@@ -19,3 +19,7 @@ spec:
           image: ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
           ports:
             - containerPort: 8080
+
+
+# This is a generic file that creates a Kubernetes deployment in our namespace. A deployment is a collection of pods
+  #that runs one or more containers. In this application, currently only one container is run in the pod.

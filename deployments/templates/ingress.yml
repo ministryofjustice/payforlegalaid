@@ -21,3 +21,9 @@ spec:
                 name: example-service
                 port:
                   number: 8080
+
+
+# This is a generic file that creates a Kubernetes ingress in our namespace.
+#  An ingress provides access to our application via the service described in the 'service.yml'.
+
+
