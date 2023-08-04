@@ -21,6 +21,9 @@ target/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+misc.xml
+modules.xml
+
 
 ### VS Code ###
 .vscode/
