@@ -27,7 +27,7 @@ public class ReportsController {
                 "Chancey Mctavish",
                 "Alan Rachnid",
                 "List all unpaid AP invoices and all outstanding AR debts at the end of the previous month. Detailed data, one row per invoice",
-                "SELECT * FROM A_CERTAIN_DB_VIEW"); // TODO -  We don't want this field in the actual response, so need to agree best way to  deal with it (new response class, or create a new JSONObject and return that?)
+                "SELECT * FROM A_CERTAIN_DB_VIEW"); // TODO - We don't want this field in the actual response, so need to agree best way to  deal with it (new response class, or create a new JSONObject and return that?)
 
         MappingTableModel modelItem2 = new MappingTableModel(
                 2,
