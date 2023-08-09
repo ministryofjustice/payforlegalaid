@@ -2,26 +2,36 @@ package uk.gov.laa.pfla.auth.service.models;
 
 import lombok.Data;
 
+//TODO - This class will be a bean, dont forget to annotate it with  @org.springframework.beans.factory.annotation.Autowired to make sonarlint happy
+// Bean guide: https://www.baeldung.com/spring-bean
+
+/**
+ * A class representing the data in the MOJFIN 'CSV - SQL Mapping' Table. A subset of this data will eventually be
+ * returned to the user via the /reports endpoint, in the form of a ReportListResponse
+ */
 @Data
 public class MappingTableModel {
 
-    private double id;
-    private String report_name;
-    private String report_period;
-
-    private String report_owner;
-    private String report_created_by;
-    private String report_description;
+    private int id;
+    private String reportName;
+    private String reportPeriod;
+    private String reportOwner;
+    private String reportCreator;
+    private String description;
     private String sql;
+    private String baseUrl;
 
-    public MappingTableModel(double id, String report_name, String report_period, String report_owner, String report_created_by, String report_description, String sql) {
+
+    public MappingTableModel(int id, String reportName, String reportPeriod, String reportOwner, String reportCreator, String description, String sql, String baseUrl) {
         this.id = id;
-        this.report_name = report_name;
-        this.report_period = report_period;
-        this.report_owner = report_owner;
-        this.report_created_by = report_created_by;
-        this.report_description = report_description;
+        this.reportName = reportName;
+        this.reportPeriod = reportPeriod;
+        this.reportOwner = reportOwner;
+        this.reportCreator = reportCreator;
+        this.description = description;
         this.sql = sql;
+        this.baseUrl = baseUrl;
+
     }
 
 
