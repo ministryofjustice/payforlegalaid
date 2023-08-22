@@ -18,19 +18,21 @@ public class MappingTableModel {
     private String reportOwner;
     private String reportCreator;
     private String description;
-    private String sql;
     private String baseUrl;
+    private String sql;
 
 
-    public MappingTableModel(int id, String reportName, String reportPeriod, String reportOwner, String reportCreator, String description, String sql, String baseUrl) {
+
+    public MappingTableModel(int id, String reportName, String reportPeriod, String reportOwner, String reportCreator, String description, String baseUrl, String sql) {
         this.id = id;
         this.reportName = reportName;
         this.reportPeriod = reportPeriod;
         this.reportOwner = reportOwner;
         this.reportCreator = reportCreator;
         this.description = description;
-        this.sql = sql;
         this.baseUrl = baseUrl;
+        this.sql = sql;
+
 
     }
 

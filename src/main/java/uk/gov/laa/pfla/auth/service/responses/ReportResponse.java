@@ -1,4 +1,4 @@
-package uk.gov.laa.pfla.auth.service;
+package uk.gov.laa.pfla.auth.service.responses;
 
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -22,5 +22,8 @@ public class ReportResponse {
         this.reportUrl = reportUrl;
         this.creationTime = creationTime;
 
+    }
+
+    public ReportResponse() {
     }
 }

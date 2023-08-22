@@ -1,4 +1,4 @@
-package uk.gov.laa.pfla.auth.service;
+package uk.gov.laa.pfla.auth.service.responses;
 
 import lombok.Data;
 
@@ -31,6 +31,7 @@ public class ReportListResponse {
     }
 
 
+    public ReportListResponse() {
 
-
+    }
 }
