@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 public class MappingTableService {
 
-    private ModelMapper mapper = new ModelMapper();
+    private final ModelMapper mapper = new ModelMapper();
 
 
     private final MappingTableDao mappingTableDao;
@@ -24,6 +24,7 @@ public class MappingTableService {
     }
 
     public List<ReportListResponse> createReportListResponseList() {
+        reportListResponses.clear(); // Prevent response data accumulating after multiple requests
 
         //Fetching reportList items from database
         List<MappingTableModel> mappingTableObjectList = mappingTableDao.fetchReportList();
