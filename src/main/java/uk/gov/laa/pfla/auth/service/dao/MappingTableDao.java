@@ -9,12 +9,14 @@ import java.util.List;
 @Repository
 public class MappingTableDao {
 
-    private List<MappingTableModel> mappingTableObjectList = new ArrayList<>();
+    private final List<MappingTableModel> mappingTableObjectList = new ArrayList<>();
     public MappingTableDao() {
         //empty contructor to allow builder to do its work
     }
 
     public List<MappingTableModel> fetchReportList() {
+
+        mappingTableObjectList.clear(); // Prevent response data accumulating after multiple requests
 
         //fetch data from database
         //fetchSingleRowOfData()

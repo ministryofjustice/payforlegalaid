@@ -23,6 +23,8 @@ public class ReportsController {
 
     private final ReportTrackingTableService reportTrackingTableService;
 
+    List<ReportListResponse> reportListResponseArray = new ArrayList<>();
+
 
     @Autowired
     public ReportsController(MappingTableService mappingTableService, ReportService reportService, ReportTrackingTableService reportTrackingTableService){
@@ -39,10 +41,10 @@ public class ReportsController {
     @RequestMapping("/reports")
     ResponseEntity<List<ReportListResponse>>getReportList() {
 
-
+        reportListResponseArray.clear(); // Prevent response data accumulating after multiple requests
 
         //Converting the model object arraylist to a response object arraylist
-        List<ReportListResponse> reportListResponseArray = mappingTableService
+        reportListResponseArray = mappingTableService
                 .createReportListResponseList();
 
 
