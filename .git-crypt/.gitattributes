@@ -2,4 +2,6 @@
 # .gitattributes file in the directory where your files are.
 .gitattributes !filter !diff
 src/main/resources/application.yml filter=git-crypt diff=git-crypt
+*.key filter=git-crypt diff=git-crypt
+
 
