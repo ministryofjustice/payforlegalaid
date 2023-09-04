@@ -23,7 +23,7 @@ spec:
             - name: AZURE_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: gpfd-test-secret-01 #todo - change this in a cloud platform PR
+                  name: gpfd-test-secret-01 #todo - change this to a more descriptive name in a cloud platform PR
                   key: client-secret
             - name: AZURE_CLIENT_ID
               valueFrom:
