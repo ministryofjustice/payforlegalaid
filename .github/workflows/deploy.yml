@@ -1,6 +1,7 @@
 on:
   push:
-    branches: [main]
+#    branches: [main] #todo - uncomment this
+    branches: [LPF-219-create-docker-file]
 
 jobs:
   ecr:
@@ -11,6 +12,20 @@ jobs:
     steps:
       # Checkout GitHub repository
       - uses: actions/checkout@v3
+
+      # Setup Java
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # Run Tests
+      - name: Run tests
+        run: mvn -B clean test
+      # Build and package JAR
+      - name: Build with Maven
+        run: mvn -B -DskipTests clean package
+
 
       # Assume role in Cloud Platform
       - uses: aws-actions/configure-aws-credentials@v2
