@@ -70,7 +70,15 @@ public class ReportsController {
 
     }
 
+        @RequestMapping(value ="/report/hello")
+        String sayHello()  {
 
+
+
+        return "hello" ;
+
+
+    }
 
 
 
