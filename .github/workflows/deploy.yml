@@ -1,16 +1,52 @@
 on:
   push:
-    branches: [main]
+    branches:
+      - '*'
 
 jobs:
-  ecr:
+  test:
     runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/main' #Run on every branch other than 'main'
     permissions:
-      id-token: write # This is required for requesting the JWT
       contents: read  # This is required for actions/checkout
     steps:
       # Checkout GitHub repository
       - uses: actions/checkout@v3
+
+      # Setup Java
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # Run Tests
+      - name: Run tests
+        run: mvn -B clean test
+
+  build-and-release-to-k8s:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' #Only run on main branch
+    permissions:
+      id-token: write # This is required for requesting the JWT
+      contents: read  # This is required for actions/checkout
+    steps:
+
+      # Checkout GitHub repository
+      - uses: actions/checkout@v3
+
+      # Setup Java
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # Run Tests
+      - name: Run tests
+        run: mvn -B clean test
+      # Build and package JAR
+      - name: Build with Maven
+        run: mvn -B -DskipTests clean package
+
 
       # Assume role in Cloud Platform
       - uses: aws-actions/configure-aws-credentials@v2

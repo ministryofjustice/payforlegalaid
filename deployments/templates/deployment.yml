@@ -14,27 +14,28 @@ spec:
       labels:
         app: gpfd-dev
     spec:
+      serviceAccountName: example-name #This relates to the IRSA module in our namespace, within the cloud-platform-environments repo
       containers:
         - name: gpfd-api-container
           image: ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
           ports:
             - containerPort: 8080
-          env:
-            - name: AZURE_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: gpfd-test-secret-01 #todo - change this to a more descriptive name in a cloud platform PR
-                  key: client-secret
-            - name: AZURE_CLIENT_ID
-              valueFrom:
-                secretKeyRef:
-                  name: gpfd-test-secret-01
-                  key: client-id
-            - name: AZURE_TENANT_ID
-              valueFrom:
-                secretKeyRef:
-                  name: gpfd-test-secret-01
-                  key: tenant-id
+#          env:
+#            - name: AZURE_CLIENT_SECRET
+#              valueFrom:
+#                secretKeyRef:
+#                  name: gpfd-test-secret-01 #todo - change this to a more descriptive name in a cloud platform PR
+#                  key: client-secret
+#            - name: AZURE_CLIENT_ID
+#              valueFrom:
+#                secretKeyRef:
+#                  name: gpfd-test-secret-01
+#                  key: client-id
+#            - name: AZURE_TENANT_ID
+#              valueFrom:
+#                secretKeyRef:
+#                  name: gpfd-test-secret-01
+#                  key: tenant-id
 
-  # This is a file that creates a Kubernetes deployment in our namespace. A deployment is a collection of pods
-  #that runs one or more containers. In this application, currently only one container is run in the pod.
+# This is a generic file that creates a Kubernetes deployment in our namespace. A deployment is a collection of pods
+# that runs one or more containers. In this application, currently only one container is run in the pod.
