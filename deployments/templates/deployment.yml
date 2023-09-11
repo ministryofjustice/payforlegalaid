@@ -23,4 +23,4 @@ spec:
 
 
 # This is a generic file that creates a Kubernetes deployment in our namespace. A deployment is a collection of pods
-  #that runs one or more containers. In this application, currently only one container is run in the pod.
+# that runs one or more containers. In this application, currently only one container is run in the pod.
