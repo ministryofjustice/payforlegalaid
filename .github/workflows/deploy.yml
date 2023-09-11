@@ -1,7 +1,6 @@
 on:
   push:
-#    branches: [main] #todo - uncomment this
-    branches: [LPF-219-create-docker-file]
+    branches: [main]
 
 jobs:
   ecr:
