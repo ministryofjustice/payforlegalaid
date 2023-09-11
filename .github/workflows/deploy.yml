@@ -8,7 +8,6 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref != 'refs/heads/main' #Run on every branch other than 'main'
     permissions:
-      id-token: write # This is required for requesting the JWT
       contents: read  # This is required for actions/checkout
     steps:
       # Checkout GitHub repository
@@ -23,9 +22,6 @@ jobs:
       # Run Tests
       - name: Run tests
         run: mvn -B clean test
-      # Build and package JAR
-      - name: Build with Maven
-        run: mvn -B -DskipTests clean package
 
   build-and-release-to-k8s:
     runs-on: ubuntu-latest
