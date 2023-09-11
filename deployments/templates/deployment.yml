@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: example-deployment
+  name: gpfd-dev-deployment
   labels:
-    app: example
+    app: gpfd-dev
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: example
+      app: gpfd-dev
   template:
     metadata:
       labels:
-        app: example
+        app: gpfd-dev
     spec:
       serviceAccountName: example-name #This relates to the IRSA module in our namespace, within the cloud-platform-environments repo
       containers:
-        - name: example
+        - name: gpfd-api-container
           image: ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
           ports:
             - containerPort: 8080
