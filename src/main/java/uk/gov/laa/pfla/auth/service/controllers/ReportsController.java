@@ -38,7 +38,7 @@ public class ReportsController {
      * Method to allow the user to see a list of all available reports, which are available to generate and download
      * @return A POJO list, converted to json by spring -  A list of report names, id's and some information on each report, in the form of json objects
      */
-    @RequestMapping("/reports")
+    @RequestMapping(value ="/reports", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<List<ReportListResponse>>getReportList() {
 
         reportListResponseArray.clear(); // Prevent response data accumulating after multiple requests
@@ -57,7 +57,7 @@ public class ReportsController {
      * @return A SingleReportResponse POJO, converted to JSON by spring, and wrapped in a ResponseEntity object.
      * It is a single JSON object which contains the name, id and url of a report
      */
-    @RequestMapping(value ="/report/{id}")
+    @RequestMapping(value ="/report/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<ReportResponse> getReport(@PathVariable(value="id") int requestedId) {
 
 
