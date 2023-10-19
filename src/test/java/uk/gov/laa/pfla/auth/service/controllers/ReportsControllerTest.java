@@ -34,8 +34,8 @@ class ReportsControllerTest {
     @Mock
     private ReportService reportServiceMock;
 
-//    @Mock
-//    private ReportTrackingTableService reportTrackingTableService;
+    @Mock
+    private ReportTrackingTableService reportTrackingTableService;
 
 //    @MockBean
 //    OAuth2AuthorizedClient mockOAuth2AuthorizedClient;
