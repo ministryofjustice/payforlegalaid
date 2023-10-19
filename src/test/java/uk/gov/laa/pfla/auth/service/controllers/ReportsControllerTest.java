@@ -1,6 +1,8 @@
 package uk.gov.laa.pfla.auth.service.controllers;
 
 
+import com.microsoft.graph.models.User;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,13 +33,29 @@ class ReportsControllerTest {
     private MappingTableService mappingTableServiceMock;
     @Mock
     private ReportService reportServiceMock;
-    @Mock
-    private ReportTrackingTableService reportTrackingTableService;
 
+//    @Mock
+//    private ReportTrackingTableService reportTrackingTableService;
+
+//    @MockBean
+//    OAuth2AuthorizedClient mockOAuth2AuthorizedClient;
+//
+//    @MockBean
+//    OAuth2AuthorizedClient mockOAuth2Client;
 
     @InjectMocks // creating a ReportsController object and then inject the mocked MappingTableService + reportService instances into it.
     private ReportsController reportsController;
-
+//
+//    @NotNull
+//    private static User createGraphUser() {
+//        User graphUser = new User();
+//        graphUser.userPrincipalName = "testPrincipalName";
+//        graphUser.givenName = "testGivenName";
+//        graphUser.surname = "testSurname";
+//        graphUser.preferredName = "testPreferredName";
+//        graphUser.mail = "testMail";
+//        return graphUser;
+//    }
 
     @Test
     void getReportListReturnsCorrectResponseEntity() {
@@ -57,21 +75,20 @@ class ReportsControllerTest {
         List<ReportListResponse> responseList = responseEntity.getBody();
 
 
-
         verify(mappingTableServiceMock, times(1)).createReportListResponseList();
         assertNotNull(responseEntity);
         assertNotNull(responseEntity.getBody());
+        assertNotNull(responseList);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals( 2, responseList.size());
+        assertEquals(2, responseList.size());
 
         //check the first and last elements are the same in each response object
-        for(int i = 0; i < reportListResponseMockList.size(); i++){
+        for (int i = 0; i < reportListResponseMockList.size(); i++) {
             ReportListResponse reportListResponseMock = reportListResponseMockList.get(i);
             ReportListResponse reportListResponse = responseList.get(i);
 
             assertEquals(reportListResponseMock.getId(), reportListResponse.getId());
             assertEquals(reportListResponseMock.getBaseUrl(), reportListResponse.getBaseUrl());
-
 
 
         }
@@ -93,9 +110,9 @@ class ReportsControllerTest {
         ReportResponse response = responseEntity.getBody();
 
 
-
         verify(reportServiceMock, times(1)).createReportResponse(reportId);
         assertNotNull(responseEntity);
+        assertNotNull(response);
         assertNotNull(responseEntity.getBody());
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(reportResponseMock.getId(), response.getId());
@@ -105,4 +122,15 @@ class ReportsControllerTest {
 
 
     }
+
+//    @Test
+//    void ssoMethodReturnsPrincipalName() throws UserServiceException {
+//
+//        User graphUser = createGraphUser();
+//        when(mockGraphClientHelper.getGraphUserDetails(mockOAuth2Client)).thenReturn(graphUser);
+////        when(userService.getUserDetails(mockOAuth2Client)).thenReturn(graphUser);
+//
+//        assertEquals("Principal Name:"  + graphUser.userPrincipalName, reportsController.sso(mockOAuth2Client));
+//    }
+
 }

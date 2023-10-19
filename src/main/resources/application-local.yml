@@ -1,0 +1,6 @@
+# Azure AD and Graph config
+spring:
+  cloud:
+    azure:
+      credential:
+        client-secret: "hi, im a client secret "
