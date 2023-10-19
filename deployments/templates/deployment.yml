@@ -20,22 +20,24 @@ spec:
           image: ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
           ports:
             - containerPort: 8080
-#          env:
-#            - name: AZURE_CLIENT_SECRET
-#              valueFrom:
-#                secretKeyRef:
-#                  name: gpfd-test-secret-01 #todo - change this to a more descriptive name in a cloud platform PR
-#                  key: client-secret
-#            - name: AZURE_CLIENT_ID
-#              valueFrom:
-#                secretKeyRef:
-#                  name: gpfd-test-secret-01
-#                  key: client-id
-#            - name: AZURE_TENANT_ID
-#              valueFrom:
-#                secretKeyRef:
-#                  name: gpfd-test-secret-01
-#                  key: tenant-id
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "dev"                  #TODO - use a configmap once more environments are added
+            - name: AZURE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: gpfd-test-secret-01 #todo - change this to a more descriptive name in a cloud platform PR
+                  key: client-secret
+            - name: AZURE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: gpfd-test-secret-01
+                  key: client-id
+            - name: AZURE_TENANT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: gpfd-test-secret-01
+                  key: tenant-id
 
 # This is a generic file that creates a Kubernetes deployment in our namespace. A deployment is a collection of pods
 # that runs one or more containers. In this application, currently only one container is run in the pod.

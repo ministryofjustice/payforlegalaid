@@ -4,4 +4,15 @@
 
 ## About this repository
 
-This is the repo that contains the code for the Pay For Legal Aid project
+This is the repo that contains the code for the Pay For Leg
+
+## Technology Stack
+
+- Java
+- Maven
+- Springboot
+    - Spring Security
+    - Spring Web
+- Docker
+- Kubernetes
+- Azure AD

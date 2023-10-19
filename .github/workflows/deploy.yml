@@ -4,7 +4,7 @@ on:
       - '*'
 
 jobs:
-  test:
+  branch-job:
     runs-on: ubuntu-latest
     if: github.ref != 'refs/heads/main' #Run on every branch other than 'main'
     permissions:
@@ -23,7 +23,7 @@ jobs:
       - name: Run tests
         run: mvn -B clean test
 
-  build-and-release-to-k8s:
+  build-and-release-to-k8s-job:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' #Only run on main branch
     permissions:
@@ -57,6 +57,9 @@ jobs:
       # Login to container repository
       - uses: aws-actions/amazon-ecr-login@v1
         id: login-ecr
+
+      - name: Set Spring profile
+        run: echo "SPRING_PROFILES_ACTIVE=dev" >> $GITHUB_ENV
 
       # Build and push a Docker image to the container repository
       - run: |
