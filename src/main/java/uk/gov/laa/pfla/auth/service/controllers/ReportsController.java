@@ -35,7 +35,6 @@ public class ReportsController {
     private final UserService userService;
 
 
-    @Autowired
     public ReportsController(MappingTableService mappingTableService, ReportService reportService, ReportTrackingTableService reportTrackingTableService, final UserService userService){
         this.mappingTableService = mappingTableService;
         this.reportService = reportService;
