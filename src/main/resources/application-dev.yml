@@ -1,4 +1,4 @@
-# Azure AD and Graph config
+## Azure AD and Graph config
 spring:
   cloud:
     azure:
@@ -16,6 +16,6 @@ spring:
               - https://graph.microsoft.com/User.Read
         post-logout-redirect-uri: /
 
-#server:
-#  port: 8080
-#  forward-headers-strategy: native
+##server:
+##  port: 8080
+##  forward-headers-strategy: native

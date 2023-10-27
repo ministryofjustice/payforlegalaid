@@ -68,28 +68,30 @@ public class ReportsController {
      */
     @RequestMapping(value ="/report/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<ReportResponse> getReport(@PathVariable(value="id") int requestedId) {
+        log.info("Get report log 1 ");
 
 
         reportTrackingTableService.updateReportTracking(requestedId, LocalDateTime.now());
 
         ReportResponse reportResponse =  reportService.createReportResponse(requestedId);
+        log.info("Get report log 2 ");
 
         return new ResponseEntity<>(reportResponse, HttpStatus.OK);
 
 
     }
 
-        @RequestMapping(value ="/sso", produces = MediaType.APPLICATION_JSON_VALUE)
-        @ResponseBody
-        public String sso(@RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient) throws UserServiceException {
-
-
-        UserDetails user = userService.getUserDetails(graphClient);
-            log.info(user.getUserPrincipalName());
-
-
-        return "Principal Name:"  + user.getUserPrincipalName();
-        }
+//        @RequestMapping(value ="/sso", produces = MediaType.APPLICATION_JSON_VALUE)
+//        @ResponseBody
+//        public String sso(@RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient) throws UserServiceException {
+//
+//
+//        UserDetails user = userService.getUserDetails(graphClient);
+//            log.info(user.getUserPrincipalName());
+//
+//
+//        return "Principal Name:"  + user.getUserPrincipalName();
+//        }
 
 
 
