@@ -50,6 +50,8 @@ public class ReportsController {
     @RequestMapping(value ="/reports", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<List<ReportListResponse>>getReportList() {
 
+        log.info("Get reportLIST log 1 ");
+
         reportListResponseArray.clear(); // Prevent response data accumulating after multiple requests
 
         //Converting the model object arraylist to a response object arraylist
@@ -81,17 +83,17 @@ public class ReportsController {
 
     }
 
-//        @RequestMapping(value ="/sso", produces = MediaType.APPLICATION_JSON_VALUE)
-//        @ResponseBody
-//        public String sso(@RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient) throws UserServiceException {
-//
-//
-//        UserDetails user = userService.getUserDetails(graphClient);
-//            log.info(user.getUserPrincipalName());
-//
-//
-//        return "Principal Name:"  + user.getUserPrincipalName();
-//        }
+        @RequestMapping(value ="/sso", produces = MediaType.APPLICATION_JSON_VALUE)
+        @ResponseBody
+        public String sso(@RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient) throws UserServiceException {
+
+
+        UserDetails user = userService.getUserDetails(graphClient);
+            log.info("Logging current graph user: " + user.getUserPrincipalName());
+
+
+        return "Principal Name:"  + user.getUserPrincipalName();
+        }
 
 
 
