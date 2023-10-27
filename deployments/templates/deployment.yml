@@ -20,7 +20,14 @@ spec:
           image: ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
           ports:
             - containerPort: 8080
-#          env:
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "dev"                  #TODO - use a configmap once more environments are added
+            - name: DEMO_SECRET   #TODO - remove this after debugging is complete
+              valueFrom:
+                secretKeyRef:
+                  name: gpfd-test-secret-01
+                  key: demo-secret
 #            - name: AZURE_CLIENT_SECRET
 #              valueFrom:
 #                secretKeyRef:

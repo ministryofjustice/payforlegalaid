@@ -15,3 +15,5 @@
 #            scopes:
 #              - https://graph.microsoft.com/User.Read
 #        post-logout-redirect-uri: /
+
+demo-secret: ${DEMO_SECRET}

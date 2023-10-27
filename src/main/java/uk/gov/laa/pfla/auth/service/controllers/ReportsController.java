@@ -1,6 +1,8 @@
 package uk.gov.laa.pfla.auth.service.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.boot.autoconfigure.*;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,7 @@ import java.util.*;
 
 @RestController
 @EnableAutoConfiguration
+@Slf4j
 public class ReportsController {
 
     private final MappingTableService mappingTableService;
@@ -25,6 +28,8 @@ public class ReportsController {
 
     List<ReportListResponse> reportListResponseArray = new ArrayList<>();
 
+    @Value("${demo-secret}")
+    private String demoEnvVariable;
 
     @Autowired
     public ReportsController(MappingTableService mappingTableService, ReportService reportService, ReportTrackingTableService reportTrackingTableService){
@@ -47,6 +52,7 @@ public class ReportsController {
         reportListResponseArray = mappingTableService
                 .createReportListResponseList();
 
+        log.info("Inside report list method " + demoEnvVariable); //TODO - delete
 
         return new ResponseEntity<>(reportListResponseArray, HttpStatus.OK);
     }
@@ -65,8 +71,9 @@ public class ReportsController {
 
         ReportResponse reportResponse =  reportService.createReportResponse(requestedId);
 
-        return new ResponseEntity<>(reportResponse, HttpStatus.OK);
+        log.info("Inside getreport  method " + demoEnvVariable); //TODO - delete
 
+        return new ResponseEntity<>(reportResponse, HttpStatus.OK);
 
     }
 
