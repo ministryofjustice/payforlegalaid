@@ -2,6 +2,7 @@ package uk.gov.laa.pfla.auth.service.controllers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.boot.autoconfigure.*;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
@@ -19,6 +20,9 @@ import uk.gov.laa.pfla.auth.service.services.UserService;
 import java.time.LocalDateTime;
 import java.util.*;
 
+
+
+
 @RestController
 @EnableAutoConfiguration
 @Slf4j
@@ -34,6 +38,9 @@ public class ReportsController {
 
     private final UserService userService;
 
+    @Value("${demo-secret}")
+    private String demoEnvVariable; //Todo - remove this - just here for debugging
+
 
     public ReportsController(MappingTableService mappingTableService, ReportService reportService, ReportTrackingTableService reportTrackingTableService, final UserService userService){
         this.mappingTableService = mappingTableService;
@@ -41,6 +48,8 @@ public class ReportsController {
         this.reportTrackingTableService = reportTrackingTableService;
         this.userService = userService;
 
+        log.info("Inside controller constructor - " + demoEnvVariable); //TODO - delete
+        
     }
 
     /**
