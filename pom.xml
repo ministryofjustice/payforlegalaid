@@ -94,16 +94,11 @@
 <!--            <artifactId>microsoft-graph</artifactId>-->
 <!--            <version>${microsoft-graph.version}</version>-->
 <!--        </dependency>-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-oauth2-client</artifactId>
-            <version>${spring-boot-starter-oauth2.version}</version>
-        </dependency>
+
 <!--        <dependency>-->
 <!--            <groupId>org.springframework.boot</groupId>-->
 <!--            <artifactId>spring-boot-starter-security</artifactId>-->
 <!--        </dependency>-->
-
 <!--        <dependency>-->
 <!--            <groupId>org.apache.logging.log4j</groupId>-->
 <!--            <artifactId>log4j-api</artifactId>-->
@@ -114,5 +109,10 @@
 <!--            <artifactId>log4j-core</artifactId>-->
 <!--            <version>2.20.0</version>-->
 <!--        </dependency>-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+            <version>${spring-boot-starter-oauth2.version}</version>
+        </dependency>
     </dependencies>
 </project>

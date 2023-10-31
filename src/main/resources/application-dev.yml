@@ -1,21 +1,37 @@
-## Azure AD and Graph config
+### Azure AD and Graph config
+#spring:
+#  cloud:
+#    azure:
+#      credential:
+#        client-secret: ${AZURE_CLIENT_SECRET}
+#        client-id: ${AZURE_CLIENT_ID}
+#      profile:
+#        tenant-id: ${AZURE_TENANT_ID}
+#      active-directory:
+#        enabled: true
+#        authorization-clients:
+#          graph:
+#            scopes:
+#              - https://graph.microsoft.com/User.Read
+#        post-logout-redirect-uri: /
+#
+###server:
+###  port: 8080
+###  forward-headers-strategy: native
+
 spring:
-  cloud:
-    azure:
-      credential:
-        client-secret: ${AZURE_CLIENT_SECRET}
-        client-id: ${AZURE_CLIENT_ID}
-      profile:
-        tenant-id: ${AZURE_TENANT_ID}
-
-      active-directory:
-        enabled: true
-        authorization-clients:
-          graph:
-            scopes:
-              - https://graph.microsoft.com/User.Read
-        post-logout-redirect-uri: /
-
-##server:
-##  port: 8080
-##  forward-headers-strategy: native
+  security:
+    oauth2:
+      client:
+        provider:
+          azure:
+            issuer-uri: https://login.microsoftonline.com/${AZURE_TENANT_ID}/v2.0
+        registration:
+          gpfd-azure-dev:
+            provider: azure
+            client-secret: ${AZURE_CLIENT_SECRET}
+            client-id: ${AZURE_CLIENT_ID}
+            scope:
+              - openid
+              - email
+              - profile
