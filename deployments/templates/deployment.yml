@@ -23,16 +23,16 @@ spec:
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: "dev"                  #TODO - use a configmap once more environments are added
-            - name: AZURE_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: gpfd-test-secret-01 #todo - change this to a more descriptive name in a cloud platform PR
-                  key: client-secret
             - name: DEMO_SECRET   #TODO - remove this after debugging is complete
               valueFrom:
                 secretKeyRef:
                   name: gpfd-test-secret-01
                   key: demo-secret
+            - name: AZURE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: gpfd-test-secret-01 #todo - change this to a more descriptive name in a cloud platform PR
+                  key: client-secret
             - name: AZURE_CLIENT_ID
               valueFrom:
                 secretKeyRef:
