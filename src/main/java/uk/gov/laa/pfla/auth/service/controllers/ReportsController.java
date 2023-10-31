@@ -22,9 +22,7 @@ import java.util.*;
 
 
 
-
 @RestController
-@EnableAutoConfiguration
 @Slf4j
 public class ReportsController {
 
@@ -36,20 +34,20 @@ public class ReportsController {
 
     List<ReportListResponse> reportListResponseArray = new ArrayList<>();
 
-    private final UserService userService;
+//    private final UserService userService;
 
     @Value("${demo-secret}")
     private String demoEnvVariable; //Todo - remove this - just here for debugging
 
-
-    public ReportsController(MappingTableService mappingTableService, ReportService reportService, ReportTrackingTableService reportTrackingTableService, final UserService userService){
+    @Autowired
+    public ReportsController(MappingTableService mappingTableService, ReportService reportService, ReportTrackingTableService reportTrackingTableService){
         this.mappingTableService = mappingTableService;
         this.reportService = reportService;
         this.reportTrackingTableService = reportTrackingTableService;
-        this.userService = userService;
+//        this.userService = userService;
 
         log.info("Inside controller constructor - " + demoEnvVariable); //TODO - delete
-        
+
     }
 
     /**
@@ -92,17 +90,17 @@ public class ReportsController {
 
     }
 
-        @RequestMapping(value ="/sso", produces = MediaType.APPLICATION_JSON_VALUE)
-        @ResponseBody
-        public String sso(@RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient) throws UserServiceException {
-
-
-        UserDetails user = userService.getUserDetails(graphClient);
-            log.info("Logging current graph user: " + user.getUserPrincipalName());
-
-
-        return "Principal Name:"  + user.getUserPrincipalName();
-        }
+//        @RequestMapping(value ="/sso", produces = MediaType.APPLICATION_JSON_VALUE)
+//        @ResponseBody
+//        public String sso(@RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient) throws UserServiceException {
+//
+//
+//        UserDetails user = userService.getUserDetails(graphClient);
+//            log.info("Logging current graph user: " + user.getUserPrincipalName());
+//
+//
+//        return "Principal Name:"  + user.getUserPrincipalName();
+//        }
 
 
 

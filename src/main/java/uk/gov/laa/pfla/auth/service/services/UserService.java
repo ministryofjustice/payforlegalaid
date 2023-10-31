@@ -5,7 +5,7 @@ import com.microsoft.graph.models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import uk.gov.laa.pfla.auth.service.beans.UserDetails;
 import uk.gov.laa.pfla.auth.service.exceptions.AuthUserNotFoundException;
@@ -16,7 +16,8 @@ import uk.gov.laa.pfla.auth.service.graph.GraphClientHelper;
  * Component to encapsulate the retrieval of user information from an
  * external directory (Microsoft Graph)
  */
-@Component
+//@Component
+@Service
 public class UserService {
   private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
