@@ -48,8 +48,7 @@ public class ReportsController {
         this.reportTrackingTableService = reportTrackingTableService;
 //        this.userService = userService;
 
-        log.info("Inside controller constructor - " + demoEnvVariable); //TODO - delete
-        
+
     }
 
     /**
@@ -59,7 +58,7 @@ public class ReportsController {
     @RequestMapping(value ="/reports", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<List<ReportListResponse>>getReportList() {
 
-        log.info("Get reportLIST log 1 ");
+        log.info("Get reportLIST log 1 "+ demoEnvVariable);
 
         reportListResponseArray.clear(); // Prevent response data accumulating after multiple requests
 
@@ -103,12 +102,5 @@ public class ReportsController {
 //
 //        return "Principal Name:"  + user.getUserPrincipalName();
 //        }
-//
-
-
-
-
-
-
 
 }
