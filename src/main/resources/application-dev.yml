@@ -26,6 +26,7 @@ spring:
         provider:
           azure:
             issuer-uri: https://login.microsoftonline.com/${AZURE_TENANT_ID}/v2.0
+            user-name-attribute: name
         registration:
           gpfd-azure-dev:
             provider: azure

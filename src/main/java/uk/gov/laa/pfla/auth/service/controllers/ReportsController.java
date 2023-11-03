@@ -7,6 +7,7 @@ import org.springframework.http.*;
 import org.springframework.boot.autoconfigure.*;
 //import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 //import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.laa.pfla.auth.service.beans.UserDetails;
 import uk.gov.laa.pfla.auth.service.exceptions.UserServiceException;
@@ -102,5 +103,21 @@ public class ReportsController {
 //
 //        return "Principal Name:"  + user.getUserPrincipalName();
 //        }
+
+        @RequestMapping(value ="/sso", produces = MediaType.APPLICATION_JSON_VALUE)
+        ResponseEntity<Object> sso(Authentication user) {
+
+
+        String nameString = String.valueOf(user.getName());
+
+        log.info("User's name is: " + nameString);
+
+            Map<String, Object> userDetails = new HashMap<>();
+            userDetails.put("Name", nameString);
+
+
+        return ResponseEntity.ok(userDetails);
+        }
+
 
 }
