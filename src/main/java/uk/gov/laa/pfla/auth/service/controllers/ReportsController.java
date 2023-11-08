@@ -14,7 +14,7 @@ import uk.gov.laa.pfla.auth.service.responses.ReportResponse;
 import uk.gov.laa.pfla.auth.service.services.MappingTableService;
 import uk.gov.laa.pfla.auth.service.services.ReportService;
 import uk.gov.laa.pfla.auth.service.services.ReportTrackingTableService;
-import uk.gov.laa.pfla.auth.service.services.UserService;
+//import uk.gov.laa.pfla.auth.service.services.UserService;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -32,15 +32,15 @@ public class ReportsController {
 
     List<ReportListResponse> reportListResponseArray = new ArrayList<>();
 
-    private final UserService userService;
+//    private final UserService userService;
 
 
     @Autowired
-    public ReportsController(MappingTableService mappingTableService, ReportService reportService, ReportTrackingTableService reportTrackingTableService, final UserService userService){
+    public ReportsController(MappingTableService mappingTableService, ReportService reportService, ReportTrackingTableService reportTrackingTableService){
         this.mappingTableService = mappingTableService;
         this.reportService = reportService;
         this.reportTrackingTableService = reportTrackingTableService;
-        this.userService = userService;
+//        this.userService = userService;
 
     }
 
@@ -80,19 +80,26 @@ public class ReportsController {
 
     }
 
-        @RequestMapping(value ="/sso", produces = MediaType.APPLICATION_JSON_VALUE)
-        @ResponseBody
-        public String sso(@RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient) throws UserServiceException {
+//        @RequestMapping(value ="/sso", produces = MediaType.APPLICATION_JSON_VALUE)
+//        @ResponseBody
+//        public String sso(@RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient) throws UserServiceException {
+//
+//
+//        UserDetails user = userService.getUserDetails(graphClient);
+//            log.info(user.getUserPrincipalName());
+//
+//
+//        return "Principal Name:"  + user.getUserPrincipalName();
+//        }
 
-
-        UserDetails user = userService.getUserDetails(graphClient);
-            log.info(user.getUserPrincipalName());
-
-
-        return "Principal Name:"  + user.getUserPrincipalName();
-        }
-
-
+    @GetMapping("/graph")
+    @ResponseBody
+    public String graph(
+            @RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient
+    ) {
+        // oAuth2AuthorizedClient contains access_token. We can use this access_token to access the resource server.
+        return String.valueOf(graphClient);
+    }
 
 
 
