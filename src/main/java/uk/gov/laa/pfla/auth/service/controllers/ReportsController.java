@@ -98,7 +98,7 @@ public class ReportsController {
             @RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient
     ) {
         // oAuth2AuthorizedClient contains access_token. We can use this access_token to access the resource server.
-        return String.valueOf(graphClient);
+        return String.valueOf(graphClient.getPrincipalName());
     }
 
 
