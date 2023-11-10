@@ -15,11 +15,27 @@
 #            scopes:
 #              - https://graph.microsoft.com/User.Read
 #        post-logout-redirect-uri: /
-logging:
-  level:
-    org:
-      springframework:
-        security=TRACE
+
+#SSL configuration
+server:
+  port: 8443
+#  shutdown: graceful
+#  servlet:
+#    session:
+#      cookie:
+#        secure: true
+  ssl:
+    key-store: /Users/luke.john/Developer/projects/payforlegalaid/src/main/resources/keystore.p12
+    key-store-password: password
+    key-store-type: PKCS12
+    key-alias: testCert
+    key-password: password
+
+#logging:
+#  level:
+#    org:
+#      springframework:
+#        TRACE
 
 spring:
   cloud:
