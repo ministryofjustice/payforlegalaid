@@ -31,8 +31,8 @@ spring:
         credential:
           client-id: ${AZURE_CLIENT_ID}
           client-secret: ${AZURE_CLIENT_SECRET}
-        redirect-uri-template: http://localhost:8080/login/oauth2/code/gpfd-azure-dev # local
-#        redirect-uri-template: https://laa-pay-for-la-dev.apps.live.cloud-platform.service.justice.gov.uk/login/oauth2/code/gpfd-azure-dev # dev
+#        redirect-uri-template: http://localhost:8080/login/oauth2/code/gpfd-azure-dev # local
+        redirect-uri-template: https://laa-pay-for-la-dev.apps.live.cloud-platform.service.justice.gov.uk/login/oauth2/code/gpfd-azure-dev # dev
         authorization-clients:
           graph:
             scopes:
