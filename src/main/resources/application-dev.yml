@@ -19,11 +19,11 @@
 #SSL configuration
 server:
   port: 8443
-#  shutdown: graceful
-#  servlet:
-#    session:
-#      cookie:
-#        secure: true
+  shutdown: graceful
+  servlet:
+    session:
+      cookie:
+        secure: true
   ssl:
     key-store: /Users/luke.john/Developer/projects/payforlegalaid/src/main/resources/keystore.p12
     key-store-password: password
