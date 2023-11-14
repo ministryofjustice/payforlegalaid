@@ -20,7 +20,7 @@ spec:
               service:
                 name: gpfd-dev-service
                 port:
-                  number: 8080
+                  number: 8443
 
 
 # This is a generic file that creates a Kubernetes ingress in our namespace.
