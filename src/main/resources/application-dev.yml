@@ -17,19 +17,19 @@
 #        post-logout-redirect-uri: /
 
 #SSL configuration
-#server:
-#  port: 8443
-#  shutdown: graceful
-#  servlet:
-#    session:
-#      cookie:
-#        secure: true
-#  ssl:
-#    key-store: classpath:keystore.p12
-#    key-store-password: password
-#    key-store-type: PKCS12
-#    key-alias: testCert
-#    key-password: password
+server:
+  port: 8443
+  shutdown: graceful
+  servlet:
+    session:
+      cookie:
+        secure: true
+  ssl:
+    key-store: classpath:keystore.p12
+    key-store-password: password
+    key-store-type: PKCS12
+    key-alias: testCert
+    key-password: password
 
 #logging:
 #  level:
@@ -47,8 +47,8 @@ spring:
         credential:
           client-id: ${AZURE_CLIENT_ID}
           client-secret: ${AZURE_CLIENT_SECRET}
-        redirect-uri-template: http://localhost:8080/login/oauth2/code/gpfd-azure-dev # local Todo - split into separate local config
-#        redirect-uri-template: https://laa-pay-for-la-dev.apps.live.cloud-platform.service.justice.gov.uk/login/oauth2/code/gpfd-azure-dev # dev
+#        redirect-uri-template: http://localhost:8080/login/oauth2/code/gpfd-azure-dev # local Todo - split into separate local config
+        redirect-uri-template: https://laa-pay-for-la-dev.apps.live.cloud-platform.service.justice.gov.uk/login/oauth2/code/gpfd-azure-dev # dev
         authorization-clients:
           graph:
             scopes:
