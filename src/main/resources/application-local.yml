@@ -17,11 +17,9 @@
 #        post-logout-redirect-uri: /
 
 
-#logging:
-#  level:
-#    org:
-#      springframework:
-#        TRACE
+logging:
+  level:
+    org.springframework.security: DEBUG
 
 spring:
   cloud:
