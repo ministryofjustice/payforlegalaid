@@ -24,15 +24,23 @@
         <plugins>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.2.2</version>
+<!--                <version>3.2.2</version>-->
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>uk.gov.laa.pfla.auth.service.PflaApplication</mainClass>
-                    <layout>JAR</layout>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
                 </configuration>
+<!--                <configuration>-->
+<!--                    <mainClass>uk.gov.laa.pfla.auth.service.PflaApplication</mainClass>-->
+<!--                    <layout>JAR</layout>-->
+<!--                </configuration>-->
             </plugin>
         </plugins>
     </build>
