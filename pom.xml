@@ -10,11 +10,11 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.0</version>
+        <version>3.1.5</version>
     </parent>
 
     <properties>
-        <java.version>15</java.version>
+        <java.version>17</java.version>
         <junit-jupiter.version>5.9.2</junit-jupiter.version>
         <azure-starter-ad.version>4.4.1</azure-starter-ad.version>
         <microsoft-graph.version>5.5.0</microsoft-graph.version>
@@ -67,18 +67,18 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.20</version>
+<!--            <version>1.18.20</version>-->
         </dependency>
         <dependency>
             <groupId>org.modelmapper</groupId>
             <artifactId>modelmapper</artifactId>
             <version>3.1.1</version>
         </dependency>
-<!--        <dependency> &lt;!&ndash;  This is a transitive dependency - in springboot starter web - and after a security vulnerability with an older version ive manually upgraded it  &ndash;&gt;-->
-<!--            <groupId>org.yaml</groupId>-->
-<!--            <artifactId>snakeyaml</artifactId>-->
-<!--            <version>2.2</version>-->
-<!--        </dependency>-->
+        <dependency> <!--  This is a transitive dependency - in springboot starter web - and after a security vulnerability with an older version ive manually upgraded it  -->
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>2.2</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
@@ -87,7 +87,7 @@
 
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
-            <artifactId>ojdbc8</artifactId>
+            <artifactId>ojdbc11</artifactId>
 <!--            <version>23.3.0.23.09</version>-->
         </dependency>
 
