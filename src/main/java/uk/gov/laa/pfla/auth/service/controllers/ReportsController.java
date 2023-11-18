@@ -4,17 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.boot.autoconfigure.*;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.web.bind.annotation.*;
-import uk.gov.laa.pfla.auth.service.beans.UserDetails;
-import uk.gov.laa.pfla.auth.service.exceptions.UserServiceException;
 import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
 import uk.gov.laa.pfla.auth.service.responses.ReportResponse;
 import uk.gov.laa.pfla.auth.service.services.MappingTableService;
 import uk.gov.laa.pfla.auth.service.services.ReportService;
 import uk.gov.laa.pfla.auth.service.services.ReportTrackingTableService;
-import uk.gov.laa.pfla.auth.service.services.UserService;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -32,16 +27,13 @@ public class ReportsController {
 
     List<ReportListResponse> reportListResponseArray = new ArrayList<>();
 
-    private final UserService userService;
 
 
     @Autowired
-    public ReportsController(MappingTableService mappingTableService, ReportService reportService, ReportTrackingTableService reportTrackingTableService, final UserService userService){
+    public ReportsController(MappingTableService mappingTableService, ReportService reportService, ReportTrackingTableService reportTrackingTableService){
         this.mappingTableService = mappingTableService;
         this.reportService = reportService;
         this.reportTrackingTableService = reportTrackingTableService;
-        this.userService = userService;
-
     }
 
     /**
@@ -49,7 +41,7 @@ public class ReportsController {
      * @return A POJO list, converted to json by spring -  A list of report names, id's and some information on each report, in the form of json objects
      */
     @RequestMapping(value ="/reports", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<List<ReportListResponse>>getReportList() {
+    ResponseEntity<List<ReportListResponse>>getReportList() throws Exception {
 
         reportListResponseArray.clear(); // Prevent response data accumulating after multiple requests
 
@@ -80,17 +72,6 @@ public class ReportsController {
 
     }
 
-        @RequestMapping(value ="/sso", produces = MediaType.APPLICATION_JSON_VALUE)
-        @ResponseBody
-        public String sso(@RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient) throws UserServiceException {
-
-
-        UserDetails user = userService.getUserDetails(graphClient);
-            log.info(user.getUserPrincipalName());
-
-
-        return "Principal Name:"  + user.getUserPrincipalName();
-        }
 
 
 

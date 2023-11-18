@@ -1,8 +1,5 @@
 package uk.gov.laa.pfla.auth.service.controllers;
 
-
-import com.microsoft.graph.models.User;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -58,7 +55,7 @@ class ReportsControllerTest {
 //    }
 
     @Test
-    void getReportListReturnsCorrectResponseEntity() {
+    void getReportListReturnsCorrectResponseEntity() throws Exception {
         //Create Mock Response objects
         ReportListResponse reportListResponseMock1 = new ReportListResponseTestBuilder().withId(1)
                 .withReportName("Test Report 1")
