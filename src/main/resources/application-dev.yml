@@ -14,6 +14,24 @@ spring:
     password: ${MOJFIN_DEV_PASSWORD}
     driver-class-name: oracle.jdbc.OracleDriver
 
+#SSL configuration
+server:
+  port: 8443
+  shutdown: graceful
+  servlet:
+    session:
+      cookie:
+        secure: true
+  ssl:
+    key-store: classpath:keystore.p12
+    key-store-password: password
+    key-store-type: PKCS12
+    key-alias: testCert
+    key-password: password
+
+logging:
+  level:
+    org.springframework.security: DEBUG
 
 #      active-directory:
 #        enabled: true
