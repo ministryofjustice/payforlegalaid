@@ -22,7 +22,7 @@ public class MappingTableDao {
     private List<MappingTableModel> mappingTableObjectList = new ArrayList<>();
 
     @Autowired
-    private JdbcTemplate JdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
     @Value("${spring.datasource.url}")
     private String databaseUrl;
@@ -47,7 +47,7 @@ public class MappingTableDao {
         PreparedStatement stmt = conn.prepareStatement("SELECT 'Hello World!' FROM dual");
         ResultSet rslt = stmt.executeQuery();
         while (rslt.next()) {
-            System.out.println(rslt.getString(1));
+            log.info(rslt.getString(1));
         }
     }
 
@@ -62,7 +62,7 @@ public class MappingTableDao {
 //        log.info("mappingTableObjectList: " + mappingTableObjectList.toString());
 //
 
-
+    log.info("Url: " + databaseUrl + "username: " + databaseUsername + "Passowrd: " + databasePassword);
 
 
 
