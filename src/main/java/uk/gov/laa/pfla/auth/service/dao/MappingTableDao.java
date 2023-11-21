@@ -37,23 +37,29 @@ public class MappingTableDao {
         //empty contructor to allow builder to do its work
     }
 
-    public void setup() throws Exception{
+    public ResultSet setup() throws Exception{ //Todo - create custom exception
         OracleDataSource ods = new OracleDataSource();
         ods.setURL(databaseUrl); // jdbc:oracle:thin@//[hostname]:[port]/[DB service name]
         ods.setUser(databaseUsername);
         ods.setPassword(databasePassword);
         Connection conn = ods.getConnection();
-
-        PreparedStatement stmt = conn.prepareStatement("SELECT 'Hello World!' FROM dual");
-        ResultSet rslt = stmt.executeQuery();
-        while (rslt.next()) {
-            log.info(rslt.getString(1));
+        ResultSet rslt = null;
+        try {
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM CSV_TO_SQL_MAPPING_TABLE");
+            rslt = stmt.executeQuery();
+            while (rslt.next()) {
+                log.info("Result column: " + rslt.getString(1));
+            }
+        }catch(Exception e){
+            log.error("Error in DB connection: " + e);
         }
+
+        return rslt;
     }
 
     public List<MappingTableModel> fetchReportList() {
 
-//        mappingTableObjectList.clear(); // Prevent response data accumulating after multiple requests
+        mappingTableObjectList.clear(); // Prevent response data accumulating after multiple requests
 //
 //        //fetch data from database
 //        String sql = "SELECT * FROM ";
@@ -62,8 +68,9 @@ public class MappingTableDao {
 //        log.info("mappingTableObjectList: " + mappingTableObjectList.toString());
 //
 
-    log.info("Url: " + databaseUrl + "username: " + databaseUsername + "Passowrd: " + databasePassword);
-
+//        ResultSet rslt = setup();
+//
+//        rslt.getString(1);
 
 
         //create a list of MappingTableModel objects
@@ -76,6 +83,17 @@ public class MappingTableDao {
                 .withBaseUrl("www.sharepoint.com/the-folder-we're-using")
                 .withSql("SELECT * FROM SOMETHING")
                 .createMappingTableModel();
+
+//        //create a list of MappingTableModel objects
+//        MappingTableModel mappingTableObject1 = new MappingTableModelBuilder()
+//                .withId(1).withReportName("Excel_Report_Name-CSV-NAME-sheetnumber")
+//                .withReportPeriod("01/08/2023 - 01/09/2023")
+//                .withReportOwner("Chancey Mctavish")
+//                .withReportCreator("Barry Gibb")
+//                .withReportDescription("List all unpaid AP invoices and all outstanding AR debts at the end of the previous month. Detailed data, one row per invoice")
+//                .withBaseUrl("www.sharepoint.com/the-folder-we're-using")
+//                .withSql("SELECT * FROM SOMETHING")
+//                .createMappingTableModel();
 
 
 
