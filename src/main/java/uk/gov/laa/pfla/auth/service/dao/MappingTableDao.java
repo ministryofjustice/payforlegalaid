@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import oracle.jdbc.pool.OracleDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import uk.gov.laa.pfla.auth.service.builders.MappingTableModelBuilder;
@@ -13,7 +12,6 @@ import uk.gov.laa.pfla.auth.service.models.MappingTableModel;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Repository
 @Slf4j
@@ -37,7 +35,7 @@ public class MappingTableDao {
         //empty contructor to allow builder to do its work
     }
 
-    public void setup(){ //Todo - create custom exception
+    public Connection setupDB(){ //Todo - create custom exception
 
         OracleDataSource ods = null;
         try {
@@ -56,47 +54,48 @@ public class MappingTableDao {
             log.error("Error in creating DB Connection: " + e);
         }
 
-        ResultSet rslt = null;
-        try {
-            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM GPFD.CSV_TO_SQL_MAPPING_TABLE");
-            rslt = stmt.executeQuery();
-            ResultSetMetaData metadata = rslt.getMetaData();
-            log.info("Metadata: " + metadata.toString());
-
-            while (rslt.next()) {
-                log.info("Result column: " + rslt.getString(1));
-                log.info("Result column: " + rslt.getString(2));
-                log.info("Result column: " + rslt.getString(3));
-                log.info("Result column: " + rslt.getString(4));
-                log.info("Result column: " + rslt.getString(5));
-                log.info("Result column: " + rslt.getString(6));
-
-            }
-        }catch(SQLException e){
-            log.error("Error in retrieving results from DB: " + e);
-        }
+//        ResultSet rslt = null;
+//        try {
+//            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM GPFD.CSV_TO_SQL_MAPPING_TABLE");
+//            rslt = stmt.executeQuery();
+//            ResultSetMetaData metadata = rslt.getMetaData();
+//            log.info("Metadata: " + metadata.toString());
+//
+//            while (rslt.next()) {
+//                log.info("Result column: " + rslt.getString(1));
+//                log.info("Result column: " + rslt.getString(2));
+//                log.info("Result column: " + rslt.getString(3));
+//                log.info("Result column: " + rslt.getString(4));
+//                log.info("Result column: " + rslt.getString(5));
+//                log.info("Result column: " + rslt.getString(6));
+//
+//            }
+//        }catch(SQLException e){
+//            log.error("Error in retrieving results from DB: " + e);
+//        }
 
         // Todo - remove duplicate block
 
-            String sqlQuery = "SELECT * FROM GPFD.CSV_TO_SQL_MAPPING_TABLE";
-            List<Map<String, Object>> rows = jdbcTemplate.queryForList(sqlQuery);
+//            String sqlQuery = "SELECT * FROM GPFD.CSV_TO_SQL_MAPPING_TABLE";
+//            List<Map<String, Object>> rows = jdbcTemplate.queryForList(sqlQuery);
+//
+//            for (Map<String, Object> row : rows){
+//                Object column1value = row.get("column1");
+//                Object column2value = row.get("column2");
+//                Object column3value = row.get("column3");
+//                Object column4value = row.get("column4");
+//                Object column5value = row.get("column5");
+//
+//                log.info("column1value: " + column1value);
+//                log.info("column2value: " + column2value);
+//                log.info("column3value: " + column3value);
+//                log.info("column4value: " + column4value);
+//                log.info("column5value: " + column5value);
+//
+//
+//            }
 
-            for (Map<String, Object> row : rows){
-                Object column1value = row.get("column1");
-                Object column2value = row.get("column2");
-                Object column3value = row.get("column3");
-                Object column4value = row.get("column4");
-                Object column5value = row.get("column5");
-
-                log.info("column1value: " + column1value);
-                log.info("column2value: " + column2value);
-                log.info("column3value: " + column3value);
-                log.info("column4value: " + column4value);
-                log.info("column5value: " + column5value);
-
-
-            }
-
+        return conn;
 
     }
 
@@ -112,25 +111,8 @@ public class MappingTableDao {
 //
 
 
+        Connection conn = setupDB();
 
-//        try {
-//            log.info(" String 1: " + rslt.getString(1));
-//
-//
-//        } catch(SQLException e){
-//            log.error("Error in creating DB Connection: " + e);
-//        }
-
-        //create a list of MappingTableModel objects
-        MappingTableModel mappingTableObject1 = new MappingTableModelBuilder()
-                .withId(1).withReportName("Excel_Report_Name-CSV-NAME-sheetnumber")
-                .withReportPeriod("01/08/2023 - 01/09/2023")
-                .withReportOwner("Chancey Mctavish")
-                .withReportCreator("Barry Gibb")
-                .withReportDescription("List all unpaid AP invoices and all outstanding AR debts at the end of the previous month. Detailed data, one row per invoice")
-                .withBaseUrl("www.sharepoint.com/the-folder-we're-using")
-                .withSql("SELECT * FROM SOMETHING")
-                .createMappingTableModel();
 
 //        //create a list of MappingTableModel objects
 //        MappingTableModel mappingTableObject1 = new MappingTableModelBuilder()
@@ -157,12 +139,62 @@ public class MappingTableDao {
 
 //
 //
-        mappingTableObjectList.add(0, mappingTableObject1);
+        mappingTableObjectList.add(0, queryDB(conn));
         mappingTableObjectList.add(1, mappingTableObject2);
         return mappingTableObjectList;
 
 
     }
+
+    private static MappingTableModel queryDB(Connection conn) {
+        ResultSet rslt = null;
+
+        int id = 0;
+        String reportName = null;
+        String sqlString = null;
+        String baseUrl = null;
+        Date date = null;
+        String reportOwner = null;
+
+        try {
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM GPFD.CSV_TO_SQL_MAPPING_TABLE");
+            rslt = stmt.executeQuery();
+
+            while (rslt.next()) {
+                log.info("Result column: " + rslt.getString(1));
+                log.info("Result column: " + rslt.getString(2));
+                log.info("Result column: " + rslt.getString(3));
+                log.info("Result column: " + rslt.getString(4));
+                log.info("Result column: " + rslt.getString(5));
+                log.info("Result column: " + rslt.getString(6));
+
+                id = rslt.getInt(1);
+                reportName = rslt.getString(2);
+                sqlString = rslt.getString(3);
+                baseUrl = rslt.getString(4);
+                date = rslt.getDate(5);
+                reportOwner = rslt.getString(6);
+
+
+
+            }
+        }catch(SQLException e){
+            log.error("Error in retrieving results from DB: " + e);
+        }
+
+
+        return new MappingTableModelBuilder()
+                .withId(id).withReportName(reportName)
+                .withReportPeriod(String.valueOf(date))
+                .withReportOwner(reportOwner)
+                .withReportCreator("Barry Gibb")
+                .withReportDescription("List all unpaid AP invoices and all outstanding AR debts at the end of the previous month. Detailed data, one row per invoice")
+                .withBaseUrl(baseUrl)
+                .withSql(sqlString)
+                .createMappingTableModel();
+
+    }
+
 
 
 }

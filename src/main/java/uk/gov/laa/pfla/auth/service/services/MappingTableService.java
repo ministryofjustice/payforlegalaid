@@ -24,7 +24,7 @@ public class MappingTableService {
     }
 
     public List<ReportListResponse> createReportListResponseList() throws Exception {
-        mappingTableDao.setup();
+        mappingTableDao.setupDB();
         reportListResponses.clear(); // Prevent response data accumulating after multiple requests
 
         //Fetching reportList items from database
