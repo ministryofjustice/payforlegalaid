@@ -153,7 +153,7 @@ public class MappingTableDao {
         String reportName = null;
         String sqlString = null;
         String baseUrl = null;
-        Date date = null;
+        String reportPeriodString = null;
         String reportOwner = null;
 
         try {
@@ -161,7 +161,7 @@ public class MappingTableDao {
             rslt = stmt.executeQuery();
 
             while (rslt.next()) {
-                log.info("Result column: " + rslt.getString(1));
+                log.info("Result column: " + rslt.getInt(1));
                 log.info("Result column: " + rslt.getString(2));
                 log.info("Result column: " + rslt.getString(3));
                 log.info("Result column: " + rslt.getString(4));
@@ -172,7 +172,7 @@ public class MappingTableDao {
                 reportName = rslt.getString(2);
                 sqlString = rslt.getString(3);
                 baseUrl = rslt.getString(4);
-                date = rslt.getDate(5);
+                reportPeriodString = rslt.getString(5);
                 reportOwner = rslt.getString(6);
 
 
@@ -185,7 +185,7 @@ public class MappingTableDao {
 
         return new MappingTableModelBuilder()
                 .withId(id).withReportName(reportName)
-                .withReportPeriod(String.valueOf(date))
+                .withReportPeriod(reportPeriodString)
                 .withReportOwner(reportOwner)
                 .withReportCreator("Barry Gibb")
                 .withReportDescription("List all unpaid AP invoices and all outstanding AR debts at the end of the previous month. Detailed data, one row per invoice")
