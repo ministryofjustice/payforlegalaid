@@ -10,11 +10,11 @@ import org.springframework.stereotype.Repository;
 import uk.gov.laa.pfla.auth.service.builders.MappingTableModelBuilder;
 import uk.gov.laa.pfla.auth.service.models.MappingTableModel;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 @Repository
 @Slf4j
 public class MappingTableDao {
@@ -37,24 +37,67 @@ public class MappingTableDao {
         //empty contructor to allow builder to do its work
     }
 
-    public ResultSet setup() throws Exception{ //Todo - create custom exception
-        OracleDataSource ods = new OracleDataSource();
-        ods.setURL(databaseUrl); // jdbc:oracle:thin@//[hostname]:[port]/[DB service name]
-        ods.setUser(databaseUsername);
-        ods.setPassword(databasePassword);
-        Connection conn = ods.getConnection();
+    public void setup(){ //Todo - create custom exception
+
+        OracleDataSource ods = null;
+        try {
+                ods = new OracleDataSource();
+                ods.setURL(databaseUrl); // jdbc:oracle:thin@//[hostname]:[port]/[DB service name]
+                ods.setUser(databaseUsername);
+                ods.setPassword(databasePassword);
+            } catch(SQLException e){
+            log.error("Error in Oracle Datasource JDBC setup: " + e);
+        }
+
+        Connection conn = null;
+        try {
+             conn = ods.getConnection();
+        } catch(SQLException e){
+            log.error("Error in creating DB Connection: " + e);
+        }
+
         ResultSet rslt = null;
         try {
             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM GPFD.CSV_TO_SQL_MAPPING_TABLE");
             rslt = stmt.executeQuery();
+            ResultSetMetaData metadata = rslt.getMetaData();
+            log.info("Metadata: " + metadata.toString());
+
             while (rslt.next()) {
                 log.info("Result column: " + rslt.getString(1));
+                log.info("Result column: " + rslt.getString(2));
+                log.info("Result column: " + rslt.getString(3));
+                log.info("Result column: " + rslt.getString(4));
+                log.info("Result column: " + rslt.getString(5));
+                log.info("Result column: " + rslt.getString(6));
+
             }
-        }catch(Exception e){
-            log.error("Error in DB connection: " + e);
+        }catch(SQLException e){
+            log.error("Error in retrieving results from DB: " + e);
         }
 
-        return rslt;
+        // Todo - remove duplicate block
+
+            String sqlQuery = "SELECT * FROM GPFD.CSV_TO_SQL_MAPPING_TABLE";
+            List<Map<String, Object>> rows = jdbcTemplate.queryForList(sqlQuery);
+
+            for (Map<String, Object> row : rows){
+                Object column1value = row.get("column1");
+                Object column2value = row.get("column2");
+                Object column3value = row.get("column3");
+                Object column4value = row.get("column4");
+                Object column5value = row.get("column5");
+
+                log.info("column1value: " + column1value);
+                log.info("column2value: " + column2value);
+                log.info("column3value: " + column3value);
+                log.info("column4value: " + column4value);
+                log.info("column5value: " + column5value);
+
+
+            }
+
+
     }
 
     public List<MappingTableModel> fetchReportList() {
@@ -68,10 +111,15 @@ public class MappingTableDao {
 //        log.info("mappingTableObjectList: " + mappingTableObjectList.toString());
 //
 
-//        ResultSet rslt = setup();
-//
-//        rslt.getString(1);
 
+
+//        try {
+//            log.info(" String 1: " + rslt.getString(1));
+//
+//
+//        } catch(SQLException e){
+//            log.error("Error in creating DB Connection: " + e);
+//        }
 
         //create a list of MappingTableModel objects
         MappingTableModel mappingTableObject1 = new MappingTableModelBuilder()
