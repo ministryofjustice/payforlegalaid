@@ -161,12 +161,7 @@ public class MappingTableDao {
             rslt = stmt.executeQuery();
 
             while (rslt.next()) {
-                log.info("Result column: " + rslt.getInt(1));
-                log.info("Result column: " + rslt.getString(2));
-                log.info("Result column: " + rslt.getString(3));
-                log.info("Result column: " + rslt.getString(4));
-                log.info("Result column: " + rslt.getString(5));
-                log.info("Result column: " + rslt.getString(6));
+
 
                 id = rslt.getInt(1);
                 reportName = rslt.getString(2);
@@ -174,6 +169,14 @@ public class MappingTableDao {
                 baseUrl = rslt.getString(4);
                 reportPeriodString = rslt.getString(5);
                 reportOwner = rslt.getString(6);
+
+
+                log.info("Result column: " + id);
+                log.info("Result column: " + reportName);
+                log.info("Result column: " + sqlString);
+                log.info("Result column: " + baseUrl);
+                log.info("Result column: " + reportPeriodString);
+                log.info("Result column: " + reportOwner);
 
 
 
