@@ -45,7 +45,7 @@ public class MappingTableDao {
         Connection conn = ods.getConnection();
         ResultSet rslt = null;
         try {
-            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM CSV_TO_SQL_MAPPING_TABLE");
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM GPFD.CSV_TO_SQL_MAPPING_TABLE");
             rslt = stmt.executeQuery();
             while (rslt.next()) {
                 log.info("Result column: " + rslt.getString(1));
