@@ -128,13 +128,16 @@ public class MappingTableDao {
 
 
         MappingTableModel mappingTableObject2 = new MappingTableModelBuilder()
-                .withId(2).withReportName("AP_and_AR_Combined-DEBT-AGING-SUMMARY-4")
+                .withId(2)
+                .withReportName("AP_and_AR_Combined-DEBT-AGING-SUMMARY-4")
+                .withSqlString("SELECT * FROM SOMETHING")
+                .withBaseUrl("www.sharepoint.com/a-different-folder-we're-using")
                 .withReportPeriod("01/07/2023 - 01/09/2023")
                 .withReportOwner("Chancey Mctavish")
                 .withReportCreator("Sophia Patel")
                 .withReportDescription("List all unpaid AP invoices and all outstanding AR debts at the end of the previous month. Summary data, one row per provider")
-                .withBaseUrl("www.sharepoint.com/a-different-folder-we're-using")
-                .withSql("SELECT * FROM SOMETHING")
+                .withExcelSheetNumber(11)
+                .withCsvName("CSV Name")
                 .createMappingTableModel();
 
 //
@@ -155,6 +158,13 @@ public class MappingTableDao {
         String baseUrl = null;
         String reportPeriodString = null;
         String reportOwner = null;
+        String reportCreator = null;
+        String reportDescription = null;
+        Date reportPeriodFrom = null;
+        Date reportPeriodTo = null;
+        String excelReport = null;
+        int excelSheetNum = 0;
+        String csvName = null;
 
         try {
             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM GPFD.CSV_TO_SQL_MAPPING_TABLE");
@@ -169,6 +179,13 @@ public class MappingTableDao {
                 baseUrl = rslt.getString(4);
                 reportPeriodString = rslt.getString(5);
                 reportOwner = rslt.getString(6);
+                reportCreator = rslt.getString(7);
+                reportDescription = rslt.getString(8);
+                reportPeriodFrom = rslt.getDate(9);
+                reportPeriodTo = rslt.getDate(10);
+                excelReport = rslt.getString(11);
+                excelSheetNum = rslt.getInt(12);
+                csvName = rslt.getString(13);
 
 
                 log.info("Result column: " + id);
@@ -177,6 +194,13 @@ public class MappingTableDao {
                 log.info("Result column: " + baseUrl);
                 log.info("Result column: " + reportPeriodString);
                 log.info("Result column: " + reportOwner);
+                log.info("Result column: " + reportCreator);
+                log.info("Result column: " + reportDescription);
+                log.info("Result column: " + reportPeriodFrom);
+                log.info("Result column: " + reportPeriodTo);
+                log.info("Result column: " + excelReport);
+                log.info("Result column: " + excelSheetNum);
+                log.info("Result column: " + csvName);
 
 
 
@@ -187,13 +211,16 @@ public class MappingTableDao {
 
 
         return new MappingTableModelBuilder()
-                .withId(id).withReportName(reportName)
+                .withId(id)
+                .withReportName(reportName)
+                .withSqlString(sqlString)
+                .withBaseUrl(baseUrl)
                 .withReportPeriod(reportPeriodString)
                 .withReportOwner(reportOwner)
-                .withReportCreator("Barry Gibb")
-                .withReportDescription("List all unpaid AP invoices and all outstanding AR debts at the end of the previous month. Detailed data, one row per invoice")
-                .withBaseUrl(baseUrl)
-                .withSql(sqlString)
+                .withReportCreator(reportCreator)
+                .withReportDescription(reportDescription)
+                .withExcelSheetNumber(excelSheetNum)
+                .withCsvName(csvName)
                 .createMappingTableModel();
 
     }
