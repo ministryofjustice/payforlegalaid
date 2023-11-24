@@ -138,7 +138,7 @@ public class MappingTableDao {
                 .withReportDescription("List all unpaid AP invoices and all outstanding AR debts at the end of the previous month. Summary data, one row per provider")
                 .withExcelSheetNumber(11)
                 .withCsvName("CSV Name")
-                .createMappingTableModel();
+                .build();
 
 //
 //
@@ -165,6 +165,8 @@ public class MappingTableDao {
         String excelReport = null;
         int excelSheetNum = 0;
         String csvName = null;
+
+
 
         try {
             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM GPFD.CSV_TO_SQL_MAPPING_TABLE");
@@ -221,7 +223,7 @@ public class MappingTableDao {
                 .withReportDescription(reportDescription)
                 .withExcelSheetNumber(excelSheetNum)
                 .withCsvName(csvName)
-                .createMappingTableModel();
+                .build();
 
     }
 

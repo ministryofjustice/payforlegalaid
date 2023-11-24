@@ -64,7 +64,7 @@ public class MappingTableModelBuilder {
 
 
 
-    public MappingTableModel createMappingTableModel() {
+    public MappingTableModel build() {
         return new MappingTableModel(id, reportName, sqlString, baseUrl, reportPeriod, reportOwner, reportCreator, description, excelSheetNum, csvName );
     }
 }

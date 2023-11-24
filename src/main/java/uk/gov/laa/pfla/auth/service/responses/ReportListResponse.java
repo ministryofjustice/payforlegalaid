@@ -35,12 +35,6 @@ public class ReportListResponse {
     }
 
 
-
-
-
-
-
-
     public ReportListResponse() {
 
     }

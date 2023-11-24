@@ -1,5 +1,6 @@
 package uk.gov.laa.pfla.auth.service.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import uk.gov.laa.pfla.auth.service.dao.MappingTableDao;
@@ -9,7 +10,14 @@ import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.jdbc.core.RowMapper;
+import uk.gov.laa.pfla.auth.service.models.MappingTableModel;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 @Service
+@Slf4j
 public class MappingTableService {
 
     private final ModelMapper mapper = new ModelMapper();

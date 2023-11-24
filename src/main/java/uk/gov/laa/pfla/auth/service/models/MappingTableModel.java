@@ -38,7 +38,4 @@ public class MappingTableModel {
     }
 
 
-
-
-
 }
