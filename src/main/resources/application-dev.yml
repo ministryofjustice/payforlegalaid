@@ -16,20 +16,20 @@
 #              - https://graph.microsoft.com/User.Read
 #        post-logout-redirect-uri: /
 
-#SSL configuration
-server:
-  port: 8443
-  shutdown: graceful
-  servlet:
-    session:
-      cookie:
-        secure: true
-  ssl:
-    key-store: classpath:keystore.p12
-    key-store-password: password
-    key-store-type: PKCS12
-    key-alias: testCert
-    key-password: password
+##SSL configuration
+#server:
+#  port: 8443
+#  shutdown: graceful
+#  servlet:
+#    session:
+#      cookie:
+#        secure: true
+#  ssl:
+#    key-store: classpath:keystore.p12
+#    key-store-password: password
+#    key-store-type: PKCS12
+#    key-alias: testCert
+#    key-password: password
 
 logging:
   level:
