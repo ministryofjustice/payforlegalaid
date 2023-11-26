@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import uk.gov.laa.pfla.auth.service.builders.MappingTableModelBuilder;
+import uk.gov.laa.pfla.auth.service.helpers.DBRowMapper;
 import uk.gov.laa.pfla.auth.service.models.MappingTableModel;
 
 import java.sql.*;
@@ -100,7 +101,9 @@ public class MappingTableDao {
     }
 
     public List<MappingTableModel> fetchReportList() {
-
+        ResultSet rslt = null;
+        DBRowMapper dbRowMapper = new DBRowMapper();
+        int rowNumber = 0;
         mappingTableObjectList.clear(); // Prevent response data accumulating after multiple requests
 //
 //        //fetch data from database
@@ -125,46 +128,23 @@ public class MappingTableDao {
 //                .withSql("SELECT * FROM SOMETHING")
 //                .createMappingTableModel();
 
-
-
-        MappingTableModel mappingTableObject2 = new MappingTableModelBuilder()
-                .withId(2)
-                .withReportName("AP_and_AR_Combined-DEBT-AGING-SUMMARY-4")
-                .withSqlString("SELECT * FROM SOMETHING")
-                .withBaseUrl("www.sharepoint.com/a-different-folder-we're-using")
-                .withReportPeriod("01/07/2023 - 01/09/2023")
-                .withReportOwner("Chancey Mctavish")
-                .withReportCreator("Sophia Patel")
-                .withReportDescription("List all unpaid AP invoices and all outstanding AR debts at the end of the previous month. Summary data, one row per provider")
-                .withExcelSheetNumber(11)
-                .withCsvName("CSV Name")
-                .build();
+//
+//
+//        MappingTableModel mappingTableObject2 = new MappingTableModelBuilder()
+//                .withId(2)
+//                .withReportName("AP_and_AR_Combined-DEBT-AGING-SUMMARY-4")
+//                .withSqlString("SELECT * FROM SOMETHING")
+//                .withBaseUrl("www.sharepoint.com/a-different-folder-we're-using")
+//                .withReportPeriod("01/07/2023 - 01/09/2023")
+//                .withReportOwner("Chancey Mctavish")
+//                .withReportCreator("Sophia Patel")
+//                .withReportDescription("List all unpaid AP invoices and all outstanding AR debts at the end of the previous month. Summary data, one row per provider")
+//                .withExcelSheetNumber(11)
+//                .withCsvName("CSV Name")
+//                .build();
 
 //
 //
-        mappingTableObjectList.add(0, queryDB(conn));
-        mappingTableObjectList.add(1, mappingTableObject2);
-        return mappingTableObjectList;
-
-
-    }
-
-    private static MappingTableModel queryDB(Connection conn) {
-        ResultSet rslt = null;
-
-        int id = 0;
-        String reportName = null;
-        String sqlString = null;
-        String baseUrl = null;
-        String reportPeriodString = null;
-        String reportOwner = null;
-        String reportCreator = null;
-        String reportDescription = null;
-        Date reportPeriodFrom = null;
-        Date reportPeriodTo = null;
-        String excelReport = null;
-        int excelSheetNum = 0;
-        String csvName = null;
 
 
 
@@ -174,58 +154,87 @@ public class MappingTableDao {
 
             while (rslt.next()) {
 
-
-                id = rslt.getInt(1);
-                reportName = rslt.getString(2);
-                sqlString = rslt.getString(3);
-                baseUrl = rslt.getString(4);
-                reportPeriodString = rslt.getString(5);
-                reportOwner = rslt.getString(6);
-                reportCreator = rslt.getString(7);
-                reportDescription = rslt.getString(8);
-                reportPeriodFrom = rslt.getDate(9);
-                reportPeriodTo = rslt.getDate(10);
-                excelReport = rslt.getString(11);
-                excelSheetNum = rslt.getInt(12);
-                csvName = rslt.getString(13);
-
-
-                log.info("Result column: " + id);
-                log.info("Result column: " + reportName);
-                log.info("Result column: " + sqlString);
-                log.info("Result column: " + baseUrl);
-                log.info("Result column: " + reportPeriodString);
-                log.info("Result column: " + reportOwner);
-                log.info("Result column: " + reportCreator);
-                log.info("Result column: " + reportDescription);
-                log.info("Result column: " + reportPeriodFrom);
-                log.info("Result column: " + reportPeriodTo);
-                log.info("Result column: " + excelReport);
-                log.info("Result column: " + excelSheetNum);
-                log.info("Result column: " + csvName);
-
-
+                MappingTableModel mappingTableObject = dbRowMapper.mapRow(rslt, rowNumber);
+                mappingTableObjectList.add(mappingTableObject);
+                rowNumber++;
 
             }
         }catch(SQLException e){
             log.error("Error in retrieving results from DB: " + e);
         }
 
+        return mappingTableObjectList;
 
-        return new MappingTableModelBuilder()
-                .withId(id)
-                .withReportName(reportName)
-                .withSqlString(sqlString)
-                .withBaseUrl(baseUrl)
-                .withReportPeriod(reportPeriodString)
-                .withReportOwner(reportOwner)
-                .withReportCreator(reportCreator)
-                .withReportDescription(reportDescription)
-                .withExcelSheetNumber(excelSheetNum)
-                .withCsvName(csvName)
-                .build();
 
     }
+
+//    private static MappingTableModel queryDB(Connection conn) {
+//        ResultSet rslt = null;
+//        DBRowMapper dbRowMapper = new DBRowMapper();
+//        int rowNumber = 0;
+//
+//
+////        int id = 0;
+////        String reportName = null;
+////        String sqlString = null;
+////        String baseUrl = null;
+////        String reportPeriodString = null;
+////        String reportOwner = null;
+////        String reportCreator = null;
+////        String reportDescription = null;
+////        Date reportPeriodFrom = null;
+////        Date reportPeriodTo = null;
+////        String excelReport = null;
+////        int excelSheetNum = 0;
+////        String csvName = null;
+////
+//
+//
+//        try {
+//            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM GPFD.CSV_TO_SQL_MAPPING_TABLE");
+//            rslt = stmt.executeQuery();
+//
+//            while (rslt.next()) {
+//
+//                dbRowMapper.mapRow(rslt, rowNumber, TableName.MAPPING_TABLE);
+//                rowNumber++;
+////                id = rslt.getInt(1);
+////                reportName = rslt.getString(2);
+////                sqlString = rslt.getString(3);
+////                baseUrl = rslt.getString(4);
+////                reportPeriodString = rslt.getString(5);
+////                reportOwner = rslt.getString(6);
+////                reportCreator = rslt.getString(7);
+////                reportDescription = rslt.getString(8);
+////                reportPeriodFrom = rslt.getDate(9);
+////                reportPeriodTo = rslt.getDate(10);
+////                excelReport = rslt.getString(11);
+////                excelSheetNum = rslt.getInt(12);
+////                csvName = rslt.getString(13);
+////
+////                log.info("Result column: " + id);
+////                log.info("Result column: " + reportName);
+////                log.info("Result column: " + sqlString);
+////                log.info("Result column: " + baseUrl);
+////                log.info("Result column: " + reportPeriodString);
+////                log.info("Result column: " + reportOwner);
+////                log.info("Result column: " + reportCreator);
+////                log.info("Result column: " + reportDescription);
+////                log.info("Result column: " + reportPeriodFrom);
+////                log.info("Result column: " + reportPeriodTo);
+////                log.info("Result column: " + excelReport);
+////                log.info("Result column: " + excelSheetNum);
+////                log.info("Result column: " + csvName);
+//
+//            }
+//        }catch(SQLException e){
+//            log.error("Error in retrieving results from DB: " + e);
+//        }
+//
+//
+//        return new
+//
+//    }
 
 
 
