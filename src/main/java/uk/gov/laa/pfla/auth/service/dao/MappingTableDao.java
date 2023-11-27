@@ -155,12 +155,12 @@ public class MappingTableDao {
 
 
             do {
+                rslt.next();
                 log.info("Row number here: " + rslt.getRow());
 
                 MappingTableModel mappingTableObject = dbRowMapper.mapRow(rslt, rowNumber);
                 mappingTableObjectList.add(mappingTableObject);
                 rowNumber++;
-                rslt.next();
 
             } while (rslt.next());
         }catch(SQLException e){
