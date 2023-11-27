@@ -105,7 +105,7 @@ public class MappingTableDao {
         DBRowMapper dbRowMapper = new DBRowMapper();
         int rowNumber = 0;
         mappingTableObjectList.clear(); // Prevent response data accumulating after multiple requests
-//
+        MappingTableModel mappingTableObject;
 //        //fetch data from database
 //        String sql = "SELECT * FROM ";
 //
@@ -159,7 +159,8 @@ public class MappingTableDao {
                 rslt.next();
                log.info("Row number here: " + rslt.getRow());
 
-               MappingTableModel mappingTableObject = dbRowMapper.mapRow(rslt, rowNumber);
+               mappingTableObject = dbRowMapper.mapRow(rslt, rowNumber);
+               log.info("mapping Object: " + mappingTableObject.getId() + mappingTableObject.getReportName());
                mappingTableObjectList.add(mappingTableObject);
                rowNumber++;
 
