@@ -153,17 +153,27 @@ public class MappingTableDao {
             rslt = stmt.executeQuery();
             log.info("Result here: " + rslt);
 
-            for (int i = 0; i < 2; i++) {
-                log.info("Row number here before next(): " + rslt.getRow());
+//            for (int i = 0; i < 2; i++) {
+//                log.info("Row number here before next(): " + rslt.getRow());
+//
+//
+//
+//               mappingTableObject = dbRowMapper.mapRow(rslt, rowNumber);
+//               log.info("mapping Object: " + mappingTableObject.getId() + "   " + mappingTableObject.getReportName());
+//               mappingTableObjectList.add(mappingTableObject);
+//               rowNumber++;
+//
+//                rslt.next();
+//                log.info("Row number here: " + rslt.getRow());
+//
+//            }
+            while(rslt.next()){
 
+                mappingTableObject = dbRowMapper.mapRow(rslt, rowNumber);
+                log.info("mapping Object: " + mappingTableObject.getId() + "   " + mappingTableObject.getReportName());
+                mappingTableObjectList.add(mappingTableObject);
+                rowNumber++;
 
-
-               mappingTableObject = dbRowMapper.mapRow(rslt, rowNumber);
-               log.info("mapping Object: " + mappingTableObject.getId() + "   " + mappingTableObject.getReportName());
-               mappingTableObjectList.add(mappingTableObject);
-               rowNumber++;
-
-                rslt.next();
                 log.info("Row number here: " + rslt.getRow());
 
             }
