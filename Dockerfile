@@ -3,7 +3,7 @@
 #Oracle base image is deprecated so i wont try that
 
 FROM alpine:latest
-RUN apk add openJdk17
+RUN apk add java openJdk17
 #RUN tar zxvf jdk-17_linux-x64_bin.tar.gz
 RUN apk update && apk add --no-cache curl
 
