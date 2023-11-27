@@ -151,9 +151,10 @@ public class MappingTableDao {
         try {
             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM GPFD.CSV_TO_SQL_MAPPING_TABLE");
             rslt = stmt.executeQuery();
-            log.info("Result here: " + rslt);
+            log.info("Result here: " + rslt.toString());
 
-            while (rslt.next()) {
+
+            do {
                 log.info("Row number here: " + rslt.getRow());
 
                 MappingTableModel mappingTableObject = dbRowMapper.mapRow(rslt, rowNumber);
@@ -161,7 +162,7 @@ public class MappingTableDao {
                 rowNumber++;
                 rslt.next();
 
-            }
+            } while (rslt.next());
         }catch(SQLException e){
             log.error("Error in retrieving results from DB: " + e);
         }
