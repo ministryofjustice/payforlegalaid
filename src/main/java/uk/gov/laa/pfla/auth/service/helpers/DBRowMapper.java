@@ -14,8 +14,6 @@ import java.sql.SQLException;
 public class DBRowMapper implements RowMapper<Object> {
 
     public MappingTableModel mapRow(ResultSet resultSet, int rowNum) throws SQLException{
-        String tableName = resultSet.getMetaData().getTableName(1);
-        log.info("Table name: "+ tableName);
 
         return mapMappingTableModel(resultSet);
 
@@ -28,7 +26,6 @@ public class DBRowMapper implements RowMapper<Object> {
 //            case "ReportTableModel":
 //                return mapReportTableModel(resultSet);
 //            default:
-//                throw new IllegalArgumentException("Unsupported table: " + tableName);
 //        }
     }
 
@@ -45,8 +42,11 @@ public class DBRowMapper implements RowMapper<Object> {
                 .withReportOwner(resultSet.getString(6))
                 .withReportCreator(resultSet.getString(7))
                 .withReportDescription(resultSet.getString(8))
-                .withExcelSheetNumber(resultSet.getInt(9))
-                .withCsvName(resultSet.getString(10))
+                //
+                //
+                //
+                .withExcelSheetNumber(resultSet.getInt(12))
+                .withCsvName(resultSet.getString(13))
                 .build();
 
     }
