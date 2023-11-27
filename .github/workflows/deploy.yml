@@ -17,7 +17,7 @@ jobs:
       - uses: actions/setup-java@v3
         with:
           distribution: 'coretto'
-          java-version: '17'
+          java-version: '17.0.9'
 
       # Run Tests
       - name: Run tests
