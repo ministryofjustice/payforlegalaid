@@ -157,6 +157,7 @@ public class MappingTableDao {
                 MappingTableModel mappingTableObject = dbRowMapper.mapRow(rslt, rowNumber);
                 mappingTableObjectList.add(mappingTableObject);
                 rowNumber++;
+                rslt.next();
 
             }
         }catch(SQLException e){
