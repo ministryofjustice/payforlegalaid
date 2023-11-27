@@ -153,14 +153,15 @@ public class MappingTableDao {
             rslt = stmt.executeQuery();
             log.info("Result here: " + rslt);
 
-            while (rslt.next()) {
-                rslt.next();
-                log.info("Row number here: " + rslt.getRow());
+            for (int i = 0; i < 2; i++) {
+                log.info("Row number here before next(): " + rslt.getRow());
 
-                MappingTableModel mappingTableObject = dbRowMapper.mapRow(rslt, rowNumber);
-                mappingTableObjectList.add(mappingTableObject);
-                rowNumber++;
                 rslt.next();
+               log.info("Row number here: " + rslt.getRow());
+
+               MappingTableModel mappingTableObject = dbRowMapper.mapRow(rslt, rowNumber);
+               mappingTableObjectList.add(mappingTableObject);
+               rowNumber++;
 
             }
         }catch(SQLException e){
