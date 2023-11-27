@@ -3,7 +3,9 @@
 #Oracle base image is deprecated so i wont try that
 
 FROM alpine:latest
-RUN apk add --no-cache openJdk17
+#RUN apk add --no-cache openJdk17
+RUN uname -m
+RUN tar zxvf jdk-17_linux-x64_bin.tar.gz
 RUN apk update && apk add --no-cache curl
 
 #trying oracle java on top of vanilla basic alpine image:
