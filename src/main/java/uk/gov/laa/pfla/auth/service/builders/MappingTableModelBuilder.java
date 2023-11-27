@@ -2,6 +2,8 @@ package uk.gov.laa.pfla.auth.service.builders;
 
 import uk.gov.laa.pfla.auth.service.models.MappingTableModel;
 
+import java.sql.Date;
+
 public class MappingTableModelBuilder {
     private int id;
     private String reportName;
@@ -11,6 +13,13 @@ public class MappingTableModelBuilder {
     private String reportOwner;
     private String reportCreator;
     private String description;
+
+    private Date reportPeriodFrom;
+
+    private Date reportPeriodTo;
+
+    private String excelReport;
+
     private int excelSheetNum;
     private String csvName;
 
@@ -45,6 +54,22 @@ public class MappingTableModelBuilder {
 
     public MappingTableModelBuilder withReportDescription(String description) {
         this.description = description;
+        return this;
+    }
+
+
+    public MappingTableModelBuilder withReportPeriodFrom(Date reportPeriodFrom) {
+        this.reportPeriodFrom = reportPeriodFrom;
+        return this;
+    }
+
+    public MappingTableModelBuilder withReportPeriodTo(Date reportPeriodTo) {
+        this.reportPeriodTo = reportPeriodTo;
+        return this;
+    }
+
+    public MappingTableModelBuilder withExcelReport(String excelReport) {
+        this.excelReport = excelReport;
         return this;
     }
     public MappingTableModelBuilder withExcelSheetNumber(int excelSheetNum) {

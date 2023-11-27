@@ -42,9 +42,9 @@ public class DBRowMapper implements RowMapper<Object> {
                 .withReportOwner(resultSet.getString(6))
                 .withReportCreator(resultSet.getString(7))
                 .withReportDescription(resultSet.getString(8))
-                //
-                //
-                //
+//                .withReportPeriodFrom(resultSet.getDate(9))
+//                .withReportPeriodTo(resultSet.getDate(10))
+//                .withExcelReport(resultSet.getString(11))
                 .withExcelSheetNumber(resultSet.getInt(12))
                 .withCsvName(resultSet.getString(13))
                 .build();
