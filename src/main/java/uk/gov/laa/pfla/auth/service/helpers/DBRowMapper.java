@@ -17,16 +17,19 @@ public class DBRowMapper implements RowMapper<Object> {
         String tableName = resultSet.getMetaData().getTableName(1);
         log.info("Table name: "+ tableName);
 
-        switch (tableName){
-            case "MappingTableModel":
-                return mapMappingTableModel(resultSet);
-            case "ReportTrackingTableModel":
-                return mapReportTrackingTableModel(resultSet);
-            case "ReportTableModel":
-                return mapReportTableModel(resultSet);
-            default:
-                throw new IllegalArgumentException("Unsupported table: " + tableName);
-        }
+        return mapMappingTableModel(resultSet);
+
+
+//        switch (tableName){
+//            case "MappingTableModel":
+//                return mapMappingTableModel(resultSet);
+//            case "ReportTrackingTableModel":
+//                return mapReportTrackingTableModel(resultSet);
+//            case "ReportTableModel":
+//                return mapReportTableModel(resultSet);
+//            default:
+//                throw new IllegalArgumentException("Unsupported table: " + tableName);
+//        }
     }
 
 
