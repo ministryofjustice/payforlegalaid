@@ -13,11 +13,11 @@ jobs:
       # Checkout GitHub repository
       - uses: actions/checkout@v3
 
-      # Setup Java
+      # Setup Javax
       - uses: actions/setup-java@v3
         with:
           distribution: 'corretto'
-          java-version: '17'
+          java-version: '17.0.9'
 
       # Run Tests
       - name: Run tests
