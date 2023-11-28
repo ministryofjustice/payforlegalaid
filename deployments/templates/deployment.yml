@@ -19,7 +19,7 @@ spec:
         - name: gpfd-api-container
           image: ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
           ports:
-            - containerPort: 80
+            - containerPort: 8080
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: "dev"                  #TODO - use a configmap once more environments are added
