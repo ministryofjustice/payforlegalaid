@@ -5,7 +5,7 @@ FROM amazoncorretto:17-alpine
 #FROM alpine:latest
 #RUN apk add --update openJdk17
 ##RUN tar zxvf jdk-17_linux-x64_bin.tar.gz
-#RUN apk update && apk add --no-cache curl
+RUN apk update && apk add --no-cache curl
 
 #trying oracle java on top of vanilla basic alpine image:
 #ENV JAVA_HOME=/usr/lib/jvm/default-jvm
