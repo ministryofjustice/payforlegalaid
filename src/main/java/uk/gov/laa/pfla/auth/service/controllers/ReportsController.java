@@ -14,8 +14,7 @@ import uk.gov.laa.pfla.auth.service.responses.ReportResponse;
 import uk.gov.laa.pfla.auth.service.services.MappingTableService;
 import uk.gov.laa.pfla.auth.service.services.ReportService;
 import uk.gov.laa.pfla.auth.service.services.ReportTrackingTableService;
-//import uk.gov.laa.pfla.auth.service.services.UserService;
-
+import uk.gov.laa.pfla.auth.service.services.UserService;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -32,15 +31,15 @@ public class ReportsController {
 
     List<ReportListResponse> reportListResponseArray = new ArrayList<>();
 
-//    private final UserService userService;
+    private final UserService userService;
 
 
     @Autowired
-    public ReportsController(MappingTableService mappingTableService, ReportService reportService, ReportTrackingTableService reportTrackingTableService){
+    public ReportsController(MappingTableService mappingTableService, ReportService reportService, ReportTrackingTableService reportTrackingTableService, final UserService userService){
         this.mappingTableService = mappingTableService;
         this.reportService = reportService;
         this.reportTrackingTableService = reportTrackingTableService;
-//        this.userService = userService;
+        this.userService = userService;
 
     }
 
@@ -80,14 +79,16 @@ public class ReportsController {
 
     }
 
-    //This ethod is for testing that
+    //This method is just for development, for testing that graph is working properly. It displays the details of the current SSO user
     @GetMapping("/graph")
     @ResponseBody
     public String graph(
             @RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient
-    ) {
-        // oAuth2AuthorizedClient contains access_token. We can use this access_token to access the resource server.
-        return String.valueOf(graphClient.getPrincipalName());
+    ) throws UserServiceException {
+        UserDetails user = userService.getUserDetails(graphClient);
+
+    return user.toString();
+
     }
 
 
