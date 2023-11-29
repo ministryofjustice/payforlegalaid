@@ -1,40 +1,23 @@
-# Azure AD and Graph config
-#spring:
-#  cloud:
-#    azure:
-#      credential:
-#        client-secret: ${AZURE_CLIENT_SECRET}
-#        client-id: ${AZURE_CLIENT_ID}
-#      profile:
-#        tenant-id: ${AZURE_TENANT_ID}
-#
-#      active-directory:
-#        enabled: true
-#        authorization-clients:
-#          graph:
-#            scopes:
-#              - https://graph.microsoft.com/User.Read
-#        post-logout-redirect-uri: /
-
-##SSL configuration
-#server:
-#  port: 8443
-#  shutdown: graceful
-#  servlet:
-#    session:
-#      cookie:
-#        secure: true
-#  ssl:
-#    key-store: classpath:keystore.p12
-#    key-store-password: password
-#    key-store-type: PKCS12
-#    key-alias: testCert
-#    key-password: password
+#SSL configuration
+server:
+  port: 8443
+  shutdown: graceful
+  servlet:
+    session:
+      cookie:
+        secure: true
+  ssl:
+    key-store: classpath:keystore.p12
+    key-store-password: password
+    key-store-type: PKCS12
+    key-alias: testCert
+    key-password: password
 
 logging:
   level:
-    org.springframework.security: DEBUG
+    org.springframework.security: TRACE
 
+# Azure AD and Graph config
 spring:
   cloud:
     azure:
