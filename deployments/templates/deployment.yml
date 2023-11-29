@@ -4,10 +4,8 @@ metadata:
   name: gpfd-dev-deployment
   labels:
     app: gpfd-dev
-#  annotations:
-#    nginx.ingress.kubernetes.io/affinity: "cookie"
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: gpfd-dev
