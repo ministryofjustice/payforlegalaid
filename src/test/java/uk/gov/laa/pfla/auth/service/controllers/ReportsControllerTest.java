@@ -3,6 +3,8 @@ package uk.gov.laa.pfla.auth.service.controllers;
 
 //import com.microsoft.graph.models.User;
 //import org.jetbrains.annotations.NotNull;
+import com.microsoft.graph.models.User;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -45,17 +47,17 @@ class ReportsControllerTest {
 
     @InjectMocks // creating a ReportsController object and then inject the mocked MappingTableService + reportService instances into it.
     private ReportsController reportsController;
-//
-//    @NotNull
-//    private static User createGraphUser() {
-//        User graphUser = new User();
-//        graphUser.userPrincipalName = "testPrincipalName";
-//        graphUser.givenName = "testGivenName";
-//        graphUser.surname = "testSurname";
-//        graphUser.preferredName = "testPreferredName";
-//        graphUser.mail = "testMail";
-//        return graphUser;
-//    }
+
+    @NotNull
+    private static User createGraphUser() {
+        User graphUser = new User();
+        graphUser.userPrincipalName = "testPrincipalName";
+        graphUser.givenName = "testGivenName";
+        graphUser.surname = "testSurname";
+        graphUser.preferredName = "testPreferredName";
+        graphUser.mail = "testMail";
+        return graphUser;
+    }
 
     @Test
     void getReportListReturnsCorrectResponseEntity() {

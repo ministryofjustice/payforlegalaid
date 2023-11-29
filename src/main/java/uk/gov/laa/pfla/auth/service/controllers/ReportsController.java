@@ -80,18 +80,7 @@ public class ReportsController {
 
     }
 
-//        @RequestMapping(value ="/sso", produces = MediaType.APPLICATION_JSON_VALUE)
-//        @ResponseBody
-//        public String sso(@RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient) throws UserServiceException {
-//
-//
-//        UserDetails user = userService.getUserDetails(graphClient);
-//            log.info(user.getUserPrincipalName());
-//
-//
-//        return "Principal Name:"  + user.getUserPrincipalName();
-//        }
-
+    //This ethod is for testing that
     @GetMapping("/graph")
     @ResponseBody
     public String graph(
