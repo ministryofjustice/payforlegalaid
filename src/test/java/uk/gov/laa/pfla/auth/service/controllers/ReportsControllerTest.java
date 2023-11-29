@@ -1,6 +1,5 @@
 package uk.gov.laa.pfla.auth.service.controllers;
 
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 import org.springframework.http.HttpStatus;
 import uk.gov.laa.pfla.auth.service.services.ReportService;
+import uk.gov.laa.pfla.auth.service.services.ReportTrackingTableService;
 
 @ExtendWith(MockitoExtension.class)
 class ReportsControllerTest {
@@ -29,10 +29,12 @@ class ReportsControllerTest {
     @Mock
     private ReportService reportServiceMock;
 
+    @Mock
+    private ReportTrackingTableService reportTrackingTableService;
+
 
     @InjectMocks // creating a ReportsController object and then inject the mocked MappingTableService + reportService instances into it.
     private ReportsController reportsController;
-
 
     @Test
     void getReportListReturnsCorrectResponseEntity() {
