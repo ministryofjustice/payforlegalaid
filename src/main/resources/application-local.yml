@@ -1,17 +1,17 @@
 ##SSL configuration
-server:
-  port: 8080
-  shutdown: graceful
-  servlet:
-    session:
-      cookie:
-        secure: true
-  ssl:
-    key-store: classpath:keystore.p12
-    key-store-password: password
-    key-store-type: PKCS12
-    key-alias: testCert
-    key-password: password
+#server:
+#  port: 8080
+#  shutdown: graceful
+#  servlet:
+#    session:
+#      cookie:
+#        secure: true
+#  ssl:
+#    key-store: classpath:keystore.p12
+#    key-store-password: password
+#    key-store-type: PKCS12
+#    key-alias: testCert
+#    key-password: password
 
 logging:
   level:
