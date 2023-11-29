@@ -1,6 +1,6 @@
 ##SSL configuration
 server:
-  port: 8443
+  port: 8080
   shutdown: graceful
   servlet:
     session:
