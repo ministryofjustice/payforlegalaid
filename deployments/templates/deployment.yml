@@ -5,7 +5,7 @@ metadata:
   labels:
     app: gpfd-dev
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: gpfd-dev
@@ -19,7 +19,7 @@ spec:
         - name: gpfd-api-container
           image: ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
           ports:
-            - containerPort: 8080
+            - containerPort: 8443
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: "dev"                  #TODO - use a configmap once more environments are added

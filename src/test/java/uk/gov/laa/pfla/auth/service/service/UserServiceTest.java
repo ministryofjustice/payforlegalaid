@@ -14,7 +14,6 @@ import uk.gov.laa.pfla.auth.service.exceptions.AuthUserNotFoundException;
 import uk.gov.laa.pfla.auth.service.exceptions.UserServiceException;
 import uk.gov.laa.pfla.auth.service.graph.GraphClientHelper;
 import uk.gov.laa.pfla.auth.service.services.UserService;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;

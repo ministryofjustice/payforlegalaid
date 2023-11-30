@@ -27,6 +27,7 @@ public class GraphAuthenticationProvider extends BaseAuthenticationProvider {
    * @return a future with the token
    */
   @Override
+  @NonNull
   public CompletableFuture<String> getAuthorizationTokenAsync(@NonNull final URL requestUrl) {
     return CompletableFuture.completedFuture(
         graphAuthorizedClient.getAccessToken().getTokenValue());

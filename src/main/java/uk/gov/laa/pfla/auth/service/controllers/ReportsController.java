@@ -15,7 +15,6 @@ import uk.gov.laa.pfla.auth.service.services.MappingTableService;
 import uk.gov.laa.pfla.auth.service.services.ReportService;
 import uk.gov.laa.pfla.auth.service.services.ReportTrackingTableService;
 import uk.gov.laa.pfla.auth.service.services.UserService;
-
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -80,19 +79,17 @@ public class ReportsController {
 
     }
 
-        @RequestMapping(value ="/sso", produces = MediaType.APPLICATION_JSON_VALUE)
-        @ResponseBody
-        public String sso(@RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient) throws UserServiceException {
-
-
+    //This method is just for development, for testing that graph is working properly. It displays the details of the current SSO user
+    @GetMapping("/graph")
+    @ResponseBody
+    public String graph(
+            @RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient
+    ) throws UserServiceException {
         UserDetails user = userService.getUserDetails(graphClient);
-            log.info(user.getUserPrincipalName());
 
+    return user.toString();
 
-        return "Principal Name:"  + user.getUserPrincipalName();
-        }
-
-
+    }
 
 
 

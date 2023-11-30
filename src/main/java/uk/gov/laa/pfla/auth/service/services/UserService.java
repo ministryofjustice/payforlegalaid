@@ -2,8 +2,7 @@ package uk.gov.laa.pfla.auth.service.services;
 
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.models.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -16,9 +15,9 @@ import uk.gov.laa.pfla.auth.service.graph.GraphClientHelper;
  * Component to encapsulate the retrieval of user information from an
  * external directory (Microsoft Graph)
  */
+@Slf4j
 @Component
 public class UserService {
-  private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
   private final GraphClientHelper graphClientHelper;
 
@@ -39,7 +38,7 @@ public class UserService {
     try {
       graphUser = graphClientHelper.getGraphUserDetails(client);
       if( graphUser == null || !StringUtils.hasText(graphUser.userPrincipalName) ) {
-        LOGGER.error("Null or insufficient User data returned from Graph: {}", graphUser);
+        log.error("Null or insufficient User data returned from Graph: {}", graphUser);
         throw new AuthUserNotFoundException("No user details returned from Graph");
       }
     } catch (ClientException e) {

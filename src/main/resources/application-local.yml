@@ -1,6 +1,39 @@
+##SSL configuration
+#server:
+#  port: 8080
+#  shutdown: graceful
+#  servlet:
+#    session:
+#      cookie:
+#        secure: true
+#  ssl:
+#    key-store: classpath:keystore.p12
+#    key-store-password: password
+#    key-store-type: PKCS12
+#    key-alias: testCert
+#    key-password: password
+
+logging:
+  level:
+    org.springframework.security: TRACE
+
 # Azure AD and Graph config
 spring:
   cloud:
     azure:
-      credential:
-        client-secret: "hi, im a client secret "
+      active-directory:
+        enabled: true
+        profile:
+          tenant-id: ${AZURE_TENANT_ID}
+        credential:
+          client-id: ${AZURE_CLIENT_ID}
+          client-secret: ${AZURE_CLIENT_SECRET}
+        redirect-uri-template: http://localhost:8080/login/oauth2/code/gpfd-azure-dev
+        authorization-clients:
+          graph:
+            scopes:
+              - https://graph.microsoft.com/User.Read
+
+#server:
+#  port: 8080
+#  forward-headers-strategy: native
