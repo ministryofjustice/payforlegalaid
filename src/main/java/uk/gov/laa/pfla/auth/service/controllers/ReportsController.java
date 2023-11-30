@@ -4,13 +4,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.boot.autoconfigure.*;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.web.bind.annotation.*;
+import uk.gov.laa.pfla.auth.service.beans.UserDetails;
+import uk.gov.laa.pfla.auth.service.exceptions.UserServiceException;
 import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
 import uk.gov.laa.pfla.auth.service.responses.ReportResponse;
 import uk.gov.laa.pfla.auth.service.services.MappingTableService;
 import uk.gov.laa.pfla.auth.service.services.ReportService;
 import uk.gov.laa.pfla.auth.service.services.ReportTrackingTableService;
-
+import uk.gov.laa.pfla.auth.service.services.UserService;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -27,13 +31,16 @@ public class ReportsController {
 
     List<ReportListResponse> reportListResponseArray = new ArrayList<>();
 
+    private final UserService userService;
 
 
     @Autowired
-    public ReportsController(MappingTableService mappingTableService, ReportService reportService, ReportTrackingTableService reportTrackingTableService){
+    public ReportsController(MappingTableService mappingTableService, ReportService reportService, ReportTrackingTableService reportTrackingTableService, final UserService userService){
         this.mappingTableService = mappingTableService;
         this.reportService = reportService;
         this.reportTrackingTableService = reportTrackingTableService;
+        this.userService = userService;
+
     }
 
     /**
@@ -73,7 +80,17 @@ public class ReportsController {
     }
 
 
+    //This method is just for development, for testing that graph is working properly. It displays the details of the current SSO user
+    @GetMapping("/graph")
+    @ResponseBody
+    public String graph(
+            @RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient
+    ) throws UserServiceException {
+        UserDetails user = userService.getUserDetails(graphClient);
 
+        return user.toString();
+
+    }
 
 
 

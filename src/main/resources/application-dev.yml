@@ -1,20 +1,8 @@
-# Azure AD and Graph config
-spring:
-  cloud:
-    azure:
-      credential:
-        client-secret: ${AZURE_CLIENT_SECRET}
-        client-id: ${AZURE_CLIENT_ID}
-      profile:
-        tenant-id: ${AZURE_TENANT_ID}
-  datasource:
-#    url: jdbc:oracle:thin:@localhost:1521:xe
-    url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
-    username: ${MOJFIN_DEV_USERNAME}
-    password: ${MOJFIN_DEV_PASSWORD}
-    driver-class-name: oracle.jdbc.OracleDriver
-
 #SSL configuration
+logging:
+  level:
+    org.springframework.security: TRACE
+
 server:
   port: 8443
   shutdown: graceful
@@ -29,18 +17,36 @@ server:
     key-alias: testCert
     key-password: password
 
-logging:
-  level:
-    org.springframework.security: DEBUG
 
-#      active-directory:
-#        enabled: true
-#        authorization-clients:
-#          graph:
-#            scopes:
-#              - https://graph.microsoft.com/User.Read
-#        post-logout-redirect-uri: /
 
-#server:
-#  port: 8080
-#  forward-headers-strategy: native
+# Azure AD and Graph config
+spring:
+  cloud:
+    azure:
+      active-directory:
+        enabled: true
+        profile:
+          tenant-id: ${AZURE_TENANT_ID}
+        credential:
+          client-id: ${AZURE_CLIENT_ID}
+          client-secret: ${AZURE_CLIENT_SECRET}
+        redirect-uri-template: https://laa-pay-for-la-dev.apps.live.cloud-platform.service.justice.gov.uk/login/oauth2/code/gpfd-azure-dev # dev
+        authorization-clients:
+          graph:
+            scopes:
+              - https://graph.microsoft.com/User.Read
+
+  # Database config
+  datasource:
+#    url: jdbc:oracle:thin:@localhost:1521:xe
+    url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
+    username: ${MOJFIN_DEV_USERNAME}
+    password: ${MOJFIN_DEV_PASSWORD}
+    driver-class-name: oracle.jdbc.OracleDriver
+
+
+
+
+
+
+

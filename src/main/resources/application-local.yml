@@ -1,28 +1,44 @@
+logging:
+  level:
+    org.springframework.security: TRACE
+
+##SSL configuration (if using HTTPs locally)
+#server:
+#  port: 8443
+#  shutdown: graceful
+#  servlet:
+#    session:
+#      cookie:
+#        secure: true
+#  ssl:
+#    key-store: classpath:keystore.p12
+#    key-store-password: password
+#    key-store-type: PKCS12
+#    key-alias: testCert
+#    key-password: password
+
+
+
 # Azure AD and Graph config
 spring:
   cloud:
     azure:
-      credential:
-        client-secret: thiswouldbeasecret
-        client-id: thiswouldbeaclientid
-      profile:
-        tenant-id: thiswouldbeatennantid
+      active-directory:
+        enabled: true
+        profile:
+          tenant-id: ${AZURE_TENANT_ID}
+        credential:
+          client-id: ${AZURE_CLIENT_ID}
+          client-secret: ${AZURE_CLIENT_SECRET}
+        redirect-uri-template: http://localhost:8080/login/oauth2/code/gpfd-azure-dev
+        authorization-clients:
+          graph:
+            scopes:
+              - https://graph.microsoft.com/User.Read
+
   datasource:
     #    url: jdbc:oracle:thin:@localhost:1521:xe
     url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
     username: blah
     password: blahword
     driver-class-name: oracle.jdbc.OracleDriver
-
-
-#      active-directory:
-#        enabled: true
-#        authorization-clients:
-#          graph:
-#            scopes:
-#              - https://graph.microsoft.com/User.Read
-#        post-logout-redirect-uri: /
-
-#server:
-#  port: 8080
-#  forward-headers-strategy: native

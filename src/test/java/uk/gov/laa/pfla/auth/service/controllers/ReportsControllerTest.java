@@ -11,10 +11,8 @@ import uk.gov.laa.pfla.auth.service.builders.ReportResponseTestBuilder;
 import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
 import uk.gov.laa.pfla.auth.service.responses.ReportResponse;
 import uk.gov.laa.pfla.auth.service.services.MappingTableService;
-
 import java.util.Arrays;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
@@ -34,25 +32,9 @@ class ReportsControllerTest {
     @Mock
     private ReportTrackingTableService reportTrackingTableService;
 
-//    @MockBean
-//    OAuth2AuthorizedClient mockOAuth2AuthorizedClient;
-//
-//    @MockBean
-//    OAuth2AuthorizedClient mockOAuth2Client;
 
     @InjectMocks // creating a ReportsController object and then inject the mocked MappingTableService + reportService instances into it.
     private ReportsController reportsController;
-//
-//    @NotNull
-//    private static User createGraphUser() {
-//        User graphUser = new User();
-//        graphUser.userPrincipalName = "testPrincipalName";
-//        graphUser.givenName = "testGivenName";
-//        graphUser.surname = "testSurname";
-//        graphUser.preferredName = "testPreferredName";
-//        graphUser.mail = "testMail";
-//        return graphUser;
-//    }
 
     @Test
     void getReportListReturnsCorrectResponseEntity() throws Exception {
@@ -119,15 +101,5 @@ class ReportsControllerTest {
 
 
     }
-
-//    @Test
-//    void ssoMethodReturnsPrincipalName() throws UserServiceException {
-//
-//        User graphUser = createGraphUser();
-//        when(mockGraphClientHelper.getGraphUserDetails(mockOAuth2Client)).thenReturn(graphUser);
-////        when(userService.getUserDetails(mockOAuth2Client)).thenReturn(graphUser);
-//
-//        assertEquals("Principal Name:"  + graphUser.userPrincipalName, reportsController.sso(mockOAuth2Client));
-//    }
 
 }

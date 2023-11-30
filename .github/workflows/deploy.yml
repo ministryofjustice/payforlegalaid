@@ -13,10 +13,10 @@ jobs:
       # Checkout GitHub repository
       - uses: actions/checkout@v3
 
-      # Setup Java
+      # Setup Javax
       - uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
+          distribution: 'corretto'
           java-version: '17'
 
       # Run Tests
@@ -34,10 +34,10 @@ jobs:
       # Checkout GitHub repository
       - uses: actions/checkout@v3
 
-      # Setup Java
+      # Setup Javax
       - uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
+          distribution: 'corretto'
           java-version: '17'
 
       # Run Tests
