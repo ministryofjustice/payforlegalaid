@@ -36,9 +36,10 @@ spring:
             scopes:
               - https://graph.microsoft.com/User.Read
 
-  datasource:
-    #    url: jdbc:oracle:thin:@localhost:1521:xe
-    url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
-    username: blah
-    password: blahword
-    driver-class-name: oracle.jdbc.OracleDriver
+#Database config - This connection won't work locally, as MOJFIN wont allow traffic from outside certain LAA environments
+#  datasource:
+#    #    url: jdbc:oracle:thin:@localhost:1521:xe
+#    url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
+#    username: blah
+#    password: blahword
+#    driver-class-name: oracle.jdbc.OracleDriver

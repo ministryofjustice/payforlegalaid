@@ -2,6 +2,7 @@ package uk.gov.laa.pfla.auth.service.dao;
 
 import lombok.extern.slf4j.Slf4j;
 import oracle.jdbc.pool.OracleDataSource;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -9,6 +10,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import uk.gov.laa.pfla.auth.service.builders.MappingTableModelBuilder;
 import uk.gov.laa.pfla.auth.service.models.MappingTableModel;
+import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -20,8 +22,8 @@ public class MappingTableDao  implements RowMapper<Object> {
 
     private final List<MappingTableModel> mappingTableObjectList = new ArrayList<>();
 
-//    @Autowired
-//    private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Value("${spring.datasource.url}")
     private String databaseUrl;
@@ -32,33 +34,35 @@ public class MappingTableDao  implements RowMapper<Object> {
     @Value("${spring.datasource.password}")
     private String databasePassword;
 
+    private final ModelMapper mapper = new ModelMapper();
+
     public MappingTableDao() {
         //empty contructor to allow builder to do its work
     }
 
-    public Connection setupDB(){ //Todo - create custom exception
-
-        OracleDataSource ods = null;
-        try {
-                ods = new OracleDataSource();
-                ods.setURL(databaseUrl); // jdbc:oracle:thin@//[hostname]:[port]/[DB service name]
-                ods.setUser(databaseUsername);
-                ods.setPassword(databasePassword);
-            } catch(SQLException e){
-            log.error("Error in Oracle Datasource JDBC setup: " + e);
-        }
-
-        Connection conn = null;
-        try {
-             conn = ods.getConnection();
-        } catch(SQLException | NullPointerException e){
-            log.error("Error in creating DB Connection: " + e);
-        }
-
-
-        return conn;
-
-    }
+//    public Connection setupDB(){ //Todo - create custom exception
+//
+//        OracleDataSource ods = null;
+//        try {
+//                ods = new OracleDataSource();
+//                ods.setURL(databaseUrl); // jdbc:oracle:thin@//[hostname]:[port]/[DB service name]
+//                ods.setUser(databaseUsername);
+//                ods.setPassword(databasePassword);
+//            } catch(SQLException e){
+//            log.error("Error in Oracle Datasource JDBC setup: " + e);
+//        }
+//
+//        Connection conn = null;
+//        try {
+//             conn = ods.getConnection();
+//        } catch(SQLException | NullPointerException e){
+//            log.error("Error in creating DB Connection: " + e);
+//        }
+//
+//
+//        return conn;
+//
+//    }
 
     public MappingTableModel mapRow(ResultSet resultSet, int rowNum) throws SQLException {
 
@@ -78,43 +82,36 @@ public class MappingTableDao  implements RowMapper<Object> {
     }
 
     public List<MappingTableModel> fetchReportList() {
-        ResultSet rslt;
-        int rowNumber = 0;
-        mappingTableObjectList.clear(); // Prevent response data accumulating after multiple requests
-        MappingTableModel mappingTableObject;
+        List rsltList;
+//        int rowNumber = 0;
+//        mappingTableObjectList.clear(); // Prevent response data accumulating after multiple requests
+//        MappingTableModel mappingTableObject;
+//
+//
+//        Connection conn = null;
+//        try {
+//            conn = setupDB();
+//        } catch (Exception e) {
+//            log.error("Database connection error:" + e );
+//        }
+//
+            String query = "SELECT * FROM GPFD.CSV_TO_SQL_MAPPING_TABLE";
 
 
-        Connection conn = null;
-        try {
-            conn = setupDB();
-        } catch (Exception e) {
-            log.error("Database connection error:" + e );
-        }
+            rsltList = jdbcTemplate.queryForList(query);
+            log.info("Result list obj here: " + rsltList);
 
 
-        try {
-            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM GPFD.CSV_TO_SQL_MAPPING_TABLE");
-            rslt = stmt.executeQuery();
-            log.info("Result here: " + rslt);
-
-            while(rslt.next()){
-
-                mappingTableObject = mapRow(rslt, rowNumber);
-                log.info("mapping Object: " + mappingTableObject.getId() + "   " + mappingTableObject.getReportName());
+            rsltList.forEach(obj -> {
+                MappingTableModel mappingTableObject = mapper.map(obj, MappingTableModel.class);
                 mappingTableObjectList.add(mappingTableObject);
-                rowNumber++;
 
-                log.info("Row number here: " + rslt.getRow());
+            });
 
-            }
-        }catch(SQLException e){
-            log.error("Error in retrieving results from DB: " + e);
-        }
+            return mappingTableObjectList;
 
-        return mappingTableObjectList;
+
 
 
     }
-
-
 }

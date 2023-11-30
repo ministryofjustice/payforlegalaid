@@ -10,11 +10,11 @@ import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.jdbc.core.RowMapper;
-import uk.gov.laa.pfla.auth.service.models.MappingTableModel;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
+//import org.springframework.jdbc.core.RowMapper;
+//import uk.gov.laa.pfla.auth.service.models.MappingTableModel;
+//
+//import java.sql.ResultSet;
+//import java.sql.SQLException;
 
 @Service
 @Slf4j
@@ -32,7 +32,7 @@ public class MappingTableService {
     }
 
     public List<ReportListResponse> createReportListResponseList() throws Exception {
-        mappingTableDao.setupDB();
+//        mappingTableDao.setupDB();
         reportListResponses.clear(); // Prevent response data accumulating after multiple requests
 
         //Fetching reportList items from database
