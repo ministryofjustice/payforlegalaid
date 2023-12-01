@@ -12,7 +12,11 @@ import lombok.Data;
  */
 @Data
 public class MappingTableModel {
-//    @Id
+    public MappingTableModel() {
+        //no args constructor needed for ModelMapper
+    }
+
+    //    @Id
     private int id;
     private String reportName;
     private String sqlString;

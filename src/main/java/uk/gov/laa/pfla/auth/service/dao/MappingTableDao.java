@@ -1,7 +1,6 @@
 package uk.gov.laa.pfla.auth.service.dao;
 
 import lombok.extern.slf4j.Slf4j;
-import oracle.jdbc.pool.OracleDataSource;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,11 +9,11 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import uk.gov.laa.pfla.auth.service.builders.MappingTableModelBuilder;
 import uk.gov.laa.pfla.auth.service.models.MappingTableModel;
-import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Repository
 @Slf4j
@@ -101,13 +100,15 @@ public class MappingTableDao  implements RowMapper<Object> {
             rsltList = jdbcTemplate.queryForList(query);
             log.info("Result list obj here: " + rsltList);
 
-
+            AtomicInteger i = new AtomicInteger();
             rsltList.forEach(obj -> {
+                i.getAndIncrement();
+
                 try {
                     MappingTableModel mappingTableObject = mapper.map(obj, MappingTableModel.class);
                     mappingTableObjectList.add(mappingTableObject);
 
-                    log.info("Result list object inside for loop: " + obj);
+                    log.info("Result list object inside for loop: " + i.get() + "counter. " + obj);
                 } catch (org.modelmapper.MappingException e) {
                     log.error("Exception with model map loop: " + e + "Object which failed: " + obj);
                 }
