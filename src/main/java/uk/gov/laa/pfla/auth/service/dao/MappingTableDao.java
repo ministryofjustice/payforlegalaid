@@ -3,7 +3,6 @@ package uk.gov.laa.pfla.auth.service.dao;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -13,6 +12,7 @@ import uk.gov.laa.pfla.auth.service.models.MappingTableModel;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Repository
@@ -24,44 +24,11 @@ public class MappingTableDao  implements RowMapper<Object> {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @Value("${spring.datasource.url}")
-    private String databaseUrl;
-
-    @Value("${spring.datasource.username}")
-    private String databaseUsername;
-
-    @Value("${spring.datasource.password}")
-    private String databasePassword;
-
     private final ModelMapper mapper = new ModelMapper();
 
     public MappingTableDao() {
         //empty contructor to allow builder to do its work
     }
-
-//    public Connection setupDB(){ //Todo - create custom exception
-//
-//        OracleDataSource ods = null;
-//        try {
-//                ods = new OracleDataSource();
-//                ods.setURL(databaseUrl); // jdbc:oracle:thin@//[hostname]:[port]/[DB service name]
-//                ods.setUser(databaseUsername);
-//                ods.setPassword(databasePassword);
-//            } catch(SQLException e){
-//            log.error("Error in Oracle Datasource JDBC setup: " + e);
-//        }
-//
-//        Connection conn = null;
-//        try {
-//             conn = ods.getConnection();
-//        } catch(SQLException | NullPointerException e){
-//            log.error("Error in creating DB Connection: " + e);
-//        }
-//
-//
-//        return conn;
-//
-//    }
 
     public MappingTableModel mapRow(ResultSet resultSet, int rowNum) throws SQLException {
 
@@ -81,39 +48,29 @@ public class MappingTableDao  implements RowMapper<Object> {
     }
 
     public List<MappingTableModel> fetchReportList() {
-        List rsltList;
-//        int rowNumber = 0;
-//        mappingTableObjectList.clear(); // Prevent response data accumulating after multiple requests
-//        MappingTableModel mappingTableObject;
-//
-//
-//        Connection conn = null;
-//        try {
-//            conn = setupDB();
-//        } catch (Exception e) {
-//            log.error("Database connection error:" + e );
-//        }
-//
+        mappingTableObjectList.clear(); // Prevent data accumulating after multiple requests
+
+        List<Map<String, Object>> resultList;
+
             String query = "SELECT * FROM GPFD.CSV_TO_SQL_MAPPING_TABLE";
 
 
-            rsltList = jdbcTemplate.queryForList(query);
-            log.info("Result list obj here: " + rsltList);
+            resultList = jdbcTemplate.queryForList(query);
+            log.info("Result list obj here: " + resultList);
 
             AtomicInteger i = new AtomicInteger();
-            rsltList.forEach(obj -> {
+
                 i.getAndIncrement();
 
                 try {
+                    resultList.forEach(obj -> {
                     MappingTableModel mappingTableObject = mapper.map(obj, MappingTableModel.class);
                     mappingTableObjectList.add(mappingTableObject);
-
-                    log.info("Result list object inside for loop: " + i.get() + "counter. " + obj);
+                });
                 } catch (org.modelmapper.MappingException e) {
-                    log.error("Exception with model map loop: " + e + "Object which failed: " + obj);
+                    log.error("Exception with model map loop: " + e);
                 }
 
-            });
 
             return mappingTableObjectList;
 
