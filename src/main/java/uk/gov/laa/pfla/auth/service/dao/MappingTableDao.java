@@ -103,8 +103,14 @@ public class MappingTableDao  implements RowMapper<Object> {
 
 
             rsltList.forEach(obj -> {
-                MappingTableModel mappingTableObject = mapper.map(obj, MappingTableModel.class);
-                mappingTableObjectList.add(mappingTableObject);
+                try {
+                    MappingTableModel mappingTableObject = mapper.map(obj, MappingTableModel.class);
+                    mappingTableObjectList.add(mappingTableObject);
+
+                    log.info("Result list object inside for loop: " + obj);
+                } catch (org.modelmapper.MappingException e) {
+                    log.error("Exception with model map loop: " + e + "Object which failed: " + obj);
+                }
 
             });
 
