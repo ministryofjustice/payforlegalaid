@@ -1,7 +1,6 @@
 package uk.gov.laa.pfla.auth.service.models;
 
 import lombok.Data;
-//import org.springframework.data.annotation.Id;
 
 //TODO - This class will be a bean, dont forget to annotate it with  @org.springframework.beans.factory.annotation.Autowired to make sonarlint happy
 // Bean guide: https://www.baeldung.com/spring-bean
@@ -16,7 +15,6 @@ public class MappingTableModel {
         //no args constructor needed for ModelMapper
     }
 
-    //    @Id
     private int id;
     private String reportName;
     private String sqlString;
