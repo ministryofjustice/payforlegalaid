@@ -2,15 +2,26 @@ package uk.gov.laa.pfla.auth.service.builders;
 
 import uk.gov.laa.pfla.auth.service.models.MappingTableModel;
 
+import java.sql.Date;
+
 public class MappingTableModelBuilder {
     private int id;
     private String reportName;
+    private String sqlString;
+    private String baseUrl;
     private String reportPeriod;
     private String reportOwner;
     private String reportCreator;
-    private String reportDescription;
-    private String baseUrl;
-    private String sql;
+    private String description;
+
+    private Date reportPeriodFrom;
+
+    private Date reportPeriodTo;
+
+    private String excelReport;
+
+    private int excelSheetNum;
+    private String csvName;
 
     public MappingTableModelBuilder withId(int id) {
         this.id = id;
@@ -22,6 +33,10 @@ public class MappingTableModelBuilder {
         return this;
     }
 
+    public MappingTableModelBuilder withSqlString(String sqlString) {
+        this.sqlString = sqlString;
+        return this;
+    }
     public MappingTableModelBuilder withReportPeriod(String reportPeriod) {
         this.reportPeriod = reportPeriod;
         return this;
@@ -38,7 +53,27 @@ public class MappingTableModelBuilder {
     }
 
     public MappingTableModelBuilder withReportDescription(String description) {
-        this.reportDescription = description;
+        this.description = description;
+        return this;
+    }
+
+
+    public MappingTableModelBuilder withReportPeriodFrom(Date reportPeriodFrom) {
+        this.reportPeriodFrom = reportPeriodFrom;
+        return this;
+    }
+
+    public MappingTableModelBuilder withReportPeriodTo(Date reportPeriodTo) {
+        this.reportPeriodTo = reportPeriodTo;
+        return this;
+    }
+
+    public MappingTableModelBuilder withExcelReport(String excelReport) {
+        this.excelReport = excelReport;
+        return this;
+    }
+    public MappingTableModelBuilder withExcelSheetNumber(int excelSheetNum) {
+        this.excelSheetNum = excelSheetNum;
         return this;
     }
 
@@ -47,14 +82,14 @@ public class MappingTableModelBuilder {
         return this;
     }
 
-    public MappingTableModelBuilder withSql(String sql) {
-        this.sql = sql;
+    public MappingTableModelBuilder withCsvName(String csvName) {
+        this.csvName = csvName;
         return this;
     }
 
 
 
-    public MappingTableModel createMappingTableModel() {
-        return new MappingTableModel(id, reportName, reportPeriod, reportOwner, reportCreator, reportDescription, baseUrl, sql);
+    public MappingTableModel build() {
+        return new MappingTableModel(id, reportName, sqlString, baseUrl, reportPeriod, reportOwner, reportCreator, description, excelSheetNum, csvName );
     }
 }

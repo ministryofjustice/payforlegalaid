@@ -11,32 +11,34 @@ import lombok.Data;
  */
 @Data
 public class MappingTableModel {
+    public MappingTableModel() {
+        //no args constructor needed for ModelMapper
+    }
 
     private int id;
     private String reportName;
+    private String sqlString;
+    private String baseUrl;
     private String reportPeriod;
     private String reportOwner;
     private String reportCreator;
     private String description;
-    private String baseUrl;
-    private String sql;
+    private int excelSheetNum;
+    private String csvName;
 
 
-
-    public MappingTableModel(int id, String reportName, String reportPeriod, String reportOwner, String reportCreator, String description, String baseUrl, String sql) {
+    public MappingTableModel(int id, String reportName, String sqlString, String baseUrl, String reportPeriod, String reportOwner, String reportCreator, String description, int excelSheetNum, String csvName) {
         this.id = id;
         this.reportName = reportName;
+        this.sqlString = sqlString;
+        this.baseUrl = baseUrl;
         this.reportPeriod = reportPeriod;
         this.reportOwner = reportOwner;
         this.reportCreator = reportCreator;
         this.description = description;
-        this.baseUrl = baseUrl;
-        this.sql = sql;
-
-
+        this.excelSheetNum = excelSheetNum;
+        this.csvName = csvName;
     }
-
-
 
 
 }

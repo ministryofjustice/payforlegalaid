@@ -37,7 +37,7 @@ class ReportsControllerTest {
     private ReportsController reportsController;
 
     @Test
-    void getReportListReturnsCorrectResponseEntity() {
+    void getReportListReturnsCorrectResponseEntity() throws Exception {
         //Create Mock Response objects
         ReportListResponse reportListResponseMock1 = new ReportListResponseTestBuilder().withId(1)
                 .withReportName("Test Report 1")

@@ -4,13 +4,30 @@ import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
 
 public class ReportListResponseBuilder {
 
+
     private int id;
     private String reportName;
+    private String sqlString;
+    private String baseUrl;
     private String reportPeriod;
     private String reportOwner;
     private String reportCreator;
-    private String reportDescription;
-    private String baseUrl;
+    private String description;
+    private int excelSheetNum;
+    private String csvName;
+
+    public ReportListResponseBuilder(int id, String reportName, String sqlString, String baseUrl, String reportPeriod, String reportOwner, String reportCreator, String description, int excelSheetNum, String csvName) {
+        this.id = id;
+        this.reportName = reportName;
+        this.sqlString = sqlString;
+        this.baseUrl = baseUrl;
+        this.reportPeriod = reportPeriod;
+        this.reportOwner = reportOwner;
+        this.reportCreator = reportCreator;
+        this.description = description;
+        this.excelSheetNum = excelSheetNum;
+        this.csvName = csvName;
+    }
 
     public ReportListResponseBuilder withId(int id) {
         this.id = id;
@@ -19,6 +36,11 @@ public class ReportListResponseBuilder {
 
     public ReportListResponseBuilder withReportName(String reportName) {
         this.reportName = reportName;
+        return this;
+    }
+
+    public ReportListResponseBuilder withSqlString(String sqlString) {
+        this.sqlString = sqlString;
         return this;
     }
 
@@ -38,7 +60,12 @@ public class ReportListResponseBuilder {
     }
 
     public ReportListResponseBuilder withReportDescription(String reportDescription) {
-        this.reportDescription = reportDescription;
+        this.description = reportDescription;
+        return this;
+    }
+
+    public ReportListResponseBuilder withExcelSheetNumber(int excelSheetNum) {
+        this.excelSheetNum = excelSheetNum;
         return this;
     }
 
@@ -47,7 +74,13 @@ public class ReportListResponseBuilder {
         return this;
     }
 
+    public ReportListResponseBuilder withCsvName(String csvName) {
+        this.csvName = csvName;
+        return this;
+    }
+
+
     public ReportListResponse createReportListResponse() {
-        return new ReportListResponse(id, reportName, reportPeriod, reportOwner, reportCreator, reportDescription, baseUrl);
+        return new ReportListResponse(id, reportName, sqlString, baseUrl, reportPeriod,  reportOwner, reportCreator, description, excelSheetNum, csvName);
     }
 }

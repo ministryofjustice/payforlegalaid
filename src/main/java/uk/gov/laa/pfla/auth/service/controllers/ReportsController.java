@@ -48,7 +48,7 @@ public class ReportsController {
      * @return A POJO list, converted to json by spring -  A list of report names, id's and some information on each report, in the form of json objects
      */
     @RequestMapping(value ="/reports", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<List<ReportListResponse>>getReportList() {
+    ResponseEntity<List<ReportListResponse>>getReportList() throws Exception {
 
         reportListResponseArray.clear(); // Prevent response data accumulating after multiple requests
 
@@ -79,6 +79,7 @@ public class ReportsController {
 
     }
 
+
     //This method is just for development, for testing that graph is working properly. It displays the details of the current SSO user
     @GetMapping("/graph")
     @ResponseBody
@@ -87,7 +88,7 @@ public class ReportsController {
     ) throws UserServiceException {
         UserDetails user = userService.getUserDetails(graphClient);
 
-    return user.toString();
+        return user.toString();
 
     }
 

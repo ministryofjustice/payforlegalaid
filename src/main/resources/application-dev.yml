@@ -1,4 +1,8 @@
 #SSL configuration
+logging:
+  level:
+    org.springframework.security: TRACE
+
 server:
   port: 8443
   shutdown: graceful
@@ -13,9 +17,7 @@ server:
     key-alias: testCert
     key-password: password
 
-logging:
-  level:
-    org.springframework.security: TRACE
+
 
 # Azure AD and Graph config
 spring:
@@ -34,6 +36,17 @@ spring:
             scopes:
               - https://graph.microsoft.com/User.Read
 
-#server:
-#  port: 8080
-#  forward-headers-strategy: native
+  # Database config
+  datasource:
+#    url: jdbc:oracle:thin:@localhost:1521:xe
+    url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
+    username: ${MOJFIN_DEV_USERNAME}
+    password: ${MOJFIN_DEV_PASSWORD}
+    driver-class-name: oracle.jdbc.OracleDriver
+
+
+
+
+
+
+

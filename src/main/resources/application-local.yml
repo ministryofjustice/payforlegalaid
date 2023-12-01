@@ -1,6 +1,10 @@
-##SSL configuration
+logging:
+  level:
+    org.springframework.security: TRACE
+
+##SSL configuration (if using HTTPs locally)
 #server:
-#  port: 8080
+#  port: 8443
 #  shutdown: graceful
 #  servlet:
 #    session:
@@ -13,9 +17,7 @@
 #    key-alias: testCert
 #    key-password: password
 
-logging:
-  level:
-    org.springframework.security: TRACE
+
 
 # Azure AD and Graph config
 spring:
@@ -34,6 +36,10 @@ spring:
             scopes:
               - https://graph.microsoft.com/User.Read
 
-#server:
-#  port: 8080
-#  forward-headers-strategy: native
+#Database config - This connection won't work locally, as MOJFIN wont allow traffic from outside certain LAA environments
+#  datasource:
+#    #    url: jdbc:oracle:thin:@localhost:1521:xe
+#    url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
+#    username: blah
+#    password: blahword
+#    driver-class-name: oracle.jdbc.OracleDriver

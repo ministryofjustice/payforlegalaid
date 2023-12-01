@@ -38,6 +38,16 @@ spec:
                 secretKeyRef:
                   name: gpfd-test-secret-01
                   key: tenant-id
+            - name: MOJFIN_DEV_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: gpfd-test-secret-01
+                  key: mojfin-dev-username
+            - name: MOJFIN_DEV_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gpfd-test-secret-01
+                  key: mojfin-dev-password
 
 # This is a generic file that creates a Kubernetes deployment in our namespace. A deployment is a collection of pods
 # that runs one or more containers. In this application, currently only one container is run in the pod.

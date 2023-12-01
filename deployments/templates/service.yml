@@ -6,9 +6,9 @@ spec:
   selector:
     app: gpfd-dev
   ports:
-    - name: http #Todo - change to https
+    - name: https
       port: 8443
-      targetPort: 8443 #Todo - change to 8443 (https)
+      targetPort: 8443
 
 
 

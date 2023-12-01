@@ -12,31 +12,31 @@ import org.springframework.stereotype.Component;
 @Component
 public class GraphClientHelper {
 
-  /**
-   * Retrieve the 'me' details from Graph for the currently authenticated User
-   * @param graphAuthorizedClient - an OAuth2AuthorizedClient with granted access to read user information from Graph
-   * @return User populated with details from Graph, or null if no user details were returned.
-   * @throws ClientException if an error occurs while querying the user details
-   */
-  public User getGraphUserDetails(OAuth2AuthorizedClient graphAuthorizedClient)
-      throws ClientException {
-    return getGraphServiceClient(graphAuthorizedClient)
-        .me()
-        .buildRequest()
-        .get();
-  }
+    /**
+     * Retrieve the 'me' details from Graph for the currently authenticated User
+     * @param graphAuthorizedClient - an OAuth2AuthorizedClient with granted access to read user information from Graph
+     * @return User populated with details from Graph, or null if no user details were returned.
+     * @throws ClientException if an error occurs while querying the user details
+     */
+    public User getGraphUserDetails(OAuth2AuthorizedClient graphAuthorizedClient)
+            throws ClientException {
+        return getGraphServiceClient(graphAuthorizedClient)
+                .me()
+                .buildRequest()
+                .get();
+    }
 
-  /**
-   * Get a GraphServiceClient using the supplied OAuth2AuthorizedClient.
-   * @param graphAuthorizedClient an OAuth2AuthorizedClient with granted access to read user information from Graph
-   * @return a GraphServiceClient
-   * @throws ClientException if an error occurs while building a GraphServiceClient.
-   */
-  protected GraphServiceClient<okhttp3.Request> getGraphServiceClient(OAuth2AuthorizedClient graphAuthorizedClient)
-      throws ClientException {
-    return GraphServiceClient.builder()
-        .authenticationProvider(new GraphAuthenticationProvider(graphAuthorizedClient))
-        .buildClient();
-  }
+    /**
+     * Get a GraphServiceClient using the supplied OAuth2AuthorizedClient.
+     * @param graphAuthorizedClient an OAuth2AuthorizedClient with granted access to read user information from Graph
+     * @return a GraphServiceClient
+     * @throws ClientException if an error occurs while building a GraphServiceClient.
+     */
+    protected GraphServiceClient<okhttp3.Request> getGraphServiceClient(OAuth2AuthorizedClient graphAuthorizedClient)
+            throws ClientException {
+        return GraphServiceClient.builder()
+                .authenticationProvider(new GraphAuthenticationProvider(graphAuthorizedClient))
+                .buildClient();
+    }
 
 }
