@@ -7,30 +7,37 @@ public class ReportListResponseBuilder {
 
     private int id;
     private String reportName;
-    private String sqlString;
+    private String excelReport;
+    private String csvName;
+    private int excelSheetNum;
+    private String sqlQuery;
     private String baseUrl;
-    private String reportPeriod;
     private String reportOwner;
     private String reportCreator;
     private String description;
-    private int excelSheetNum;
-    private String csvName;
+    private String ownerEmail;
 
-    public ReportListResponseBuilder(int id, String reportName, String sqlString, String baseUrl, String reportPeriod, String reportOwner, String reportCreator, String description, int excelSheetNum, String csvName) {
+    public ReportListResponseBuilder(int id, String reportName, String excelReport, String csvName, int excelSheetNum, String sqlQuery, String baseUrl, String reportOwner, String reportCreator, String description, String ownerEmail) {
         this.id = id;
         this.reportName = reportName;
-        this.sqlString = sqlString;
+        this.excelReport = excelReport;
+        this.csvName = csvName;
+        this.excelSheetNum = excelSheetNum;
+        this.sqlQuery = sqlQuery;
         this.baseUrl = baseUrl;
-        this.reportPeriod = reportPeriod;
         this.reportOwner = reportOwner;
         this.reportCreator = reportCreator;
         this.description = description;
-        this.excelSheetNum = excelSheetNum;
-        this.csvName = csvName;
+        this.ownerEmail = ownerEmail;
     }
 
     public ReportListResponseBuilder withId(int id) {
         this.id = id;
+        return this;
+    }
+
+    public ReportListResponseBuilder withExcelReport(String excelReport) {
+        this.excelReport = excelReport;
         return this;
     }
 
@@ -39,13 +46,23 @@ public class ReportListResponseBuilder {
         return this;
     }
 
-    public ReportListResponseBuilder withSqlString(String sqlString) {
-        this.sqlString = sqlString;
+    public ReportListResponseBuilder withCsvName(String csvName) {
+        this.csvName = csvName;
         return this;
     }
 
-    public ReportListResponseBuilder withReportPeriod(String reportPeriod) {
-        this.reportPeriod = reportPeriod;
+    public ReportListResponseBuilder withExcelSheetNumber(int excelSheetNum) {
+        this.excelSheetNum = excelSheetNum;
+        return this;
+    }
+
+    public ReportListResponseBuilder withSqlQuery(String sqlQuery) {
+        this.sqlQuery = sqlQuery;
+        return this;
+    }
+
+    public ReportListResponseBuilder withBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
         return this;
     }
 
@@ -59,28 +76,17 @@ public class ReportListResponseBuilder {
         return this;
     }
 
-    public ReportListResponseBuilder withReportDescription(String reportDescription) {
-        this.description = reportDescription;
+    public ReportListResponseBuilder withReportDescription(String description) {
+        this.description = description;
         return this;
     }
 
-    public ReportListResponseBuilder withExcelSheetNumber(int excelSheetNum) {
-        this.excelSheetNum = excelSheetNum;
+    public ReportListResponseBuilder withOwnerEmail(String ownerEmail) {
+        this.ownerEmail = ownerEmail;
         return this;
     }
-
-    public ReportListResponseBuilder withBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
-        return this;
-    }
-
-    public ReportListResponseBuilder withCsvName(String csvName) {
-        this.csvName = csvName;
-        return this;
-    }
-
 
     public ReportListResponse createReportListResponse() {
-        return new ReportListResponse(id, reportName, sqlString, baseUrl, reportPeriod,  reportOwner, reportCreator, description, excelSheetNum, csvName);
+        return new ReportListResponse(id, reportName, excelReport, csvName, excelSheetNum, sqlQuery, baseUrl, reportOwner, reportCreator, description, ownerEmail);
     }
 }

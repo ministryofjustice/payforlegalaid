@@ -7,21 +7,15 @@ import java.sql.Date;
 public class MappingTableModelBuilder {
     private int id;
     private String reportName;
-    private String sqlString;
+    private String excelReport;
+    private String csvName;
+    private int excelSheetNum;
+    private String sqlQuery;
     private String baseUrl;
-    private String reportPeriod;
     private String reportOwner;
     private String reportCreator;
     private String description;
-
-    private Date reportPeriodFrom;
-
-    private Date reportPeriodTo;
-
-    private String excelReport;
-
-    private int excelSheetNum;
-    private String csvName;
+    private String ownerEmail;
 
     public MappingTableModelBuilder withId(int id) {
         this.id = id;
@@ -33,12 +27,28 @@ public class MappingTableModelBuilder {
         return this;
     }
 
-    public MappingTableModelBuilder withSqlString(String sqlString) {
-        this.sqlString = sqlString;
+    public MappingTableModelBuilder withExcelReport(String excelReport) {
+        this.excelReport = excelReport;
         return this;
     }
-    public MappingTableModelBuilder withReportPeriod(String reportPeriod) {
-        this.reportPeriod = reportPeriod;
+
+    public MappingTableModelBuilder withCsvName(String csvName) {
+        this.csvName = csvName;
+        return this;
+    }
+
+    public MappingTableModelBuilder withExcelSheetNumber(int excelSheetNum) {
+        this.excelSheetNum = excelSheetNum;
+        return this;
+    }
+
+    public MappingTableModelBuilder withSqlQuery(String sqlQuery) {
+        this.sqlQuery = sqlQuery;
+        return this;
+    }
+
+    public MappingTableModelBuilder withBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
         return this;
     }
 
@@ -57,39 +67,14 @@ public class MappingTableModelBuilder {
         return this;
     }
 
-
-    public MappingTableModelBuilder withReportPeriodFrom(Date reportPeriodFrom) {
-        this.reportPeriodFrom = reportPeriodFrom;
-        return this;
-    }
-
-    public MappingTableModelBuilder withReportPeriodTo(Date reportPeriodTo) {
-        this.reportPeriodTo = reportPeriodTo;
-        return this;
-    }
-
-    public MappingTableModelBuilder withExcelReport(String excelReport) {
-        this.excelReport = excelReport;
-        return this;
-    }
-    public MappingTableModelBuilder withExcelSheetNumber(int excelSheetNum) {
-        this.excelSheetNum = excelSheetNum;
-        return this;
-    }
-
-    public MappingTableModelBuilder withBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
-        return this;
-    }
-
-    public MappingTableModelBuilder withCsvName(String csvName) {
-        this.csvName = csvName;
+    public MappingTableModelBuilder withOwnerEmail(String ownerEmail) {
+        this.ownerEmail = ownerEmail;
         return this;
     }
 
 
 
     public MappingTableModel build() {
-        return new MappingTableModel(id, reportName, sqlString, baseUrl, reportPeriod, reportOwner, reportCreator, description, excelSheetNum, csvName );
+        return new MappingTableModel(id, reportName, excelReport, csvName, excelSheetNum, sqlQuery, baseUrl, reportOwner, reportCreator, description, ownerEmail);
     }
 }
