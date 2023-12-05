@@ -6,32 +6,40 @@ public class ReportListResponseTestBuilder {
 
     public static final int DEFAULT_ID = 1;
     public static final String DEFAULT_REPORT_NAME = "Excel_Report_Name-CSV-NAME-sheetnumber";
+    private static final String DEFAULT_EXCEL_REPORT = "Excel_Report_Name";
+
+    private static final String DEFAULT_CSV_NAME = "CSV-name";
+    private static final int DEFAULT_EXCEL_SHEET_NUM = 7;
     public static final String DEFAULT_SQL_STRING = "SELECT * FROM SOMETHING";
-    public static final String DEFAULT_REPORT_PERIOD = "01/08/2023 - 01/09/2023";
+    public static final String DEFAULT_BASE_URL = "www.sharepoint.com/the-folder-we're-using";
     public static final String DEFAULT_REPORT_OWNER = "Chancey Mctavish";
     public static final String DEFAULT_REPORT_CREATOR = "Barry Gibb";
     public static final String DEFAULT_REPORT_DESCRIPTION= "List all unpaid AP invoices and all outstanding AR debts at the end of the previous month. Detailed data, one row per invoice";
-    public static final String DEFAULT_BASE_URL = "www.sharepoint.com/the-folder-we're-using";
 
-    private static final int DEFAULT_EXCEL_SHEET_NUM = 7;
-    private static final String DEFAULT_CSV_NAME = "CSV-name";
+    public static final String DEFAULT_OWNER_EMAIL = "test-owner-email@example.com";
 
     private int id = DEFAULT_ID;
     private String reportName = DEFAULT_REPORT_NAME;
+    private String excelReport = DEFAULT_EXCEL_REPORT ;
+    private String csvName = DEFAULT_CSV_NAME;
+    private int excelSheetNum = DEFAULT_EXCEL_SHEET_NUM;
 
-    private String sqlString = DEFAULT_SQL_STRING;
+    private String sqlQuery = DEFAULT_SQL_STRING;
     private String baseUrl = DEFAULT_BASE_URL;
 
-    private String reportPeriod = DEFAULT_REPORT_PERIOD;
     private String reportOwner = DEFAULT_REPORT_OWNER;
     private String reportCreator = DEFAULT_REPORT_CREATOR;
     private String description = DEFAULT_REPORT_DESCRIPTION;
+    private String ownerEmail = DEFAULT_OWNER_EMAIL;
 
-    private int excelSheetNum = DEFAULT_EXCEL_SHEET_NUM;
-    private String csvName = DEFAULT_CSV_NAME;
 
     public ReportListResponseTestBuilder withId(int id) {
         this.id = id;
+        return this;
+    }
+
+    public ReportListResponseTestBuilder withExcelReport(String excelReport) {
+        this.excelReport = excelReport;
         return this;
     }
 
@@ -40,8 +48,23 @@ public class ReportListResponseTestBuilder {
         return this;
     }
 
-    public ReportListResponseTestBuilder withReportPeriod(String reportPeriod) {
-        this.reportPeriod = reportPeriod;
+    public ReportListResponseTestBuilder withCsvName(String csvName) {
+        this.csvName = csvName;
+        return this;
+    }
+
+    public ReportListResponseTestBuilder withExcelSheetNumber(int excelSheetNum) {
+        this.excelSheetNum = excelSheetNum;
+        return this;
+    }
+
+    public ReportListResponseTestBuilder withSqlQuery(String sqlQuery) {
+        this.sqlQuery = sqlQuery;
+        return this;
+    }
+
+    public ReportListResponseTestBuilder withBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
         return this;
     }
 
@@ -55,17 +78,18 @@ public class ReportListResponseTestBuilder {
         return this;
     }
 
-    public ReportListResponseTestBuilder withDescription(String reportDescription) {
-        this.description = reportDescription;
+    public ReportListResponseTestBuilder withReportDescription(String description) {
+        this.description = description;
         return this;
     }
 
-    public ReportListResponseTestBuilder withBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
+    public ReportListResponseTestBuilder withOwnerEmail(String ownerEmail) {
+        this.ownerEmail = ownerEmail;
         return this;
     }
 
     public ReportListResponse createReportListResponse() {
-        return new ReportListResponse(id, reportName, sqlString, baseUrl, reportPeriod,  reportOwner, reportCreator, description, excelSheetNum, csvName);
+        return new ReportListResponse(id, reportName, excelReport, csvName, excelSheetNum, sqlQuery, baseUrl, reportOwner, reportCreator, description, ownerEmail);
     }
+
 }

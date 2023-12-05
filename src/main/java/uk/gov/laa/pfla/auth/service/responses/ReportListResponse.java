@@ -12,28 +12,30 @@ public class ReportListResponse {
 
     private int id;
     private String reportName;
-    private String sqlString;
+    private String excelReport;
+    private String csvName;
+    private int excelSheetNum;
+    private String sqlQuery;
     private String baseUrl;
-    private String reportPeriod;
     private String reportOwner;
     private String reportCreator;
     private String description;
-    private int excelSheetNum;
-    private String csvName;
+    private String ownerEmail;
 
-    public ReportListResponse(int id, String reportName, String sqlString, String baseUrl, String reportPeriod, String reportOwner, String reportCreator, String description, int excelSheetNum, String csvName) {
+
+    public ReportListResponse(int id, String reportName, String excelReport, String csvName, int excelSheetNum, String sqlQuery, String baseUrl, String reportOwner, String reportCreator, String description, String ownerEmail) {
         this.id = id;
         this.reportName = reportName;
-        this.sqlString = sqlString;
+        this.excelReport = excelReport;
+        this.csvName = csvName;
+        this.excelSheetNum = excelSheetNum;
+        this.sqlQuery = sqlQuery;
         this.baseUrl = baseUrl;
-        this.reportPeriod = reportPeriod;
         this.reportOwner = reportOwner;
         this.reportCreator = reportCreator;
         this.description = description;
-        this.excelSheetNum = excelSheetNum;
-        this.csvName = csvName;
+        this.ownerEmail = ownerEmail;
     }
-
 
     public ReportListResponse() {
 
