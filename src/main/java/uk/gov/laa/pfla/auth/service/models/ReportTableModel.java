@@ -30,6 +30,10 @@ public class ReportTableModel {
 
     }
 
+    public ReportTableModel() {
+        //no args constructor needed for ModelMapper
+    }
+
 
 
 

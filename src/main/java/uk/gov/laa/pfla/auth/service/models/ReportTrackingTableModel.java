@@ -31,4 +31,8 @@ public class ReportTrackingTableModel {
 
 
     }
+
+    public ReportTrackingTableModel() {
+        //no args constructor needed for ModelMapper
+    }
 }

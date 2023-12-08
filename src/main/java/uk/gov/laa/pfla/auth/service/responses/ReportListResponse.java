@@ -38,6 +38,6 @@ public class ReportListResponse {
     }
 
     public ReportListResponse() {
-
+        //no args constructor needed for ModelMapper
     }
 }
