@@ -1,5 +1,6 @@
 package uk.gov.laa.pfla.auth.service.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import uk.gov.laa.pfla.auth.service.dao.ReportTableDao;
@@ -12,6 +13,7 @@ import java.util.List;
 
 
 @Service
+@Slf4j
 public class ReportService {
 
     private ModelMapper mapper = new ModelMapper();
@@ -28,19 +30,23 @@ public class ReportService {
     public ReportResponse createReportResponse(int id) {
 
 
-
+        log.debug("Made it to  report service");
 
         //Fetching report items from database
         List<ReportTableModel> reportTableObjectList = reportTableDao.fetchReport(id);
 
+        log.debug("Object table list: " + reportTableObjectList.toString());
+
         reportTableObjectList.forEach(reportTableObject -> {
 
 
-            ReportResponse reportResponse = mapper.map(reportTableObject, ReportResponse.class);
+          ReportResponse reportResponse = mapper.map(reportTableObject, ReportResponse.class);
 
-            reportResponses.add(reportResponse);
+          reportResponses.add(reportResponse);
 
         });
+
+        log.debug("Report table list: " +  reportResponses.get(0));
 
         return reportResponses.get(0);
 

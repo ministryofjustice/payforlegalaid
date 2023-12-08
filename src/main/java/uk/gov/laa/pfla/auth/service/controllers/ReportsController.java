@@ -72,7 +72,7 @@ public class ReportsController {
 
         reportTrackingTableService.updateReportTracking(requestedId, LocalDateTime.now());
 
-        ReportResponse reportResponse =  reportService.createReportResponse(requestedId);
+        ReportResponse reportResponse = reportService.createReportResponse(requestedId);
 
         return new ResponseEntity<>(reportResponse, HttpStatus.OK);
 

@@ -29,11 +29,13 @@ public class ReportTableDao {
 
         List<Map<String, Object>> resultList;
 
+
         String query = "SELECT * FROM ANY_REPORT.V_BANK_MONTH";
 
+        log.debug("just before result list: ");
 
         resultList = jdbcTemplate.queryForList(query);
-        log.info("Result list, a list of objects each representing a row in the DB: " + resultList);
+        log.debug("Result list, a list of objects each representing a row in the DB: " + resultList);
 
         try {
             resultList.forEach(obj -> {
