@@ -2,6 +2,7 @@ package uk.gov.laa.pfla.auth.service.models;
 
 import lombok.Data;
 
+import java.sql.Date;
 import java.time.LocalDateTime;
 
 //TODO - This class will be a bean, dont forget to annotate it with  @org.springframework.beans.factory.annotation.Autowired to make sonarlint happy
@@ -18,6 +19,13 @@ public class ReportTableModel {
     private String reportName;
     private String reportUrl; // The sharepoint URL where the report is stored, after being created
     private LocalDateTime creationTime;
+
+
+    private Date dateAuthorisedCis;
+    private String theSystem;
+    private double cisValue;
+    private double ccmsValue;
+
 
 
 

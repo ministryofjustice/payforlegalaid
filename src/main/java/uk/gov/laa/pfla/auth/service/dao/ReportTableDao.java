@@ -30,7 +30,8 @@ public class ReportTableDao {
         List<Map<String, Object>> resultList;
 
 
-        String query = "SELECT * FROM ANY_REPORT.V_BANK_MONTH";
+//        String query = "SELECT * FROM ANY_REPORT.V_BANK_MONTH";
+        String query = "SELECT * FROM ANY_REPORT.V_CIS_TO_CCMS_INVOICE_SUMMARY";
 
         log.debug("just before result list: ");
 
@@ -42,6 +43,7 @@ public class ReportTableDao {
                 ReportTableModel reportTableObject = mapper.map(obj, ReportTableModel.class);
                 reportTableObjectList.add(reportTableObject);
             });
+            log.debug("reportTableObjectList: " + reportTableObjectList);
         } catch (MappingException e) {
             log.error("Exception with model map loop: " + e);
         }
