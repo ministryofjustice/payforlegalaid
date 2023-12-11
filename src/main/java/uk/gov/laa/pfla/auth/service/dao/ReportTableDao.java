@@ -33,13 +33,13 @@ public class ReportTableDao {
 
 
 //        String query = "SELECT * FROM ANY_REPORT.V_BANK_MONTH";
-        String query = "SELECT * FROM ANY_REPORT.?";
+        String query =  String.format("SELECT * FROM ANY_REPORT.%s", reportViewName);
 
         log.debug("just before result list: ");
 
 
 
-        resultList = jdbcTemplate.queryForList(query, new Object[]{reportViewName});
+        resultList = jdbcTemplate.queryForList(query);
         log.debug("Result list, a list of objects each representing a row in the Report Table: " + resultList);
 
         try {
