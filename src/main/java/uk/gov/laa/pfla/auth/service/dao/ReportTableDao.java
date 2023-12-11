@@ -24,7 +24,7 @@ public class ReportTableDao {
 
     private final ModelMapper mapper = new ModelMapper();
 
-    public List<ReportTableModel> fetchReport(int requestedId) {
+    public List<ReportTableModel> fetchReport(String reportViewName) {
 
         reportTableObjectList.clear(); // Prevent data accumulating after multiple requests
 
@@ -32,12 +32,12 @@ public class ReportTableDao {
 
 
 //        String query = "SELECT * FROM ANY_REPORT.V_BANK_MONTH";
-        String query = "SELECT * FROM ANY_REPORT.V_CIS_TO_CCMS_INVOICE_SUMMARY";
+        String query =  String.format("SELECT * FROM ANY_REPORT.%s", reportViewName);
 
         log.debug("just before result list: ");
 
         resultList = jdbcTemplate.queryForList(query);
-        log.debug("Result list, a list of objects each representing a row in the DB: " + resultList);
+        log.debug("Result list, a list of objects each representing a row in the Report Table: " + resultList);
 
         try {
             resultList.forEach(obj -> {
@@ -51,19 +51,6 @@ public class ReportTableDao {
 
 
         return reportTableObjectList;
-
-
-
-
-//        LocalDateTime placeHolderDateTime = LocalDateTime.now();
-//
-//
-//
-//        return new ReportTableModelBuilder()
-//                .withId(requestedId).withReportName("AP_and_AR_Combined-DEBT-AGING-SUMMARY-4")
-//                .withReportUrl("www.sharepoint.com/an-example-report.csv")
-//                .withCreationTime(placeHolderDateTime)
-//                .createReportModel();
 
     }
 
