@@ -1,20 +1,19 @@
 package uk.gov.laa.pfla.auth.service.services;
 
-import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import uk.gov.laa.pfla.auth.service.dao.ReportTableDao;
-import uk.gov.laa.pfla.auth.service.models.MappingTableModel;
 import uk.gov.laa.pfla.auth.service.models.ReportTableModel;
 import uk.gov.laa.pfla.auth.service.responses.ReportResponse;
-
 import java.util.ArrayList;
 import java.util.List;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
-@Slf4j
 public class ReportService {
+
+    public static final Logger log = LoggerFactory.getLogger(ReportService.class);
 
     private ModelMapper mapper = new ModelMapper();
 
