@@ -43,7 +43,7 @@ public class ReportService {
 
         // Create report response object
 //         ReportResponse reportResponse = mapper.map(reportTableObject, ReportResponse.class);
-        ReportResponse reportResponse = null;
+        ReportResponse reportResponse = new ReportResponse();
         reportResponse.setId(reportListResponse.getId());
         reportResponse.setReportName(reportListResponse.getReportName());
         reportResponse.setReportUrl(reportListResponse.getBaseUrl());

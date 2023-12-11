@@ -54,7 +54,10 @@ public class MappingTableService {
     public ReportListResponse getDetailsForSpecificReport(int id){
         createReportListResponseList();
 
+        int indexInt = id - 1;
+        log.debug("Index for selecting the right reportListResponse object: " + indexInt);
+
         // The-1 accounts for the fact that the array index starts at 0, whereas the database index/id starts at 1
-        return reportListResponses.get(id - 1);
+        return reportListResponses.get(indexInt);
     }
 }
