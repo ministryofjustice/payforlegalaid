@@ -48,7 +48,7 @@ public class ReportsController {
      * @return A POJO list, converted to json by spring -  A list of report names, id's and some information on each report, in the form of json objects
      */
     @RequestMapping(value ="/reports", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<List<ReportListResponse>>getReportList() throws Exception {
+    ResponseEntity<List<ReportListResponse>>getReportList() {
 
         reportListResponseArray.clear(); // Prevent response data accumulating after multiple requests
 
@@ -72,7 +72,17 @@ public class ReportsController {
 
         reportTrackingTableService.updateReportTracking(requestedId, LocalDateTime.now());
 
-        ReportResponse reportResponse = reportService.createReportResponse(requestedId);
+        ReportResponse reportResponse = new ReportResponse();
+        try {
+            reportResponse = reportService.createReportResponse(requestedId);
+        } catch (IndexOutOfBoundsException e) {
+            log.error("index out of bounds  Error: " + e);
+            reportResponse.setReportName("Invalid input");
+            return new ResponseEntity<>(reportResponse, HttpStatus.BAD_REQUEST);
+
+
+        }
+
 
         return new ResponseEntity<>(reportResponse, HttpStatus.OK);
 

@@ -1,6 +1,5 @@
 package uk.gov.laa.pfla.auth.service.services;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import uk.gov.laa.pfla.auth.service.dao.ReportTableDao;
 import uk.gov.laa.pfla.auth.service.models.ReportTableModel;
@@ -27,7 +26,7 @@ public class ReportService {
 
     }
 
-    public ReportResponse createReportResponse(int id) {
+    public ReportResponse createReportResponse(int id) throws IndexOutOfBoundsException {
         //Querying the mapping table, to obtain metadata about the report
         ReportListResponse reportListResponse = mappingTableService.getDetailsForSpecificReport(id);
 
