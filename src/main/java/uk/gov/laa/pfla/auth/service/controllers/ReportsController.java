@@ -80,12 +80,9 @@ public class ReportsController {
             reportResponse.setReportName("Invalid input");
             return new ResponseEntity<>(reportResponse, HttpStatus.BAD_REQUEST);
 
-
         }
 
-
         return new ResponseEntity<>(reportResponse, HttpStatus.OK);
-
 
     }
 
