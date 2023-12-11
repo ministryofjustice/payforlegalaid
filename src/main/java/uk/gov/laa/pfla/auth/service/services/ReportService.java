@@ -5,8 +5,10 @@ import org.springframework.stereotype.Service;
 import uk.gov.laa.pfla.auth.service.dao.ReportTableDao;
 import uk.gov.laa.pfla.auth.service.models.ReportTableModel;
 import uk.gov.laa.pfla.auth.service.responses.ReportResponse;
+import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,10 +22,15 @@ public class ReportService {
 
     private final ReportTableDao reportTableDao;
 
+    private final MappingTableService mappingTableService;
+
+
     private final List<ReportResponse> reportResponses = new ArrayList<>();
 
-    public ReportService(ReportTableDao reportTableDao) {
+    public ReportService(ReportTableDao reportTableDao, MappingTableService mappingTableService) {
         this.reportTableDao = reportTableDao;
+        this.mappingTableService = mappingTableService;
+
     }
 
     public ReportResponse createReportResponse(int id) {
@@ -39,9 +46,17 @@ public class ReportService {
         reportTableObjectList.forEach(reportTableObject -> {
 
 
-          ReportResponse reportResponse = mapper.map(reportTableObject, ReportResponse.class);
+            ReportResponse reportResponse = mapper.map(reportTableObject, ReportResponse.class);
+            ReportListResponse reportListResponse = mappingTableService.getDetailsForSpecificReport(id);
 
-          reportResponses.add(reportResponse);
+            reportResponse.setId(id);
+            reportResponse.setReportName(reportListResponse.getReportName());
+            reportResponse.setReportUrl(reportListResponse.getBaseUrl());
+            reportResponse.setCreationTime(LocalDateTime.now());
+
+
+
+            reportResponses.add(reportResponse);
 
         });
 

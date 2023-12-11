@@ -31,8 +31,7 @@ public class MappingTableService {
         this.mappingTableDao = mappingTableDao;
     }
 
-    public List<ReportListResponse> createReportListResponseList() throws Exception {
-//        mappingTableDao.setupDB();
+    public List<ReportListResponse> createReportListResponseList() {
         reportListResponses.clear(); // Prevent response data accumulating after multiple requests
 
         //Fetching reportList items from database
@@ -52,5 +51,10 @@ public class MappingTableService {
     }
 
 
+    public ReportListResponse getDetailsForSpecificReport(int id){
+        createReportListResponseList();
 
+        // The-1 accounts for the fact that the array index starts at 0, whereas the database index/id starts at 1
+        return reportListResponses.get(id - 1);
+    }
 }
