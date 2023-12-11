@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import uk.gov.laa.pfla.auth.service.models.ReportTableModel;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,11 +33,13 @@ public class ReportTableDao {
 
 
 //        String query = "SELECT * FROM ANY_REPORT.V_BANK_MONTH";
-        String query =  String.format("SELECT * FROM ANY_REPORT.%s", reportViewName);
+        String query = "SELECT * FROM ANY_REPORT.?";
 
         log.debug("just before result list: ");
 
-        resultList = jdbcTemplate.queryForList(query);
+
+
+        resultList = jdbcTemplate.queryForList(query,reportViewName);
         log.debug("Result list, a list of objects each representing a row in the Report Table: " + resultList);
 
         try {
