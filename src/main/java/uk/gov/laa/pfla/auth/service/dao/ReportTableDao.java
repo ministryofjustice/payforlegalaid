@@ -39,7 +39,7 @@ public class ReportTableDao {
 
 
 
-        resultList = jdbcTemplate.queryForList(query,reportViewName);
+        resultList = jdbcTemplate.queryForList(query, new Object[]{reportViewName});
         log.debug("Result list, a list of objects each representing a row in the Report Table: " + resultList);
 
         try {
