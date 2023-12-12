@@ -1,6 +1,5 @@
 package uk.gov.laa.pfla.auth.service.dao;
 
-import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.MappingException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,12 +9,16 @@ import uk.gov.laa.pfla.auth.service.models.MappingTableModel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Repository
-@Slf4j
 public class MappingTableDao {
 
     private final List<MappingTableModel> mappingTableObjectList = new ArrayList<>();
+
+    public static final Logger log = LoggerFactory.getLogger(MappingTableDao.class);
+
 
     @Autowired
     private JdbcTemplate jdbcTemplate;

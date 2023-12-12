@@ -2,6 +2,7 @@ package uk.gov.laa.pfla.auth.service.models;
 
 import lombok.Data;
 
+import java.sql.Date;
 import java.time.LocalDateTime;
 
 //TODO - This class will be a bean, dont forget to annotate it with  @org.springframework.beans.factory.annotation.Autowired to make sonarlint happy
@@ -20,6 +21,13 @@ public class ReportTableModel {
     private LocalDateTime creationTime;
 
 
+    private Date dateAuthorisedCis;
+    private String theSystem;
+    private double cisValue;
+    private double ccmsValue;
+
+
+
 
 
     public ReportTableModel(int id, String reportName, String reportUrl, LocalDateTime creationTime) {
@@ -28,6 +36,10 @@ public class ReportTableModel {
         this.reportUrl = reportUrl;
         this.creationTime = creationTime;
 
+    }
+
+    public ReportTableModel() {
+        //no args constructor needed for ModelMapper
     }
 
 

@@ -1,7 +1,10 @@
 #SSL configuration
 logging:
   level:
-    org.springframework.security: TRACE
+    root: TRACE
+#    org.springframework: INFO
+#    org.springframework.security: INFO #TRACE
+
 
 server:
   port: 8443

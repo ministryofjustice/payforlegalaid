@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import uk.gov.laa.pfla.auth.service.dao.MappingTableDao;
 import uk.gov.laa.pfla.auth.service.models.MappingTableModel;
 import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,8 +30,7 @@ public class MappingTableService {
         this.mappingTableDao = mappingTableDao;
     }
 
-    public List<ReportListResponse> createReportListResponseList() throws Exception {
-//        mappingTableDao.setupDB();
+    public List<ReportListResponse> createReportListResponseList() {
         reportListResponses.clear(); // Prevent response data accumulating after multiple requests
 
         //Fetching reportList items from database
@@ -52,5 +50,15 @@ public class MappingTableService {
     }
 
 
+    public ReportListResponse getDetailsForSpecificReport(int id) throws IndexOutOfBoundsException {
+        createReportListResponseList();
 
+        int indexInt = id - 1;
+        log.debug("Index for selecting the right reportListResponse object: " + indexInt);
+
+
+
+        // The-1 accounts for the fact that the array index starts at 0, whereas the database index/id starts at 1
+        return reportListResponses.get(indexInt);
+    }
 }
