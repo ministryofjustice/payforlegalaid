@@ -40,7 +40,7 @@ public class ReportTableDao {
 
 
         resultList = jdbcTemplate.queryForList(query);
-        log.debug("Result list, a list of objects each representing a row in the Report Table: {}", resultList);
+        log.debug("Result list, a list of objects each representing a row in the Report Table: {}", resultList); //Todo: remove this logging when going graduating from MVP to phase 2, when we incorporate reports with sensitive data
 
         try {
             resultList.forEach(obj -> {
