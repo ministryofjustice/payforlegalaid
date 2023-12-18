@@ -40,14 +40,14 @@ public class ReportTableDao {
 
 
         resultList = jdbcTemplate.queryForList(query);
-        log.debug("Result list, a list of objects each representing a row in the Report Table: " + resultList);
+        log.debug("Result list, a list of objects each representing a row in the Report Table: {}", resultList);
 
         try {
             resultList.forEach(obj -> {
                 ReportTableModel reportTableObject = mapper.map(obj, ReportTableModel.class);
                 reportTableObjectList.add(reportTableObject);
             });
-            log.debug("reportTableObjectList: " + reportTableObjectList);
+            log.debug("reportTableObjectList: {}", reportTableObjectList);
         } catch (MappingException e) {
             log.error("Exception with model map loop: " + e);
         }

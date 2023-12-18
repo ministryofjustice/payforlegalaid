@@ -9,11 +9,6 @@ import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
 import java.util.ArrayList;
 import java.util.List;
 
-//import org.springframework.jdbc.core.RowMapper;
-//import uk.gov.laa.pfla.auth.service.models.MappingTableModel;
-//
-//import java.sql.ResultSet;
-//import java.sql.SQLException;
 
 @Service
 @Slf4j
@@ -54,7 +49,7 @@ public class MappingTableService {
         createReportListResponseList();
 
         int indexInt = id - 1;
-        log.debug("Index for selecting the right reportListResponse object: " + indexInt);
+        log.debug("Index for selecting the right reportListResponse object: {}", indexInt);
 
 
 

@@ -33,16 +33,8 @@ public class ReportService {
         //Fetching report items from database
         List<ReportTableModel> reportTableObjectList = reportTableDao.fetchReport("V_CIS_TO_CCMS_INVOICE_SUMMARY");
 
-        if (log.isDebugEnabled()) { //checking debug is enabled so that method calls aren't performed unnecessarily - which affects performance
-            log.debug("Object table list size: " + reportTableObjectList.size()
-                    + " Object table report name: " + reportTableObjectList.get(0).getReportName());
+        log.debug("Object table list size: {}", reportTableObjectList.size()); // Checking if the list is unexpectedly empty
 
-            log.debug("Whole Object table list : " + reportTableObjectList);
-            log.debug("Object table list, index 0,  whole object : " + reportTableObjectList.get(0));
-
-
-
-        }
 
 
         // Create csv here

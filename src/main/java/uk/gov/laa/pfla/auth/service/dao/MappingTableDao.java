@@ -38,7 +38,7 @@ public class MappingTableDao {
 
 
             resultList = jdbcTemplate.queryForList(query);
-            log.debug("Result list, a list of objects each representing a row in the DB: " + resultList);
+            log.debug("Result list, a list of objects each representing a row in the DB: {}", resultList);
 
                 try {
                     resultList.forEach(obj -> {
