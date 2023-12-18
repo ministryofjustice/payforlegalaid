@@ -17,7 +17,7 @@ server:
     key-store: classpath:gpfd-ssl-keystore.p12
     key-store-password: ${SSL-DEV-KEY-STORE-PASSWORD}
     key-store-type: PKCS12
-    key-alias: testCert
+    key-alias: gpfd-dev-ssl-key
     key-password: ${SSL-DEV-KEY-STORE-PASSWORD}
 
 
