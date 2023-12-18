@@ -36,6 +36,11 @@ public class ReportService {
         if (log.isDebugEnabled()) { //checking debug is enabled so that method calls aren't performed unnecessarily - which affects performance
             log.debug("Object table list size: " + reportTableObjectList.size()
                     + " Object table report name: " + reportTableObjectList.get(0).getReportName());
+
+            log.debug("Whole Object table list : " + reportTableObjectList);
+            log.debug("Object table list, index 0,  whole object : " + reportTableObjectList.get(0));
+
+
         }
 
 
