@@ -14,7 +14,7 @@ server:
       cookie:
         secure: true
   ssl:
-    key-store: classpath:keystore.p12
+    key-store: classpath:gpfd-ssl-keystore.p12
     key-store-password: ${SSL-DEV-KEY-STORE-PASSWORD}
     key-store-type: PKCS12
     key-alias: testCert
