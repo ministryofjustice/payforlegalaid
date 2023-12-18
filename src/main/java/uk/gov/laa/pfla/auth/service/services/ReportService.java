@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 @Service
 public class ReportService {
 
-//    public static final Logger log = LoggerFactory.getLogger(ReportService.class);
+    public static final Logger log = LoggerFactory.getLogger(ReportService.class);
 
     private final ReportTableDao reportTableDao;
 
@@ -33,9 +33,9 @@ public class ReportService {
         //Fetching report items from database
         List<ReportTableModel> reportTableObjectList = reportTableDao.fetchReport("V_CIS_TO_CCMS_INVOICE_SUMMARY");
 
-//        if (log.isDebugEnabled()) { //checking debug is enabled so that method calls aren't performed unnecessarily - which affects performance
-//            log.debug("Object table list size: %s Object table report name: %s", reportTableObjectList.size(), reportTableObjectList.get(0).getReportName());
-//        }
+        if (log.isDebugEnabled()) { //checking debug is enabled so that method calls aren't performed unnecessarily - which affects performance
+            log.debug("Object table list size: %s Object table report name: %s", reportTableObjectList.size(), reportTableObjectList.get(0).getReportName());
+        }
 
 
         // Create csv here
@@ -48,7 +48,7 @@ public class ReportService {
         reportResponse.setCreationTime(LocalDateTime.now());
 
 
-//        log.debug("Report response object: %s", reportResponse);
+        log.debug("Report response object: %s", reportResponse);
 
         return reportResponse;
 
