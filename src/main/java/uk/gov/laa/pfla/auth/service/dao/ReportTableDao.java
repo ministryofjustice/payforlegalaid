@@ -25,24 +25,20 @@ public class ReportTableDao {
 
     private final ModelMapper mapper = new ModelMapper();
 
-    public List<ReportTableModel> fetchReport(String reportViewName) {
+    public List<ReportTableModel> fetchReport(String sqlQuery) {
 
         reportTableObjectList.clear(); // Prevent data accumulating after multiple requests
 
         List<Map<String, Object>> resultList;
 
 
-//        String query = "SELECT * FROM ANY_REPORT.V_BANK_MONTH";
-        String query =  String.format("SELECT * FROM ANY_REPORT.%s", reportViewName);
+//        String query =  String.format("SELECT * FROM ANY_REPORT.%s", sqlQuery);
 
-        log.debug("just before result list: ");
+        log.debug("Calling result list, with sqlQuery: {} ", sqlQuery);
+        resultList = jdbcTemplate.queryForList(sqlQuery);
+        log.debug("Result list, a list of objects each representing a row in the Report Table: {}", resultList); //Todo: remove some of this logging when going graduating from MVP to phase 2, when we incorporate reports with sensitive data
 
-
-
-        resultList = jdbcTemplate.queryForList(query);
-        log.debug("Result list, a list of objects each representing a row in the Report Table: {}", resultList); //Todo: remove this logging when going graduating from MVP to phase 2, when we incorporate reports with sensitive data
-
-        try {
+        try {  // Mapping the results of the database query to a list of reportTableModel objects
             resultList.forEach(obj -> {
                 ReportTableModel reportTableObject = mapper.map(obj, ReportTableModel.class);
                 reportTableObjectList.add(reportTableObject);
@@ -51,7 +47,6 @@ public class ReportTableDao {
         } catch (MappingException e) {
             log.error("Exception with model map loop: " + e);
         }
-
 
         return reportTableObjectList;
 

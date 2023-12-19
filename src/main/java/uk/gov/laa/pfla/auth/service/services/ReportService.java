@@ -30,8 +30,8 @@ public class ReportService {
         //Querying the mapping table, to obtain metadata about the report
         ReportListResponse reportListResponse = mappingTableService.getDetailsForSpecificReport(id);
 
-        //Fetching report items from database
-        List<ReportTableModel> reportTableObjectList = reportTableDao.fetchReport("V_CIS_TO_CCMS_INVOICE_SUMMARY");
+        //Fetching report items from database report views (using the SQL query string from the mapping table)
+        List<ReportTableModel> reportTableObjectList = reportTableDao.fetchReport(reportListResponse.getSqlQuery());
 
         log.debug("Object table list size: {}", reportTableObjectList.size()); // Checking if the list is unexpectedly empty
 
