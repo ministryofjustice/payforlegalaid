@@ -27,8 +27,14 @@ public class ReportService {
     }
 
     public ReportResponse createReportResponse(int id) throws IndexOutOfBoundsException {
-        //Querying the mapping table, to obtain metadata about the report
-        ReportListResponse reportListResponse = mappingTableService.getDetailsForSpecificReport(id);
+
+        ReportListResponse reportListResponse;
+
+        if(id < 1000 && id > 0){
+            //Querying the mapping table, to obtain metadata about the report
+             reportListResponse = mappingTableService.getDetailsForSpecificReport(id);
+        }else{ throw new IndexOutOfBoundsException("Report ID needs to be a number between 0 and 1000");}
+
 
         //Fetching report items from database report views (using the SQL query string from the mapping table)
         List<ReportTableModel> reportTableObjectList = reportTableDao.fetchReport(reportListResponse.getSqlQuery());

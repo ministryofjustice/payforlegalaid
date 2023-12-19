@@ -4,9 +4,11 @@ import org.modelmapper.MappingException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
 import uk.gov.laa.pfla.auth.service.models.ReportTableModel;
 
+import java.sql.CallableStatement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +33,9 @@ public class ReportTableDao {
 
         List<Map<String, Object>> resultList;
 
+
+//        SimpleJdbcCall simpleJdbcCall = new SimpleJdbcCall(jdbcTemplate)
+//                .withProcedureName()
 
 //        String query =  String.format("SELECT * FROM ANY_REPORT.%s", sqlQuery);
 
