@@ -32,16 +32,14 @@ public class ReportService {
 
         //Fetching report items from database
         List<ReportTableModel> reportTableObjectList = reportTableDao.fetchReport("V_CIS_TO_CCMS_INVOICE_SUMMARY");
-        log.debug("Object table list: " + reportTableObjectList.toString());
+
+        log.debug("Object table list size: {}", reportTableObjectList.size()); // Checking if the list is unexpectedly empty
 
 
 
         // Create csv here
 
 
-
-        // Create report response object
-//         ReportResponse reportResponse = mapper.map(reportTableObject, ReportResponse.class);
         ReportResponse reportResponse = new ReportResponse();
         reportResponse.setId(reportListResponse.getId());
         reportResponse.setReportName(reportListResponse.getReportName());
@@ -49,7 +47,7 @@ public class ReportService {
         reportResponse.setCreationTime(LocalDateTime.now());
 
 
-        log.debug("Report response object: " + reportResponse);
+        log.debug("Report response object: {}", reportResponse);
 
         return reportResponse;
 
