@@ -79,13 +79,13 @@ public class ReportsController {
             log.error("index out of bounds  Error: " + e);
 //            reportResponse.setReportName("Invalid input");
 //            return new ResponseEntity<>(reportResponse, HttpStatus.BAD_REQUEST);
-            return ResponseEntity.badRequest().body("Report ID not found");
+            return ResponseEntity.badRequest().body((Object)"Report ID not found");
         } catch ( NumberFormatException e) {
             log.error("Number format exception: " + e);
-            return ResponseEntity.badRequest().body("Report ID must be a number with no decimal points");
+            return ResponseEntity.badRequest().body((Object)"Report ID must be a number with no decimal points");
         }
 
-        return ResponseEntity.ok(reportResponse);
+        return ResponseEntity.ok((Object) reportResponse);
 
     }
 
