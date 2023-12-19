@@ -67,25 +67,25 @@ public class ReportsController {
      * It is a single JSON object which contains the name, id and url of a report
      */
     @RequestMapping(value ="/report/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<Object> getReport(@PathVariable(value="id") int requestedId) {
+    ResponseEntity<ReportResponse> getReport(@PathVariable(value="id") int requestedId) {
 
 
         reportTrackingTableService.updateReportTracking(requestedId, LocalDateTime.now());
 
-        ReportResponse reportResponse;
+        ReportResponse reportResponse = new ReportResponse();
         try {
             reportResponse = reportService.createReportResponse(requestedId);
         } catch (IndexOutOfBoundsException e) {
             log.error("index out of bounds  Error: " + e);
-//            reportResponse.setReportName("Invalid input");
-//            return new ResponseEntity<>(reportResponse, HttpStatus.BAD_REQUEST);
-            return ResponseEntity.badRequest().body((Object)"Report ID not found");
+            reportResponse.setReportName("Report ID not found");
+            return new ResponseEntity<>(reportResponse, HttpStatus.BAD_REQUEST);
         } catch ( NumberFormatException e) {
             log.error("Number format exception: " + e);
-            return ResponseEntity.badRequest().body((Object)"Report ID must be a number with no decimal points");
+            reportResponse.setReportName("Invalid input, report id must be a number with no decimal places");
+            return new ResponseEntity<>(reportResponse, HttpStatus.BAD_REQUEST);
         }
 
-        return ResponseEntity.ok((Object) reportResponse);
+        return new ResponseEntity<>(reportResponse, HttpStatus.OK);
 
     }
 
