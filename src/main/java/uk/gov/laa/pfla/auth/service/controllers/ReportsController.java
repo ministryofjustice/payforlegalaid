@@ -85,7 +85,7 @@ public class ReportsController {
             return ResponseEntity.badRequest().body("Report ID must be a number with no decimal points");
         }
 
-        return new ResponseEntity<>(reportResponse, HttpStatus.OK);
+        return ResponseEntity.ok(reportResponse);
 
     }
 
