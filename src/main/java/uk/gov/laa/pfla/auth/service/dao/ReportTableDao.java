@@ -2,13 +2,13 @@ package uk.gov.laa.pfla.auth.service.dao;
 
 import org.modelmapper.MappingException;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
-import uk.gov.laa.pfla.auth.service.models.ReportTableModel;
+import uk.gov.laa.pfla.auth.service.models.report_view_models.ReportModel;
+import uk.gov.laa.pfla.auth.service.models.report_view_models.VCisToCcmsInvoiceSummaryModel;
 
-import java.sql.CallableStatement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,24 +20,19 @@ public class ReportTableDao {
 
     public static final Logger log = LoggerFactory.getLogger(ReportTableDao.class);
 
-    private final List<ReportTableModel> reportTableObjectList = new ArrayList<>();
-
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     private final ModelMapper mapper = new ModelMapper();
 
-    public List<ReportTableModel> fetchReport(String sqlQuery) {
+    public <T> List<T> fetchReport(String sqlQuery, Class<T> requestedModelClass) {
 
-        reportTableObjectList.clear(); // Prevent data accumulating after multiple requests
+        final List<T> reportTableObjectList = new ArrayList<>();
+
+//        reportTableObjectList.clear(); // Prevent data accumulating after multiple requests
 
         List<Map<String, Object>> resultList;
 
-
-//        SimpleJdbcCall simpleJdbcCall = new SimpleJdbcCall(jdbcTemplate)
-//                .withProcedureName()
-
-//        String query =  String.format("SELECT * FROM ANY_REPORT.%s", sqlQuery);
 
         log.debug("Calling result list, with sqlQuery: {} ", sqlQuery);
         resultList = jdbcTemplate.queryForList(sqlQuery);
@@ -45,8 +40,9 @@ public class ReportTableDao {
 
         try {  // Mapping the results of the database query to a list of reportTableModel objects
             resultList.forEach(obj -> {
-                ReportTableModel reportTableObject = mapper.map(obj, ReportTableModel.class);
+                T reportTableObject = mapper.map(obj,  requestedModelClass);
                 reportTableObjectList.add(reportTableObject);
+//                convertSourceObjToModel(obj,)
             });
             log.debug("reportTableObjectList: {}", reportTableObjectList);
         } catch (MappingException e) {
@@ -56,6 +52,10 @@ public class ReportTableDao {
         return reportTableObjectList;
 
     }
+
+//    public <T> T convertSourceObjToModel(Object sourceObject, Class<T> modelClass) {
+//        return mapper.map(sourceObject, modelClass);
+//    }
 
 
 
