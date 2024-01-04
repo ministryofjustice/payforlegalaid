@@ -1,7 +1,7 @@
 #SSL configuration
 logging:
   level:
-    root: TRACE
+    root: ERROR
 #    org.springframework: INFO
 #    org.springframework.security: INFO #TRACE
 
