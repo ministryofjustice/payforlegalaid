@@ -14,22 +14,33 @@ import java.sql.Date;
 @Data
 public class VBankMonth implements ReportModel{
 
-//todo - change these fields to match actual database view
-    private Date dateAuthorisedCis;
-    private String theSystem;
-    private double cisValue;
-    private double ccmsValue;
+    private String source;
+    private String invSource;
+    private String subSource;
+    private Date paymentDate;
+    private Date paymentMonth;
+    private String settlementType;
+    private String scheme;
+    private String subScheme;
+    private String detailDesc;
+    private String catCode;
+    private String apArMovement;
+    private double total;
 
 
-
-
-
-    public VBankMonth(Date dateAuthorisedCis, String theSystem, double cisValue, double ccmsValue) {
-        this.dateAuthorisedCis = dateAuthorisedCis;
-        this.theSystem = theSystem;
-        this.cisValue = cisValue;
-        this.ccmsValue = ccmsValue;
-
+    public VBankMonth(String source, String invSource, String subSource, Date paymentDate, Date paymentMonth, String settlementType, String scheme, String subScheme, String detailDesc, String catCode, String apArMovement, double total) {
+        this.source = source;
+        this.invSource = invSource;
+        this.subSource = subSource;
+        this.paymentDate = paymentDate;
+        this.paymentMonth = paymentMonth;
+        this.settlementType = settlementType;
+        this.scheme = scheme;
+        this.subScheme = subScheme;
+        this.detailDesc = detailDesc;
+        this.catCode = catCode;
+        this.apArMovement = apArMovement;
+        this.total = total;
     }
 
     public VBankMonth() {

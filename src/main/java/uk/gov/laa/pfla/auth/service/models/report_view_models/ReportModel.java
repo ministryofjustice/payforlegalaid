@@ -4,5 +4,5 @@ public interface ReportModel {
 
     //this interface is purely used to group the report view model classes together, so we can process them interchangeably, in methods using generics
 
-    //These
+    //Each class in report_view_models should correspond to a database view in the MOJFIN DB
 }

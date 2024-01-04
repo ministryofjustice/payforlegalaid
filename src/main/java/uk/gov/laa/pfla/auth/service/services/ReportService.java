@@ -1,14 +1,12 @@
 package uk.gov.laa.pfla.auth.service.services;
 
 import org.springframework.stereotype.Service;
-import uk.gov.laa.pfla.auth.service.dao.ReportTableDao;
-import uk.gov.laa.pfla.auth.service.models.report_view_models.ReportModel;
+import uk.gov.laa.pfla.auth.service.dao.ReportViewsDao;
 import uk.gov.laa.pfla.auth.service.models.report_view_models.VBankMonth;
 import uk.gov.laa.pfla.auth.service.models.report_view_models.VCisToCcmsInvoiceSummaryModel;
 import uk.gov.laa.pfla.auth.service.responses.ReportResponse;
 import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.time.LocalDateTime;
@@ -22,14 +20,14 @@ public class ReportService {
 
     public static final Logger log = LoggerFactory.getLogger(ReportService.class);
 
-    private final ReportTableDao reportTableDao;
+    private final ReportViewsDao reportTableDao;
 
     private final MappingTableService mappingTableService;
 
     private final Map<Integer, Class<?>> reportModelMapping;
 
 
-    public ReportService(ReportTableDao reportTableDao, MappingTableService mappingTableService) {
+    public ReportService(ReportViewsDao reportTableDao, MappingTableService mappingTableService) {
         this.reportTableDao = reportTableDao;
         this.mappingTableService = mappingTableService;
 

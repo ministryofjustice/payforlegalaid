@@ -2,12 +2,10 @@ package uk.gov.laa.pfla.auth.service.dao;
 
 import org.modelmapper.MappingException;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import uk.gov.laa.pfla.auth.service.models.report_view_models.ReportModel;
-import uk.gov.laa.pfla.auth.service.models.report_view_models.VCisToCcmsInvoiceSummaryModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 @Repository
 //@Slf4j
-public class ReportTableDao {
+public class ReportViewsDao {
 
-    public static final Logger log = LoggerFactory.getLogger(ReportTableDao.class);
+    public static final Logger log = LoggerFactory.getLogger(ReportViewsDao.class);
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
