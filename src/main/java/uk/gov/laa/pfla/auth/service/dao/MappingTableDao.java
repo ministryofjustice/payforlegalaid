@@ -20,10 +20,14 @@ public class MappingTableDao {
     public static final Logger log = LoggerFactory.getLogger(MappingTableDao.class);
 
 
-    @Autowired
     private JdbcTemplate jdbcTemplate;
 
     private final ModelMapper mapper = new ModelMapper();
+
+    @Autowired
+    public MappingTableDao(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     public MappingTableDao() {
         //empty contructor to allow builder to do its work

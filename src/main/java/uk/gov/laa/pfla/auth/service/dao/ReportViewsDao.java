@@ -18,16 +18,18 @@ public class ReportViewsDao {
 
     public static final Logger log = LoggerFactory.getLogger(ReportViewsDao.class);
 
-    @Autowired
     private JdbcTemplate jdbcTemplate;
 
     private final ModelMapper mapper = new ModelMapper();
 
+    @Autowired
+    public ReportViewsDao(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
     public <T> List<T> fetchReport(String sqlQuery, Class<T> requestedModelClass) {
 
         final List<T> reportTableObjectList = new ArrayList<>();
-
-//        reportTableObjectList.clear(); // Prevent data accumulating after multiple requests
 
         List<Map<String, Object>> resultList;
 

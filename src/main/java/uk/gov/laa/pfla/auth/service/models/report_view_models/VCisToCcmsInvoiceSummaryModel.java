@@ -19,7 +19,7 @@ public class VCisToCcmsInvoiceSummaryModel implements ReportModel{
     private String theSystem;
     private double cisValue;
     private double ccmsValue;
-
+    String sql = "SELECT ";
 
 
 

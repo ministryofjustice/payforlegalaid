@@ -37,23 +37,17 @@ public class ReportService {
 
     }
 
-    public <T> ReportResponse createReportResponse(int id) throws IndexOutOfBoundsException {
+    public ReportResponse createReportResponse(int id) throws IndexOutOfBoundsException {
 
+        //Querying the mapping table, to obtain metadata about the report
         ReportListResponse reportListResponse;
 
         if(id < 1000 && id > 0){
-            //Querying the mapping table, to obtain metadata about the report
-             reportListResponse = mappingTableService.getDetailsForSpecificReport(id);
+            reportListResponse = mappingTableService.getDetailsForSpecificReport(id);
         }else{ throw new IndexOutOfBoundsException("Report ID needs to be a number between 0 and 1000");}
 
-        //Use the id from the customer's request to define the report model we need to use (when we later query the database)
-        Class<?> requestedModelClass = reportModelMapping.get(id);
-
-        //Fetching report items from database report views (using the SQL query string from the mapping table)
-        List<T> reportTableObjectList = (List<T>) reportTableDao.fetchReport(reportListResponse.getSqlQuery(), requestedModelClass);
-
-        log.debug("Object table list size: {}", reportTableObjectList.size()); // Checking if the list is unexpectedly empty
-
+        //Fetch report data from MOJFIN database
+        List<T> reportViewObjectList = fetchReportViewObjectList(id, reportListResponse.getSqlQuery());
 
 
         // Create csv here
@@ -72,6 +66,17 @@ public class ReportService {
 
     }
 
+    public <T> List<T>  fetchReportViewObjectList(int id, String sqlQuery) {
+        //Use the id from the customer's request to define the report model we need to use (when we later query the database)
+        Class<?> requestedModelClass = reportModelMapping.get(id);
+
+        //Fetching report items from database report views (using the SQL query string from the mapping table)
+        List<T> reportViewObjectList = (List<T>) reportTableDao.fetchReport(sqlQuery, requestedModelClass);
+
+        log.debug("Object table list size: {}", reportViewObjectList.size()); // Checking if the list is unexpectedly empty
+
+        return reportViewObjectList;
+    }
 
 
 }
