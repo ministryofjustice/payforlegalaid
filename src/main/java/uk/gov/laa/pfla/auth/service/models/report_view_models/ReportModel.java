@@ -6,7 +6,8 @@ public interface ReportModel {
 
     //Each class in report_view_models should correspond to a database view in the MOJFIN DB
 
-    getGenerativeSql()
 
-    getReportId()
+    //Implement this method with logic to convert a stream of DB data to CSV file format
+//    String asCSV();
+
 }

@@ -29,8 +29,6 @@ public class ReportsController {
 
     private final ReportTrackingTableService reportTrackingTableService;
 
-    List<ReportListResponse> reportListResponseArray = new ArrayList<>();
-
     private final UserService userService;
 
 
@@ -50,10 +48,8 @@ public class ReportsController {
     @RequestMapping(value ="/reports", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<List<ReportListResponse>>getReportList() {
 
-        reportListResponseArray.clear(); // Prevent response data accumulating after multiple requests
-
         //Converting the model object arraylist to a response object arraylist
-        reportListResponseArray = mappingTableService
+        List<ReportListResponse> reportListResponseArray = mappingTableService
                 .createReportListResponseList();
 
 
