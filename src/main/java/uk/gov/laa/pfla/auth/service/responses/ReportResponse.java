@@ -1,5 +1,6 @@
 package uk.gov.laa.pfla.auth.service.responses;
 
+import lombok.Builder;
 import lombok.Data;
 import java.time.LocalDateTime;
 
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
  * of the report.
  */
 @Data
+@Builder
 public class ReportResponse {
 
     private int id;

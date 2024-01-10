@@ -1,6 +1,9 @@
 package uk.gov.laa.pfla.auth.service.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 //TODO - This class will be a bean, dont forget to annotate it with  @org.springframework.beans.factory.annotation.Autowired to make sonarlint happy
@@ -10,6 +13,9 @@ import java.time.LocalDateTime;
  * A class representing the data in the MOJFIN 'Report Tracking' Table.
  */
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor //Needed by the modelmapper library
 public class ReportTrackingTableModel {
 
     private int id;
@@ -21,18 +27,4 @@ public class ReportTrackingTableModel {
 
 
 
-    public ReportTrackingTableModel(int id, String reportName, String reportUrl, LocalDateTime creationTime, int mappingId, String reportGeneratedBy ) {
-        this.id = id;
-        this.reportName = reportName;
-        this.reportUrl = reportUrl;
-        this.creationTime = creationTime;
-        this.mappingId = mappingId;
-        this.reportGeneratedBy = reportGeneratedBy;
-
-
-    }
-
-    public ReportTrackingTableModel() {
-        //no args constructor needed for ModelMapper
-    }
 }

@@ -1,7 +1,6 @@
 package uk.gov.laa.pfla.auth.service.services;
 
 import org.springframework.stereotype.Service;
-import uk.gov.laa.pfla.auth.service.builders.ReportTrackingTableModelBuilder;
 import uk.gov.laa.pfla.auth.service.dao.ReportTrackingTableDao;
 import uk.gov.laa.pfla.auth.service.models.ReportTrackingTableModel;
 
@@ -10,7 +9,7 @@ import java.time.LocalDateTime;
 @Service
 public class ReportTrackingTableService {
 
-    private ReportTrackingTableDao reportTrackingTableDao;
+    private final ReportTrackingTableDao reportTrackingTableDao;
 
     public ReportTrackingTableService(ReportTrackingTableDao reportTrackingTableDao) {
         this.reportTrackingTableDao = reportTrackingTableDao;
@@ -18,14 +17,14 @@ public class ReportTrackingTableService {
 
     public void updateReportTracking(int requestedId, LocalDateTime creationTime) {
 
-        ReportTrackingTableModel reportTrackingTableModel = new ReportTrackingTableModelBuilder()
-                .withId(requestedId)
-                .withReportName("Report1")
-                .withReportUrl("www.sharepoint.com/place-where-we-will-create-report")
-                .withCreationTime(creationTime)
-                .withMappingId(1)
-                .withReportGeneratedBy("Barry White")
-                .createReportTrackingTableModel();
+        ReportTrackingTableModel reportTrackingTableModel = ReportTrackingTableModel.builder()
+                .id(requestedId)
+                .reportName("Report1")
+                .reportUrl("www.sharepoint.com/place-where-we-will-create-report")
+                .creationTime(creationTime)
+                .mappingId(1)
+                .reportGeneratedBy("Barry White")
+                .build();
 
 
 
