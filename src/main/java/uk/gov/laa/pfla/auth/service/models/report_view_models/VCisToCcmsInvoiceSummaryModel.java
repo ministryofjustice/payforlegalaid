@@ -14,7 +14,7 @@ import java.text.SimpleDateFormat;
  * added to a newly generated .csv file when a new report is requested
  */
 @Builder
-@Getter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class VCisToCcmsInvoiceSummaryModel implements ReportModel{

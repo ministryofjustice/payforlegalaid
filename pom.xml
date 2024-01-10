@@ -137,10 +137,5 @@
             <artifactId>logback-classic</artifactId>
             <version>1.4.14</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 </project>
