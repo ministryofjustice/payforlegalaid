@@ -1,6 +1,10 @@
 package uk.gov.laa.pfla.auth.service.responses;
 
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 /**
@@ -8,8 +12,12 @@ import lombok.Data;
  * Multiple response objects are sent to the user, forming a list of reports in JSON format
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ReportListResponse {
 
+    @NotBlank(message = "Report id  cannot be blank")
     private int id;
     private String reportName;
     private String excelReport;
@@ -23,21 +31,4 @@ public class ReportListResponse {
     private String ownerEmail;
 
 
-    public ReportListResponse(int id, String reportName, String excelReport, String csvName, int excelSheetNum, String sqlQuery, String baseUrl, String reportOwner, String reportCreator, String description, String ownerEmail) {
-        this.id = id;
-        this.reportName = reportName;
-        this.excelReport = excelReport;
-        this.csvName = csvName;
-        this.excelSheetNum = excelSheetNum;
-        this.sqlQuery = sqlQuery;
-        this.baseUrl = baseUrl;
-        this.reportOwner = reportOwner;
-        this.reportCreator = reportCreator;
-        this.description = description;
-        this.ownerEmail = ownerEmail;
-    }
-
-    public ReportListResponse() {
-        //no args constructor needed for ModelMapper
-    }
 }

@@ -1,5 +1,6 @@
 package uk.gov.laa.pfla.auth.service.models;
 
+import lombok.Builder;
 import lombok.Data;
 
 //TODO - This class will be a bean, dont forget to annotate it with  @org.springframework.beans.factory.annotation.Autowired to make sonarlint happy
@@ -10,6 +11,7 @@ import lombok.Data;
  * returned to the user via the /reports endpoint, in the form of a ReportListResponse
  */
 @Data
+@Builder
 public class MappingTableModel {
     public MappingTableModel() {
         //no args constructor needed for ModelMapper

@@ -29,8 +29,6 @@ public class ReportsController {
 
     private final ReportTrackingTableService reportTrackingTableService;
 
-    List<ReportListResponse> reportListResponseArray = new ArrayList<>();
-
     private final UserService userService;
 
 
@@ -50,10 +48,8 @@ public class ReportsController {
     @RequestMapping(value ="/reports", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<List<ReportListResponse>>getReportList() {
 
-        reportListResponseArray.clear(); // Prevent response data accumulating after multiple requests
-
         //Converting the model object arraylist to a response object arraylist
-        reportListResponseArray = mappingTableService
+        List<ReportListResponse> reportListResponseArray = mappingTableService
                 .createReportListResponseList();
 
 
@@ -77,9 +73,12 @@ public class ReportsController {
             reportResponse = reportService.createReportResponse(requestedId);
         } catch (IndexOutOfBoundsException e) {
             log.error("index out of bounds  Error: " + e);
-            reportResponse.setReportName("Invalid input");
+            reportResponse.setReportName("Report ID not found");
             return new ResponseEntity<>(reportResponse, HttpStatus.BAD_REQUEST);
-
+        } catch ( NumberFormatException e) { //todo - catch a different type of exception
+            log.error("Number format exception: " + e);
+            reportResponse.setReportName("Invalid input, report id must be a number with no decimal places");
+            return new ResponseEntity<>(reportResponse, HttpStatus.BAD_REQUEST);
         }
 
         return new ResponseEntity<>(reportResponse, HttpStatus.OK);
