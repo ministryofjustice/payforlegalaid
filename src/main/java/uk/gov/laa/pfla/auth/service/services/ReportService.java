@@ -106,7 +106,7 @@ public class ReportService {
         try {
 //            final CSVPrinter printer = CSVFormat.ORACLE.withHeader(resultList).print(out);
             final CSVPrinter printer = new CSVPrinter(out, csvFormat);
-
+            printer.print(resultList);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
