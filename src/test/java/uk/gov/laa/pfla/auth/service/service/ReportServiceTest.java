@@ -44,7 +44,7 @@ public class ReportServiceTest {
 //        LOG.info("startup");
         try {
 
-            json1 = new JSONObject("{\"name\":\"John\", \"age\":30, \"car\":null}");
+            json1 = new JSONObject("{\"name\":\"CCMS Report\", \"balance\":12300, \"system\":ccms}");
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -53,8 +53,8 @@ public class ReportServiceTest {
 
 
             {
-                put("Dan Simmons", json1);
-                put("Douglas Adams", json1);
+                put("CCMS Report", json1);
+                put("Finance Report", json1);
             }
         });
 
@@ -115,8 +115,7 @@ public class ReportServiceTest {
 
     @Test
     void givenAuthorBookMap_whenWrittenToStream_thenOutputStreamAsExpected() throws IOException {
-        StringWriter sw = new StringWriter();
-        FileWriter out = new FileWriter("book_new.csv");
+//        StringWriter sw = new StringWriter();
 
 
         CSVFormat csvFormat = CSVFormat.ORACLE.builder()

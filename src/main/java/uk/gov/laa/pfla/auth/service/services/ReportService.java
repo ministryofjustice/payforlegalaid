@@ -89,11 +89,11 @@ public class ReportService {
 
     public void convertToCSV(List<Map<String, Object>> resultList) {
 
-
 //        StringWriter sw = new StringWriter();
-        FileWriter out = null;
+
+        FileWriter out;
         try {
-            out = new FileWriter("book_new.csv");
+            out = new FileWriter("new_report.csv");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -110,12 +110,6 @@ public class ReportService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-
-//        CSVFormat csvFormat = CSVFormat.ORACLE.builder()
-//                .setHeader(HEADERS)
-//                .build();
-
 
 
 
