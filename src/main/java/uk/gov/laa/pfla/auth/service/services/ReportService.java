@@ -1,5 +1,6 @@
 package uk.gov.laa.pfla.auth.service.services;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.springframework.stereotype.Service;
@@ -10,16 +11,11 @@ import uk.gov.laa.pfla.auth.service.models.report_view_models.VCisToCcmsInvoiceS
 import uk.gov.laa.pfla.auth.service.responses.ReportResponse;
 import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +41,7 @@ public class ReportService {
         reportModelMapping.put(2, VBankMonth.class);
     }
 
-    public ReportResponse createReportResponse(int id) throws IndexOutOfBoundsException {
+    public ReportResponse createReportResponse(int id) throws IndexOutOfBoundsException, IOException {
 
         //Querying the mapping table, to obtain metadata about the report
         ReportListResponse reportListResponse;
@@ -54,14 +50,25 @@ public class ReportService {
             reportListResponse = mappingTableService.getDetailsForSpecificReport(id);
         }else{ throw new IndexOutOfBoundsException("Report ID needs to be a number between 0 and 1000");}
 
-        Class<? extends ReportModel> classOne = reportModelMapping.get(id);
+        Class<? extends ReportModel> requestedReportType = reportModelMapping.get(id);
+
         //Fetch fetchReportViewObjectList data from MOJFIN database
 //        List<ReportModel> reportViewObjectList = fetchReportViewObjectList(classOne, reportListResponse.getSqlQuery());
 
 
-        // Create csv here
+        // Create CSV
         List<Map<String, Object>> resultList = reportViewsDao.callDataBase(reportListResponse.getSqlQuery());
-        convertToCSV(resultList);
+        String createdReportName = null;
+        if(CollectionUtils.isNotEmpty(resultList)){
+            createdReportName = convertToCSVandWriteToFile(resultList, requestedReportType );
+        }
+
+        // Upload CSV to sharepoint here
+
+
+
+        // Delete CSV
+        deleteLocalFile(createdReportName);
 
         ReportResponse reportResponse = new ReportResponse();
         reportResponse.setId(reportListResponse.getId());
@@ -76,6 +83,18 @@ public class ReportService {
 
     }
 
+    public static boolean deleteLocalFile(String createdReportName) {
+        log.info("Deleting file: " + createdReportName);
+        File file = new File(createdReportName);
+        if(file.delete()){
+            log.info("file deleted successfully");
+            return true;
+        }else{
+            log.error("failed to delete the file: " + createdReportName);
+            return false;
+        }
+    }
+
     public List<ReportModel>  fetchReportViewObjectList(Class<? extends ReportModel> clazz, String sqlQuery) {
         //Use the id from the customer's request to define the report model we need to use (when we later query the database)
 
@@ -87,35 +106,44 @@ public class ReportService {
         return reportViewObjectList;
     }
 
-    public void convertToCSV(List<Map<String, Object>> resultList) {
+    public String convertToCSVandWriteToFile(List<Map<String, Object>> allRows, Class<? extends ReportModel> requestedReportType) throws ArrayIndexOutOfBoundsException, IOException {
+
+        UUID uuid = UUID.randomUUID();
 
 //        StringWriter sw = new StringWriter();
-
+        String pathToRemove = "uk.gov.laa.pfla.auth.service.models.report_view_models.";
+        String requestedClassName = requestedReportType.getName().replace(pathToRemove, "");
+        String fileName = requestedClassName + "-" + uuid + ".csv";
         FileWriter out;
         try {
-            out = new FileWriter("new_report.csv");
+            out = new FileWriter(fileName);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IOException("error creating file: " + e);
         }
 
-
-        CSVFormat csvFormat = CSVFormat.ORACLE.builder()
-//                .setHeader(HEADERS)
-                .build();
-
+        // Reading the first line of the DB resultset and parsing this to determine the headers for the csv
+        String[] headers;
         try {
-//            final CSVPrinter printer = CSVFormat.ORACLE.withHeader(resultList).print(out);
-            final CSVPrinter printer = new CSVPrinter(out, csvFormat);
-            printer.print(resultList);
+            headers = allRows.get(0).keySet().toArray(new String[]{});
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new ArrayIndexOutOfBoundsException("Error reading headers from resultlist data, when constructing csv: " + e);
+        }
+        CSVFormat csvFormat = CSVFormat.DEFAULT
+                .builder()
+                .setHeader(headers)
+                .build();
+        // The CSVPrinter will automatically be closed after the try statement has completed (a'try-with-resources' statement)
+        try(CSVPrinter printer = new CSVPrinter(out, csvFormat)) {
+            for (Map<String, Object> fieldNamesAndValues : allRows) {
+                Object[] row = fieldNamesAndValues.values().toArray();
+                printer.printRecord(row);
+            }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IOException("error writing to file: " + e);
         }
 
 
-
-//        return Stream.of(list)
-//                .map(this::escapeSpecialCharacters)
-//                .collect(Collectors.joining(","));
+        return fileName;
     }
 
 
