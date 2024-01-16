@@ -20,7 +20,7 @@ spec:
           image: ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
           volumeMounts:
             - name: csv-volume
-              mountPath: /csv-files
+              mountPath: /app/payforlegalaid/csv-files
           ports:
             - containerPort: 8443
           env:
