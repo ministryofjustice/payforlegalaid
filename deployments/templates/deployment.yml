@@ -18,6 +18,9 @@ spec:
       containers:
         - name: gpfd-api-container
           image: ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
+          volumeMounts:
+            - name: csv-volume
+              mountPath: /csv-files
           ports:
             - containerPort: 8443
           env:
@@ -53,6 +56,8 @@ spec:
                 secretKeyRef:
                   name: gpfd-test-secret-01
                   key: ssl-dev-key-store-password
-
+      volumes:
+        - name: csv-volume
+          emptyDir: {}
 # This is a generic file that creates a Kubernetes deployment in our namespace. A deployment is a collection of pods
 # that runs one or more containers. In this application, currently only one container is run in the pod.

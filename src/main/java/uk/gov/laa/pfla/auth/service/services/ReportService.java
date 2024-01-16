@@ -113,7 +113,7 @@ public class ReportService {
 //        StringWriter sw = new StringWriter();
         String pathToRemove = "uk.gov.laa.pfla.auth.service.models.report_view_models.";
         String requestedClassName = requestedReportType.getName().replace(pathToRemove, "");
-        String fileName = requestedClassName + "-" + uuid + ".csv";
+        String fileName = "csv-files/" + requestedClassName + "-" + uuid + ".csv";
         FileWriter out;
         try {
             out = new FileWriter(fileName);
