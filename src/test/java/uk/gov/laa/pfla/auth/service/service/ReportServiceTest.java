@@ -117,7 +117,7 @@ public class ReportServiceTest {
         // Assert
         Assertions.assertTrue(file.exists(), "file should be created");
         Assertions.assertEquals(expectedContent, fileContent, "File content does not match");
-//        assertTrue(reportService.deleteLocalFile(fileName));
+        assertTrue(reportService.deleteLocalFile(fileName));
     }
 
     @Test
