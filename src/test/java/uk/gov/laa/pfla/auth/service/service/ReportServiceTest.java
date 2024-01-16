@@ -136,7 +136,7 @@ public class ReportServiceTest {
 
 
     @Test
-    void createReportResponse_reportResponseMatchesValuesFromMappingTable()  {
+    void createReportResponse_reportResponseMatchesValuesFromMappingTable() throws IOException {
 
         // Mocking the data from mapping table
         ReportListResponse mockReportListResponse =  new ReportListResponseTestBuilder().createReportListResponse();
