@@ -15,6 +15,13 @@ spec:
         app: gpfd-dev
     spec:
       serviceAccountName: example-name #This relates to the IRSA module in our namespace, within the cloud-platform-environments repo
+      initContainers:
+        - name: create-directory
+          image: busybox
+          command: ["sh", "-c", "mkdir -p /app/csv-files"]
+          volumeMounts:
+            - name: csv-storage
+              mountPath: /app/csv-files
       containers:
         - name: gpfd-api-container
           image: ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
