@@ -19,8 +19,8 @@ spec:
         - name: gpfd-api-container
           image: ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
           volumeMounts:
-            - name: csv-volume
-              mountPath: /app/payforlegalaid/csv-files
+            - name: csv-storage
+              mountPath: /app/csv-files
           ports:
             - containerPort: 8443
           env:
@@ -57,7 +57,9 @@ spec:
                   name: gpfd-test-secret-01
                   key: ssl-dev-key-store-password
       volumes:
-        - name: csv-volume
-          emptyDir: {}
+        - name: csv-files
+          emptyDir: {} #Using ephemeral storage which is shared between pods and is deleted when a pod is shut down
+
+
 # This is a generic file that creates a Kubernetes deployment in our namespace. A deployment is a collection of pods
 # that runs one or more containers. In this application, currently only one container is run in the pod.
