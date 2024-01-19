@@ -64,7 +64,7 @@ spec:
                   name: gpfd-test-secret-01
                   key: ssl-dev-key-store-password
       volumes:
-        - name: csv-files
+        - name: csv-storage
           emptyDir: {} #Using ephemeral storage which is shared between pods and is deleted when a pod is shut down
 
 
