@@ -41,8 +41,8 @@ jobs:
           java-version: '17'
 
       # Run Tests
-#      - name: Run tests #todo - uncomment this, its just an experimental temporary measure
-#        run: mvn -B clean test
+      - name: Run tests
+        run: mvn -B clean test
       # Build and package JAR
       - name: Build with Maven
         run: mvn -B -DskipTests clean package

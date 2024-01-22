@@ -15,19 +15,19 @@ spec:
         app: gpfd-dev
     spec:
       serviceAccountName: example-name #This relates to the IRSA module in our namespace, within the cloud-platform-environments repo
-      initContainers:
-        - name: create-directory
-          image: busybox
-          command: ["sh", "-c", "mkdir -p /app/csv-files"]
-          volumeMounts:
-            - name: csv-storage
-              mountPath: /app/csv-files
+#      initContainers:
+#        - name: create-directory
+#          image: busybox
+#          command: ["sh", "-c", "mkdir -p /app/csv-files"]
+#          volumeMounts:
+#            - name: csv-storage
+#              mountPath: /app/csv-files
       containers:
         - name: gpfd-api-container
           image: ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
-          volumeMounts:
-            - name: csv-storage
-              mountPath: /app/csv-files
+#          volumeMounts:
+#            - name: csv-storage
+#              mountPath: /app/csv-files
           ports:
             - containerPort: 8443
           env:
@@ -63,9 +63,9 @@ spec:
                 secretKeyRef:
                   name: gpfd-test-secret-01
                   key: ssl-dev-key-store-password
-      volumes:
-        - name: csv-storage
-          emptyDir: {} #Using ephemeral storage which is shared between pods and is deleted when a pod is shut down
+#      volumes:
+#        - name: csv-storage
+#          emptyDir: {} #Using ephemeral storage which is shared between pods and is deleted when a pod is shut down
 
 
 # This is a generic file that creates a Kubernetes deployment in our namespace. A deployment is a collection of pods
