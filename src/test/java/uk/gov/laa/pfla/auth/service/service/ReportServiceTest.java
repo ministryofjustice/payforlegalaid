@@ -179,7 +179,7 @@ public class ReportServiceTest {
     void testGenerateAndUploadCsvToSharePoint() throws IOException {
 
         // Mock the RestTemplate behavior
-        String sharePointApiUrl = "https://your-sharepoint-site/api/upload";
+        String sharePointApiUrl = "https://placeholder-sharepoint-site/api/upload"; //This needs to match the real URI
         HttpHeaders headers = new HttpHeaders();
         ResponseEntity<Void> responseEntity = new ResponseEntity<>(headers, HttpStatus.CREATED);
         when(restTemplate.postForLocation(eq(sharePointApiUrl), inputStreamCaptor.capture()))
@@ -207,9 +207,10 @@ public class ReportServiceTest {
         assertArrayEquals(expectedCsvBytes, capturedCsvBytes);
 
         // Verify that RestTemplate's postForEntity was called with the correct arguments
-        verify(restTemplate, times(1)).postForLocation(eq(sharePointApiUrl), any(InputStream.class));
+        verify(restTemplate, times(1)).postForLocation(eq(sharePointApiUrl), inputStreamCaptor.capture());
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
         assertTrue(responseEntity.getHeaders().isEmpty());
+
     }
 
 }

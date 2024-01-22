@@ -76,10 +76,10 @@ public class ReportService {
         InputStream inputStream = new ByteArrayInputStream((byteArrayOutputStream.toByteArray()));
 
         // Configure SharePoint API URL, headers, and authentication
-//        String sharePointApiUrl = "https://placeholder-sharepoint-site/api/upload";
+        String sharePointApiUrl = "https://placeholder-sharepoint-site/api/upload"; //todo - insert correct api URL
 
         // Upload CSV to SharePoint using HTTP client
-//        restTemplate.postForLocation(sharePointApiUrl, inputStream);
+        restTemplate.postForLocation(sharePointApiUrl, inputStream);
 
         String csvStreamString = new String(byteArrayOutputStream.toByteArray(), StandardCharsets.UTF_8);
         log.info("CSV byte-stream data converted to a string: " + csvStreamString);
