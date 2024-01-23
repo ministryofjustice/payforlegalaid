@@ -89,7 +89,8 @@ public class ReportService {
         }
 
         String csvStreamString = new String(byteArrayOutputStream.toByteArray(), StandardCharsets.UTF_8);
-        log.info("CSV byte-stream data converted to a string: " + csvStreamString);
+        String singleLineContent = csvStreamString.replace("\n", "|"); //If we don't filter out newline chars then kibana will print each line as a separate log message
+        log.info("CSV byte-stream data converted to a string: " + singleLineContent);
 
         // Clean up in-memory resources
         inputStream.close();
