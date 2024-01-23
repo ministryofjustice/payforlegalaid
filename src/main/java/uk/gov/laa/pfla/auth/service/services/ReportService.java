@@ -3,7 +3,9 @@ package uk.gov.laa.pfla.auth.service.services;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.laa.pfla.auth.service.dao.ReportViewsDao;
 import uk.gov.laa.pfla.auth.service.models.report_view_models.ReportModel;
@@ -33,6 +35,7 @@ public class ReportService {
 
     private final RestTemplate restTemplate;
 
+    @Autowired
     public ReportService(ReportViewsDao reportViewsDao, MappingTableService mappingTableService, RestTemplate restTemplate) {
         this.reportViewsDao = reportViewsDao;
         this.mappingTableService = mappingTableService;
@@ -79,7 +82,11 @@ public class ReportService {
         String sharePointApiUrl = "https://placeholder-sharepoint-site/api/upload"; //todo - insert correct api URL
 
         // Upload CSV to SharePoint using HTTP client
-        restTemplate.postForLocation(sharePointApiUrl, inputStream);
+        try {
+            restTemplate.postForLocation(sharePointApiUrl, inputStream);
+        } catch (RestClientException e) {
+            log.error("Error when sending a post HTTP message to sharepoint API - RestClientException: " + e);
+        }
 
         String csvStreamString = new String(byteArrayOutputStream.toByteArray(), StandardCharsets.UTF_8);
         log.info("CSV byte-stream data converted to a string: " + csvStreamString);
