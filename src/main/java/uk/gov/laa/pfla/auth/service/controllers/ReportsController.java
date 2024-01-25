@@ -15,6 +15,8 @@ import uk.gov.laa.pfla.auth.service.services.MappingTableService;
 import uk.gov.laa.pfla.auth.service.services.ReportService;
 import uk.gov.laa.pfla.auth.service.services.ReportTrackingTableService;
 import uk.gov.laa.pfla.auth.service.services.UserService;
+
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -33,7 +35,7 @@ public class ReportsController {
 
 
     @Autowired
-    public ReportsController(MappingTableService mappingTableService, ReportService reportService, ReportTrackingTableService reportTrackingTableService, final UserService userService){
+    public ReportsController(MappingTableService mappingTableService, ReportService reportService, ReportTrackingTableService reportTrackingTableService, UserService userService){
         this.mappingTableService = mappingTableService;
         this.reportService = reportService;
         this.reportTrackingTableService = reportTrackingTableService;
@@ -79,6 +81,9 @@ public class ReportsController {
             log.error("Number format exception: " + e);
             reportResponse.setReportName("Invalid input, report id must be a number with no decimal places");
             return new ResponseEntity<>(reportResponse, HttpStatus.BAD_REQUEST);
+        } catch (IOException e) {
+            log.error("Technical error creating CSV file: " + e);
+            reportResponse.setReportName("Technical error creating report");
         }
 
         return new ResponseEntity<>(reportResponse, HttpStatus.OK);

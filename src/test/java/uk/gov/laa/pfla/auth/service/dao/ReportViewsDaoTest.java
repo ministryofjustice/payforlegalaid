@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -76,7 +75,7 @@ public class ReportViewsDaoTest {
 
 
         // Act
-        List<ReportModel> actualReportViewObjectList = reportViewsDao.fetchReport(sqlQuery, VCisToCcmsInvoiceSummaryModel.class);
+        List<ReportModel> actualReportViewObjectList = reportViewsDao.fetchReportViewObjectList(sqlQuery, VCisToCcmsInvoiceSummaryModel.class);
         ReportModel reportModel = actualReportViewObjectList.get(0);
         assertThat(reportModel, CoreMatchers.instanceOf(VCisToCcmsInvoiceSummaryModel.class));
 

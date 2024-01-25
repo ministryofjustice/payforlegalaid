@@ -11,6 +11,8 @@ import uk.gov.laa.pfla.auth.service.builders.ReportResponseTestBuilder;
 import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
 import uk.gov.laa.pfla.auth.service.responses.ReportResponse;
 import uk.gov.laa.pfla.auth.service.services.MappingTableService;
+
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,7 +39,7 @@ class ReportsControllerTest {
     private ReportsController reportsController;
 
     @Test
-    void getReportListReturnsCorrectResponseEntity() throws Exception {
+    void getReportListReturnsCorrectResponseEntity()  {
         //Create Mock Response objects
         ReportListResponse reportListResponseMock1 = new ReportListResponseTestBuilder().withId(1)
                 .withReportName("Test Report 1")
@@ -76,7 +78,7 @@ class ReportsControllerTest {
     }
 
     @Test
-    void getReportReturnsCorrectResponseEntity() {
+    void getReportReturnsCorrectResponseEntity() throws IOException {
 
         int reportId = 2;
 

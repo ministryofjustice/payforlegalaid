@@ -19,14 +19,13 @@ public class MappingTableService {
 
     private final MappingTableDao mappingTableDao;
 
-    private final List<ReportListResponse> reportListResponses = new ArrayList<>();
 
     public MappingTableService(MappingTableDao mappingTableDao) {
         this.mappingTableDao = mappingTableDao;
     }
 
     public List<ReportListResponse> createReportListResponseList() {
-        reportListResponses.clear(); // Prevent response data accumulating after multiple requests
+       List<ReportListResponse> reportListResponses = new ArrayList<>();
 
         //Fetching reportList items from database
         List<MappingTableModel> mappingTableObjectList = mappingTableDao.fetchReportList();
@@ -46,7 +45,8 @@ public class MappingTableService {
 
 
     public ReportListResponse getDetailsForSpecificReport(int id) throws IndexOutOfBoundsException {
-        createReportListResponseList();
+
+        List<ReportListResponse> reportListResponses = createReportListResponseList();
 
         int indexInt = id - 1;
         log.debug("Index for selecting the right reportListResponse object: {}", indexInt);

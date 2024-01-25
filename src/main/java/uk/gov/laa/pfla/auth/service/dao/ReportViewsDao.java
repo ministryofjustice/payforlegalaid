@@ -24,7 +24,7 @@ public class ReportViewsDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public List<ReportModel> fetchReport(String sqlQuery, Class<? extends ReportModel> requestedModelClass) {
+    public List<ReportModel> fetchReportViewObjectList(String sqlQuery, Class<? extends ReportModel> requestedModelClass) {
 //        mapper.addConverter(getDateConverter());
 
         final List<ReportModel> reportViewObjectList = new ArrayList<>();
@@ -39,10 +39,8 @@ public class ReportViewsDao {
                 // Add db data straight to csv here
                 log.info("Current resultlist map objects: ");
                 obj.forEach((obj1, obj2) -> {
-                    log.info(String.valueOf(obj1)); //todo - this print statement is just for illustrative purposes
-                    log.info(String.valueOf(obj1.getClass()));
-                    log.info(String.valueOf(obj2));
-                    log.info(String.valueOf(obj2.getClass()));
+                    log.info("Object: " + obj1 + "Class/type of object: " + obj1.getClass()); //todo - these log statements are just for testing purposes
+                    log.info("Object: " + obj2 + "Class/type of object: " + obj2.getClass());
 
                 });
 

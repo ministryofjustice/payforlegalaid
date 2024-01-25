@@ -1,5 +1,6 @@
 package uk.gov.laa.pfla.auth.service.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
@@ -12,6 +13,7 @@ import lombok.Data;
  */
 @Data
 @Builder
+@AllArgsConstructor
 public class MappingTableModel {
     public MappingTableModel() {
         //no args constructor needed for ModelMapper
@@ -30,17 +32,4 @@ public class MappingTableModel {
     private String ownerEmail;
 
 
-    public MappingTableModel(int id, String reportName, String excelReport, String csvName, int excelSheetNum, String sqlQuery, String baseUrl, String reportOwner, String reportCreator, String description, String ownerEmail) {
-        this.id = id;
-        this.reportName = reportName;
-        this.excelReport = excelReport;
-        this.csvName = csvName;
-        this.excelSheetNum = excelSheetNum;
-        this.sqlQuery = sqlQuery;
-        this.baseUrl = baseUrl;
-        this.reportOwner = reportOwner;
-        this.reportCreator = reportCreator;
-        this.description = description;
-        this.ownerEmail = ownerEmail;
-    }
 }

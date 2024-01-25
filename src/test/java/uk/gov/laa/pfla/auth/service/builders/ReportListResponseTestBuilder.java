@@ -11,7 +11,7 @@ public class ReportListResponseTestBuilder {
     private static final String DEFAULT_CSV_NAME = "CSV-name";
     private static final int DEFAULT_EXCEL_SHEET_NUM = 7;
     public static final String DEFAULT_SQL_STRING = "SELECT * FROM SOMETHING";
-    public static final String DEFAULT_BASE_URL = "www.sharepoint.com/the-folder-we're-using";
+    public static final String DEFAULT_BASE_URL = "www.sharepoint.com/folder-for-storing-created-reports";
     public static final String DEFAULT_REPORT_OWNER = "Chancey Mctavish";
     public static final String DEFAULT_REPORT_CREATOR = "Barry Gibb";
     public static final String DEFAULT_REPORT_DESCRIPTION= "List all unpaid AP invoices and all outstanding AR debts at the end of the previous month. Detailed data, one row per invoice";
