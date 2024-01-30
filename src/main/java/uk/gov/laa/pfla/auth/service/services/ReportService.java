@@ -35,11 +35,18 @@ public class ReportService {
 
     private final RestTemplate restTemplate;
 
+    private final UserService userService;
+
+    private final SharePointService sharePointService;
+
+
     @Autowired
-    public ReportService(ReportViewsDao reportViewsDao, MappingTableService mappingTableService, RestTemplate restTemplate) {
+    public ReportService(ReportViewsDao reportViewsDao, MappingTableService mappingTableService, RestTemplate restTemplate, UserService userService, SharePointService sharePointService) {
         this.reportViewsDao = reportViewsDao;
         this.mappingTableService = mappingTableService;
         this.restTemplate = restTemplate;
+        this.userService = userService;
+        this.sharePointService = sharePointService;
 
         this.reportModelMapping = new HashMap<>();
         reportModelMapping.put(1, VCisToCcmsInvoiceSummaryModel.class);
@@ -51,52 +58,77 @@ public class ReportService {
      * @param rawData
      * @throws IOException
      */
+//    public void generateAndUploadCsvToSharePoint(List<Map<String, Object>> rawData) throws IOException {
+//
+//        // Generate CSV content in-memory
+//        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//
+//        try (Writer writer = new OutputStreamWriter(byteArrayOutputStream);
+//             CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
+//            // Extract headers from the first map and write them to the CSV
+//            Map<String, Object> firstRow = rawData.get(0);
+//            for (String header : firstRow.keySet()) {
+//                csvPrinter.print(header);
+//            }
+//            csvPrinter.println();
+//
+//            // Iterate through the list of maps and write data to the CSV
+//            for (Map<String, Object> row : rawData) {
+//                for (String header : firstRow.keySet()) {
+//                    csvPrinter.print(row.get(header));
+//                }
+//                csvPrinter.println();
+//            }
+//        }
+//
+//
+//        // Convert CSV content to InputStream
+//        InputStream inputStream = new ByteArrayInputStream((byteArrayOutputStream.toByteArray()));
+//
+//
+//
+//
+//
+//
+//
+//        // Configure SharePoint API URL, headers, and authentication
+//        String sharePointApiUrl = "https://placeholder-sharepoint-site/api/upload"; //todo - insert correct api URL
+//
+//        // Upload CSV to SharePoint using HTTP client todo - this is just placeholder code for now, the actual api call still needs to be formulated
+//        try {
+//            restTemplate.postForLocation(sharePointApiUrl, inputStream);
+//        } catch (RestClientException e) {
+//            log.error("Error when sending a post HTTP message to sharepoint API - RestClientException: " + e);
+//        }
+//
+//        String csvStreamString = new String(byteArrayOutputStream.toByteArray(), StandardCharsets.UTF_8);
+//        String singleLineContent = csvStreamString.replace("\n", "|"); //If we don't filter out newline chars then kibana will print each line as a separate log message
+//        log.info("CSV byte-stream data converted to a string: " + singleLineContent);
+//
+//        // Clean up in-memory resources
+//        inputStream.close();
+//        byteArrayOutputStream.close();
+//    }
+
+
     public void generateAndUploadCsvToSharePoint(List<Map<String, Object>> rawData) throws IOException {
-
-        // Generate CSV content in-memory
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-
-        try (Writer writer = new OutputStreamWriter(byteArrayOutputStream);
-             CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
-            // Extract headers from the first map and write them to the CSV
-            Map<String, Object> firstRow = rawData.get(0);
-            for (String header : firstRow.keySet()) {
-                csvPrinter.print(header);
-            }
-            csvPrinter.println();
-
-            // Iterate through the list of maps and write data to the CSV
-            for (Map<String, Object> row : rawData) {
-                for (String header : firstRow.keySet()) {
-                    csvPrinter.print(row.get(header));
-                }
-                csvPrinter.println();
-            }
-        }
-
-
-        // Convert CSV content to InputStream
-        InputStream inputStream = new ByteArrayInputStream((byteArrayOutputStream.toByteArray()));
-
-        // Configure SharePoint API URL, headers, and authentication
-        String sharePointApiUrl = "https://placeholder-sharepoint-site/api/upload"; //todo - insert correct api URL
-
-        // Upload CSV to SharePoint using HTTP client todo - this is just placeholder code for now, the actual api call still needs to be formulated
-        try {
-            restTemplate.postForLocation(sharePointApiUrl, inputStream);
-        } catch (RestClientException e) {
-            log.error("Error when sending a post HTTP message to sharepoint API - RestClientException: " + e);
-        }
-
-        String csvStreamString = new String(byteArrayOutputStream.toByteArray(), StandardCharsets.UTF_8);
-        String singleLineContent = csvStreamString.replace("\n", "|"); //If we don't filter out newline chars then kibana will print each line as a separate log message
-        log.info("CSV byte-stream data converted to a string: " + singleLineContent);
-
-        // Clean up in-memory resources
-        inputStream.close();
-        byteArrayOutputStream.close();
+        String siteUrl = "https://mojodevl.sharepoint.com/sites/FinanceSysReference-DEV";
+        String folderPath = "Documents/General/Get Payments & Financial Data Reports/Generated Reports/CCMS invoice analysis/CIS to CCMS Import Analysis";
+        String fileName = "testfile111.csv"; // name of file to be uploaded
+        sharePointService.uploadCsv(rawData, siteUrl, folderPath, fileName);
     }
 
+
+//    public void sendRequestToSharepoint(
+//            @RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient
+//    ) throws UserServiceException {
+//
+//
+//        GraphAuthenticationProvider  graphAuthenticationProvider = new GraphAuthenticationProvider(graphClient);
+//
+//        String accessToken = graphAuthenticationProvider.getAuthorizationTokenAsync(https://www.mango.com).join();
+//
+//    }
 
 
     public ReportResponse createReportResponse(int id) throws IndexOutOfBoundsException, IOException {
@@ -144,6 +176,8 @@ public class ReportService {
         return reportResponse;
 
     }
+
+
 
 //    public static boolean deleteLocalFile(String createdReportName) {
 //        log.info("Deleting file: " + createdReportName);

@@ -3,6 +3,7 @@ package uk.gov.laa.pfla.auth.service.graph;
 import com.microsoft.graph.authentication.BaseAuthenticationProvider;
 import org.springframework.lang.NonNull;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.stereotype.Component;
 
 import java.net.URL;
 import java.util.concurrent.CompletableFuture;
