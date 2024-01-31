@@ -14,6 +14,8 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
+import java.net.URI;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +23,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.gov.laa.pfla.auth.service.graph.GraphAuthenticationProvider;
 
 
 @Service
@@ -73,28 +76,57 @@ public class SharePointService {
         String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
         // Load the OAuth2AuthorizedClient for the authenticated user
         OAuth2AuthorizedClient client = clientService.loadAuthorizedClient("gpfd-azure-dev", currentUser);
-
-        // Build the request headers with the OAuth2 access token
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(client.getAccessToken().getTokenValue());
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-
+        GraphAuthenticationProvider graphAuthenticationProvider = new GraphAuthenticationProvider(client);
 
         // Construct the URL to SharePoint's file upload endpoint
         String sharePointApiUrl = String.format(
                 "%s/_api/web/GetFolderByServerRelativeUrl('%s')/Files/add(url='%s', overwrite=true)",
                 siteUrl, folderPath, fileName
         );  //todo - insert correct api URL
+        URL sharePointFormattedUrl = new URL(sharePointApiUrl);
+
+
+
+
+
+
 
 
         ////
-
-
         try {
-            restTemplate.postForLocation(sharePointApiUrl, inputStream);
-        } catch (RestClientException e) {
-            log.error("Error when sending a post HTTP message to sharepoint API - RestClientException: " + e);
+
+            // URL of the SharePoint API
+
+            // Set the authorization token
+            String accessToken = "your_access_token_here";
+
+            // Create headers and set 'Authorization' and 'Content-Type'
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(graphAuthenticationProvider.getAuthorizationTokenAsync(sharePointFormattedUrl).join());
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+            // Create a new HttpEntity with the headers. You can also pass a body if needed.
+            HttpEntity<String> entity = new HttpEntity<>("your_request_body", headers);
+
+            // Make the POST request and capture the response location URI
+            URI location = restTemplate.postForLocation(sharePointApiUrl, entity);
+
+            // Output the location if you need to check it
+            if (location != null) {
+                log.info("Location: " + location);
+            } else {
+                log.error("SharePoint API error: No location returned from API call");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+//        try {
+//            restTemplate.postForLocation(sharePointApiUrl, inputStream);
+//        } catch (RestClientException e) {
+//            log.error("Error when sending a post HTTP message to sharepoint API - RestClientException: " + e);
+//        }
 
         String csvStreamString = new String(byteArrayOutputStream.toByteArray(), StandardCharsets.UTF_8);
         String singleLineContent = csvStreamString.replace("\n", "|"); //If we don't filter out newline chars then kibana will print each line as a separate log message
