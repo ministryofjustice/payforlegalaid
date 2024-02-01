@@ -65,14 +65,16 @@ public class ReportsController {
      * It is a single JSON object which contains the name, id and url of a report
      */
     @RequestMapping(value ="/report/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<ReportResponse> getReport(@PathVariable(value="id") int requestedId) {
+    ResponseEntity<ReportResponse> getReport(
+            @RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient,
+            @PathVariable(value="id") int requestedId) {
 
 
         reportTrackingTableService.updateReportTracking(requestedId, LocalDateTime.now());
 
         ReportResponse reportResponse = new ReportResponse();
         try {
-            reportResponse = reportService.createReportResponse(requestedId);
+            reportResponse = reportService.createReportResponse(requestedId, graphClient);
         } catch (IndexOutOfBoundsException e) {
             log.error("index out of bounds  Error: " + e);
             reportResponse.setReportName("Report ID not found");

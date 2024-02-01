@@ -39,7 +39,7 @@ public class SharePointService {
         this.restTemplate = restTemplate;
     }
 
-    public void uploadCsv(List<Map<String, Object>> rawData, String siteUrl, String folderPath, String fileName) throws IOException {
+    public void uploadCsv(List<Map<String, Object>> rawData, String siteUrl, String folderPath, String fileName, OAuth2AuthorizedClient graphClient) throws IOException {
 
         // Generate CSV content in-memory
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -72,11 +72,12 @@ public class SharePointService {
 
 
 
-        // Retrieve the name of the currently authenticated user
-        String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
-        // Load the OAuth2AuthorizedClient for the authenticated user
-        OAuth2AuthorizedClient client = clientService.loadAuthorizedClient("gpfd-azure-dev", currentUser);
-        GraphAuthenticationProvider graphAuthenticationProvider = new GraphAuthenticationProvider(client);
+//        // Retrieve the name of the currently authenticated user
+//        String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
+//        // Load the OAuth2AuthorizedClient for the authenticated user
+//        OAuth2AuthorizedClient client = clientService.loadAuthorizedClient("gpfd-azure-dev", currentUser);
+        // Passing in the client originally obtained from the "@RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient" method parameter in the getReport method in the controller.
+        GraphAuthenticationProvider graphAuthenticationProvider = new GraphAuthenticationProvider(graphClient);
 
         // Construct the URL to SharePoint's file upload endpoint
         String sharePointApiUrl = String.format(
@@ -84,11 +85,6 @@ public class SharePointService {
                 siteUrl, folderPath, fileName
         );  //todo - insert correct api URL
         URL sharePointFormattedUrl = new URL(sharePointApiUrl);
-
-
-
-
-
 
 
 
@@ -100,9 +96,13 @@ public class SharePointService {
             // Set the authorization token
             String accessToken = "your_access_token_here";
 
+            String tokenValue = graphClient.getAccessToken().getTokenValue();
+
+
             // Create headers and set 'Authorization' and 'Content-Type'
             HttpHeaders headers = new HttpHeaders();
-            headers.setBearerAuth(graphAuthenticationProvider.getAuthorizationTokenAsync(sharePointFormattedUrl).join());
+//            headers.setBearerAuth(graphAuthenticationProvider.getAuthorizationTokenAsync(sharePointFormattedUrl).join());
+            headers.setBearerAuth(tokenValue);
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 
             // Create a new HttpEntity with the headers. You can also pass a body if needed.

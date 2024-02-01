@@ -4,6 +4,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -111,11 +113,11 @@ public class ReportService {
 //    }
 
 
-    public void generateAndUploadCsvToSharePoint(List<Map<String, Object>> rawData) throws IOException {
+    public void generateAndUploadCsvToSharePoint(List<Map<String, Object>> rawData, OAuth2AuthorizedClient graphClient) throws IOException {
         String siteUrl = "https://mojodevl.sharepoint.com/sites/FinanceSysReference-DEV";
         String folderPath = "Documents/General/Get Payments & Financial Data Reports/Generated Reports/CCMS invoice analysis/CIS to CCMS Import Analysis";
         String fileName = "testfile111.csv"; // name of file to be uploaded
-        sharePointService.uploadCsv(rawData, siteUrl, folderPath, fileName);
+        sharePointService.uploadCsv(rawData, siteUrl, folderPath, fileName, graphClient);
     }
 
 
@@ -131,11 +133,10 @@ public class ReportService {
 //    }
 
 
-    public ReportResponse createReportResponse(int id) throws IndexOutOfBoundsException, IOException {
+    public ReportResponse createReportResponse(int id, OAuth2AuthorizedClient graphClient) throws IndexOutOfBoundsException, IOException {
 
         //Querying the mapping table, to obtain metadata about the report
         ReportListResponse reportListResponse;
-
         if(id < 1000 && id > 0){
             reportListResponse = mappingTableService.getDetailsForSpecificReport(id);
         }else{ throw new IndexOutOfBoundsException("Report ID needs to be a number between 0 and 1000");}
@@ -157,7 +158,7 @@ public class ReportService {
 
         // Generate in-memory csv data stream and upload to sharepoint
         if(CollectionUtils.isNotEmpty(resultList)){
-            generateAndUploadCsvToSharePoint(resultList);
+            generateAndUploadCsvToSharePoint(resultList, graphClient);
         }
 
 
