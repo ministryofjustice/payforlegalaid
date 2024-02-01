@@ -89,6 +89,10 @@
         <!-- MS Entra/Active Directory -->
         <dependency>
             <groupId>com.azure.spring</groupId>
+            <artifactId>spring-cloud-azure-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.azure.spring</groupId>
             <artifactId>spring-cloud-azure-starter-active-directory</artifactId>
         </dependency>
         <dependency>

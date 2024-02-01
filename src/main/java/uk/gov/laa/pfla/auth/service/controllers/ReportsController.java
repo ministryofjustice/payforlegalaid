@@ -101,6 +101,12 @@ public class ReportsController {
     ) throws UserServiceException {
         UserDetails user = userService.getUserDetails(graphClient);
 
+        log.info("Here's the graphClient.getClientRegistration(): " + graphClient.getClientRegistration());
+        log.info("Here's the graphClient.getRefreshToken(): " + graphClient.getRefreshToken());
+        log.info("Here's the graphClient.getClientRegistration(): " + graphClient.getClientRegistration());
+        log.info("Here's the graphClient.getAccessToken(): " + graphClient.getAccessToken());
+
+
         return user.toString();
 
     }

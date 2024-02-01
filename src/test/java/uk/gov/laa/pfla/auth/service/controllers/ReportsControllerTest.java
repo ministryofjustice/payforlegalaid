@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import uk.gov.laa.pfla.auth.service.builders.ReportListResponseTestBuilder;
 import uk.gov.laa.pfla.auth.service.builders.ReportResponseTestBuilder;
 import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
@@ -30,7 +31,8 @@ class ReportsControllerTest {
     private MappingTableService mappingTableServiceMock;
     @Mock
     private ReportService reportServiceMock;
-
+    @Mock
+    private OAuth2AuthorizedClient mockAuthorizedClient;
     @Mock
     private ReportTrackingTableService reportTrackingTableService;
 
@@ -85,13 +87,13 @@ class ReportsControllerTest {
         //Create Mock Response object
         ReportResponse reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();
         //Mock report service
-        when(reportServiceMock.createReportResponse(reportId)).thenReturn(reportResponseMock);
+        when(reportServiceMock.createReportResponse(reportId, mockAuthorizedClient)).thenReturn(reportResponseMock);
 
-        ResponseEntity<ReportResponse> responseEntity = reportsController.getReport(reportId);
+        ResponseEntity<ReportResponse> responseEntity = reportsController.getReport(mockAuthorizedClient, reportId);
         ReportResponse response = responseEntity.getBody();
 
 
-        verify(reportServiceMock, times(1)).createReportResponse(reportId);
+        verify(reportServiceMock, times(1)).createReportResponse(reportId, mockAuthorizedClient);
         assertNotNull(responseEntity);
         assertNotNull(response);
         assertNotNull(responseEntity.getBody());

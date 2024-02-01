@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.laa.pfla.auth.service.builders.ReportListResponseTestBuilder;
 import uk.gov.laa.pfla.auth.service.builders.ReportResponseTestBuilder;
@@ -55,6 +56,8 @@ public class ReportServiceTest {
     @Mock
     RestTemplate restTemplate;
 
+    @Mock
+    OAuth2AuthorizedClient mockAuthorizedClient;
     @InjectMocks
     ReportService reportService;
     List<Map<String, Object>> reportMapMockList = new ArrayList<>();
@@ -170,7 +173,7 @@ public class ReportServiceTest {
         when(reportViewsDAO.callDataBase(mockReportListResponse.getSqlQuery())).thenReturn(reportMapMockList);
 
 
-        ReportResponse actualReportResponse = reportService.createReportResponse(1);
+        ReportResponse actualReportResponse = reportService.createReportResponse(1, mockAuthorizedClient);
 
         //check something
         assertEquals(expectedReportResponse.getReportName(), actualReportResponse.getReportName());
