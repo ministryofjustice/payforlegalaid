@@ -96,17 +96,17 @@ public class SharePointService {
             // Set the authorization token
             String accessToken = "your_access_token_here";
 
-            String tokenValue = graphClient.getAccessToken().getTokenValue();
+            String token = graphClient.getAccessToken().getTokenValue();
 
 
             // Create headers and set 'Authorization' and 'Content-Type'
             HttpHeaders headers = new HttpHeaders();
 //            headers.setBearerAuth(graphAuthenticationProvider.getAuthorizationTokenAsync(sharePointFormattedUrl).join());
-            headers.setBearerAuth(tokenValue);
+            headers.setBearerAuth(token);
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 
             // Create a new HttpEntity with the headers. You can also pass a body if needed.
-            HttpEntity<String> entity = new HttpEntity<>("your_request_body", headers);
+            HttpEntity<InputStream> entity = new HttpEntity<>(inputStream, headers);
 
             // Make the POST request and capture the response location URI
             URI location = restTemplate.postForLocation(sharePointApiUrl, entity);
