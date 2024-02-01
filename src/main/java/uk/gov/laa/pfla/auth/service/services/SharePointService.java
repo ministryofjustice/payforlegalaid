@@ -10,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -67,9 +68,7 @@ public class SharePointService {
         InputStream inputStream = new ByteArrayInputStream((byteArrayOutputStream.toByteArray()));
 
 
-
         ///////
-
 
 
 //        // Retrieve the name of the currently authenticated user
@@ -87,40 +86,49 @@ public class SharePointService {
         URL sharePointFormattedUrl = new URL(sharePointApiUrl);
 
 
-
         ////
-        try {
-
-            // URL of the SharePoint API
-
-            // Set the authorization token
-            String accessToken = "your_access_token_here";
-
-            String token = graphClient.getAccessToken().getTokenValue();
 
 
-            // Create headers and set 'Authorization' and 'Content-Type'
-            HttpHeaders headers = new HttpHeaders();
+        // URL of the SharePoint API
+        String token = graphClient.getAccessToken().getTokenValue();
+
+
+        // Create headers and set 'Authorization' and 'Content-Type'
+        HttpHeaders headers = new HttpHeaders();
 //            headers.setBearerAuth(graphAuthenticationProvider.getAuthorizationTokenAsync(sharePointFormattedUrl).join());
-            headers.setBearerAuth(token);
-            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setBearerAuth(token);
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 
-            // Create a new HttpEntity with the headers. You can also pass a body if needed.
-            HttpEntity<InputStream> entity = new HttpEntity<>(inputStream, headers);
+//            // Create a new HttpEntity with the headers. You can also pass a body if needed.
+//            HttpEntity<InputStream> entity = new HttpEntity<>(inputStream, headers);
 
-            // Make the POST request and capture the response location URI
-            URI location = restTemplate.postForLocation(sharePointApiUrl, entity);
 
-            // Output the location if you need to check it
-            if (location != null) {
-                log.info("Location: " + location);
-            } else {
-                log.error("SharePoint API error: No location returned from API call");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        byte[] byteArray = new byte[0];
+        try {
+            byteArray = StreamUtils.copyToByteArray(inputStream);
+        } catch (IOException e) {
+            log.error("IOException, byte array was not able to be created from input stream: " + e);
         }
+
+        ByteArrayResource resource = new ByteArrayResource(byteArray) {
+            @Override
+            public String getFilename() {
+                return fileName; // To provide a filename in the content-disposition header
+            }
+        };
+
+        HttpEntity<ByteArrayResource> requestEntity = new HttpEntity<>(resource, headers);
+
+        // Make the POST request and capture the response location URI
+        URI location = restTemplate.postForLocation(sharePointApiUrl, requestEntity);
+
+        // Output the location if you need to check it
+        if (location != null) {
+            log.info("Location: " + location);
+        } else {
+            log.error("SharePoint API error: No location returned from API call");
+        }
+
 
 //        try {
 //            restTemplate.postForLocation(sharePointApiUrl, inputStream);
