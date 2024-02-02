@@ -4,6 +4,7 @@ logging:
     root: INFO
 #    org.springframework: INFO
 #    org.springframework.security: INFO #TRACE
+    org.springframework.web.client.RestTemplate: DEBUG
 
 
 server:
