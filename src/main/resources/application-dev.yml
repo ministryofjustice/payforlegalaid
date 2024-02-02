@@ -40,6 +40,27 @@ spring:
             scopes:
               - https://graph.microsoft.com/User.Read
 
+  security:
+    oauth2:
+      client:
+        registration:
+          azure:
+            client-id: ${spring.cloud.azure.credential.client-id}
+            client-secret: ${spring.cloud.azure.credential.client-secret}
+            authorization-grant-type: authorization_code
+            redirect-uri: ${spring.cloud.azure.active-directory.redirect-uri-template}
+            scope: openid, profile, ${spring.cloud.azure.active-directory.authorization-clients.graph.scopes}
+            client-name: Azure
+            client-authentication-method: post
+        provider:
+          azure:
+            authorization-uri: https://login.microsoftonline.com/${spring.cloud.azure.profile.tenant-id}/oauth2/v2.0/authorize
+            token-uri: https://login.microsoftonline.com/${spring.cloud.azure.profile.tenant-id}/oauth2/v2.0/token
+            user-info-uri: https://graph.microsoft.com/oidc/userinfo
+            user-name-attribute: name
+            jwk-set-uri: https://login.microsoftonline.com/${spring.cloud.azure.profile.tenant-id}/discovery/v2.0/keys
+
+
   # Database config
   datasource:
 #    url: jdbc:oracle:thin:@localhost:1521:xe
