@@ -12,9 +12,9 @@ public class WebSecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.authorizeRequests(authorizeRequests ->
+        return http.authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
                         .anyRequest().permitAll() )
-                .csrf((csrf) -> csrf.disable()).build(); // Allow all requests
+                .csrf(csrf -> csrf.disable()).build(); // Allow all requests
     }
 }
