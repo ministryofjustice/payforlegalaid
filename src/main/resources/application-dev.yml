@@ -1,3 +1,9 @@
+gpfd:
+  redirect-uri-template: https://laa-pay-for-la-dev.apps.live.cloud-platform.service.justice.gov.uk/login/oauth2/code/gpfd-azure-dev
+  # Note,"gpfd-azure-dev" is also known as the Oauth2 'registrationId'
+  scope: https://graph.microsoft.com/User.Read
+
+
 #SSL configuration
 logging:
   level:
@@ -37,12 +43,11 @@ spring:
         credential:
           client-id: ${AZURE_CLIENT_ID}
           client-secret: ${AZURE_CLIENT_SECRET}
-        redirect-uri-template: https://laa-pay-for-la-dev.apps.live.cloud-platform.service.justice.gov.uk/login/oauth2/code/gpfd-azure-dev
-        #        Note,"gpfd-azure-dev" is also known as the Oauth2 'registrationId'
+        redirect-uri-template: ${gpfd.redirect-uri-template}
         authorization-clients:
           graph:
             scopes:
-              - https://graph.microsoft.com/User.Read
+              - ${gpfd.scope}
 
   security:
     oauth2:
@@ -52,8 +57,8 @@ spring:
             client-id: ${AZURE_CLIENT_ID}
             client-secret: ${AZURE_CLIENT_SECRET}
             authorization-grant-type: authorization_code
-            redirect-uri: ${spring.cloud.azure.active-directory.redirect-uri-template}
-            scope: openid, profile, ${spring.cloud.azure.active-directory.authorization-clients.graph.scopes}
+            redirect-uri: ${gpfd.redirect-uri-template}
+            scope: openid, profile, ${gpfd.scope}
             client-name: Azure
             client-authentication-method: post
         provider:
