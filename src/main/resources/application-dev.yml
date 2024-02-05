@@ -18,6 +18,7 @@ logging:
 
 server:
   port: 8443
+  forward-headers-strategy: native # not sure if needed
   shutdown: graceful
   servlet:
     session:
