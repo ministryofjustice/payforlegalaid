@@ -1,5 +1,15 @@
 package uk.gov.laa.pfla.auth.service.services;
 
+import com.azure.identity.ClientSecretCredential;
+import com.azure.identity.ClientSecretCredentialBuilder;
+import com.microsoft.graph.authentication.IAuthenticationProvider;
+import com.microsoft.graph.authentication.TokenCredentialAuthProvider;
+import com.microsoft.graph.core.ClientException;
+import com.microsoft.graph.models.DriveItem;
+import com.microsoft.graph.models.DriveItemUploadableProperties;
+import com.microsoft.graph.models.UploadSession;
+import com.microsoft.graph.requests.GraphServiceClient;
+import okhttp3.Request;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -18,6 +28,7 @@ import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +51,7 @@ public class SharePointService {
         this.restTemplate = restTemplate;
     }
 
-    public void uploadCsv(List<Map<String, Object>> rawData, String siteUrl, String folderPath, String fileName, OAuth2AuthorizedClient graphClient) throws IOException {
+    public void uploadCsvManual(List<Map<String, Object>> rawData, String siteUrl, String folderPath, String fileName, OAuth2AuthorizedClient oAuth2Client) throws IOException {
 
         // Generate CSV content in-memory
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -76,7 +87,7 @@ public class SharePointService {
 //        // Load the OAuth2AuthorizedClient for the authenticated user
 //        OAuth2AuthorizedClient client = clientService.loadAuthorizedClient("gpfd-azure-dev", currentUser);
         // Passing in the client originally obtained from the "@RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient" method parameter in the getReport method in the controller.
-        GraphAuthenticationProvider graphAuthenticationProvider = new GraphAuthenticationProvider(graphClient);
+        GraphAuthenticationProvider graphAuthenticationProvider = new GraphAuthenticationProvider(oAuth2Client);
 
         // Construct the URL to SharePoint's file upload endpoint
         String sharePointApiUrl = String.format(
@@ -90,7 +101,7 @@ public class SharePointService {
 
 
         // URL of the SharePoint API
-        String token = graphClient.getAccessToken().getTokenValue();
+        String token = oAuth2Client.getAccessToken().getTokenValue();
 
 
         // Create headers and set 'Authorization' and 'Content-Type'
@@ -144,4 +155,138 @@ public class SharePointService {
         inputStream.close();
         byteArrayOutputStream.close();
     }
+
+    //trying an upload with microsoft graph:
+    public void uploadCsv(List<Map<String, Object>> rawData, String siteUrl, String folderPath, String fileName, OAuth2AuthorizedClient oAuth2Client) throws IOException {
+
+        // Generate CSV content in-memory
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+
+
+        try (Writer writer = new OutputStreamWriter(byteArrayOutputStream);
+             CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
+            // Extract headers from the first map and write them to the CSV
+            Map<String, Object> firstRow = rawData.get(0);
+            for (String header : firstRow.keySet()) {
+                csvPrinter.print(header);
+            }
+            csvPrinter.println();
+
+            // Iterate through the list of maps and write data to the CSV
+            for (Map<String, Object> row : rawData) {
+                for (String header : firstRow.keySet()) {
+                    csvPrinter.print(row.get(header));
+                }
+                csvPrinter.println();
+            }
+        }
+
+
+        // Convert CSV content to InputStream
+        InputStream inputStream = new ByteArrayInputStream((byteArrayOutputStream.toByteArray()));
+
+
+
+        // Construct the URL to SharePoint's file upload endpoint
+        String sharePointApiUrl = String.format(
+                "%s/_api/web/GetFolderByServerRelativeUrl('%s')/Files/add(url='%s', overwrite=true)",
+                siteUrl, folderPath, fileName
+        );  //todo - insert correct api URL
+        URL sharePointFormattedUrl = new URL(sharePointApiUrl);
+
+
+
+
+        ClientSecretCredential clientSecretCredential = new ClientSecretCredentialBuilder()
+                .clientId("YOUR_CLIENT_ID")
+                .clientSecret("YOUR_CLIENT_SECRET")
+                .tenantId("YOUR_TENANT_ID")
+                .build();
+
+        IAuthenticationProvider authProvider = new TokenCredentialAuthProvider(Arrays.asList("https://graph.microsoft.com/.default"), clientSecretCredential);
+        String relativePath = "/sites/FinanceSysReference-DEV/drive/root:/General/test-upload-file.csv";
+
+        GraphServiceClient<Request> graphClient = GraphServiceClient.builder().authenticationProvider(authProvider).buildClient();
+        try{
+
+            // Create a new DriveItem with the uploaded file's content
+            DriveItemUploadableProperties driveItemUploadProps = new DriveItemUploadableProperties();
+            driveItemUploadProps.name = "filename.csv";
+
+
+
+//   ------------------
+
+
+
+//            // Variables for site, drive (optional), and item path
+//            String siteHostname = "mojodevl.sharepoint.com";
+//            String sitePath = "/sites/FinanceSysReference-DEV";
+////            String driveId = "b!driveId"; // Optional, if not provided, default document library is used
+//            String itemPath = "Documents/General/Get Payments & Financial Data Reports/Generated Reports/CCMS invoice analysis/CIS to CCMS Import Analysis/testfile111.csv"; // Path where the file will be uploaded
+//
+//            // Create an upload sessionx
+//            UploadSession uploadSession;
+//            uploadSession = graphClient.sites(siteHostname).places(sitePath).drive().root().itemWithPath(itemPath).createUploadSession(new DriveItemUploadableProperties()).buildRequest().post();
+
+
+
+
+
+            // Specify the size of the inputStream (important for large uploads)
+            long streamSize = 3000; //todo - this is a guess, a MB is equal to about 500 pages of text
+
+
+
+            // Upload small files (less than 4MB) directly
+            if (streamSize < 4 * 1024 * 1024) {
+                byte[] buffer = new byte[(int) streamSize];
+                inputStream.read(buffer);
+                graphClient.me().drive().items(relativePath).content().buildRequest().put(buffer);
+            } else {
+//                // For larger files, create an upload session
+//                UploadSession uploadSession = graphClient.me().drive().items(driveItemId).createUploadSession(new DriveItemUploadableProperties()).buildRequest().post();
+//
+//                // Create an upload provider
+//                ChunkedUploadProvider<DriveItem> uploadProvider = new ChunkedUploadProvider<>(uploadSession, graphClient, inputStream, streamSize, DriveItem.class);
+//
+//                // Configuring chunk size (optional, defaults are available)
+//                int chunkSize = 1024 * 1024; // 1MB
+//                ChunkedUploadResult<DriveItem> uploadResult = uploadProvider.upload(chunkSize).get();
+//
+//                if (uploadResult.uploadCompleted()) {
+//                    // Handle the uploaded drive item
+//                    DriveItem uploadedItem = uploadResult.getItemResponse();
+//                } else {
+//                    // Handle the failure
+//                }
+            }
+
+
+
+//            DriveItem uploadedFile = graphClient
+//                    .customRequest(relativePath, DriveItem.class)
+//                    .buildRequest()
+//                    .put();
+//
+//            System.out.println("Uploaded file ID: " + uploadedFile.id);
+        } catch (ClientException e) {
+            log.error("SharePoint graph API error, ClientException: " + e);
+        }
+
+
+
+        String csvStreamString = new String(byteArrayOutputStream.toByteArray(), StandardCharsets.UTF_8);
+        String singleLineContent = csvStreamString.replace("\n", "|"); //If we don't filter out newline chars then kibana will print each line as a separate log message
+        log.info("CSV byte-stream data converted to a string: " + singleLineContent);
+
+        // Clean up in-memory resources
+        inputStream.close();
+        byteArrayOutputStream.close();
+    }
+
+
+
+
 }

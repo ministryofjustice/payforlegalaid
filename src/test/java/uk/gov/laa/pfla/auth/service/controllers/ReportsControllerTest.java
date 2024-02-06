@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.SpringVersion;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import uk.gov.laa.pfla.auth.service.builders.ReportListResponseTestBuilder;
@@ -91,7 +92,6 @@ class ReportsControllerTest {
 
         ResponseEntity<ReportResponse> responseEntity = reportsController.getReport(mockAuthorizedClient, reportId);
         ReportResponse response = responseEntity.getBody();
-
 
         verify(reportServiceMock, times(1)).createReportResponse(reportId, mockAuthorizedClient);
         assertNotNull(responseEntity);
