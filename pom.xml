@@ -11,7 +11,8 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.1.5</version>
-<!--        For spring-boot-starter-parent v3.1.5,   the Spring version being pulled in is:  6.0.13-->
+        <!-- To see which versions that the starter parent is enforcing in other dependencies, then you can control-click into the starter-parent and control-click its parent pom:  spring-boot-dependencies-->
+        <!-- For spring-boot-starter-parent v3.1.5,   the Spring version being pulled in is:  6.0.13-->
     </parent>
 
     <properties>
@@ -26,9 +27,16 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.3</version>
             </plugin>
+            <!-- Plugin to give you the 'Plugins > Dependency > dependency:tree' diagram: -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.6.1</version>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <!--  Version set in the spring-boot-starter-parent-->
                 <configuration>
                     <excludes>
                         <exclude>
@@ -55,6 +63,7 @@
     </dependencyManagement>
 
     <dependencies>
+        <!--   Springboot dependencies, managed by spring-boot-starter-parent:  -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -69,14 +78,19 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!-- other dependencies-->
+        <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20231013</version>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <!--            <version>1.18.20</version>-->
         </dependency>
         <dependency>
             <groupId>org.modelmapper</groupId>
@@ -104,10 +118,8 @@
             <artifactId>microsoft-graph</artifactId>
             <version>${microsoft-graph.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
+
+
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-oauth2-client</artifactId>
@@ -123,12 +135,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
-            <!--            <version>4.3.0</version>-->
+            <!-- <version>4.3.0</version>-->
         </dependency>
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
             <artifactId>ojdbc11</artifactId>
-            <!--            <version>23.3.0.23.09</version>-->
+            <!-- <version>23.3.0.23.09</version>-->
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
