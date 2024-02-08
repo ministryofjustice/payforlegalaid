@@ -12,6 +12,7 @@ import com.microsoft.graph.requests.GraphServiceClient;
 import okhttp3.Request;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.stereotype.Service;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
@@ -163,7 +164,6 @@ public class SharePointService {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
 
-
         try (Writer writer = new OutputStreamWriter(byteArrayOutputStream);
              CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
             // Extract headers from the first map and write them to the CSV
@@ -187,15 +187,12 @@ public class SharePointService {
         InputStream inputStream = new ByteArrayInputStream((byteArrayOutputStream.toByteArray()));
 
 
-
         // Construct the URL to SharePoint's file upload endpoint
         String sharePointApiUrl = String.format(
                 "%s/_api/web/GetFolderByServerRelativeUrl('%s')/Files/add(url='%s', overwrite=true)",
                 siteUrl, folderPath, fileName
         );  //todo - insert correct api URL
         URL sharePointFormattedUrl = new URL(sharePointApiUrl);
-
-
 
 
         ClientSecretCredential clientSecretCredential = new ClientSecretCredentialBuilder()
@@ -208,16 +205,14 @@ public class SharePointService {
         String relativePath = "/sites/FinanceSysReference-DEV/drive/root:/General/test-upload-file.csv";
 
         GraphServiceClient<Request> graphClient = GraphServiceClient.builder().authenticationProvider(authProvider).buildClient();
-        try{
+        try {
 
             // Create a new DriveItem with the uploaded file's content
             DriveItemUploadableProperties driveItemUploadProps = new DriveItemUploadableProperties();
             driveItemUploadProps.name = "filename.csv";
 
 
-
 //   ------------------
-
 
 
 //            // Variables for site, drive (optional), and item path
@@ -231,12 +226,8 @@ public class SharePointService {
 //            uploadSession = graphClient.sites(siteHostname).places(sitePath).drive().root().itemWithPath(itemPath).createUploadSession(new DriveItemUploadableProperties()).buildRequest().post();
 
 
-
-
-
             // Specify the size of the inputStream (important for large uploads)
             long streamSize = 3000; //todo - this is a guess, a MB is equal to about 500 pages of text
-
 
 
             // Upload small files (less than 4MB) directly
@@ -264,7 +255,6 @@ public class SharePointService {
             }
 
 
-
 //            DriveItem uploadedFile = graphClient
 //                    .customRequest(relativePath, DriveItem.class)
 //                    .buildRequest()
@@ -285,8 +275,6 @@ public class SharePointService {
         inputStream.close();
         byteArrayOutputStream.close();
     }
-
-
 
 
 }

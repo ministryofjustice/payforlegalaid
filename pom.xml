@@ -102,16 +102,15 @@
             <artifactId>snakeyaml</artifactId>
             <version>2.2</version>
         </dependency>
+
         <!-- MS Entra/Active Directory -->
-<!--        Omitting because its included in starter active directory -->
-<!--        <dependency>-->
-<!--            <groupId>com.azure.spring</groupId>-->
-<!--            <artifactId>spring-cloud-azure-starter</artifactId>-->
-<!--        </dependency>-->
-<!--        Azure versions managed by BOM near the top of this POM file  - 'spring-cloud-azure-dependencies'-->
+
+<!--        Omitting "spring-cloud-azure-starter" because it's included in "spring-cloud-azure-starter-active-directory" -->
         <dependency>
             <groupId>com.azure.spring</groupId>
             <artifactId>spring-cloud-azure-starter-active-directory</artifactId>
+            <!-- Dependency version comes from BOM: com.azure.spring:spring-cloud-azure-dependencies:5.7.0 -->
+            <!-- <version>5.7.0</version>-->
         </dependency>
         <dependency>
             <groupId>com.microsoft.graph</groupId>
@@ -123,24 +122,32 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-oauth2-client</artifactId>
+            <!--  Dependency version comes from org.springframework.security:spring-security-bom:6.1.5
+            <version>6.1.5</version>-->
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-oauth2-jose</artifactId>
+            <!--  Dependency version comes from org.springframework.security:spring-security-bom:6.1.5
+            <version>6.1.5</version>-->
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
+            <!--  Dependency version comes from org.springframework.integration:spring-integration-bom:6.1.4-->
+            <!-- <version>6.1.4</version>-->
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
-            <!-- <version>4.3.0</version>-->
+            <!-- Dependency version comes from org.springframework.boot:spring-boot-dependencies:3.1.5-->
+            <!-- <version>3.1.5</version> -->
         </dependency>
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
             <artifactId>ojdbc11</artifactId>
-            <!-- <version>23.3.0.23.09</version>-->
+            <!-- Dependency version comes from com.oracle.database.jdbc:ojdbc-bom:21.9.0.0-->
+            <!-- <version>21.9.0.0</version>-->
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>

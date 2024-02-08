@@ -1,8 +1,6 @@
 gpfd:
   redirect-uri-template: https://laa-pay-for-la-dev.apps.live.cloud-platform.service.justice.gov.uk/login/oauth2/code/gpfd-azure-dev
   # Note,"gpfd-azure-dev" is also known as the Oauth2 'registrationId'
-  scope: https://graph.microsoft.com/User.Read
-
 
 #SSL configuration
 logging:
@@ -48,7 +46,8 @@ spring:
         authorization-clients:
           graph:
             scopes:
-              - ${gpfd.scope}
+              - https://graph.microsoft.com/User.Read
+              - https://graph.microsoft.com/Files.ReadWrite.All
 
   security:
     oauth2:
