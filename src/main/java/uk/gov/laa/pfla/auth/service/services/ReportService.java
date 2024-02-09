@@ -117,7 +117,7 @@ public class ReportService {
         String siteUrl = "https://mojodevl.sharepoint.com/sites/FinanceSysReference-DEV";
         String folderPath = "Documents/General/Get Payments & Financial Data Reports/Generated Reports/CCMS invoice analysis/CIS to CCMS Import Analysis";
         String fileName = "testfile111.csv"; // name of file to be uploaded
-        sharePointService.uploadCsv(rawData, siteUrl, folderPath, fileName, graphClient);
+        sharePointService.uploadCsvManual(rawData, siteUrl, folderPath, fileName, graphClient);
     }
 
 
