@@ -43,12 +43,19 @@ spring:
           client-id: ${AZURE_CLIENT_ID}
           client-secret: ${AZURE_CLIENT_SECRET}
         redirect-uri-template: ${gpfd.redirect-uri-template}
+#        app-id-uri: ${WEB_API_A_APP_ID_URL} #todo -
         authorization-clients:
           graph:
             scopes:
               - https://graph.microsoft.com/User.Read
 #              - https://graph.microsoft.com/Files.ReadWrite.All #todo - need added permissions in A.D. for this to work
-
+          sharepoint:
+            scopes:
+              - https://mojodevl.sharepoint.com/Files.ReadWrite.All
+#          webapiB:         # When authorization-grant-type is null, on behalf of flow is used by default todo -research this
+#            authorization-grant-type: on_behalf_of
+#            scopes:
+#              - ${WEB_API_B_APP_ID_URL}/WebApiB.ExampleScope
 #  security:
 #    oauth2:
 #      client:
