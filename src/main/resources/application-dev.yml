@@ -49,10 +49,15 @@ spring:
             scopes:
               - https://graph.microsoft.com/User.Read
 #              - https://graph.microsoft.com/Files.ReadWrite.All #todo - need added permissions in A.D. for this to work
-          sharepoint:
-            scopes:
-              - https://mojodevl.sharepoint.com/Files.ReadWrite.All
-#          webapiB:         # When authorization-grant-type is null, on behalf of flow is used by default todo -research this
+#          sharepoint:
+#            scopes:
+#              - https://mojodevl.sharepoint.com/Files.ReadWrite.All
+#
+#  Directory.Write.Restricted
+#  Sites.Selected
+#https://graph.microsoft.com/v1.0/sites/{siteID}/permissions
+
+  #          webapiB:         # When authorization-grant-type is null, on behalf of flow is used by default todo -research this
 #            authorization-grant-type: on_behalf_of
 #            scopes:
 #              - ${WEB_API_B_APP_ID_URL}/WebApiB.ExampleScope
