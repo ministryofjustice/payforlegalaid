@@ -11,6 +11,8 @@ public class ReportResponseTestBuilder {
     public static final String DEFAULT_REPORT_NAME = "Excel_Report_Name-CSV-NAME-sheetnumber";
     public static final String DEFAULT_URL = "www.sharepoint.com/folder-for-storing-created-reports";
 
+    public static final String DEFAULT_DOWNLOAD_URL = "www.testurlnotanactualaddress.org";
+
     public static final LocalDateTime DEFAULT_TIME = LocalDateTime.of(2023,
             Month.AUGUST, 29, 19, 30, 40);
 
@@ -18,6 +20,9 @@ public class ReportResponseTestBuilder {
     private String reportName = DEFAULT_REPORT_NAME;
     private String reportUrl = DEFAULT_URL;
     private LocalDateTime creationTime = DEFAULT_TIME;
+
+    private String reportDownloadUrl = DEFAULT_DOWNLOAD_URL;
+
 
     public ReportResponseTestBuilder withId(int id) {
         this.id = id;
@@ -39,7 +44,12 @@ public class ReportResponseTestBuilder {
         return this;
     }
 
+    public ReportResponseTestBuilder withReportDownloadUrl(String reportDownloadUrl) {
+        this.reportDownloadUrl = reportDownloadUrl;
+        return this;
+    }
+
     public ReportResponse createReportResponse() {
-        return new ReportResponse(id, reportName, reportUrl, creationTime);
+        return new ReportResponse(id, reportName, reportUrl, creationTime, reportDownloadUrl );
     }
 }
