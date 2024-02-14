@@ -5,9 +5,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.laa.pfla.auth.service.dao.ReportViewsDao;
 import uk.gov.laa.pfla.auth.service.models.report_view_models.ReportModel;
@@ -121,6 +119,74 @@ public class ReportService {
     }
 
 
+    public ByteArrayOutputStream createCsvStream(List<Map<String, Object>> rawData) throws IOException {
+
+        // Generate CSV content in-memory
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+        try (Writer writer = new OutputStreamWriter(byteArrayOutputStream);
+             CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
+            // Extract headers from the first map and write them to the CSV
+            Map<String, Object> firstRow = rawData.get(0);
+            for (String header : firstRow.keySet()) {
+                csvPrinter.print(header);
+            }
+            csvPrinter.println();
+
+            // Iterate through the list of maps and write data to the CSV
+            for (Map<String, Object> row : rawData) {
+                for (String header : firstRow.keySet()) {
+                    csvPrinter.print(row.get(header));
+                }
+                csvPrinter.println();
+            }
+        }
+
+
+        // Convert CSV content to InputStream
+//        InputStream inputStream = new ByteArrayInputStream((byteArrayOutputStream.toByteArray()));
+//
+//        byte[] byteArray = new byte[0];
+//        try {
+//            byteArray = StreamUtils.copyToByteArray(inputStream);
+//        } catch (IOException e) {
+//            log.error("IOException, byte array was not able to be created from input stream: " + e);
+//        }
+
+//        ByteArrayResource resource = new ByteArrayResource(byteArray) {
+//            @Override
+//            public String getFilename() {
+//                return fileName; // To provide a filename in the content-disposition header
+//            }
+//        };
+//
+//        HttpEntity<ByteArrayResource> requestEntity = new HttpEntity<>(resource, headers);
+//
+//        // Make the POST request and capture the response location URI
+//        URI location = restTemplate.postForLocation(sharePointApiUrl, requestEntity);
+//
+//        // Output the location if you need to check it
+//        if (location != null) {
+//            log.info("Location: " + location);
+//        } else {
+//            log.error("SharePoint API error: No location returned from API call");
+//        }
+
+
+//        try {
+//            restTemplate.postForLocation(sharePointApiUrl, inputStream);
+//        } catch (RestClientException e) {
+//            log.error("Error when sending a post HTTP message to sharepoint API - RestClientException: " + e);
+//        }
+
+        String csvStreamString = new String(byteArrayOutputStream.toByteArray(), StandardCharsets.UTF_8);
+        String singleLineContent = csvStreamString.replace("\n", "|"); //If we don't filter out newline chars then kibana will print each line as a separate log message
+        log.info("CSV byte-stream data converted to a string: " + singleLineContent);
+
+        return byteArrayOutputStream;
+    }
+
+
 //    public void sendRequestToSharepoint(
 //            @RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient
 //    ) throws UserServiceException {
@@ -158,7 +224,9 @@ public class ReportService {
 
         // Generate in-memory csv data stream and upload to sharepoint
         if(CollectionUtils.isNotEmpty(resultList)){
-            generateAndUploadCsvToSharePoint(resultList, graphClient);
+//            generateAndUploadCsvToSharePoint(resultList, graphClient);
+
+            createCsvStream(resultList);
         }
 
 
@@ -170,6 +238,8 @@ public class ReportService {
         reportResponse.setReportName(reportListResponse.getReportName());
         reportResponse.setReportUrl(reportListResponse.getBaseUrl());
         reportResponse.setCreationTime(LocalDateTime.now());
+        reportResponse.setReportDownloadUrl("https://laa-pay-for-la-dev.apps.live.cloud-platform.service.justice.gov.uk/report/1");
+
 
 
         log.debug("Report response object: {}", reportResponse);
