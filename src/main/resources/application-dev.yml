@@ -48,6 +48,7 @@ spring:
           graph:
             scopes:
               - https://graph.microsoft.com/User.Read
+
 #              - https://graph.microsoft.com/Files.ReadWrite.All #todo - need added permissions in A.D. for this to work
 #          sharepoint:
 #            scopes:
