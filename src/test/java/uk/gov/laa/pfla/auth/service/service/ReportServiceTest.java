@@ -170,7 +170,7 @@ public class ReportServiceTest {
 
 
         when(mappingTableService.getDetailsForSpecificReport(1)).thenReturn(mockReportListResponse);
-        when(reportViewsDAO.callDataBase(mockReportListResponse.getSqlQuery())).thenReturn(reportMapMockList);
+//        when(reportViewsDAO.callDataBase(mockReportListResponse.getSqlQuery())).thenReturn(reportMapMockList);
 
 
         ReportResponse actualReportResponse = reportService.createReportResponse(1, mockAuthorizedClient);

@@ -119,22 +119,36 @@ public class ReportService {
     }
 
 
-    public ByteArrayOutputStream createCsvStream(List<Map<String, Object>> rawData) throws IOException {
+    public ByteArrayOutputStream createCsvStream(int id) throws IOException {
 
+        //Querying the mapping table, to obtain metadata about the report
+        ReportListResponse reportListResponse;
+        if(id < 1000 && id > 0){
+            reportListResponse = mappingTableService.getDetailsForSpecificReport(id);
+        }else{ throw new IndexOutOfBoundsException("Report ID needs to be a number between 0 and 1000");}
+
+//        Class<? extends ReportModel> requestedReportType = reportModelMapping.get(id);
+
+        //Fetch fetchReportViewObjectList data from MOJFIN database
+//        List<ReportModel> reportViewObjectList = fetchReportViewObjectList(classOne, reportListResponse.getSqlQuery());
+
+
+        // Create CSV
+        List<Map<String, Object>> resultList = reportViewsDao.callDataBase(reportListResponse.getSqlQuery());
         // Generate CSV content in-memory
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
         try (Writer writer = new OutputStreamWriter(byteArrayOutputStream);
              CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
             // Extract headers from the first map and write them to the CSV
-            Map<String, Object> firstRow = rawData.get(0);
+            Map<String, Object> firstRow = resultList.get(0);
             for (String header : firstRow.keySet()) {
                 csvPrinter.print(header);
             }
             csvPrinter.println();
 
             // Iterate through the list of maps and write data to the CSV
-            for (Map<String, Object> row : rawData) {
+            for (Map<String, Object> row : resultList) {
                 for (String header : firstRow.keySet()) {
                     csvPrinter.print(row.get(header));
                 }
@@ -213,9 +227,6 @@ public class ReportService {
 //        List<ReportModel> reportViewObjectList = fetchReportViewObjectList(classOne, reportListResponse.getSqlQuery());
 
 
-        // Create CSV
-        List<Map<String, Object>> resultList = reportViewsDao.callDataBase(reportListResponse.getSqlQuery());
-
         // create a physical csv file
 //        String createdReportName = null;
 //        if(CollectionUtils.isNotEmpty(resultList)){
@@ -223,11 +234,10 @@ public class ReportService {
 //        }
 
         // Generate in-memory csv data stream and upload to sharepoint
-        if(CollectionUtils.isNotEmpty(resultList)){
-//            generateAndUploadCsvToSharePoint(resultList, graphClient);
-
-            createCsvStream(resultList);
-        }
+//        if(CollectionUtils.isNotEmpty(resultList)){
+////            generateAndUploadCsvToSharePoint(resultList, graphClient);
+//
+//        }
 
 
         // Delete CSV
@@ -238,7 +248,7 @@ public class ReportService {
         reportResponse.setReportName(reportListResponse.getReportName());
         reportResponse.setReportUrl(reportListResponse.getBaseUrl());
         reportResponse.setCreationTime(LocalDateTime.now());
-        reportResponse.setReportDownloadUrl("https://laa-pay-for-la-dev.apps.live.cloud-platform.service.justice.gov.uk/report/1");
+        reportResponse.setReportDownloadUrl("https://laa-pay-for-la-dev.apps.live.cloud-platform.service.justice.gov.uk/" + "csv/" + id);
 
 
 

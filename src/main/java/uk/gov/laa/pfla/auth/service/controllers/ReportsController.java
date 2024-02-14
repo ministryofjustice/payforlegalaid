@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.*;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.pfla.auth.service.beans.UserDetails;
 import uk.gov.laa.pfla.auth.service.exceptions.UserServiceException;
 import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
@@ -16,6 +17,7 @@ import uk.gov.laa.pfla.auth.service.services.ReportService;
 import uk.gov.laa.pfla.auth.service.services.ReportTrackingTableService;
 import uk.gov.laa.pfla.auth.service.services.UserService;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -91,7 +93,31 @@ public class ReportsController {
         return new ResponseEntity<>(reportResponse, HttpStatus.OK);
 
     }
+    @RequestMapping(value ="/csv/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<StreamingResponseBody> getCSV(@PathVariable(value="id") int requestedId) {
+        //Get CSV data stream
+        ByteArrayOutputStream csvDataOutputStream;
+        try {
+             csvDataOutputStream = reportService.createCsvStream(requestedId);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
+        //Create response
+        StreamingResponseBody responseBody = outputStream -> {
+            try {
+                csvDataOutputStream.writeTo(outputStream);
+                outputStream.flush();
+            } catch (IOException e) {
+                // Handle IO exception
+            }
+        };
+
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=data.csv")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(responseBody);
+    }
 
     //This method is just for development, for testing that graph is working properly. It displays the details of the current SSO user
     @GetMapping("/graph")
