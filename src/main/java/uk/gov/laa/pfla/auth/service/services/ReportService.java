@@ -199,8 +199,11 @@ public class ReportService {
     }
 
 
-
-
+    /**
+     * Create a Response entity with a CSV data stream inside the body, for use by the controller's '/csv' endpoint
+     * @param requestedId - the ID of the requested report
+     * @return
+     */
     public ResponseEntity<StreamingResponseBody> createCSVResponse(int requestedId){
 
         //Querying the mapping table, to obtain metadata about the report
