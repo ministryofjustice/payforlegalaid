@@ -229,7 +229,7 @@ public class ReportService {
         };
 
         return ResponseEntity.ok()
-                .header("Content-Disposition", "attachment; filename=" + reportListResponse.getReportName())
+                .header("Content-Disposition", "attachment; filename=" + reportListResponse.getReportName() + ".csv")
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(responseBody);
     }
