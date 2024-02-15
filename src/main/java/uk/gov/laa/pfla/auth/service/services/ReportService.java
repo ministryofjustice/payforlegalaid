@@ -1,12 +1,14 @@
 package uk.gov.laa.pfla.auth.service.services;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.pfla.auth.service.dao.ReportViewsDao;
 import uk.gov.laa.pfla.auth.service.models.report_view_models.ReportModel;
 import uk.gov.laa.pfla.auth.service.models.report_view_models.VBankMonth;
@@ -119,13 +121,9 @@ public class ReportService {
     }
 
 
-    public ByteArrayOutputStream createCsvStream(int id) throws IOException {
+    public ByteArrayOutputStream createCsvStream(String sqlQuery) throws IOException {
 
-        //Querying the mapping table, to obtain metadata about the report
-        ReportListResponse reportListResponse;
-        if(id < 1000 && id > 0){
-            reportListResponse = mappingTableService.getDetailsForSpecificReport(id);
-        }else{ throw new IndexOutOfBoundsException("Report ID needs to be a number between 0 and 1000");}
+
 
 //        Class<? extends ReportModel> requestedReportType = reportModelMapping.get(id);
 
@@ -134,7 +132,7 @@ public class ReportService {
 
 
         // Create CSV
-        List<Map<String, Object>> resultList = reportViewsDao.callDataBase(reportListResponse.getSqlQuery());
+        List<Map<String, Object>> resultList = reportViewsDao.callDataBase(sqlQuery);
         // Generate CSV content in-memory
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
@@ -201,6 +199,38 @@ public class ReportService {
     }
 
 
+
+
+    public ResponseEntity<StreamingResponseBody> createCSVResponse(int requestedId){
+
+        //Querying the mapping table, to obtain metadata about the report
+        ReportListResponse reportListResponse = getMappingTableMetadata(requestedId);
+
+
+        //Get CSV data stream
+        ByteArrayOutputStream csvDataOutputStream;
+        try {
+            csvDataOutputStream = createCsvStream(reportListResponse.getSqlQuery());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        //Create response
+        StreamingResponseBody responseBody = outputStream -> {
+            try {
+                csvDataOutputStream.writeTo(outputStream);
+                outputStream.flush();
+            } catch (IOException e) {
+                // Handle IO exception
+            }
+        };
+
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=" + reportListResponse.getReportName())
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(responseBody);
+    }
+
 //    public void sendRequestToSharepoint(
 //            @RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient
 //    ) throws UserServiceException {
@@ -216,10 +246,7 @@ public class ReportService {
     public ReportResponse createReportResponse(int id, OAuth2AuthorizedClient graphClient) throws IndexOutOfBoundsException, IOException {
 
         //Querying the mapping table, to obtain metadata about the report
-        ReportListResponse reportListResponse;
-        if(id < 1000 && id > 0){
-            reportListResponse = mappingTableService.getDetailsForSpecificReport(id);
-        }else{ throw new IndexOutOfBoundsException("Report ID needs to be a number between 0 and 1000");}
+        ReportListResponse reportListResponse = getMappingTableMetadata(id);
 
 //        Class<? extends ReportModel> requestedReportType = reportModelMapping.get(id);
 
@@ -258,6 +285,18 @@ public class ReportService {
 
     }
 
+    /**
+     * Create a ReportListResponse with report metadata such as reportname, obtained from the CSV to SQL mapping table
+     * @param id - the id of the requested report
+     * @return
+     */
+    private ReportListResponse getMappingTableMetadata(int id) {
+        ReportListResponse reportListResponse;
+        if(id < 1000 && id > 0){
+            reportListResponse = mappingTableService.getDetailsForSpecificReport(id);
+        }else{ throw new IndexOutOfBoundsException("Report ID needs to be a number between 0 and 1000");}
+        return reportListResponse;
+    }
 
 
 //    public static boolean deleteLocalFile(String createdReportName) {

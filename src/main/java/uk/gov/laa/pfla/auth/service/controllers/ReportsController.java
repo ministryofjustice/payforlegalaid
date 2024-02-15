@@ -95,28 +95,8 @@ public class ReportsController {
     }
     @RequestMapping(value ="/csv/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<StreamingResponseBody> getCSV(@PathVariable(value="id") int requestedId) {
-        //Get CSV data stream
-        ByteArrayOutputStream csvDataOutputStream;
-        try {
-             csvDataOutputStream = reportService.createCsvStream(requestedId);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
-        //Create response
-        StreamingResponseBody responseBody = outputStream -> {
-            try {
-                csvDataOutputStream.writeTo(outputStream);
-                outputStream.flush();
-            } catch (IOException e) {
-                // Handle IO exception
-            }
-        };
-
-        return ResponseEntity.ok()
-                .header("Content-Disposition", "attachment; filename=data.csv")
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(responseBody);
+        return reportService.createCSVResponse(requestedId);
     }
 
     //This method is just for development, for testing that graph is working properly. It displays the details of the current SSO user

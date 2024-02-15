@@ -13,9 +13,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.pfla.auth.service.builders.ReportListResponseTestBuilder;
 import uk.gov.laa.pfla.auth.service.builders.ReportResponseTestBuilder;
 import uk.gov.laa.pfla.auth.service.dao.ReportViewsDao;
@@ -29,6 +32,8 @@ import uk.gov.laa.pfla.auth.service.services.ReportService;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import org.slf4j.Logger;
@@ -220,6 +225,83 @@ public class ReportServiceTest {
 //        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
 //        assertTrue(responseEntity.getHeaders().isEmpty());
 //
+//    }
+
+    @Test
+    void createCSVStreamReturnsCorrectContent() throws Exception {
+        // Arrange
+        String sqlQuery = "SELECT * FROM exampleTable";
+        List<Map<String, Object>> mockResultList = Arrays.asList(
+                new LinkedHashMap<String, Object>() {{
+                    put("id", 1);
+                    put("DATE_AUTHORISED_CIS", Timestamp.valueOf(LocalDateTime.of(2023, 8, 07, 0, 0)));
+                    put("name", "Example Report 1");
+                }},
+                new LinkedHashMap<String, Object>() {{
+                    put("id", 2);
+                    put("DATE_AUTHORISED_CIS", Timestamp.valueOf(LocalDateTime.of(2023, 12, 31, 1, 50)));
+                    put("name", "Example Report 2");
+                }}
+        );
+
+        when(reportViewsDAO.callDataBase(sqlQuery)).thenReturn(mockResultList);
+
+        // Act
+        ByteArrayOutputStream outputStream = reportService.createCsvStream(sqlQuery);
+
+        // Assert
+        assertNotNull(outputStream);
+        String resultContent = outputStream.toString();
+        assertTrue(resultContent.contains("id,DATE_AUTHORISED_CIS,name"));
+        assertTrue(resultContent.contains("1,2023-08-07 00:00:00.0,Example Report 1"));
+        assertTrue(resultContent.contains("2,2023-12-31 01:50:00.0,Example Report 2"));
+
+
+        // Verify the interaction with the mock
+        verify(reportViewsDAO).callDataBase(sqlQuery);
+    }
+//    @Test
+//    public void testCreateCsvStream() throws IOException {
+//
+//
+//        List<Map<String, Object>> resultList = [{DATE_AUTHORISED_CIS=2023-08-07 00:00:00.0, THE_SYSTEM=CWA Crime Lower Contract, CIS_VALUE=10466.08, CCMS_VALUE=10466.08}, {DATE_AUTHORISED_CIS=2023-08-07 00:00:00.0, THE_SYSTEM=AGFS scheme, CIS_VALUE=1258037.63, CCMS_VALUE=1256489.69}, {DATE_AUTHORISED_CIS=2023-08-08 00:00:00.0, THE_SYSTEM=eForms, CIS_VALUE=8502.7, CCMS_VALUE=8502.7}]
+//
+//        // Mock CSV data
+//        ByteArrayOutputStream csvDataOutputStream = new ByteArrayOutputStream();
+//        csvDataOutputStream.write("1,John,Doe\n".getBytes());
+//        csvDataOutputStream.write("2,Jane,Smith\n".getBytes());
+//
+//        // Mock response body
+//        StreamingResponseBody responseBody = outputStream -> {
+//            csvDataOutputStream.writeTo(outputStream);
+//            outputStream.flush();
+//        };
+//
+//        // Mock ResponseEntity
+//        ResponseEntity<StreamingResponseBody> mockResponseEntity = ResponseEntity.ok()
+//                .header("Content-Disposition", "attachment; filename=data.csv")
+//                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+//                .body(responseBody);
+//
+//        // Mock CSVController behavior
+////        when(reportsController.getCSV(1)).thenReturn(mockResponseEntity);
+//        when(reportService.createCsvStream(1, reportListResponse.getSqlQuery())).thenReturn(reportResponseMock);
+//
+//
+//
+//        // Verify response status
+//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+//
+//        // Verify content type
+//        assertEquals(MediaType.APPLICATION_OCTET_STREAM, responseEntity.getHeaders().getContentType());
+//
+//        // Verify content disposition header
+//        assertEquals("attachment; filename=data.csv", responseEntity.getHeaders().getFirst("Content-Disposition"));
+//
+//        // Verify CSV data
+//        MockHttpServletResponse mockHttpServletResponse = new MockHttpServletResponse();
+//        responseEntity.getBody().writeTo(mockHttpServletResponse.getOutputStream());
+//        assertEquals("1,John,Doe\n2,Jane,Smith\n", mockHttpServletResponse.getContentAsString());
 //    }
 
 }
