@@ -34,15 +34,17 @@ public class ReportResponseTestBuilder {
         return this;
     }
 
-    public ReportResponseTestBuilder withReportUrl(String reportUrl) {
-        this.reportUrl = reportUrl;
-        return this;
-    }
+    //These fields will be useful when caching/content management is brought into the app
 
-    public ReportResponseTestBuilder withCreationTime(LocalDateTime creationTime) {
-        this.creationTime = creationTime;
-        return this;
-    }
+//    public ReportResponseTestBuilder withReportSharepointUrl(String reportUrl) {
+//        this.reportUrl = reportUrl;
+//        return this;
+//    }
+//
+//    public ReportResponseTestBuilder withCreationTime(LocalDateTime creationTime) {
+//        this.creationTime = creationTime;
+//        return this;
+//    }
 
     public ReportResponseTestBuilder withReportDownloadUrl(String reportDownloadUrl) {
         this.reportDownloadUrl = reportDownloadUrl;
@@ -50,6 +52,6 @@ public class ReportResponseTestBuilder {
     }
 
     public ReportResponse createReportResponse() {
-        return new ReportResponse(id, reportName, reportUrl, creationTime, reportDownloadUrl );
+        return new ReportResponse(id, reportName, reportDownloadUrl );
     }
 }

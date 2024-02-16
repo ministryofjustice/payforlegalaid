@@ -1,17 +1,14 @@
 package uk.gov.laa.pfla.auth.service.controllers;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.pfla.auth.service.builders.ReportListResponseTestBuilder;
@@ -19,7 +16,6 @@ import uk.gov.laa.pfla.auth.service.builders.ReportResponseTestBuilder;
 import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
 import uk.gov.laa.pfla.auth.service.responses.ReportResponse;
 import uk.gov.laa.pfla.auth.service.services.MappingTableService;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
@@ -27,7 +23,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
@@ -44,9 +39,8 @@ class ReportsControllerTest {
     private MappingTableService mappingTableServiceMock;
     @Mock
     private ReportService reportServiceMock;
-    @Mock
-    private OAuth2AuthorizedClient mockAuthorizedClient;
-    @Mock
+
+    @Mock //This is used, despite what sonarlint  might say
     private ReportTrackingTableService reportTrackingTableService;
 
 
@@ -97,28 +91,25 @@ class ReportsControllerTest {
     }
 
     @Test
-    void getReportReturnsCorrectResponseEntity() throws IOException {
+    void getReportReturnsCorrectResponseEntity() {
 
         int reportId = 2;
 
         //Create Mock Response object
         ReportResponse reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();
         //Mock report service
-        when(reportServiceMock.createReportResponse(reportId, mockAuthorizedClient)).thenReturn(reportResponseMock);
+        when(reportServiceMock.createReportResponse(reportId)).thenReturn(reportResponseMock);
 
-        ResponseEntity<ReportResponse> responseEntity = reportsController.getReport(mockAuthorizedClient, reportId);
+        ResponseEntity<ReportResponse> responseEntity = reportsController.getReport(reportId);
         ReportResponse response = responseEntity.getBody();
 
-        verify(reportServiceMock, times(1)).createReportResponse(reportId, mockAuthorizedClient);
+        verify(reportServiceMock, times(1)).createReportResponse(reportId);
         assertNotNull(responseEntity);
         assertNotNull(response);
         assertNotNull(responseEntity.getBody());
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(reportResponseMock.getId(), response.getId());
         assertEquals(reportResponseMock.getReportName(), response.getReportName());
-        assertEquals(reportResponseMock.getReportUrl(), response.getReportUrl());
-        assertEquals(reportResponseMock.getCreationTime(), response.getCreationTime());
-
 
     }
 
@@ -152,12 +143,6 @@ class ReportsControllerTest {
                 .andExpect(content().string(csvDataOutputStream.toString()));
 
         verify(reportServiceMock).createCSVResponse(1);
-
-
-
-
-
-
 
 
         // Invoke the controller method
