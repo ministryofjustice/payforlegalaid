@@ -49,43 +49,8 @@ spring:
             scopes:
               - https://graph.microsoft.com/User.Read
 
-#              - https://graph.microsoft.com/Files.ReadWrite.All #todo - need added permissions in A.D. for this to work
-#          sharepoint:
-#            scopes:
-#              - https://mojodevl.sharepoint.com/Files.ReadWrite.All
-#
-#  Directory.Write.Restricted
-#  Sites.Selected
-#https://graph.microsoft.com/v1.0/sites/{siteID}/permissions
-
-  #          webapiB:         # When authorization-grant-type is null, on behalf of flow is used by default todo -research this
-#            authorization-grant-type: on_behalf_of
-#            scopes:
-#              - ${WEB_API_B_APP_ID_URL}/WebApiB.ExampleScope
-#  security:
-#    oauth2:
-#      client:
-#        registration:
-#          azure:
-#            client-id: ${AZURE_CLIENT_ID}
-#            client-secret: ${AZURE_CLIENT_SECRET}
-#            authorization-grant-type: authorization_code
-#            redirect-uri: ${gpfd.redirect-uri-template}
-#            scope: openid, profile, https://graph.microsoft.com/User.Read, https://graph.microsoft.com/Files.ReadWrite.All
-#            client-name: Azure
-#            client-authentication-method: post
-#        provider:
-#          azure:
-#            authorization-uri: https://login.microsoftonline.com/${AZURE_TENANT_ID}/oauth2/v2.0/authorize
-#            token-uri: https://login.microsoftonline.com/${AZURE_TENANT_ID}/oauth2/v2.0/token
-#            user-info-uri: https://graph.microsoft.com/oidc/userinfo
-#            user-name-attribute: name
-#            jwk-set-uri: https://login.microsoftonline.com/${AZURE_TENANT_ID}/discovery/v2.0/keys
-
-
   # Database config
   datasource:
-    #    url: jdbc:oracle:thin:@localhost:1521:xe
     url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
     username: ${MOJFIN_DEV_USERNAME}
     password: ${MOJFIN_DEV_PASSWORD}
