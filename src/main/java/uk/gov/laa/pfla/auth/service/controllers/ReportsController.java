@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.*;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.pfla.auth.service.beans.UserDetails;
 import uk.gov.laa.pfla.auth.service.exceptions.UserServiceException;
 import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
@@ -44,7 +45,8 @@ public class ReportsController {
     }
 
     /**
-     * Method to allow the user to see a list of all available reports, which are available to generate and download
+     * Allows the user to see a list of all available reports, which are available to generate and download
+     *
      * @return A POJO list, converted to json by spring -  A list of report names, id's and some information on each report, in the form of json objects
      */
     @RequestMapping(value ="/reports", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -60,10 +62,11 @@ public class ReportsController {
 
 
     /**
-     *
+     * This method will be useful once a content management/caching system is in place, it will return the name of the requested report, and other data such as the time at which it was requested
+     * @param requestedId - id of the requested report
      * @return A SingleReportResponse POJO, converted to JSON by spring, and wrapped in a ResponseEntity object.
-     * It is a single JSON object which contains the name, id and url of a report
-     */
+     * It is a single JSON object which contains the name, id and download url of a report
+     **/
     @RequestMapping(value ="/report/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<ReportResponse> getReport(@PathVariable(value="id") int requestedId) {
 
@@ -81,15 +84,27 @@ public class ReportsController {
             log.error("Number format exception: " + e);
             reportResponse.setReportName("Invalid input, report id must be a number with no decimal places");
             return new ResponseEntity<>(reportResponse, HttpStatus.BAD_REQUEST);
-        } catch (IOException e) {
-            log.error("Technical error creating CSV file: " + e);
-            reportResponse.setReportName("Technical error creating report");
         }
 
         return new ResponseEntity<>(reportResponse, HttpStatus.OK);
 
     }
 
+    /**
+     * Sends a report to the user in the form of a CSV data stream. If the user requests via a web browser this response then triggers the browser to download the file.
+     *
+     * @param requestedId - id of the requested report
+     * @return CSV data stream or reports data
+     */
+    @RequestMapping(value ="/csv/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<StreamingResponseBody> getCSV(@PathVariable(value="id") int requestedId) {
+
+        try {
+            return reportService.createCSVResponse(requestedId);
+        } catch (IOException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // todo - need to write a custom exception handler to make this more presentable
+        }
+    }
 
     //This method is just for development, for testing that graph is working properly. It displays the details of the current SSO user
     @GetMapping("/graph")
@@ -98,6 +113,12 @@ public class ReportsController {
             @RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient
     ) throws UserServiceException {
         UserDetails user = userService.getUserDetails(graphClient);
+
+        log.info("Here's the graphClient.getClientRegistration(): " + graphClient.getClientRegistration());
+        log.info("Here's the graphClient.getRefreshToken(): " + graphClient.getRefreshToken());
+        log.info("Here's the graphClient.getPrincipalName(): " + graphClient.getPrincipalName());
+        log.info("Here's the graphClient.getAccessToken(): " + graphClient.getAccessToken());
+
 
         return user.toString();
 
