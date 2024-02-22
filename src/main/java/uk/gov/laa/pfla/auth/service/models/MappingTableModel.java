@@ -3,6 +3,7 @@ package uk.gov.laa.pfla.auth.service.models;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 //TODO - This class will be a bean, dont forget to annotate it with  @org.springframework.beans.factory.annotation.Autowired to make sonarlint happy
 // Bean guide: https://www.baeldung.com/spring-bean
@@ -14,10 +15,8 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class MappingTableModel {
-    public MappingTableModel() {
-        //no args constructor needed for ModelMapper
-    }
 
     private int id;
     private String reportName;

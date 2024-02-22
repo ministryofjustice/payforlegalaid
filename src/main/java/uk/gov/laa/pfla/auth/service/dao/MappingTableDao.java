@@ -5,6 +5,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import uk.gov.laa.pfla.auth.service.exceptions.DatabaseReadException;
 import uk.gov.laa.pfla.auth.service.models.MappingTableModel;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,16 +34,20 @@ public class MappingTableDao {
         //empty contructor to allow builder to do its work
     }
 
-    public List<MappingTableModel> fetchReportList() {
+    public List<MappingTableModel> fetchReportList() throws DatabaseReadException {
         mappingTableObjectList.clear(); // Prevent data accumulating after multiple requests
 
         List<Map<String, Object>> resultList;
 
             String query = "SELECT * FROM GPFD.CSV_TO_SQL_MAPPING_TABLE";
 
+        resultList = jdbcTemplate.queryForList(query);
 
-            resultList = jdbcTemplate.queryForList(query);
-            log.debug("Result list, a list of objects each representing a row in the mapping table: {}", resultList);
+        if (resultList.isEmpty()) {
+            throw new DatabaseReadException("No results returned from mapping table");
+        }
+
+        log.debug("Result list, a list of objects each representing a row in the mapping table: {}", resultList);
 
                 try {
                     resultList.forEach(obj -> {

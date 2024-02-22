@@ -1,6 +1,5 @@
 package uk.gov.laa.pfla.auth.service.responses;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +16,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReportListResponse {
 
-    @NotBlank(message = "Report id  cannot be blank")
     private int id;
     private String reportName;
     private String excelReport;
