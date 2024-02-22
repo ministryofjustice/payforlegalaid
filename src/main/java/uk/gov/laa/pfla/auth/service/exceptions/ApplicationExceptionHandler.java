@@ -1,6 +1,7 @@
 package uk.gov.laa.pfla.auth.service.exceptions;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -12,7 +13,7 @@ import java.util.Map;
 @ControllerAdvice
 public class ApplicationExceptionHandler {
 
-    private static final String ERROR_STRING = "error";
+    private static final String ERROR_STRING = "Error: ";
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(CsvStreamException.class)
     public Map<String, String> handleCsvStreamException(CsvStreamException e){
@@ -54,13 +55,10 @@ public class ApplicationExceptionHandler {
     }
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public Map<String, String>  handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e){
-//        String message = "Invalid input for parameter " + e.getName() + ". Expected a numeric value";
+    public ResponseEntity<String> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e){
+        String message = ERROR_STRING + "Invalid input for parameter " + e.getName() + ". Expected a numeric value";
 
-        Map<String, String> errorMap = new HashMap<>();
-        errorMap.put(ERROR_STRING, e.getMessage());
-
-        return errorMap;
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 
 }
