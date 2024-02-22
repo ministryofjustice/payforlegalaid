@@ -1,7 +1,6 @@
 package uk.gov.laa.pfla.auth.service.exceptions;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -55,10 +54,13 @@ public class ApplicationExceptionHandler {
     }
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<String> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e){
-        String message = "Invalid input for parameter " + e.getName() + ". Expected a numeric value";
+    public Map<String, String>  handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e){
+//        String message = "Invalid input for parameter " + e.getName() + ". Expected a numeric value";
 
-        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+        Map<String, String> errorMap = new HashMap<>();
+        errorMap.put(ERROR_STRING, e.getMessage());
+
+        return errorMap;
     }
 
 }

@@ -3,6 +3,7 @@ package uk.gov.laa.pfla.auth.service.dao;
 import org.modelmapper.MappingException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import uk.gov.laa.pfla.auth.service.exceptions.DatabaseReadException;
@@ -41,7 +42,12 @@ public class MappingTableDao {
 
             String query = "SELECT * FROM GPFD.CSV_TO_SQL_MAPPING_TABLE";
 
-        resultList = jdbcTemplate.queryForList(query);
+
+        try {
+            resultList = jdbcTemplate.queryForList(query);
+        } catch (DataAccessException e) {
+            throw new DatabaseReadException("Error reading from DB: " + e);
+        }
 
         if (resultList.isEmpty()) {
             throw new DatabaseReadException("No results returned from mapping table");
