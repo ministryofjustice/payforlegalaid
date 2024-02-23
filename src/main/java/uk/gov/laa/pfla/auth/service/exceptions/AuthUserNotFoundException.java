@@ -8,7 +8,4 @@ public class AuthUserNotFoundException extends UserServiceException {
     super(message);
   }
 
-  public AuthUserNotFoundException(String message, Throwable cause) {
-    super(message, cause);
-  }
 }
