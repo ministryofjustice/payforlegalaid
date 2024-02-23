@@ -9,6 +9,9 @@ import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2Aut
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.pfla.auth.service.beans.UserDetails;
+import uk.gov.laa.pfla.auth.service.exceptions.CsvStreamException;
+import uk.gov.laa.pfla.auth.service.exceptions.DatabaseReadException;
+import uk.gov.laa.pfla.auth.service.exceptions.ReportIdNotFoundException;
 import uk.gov.laa.pfla.auth.service.exceptions.UserServiceException;
 import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
 import uk.gov.laa.pfla.auth.service.responses.ReportResponse;
@@ -16,8 +19,6 @@ import uk.gov.laa.pfla.auth.service.services.MappingTableService;
 import uk.gov.laa.pfla.auth.service.services.ReportService;
 import uk.gov.laa.pfla.auth.service.services.ReportTrackingTableService;
 import uk.gov.laa.pfla.auth.service.services.UserService;
-
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -36,7 +37,8 @@ public class ReportsController {
 
 
     @Autowired
-    public ReportsController(MappingTableService mappingTableService, ReportService reportService, ReportTrackingTableService reportTrackingTableService, UserService userService){
+    public ReportsController(MappingTableService mappingTableService, ReportService reportService,
+                             ReportTrackingTableService reportTrackingTableService, UserService userService){
         this.mappingTableService = mappingTableService;
         this.reportService = reportService;
         this.reportTrackingTableService = reportTrackingTableService;
@@ -50,7 +52,7 @@ public class ReportsController {
      * @return A POJO list, converted to json by spring -  A list of report names, id's and some information on each report, in the form of json objects
      */
     @RequestMapping(value ="/reports", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<List<ReportListResponse>>getReportList() {
+    ResponseEntity<List<ReportListResponse>>getReportList() throws DatabaseReadException {
 
         //Converting the model object arraylist to a response object arraylist
         List<ReportListResponse> reportListResponseArray = mappingTableService
@@ -68,23 +70,13 @@ public class ReportsController {
      * It is a single JSON object which contains the name, id and download url of a report
      **/
     @RequestMapping(value ="/report/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<ReportResponse> getReport(@PathVariable(value="id") int requestedId) {
+    ResponseEntity<ReportResponse> getReport(@PathVariable(value="id") int requestedId) throws IndexOutOfBoundsException {
 
 
         reportTrackingTableService.updateReportTracking(requestedId, LocalDateTime.now());
 
-        ReportResponse reportResponse = new ReportResponse();
-        try {
-            reportResponse = reportService.createReportResponse(requestedId);
-        } catch (IndexOutOfBoundsException e) {
-            log.error("index out of bounds  Error: " + e);
-            reportResponse.setReportName("Report ID not found");
-            return new ResponseEntity<>(reportResponse, HttpStatus.BAD_REQUEST);
-        } catch ( NumberFormatException e) { //todo - catch a different type of exception
-            log.error("Number format exception: " + e);
-            reportResponse.setReportName("Invalid input, report id must be a number with no decimal places");
-            return new ResponseEntity<>(reportResponse, HttpStatus.BAD_REQUEST);
-        }
+        ReportResponse reportResponse = reportService.createReportResponse(requestedId);
+
 
         return new ResponseEntity<>(reportResponse, HttpStatus.OK);
 
@@ -97,13 +89,10 @@ public class ReportsController {
      * @return CSV data stream or reports data
      */
     @RequestMapping(value ="/csv/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<StreamingResponseBody> getCSV(@PathVariable(value="id") int requestedId) {
+    public ResponseEntity<StreamingResponseBody> getCSV(@PathVariable(value="id") int requestedId) throws ReportIdNotFoundException,
+            CsvStreamException, DatabaseReadException, IndexOutOfBoundsException {
 
-        try {
-            return reportService.createCSVResponse(requestedId);
-        } catch (IOException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // todo - need to write a custom exception handler to make this more presentable
-        }
+        return reportService.createCSVResponse(requestedId);
     }
 
     //This method is just for development, for testing that graph is working properly. It displays the details of the current SSO user

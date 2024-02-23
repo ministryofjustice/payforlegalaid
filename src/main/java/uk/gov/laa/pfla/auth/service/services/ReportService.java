@@ -2,12 +2,14 @@ package uk.gov.laa.pfla.auth.service.services;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.pfla.auth.service.dao.ReportViewsDao;
+import uk.gov.laa.pfla.auth.service.exceptions.CsvStreamException;
+import uk.gov.laa.pfla.auth.service.exceptions.DatabaseReadException;
+import uk.gov.laa.pfla.auth.service.exceptions.ReportIdNotFoundException;
 import uk.gov.laa.pfla.auth.service.responses.ReportResponse;
 import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
 
@@ -48,17 +50,12 @@ public class ReportService {
      * @return a byteArrayOutputStream - a stream of CSV data
      * @throws IOException - if conversion of the DB data to a CSV stream fails
      */
-    public ByteArrayOutputStream createCsvStream(String sqlQuery) throws IOException {
+    public ByteArrayOutputStream createCsvStream(String sqlQuery) throws IOException, DatabaseReadException {
 
 
-        // Create CSV
-        List<Map<String, Object>> resultList = null;
-        try {
-            resultList = reportViewsDao.callDataBase(sqlQuery);
-        } catch (DataAccessException e) {
-            log.error("Error reading from DB: " + e);
-            // todo - throw custom DB exception type
-        }
+        // Get report data from DB
+        List<Map<String, Object>> resultList =  reportViewsDao.callDataBase(sqlQuery);
+
         // Generate CSV content in-memory
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
@@ -94,7 +91,7 @@ public class ReportService {
      * @param requestedId - the ID of the requested report
      * @return a ResponseEntity of type 'StreamingResponseBody', containing a stream of CSV data
      */
-    public ResponseEntity<StreamingResponseBody> createCSVResponse(int requestedId) throws IOException {
+    public ResponseEntity<StreamingResponseBody> createCSVResponse(int requestedId) throws ReportIdNotFoundException, DatabaseReadException, IndexOutOfBoundsException, CsvStreamException {
 
         //Querying the mapping table, to obtain metadata about the report
         ReportListResponse reportListResponse = getMappingTableMetadata(requestedId);
@@ -105,8 +102,7 @@ public class ReportService {
         try {
             csvDataOutputStream = createCsvStream(reportListResponse.getSqlQuery());
         } catch (IOException e) {
-            log.error("Error creating CSV data stream: " + e);
-            throw new IOException("Error creating CSV data stream: " + e);
+            throw new CsvStreamException("Error creating CSV data stream: " + e);
         }
 
         //Create response
@@ -115,8 +111,7 @@ public class ReportService {
                 csvDataOutputStream.writeTo(outputStream);
                 outputStream.flush();
             } catch (IOException e) {
-                log.error("Error writing csv stream data to a response body " + e);
-                throw new IOException("Error writing csv stream data to a response body " + e);            }
+                throw new CsvStreamException("Error writing csv stream data to a response body " + e);            }
         };
 
         return ResponseEntity.ok()
@@ -132,7 +127,6 @@ public class ReportService {
      * @param id - id of the requested report
      * @return reportResponse containing json data about the requested report
      * @throws IndexOutOfBoundsException
-     * @throws IOException
      */
     public ReportResponse createReportResponse(int id ) throws IndexOutOfBoundsException {
 
@@ -158,7 +152,7 @@ public class ReportService {
      * @param id - the id of the requested report
      * @return a ReportListResponse from the CSV - SQL mapping table
      */
-    private ReportListResponse getMappingTableMetadata(int id) {
+    private ReportListResponse getMappingTableMetadata(int id) throws IndexOutOfBoundsException, ReportIdNotFoundException, DatabaseReadException {
         ReportListResponse reportListResponse;
         if(id < 1000 && id > 0){
             reportListResponse = mappingTableService.getDetailsForSpecificReport(id);
