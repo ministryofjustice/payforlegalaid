@@ -46,19 +46,21 @@ public class ApplicationExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IndexOutOfBoundsException.class)
-    public Map<String, String> handleIndexOutOfBoundsException(IndexOutOfBoundsException e){
+    public ResponseEntity<Map<String, String> > handleIndexOutOfBoundsException(IndexOutOfBoundsException e){
         Map<String, String> errorMap = new HashMap<>();
         errorMap.put(ERROR_STRING, e.getMessage());
 
-        return errorMap;
+        return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
 
     }
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<String> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e){
+    public ResponseEntity<Map<String, String> > handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e){
         String message = ERROR_STRING + "Invalid input for parameter " + e.getName() + ". Expected a numeric value";
+        Map<String, String> errorMap = new HashMap<>();
+        errorMap.put(message, e.getMessage());
 
-        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
     }
 
 }
