@@ -73,7 +73,6 @@ public class ReportsController {
     ResponseEntity<ReportResponse> getReport(@PathVariable(value="id") int requestedId) throws IndexOutOfBoundsException {
 
 
-        reportTrackingTableService.updateReportTracking(requestedId, LocalDateTime.now());
 
         ReportResponse reportResponse = reportService.createReportResponse(requestedId);
 
@@ -91,6 +90,8 @@ public class ReportsController {
     @RequestMapping(value ="/csv/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<StreamingResponseBody> getCSV(@PathVariable(value="id") int requestedId) throws ReportIdNotFoundException,
             CsvStreamException, DatabaseReadException, IndexOutOfBoundsException {
+
+        reportTrackingTableService.updateReportTracking(requestedId, LocalDateTime.now());
 
         return reportService.createCSVResponse(requestedId);
     }

@@ -43,13 +43,12 @@ spring:
           client-id: ${AZURE_CLIENT_ID}
           client-secret: ${AZURE_CLIENT_SECRET}
         redirect-uri-template: ${gpfd.redirect-uri-template}
-#        app-id-uri: ${WEB_API_A_APP_ID_URL} #todo -
         authorization-clients:
           graph:
             scopes:
               - https://graph.microsoft.com/User.Read
 
-  # Database config
+  # DEV MOJFIN database config
   datasource:
     url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
     username: ${MOJFIN_DEV_USERNAME}

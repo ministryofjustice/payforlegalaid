@@ -1,22 +1,32 @@
 package uk.gov.laa.pfla.auth.service.dao;
 
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import uk.gov.laa.pfla.auth.service.models.ReportTrackingTableModel;
-import java.time.LocalDateTime;
 
 @Repository
 public class ReportTrackingTableDao {
-    private int id;
-    private String reportName;
-    private String reportUrl; // The sharepoint URL where the report is stored, after being created
-    private LocalDateTime creationTime;
-    private int mappingId;
-    private String reportGeneratedBy;
 
+    private final JdbcTemplate jdbcTemplate;
+//    private int id;
+//    private String reportName;
+//    private String reportUrl; // The sharepoint URL where the report is stored, after being created
+//    private LocalDateTime creationTime;
+//    private int mappingId;
+//    private String reportGeneratedBy;
 
-    public void updateTable(ReportTrackingTableModel reportTrackingTableModel) {
+    //Note: Spring autowires @Repository constructors automatically
+    public ReportTrackingTableDao(JdbcTemplate jdbcTemplate){
+        this.jdbcTemplate = jdbcTemplate;
 
-        //update database table
+    }
+
+    public void updateTrackingTable(ReportTrackingTableModel trackingModel) {
+
+        String sql = "INSERT INTO REPORT_TRACKING (id, reportName, reportUrl, creationTime, mappingId, reportGeneratedBy) VALUES (?,?,?,?,?,?)";
+
+        jdbcTemplate.update(sql, new Object[]{trackingModel.getId(), trackingModel.getReportName(), trackingModel.getReportUrl(),
+                trackingModel.getCreationTime(), trackingModel.getMappingId(), trackingModel.getReportGeneratedBy()});
 
     }
 
