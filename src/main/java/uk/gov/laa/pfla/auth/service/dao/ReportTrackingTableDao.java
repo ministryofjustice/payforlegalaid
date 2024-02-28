@@ -42,6 +42,8 @@ public class ReportTrackingTableDao {
                 trackingModel.getId(), trackingModel.getReportName(), trackingModel.getReportUrl(),
                 null, trackingModel.getMappingId(), trackingModel.getReportGeneratedBy());
 
+
+
     }
 
 
