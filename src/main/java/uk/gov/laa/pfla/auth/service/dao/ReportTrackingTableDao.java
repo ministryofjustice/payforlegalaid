@@ -23,10 +23,11 @@ public class ReportTrackingTableDao {
 
     public void updateTrackingTable(ReportTrackingTableModel trackingModel) {
 
-        String sql = "INSERT INTO REPORT_TRACKING (id, reportName, reportUrl, creationTime, mappingId, reportGeneratedBy) VALUES (?,?,?,?,?,?)";
+        String sql = "INSERT INTO REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (?,?,?,?,?,?)";
 
-        jdbcTemplate.update(sql, new Object[]{trackingModel.getId(), trackingModel.getReportName(), trackingModel.getReportUrl(),
-                trackingModel.getCreationTime(), trackingModel.getMappingId(), trackingModel.getReportGeneratedBy()});
+        //Insert values into sql statement and update
+        jdbcTemplate.update(sql, trackingModel.getId(), trackingModel.getReportName(), trackingModel.getReportUrl(),
+                trackingModel.getCreationTime(), trackingModel.getMappingId(), trackingModel.getReportGeneratedBy());
 
     }
 
