@@ -40,7 +40,7 @@ public class ReportTrackingTableDao {
         this.jdbcTemplate.update(
                 "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (?,?,?,?,?,?)",
                 trackingModel.getId(), trackingModel.getReportName(), trackingModel.getReportUrl(),
-                trackingModel.getCreationTime(), trackingModel.getMappingId(), trackingModel.getReportGeneratedBy());
+                null, trackingModel.getMappingId(), trackingModel.getReportGeneratedBy());
 
     }
 
