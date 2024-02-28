@@ -146,6 +146,7 @@
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
             <artifactId>ojdbc11</artifactId>
+            <!--  Can try ojdbc11-production (a slimmed down version of this dependency) to get added efficiency in PROD -->
             <!-- Dependency version comes from com.oracle.database.jdbc:ojdbc-bom:21.9.0.0-->
             <!-- <version>21.9.0.0</version>-->
         </dependency>

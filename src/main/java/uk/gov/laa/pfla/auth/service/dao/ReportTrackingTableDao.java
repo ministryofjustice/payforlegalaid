@@ -30,11 +30,17 @@ public class ReportTrackingTableDao {
 //                trackingModel.getCreationTime(), trackingModel.getMappingId(), trackingModel.getReportGeneratedBy());
 
 
-        String sql = "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (1, 'test report name 2', 'www.sharepoint.com/place-where-we-will-create-report', null, 2, 'Liv Tyler')";
+//        String sql = "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (1, 'test report name 2', 'www.sharepoint.com/place-where-we-will-create-report', null, 2, 'Liv Tyler')";
 
-        //Insert values into sql statement and update
-        jdbcTemplate.update(sql);
 
+//        PreparedStatement stmt = "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (1, 'test report name 2', 'www.sharepoint.com/place-where-we-will-create-report', null, 2, 'Liv Tyler')";
+//        //Insert values into sql statement and update
+//        jdbcTemplate.update(sql);
+
+        this.jdbcTemplate.update(
+                "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (?,?,?,?,?,?)",
+                trackingModel.getId(), trackingModel.getReportName(), trackingModel.getReportUrl(),
+                trackingModel.getCreationTime(), trackingModel.getMappingId(), trackingModel.getReportGeneratedBy());
 
     }
 
