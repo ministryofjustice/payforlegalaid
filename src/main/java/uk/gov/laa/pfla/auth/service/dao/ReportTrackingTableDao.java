@@ -23,17 +23,17 @@ public class ReportTrackingTableDao {
 
     public void updateTrackingTable(ReportTrackingTableModel trackingModel) {
 
-        String sql = "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (?,?,?,?,?,?)";
-
-        //Insert values into sql statement and update
-        jdbcTemplate.update(sql, trackingModel.getId(), trackingModel.getReportName(), trackingModel.getReportUrl(),
-                trackingModel.getCreationTime(), trackingModel.getMappingId(), trackingModel.getReportGeneratedBy());
-
-
-//        String sql = "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (1,'test report name','www.sharepoint.com/place-where-we-will-create-report',null, 2, 'Barry White')";
+//        String sql = "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (?,?,?,?,?,?)";
 //
 //        //Insert values into sql statement and update
-//        jdbcTemplate.update(sql);
+//        jdbcTemplate.update(sql, trackingModel.getId(), trackingModel.getReportName(), trackingModel.getReportUrl(),
+//                trackingModel.getCreationTime(), trackingModel.getMappingId(), trackingModel.getReportGeneratedBy());
+
+
+        String sql = "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (1,'test report name 2','www.sharepoint.com/place-where-we-will-create-report',null, 2, 'Liv Tyler')";
+
+        //Insert values into sql statement and update
+        jdbcTemplate.update(sql);
 
 
     }
