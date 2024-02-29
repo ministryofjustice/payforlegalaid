@@ -1,5 +1,6 @@
 package uk.gov.laa.pfla.auth.service.dao;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
@@ -11,7 +12,7 @@ import java.util.Map;
 @Repository
 public class ReportTrackingTableDao {
 
-    private final JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate writeJdbcTemplate;
     private SimpleJdbcInsert insertActor;
 
 //    private int id;
@@ -21,10 +22,11 @@ public class ReportTrackingTableDao {
 //    private int mappingId;
 //    private String reportGeneratedBy;
 
-    //Note: Spring autowires @Repository constructors automatically
-    public ReportTrackingTableDao(JdbcTemplate jdbcTemplate){
-        this.jdbcTemplate = jdbcTemplate;
-
+    // Using the JDBCTemplate bean defined in  PflaApplication (the @SpringBootApplication / run class) which uses the
+    // DB datasource/credentials with write permissions
+    @Autowired
+    public ReportTrackingTableDao(JdbcTemplate readOnlyJdbcTemplate, JdbcTemplate writeJdbcTemplate){
+        this.writeJdbcTemplate = writeJdbcTemplate;
 
     }
 
@@ -62,7 +64,7 @@ public class ReportTrackingTableDao {
 
 
         SimpleJdbcInsert simpleJdbcInsert =
-                new SimpleJdbcInsert(jdbcTemplate).withTableName("REPORT_TRACKING");
+                new SimpleJdbcInsert(writeJdbcTemplate).withTableName("REPORT_TRACKING");
 
         Map<String,Object> parameters = new HashMap<>();
         parameters.put("ID",trackingModel.getId());

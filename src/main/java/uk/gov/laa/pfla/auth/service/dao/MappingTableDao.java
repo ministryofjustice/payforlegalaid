@@ -22,18 +22,16 @@ public class MappingTableDao {
     public static final Logger log = LoggerFactory.getLogger(MappingTableDao.class);
 
 
-    private JdbcTemplate jdbcTemplate;
-
+    private final JdbcTemplate readOnlyJdbcTemplate;
     private final ModelMapper mapper = new ModelMapper();
 
+    // Using the JDBCTemplate bean defined in  PflaApplication (the @SpringBootApplication / run class) which uses the
+    //read only DB datasource/credentials
     @Autowired
-    public MappingTableDao(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public MappingTableDao(JdbcTemplate readOnlyJdbcTemplate) {
+        this.readOnlyJdbcTemplate = readOnlyJdbcTemplate;
     }
 
-    public MappingTableDao() {
-        //empty contructor to allow builder to do its work
-    }
 
     public List<MappingTableModel> fetchReportList() throws DatabaseReadException {
         mappingTableObjectList.clear(); // Prevent data accumulating after multiple requests
@@ -44,7 +42,7 @@ public class MappingTableDao {
 
 
         try {
-            resultList = jdbcTemplate.queryForList(query);
+            resultList = readOnlyJdbcTemplate.queryForList(query);
         } catch (DataAccessException e) {
             throw new DatabaseReadException("Error reading from DB: " + e);
         }
