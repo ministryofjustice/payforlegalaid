@@ -43,7 +43,7 @@ public class ReportTrackingTableDao {
 
         //Insert values into sql statement and update
         writeJdbcTemplate.update(sql, 1, "Test name 1", "www.test-site.com",
-                null , 2, "Tony Soprano");
+                trackingModel.getCreationTime() , 2, "Tony Soprano");
 
 
 
