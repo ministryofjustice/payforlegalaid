@@ -2,10 +2,13 @@ package uk.gov.laa.pfla.auth.service.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SqlParameterValue;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import uk.gov.laa.pfla.auth.service.models.ReportTrackingTableModel;
 
+import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,18 +35,19 @@ public class ReportTrackingTableDao {
 
     public void updateTrackingTable(ReportTrackingTableModel trackingModel) {
 
+        String sql = "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (?,?,?,?,?,?)";
+        Timestamp timestamp = Timestamp.valueOf(trackingModel.getCreationTime());
+
+        //Insert values into sql statement and update
+        writeJdbcTemplate.update(sql, trackingModel.getId(), trackingModel.getReportName(), trackingModel.getReportUrl(),
+                timestamp, trackingModel.getMappingId(), trackingModel.getReportGeneratedBy());
+
+
 //        String sql = "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (?,?,?,?,?,?)";
 //
 //        //Insert values into sql statement and update
-//        jdbcTemplate.update(sql, trackingModel.getId(), trackingModel.getReportName(), trackingModel.getReportUrl(),
-//                trackingModel.getCreationTime(), trackingModel.getMappingId(), trackingModel.getReportGeneratedBy());
-
-
-        String sql = "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (?,?,?,?,?,?)";
-
-        //Insert values into sql statement and update
-        writeJdbcTemplate.update(sql, 1, "Test name 1", "www.test-site.com",
-                trackingModel.getCreationTime() , 2, "Tony Soprano");
+//        writeJdbcTemplate.update(sql, 1, "Test name 1", "www.test-site.com",
+//                trackingModel.getCreationTime() , 2, "Tony Soprano");
 
 
 
