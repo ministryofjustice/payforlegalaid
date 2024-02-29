@@ -37,11 +37,11 @@ public class ReportTrackingTableDao {
 //                trackingModel.getCreationTime(), trackingModel.getMappingId(), trackingModel.getReportGeneratedBy());
 
 
-        String sql = "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (?,?,?,?,?,?)";
-
-        //Insert values into sql statement and update
-        jdbcTemplate.update(sql, 1, "Test name 1", "www.test-site.com",
-                null , 2, "Tony Soprano");
+//        String sql = "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (?,?,?,?,?,?)";
+//
+//        //Insert values into sql statement and update
+//        jdbcTemplate.update(sql, 1, "Test name 1", "www.test-site.com",
+//                null , 2, "Tony Soprano");
 
 
 
@@ -60,19 +60,19 @@ public class ReportTrackingTableDao {
 
 
 
-//
-//        SimpleJdbcInsert simpleJdbcInsert =
-//                new SimpleJdbcInsert(jdbcTemplate).withTableName("REPORT_TRACKING");
-//
-//        Map<String,Object> parameters = new HashMap<>();
-//        parameters.put("ID",trackingModel.getId());
-//        parameters.put("REPORT_NAME",trackingModel.getReportName());
-//        parameters.put("REPORT_URL",trackingModel.getReportUrl());
-//        parameters.put("CREATION_TIME",trackingModel.getCreationTime());
-//        parameters.put("MAPPING_ID",trackingModel.getMappingId());
-//        parameters.put("REPORT_GENERATED_BY",trackingModel.getReportGeneratedBy());
-//
-//        simpleJdbcInsert.execute(parameters);
+
+        SimpleJdbcInsert simpleJdbcInsert =
+                new SimpleJdbcInsert(jdbcTemplate).withTableName("REPORT_TRACKING");
+
+        Map<String,Object> parameters = new HashMap<>();
+        parameters.put("ID",trackingModel.getId());
+        parameters.put("REPORT_NAME",trackingModel.getReportName());
+        parameters.put("REPORT_URL",trackingModel.getReportUrl());
+        parameters.put("CREATION_TIME",trackingModel.getCreationTime());
+        parameters.put("MAPPING_ID",trackingModel.getMappingId());
+        parameters.put("REPORT_GENERATED_BY",trackingModel.getReportGeneratedBy());
+
+        simpleJdbcInsert.execute(parameters);
 
     }
 
