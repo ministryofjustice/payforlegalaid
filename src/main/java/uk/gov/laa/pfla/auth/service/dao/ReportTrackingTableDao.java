@@ -1,22 +1,31 @@
 package uk.gov.laa.pfla.auth.service.dao;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.SqlParameterValue;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import uk.gov.laa.pfla.auth.service.models.ReportTrackingTableModel;
 
-import java.sql.Timestamp;
-import java.sql.Types;
-import java.util.HashMap;
-import java.util.Map;
+import java.sql.*;
 
 @Repository
+@Slf4j
 public class ReportTrackingTableDao {
 
     private final JdbcTemplate writeJdbcTemplate;
     private SimpleJdbcInsert insertActor;
+
+    @Value("${spring.datasource.write.url}")
+    String dbUrl;
+
+    @Value("${spring.datasource.write.username}")
+    String dbUser;
+
+    @Value("${spring.datasource.write.password}")
+    String dbPassword;
+
 
 //    private int id;
 //    private String reportName;
@@ -35,12 +44,14 @@ public class ReportTrackingTableDao {
 
     public void updateTrackingTable(ReportTrackingTableModel trackingModel) {
 
-        String sql = "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (?,?,?,?,?,?)";
-        Timestamp timestamp = Timestamp.valueOf(trackingModel.getCreationTime());
+//        String sql = "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (?,?,?,?,?,?)";
+//        Timestamp timestamp = Timestamp.valueOf(trackingModel.getCreationTime());
+//
+//        //Insert values into sql statement and update
+//        writeJdbcTemplate.update(sql, trackingModel.getId(), trackingModel.getReportName(), trackingModel.getReportUrl(),
+//                timestamp, trackingModel.getMappingId(), trackingModel.getReportGeneratedBy());
 
-        //Insert values into sql statement and update
-        writeJdbcTemplate.update(sql, trackingModel.getId(), trackingModel.getReportName(), trackingModel.getReportUrl(),
-                timestamp, trackingModel.getMappingId(), trackingModel.getReportGeneratedBy());
+//        writeJdbcTemplate.update(sql);
 
 
 //        String sql = "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (?,?,?,?,?,?)";
@@ -80,7 +91,31 @@ public class ReportTrackingTableDao {
 //
 //        simpleJdbcInsert.execute(parameters);
 
+
+        //Attempt with manual JDBC connection
+
+        Timestamp timestamp = Timestamp.valueOf(trackingModel.getCreationTime());
+
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
+
+            String sql = "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (?,?,?,?,?,?)";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setInt(1, trackingModel.getId());
+                preparedStatement.setString(2, trackingModel.getReportName());
+                preparedStatement.setString(3, trackingModel.getReportUrl());
+                preparedStatement.setTimestamp(4, timestamp);
+                preparedStatement.setInt(5, trackingModel.getMappingId());
+                preparedStatement.setString(6, trackingModel.getReportGeneratedBy());
+                int rowsAffected = preparedStatement.executeUpdate();
+                log.info("Rows affected: " + rowsAffected);
+
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
+
 
 
 }
