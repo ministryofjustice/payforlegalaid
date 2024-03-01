@@ -32,7 +32,7 @@ public class ReportTrackingTableDao {
         int numberOfRowsAffected = writeJdbcTemplate.update(sql, trackingModel.getId(), trackingModel.getReportName(), trackingModel.getReportUrl(),
                 timestamp, trackingModel.getMappingId(), trackingModel.getReportGeneratedBy());
 
-        log.info("Number of database rows affected by insert statement: " + numberOfRowsAffected);
+        log.info("Number of database rows affected by insert to report tracking table: " + numberOfRowsAffected);
 
     }
 
