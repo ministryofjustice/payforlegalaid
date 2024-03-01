@@ -44,12 +44,12 @@ public class ReportTrackingTableDao {
 
     public void updateTrackingTable(ReportTrackingTableModel trackingModel) {
 
-//        String sql = "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (?,?,?,?,?,?)";
-//        Timestamp timestamp = Timestamp.valueOf(trackingModel.getCreationTime());
-//
-//        //Insert values into sql statement and update
-//        writeJdbcTemplate.update(sql, trackingModel.getId(), trackingModel.getReportName(), trackingModel.getReportUrl(),
-//                timestamp, trackingModel.getMappingId(), trackingModel.getReportGeneratedBy());
+        String sql = "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (?,?,?,?,?,?)";
+        Timestamp timestamp = Timestamp.valueOf(trackingModel.getCreationTime());
+
+        //Insert values into sql statement and update
+        writeJdbcTemplate.update(sql, trackingModel.getId(), trackingModel.getReportName(), trackingModel.getReportUrl(),
+                timestamp, trackingModel.getMappingId(), trackingModel.getReportGeneratedBy());
 
 //        writeJdbcTemplate.update(sql);
 
@@ -94,26 +94,26 @@ public class ReportTrackingTableDao {
 
         //Attempt with manual JDBC connection
 
-        Timestamp timestamp = Timestamp.valueOf(trackingModel.getCreationTime());
-
-        try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) { //This 'try-with' block will close the DB connection after the try statement ends
-
-            String sql = "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (?,?,?,?,?,?)";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-                preparedStatement.setInt(1, trackingModel.getId());
-                preparedStatement.setString(2, trackingModel.getReportName());
-                preparedStatement.setString(3, trackingModel.getReportUrl());
-                preparedStatement.setTimestamp(4, timestamp);
-                preparedStatement.setInt(5, trackingModel.getMappingId());
-                preparedStatement.setString(6, trackingModel.getReportGeneratedBy());
-                int rowsAffected = preparedStatement.executeUpdate();
-                log.info("Rows affected: " + rowsAffected);
-
-
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+//        Timestamp timestamp = Timestamp.valueOf(trackingModel.getCreationTime());
+//
+//        try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) { //This 'try-with' block will close the DB connection after the try statement ends
+//
+//            String sql = "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (?,?,?,?,?,?)";
+//            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+//                preparedStatement.setInt(1, trackingModel.getId());
+//                preparedStatement.setString(2, trackingModel.getReportName());
+//                preparedStatement.setString(3, trackingModel.getReportUrl());
+//                preparedStatement.setTimestamp(4, timestamp);
+//                preparedStatement.setInt(5, trackingModel.getMappingId());
+//                preparedStatement.setString(6, trackingModel.getReportGeneratedBy());
+//                int rowsAffected = preparedStatement.executeUpdate();
+//                log.info("Rows affected: " + rowsAffected);
+//
+//
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
     }
 
 
