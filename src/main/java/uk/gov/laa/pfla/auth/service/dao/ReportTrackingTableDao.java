@@ -96,7 +96,7 @@ public class ReportTrackingTableDao {
 
         Timestamp timestamp = Timestamp.valueOf(trackingModel.getCreationTime());
 
-        try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
+        try (Connection connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) { //This 'try-with' block will close the DB connection after the try statement ends
 
             String sql = "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (?,?,?,?,?,?)";
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
