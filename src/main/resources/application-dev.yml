@@ -9,6 +9,11 @@ logging:
     org:
       springframework:
         security: DEBUG
+        jdbc:
+          core:
+            JdbcTemplate: DEBUG
+            StatementCreatorUtils: DEBUG
+        transaction: DEBUG
 #    org.springframework: INFO
 #    org.springframework.security: INFO #TRACE
     org.springframework.web.client.RestTemplate: DEBUG
@@ -43,20 +48,23 @@ spring:
           client-id: ${AZURE_CLIENT_ID}
           client-secret: ${AZURE_CLIENT_SECRET}
         redirect-uri-template: ${gpfd.redirect-uri-template}
-#        app-id-uri: ${WEB_API_A_APP_ID_URL} #todo -
         authorization-clients:
           graph:
             scopes:
               - https://graph.microsoft.com/User.Read
 
-  # Database config
+  # DEV MOJFIN database config
   datasource:
-    url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
-    username: ${MOJFIN_DEV_USERNAME}
-    password: ${MOJFIN_DEV_PASSWORD}
-    driver-class-name: oracle.jdbc.OracleDriver
-
-
+    read-only:
+      url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
+      username: ${MOJFIN_DEV_READ_USERNAME}
+      password: ${MOJFIN_DEV_READ_PASSWORD}
+      driver-class-name: oracle.jdbc.OracleDriver
+    write:
+      url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
+      username: ${MOJFIN_DEV_WRITE_USERNAME}
+      password: ${MOJFIN_DEV_WRITE_PASSWORD}
+      driver-class-name: oracle.jdbc.OracleDriver
 
 
 

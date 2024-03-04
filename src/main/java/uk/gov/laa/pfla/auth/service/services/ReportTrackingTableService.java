@@ -17,6 +17,7 @@ public class ReportTrackingTableService {
 
     public void updateReportTracking(int requestedId, LocalDateTime creationTime) {
 
+
         ReportTrackingTableModel reportTrackingTableModel = ReportTrackingTableModel.builder()
                 .id(requestedId)
                 .reportName("Report1")
@@ -29,7 +30,7 @@ public class ReportTrackingTableService {
 
 
         //Create a trackingtable row in the table
-        reportTrackingTableDao.updateTable(reportTrackingTableModel);
+        reportTrackingTableDao.updateTrackingTable(reportTrackingTableModel);
     }
 
 

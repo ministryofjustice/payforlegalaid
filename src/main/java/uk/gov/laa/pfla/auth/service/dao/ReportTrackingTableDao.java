@@ -1,24 +1,41 @@
 package uk.gov.laa.pfla.auth.service.dao;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import uk.gov.laa.pfla.auth.service.models.ReportTrackingTableModel;
-import java.time.LocalDateTime;
+
+import java.sql.*;
 
 @Repository
+@Slf4j
 public class ReportTrackingTableDao {
-    private int id;
-    private String reportName;
-    private String reportUrl; // The sharepoint URL where the report is stored, after being created
-    private LocalDateTime creationTime;
-    private int mappingId;
-    private String reportGeneratedBy;
+
+    private final JdbcTemplate writeJdbcTemplate;
 
 
-    public void updateTable(ReportTrackingTableModel reportTrackingTableModel) {
-
-        //update database table
+    // Using the JDBCTemplate bean defined in  PflaApplication (the @SpringBootApplication / run class) which uses the
+    // DB datasource/credentials with write permissions
+    @Autowired
+    public ReportTrackingTableDao(JdbcTemplate writeJdbcTemplate){
+        this.writeJdbcTemplate = writeJdbcTemplate;
 
     }
+
+    public void updateTrackingTable(ReportTrackingTableModel trackingModel) {
+
+        String sql = "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (?,?,?,?,?,?)";
+        Timestamp timestamp = Timestamp.valueOf(trackingModel.getCreationTime());
+
+        //Insert values into sql statement and update
+        int numberOfRowsAffected = writeJdbcTemplate.update(sql, trackingModel.getId(), trackingModel.getReportName(), trackingModel.getReportUrl(),
+                timestamp, trackingModel.getMappingId(), trackingModel.getReportGeneratedBy());
+
+        log.info("Number of database rows affected by insert to report tracking table: " + numberOfRowsAffected);
+
+    }
+
 
 
 }

@@ -18,7 +18,7 @@ import java.util.Map;
 public class ReportViewsDao {
 
 
-    private final JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate writeJdbcTemplate;
 
 
     @NotNull
@@ -27,7 +27,7 @@ public class ReportViewsDao {
         log.debug("Calling database for result list, with sqlQuery: {} ", sqlQuery);
 
         try {
-            resultList = jdbcTemplate.queryForList(sqlQuery);
+            resultList = writeJdbcTemplate.queryForList(sqlQuery);
         } catch (DataAccessException e) {
             throw new DatabaseReadException("Error reading from DB: " + e);
         }
