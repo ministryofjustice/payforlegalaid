@@ -91,7 +91,7 @@ public class ReportsController {
     public ResponseEntity<StreamingResponseBody> getCSV(@PathVariable(value="id") int requestedId) throws ReportIdNotFoundException,
             CsvStreamException, DatabaseReadException, IndexOutOfBoundsException {
 
-        reportTrackingTableService.updateReportTracking(requestedId, LocalDateTime.now());
+        reportTrackingTableService.updateReportTrackingTable(requestedId, LocalDateTime.now());
 
         return reportService.createCSVResponse(requestedId);
     }

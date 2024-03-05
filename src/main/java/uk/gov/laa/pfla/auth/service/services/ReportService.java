@@ -29,18 +29,12 @@ public class ReportService {
 
     private final MappingTableService mappingTableService;
 
-//    private final Map<Integer, Class<? extends ReportModel>> reportModelMapping; //This is only necessary if we need to create pojo objects of reports (i.e. each report might need a specific pojo object in order to transform/create a file from the data. Currently, we are using streams)
-
 
     @Autowired
     public ReportService(ReportViewsDao reportViewsDao, MappingTableService mappingTableService) {
         this.reportViewsDao = reportViewsDao;
         this.mappingTableService = mappingTableService;
 
-
-//        this.reportModelMapping = new HashMap<>();
-//        reportModelMapping.put(1, VCisToCcmsInvoiceSummaryModel.class);
-//        reportModelMapping.put(2, VBankMonth.class);
     }
 
 
@@ -93,8 +87,9 @@ public class ReportService {
      */
     public ResponseEntity<StreamingResponseBody> createCSVResponse(int requestedId) throws ReportIdNotFoundException, DatabaseReadException, IndexOutOfBoundsException, CsvStreamException {
 
+
         //Querying the mapping table, to obtain metadata about the report
-        ReportListResponse reportListResponse = getMappingTableMetadata(requestedId);
+        ReportListResponse reportListResponse = mappingTableService.getDetailsForSpecificReport(requestedId);
 
 
         //Get CSV data stream
@@ -126,12 +121,14 @@ public class ReportService {
      *
      * @param id - id of the requested report
      * @return reportResponse containing json data about the requested report
-     * @throws IndexOutOfBoundsException
+     * @throws IndexOutOfBoundsException - From the getDetailsForSpecificReport() method call, if the requested index is under 0 or over 100
+     * @throws ReportIdNotFoundException - From the getDetailsForSpecificReport() method call, if the requested index is not found
+     * @throws DatabaseReadException - From the createReportListResponseList() method call inside getDetailsForSpecificReport()
      */
     public ReportResponse createReportResponse(int id ) throws IndexOutOfBoundsException {
 
         //Querying the mapping table, to obtain metadata about the report
-        ReportListResponse reportListResponse = getMappingTableMetadata(id);
+        ReportListResponse reportListResponse = mappingTableService.getDetailsForSpecificReport(id);
 
         ReportResponse reportResponse = new ReportResponse();
         reportResponse.setId(reportListResponse.getId());
@@ -147,18 +144,6 @@ public class ReportService {
 
     }
 
-    /**
-     * Create a ReportListResponse with report metadata such as reportname, obtained from the CSV to SQL mapping table
-     * @param id - the id of the requested report
-     * @return a ReportListResponse from the CSV - SQL mapping table
-     */
-    private ReportListResponse getMappingTableMetadata(int id) throws IndexOutOfBoundsException, ReportIdNotFoundException, DatabaseReadException {
-        ReportListResponse reportListResponse;
-        if(id < 1000 && id > 0){
-            reportListResponse = mappingTableService.getDetailsForSpecificReport(id);
-        }else{ throw new IndexOutOfBoundsException("Report ID needs to be a number between 0 and 1000");}
-        return reportListResponse;
-    }
 
 
 

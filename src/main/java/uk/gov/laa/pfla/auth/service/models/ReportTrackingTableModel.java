@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor //Needed by the modelmapper library
 public class ReportTrackingTableModel {
 
-    private int id;
+    //An id field/column is not necessary in this model, since the id primary key is auto-incremented in the tracking table, using an oracle DB sequence
     private String reportName;
     private String reportUrl; // The sharepoint URL where the report is stored, after being created
     private LocalDateTime creationTime;

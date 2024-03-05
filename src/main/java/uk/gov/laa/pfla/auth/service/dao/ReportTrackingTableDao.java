@@ -25,11 +25,11 @@ public class ReportTrackingTableDao {
 
     public void updateTrackingTable(ReportTrackingTableModel trackingModel) {
 
-        String sql = "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (?,?,?,?,?,?)";
+        String sql = "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (GPFD_TRAKING_TABLE_SEQUENCE.NEXTVAL,?,?,?,?,?)";
         Timestamp timestamp = Timestamp.valueOf(trackingModel.getCreationTime());
 
         //Insert values into sql statement and update
-        int numberOfRowsAffected = writeJdbcTemplate.update(sql, trackingModel.getId(), trackingModel.getReportName(), trackingModel.getReportUrl(),
+        int numberOfRowsAffected = writeJdbcTemplate.update(sql, trackingModel.getReportName(), trackingModel.getReportUrl(),
                 timestamp, trackingModel.getMappingId(), trackingModel.getReportGeneratedBy());
 
         log.info("Number of database rows affected by insert to report tracking table: " + numberOfRowsAffected);

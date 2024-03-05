@@ -1,8 +1,10 @@
 package uk.gov.laa.pfla.auth.service.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.laa.pfla.auth.service.dao.ReportTrackingTableDao;
 import uk.gov.laa.pfla.auth.service.models.ReportTrackingTableModel;
+import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
 
 import java.time.LocalDateTime;
 
@@ -10,20 +12,25 @@ import java.time.LocalDateTime;
 public class ReportTrackingTableService {
 
     private final ReportTrackingTableDao reportTrackingTableDao;
+    private final MappingTableService mappingTableService;
 
-    public ReportTrackingTableService(ReportTrackingTableDao reportTrackingTableDao) {
+
+    @Autowired
+    public ReportTrackingTableService(ReportTrackingTableDao reportTrackingTableDao, MappingTableService mappingTableService) {
         this.reportTrackingTableDao = reportTrackingTableDao;
+        this.mappingTableService = mappingTableService;
     }
 
-    public void updateReportTracking(int requestedId, LocalDateTime creationTime) {
+    public void updateReportTrackingTable(int requestedId, LocalDateTime creationTime) {
 
+        //Querying the mapping table, to obtain metadata about the report
+        ReportListResponse reportListResponse = mappingTableService.getDetailsForSpecificReport(requestedId);
 
         ReportTrackingTableModel reportTrackingTableModel = ReportTrackingTableModel.builder()
-                .id(requestedId)
-                .reportName("Report1")
+                .reportName(reportListResponse.getReportName())
                 .reportUrl("www.sharepoint.com/place-where-we-will-create-report")
                 .creationTime(creationTime)
-                .mappingId(1)
+                .mappingId(reportListResponse.getId())
                 .reportGeneratedBy("Barry White")
                 .build();
 

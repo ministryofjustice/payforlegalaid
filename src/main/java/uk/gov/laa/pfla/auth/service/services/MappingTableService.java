@@ -45,13 +45,24 @@ public class MappingTableService {
         return reportListResponses;
     }
 
-
+    /**
+     * Create a ReportListResponse with report metadata such as reportname, obtained from the CSV to SQL mapping table
+     * @param requestedId - the id of the requested report
+     * @return a ReportListResponse from the CSV - SQL mapping table
+     */
     public ReportListResponse getDetailsForSpecificReport(int requestedId) throws IndexOutOfBoundsException, ReportIdNotFoundException, DatabaseReadException {
 
-        List<ReportListResponse> reportListResponses = createReportListResponseList();
+        List<ReportListResponse> reportListResponses;
+        if(requestedId < 1000 && requestedId > 0){
+            reportListResponses= createReportListResponseList();
+        }else{
+            throw new IndexOutOfBoundsException("Report ID needs to be a number between 0 and 1000");
+        }
+
+
 
         int indexInt = requestedId - 1;   // The '-1' accounts for the fact that the array index starts at 0, whereas the database index/id starts at 1
-        log.debug("Checking the reportListResponses for the desired reportListResponse object, the requested report ID is: {}", indexInt);
+        log.debug("Checking the reportListResponses for the desired reportListResponse object, the requested report index is: {}", indexInt);
 
         if (indexInt >= reportListResponses.size()){
             throw new ReportIdNotFoundException("Report ID not found with ID: " + requestedId);
