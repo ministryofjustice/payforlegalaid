@@ -1,5 +1,7 @@
 package uk.gov.laa.pfla.auth.service.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.laa.pfla.auth.service.dao.ReportTrackingTableDao;
@@ -10,6 +12,7 @@ import java.time.LocalDateTime;
 
 @Service
 public class ReportTrackingTableService {
+    public static final Logger log = LoggerFactory.getLogger(ReportTrackingTableService.class);
 
     private final ReportTrackingTableDao reportTrackingTableDao;
     private final MappingTableService mappingTableService;
@@ -34,7 +37,7 @@ public class ReportTrackingTableService {
                 .reportGeneratedBy("Barry White")
                 .build();
 
-
+        log.error("reportTrackingTableModel to string: " + reportTrackingTableModel.toString());
 
         //Create a trackingtable row in the table
         reportTrackingTableDao.updateTrackingTable(reportTrackingTableModel);
