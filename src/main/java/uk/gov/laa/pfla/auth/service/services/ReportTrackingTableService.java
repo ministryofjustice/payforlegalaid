@@ -30,7 +30,7 @@ public class ReportTrackingTableService {
         this.userService = userService;
     }
 
-    public void updateReportTrackingTable(int requestedId, LocalDateTime creationTime, OAuth2AuthorizedClient graphClient) throws UserServiceException {
+    public synchronized void updateReportTrackingTable(int requestedId, LocalDateTime creationTime, OAuth2AuthorizedClient graphClient) throws UserServiceException {
 
         //Querying the mapping table, to obtain metadata about the report
         ReportListResponse reportListResponse = mappingTableService.getDetailsForSpecificReport(requestedId);
