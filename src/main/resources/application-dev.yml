@@ -5,7 +5,7 @@ gpfd:
 #SSL configuration
 logging:
   level:
-    root: INFO
+    root: DEBUG
     org:
       springframework:
         security: DEBUG

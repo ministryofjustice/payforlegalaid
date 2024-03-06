@@ -88,10 +88,11 @@ public class ReportsController {
      * @return CSV data stream or reports data
      */
     @RequestMapping(value ="/csv/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<StreamingResponseBody> getCSV(@PathVariable(value="id") int requestedId) throws ReportIdNotFoundException,
-            CsvStreamException, DatabaseReadException, IndexOutOfBoundsException {
+    public ResponseEntity<StreamingResponseBody> getCSV(@PathVariable(value="id") int requestedId,
+                                                        @RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient) throws ReportIdNotFoundException,
+            CsvStreamException, DatabaseReadException, IndexOutOfBoundsException, UserServiceException {
 
-        reportTrackingTableService.updateReportTrackingTable(requestedId, LocalDateTime.now());
+        reportTrackingTableService.updateReportTrackingTable(requestedId, LocalDateTime.now(),graphClient);
 
         return reportService.createCSVResponse(requestedId);
     }
