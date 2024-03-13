@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith(SpringExtension.class)
 @JdbcTest
 @Import(ReportTrackingTableDao.class) // Import your DAO class into the Spring context
-//@ActiveProfiles("test") // Use application-test.properties configurations
+@ActiveProfiles("dev")
 class ReportTrackingTableDAOTest {
 
     @Autowired
