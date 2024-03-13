@@ -17,9 +17,9 @@ import uk.gov.laa.pfla.auth.service.models.ReportTrackingTableModel;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
-@JdbcTest
+// @JdbcTest //use this instead of @SpringBootTest if switching from DEV MOJFIN to a H2 database
 @Import(ReportTrackingTableDao.class) // Import your DAO class into the Spring context
-@SpringBootTest
+@SpringBootTest // This uses the whole spring context, switch to @JdbcTest if you switch to a H2 DB
 @ActiveProfiles("dev")
 class ReportTrackingTableDAOTest {
 
