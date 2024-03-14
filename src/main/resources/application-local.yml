@@ -1,0 +1,76 @@
+gpfd:
+  redirect-uri-template: https://laa-pay-for-la-dev.apps.live.cloud-platform.service.justice.gov.uk/login/oauth2/code/gpfd-azure-dev
+  # Note,"gpfd-azure-dev" is also known as the Oauth2 'registrationId'
+
+#SSL configuration
+logging:
+  level:
+    root: DEBUG
+    org:
+      springframework:
+        security: DEBUG
+        jdbc:
+          core:
+            JdbcTemplate: DEBUG
+            StatementCreatorUtils: DEBUG
+        transaction: DEBUG
+#    org.springframework: INFO
+#    org.springframework.security: INFO #TRACE
+    org.springframework.web.client.RestTemplate: DEBUG
+
+
+server:
+  port: 8443
+  forward-headers-strategy: native # not sure if needed
+  shutdown: graceful
+  servlet:
+    session:
+      cookie:
+        secure: true
+  ssl:
+    key-store: classpath:gpfd-ssl-keystore.p12
+    key-store-password: ${SSL-DEV-KEY-STORE-PASSWORD}
+    key-store-type: PKCS12
+    key-alias: gpfd-dev-ssl-key
+    key-password: ${SSL-DEV-KEY-STORE-PASSWORD}
+
+
+
+# Azure AD and Graph config
+spring:
+  cloud:
+    azure:
+      active-directory:
+        enabled: true
+        profile:
+          tenant-id: ${AZURE_TENANT_ID}
+        credential:
+          client-id: ${AZURE_CLIENT_ID}
+          client-secret: ${AZURE_CLIENT_SECRET}
+        redirect-uri-template: ${gpfd.redirect-uri-template}
+        authorization-clients:
+          graph:
+            scopes:
+              - https://graph.microsoft.com/User.Read
+
+  # DEV MOJFIN database config
+  datasource:
+    write:
+      url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=Oracle
+      username: sa
+      password:
+      driver-class-name: org.h2.Driver
+#    sql:
+#      init:
+#        platform: h2
+#        schema-locations: 'classpath:schema-h2.sql'
+#        data-locations: 'classpath:data-h2.sql'
+#        continue-on-error: true
+    h2:
+      console:
+        enabled: true #Optional, for enabling H2 console for troubleshooting
+
+
+
+
+
