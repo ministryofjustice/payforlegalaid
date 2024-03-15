@@ -1,50 +1,120 @@
 package uk.gov.laa.pfla.auth.service.controllers;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.pfla.auth.service.builders.ReportListResponseTestBuilder;
 import uk.gov.laa.pfla.auth.service.builders.ReportResponseTestBuilder;
+import uk.gov.laa.pfla.auth.service.graph.GraphClientHelper;
 import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
 import uk.gov.laa.pfla.auth.service.responses.ReportResponse;
 import uk.gov.laa.pfla.auth.service.services.MappingTableService;
+import uk.gov.laa.pfla.auth.service.services.ReportService;
+import uk.gov.laa.pfla.auth.service.services.ReportTrackingTableService;
+import uk.gov.laa.pfla.auth.service.services.UserService;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
-import org.springframework.http.HttpStatus;
-import uk.gov.laa.pfla.auth.service.services.ReportService;
-import uk.gov.laa.pfla.auth.service.services.ReportTrackingTableService;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Client;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(MockitoExtension.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureMockMvc
 class ReportsControllerTest {
-    public static final Logger log = LoggerFactory.getLogger(ReportsControllerTest.class);
 
-
-    @Mock
+    @MockBean
+    UserService userService;
+    @MockBean
+    GraphClientHelper mockGraphClientHelper;
+    @MockBean
     private MappingTableService mappingTableServiceMock;
-    @Mock
+    @MockBean
     private ReportService reportServiceMock;
+    @MockBean
+    private ReportTrackingTableService reportTrackingTableService;
+    @Autowired
+    private WebApplicationContext context;
+    @Autowired
+    private MockMvc mockMvc;
+
+    @BeforeEach
+    public void setup() {
+    }
 
 
-    @Mock
-    private ReportTrackingTableService reportTrackingTableServiceMock;
+    @AfterEach
+    void tearDown() {
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void downloadCsvReturnsCorrectResponse() throws Exception {
+
+        // Mock CSV data
+        ByteArrayOutputStream csvDataOutputStream = new ByteArrayOutputStream();
+        csvDataOutputStream.write("1,John,Doe\n".getBytes());
+        csvDataOutputStream.write("2,Jane,Smith\n".getBytes());
+
+        // Mock response body
+        StreamingResponseBody responseBody = outputStream -> {
+            csvDataOutputStream.writeTo(outputStream);
+            outputStream.flush();
+        };
+
+        // Mock ResponseEntity
+        ResponseEntity<StreamingResponseBody> mockResponseEntity = ResponseEntity.ok().header("Content-Disposition", "attachment; filename=data.csv").contentType(MediaType.APPLICATION_OCTET_STREAM).body(responseBody);
+
+        // Mock method call
+        when(reportServiceMock.createCSVResponse(1)).thenReturn(mockResponseEntity);
+
+        // Perform the GET request
+        mockMvc.perform(MockMvcRequestBuilders.get("/csv/1")
+                        .with(oidcLogin())
+                        .with(oauth2Client("graph")))
+                .andExpect(status().isOk()).andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=data.csv"));
+        verify(reportServiceMock).createCSVResponse(1);
+    }
+
+    @Test
+    @WithAnonymousUser
+    void downloadCsvReturnsCorrectResponseWhenNotAuthenticated() throws Exception {
+        // Perform the GET request without any oidc login credentials - i.e. user does not have an MOJ SSO account
+        mockMvc.perform(MockMvcRequestBuilders.get("/csv/1"))
+                .andExpect(status().is3xxRedirection());
+        verify(reportServiceMock, never()).createCSVResponse(anyInt());
+    }
 
 
-    @InjectMocks // creating a ReportsController object and then inject the mocked MappingTableService + reportService instances into it.
-    private ReportsController reportsController;
+
+
+
+
+
 
     @Test
     void getReportListReturnsCorrectResponseEntity()  {
@@ -111,51 +181,4 @@ class ReportsControllerTest {
 
 
     }
-
-
-
-//    @Test
-//    void downloadCsvReturnsCorrectResponse() throws Exception {
-//
-//        int reportId = 2;
-//
-//        //Create Mock CSV data
-//        ByteArrayOutputStream csvDataOutputStream = new ByteArrayOutputStream();
-//        csvDataOutputStream.write("1,John,Doe\n".getBytes());
-//        csvDataOutputStream.write("2,Jane,Smith\n".getBytes());
-//
-//        // Mock response body
-//        StreamingResponseBody responseBody = outputStream -> {
-//            csvDataOutputStream.writeTo(outputStream);
-//            outputStream.flush();
-//        };
-//
-//        // Mock ResponseEntity
-//        ResponseEntity<StreamingResponseBody> mockResponseEntity = ResponseEntity.ok()
-//                .header("Content-Disposition", "attachment; filename=data.csv")
-//                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-//                .body(responseBody);
-//
-//
-//        given(reportServiceMock.createCSVResponse(reportId)).willReturn(mockResponseEntity);
-//
-//
-//        ResponseEntity<ReportResponse> responseEntity = reportsController.getCSV(reportId);
-//
-//
-////        verify(reportServiceMock, times(1)).createCSVResponse(reportId);
-//        assertNotNull(mockResponseEntity);
-//        assertNotNull(mockResponseEntity.getBody());
-//        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-////        assertEquals(mockResponseEntity.getBody().toString(), csvDataOutputStream.toString());
-////        assertTrue(mockResponseEntity.getBody().contains("id,DATE_AUTHORISED_CIS,name"));
-//        assertEquals(mockResponseEntity.getHeaders().getContentDisposition().toString(), "attachment; filename=\"data.csv\"");
-//        assertEquals(mockResponseEntity.getHeaders().getContentType(), MediaType.APPLICATION_OCTET_STREAM);
-//
-//        log.debug("Get body: -- " + mockResponseEntity.getBody().toString());
-//        log.debug("Get entity: -- " + mockResponseEntity);
-//
-//    }
-//
-
 }

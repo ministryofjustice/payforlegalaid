@@ -23,7 +23,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
-@EnableAutoConfiguration
 @Slf4j
 public class ReportsController {
 
