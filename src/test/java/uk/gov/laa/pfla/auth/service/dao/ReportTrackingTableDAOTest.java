@@ -1,4 +1,3 @@
-
 package uk.gov.laa.pfla.auth.service.dao;
 
 import org.junit.jupiter.api.BeforeEach;
