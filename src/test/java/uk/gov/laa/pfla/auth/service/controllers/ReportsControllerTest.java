@@ -1,7 +1,6 @@
 package uk.gov.laa.pfla.auth.service.controllers;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithAnonymousUser;
@@ -17,7 +15,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.pfla.auth.service.builders.ReportListResponseTestBuilder;
 import uk.gov.laa.pfla.auth.service.builders.ReportResponseTestBuilder;
@@ -30,17 +27,14 @@ import uk.gov.laa.pfla.auth.service.services.ReportTrackingTableService;
 import uk.gov.laa.pfla.auth.service.services.UserService;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Client;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -49,27 +43,22 @@ class ReportsControllerTest {
 
     @MockBean
     UserService userService;
+
     @MockBean
     GraphClientHelper mockGraphClientHelper;
+
     @MockBean
     private MappingTableService mappingTableServiceMock;
+
     @MockBean
     private ReportService reportServiceMock;
+
     @MockBean
-    private ReportTrackingTableService reportTrackingTableService;
-    @Autowired
-    private WebApplicationContext context;
+    private ReportTrackingTableService reportTrackingTableService; // This is required, despite the sonarlint suggestions
+
     @Autowired
     private MockMvc mockMvc;
 
-    @BeforeEach
-    public void setup() {
-    }
-
-
-    @AfterEach
-    void tearDown() {
-    }
 
     @Test
     @WithMockUser(roles = "ADMIN")
@@ -111,13 +100,9 @@ class ReportsControllerTest {
 
 
 
-
-
-
-
-
     @Test
-    void getReportListReturnsCorrectResponseEntity()  {
+    @WithMockUser(roles = "ADMIN")
+    void getReportListReturnsCorrectResponseEntity() throws Exception {
         //Create Mock Response objects
         ReportListResponse reportListResponseMock1 = new ReportListResponseTestBuilder().withId(1)
                 .withReportName("Test Report 1")
@@ -129,56 +114,35 @@ class ReportsControllerTest {
         // Mock the Service call
         when(mappingTableServiceMock.createReportListResponseList()).thenReturn(reportListResponseMockList);
 
-        //Get response object List from a call to the controller
-        ResponseEntity<List<ReportListResponse>> responseEntity = reportsController.getReportList();
-        List<ReportListResponse> responseList = responseEntity.getBody();
-
+        // Perform request and assert results
+        mockMvc.perform(MockMvcRequestBuilders.get("/reports"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].id").value(reportListResponseMock1.getId()))
+                .andExpect(jsonPath("$[0].baseUrl").value(reportListResponseMock1.getBaseUrl()))
+                .andExpect(jsonPath("$[1].id").value(reportListResponseMock2.getId()));
 
         verify(mappingTableServiceMock, times(1)).createReportListResponseList();
-        assertNotNull(responseEntity);
-        assertNotNull(responseEntity.getBody());
-        assertNotNull(responseList);
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(2, responseList.size());
-
-        //check the first and last elements are the same in each response object
-        for (int i = 0; i < reportListResponseMockList.size(); i++) {
-            ReportListResponse reportListResponseMock = reportListResponseMockList.get(i);
-            ReportListResponse reportListResponse = responseList.get(i);
-
-            assertEquals(reportListResponseMock.getId(), reportListResponse.getId());
-            assertEquals(reportListResponseMock.getBaseUrl(), reportListResponse.getBaseUrl());
-
-
-        }
-
 
     }
 
     @Test
-    void getReportReturnsCorrectResponseEntity() throws IOException {
+    @WithMockUser(roles = "ADMIN")
+    void getReportReturnsCorrectResponseEntity() throws Exception {
 
         int reportId = 2;
-
-        //Create Mock Response object
         ReportResponse reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();
-        //Mock report service
+
+        // Mock the service
         when(reportServiceMock.createReportResponse(reportId)).thenReturn(reportResponseMock);
 
-        ResponseEntity<ReportResponse> responseEntity = reportsController.getReport(reportId);
-        ReportResponse response = responseEntity.getBody();
-
+        // Perform request and assert results
+        mockMvc.perform(MockMvcRequestBuilders.get("/report/{id}", reportId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(reportId))
+                .andExpect(jsonPath("$.reportName").value(reportResponseMock.getReportName()));
 
         verify(reportServiceMock, times(1)).createReportResponse(reportId);
-        assertNotNull(responseEntity);
-        assertNotNull(response);
-        assertNotNull(responseEntity.getBody());
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(reportResponseMock.getId(), response.getId());
-        assertEquals(reportResponseMock.getReportName(), response.getReportName());
-//        assertEquals(reportResponseMock.getReportUrl(), response.getReportUrl());
-//        assertEquals(reportResponseMock.getCreationTime(), response.getCreationTime());
-
 
     }
 }
