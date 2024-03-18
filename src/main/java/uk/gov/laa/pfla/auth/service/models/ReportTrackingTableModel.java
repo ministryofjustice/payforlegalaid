@@ -16,7 +16,8 @@ import java.time.LocalDateTime;
 @ToString
 public class ReportTrackingTableModel {
 
-    //An id field/column is not necessary in this model, since the id primary key is auto-incremented in the tracking table, using an oracle DB sequence
+    //An id field/column is only used for reads from the tracking table, not for writing to it, since the id primary key is auto-incremented in the tracking table, using an oracle DB sequence
+    private int id;
     private String reportName;
     private String reportUrl; // The sharepoint URL where the report is stored, after being created
     private LocalDateTime creationTime;

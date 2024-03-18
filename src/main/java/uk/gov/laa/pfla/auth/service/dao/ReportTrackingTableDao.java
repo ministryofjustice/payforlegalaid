@@ -5,8 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import uk.gov.laa.pfla.auth.service.models.ReportTrackingTableModel;
+import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 @Slf4j
@@ -39,6 +43,14 @@ public class ReportTrackingTableDao {
 
         log.info("Number of database rows affected by insert to report tracking table: " + numberOfRowsAffected);
 
+    }
+
+
+    public List<Map<String, Object>> list() {
+
+
+        String sql = "SELECT * from REPORT_TRACKING";
+        return writeJdbcTemplate.queryForList(sql);
     }
 
 
