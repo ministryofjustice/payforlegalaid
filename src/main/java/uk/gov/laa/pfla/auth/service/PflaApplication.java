@@ -10,6 +10,9 @@ import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+//import org.h2.jdbcx.JdbcDataSource.*;
+//import org.h2.jdbcx.JdbcDataSource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.web.client.RestTemplate;
 
@@ -51,6 +54,18 @@ public class PflaApplication {
         return new JdbcTemplate(dataSource);
     }
 
+//    @Bean
+//    public DataSourceTransactionManager transactionManager() {
+//
+//        JdbcDataSource dataSource = new JdbcDataSource();
+//        dataSource.setURL("jdbc:h2:mem:test");
+//        txManager.setDataSource(dataSource);
+//
+//        final DataSourceTransactionManager txManager = new DataSourceTransactionManager();
+//        txManager.setDataSource(dataSource);
+//
+//        return txManager;
+//    }
 
     @Bean
     public RestTemplate restTemplate(){
