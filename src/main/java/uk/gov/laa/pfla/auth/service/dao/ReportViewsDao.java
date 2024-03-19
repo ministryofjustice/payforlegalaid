@@ -24,7 +24,7 @@ public class ReportViewsDao {
     @NotNull
     public List<Map<String, Object>> callDataBase(String sqlQuery) throws ReportIdNotFoundException {
         List<Map<String, Object>> resultList;
-        log.debug("Calling database for result list, with sqlQuery: {} ", sqlQuery);
+        log.info("Calling database for result list, with sqlQuery: {} ", sqlQuery);
 
         try {
             resultList = writeJdbcTemplate.queryForList(sqlQuery);
@@ -35,8 +35,8 @@ public class ReportViewsDao {
         if(resultList.isEmpty()){
             throw new DatabaseReadException("No results returned from query to MOJFIN reports database");
         }
-        log.debug("Result list, a list of objects each representing a row in the Report Table: {}", resultList); //Todo: remove some of this logging when going graduating from MVP to phase 2, when we incorporate reports with sensitive data
 
+        log.info("returning DB result list");
         return resultList;
     }
 

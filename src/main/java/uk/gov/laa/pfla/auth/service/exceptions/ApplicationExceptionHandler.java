@@ -1,5 +1,7 @@
 package uk.gov.laa.pfla.auth.service.exceptions;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -13,12 +15,16 @@ import java.util.Map;
 @ControllerAdvice
 public class ApplicationExceptionHandler {
 
+    public static final Logger log = LoggerFactory.getLogger(ApplicationExceptionHandler.class);
+
     private static final String ERROR_STRING = "Error: ";
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) // 500
     @ExceptionHandler(CsvStreamException.class)
     public ResponseEntity<Map<String, String>> handleCsvStreamException(CsvStreamException e){
         Map<String, String> errorMap = new HashMap<>();
         errorMap.put(ERROR_STRING, e.getMessage());
+
+        log.error("CsvStreamException Thrown: %s".formatted(errorMap));
 
         return new ResponseEntity<>(errorMap, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -28,6 +34,8 @@ public class ApplicationExceptionHandler {
     public ResponseEntity<Map<String, String>> handleDatabaseReadException(DatabaseReadException e){
         Map<String, String> errorMap = new HashMap<>();
         errorMap.put(ERROR_STRING, e.getMessage());
+
+        log.error("DatabaseReadException Thrown: %s".formatted(errorMap));
 
         return new ResponseEntity<>(errorMap, HttpStatus.INTERNAL_SERVER_ERROR);
 
@@ -39,6 +47,8 @@ public class ApplicationExceptionHandler {
         Map<String, String> errorMap = new HashMap<>();
         errorMap.put(ERROR_STRING, e.getMessage());
 
+        log.error("ReportIdNotFoundException Thrown: %s".formatted(errorMap));
+
         return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
 
     }
@@ -49,6 +59,8 @@ public class ApplicationExceptionHandler {
         Map<String, String> errorMap = new HashMap<>();
         errorMap.put(ERROR_STRING, e.getMessage());
 
+        log.error("IndexOutOfBoundsException Thrown: %s".formatted(errorMap));
+
         return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
 
     }
@@ -58,6 +70,8 @@ public class ApplicationExceptionHandler {
         String message = ERROR_STRING + "Invalid input for parameter " + e.getName() + ". Expected a numeric value";
         Map<String, String> errorMap = new HashMap<>();
         errorMap.put(message, e.getMessage());
+
+        log.error("MethodArgumentTypeMismatchException Thrown: %s".formatted(errorMap));
 
         return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
     }

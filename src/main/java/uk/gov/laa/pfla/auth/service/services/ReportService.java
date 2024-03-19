@@ -14,7 +14,6 @@ import uk.gov.laa.pfla.auth.service.responses.ReportResponse;
 import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import org.slf4j.Logger;
@@ -72,9 +71,9 @@ public class ReportService {
         }
 
 
-        String csvStreamString = new String(byteArrayOutputStream.toByteArray(), StandardCharsets.UTF_8);
-        String singleLineContent = csvStreamString.replace("\n", "|"); //If we don't filter out newline chars then kibana will print each line as a separate log message
-        log.info("CSV byte-stream data converted to a string: " + singleLineContent);
+//        String csvStreamString = new String(byteArrayOutputStream.toByteArray(), StandardCharsets.UTF_8);
+//        String singleLineContent = csvStreamString.replace("\n", "|"); //For debugging in DEV. If we don't filter out newline chars then kibana will print each line as a separate log message
+        log.info("Returning byteArrayOutputStream of CSV data, from createCsvStream method");
 
         return byteArrayOutputStream;
     }
@@ -138,7 +137,7 @@ public class ReportService {
         reportResponse.setReportDownloadUrl("https://laa-pay-for-la-dev.apps.live.cloud-platform.service.justice.gov.uk/" + "csv/" + id);
 
 
-        log.debug("Report response object: {}", reportResponse);
+        log.info("Returning report response object");
 
         return reportResponse;
 

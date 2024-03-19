@@ -3,12 +3,10 @@ package uk.gov.laa.pfla.auth.service.controllers;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
-import org.springframework.boot.autoconfigure.*;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import uk.gov.laa.pfla.auth.service.beans.UserDetails;
 import uk.gov.laa.pfla.auth.service.exceptions.CsvStreamException;
 import uk.gov.laa.pfla.auth.service.exceptions.DatabaseReadException;
 import uk.gov.laa.pfla.auth.service.exceptions.ReportIdNotFoundException;
@@ -57,7 +55,7 @@ public class ReportsController {
         List<ReportListResponse> reportListResponseArray = mappingTableService
                 .createReportListResponseList();
 
-
+        log.debug("Returning a reportListResponse to user");
         return new ResponseEntity<>(reportListResponseArray, HttpStatus.OK);
     }
 
@@ -75,7 +73,7 @@ public class ReportsController {
 
         ReportResponse reportResponse = reportService.createReportResponse(requestedId);
 
-
+        log.debug("Returning a report response to user");
         return new ResponseEntity<>(reportResponse, HttpStatus.OK);
 
     }
@@ -93,26 +91,27 @@ public class ReportsController {
 
         reportTrackingTableService.updateReportTrackingTable(requestedId, LocalDateTime.now(),graphClient);
 
+        log.debug("Returning a CSV response to user");
         return reportService.createCSVResponse(requestedId);
     }
 
     //This method is just for development, for testing that graph is working properly. It displays the details of the current SSO user
-    @GetMapping("/graph")
-    @ResponseBody
-    public String graph(
-            @RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient
-    ) throws UserServiceException {
-        UserDetails user = userService.getUserDetails(graphClient);
-
-        log.info("Here's the graphClient.getClientRegistration(): " + graphClient.getClientRegistration());
-        log.info("Here's the graphClient.getRefreshToken(): " + graphClient.getRefreshToken());
-        log.info("Here's the graphClient.getPrincipalName(): " + graphClient.getPrincipalName());
-        log.info("Here's the graphClient.getAccessToken(): " + graphClient.getAccessToken());
-
-
-        return user.toString();
-
-    }
+//    @GetMapping("/graph")
+//    @ResponseBody
+//    public String graph(
+//            @RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient
+//    ) throws UserServiceException {
+//        UserDetails user = userService.getUserDetails(graphClient);
+//
+//        log.info("Here's the graphClient.getClientRegistration(): " + graphClient.getClientRegistration());
+//        log.info("Here's the graphClient.getRefreshToken(): " + graphClient.getRefreshToken());
+//        log.info("Here's the graphClient.getPrincipalName(): " + graphClient.getPrincipalName());
+//        log.info("Here's the graphClient.getAccessToken(): " + graphClient.getAccessToken());
+//
+//
+//        return user.toString();
+//
+//    }
 
 
 

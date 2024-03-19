@@ -42,6 +42,7 @@ public class MappingTableDao {
 
 
         try {
+            log.info("Reading from mapping table");
             resultList = readOnlyJdbcTemplate.queryForList(query);
         } catch (DataAccessException e) {
             throw new DatabaseReadException("Error reading from DB: " + e);
@@ -51,7 +52,6 @@ public class MappingTableDao {
             throw new DatabaseReadException("No results returned from mapping table");
         }
 
-        log.debug("Result list, a list of objects each representing a row in the mapping table: {}", resultList);
 
                 try {
                     resultList.forEach(obj -> {
@@ -59,7 +59,7 @@ public class MappingTableDao {
                     mappingTableObjectList.add(mappingTableObject);
                 });
                 } catch (MappingException e) {
-                    log.error("Exception with model map loop: " + e);
+                    log.error("Exception with model map loop: %s", e);
                 }
 
 
