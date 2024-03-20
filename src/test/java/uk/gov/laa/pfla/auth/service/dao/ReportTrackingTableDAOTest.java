@@ -2,27 +2,15 @@ package uk.gov.laa.pfla.auth.service.dao;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import java.time.LocalDateTime;
+import uk.gov.laa.pfla.auth.service.utils.FileUtils;
+
 import java.util.List;
 import java.util.Map;
-import org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration;
-//import org.springframework.data.
-//import org.springframework.jdbc.config.
-
-
-import uk.gov.laa.pfla.auth.service.dao.ReportTrackingTableDao;
-import uk.gov.laa.pfla.auth.service.models.ReportTrackingTableModel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -32,32 +20,44 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 //        classes = AbstractJdbcConfiguration.class))
 //This is a slimmed down version of @jdbctest, using an in-memory DB
 //@Import(ReportTrackingTableDao.class) // Import your DAO class into the Spring context
-//@SpringBootTest // This uses the whole spring context, switch to @JdbcTest if you switch to a H2 DB
-//@ActiveProfiles("test")
+@SpringBootTest // This uses the whole spring context, switch to @JdbcTest if you switch to a H2 DB
+@ActiveProfiles("test")
+//@Sql({"/schema.sql", "/data.sql"})
 @DataJdbcTest
 class ReportTrackingTableDAOTest {
 
-//    @Autowired
-    private final JdbcTemplate writeJdbcTemplate;
+    @Autowired
+    private JdbcTemplate writeJdbcTemplate;
 
-//    @Autowired
-    private final ReportTrackingTableDao reportTrackingTableDAO;
+    @Autowired
+    private ReportTrackingTableDao reportTrackingTableDao;
 
 //    @BeforeEach
 //    void setup() {
 //
 //    }
 
-    @Autowired
-    public ReportTrackingTableDAOTest(JdbcTemplate writeJdbcTemplate) {
-        this.writeJdbcTemplate = writeJdbcTemplate;
-        reportTrackingTableDAO = new ReportTrackingTableDao(writeJdbcTemplate);
+//    @Autowired
+//    public ReportTrackingTableDAOTest(JdbcTemplate writeJdbcTemplate) {
+//        this.writeJdbcTemplate = writeJdbcTemplate;
+//        reportTrackingTableDAO = new ReportTrackingTableDao(writeJdbcTemplate);
+//    }
+
+    @BeforeEach
+    void setup() {
+
+        String sqlSchema = FileUtils.readResourceToString("schema.sql");
+        String sqlData = FileUtils.readResourceToString("data.sql");
+
+        writeJdbcTemplate.execute(sqlSchema);
+        writeJdbcTemplate.execute(sqlData);
+
     }
 
     @Test
     void list_ShouldReturnAllreportTrackingTableObjects() {
-        List<Map<String, Object>> reportTrackingTableList = reportTrackingTableDAO.list();
-        assertEquals(1,reportTrackingTableList.size());
+        List<Map<String, Object>> reportTrackingTableList = reportTrackingTableDao.list();
+        assertEquals(1, reportTrackingTableList.size());
     }
 //    @Test
 //    void testUpdateTrackingTable() {

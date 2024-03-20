@@ -1,1 +1,0 @@
-INSERT INTO REPORT_TRACKING(id, report_name, report_url, creation_time, mapping_id, report_generated_by) values (1,'Report name','https://www.some-url.com', '2024-03-18T12:10:11.814596', 2, 'Bill Evans');                                                                                                               );

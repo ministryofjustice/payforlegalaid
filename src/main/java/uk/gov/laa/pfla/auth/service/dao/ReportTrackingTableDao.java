@@ -1,31 +1,24 @@
 package uk.gov.laa.pfla.auth.service.dao;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import uk.gov.laa.pfla.auth.service.models.ReportTrackingTableModel;
-import org.springframework.jdbc.core.RowMapper;
 
-import java.sql.*;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
 @Repository
 @Slf4j
+@RequiredArgsConstructor //This creates a constructor for all final fields, @Repository will autowire it
 public class ReportTrackingTableDao {
-
-    private final JdbcTemplate writeJdbcTemplate;
-
 
     // Using the JDBCTemplate bean defined in  PflaApplication (the @SpringBootApplication / run class) which uses the
     // DB datasource/credentials with write permissions
-    @Autowired
-    public ReportTrackingTableDao(JdbcTemplate writeJdbcTemplate){
-        this.writeJdbcTemplate = writeJdbcTemplate;
+    private final JdbcTemplate writeJdbcTemplate;
 
-    }
 
     public void updateTrackingTable(ReportTrackingTableModel trackingModel) {
 
@@ -39,7 +32,7 @@ public class ReportTrackingTableDao {
                 timestamp, trackingModel.getMappingId(), trackingModel.getReportGeneratedBy());
 
         log.info("JDBC update arguments: " + sql + "  , " + trackingModel.getReportName() + "  , " + trackingModel.getReportUrl() + "  , " +
-                timestamp + "  , " +  trackingModel.getMappingId() + "  , " + trackingModel.getReportGeneratedBy());
+                timestamp + "  , " + trackingModel.getMappingId() + "  , " + trackingModel.getReportGeneratedBy());
 
         log.info("Number of database rows affected by insert to report tracking table: " + numberOfRowsAffected);
 
@@ -47,12 +40,10 @@ public class ReportTrackingTableDao {
 
 
     public List<Map<String, Object>> list() {
-
-
-        String sql = "SELECT * from REPORT_TRACKING";
+        
+        String sql = "SELECT * from report_tracking";
         return writeJdbcTemplate.queryForList(sql);
     }
-
 
 
 }
