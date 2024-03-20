@@ -1,4 +1,5 @@
 package uk.gov.laa.pfla.auth.service.dao;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -24,19 +25,19 @@ public class ReportViewsDao {
     @NotNull
     public List<Map<String, Object>> callDataBase(String sqlQuery) throws ReportIdNotFoundException {
         List<Map<String, Object>> resultList;
-        log.info("Calling database for result list, with sqlQuery: {} ", sqlQuery);
 
         try {
+            log.debug("Retrieving data");
             resultList = writeJdbcTemplate.queryForList(sqlQuery);
         } catch (DataAccessException e) {
             throw new DatabaseReadException("Error reading from DB: " + e);
         }
 
-        if(resultList.isEmpty()){
+        if (resultList.isEmpty()) {
             throw new DatabaseReadException("No results returned from query to MOJFIN reports database");
         }
 
-        log.info("returning DB result list");
+        log.info("returning result list");
         return resultList;
     }
 

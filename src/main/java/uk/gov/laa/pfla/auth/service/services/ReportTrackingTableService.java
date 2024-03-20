@@ -47,7 +47,7 @@ public class ReportTrackingTableService {
                 .build();
 
         //Create a new trackingtable row
-        log.info("Updating reportTrackingTable with details of the report request from user");
+        log.info("Updating tracking information");
         reportTrackingTableDao.updateTrackingTable(reportTrackingTableModel);
     }
 

@@ -8,9 +8,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import uk.gov.laa.pfla.auth.service.exceptions.DatabaseReadException;
 import uk.gov.laa.pfla.auth.service.models.MappingTableModel;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,11 +40,11 @@ public class MappingTableDao {
 
         List<Map<String, Object>> resultList;
 
-            String query = "SELECT * FROM GPFD.CSV_TO_SQL_MAPPING_TABLE";
+        String query = "SELECT * FROM GPFD.CSV_TO_SQL_MAPPING_TABLE";
 
 
         try {
-            log.info("Reading from mapping table");
+            log.info("Reading mapping data");
             resultList = readOnlyJdbcTemplate.queryForList(query);
         } catch (DataAccessException e) {
             throw new DatabaseReadException("Error reading from DB: " + e);
@@ -53,19 +55,17 @@ public class MappingTableDao {
         }
 
 
-                try {
-                    resultList.forEach(obj -> {
-                    MappingTableModel mappingTableObject = mapper.map(obj, MappingTableModel.class);
-                    mappingTableObjectList.add(mappingTableObject);
-                });
-                } catch (MappingException e) {
-                    log.error("Exception with model map loop: %s", e);
-                }
+        try {
+            resultList.forEach(obj -> {
+                MappingTableModel mappingTableObject = mapper.map(obj, MappingTableModel.class);
+                mappingTableObjectList.add(mappingTableObject);
+            });
+        } catch (MappingException e) {
+            log.error("Exception with model map loop: %s", e);
+        }
 
 
-            return mappingTableObjectList;
-
-
+        return mappingTableObjectList;
 
 
     }

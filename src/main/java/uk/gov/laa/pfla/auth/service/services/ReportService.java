@@ -1,4 +1,5 @@
 package uk.gov.laa.pfla.auth.service.services;
+
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,7 @@ public class ReportService {
 
     /**
      * Obtains a resultlist of data from the MOJFIN reports database, and converts it into a CSV data stream
+     *
      * @param sqlQuery - the sql query necessary to request a specific report from the MOJFIN database
      * @return a byteArrayOutputStream - a stream of CSV data
      * @throws IOException - if conversion of the DB data to a CSV stream fails
@@ -47,7 +49,7 @@ public class ReportService {
 
 
         // Get report data from DB
-        List<Map<String, Object>> resultList =  reportViewsDao.callDataBase(sqlQuery);
+        List<Map<String, Object>> resultList = reportViewsDao.callDataBase(sqlQuery);
 
         // Generate CSV content in-memory
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -81,6 +83,7 @@ public class ReportService {
 
     /**
      * Create a Response entity with a CSV data stream inside the body, for use by the controller's '/csv' endpoint
+     *
      * @param requestedId - the ID of the requested report
      * @return a ResponseEntity of type 'StreamingResponseBody', containing a stream of CSV data
      */
@@ -94,6 +97,7 @@ public class ReportService {
         //Get CSV data stream
         ByteArrayOutputStream csvDataOutputStream;
         try {
+            log.debug("Creating CSV stream with id: " + reportListResponse.getId());
             csvDataOutputStream = createCsvStream(reportListResponse.getSqlQuery());
         } catch (IOException e) {
             throw new CsvStreamException("Error creating CSV data stream: " + e);
@@ -105,7 +109,8 @@ public class ReportService {
                 csvDataOutputStream.writeTo(outputStream);
                 outputStream.flush();
             } catch (IOException e) {
-                throw new CsvStreamException("Error writing csv stream data to a response body " + e);            }
+                throw new CsvStreamException("Error writing csv stream data to a response body " + e);
+            }
         };
 
         return ResponseEntity.ok()
@@ -122,9 +127,9 @@ public class ReportService {
      * @return reportResponse containing json data about the requested report
      * @throws IndexOutOfBoundsException - From the getDetailsForSpecificReport() method call, if the requested index is under 0 or over 100
      * @throws ReportIdNotFoundException - From the getDetailsForSpecificReport() method call, if the requested index is not found
-     * @throws DatabaseReadException - From the createReportListResponseList() method call inside getDetailsForSpecificReport()
+     * @throws DatabaseReadException     - From the createReportListResponseList() method call inside getDetailsForSpecificReport()
      */
-    public ReportResponse createReportResponse(int id ) throws IndexOutOfBoundsException {
+    public ReportResponse createReportResponse(int id) throws IndexOutOfBoundsException {
 
         //Querying the mapping table, to obtain metadata about the report
         ReportListResponse reportListResponse = mappingTableService.getDetailsForSpecificReport(id);
@@ -142,8 +147,6 @@ public class ReportService {
         return reportResponse;
 
     }
-
-
 
 
 }

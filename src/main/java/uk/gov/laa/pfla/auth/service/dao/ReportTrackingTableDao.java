@@ -18,7 +18,7 @@ public class ReportTrackingTableDao {
     // Using the JDBCTemplate bean defined in  PflaApplication (the @SpringBootApplication / run class) which uses the
     // DB datasource/credentials with write permissions
     @Autowired
-    public ReportTrackingTableDao(JdbcTemplate writeJdbcTemplate){
+    public ReportTrackingTableDao(JdbcTemplate writeJdbcTemplate) {
         this.writeJdbcTemplate = writeJdbcTemplate;
 
     }
@@ -32,16 +32,14 @@ public class ReportTrackingTableDao {
         Timestamp timestamp = Timestamp.valueOf(trackingModel.getCreationTime());
 
         //Insert values into sql statement and update
-        log.info("Updating tracking table");
+        log.info("Updating tracking information");
         int numberOfRowsAffected = localJdbcTemplate.update(sql, trackingModel.getReportName(), trackingModel.getReportUrl(),
                 timestamp, trackingModel.getMappingId(), trackingModel.getReportGeneratedBy());
-
 
 
         log.debug("Number of database rows affected by insert to report tracking table: " + numberOfRowsAffected);
 
     }
-
 
 
 }
