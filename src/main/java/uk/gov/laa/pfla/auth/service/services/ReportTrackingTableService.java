@@ -46,11 +46,8 @@ public class ReportTrackingTableService {
                 .reportGeneratedBy(user.getGivenName() + " " + user.getSurname())
                 .build();
 
-        if(log.isDebugEnabled()){
-            log.debug("reportTrackingTableModel to string: {} ", reportTrackingTableModel);
-        }
-
-        //Create a trackingtable row in the table
+        //Create a new trackingtable row
+        log.info("Updating tracking information");
         reportTrackingTableDao.updateTrackingTable(reportTrackingTableModel);
     }
 
