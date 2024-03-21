@@ -1,29 +1,24 @@
 package uk.gov.laa.pfla.auth.service.dao;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
+import uk.gov.laa.pfla.auth.service.models.ReportTrackingTableModel;
 import uk.gov.laa.pfla.auth.service.utils.FileUtils;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-//@ExtendWith(SpringExtension.class)
-//@JdbcTest //use this instead of @SpringBootTest if switching from DEV MOJFIN to a H2 database
-//@DataJdbcTest(includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
-//        classes = AbstractJdbcConfiguration.class))
-//This is a slimmed down version of @jdbctest, using an in-memory DB
-//@Import(ReportTrackingTableDao.class) // Import your DAO class into the Spring context
 @SpringBootTest // This uses the whole spring context, switch to @JdbcTest if you switch to a H2 DB
 @ActiveProfiles("test")
-//@Sql({"/schema.sql", "/data.sql"})
-@DataJdbcTest
 class ReportTrackingTableDAOTest {
 
     @Autowired
@@ -31,17 +26,6 @@ class ReportTrackingTableDAOTest {
 
     @Autowired
     private ReportTrackingTableDao reportTrackingTableDao;
-
-//    @BeforeEach
-//    void setup() {
-//
-//    }
-
-//    @Autowired
-//    public ReportTrackingTableDAOTest(JdbcTemplate writeJdbcTemplate) {
-//        this.writeJdbcTemplate = writeJdbcTemplate;
-//        reportTrackingTableDAO = new ReportTrackingTableDao(writeJdbcTemplate);
-//    }
 
     @BeforeEach
     void setup() {
@@ -54,32 +38,53 @@ class ReportTrackingTableDAOTest {
 
     }
 
+    @AfterEach
+    void resetDatabase() {
+
+        writeJdbcTemplate.update("TRUNCATE TABLE GPFD.REPORT_TRACKING");
+        writeJdbcTemplate.update("DROP SEQUENCE GPFD_TRACKING_TABLE_SEQUENCE");
+
+    }
+
     @Test
     void list_ShouldReturnAllreportTrackingTableObjects() {
         List<Map<String, Object>> reportTrackingTableList = reportTrackingTableDao.list();
+
+        String reportName = reportTrackingTableList.get(0).get("REPORT_NAME").toString();
+
         assertEquals(1, reportTrackingTableList.size());
+        assertEquals(1, reportTrackingTableList.get(0).get("ID"));
+        assertEquals("Initial Test Report Name", reportName); // Testing the data.sql test data has populated into the DB properly
     }
-//    @Test
-//    void testUpdateTrackingTable() {
-//        // Arrange
-//        JdbcTemplate localJdbcTemplate = this.writeJdbcTemplate;
-//
-//        String reportName = "Test Report";
-//        String reportUrl = "http://example.com/report";
-//        LocalDateTime creationTime = LocalDateTime.now();
-//        int mappingId = 1;
-//        String reportGeneratedBy = "TestUser";
-//
-//        ReportTrackingTableModel reportTrackingTableModel = new ReportTrackingTableModel(reportName, reportUrl, creationTime, mappingId, reportGeneratedBy);
-//
-//        // Act
-//        reportTrackingTableDAO.updateTrackingTable(reportTrackingTableModel);
-//
-//        // Assert
-//        String sql = "SELECT COUNT(*) FROM GPFD.REPORT_TRACKING WHERE ReportName = ? AND ReportUrl = ? AND MappingID = ?";
-//        int count = localJdbcTemplate.queryForObject(sql, new Object[]{reportName, reportUrl, mappingId}, Integer.class);
-//
-//        assertEquals(1, count);
-//
-//    }
+
+
+    @Test
+    void testUpdateTrackingTable() {
+        // Arrange
+        int insertedId = 0; //This will be overridden  when the DAO uses an Oracle sequence to populate the id
+        String insertedReportName = "Test Report";
+        String insertedReportUrl = "http://example.com/report";
+        Timestamp insertedCreationTime = Timestamp.valueOf(LocalDateTime.now());
+        int insertedMappingId = 2;
+        String insertedReportGeneratedBy = "TestUser";
+
+        ReportTrackingTableModel reportTrackingTableModel = new ReportTrackingTableModel(insertedId, insertedReportName, insertedReportUrl, insertedCreationTime, insertedMappingId, insertedReportGeneratedBy);
+
+        // Act
+        reportTrackingTableDao.updateTrackingTable(reportTrackingTableModel);
+
+        // Assert
+        List<Map<String, Object>> reportTrackingTableList = reportTrackingTableDao.list();
+        String reportName = reportTrackingTableList.get(1).get("REPORT_NAME").toString();
+        Timestamp reportCreationTime = (Timestamp) reportTrackingTableList.get(1).get("CREATION_TIME"); //index 1 because index 0 is populated by data.sql
+
+        assertEquals(2, reportTrackingTableList.size());
+        assertEquals(2, reportTrackingTableList.get(1).get("ID")); //2 is the value of the id since the database sequence will increment up to 2 after inserting 2 rows of data
+        assertEquals(insertedReportName, reportName);
+        assertEquals(insertedReportUrl, reportTrackingTableList.get(1).get("REPORT_URL"));
+        assertEquals(reportCreationTime, insertedCreationTime);
+        assertEquals(insertedMappingId, reportTrackingTableList.get(1).get("MAPPING_ID"));
+        assertEquals(insertedReportGeneratedBy, reportTrackingTableList.get(1).get("REPORT_GENERATED_BY"));
+
+    }
 }

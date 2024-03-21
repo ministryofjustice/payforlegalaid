@@ -78,6 +78,7 @@ spring:
     h2:
       console:
         enabled: true #Optional, for enabling H2 console for troubleshooting
+        path: /h2-console
 
 
 

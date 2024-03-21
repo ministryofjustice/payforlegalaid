@@ -1,2 +1,4 @@
-INSERT INTO report_tracking(id, report_name, report_url, creation_time, mapping_id, report_generated_by)
-VALUES (1, 'Report name', 'https://www.some-url.com', '2024-03-18T12:10:11.814596', 2, 'Bill Evans');
+INSERT INTO GPFD.REPORT_TRACKING(ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY)
+VALUES (GPFD_TRACKING_TABLE_SEQUENCE.NEXTVAL, 'Initial Test Report Name', 'https://www.some-url.com',
+        '2024-03-18T12:10:11.814596',
+        2, 'Bill Evans');

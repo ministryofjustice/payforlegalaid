@@ -11,6 +11,7 @@ import uk.gov.laa.pfla.auth.service.exceptions.UserServiceException;
 import uk.gov.laa.pfla.auth.service.models.ReportTrackingTableModel;
 import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Service
@@ -30,7 +31,8 @@ public class ReportTrackingTableService {
         this.userService = userService;
     }
 
-    public synchronized void updateReportTrackingTable(int requestedId, LocalDateTime creationTime, OAuth2AuthorizedClient graphClient) throws UserServiceException {
+    public synchronized void updateReportTrackingTable(int requestedId, OAuth2AuthorizedClient graphClient) throws UserServiceException {
+        Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
 
         //Querying the mapping table, to obtain metadata about the report
         ReportListResponse reportListResponse = mappingTableService.getDetailsForSpecificReport(requestedId);
@@ -41,12 +43,12 @@ public class ReportTrackingTableService {
         ReportTrackingTableModel reportTrackingTableModel = ReportTrackingTableModel.builder()
                 .reportName(reportListResponse.getReportName())
                 .reportUrl("www.sharepoint.com/place-where-we-will-create-report")
-                .creationTime(creationTime)
+                .creationTime(timestamp)
                 .mappingId(reportListResponse.getId())
                 .reportGeneratedBy(user.getGivenName() + " " + user.getSurname())
                 .build();
 
-        if(log.isDebugEnabled()){
+        if (log.isDebugEnabled()) {
             log.debug("reportTrackingTableModel to string: {} ", reportTrackingTableModel);
         }
 
