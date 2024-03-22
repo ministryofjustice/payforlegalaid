@@ -3,7 +3,6 @@ package uk.gov.laa.pfla.auth.service.controllers;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
-import org.springframework.boot.autoconfigure.*;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +21,6 @@ import uk.gov.laa.pfla.auth.service.services.UserService;
 import java.util.*;
 
 @RestController
-@EnableAutoConfiguration
 @Slf4j
 public class ReportsController {
 
@@ -57,7 +55,7 @@ public class ReportsController {
         List<ReportListResponse> reportListResponseArray = mappingTableService
                 .createReportListResponseList();
 
-
+        log.debug("Returning a reportListResponse to user");
         return new ResponseEntity<>(reportListResponseArray, HttpStatus.OK);
     }
 
@@ -75,7 +73,7 @@ public class ReportsController {
 
         ReportResponse reportResponse = reportService.createReportResponse(requestedId);
 
-
+        log.debug("Returning a report response to user");
         return new ResponseEntity<>(reportResponse, HttpStatus.OK);
 
     }
@@ -93,6 +91,7 @@ public class ReportsController {
 
         reportTrackingTableService.updateReportTrackingTable(requestedId, graphClient);
 
+        log.debug("Returning a CSV response to user");
         return reportService.createCSVResponse(requestedId);
     }
 

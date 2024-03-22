@@ -21,18 +21,18 @@ public class ReportTrackingTableDao {
 
     public void updateTrackingTable(ReportTrackingTableModel trackingModel) {
 
+
         JdbcTemplate localJdbcTemplate = this.writeJdbcTemplate;
 
         String sql = "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (GPFD_TRACKING_TABLE_SEQUENCE.NEXTVAL,?,?,?,?,?)";
 
         //Insert values into sql statement and update
+        log.info("Updating tracking information");
         int numberOfRowsAffected = localJdbcTemplate.update(sql, trackingModel.getReportName(), trackingModel.getReportUrl(),
                 trackingModel.getCreationTime(), trackingModel.getMappingId(), trackingModel.getReportGeneratedBy());
 
-        log.info("JDBC update arguments: " + sql + "  , " + trackingModel.getReportName() + "  , " + trackingModel.getReportUrl() + "  , " +
-                trackingModel.getCreationTime() + "  , " + trackingModel.getMappingId() + "  , " + trackingModel.getReportGeneratedBy());
 
-        log.info("Number of database rows affected by insert to report tracking table: " + numberOfRowsAffected);
+        log.debug("Number of database rows affected by insert to report tracking table: " + numberOfRowsAffected);
 
     }
 
