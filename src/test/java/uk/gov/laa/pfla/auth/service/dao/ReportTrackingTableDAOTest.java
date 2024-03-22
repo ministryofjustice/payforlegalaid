@@ -64,7 +64,8 @@ class ReportTrackingTableDAOTest {
         int insertedId = 0; //This will be overridden  when the DAO uses an Oracle sequence to populate the id
         String insertedReportName = "Test Report";
         String insertedReportUrl = "http://example.com/report";
-        Timestamp insertedCreationTime = Timestamp.valueOf(LocalDateTime.now());
+        LocalDateTime creationTime = LocalDateTime.now();
+        Timestamp insertedCreationTime = Timestamp.valueOf(creationTime.withNano(0));
         int insertedMappingId = 2;
         String insertedReportGeneratedBy = "TestUser";
 
