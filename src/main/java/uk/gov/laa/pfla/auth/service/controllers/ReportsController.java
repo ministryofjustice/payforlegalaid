@@ -2,6 +2,7 @@ package uk.gov.laa.pfla.auth.service.controllers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.*;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
@@ -21,6 +22,7 @@ import uk.gov.laa.pfla.auth.service.services.UserService;
 import java.util.*;
 
 @RestController
+//@EnableAutoConfiguration
 @Slf4j
 public class ReportsController {
 
