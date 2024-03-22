@@ -99,7 +99,6 @@ class ReportsControllerTest {
     }
 
 
-
     @Test
     @WithMockUser(roles = "ADMIN")
     void getReportListReturnsCorrectResponseEntity() throws Exception {
@@ -145,4 +144,5 @@ class ReportsControllerTest {
         verify(reportServiceMock, times(1)).createReportResponse(reportId);
 
     }
+
 }
