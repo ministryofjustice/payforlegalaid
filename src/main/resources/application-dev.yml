@@ -14,7 +14,6 @@ gpfd:
       password: ${MOJFIN_DEV_WRITE_PASSWORD}
       driver-class-name: oracle.jdbc.OracleDriver #Spring uses this in PflaApplication.java > writeDataSource() > DriverManagerDataSource.setDriverClassName()
 
-#SSL configuration
 logging:
   level:
     root: DEBUG
@@ -30,7 +29,7 @@ logging:
     #    org.springframework.security: INFO #TRACE
     org.springframework.web.client.RestTemplate: DEBUG
 
-
+#SSL configuration
 server:
   port: 8443
   forward-headers-strategy: native # not sure if needed
