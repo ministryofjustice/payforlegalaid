@@ -18,7 +18,6 @@ import uk.gov.laa.pfla.auth.service.services.ReportService;
 import uk.gov.laa.pfla.auth.service.services.ReportTrackingTableService;
 import uk.gov.laa.pfla.auth.service.services.UserService;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -91,7 +90,7 @@ public class ReportsController {
                                                         @RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient) throws ReportIdNotFoundException,
             CsvStreamException, DatabaseReadException, IndexOutOfBoundsException, UserServiceException {
 
-        reportTrackingTableService.updateReportTrackingTable(requestedId, LocalDateTime.now(), graphClient);
+        reportTrackingTableService.updateReportTrackingTable(requestedId, graphClient);
 
         log.debug("Returning a CSV response to user");
         return reportService.createCSVResponse(requestedId);
