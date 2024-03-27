@@ -17,6 +17,7 @@ import uk.gov.laa.pfla.auth.service.services.MappingTableService;
 import uk.gov.laa.pfla.auth.service.services.ReportService;
 import uk.gov.laa.pfla.auth.service.services.ReportTrackingTableService;
 import uk.gov.laa.pfla.auth.service.services.UserService;
+
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -35,7 +36,7 @@ public class ReportsController {
 
     @Autowired
     public ReportsController(MappingTableService mappingTableService, ReportService reportService,
-                             ReportTrackingTableService reportTrackingTableService, UserService userService){
+                             ReportTrackingTableService reportTrackingTableService, UserService userService) {
         this.mappingTableService = mappingTableService;
         this.reportService = reportService;
         this.reportTrackingTableService = reportTrackingTableService;
@@ -48,8 +49,9 @@ public class ReportsController {
      *
      * @return A POJO list, converted to json by spring -  A list of report names, id's and some information on each report, in the form of json objects
      */
-    @RequestMapping(value ="/reports", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<List<ReportListResponse>>getReportList() throws DatabaseReadException {
+
+    @RequestMapping(value = "/reports", produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<List<ReportListResponse>> getReportList() throws DatabaseReadException {
 
         //Converting the model object arraylist to a response object arraylist
         List<ReportListResponse> reportListResponseArray = mappingTableService
@@ -62,13 +64,13 @@ public class ReportsController {
 
     /**
      * This method will be useful once a content management/caching system is in place, it will return the name of the requested report, and other data such as the time at which it was requested
+     *
      * @param requestedId - id of the requested report
      * @return A SingleReportResponse POJO, converted to JSON by spring, and wrapped in a ResponseEntity object.
      * It is a single JSON object which contains the name, id and download url of a report
      **/
-    @RequestMapping(value ="/report/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<ReportResponse> getReport(@PathVariable(value="id") int requestedId) throws IndexOutOfBoundsException {
-
+    @RequestMapping(value = "/report/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<ReportResponse> getReport(@PathVariable(value = "id") int requestedId) throws IndexOutOfBoundsException {
 
 
         ReportResponse reportResponse = reportService.createReportResponse(requestedId);
@@ -84,12 +86,12 @@ public class ReportsController {
      * @param requestedId - id of the requested report
      * @return CSV data stream or reports data
      */
-    @RequestMapping(value ="/csv/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<StreamingResponseBody> getCSV(@PathVariable(value="id") int requestedId,
+    @RequestMapping(value = "/csv/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<StreamingResponseBody> getCSV(@PathVariable(value = "id") int requestedId,
                                                         @RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient) throws ReportIdNotFoundException,
             CsvStreamException, DatabaseReadException, IndexOutOfBoundsException, UserServiceException {
 
-        reportTrackingTableService.updateReportTrackingTable(requestedId, LocalDateTime.now(),graphClient);
+        reportTrackingTableService.updateReportTrackingTable(requestedId, LocalDateTime.now(), graphClient);
 
         log.debug("Returning a CSV response to user");
         return reportService.createCSVResponse(requestedId);
@@ -112,10 +114,6 @@ public class ReportsController {
 //        return user.toString();
 //
 //    }
-
-
-
-
 
 
 }
