@@ -2,7 +2,7 @@ package uk.gov.laa.pfla.auth.service.models;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 //TODO - This class will be a bean, dont forget to annotate it with  @org.springframework.beans.factory.annotation.Autowired to make sonarlint happy
 // Bean guide: https://www.baeldung.com/spring-bean
 
@@ -17,12 +17,12 @@ import java.time.LocalDateTime;
 public class ReportTrackingTableModel {
 
     //An id field/column is not necessary in this model, since the id primary key is auto-incremented in the tracking table, using an oracle DB sequence
+    private int id;
     private String reportName;
     private String reportUrl; // The sharepoint URL where the report is stored, after being created
-    private LocalDateTime creationTime;
+    private Timestamp creationTime;
     private int mappingId;
     private String reportGeneratedBy;
-
 
 
 }
