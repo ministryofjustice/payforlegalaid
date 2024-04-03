@@ -11,6 +11,7 @@ import uk.gov.laa.pfla.auth.service.exceptions.CsvStreamException;
 import uk.gov.laa.pfla.auth.service.exceptions.DatabaseReadException;
 import uk.gov.laa.pfla.auth.service.exceptions.ReportIdNotFoundException;
 import uk.gov.laa.pfla.auth.service.exceptions.UserServiceException;
+import uk.gov.laa.pfla.auth.service.responses.ReportListEntry;
 import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
 import uk.gov.laa.pfla.auth.service.responses.ReportResponse;
 import uk.gov.laa.pfla.auth.service.services.MappingTableService;
@@ -50,14 +51,16 @@ public class ReportsController {
      */
 
     @RequestMapping(value = "/reports", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<List<ReportListResponse>> getReportList() throws DatabaseReadException {
+    ResponseEntity<ReportListResponse> getReportList() throws DatabaseReadException {
 
         //Converting the model object arraylist to a response object arraylist
-        List<ReportListResponse> reportListResponseArray = mappingTableService
-                .createReportListResponseList();
+        List<ReportListEntry> reportListEntries = mappingTableService
+                .fetchReportListEntries();
+
+        ReportListResponse reportListResponse = new ReportListResponse(reportListEntries);
 
         log.debug("Returning a reportListResponse to user");
-        return new ResponseEntity<>(reportListResponseArray, HttpStatus.OK);
+        return new ResponseEntity<>(reportListResponse, HttpStatus.OK);
     }
 
 

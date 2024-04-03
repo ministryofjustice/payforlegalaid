@@ -1,8 +1,8 @@
 package uk.gov.laa.pfla.auth.service.builders;
 
-import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
+import uk.gov.laa.pfla.auth.service.responses.ReportListEntry;
 
-public class ReportListResponseTestBuilder {
+public class ReportListEntryTestBuilder {
 
     public static final int DEFAULT_ID = 1;
     public static final String DEFAULT_REPORT_NAME = "Excel_Report_Name-CSV-NAME-sheetnumber";
@@ -14,13 +14,13 @@ public class ReportListResponseTestBuilder {
     public static final String DEFAULT_BASE_URL = "www.sharepoint.com/folder-for-storing-created-reports";
     public static final String DEFAULT_REPORT_OWNER = "Chancey Mctavish";
     public static final String DEFAULT_REPORT_CREATOR = "Barry Gibb";
-    public static final String DEFAULT_REPORT_DESCRIPTION= "List all unpaid AP invoices and all outstanding AR debts at the end of the previous month. Detailed data, one row per invoice";
+    public static final String DEFAULT_REPORT_DESCRIPTION = "List all unpaid AP invoices and all outstanding AR debts at the end of the previous month. Detailed data, one row per invoice";
 
     public static final String DEFAULT_OWNER_EMAIL = "test-owner-email@example.com";
 
     private int id = DEFAULT_ID;
     private String reportName = DEFAULT_REPORT_NAME;
-    private String excelReport = DEFAULT_EXCEL_REPORT ;
+    private String excelReport = DEFAULT_EXCEL_REPORT;
     private String csvName = DEFAULT_CSV_NAME;
     private int excelSheetNum = DEFAULT_EXCEL_SHEET_NUM;
 
@@ -33,63 +33,63 @@ public class ReportListResponseTestBuilder {
     private String ownerEmail = DEFAULT_OWNER_EMAIL;
 
 
-    public ReportListResponseTestBuilder withId(int id) {
+    public ReportListEntryTestBuilder withId(int id) {
         this.id = id;
         return this;
     }
 
-    public ReportListResponseTestBuilder withExcelReport(String excelReport) {
+    public ReportListEntryTestBuilder withExcelReport(String excelReport) {
         this.excelReport = excelReport;
         return this;
     }
 
-    public ReportListResponseTestBuilder withReportName(String reportName) {
+    public ReportListEntryTestBuilder withReportName(String reportName) {
         this.reportName = reportName;
         return this;
     }
 
-    public ReportListResponseTestBuilder withCsvName(String csvName) {
+    public ReportListEntryTestBuilder withCsvName(String csvName) {
         this.csvName = csvName;
         return this;
     }
 
-    public ReportListResponseTestBuilder withExcelSheetNumber(int excelSheetNum) {
+    public ReportListEntryTestBuilder withExcelSheetNumber(int excelSheetNum) {
         this.excelSheetNum = excelSheetNum;
         return this;
     }
 
-    public ReportListResponseTestBuilder withSqlQuery(String sqlQuery) {
+    public ReportListEntryTestBuilder withSqlQuery(String sqlQuery) {
         this.sqlQuery = sqlQuery;
         return this;
     }
 
-    public ReportListResponseTestBuilder withBaseUrl(String baseUrl) {
+    public ReportListEntryTestBuilder withBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
         return this;
     }
 
-    public ReportListResponseTestBuilder withReportOwner(String reportOwner) {
+    public ReportListEntryTestBuilder withReportOwner(String reportOwner) {
         this.reportOwner = reportOwner;
         return this;
     }
 
-    public ReportListResponseTestBuilder withReportCreator(String reportCreator) {
+    public ReportListEntryTestBuilder withReportCreator(String reportCreator) {
         this.reportCreator = reportCreator;
         return this;
     }
 
-    public ReportListResponseTestBuilder withReportDescription(String description) {
+    public ReportListEntryTestBuilder withReportDescription(String description) {
         this.description = description;
         return this;
     }
 
-    public ReportListResponseTestBuilder withOwnerEmail(String ownerEmail) {
+    public ReportListEntryTestBuilder withOwnerEmail(String ownerEmail) {
         this.ownerEmail = ownerEmail;
         return this;
     }
 
-    public ReportListResponse createReportListResponse() {
-        return new ReportListResponse(id, reportName, excelReport, csvName, excelSheetNum, sqlQuery, baseUrl, reportOwner, reportCreator, description, ownerEmail);
+    public ReportListEntry createReportListResponse() {
+        return new ReportListEntry(id, reportName, excelReport, csvName, excelSheetNum, sqlQuery, baseUrl, reportOwner, reportCreator, description, ownerEmail);
     }
 
 }

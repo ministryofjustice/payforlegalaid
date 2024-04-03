@@ -2,7 +2,6 @@ package uk.gov.laa.pfla.auth.service.controllers;
 
 
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,14 +12,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import uk.gov.laa.pfla.auth.service.builders.ReportListResponseTestBuilder;
+import uk.gov.laa.pfla.auth.service.builders.ReportListEntryTestBuilder;
 import uk.gov.laa.pfla.auth.service.builders.ReportResponseTestBuilder;
 import uk.gov.laa.pfla.auth.service.graph.GraphClientHelper;
-import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
+import uk.gov.laa.pfla.auth.service.responses.ReportListEntry;
 import uk.gov.laa.pfla.auth.service.responses.ReportResponse;
 import uk.gov.laa.pfla.auth.service.services.MappingTableService;
 import uk.gov.laa.pfla.auth.service.services.ReportService;
@@ -37,7 +35,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -105,25 +102,25 @@ class ReportsControllerTest {
     @WithMockUser(roles = "ADMIN")
     void getReportListReturnsCorrectResponseEntity() throws Exception {
         //Create Mock Response objects
-        ReportListResponse reportListResponseMock1 = new ReportListResponseTestBuilder().withId(1)
+        ReportListEntry reportListEntryMock1 = new ReportListEntryTestBuilder().withId(1)
                 .withReportName("Test Report 1")
                 .withBaseUrl("www.sharepoint.com/a-different-folder-we're-using").createReportListResponse();
-        ReportListResponse reportListResponseMock2 = new ReportListResponseTestBuilder().withId(2).createReportListResponse();
+        ReportListEntry reportListEntryMock2 = new ReportListEntryTestBuilder().withId(2).createReportListResponse();
 
         //Add mock response objects to a list
-        List<ReportListResponse> reportListResponseMockList = Arrays.asList(reportListResponseMock1, reportListResponseMock2);
+        List<ReportListEntry> reportListResponseMockList = Arrays.asList(reportListEntryMock1, reportListEntryMock2);
         // Mock the Service call
-        when(mappingTableServiceMock.createReportListResponseList()).thenReturn(reportListResponseMockList);
+        when(mappingTableServiceMock.fetchReportListEntries()).thenReturn(reportListResponseMockList);
 
         // Perform request and assert results
         mockMvc.perform(MockMvcRequestBuilders.get("/reports"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].id").value(reportListResponseMock1.getId()))
-                .andExpect(jsonPath("$[0].baseUrl").value(reportListResponseMock1.getBaseUrl()))
-                .andExpect(jsonPath("$[1].id").value(reportListResponseMock2.getId()));
+                .andExpect(jsonPath("$.reportList", hasSize(2)))
+                .andExpect(jsonPath("$.reportList[0].id").value(reportListEntryMock1.getId()))
+                .andExpect(jsonPath("$.reportList[0].baseUrl").value(reportListEntryMock1.getBaseUrl()))
+                .andExpect(jsonPath("$.reportList[1].id").value(reportListEntryMock2.getId()));
 
-        verify(mappingTableServiceMock, times(1)).createReportListResponseList();
+        verify(mappingTableServiceMock, times(1)).fetchReportListEntries();
 
     }
 

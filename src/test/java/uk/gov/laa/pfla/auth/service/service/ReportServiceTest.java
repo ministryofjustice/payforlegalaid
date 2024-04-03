@@ -1,14 +1,15 @@
 package uk.gov.laa.pfla.auth.service.service;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.laa.pfla.auth.service.builders.ReportListResponseTestBuilder;
+import uk.gov.laa.pfla.auth.service.builders.ReportListEntryTestBuilder;
 import uk.gov.laa.pfla.auth.service.builders.ReportResponseTestBuilder;
 import uk.gov.laa.pfla.auth.service.dao.ReportViewsDao;
-import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
+import uk.gov.laa.pfla.auth.service.responses.ReportListEntry;
 import uk.gov.laa.pfla.auth.service.responses.ReportResponse;
 import uk.gov.laa.pfla.auth.service.services.MappingTableService;
 import uk.gov.laa.pfla.auth.service.services.ReportService;
@@ -34,7 +35,6 @@ class ReportServiceTest {
     List<Map<String, Object>> reportMapMockList = new ArrayList<>();
 
 
-
     @BeforeEach
     void init() {
 
@@ -54,12 +54,11 @@ class ReportServiceTest {
     }
 
 
-
     @Test
     void createReportResponse_reportResponseMatchesValuesFromMappingTable() throws IOException {
 
         // Mocking the data from mapping table
-        ReportListResponse mockReportListResponse =  new ReportListResponseTestBuilder().createReportListResponse();
+        ReportListEntry mockReportListResponse = new ReportListEntryTestBuilder().createReportListResponse();
 
         ReportResponse expectedReportResponse = new ReportResponseTestBuilder().createReportResponse();
         when(mappingTableService.getDetailsForSpecificReport(1)).thenReturn(mockReportListResponse);
@@ -73,7 +72,6 @@ class ReportServiceTest {
 //        assertEquals(expectedReportResponse.getReportSharepointUrl(), actualReportResponse.getReportSharepointUrl());
 
     }
-
 
 
     @Test

@@ -12,7 +12,7 @@ import uk.gov.laa.pfla.auth.service.exceptions.CsvStreamException;
 import uk.gov.laa.pfla.auth.service.exceptions.DatabaseReadException;
 import uk.gov.laa.pfla.auth.service.exceptions.ReportIdNotFoundException;
 import uk.gov.laa.pfla.auth.service.responses.ReportResponse;
-import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
+import uk.gov.laa.pfla.auth.service.responses.ReportListEntry;
 
 import java.io.*;
 import java.util.*;
@@ -91,7 +91,7 @@ public class ReportService {
 
 
         //Querying the mapping table, to obtain metadata about the report
-        ReportListResponse reportListResponse = mappingTableService.getDetailsForSpecificReport(requestedId);
+        ReportListEntry reportListResponse = mappingTableService.getDetailsForSpecificReport(requestedId);
 
 
         //Get CSV data stream
@@ -132,7 +132,7 @@ public class ReportService {
     public ReportResponse createReportResponse(int id) throws IndexOutOfBoundsException {
 
         //Querying the mapping table, to obtain metadata about the report
-        ReportListResponse reportListResponse = mappingTableService.getDetailsForSpecificReport(id);
+        ReportListEntry reportListResponse = mappingTableService.getDetailsForSpecificReport(id);
 
         ReportResponse reportResponse = new ReportResponse();
         reportResponse.setId(reportListResponse.getId());
