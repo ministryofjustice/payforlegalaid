@@ -1,7 +1,7 @@
 package uk.gov.laa.pfla.auth.service.controllers;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
@@ -23,6 +23,7 @@ import java.util.*;
 
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 public class ReportsController {
 
     private final MappingTableService mappingTableService;
@@ -33,16 +34,6 @@ public class ReportsController {
 
     private final UserService userService;
 
-
-    @Autowired
-    public ReportsController(MappingTableService mappingTableService, ReportService reportService,
-                             ReportTrackingTableService reportTrackingTableService, UserService userService) {
-        this.mappingTableService = mappingTableService;
-        this.reportService = reportService;
-        this.reportTrackingTableService = reportTrackingTableService;
-        this.userService = userService;
-
-    }
 
     /**
      * Allows the user to see a list of all available reports, which are available to generate and download

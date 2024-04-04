@@ -18,17 +18,19 @@ public class ReportTrackingTableDao {
     // DB datasource/credentials with write permissions
     private final JdbcTemplate writeJdbcTemplate;
 
+    private static final String INSERT_SQL = "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (GPFD_TRACKING_TABLE_SEQUENCE.NEXTVAL,?,?,?,?,?)";
+
+    private static final String SELECT_SQL = "SELECT * from GPFD.REPORT_TRACKING";
 
     public void updateTrackingTable(ReportTrackingTableModel trackingModel) {
 
 
         JdbcTemplate localJdbcTemplate = this.writeJdbcTemplate;
 
-        String sql = "INSERT INTO GPFD.REPORT_TRACKING (ID, REPORT_NAME, REPORT_URL, CREATION_TIME, MAPPING_ID, REPORT_GENERATED_BY) VALUES (GPFD_TRACKING_TABLE_SEQUENCE.NEXTVAL,?,?,?,?,?)";
 
         //Insert values into sql statement and update
         log.info("Updating tracking information");
-        int numberOfRowsAffected = localJdbcTemplate.update(sql, trackingModel.getReportName(), trackingModel.getReportUrl(),
+        int numberOfRowsAffected = localJdbcTemplate.update(INSERT_SQL, trackingModel.getReportName(), trackingModel.getReportUrl(),
                 trackingModel.getCreationTime(), trackingModel.getMappingId(), trackingModel.getReportGeneratedBy());
 
 
@@ -38,8 +40,7 @@ public class ReportTrackingTableDao {
 
     public List<Map<String, Object>> list() {
 
-        String sql = "SELECT * from GPFD.REPORT_TRACKING";
-        return writeJdbcTemplate.queryForList(sql);
+        return writeJdbcTemplate.queryForList(SELECT_SQL);
     }
 
 

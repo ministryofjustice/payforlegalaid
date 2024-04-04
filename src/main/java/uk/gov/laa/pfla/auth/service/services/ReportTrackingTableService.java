@@ -1,8 +1,8 @@
 package uk.gov.laa.pfla.auth.service.services;
 
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.stereotype.Service;
 import uk.gov.laa.pfla.auth.service.beans.UserDetails;
@@ -15,6 +15,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Service
+@RequiredArgsConstructor
 public class ReportTrackingTableService {
     public static final Logger log = LoggerFactory.getLogger(ReportTrackingTableService.class);
 
@@ -23,13 +24,6 @@ public class ReportTrackingTableService {
 
     private final UserService userService;
 
-
-    @Autowired
-    public ReportTrackingTableService(ReportTrackingTableDao reportTrackingTableDao, MappingTableService mappingTableService, UserService userService) {
-        this.reportTrackingTableDao = reportTrackingTableDao;
-        this.mappingTableService = mappingTableService;
-        this.userService = userService;
-    }
 
     public synchronized void updateReportTrackingTable(int requestedId, OAuth2AuthorizedClient graphClient) throws UserServiceException {
         Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
