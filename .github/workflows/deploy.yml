@@ -27,7 +27,7 @@ jobs:
 
   build-and-release-to-k8s-job:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' #Only run on main branch
+    #    if: github.ref == 'refs/heads/main' #Only run on main branch
     permissions:
       id-token: write # This is required for requesting the JWT
       contents: read  # This is required for actions/checkout
