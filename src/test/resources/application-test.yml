@@ -17,21 +17,6 @@ gpfd:
       driver-class-name: org.h2.Driver
       initilization-mode: embedded
     #      generate-unique-name: false
-#SSL configuration
-logging:
-  level:
-    root: INFO
-    org:
-      springframework:
-        security: INFO
-        test: DEBUG
-        jdbc:
-          core:
-            JdbcTemplate: DEBUG
-            StatementCreatorUtils: DEBUG
-        transaction: DEBUG
-    #    org.springframework: INFO
-    org.springframework.web.client.RestTemplate: DEBUG
 
 
 # Azure AD and Graph config

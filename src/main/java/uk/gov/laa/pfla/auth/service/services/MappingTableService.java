@@ -7,7 +7,8 @@ import uk.gov.laa.pfla.auth.service.dao.MappingTableDao;
 import uk.gov.laa.pfla.auth.service.exceptions.DatabaseReadException;
 import uk.gov.laa.pfla.auth.service.exceptions.ReportIdNotFoundException;
 import uk.gov.laa.pfla.auth.service.models.MappingTableModel;
-import uk.gov.laa.pfla.auth.service.responses.ReportListResponse;
+import uk.gov.laa.pfla.auth.service.responses.ReportListEntry;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,48 +27,45 @@ public class MappingTableService {
         this.mappingTableDao = mappingTableDao;
     }
 
-    public List<ReportListResponse> createReportListResponseList() throws DatabaseReadException {
-       List<ReportListResponse> reportListResponses = new ArrayList<>();
+    public List<ReportListEntry> fetchReportListEntries() throws DatabaseReadException {
+        List<ReportListEntry> reportListEntries = new ArrayList<>();
 
         //Fetching reportList items from database
         List<MappingTableModel> mappingTableObjectList = mappingTableDao.fetchReportList();
 
         mappingTableObjectList.forEach(obj -> {
-            ReportListResponse reportListResponse = mapper.map(obj, ReportListResponse.class);
+            ReportListEntry reportListResponse = mapper.map(obj, ReportListEntry.class);
 
-            reportListResponses.add(reportListResponse);
+            reportListEntries.add(reportListResponse);
 
         });
 
 
-
-
-        return reportListResponses;
+        return reportListEntries;
     }
 
     /**
      * Create a ReportListResponse with report metadata such as reportname, obtained from the CSV to SQL mapping table
+     *
      * @param requestedId - the id of the requested report
      * @return a ReportListResponse from the CSV - SQL mapping table
      */
-    public ReportListResponse getDetailsForSpecificReport(int requestedId) throws IndexOutOfBoundsException, ReportIdNotFoundException, DatabaseReadException {
+    public ReportListEntry getDetailsForSpecificReport(int requestedId) throws IndexOutOfBoundsException, ReportIdNotFoundException, DatabaseReadException {
 
-        List<ReportListResponse> reportListResponses;
-        if(requestedId < 1000 && requestedId > 0){
-            reportListResponses= createReportListResponseList();
-        }else{
+        List<ReportListEntry> reportListResponses;
+        if (requestedId < 1000 && requestedId > 0) {
+            reportListResponses = fetchReportListEntries();
+        } else {
             throw new IndexOutOfBoundsException("Report ID needs to be a number between 0 and 1000");
         }
-
 
 
         int indexInt = requestedId - 1;   // The '-1' accounts for the fact that the array index starts at 0, whereas the database index/id starts at 1
         log.debug("Checking the reportListResponses for the desired reportListResponse object, the requested report index is: {}", indexInt);
 
-        if (indexInt >= reportListResponses.size()){
+        if (indexInt >= reportListResponses.size()) {
             throw new ReportIdNotFoundException("Report ID not found with ID: " + requestedId);
-        }
-        else {
+        } else {
             return reportListResponses.get(indexInt);
 
         }
