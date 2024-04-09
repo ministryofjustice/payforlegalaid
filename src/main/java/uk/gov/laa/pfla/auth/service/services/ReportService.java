@@ -137,8 +137,6 @@ public class ReportService {
         ReportResponse reportResponse = new ReportResponse();
         reportResponse.setId(reportListResponse.getId());
         reportResponse.setReportName(reportListResponse.getReportName());
-//        reportResponse.setReportSharepointUrl(reportListResponse.getBaseUrl()); // only needed if/when integrating with sharepoint
-//        reportResponse.setCreationTime(LocalDateTime.now()); // it only makes sense to set the time once caching/content management system is in place
         reportResponse.setReportDownloadUrl("https://laa-pay-for-la-dev.apps.live.cloud-platform.service.justice.gov.uk/" + "csv/" + id);
 
 
