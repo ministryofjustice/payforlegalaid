@@ -96,7 +96,9 @@ https://dsdmoj.atlassian.net/wiki/spaces/LPF/pages/4736516940/GPFD+Environments
 - There is currently a gpfd-ssl-keystore.p12 and custom ssl key used in the application (despite cloud platform
   providing its own TLS protection on the platform level), because a https url is required by the Active Directory
   server /app registration. A cloud platform-managed TLS cert should be used in the test environments in future, and there is a task in the
-  backlog for this. It is mandatory in PROD. 
+  backlog for this. It is mandatory in PROD.
+
+- There is a shared password-manager group account for the GPFD team, ask the manager of the team for access. This group has a number of test users which can be used to access the Dev environment - these accounts have been registered with the DEV environment's active directory, and so will pass the SSO authentication.
 
 ## Tests
 
