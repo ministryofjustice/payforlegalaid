@@ -1,38 +1,38 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: gpfd-dev-deployment
+  name: gpfd-uat-deployment
   labels:
-    app: gpfd-dev
+    app: gpfd-uat
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: gpfd-dev
+      app: gpfd-uat
   template:
     metadata:
       labels:
-        app: gpfd-dev
+        app: gpfd-uat
     spec:
       serviceAccountName: example-name #This relates to the IRSA module in our namespace, within the cloud-platform-environments repo
-#      initContainers:
-#        - name: create-directory
-#          image: busybox
-#          command: ["sh", "-c", "mkdir -p /app/csv-files"]
-#          volumeMounts:
-#            - name: csv-storage
-#              mountPath: /app/csv-files
+      #      initContainers:
+      #        - name: create-directory
+      #          image: busybox
+      #          command: ["sh", "-c", "mkdir -p /app/csv-files"]
+      #          volumeMounts:
+      #            - name: csv-storage
+      #              mountPath: /app/csv-files
       containers:
-        - name: gpfd-api-container
+        - name: gpfd-api-container-uat
           image: ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
-#          volumeMounts:
-#            - name: csv-storage
-#              mountPath: /app/csv-files
+          #          volumeMounts:
+          #            - name: csv-storage
+          #              mountPath: /app/csv-files
           ports:
             - containerPort: 8443
           env:
             - name: SPRING_PROFILES_ACTIVE
-              value: "dev"                  #TODO - use a configmap once more environments are added
+              value: "uat"                  #TODO - use a configmap once more environments are added
             - name: AZURE_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:

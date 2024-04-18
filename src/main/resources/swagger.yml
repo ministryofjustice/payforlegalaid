@@ -1,0 +1,55 @@
+#Note: This is a work-in progress document
+
+paths:
+  /report/{id}:
+    get:
+      summary: Returns metadata about a single report.
+      parameters:
+        - in: path
+          name: reportId
+          type: integer
+          required: true
+          description: Numeric ID of the report to get.
+      responses:
+        '200': # status code
+          description: A JSON object
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  type: string, int # A JSON object containing string and int fields
+
+
+  /reports:
+    get:
+      summary: Returns a list of reports with metadata about each report.
+      responses:
+        '200': # status code
+          description: A JSON array
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object, string, int # A JSON array containing objects, which  contain string and int fields
+
+
+  /csv/{id}:
+    get:
+      summary: Returns a CSV data stream of reports data.
+      parameters:
+        - in: path
+          name: reportId
+          type: integer
+          required: true
+          description: Numeric ID of the report to get.
+      responses:
+        '200': # status code
+          description: A JSON array
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string, int # A JSON object containing string and int fields

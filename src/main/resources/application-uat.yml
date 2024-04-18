@@ -1,0 +1,8 @@
+gpfd:
+  #This is the url which the Active directory dev app registration will redirect to after SSO is complete
+  redirect-uri-template: https://laa-pay-for-la-uat.apps.live.cloud-platform.service.justice.gov.uk/login/oauth2/code/gpfd-azure-uat
+  # Note,"gpfd-azure-uat" is also known as the Oauth2 'registrationId'
+
+
+
+
