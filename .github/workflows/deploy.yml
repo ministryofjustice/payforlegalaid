@@ -26,7 +26,7 @@ jobs:
           SPRING_PROFILES_ACTIVE: test
 
   build-and-deploy-to-dev:
-    environment: dev
+    environment: dev # Points to the set of environment secrets kept in github secrets
     runs-on: ubuntu-latest
     #    if: github.ref == 'refs/heads/main' #Only run on main branch #todo -uncomment, its commented for testing CICD only
     permissions:
@@ -100,6 +100,7 @@ jobs:
           KUBE_CLUSTER: ${{ secrets.KUBE_CLUSTER }}
 
   build-and-deploy-to-uat:
+    environment: uat # Points to the set of environment secrets kept in github secrets
     runs-on: ubuntu-latest
     #    if: github.ref == 'refs/heads/main' #Only run on main branch #todo -uncomment, its commented for testing CICD only
     permissions:
@@ -138,7 +139,7 @@ jobs:
         id: login-ecr
 
       - name: Set Spring profile
-        run: echo "SPRING_PROFILES_ACTIVE=dev" >> $GITHUB_ENV
+        run: echo "SPRING_PROFILES_ACTIVE=uat" >> $GITHUB_ENV
 
       # Build and push a Docker image to the container repository
       - run: |
@@ -151,9 +152,9 @@ jobs:
 
       # Generate Kubernetes files from the deployments/dev/*.yml files
       - run: |
-          cat deployments/dev/deployment.yml | envsubst > deployments/deployment.yml
-          cat deployments/dev/ingress.yml | envsubst > deployments/ingress.yml
-          cat deployments/dev/service.yml | envsubst > deployments/service.yml
+          cat deployments/uat/deployment.yml | envsubst > deployments/deployment.yml
+          cat deployments/uat/ingress.yml | envsubst > deployments/ingress.yml
+          cat deployments/uat/service.yml | envsubst > deployments/service.yml
         env:
           IMAGE_TAG: ${{ github.sha }} # Tags ECR image with commit sha
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
