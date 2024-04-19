@@ -78,6 +78,7 @@ jobs:
 
       # Generate Kubernetes files from the deployments/dev/*.yml files
       - run: |
+          echo $NAMESPACE
           cat deployments/dev/deployment.yml | envsubst > deployments/dev/deployment.yml
           cat deployments/dev/ingress.yml | envsubst > deployments/dev/ingress.yml
           cat deployments/dev/service.yml | envsubst > deployments/dev/service.yml
@@ -152,6 +153,7 @@ jobs:
 
       # Generate Kubernetes files from the deployments/dev/*.yml files
       - run: |
+          echo $NAMESPACE
           cat deployments/uat/deployment.yml | envsubst > deployments/uat/deployment.yml
           cat deployments/uat/ingress.yml | envsubst > deployments/uat/ingress.yml
           cat deployments/uat/service.yml | envsubst > deployments/uat/service.yml
