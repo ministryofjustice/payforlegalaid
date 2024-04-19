@@ -78,9 +78,9 @@ jobs:
 
       # Generate Kubernetes files from the deployments/dev/*.yml files
       - run: |
-          cat deployments/dev/deployment.yml | envsubst > deployments/deployment.yml
-          cat deployments/dev/ingress.yml | envsubst > deployments/ingress.yml
-          cat deployments/dev/service.yml | envsubst > deployments/service.yml
+          cat deployments/dev/deployment.yml | envsubst > deployments/dev/deployment.yml
+          cat deployments/dev/ingress.yml | envsubst > deployments/dev/ingress.yml
+          cat deployments/dev/service.yml | envsubst > deployments/dev/service.yml
         env:
           IMAGE_TAG: ${{ github.sha }} # Tags ECR image with commit sha
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -152,9 +152,9 @@ jobs:
 
       # Generate Kubernetes files from the deployments/dev/*.yml files
       - run: |
-          cat deployments/uat/deployment.yml | envsubst > deployments/deployment.yml
-          cat deployments/uat/ingress.yml | envsubst > deployments/ingress.yml
-          cat deployments/uat/service.yml | envsubst > deployments/service.yml
+          cat deployments/uat/deployment.yml | envsubst > deployments/uat/deployment.yml
+          cat deployments/uat/ingress.yml | envsubst > deployments/uat/ingress.yml
+          cat deployments/uat/service.yml | envsubst > deployments/uat/service.yml
         env:
           IMAGE_TAG: ${{ github.sha }} # Tags ECR image with commit sha
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
