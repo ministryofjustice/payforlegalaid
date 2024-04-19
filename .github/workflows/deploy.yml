@@ -154,9 +154,9 @@ jobs:
       # Generate Kubernetes files from the deployments/dev/*.yml files
       - run: |
           echo $NAMESPACE
-          cat deployments/uat/deployment.yml | envsubst > deployments/uat/deployment.yml
-          cat deployments/uat/ingress.yml | envsubst > deployments/uat/ingress.yml
-          cat deployments/uat/service.yml | envsubst > deployments/uat/service.yml
+          cat deployments/uat/deployment.tpl | envsubst > deployments/uat/deployment.yml
+          cat deployments/uat/ingress.tpl | envsubst > deployments/uat/ingress.yml
+          cat deployments/uat/service.tpl | envsubst > deployments/uat/service.yml
         env:
           IMAGE_TAG: ${{ github.sha }} # Tags ECR image with commit sha
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
