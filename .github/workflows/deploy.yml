@@ -83,22 +83,22 @@ jobs:
           cat deployments/dev/ingress.tpl | envsubst > deployments/dev/ingress.yml
           cat deployments/dev/service.tpl | envsubst > deployments/dev/service.yml
         env:
-          IMAGE_TAG: ${{ github.sha }} # Tags ECR image with commit sha
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: ${{ vars.ECR_REPOSITORY }}
-          NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
+          IMAGE_TAG: ${{github.sha}} # Tags ECR image with commit sha
+          REGISTRY: ${{steps.login-ecr.outputs.registry}}
+          REPOSITORY: ${{vars.ECR_REPOSITORY}}
+          NAMESPACE: ${{secrets.KUBE_NAMESPACE_DEV}}
 
       # authenticates with the Cloud Platform and deploys the container image to the namespace
       - run: |
-          echo "${{ secrets.KUBE_CERT_DEV }}" > ca.crt
-          kubectl config set-cluster ${ secrets.KUBE_CLUSTER_DEV} --certificate-authority=./ca.crt --server=https://${ secrets.KUBE_CLUSTER_DEV}
-          kubectl config set-credentials deploy-user --token=${{ secrets.KUBE_TOKEN_DEV }}
-          kubectl config set-context ${ secrets.KUBE_CLUSTER_DEV} --cluster=${ secrets.KUBE_CLUSTER_DEV } --user=deploy-user --namespace=${secrets.KUBE_NAMESPACE_DEV}
-          kubectl config use-context ${ secrets.KUBE_CLUSTER_DEV}
+          echo "${{secrets.KUBE_CERT_DEV}}" > ca.crt
+          kubectl config set-cluster ${secrets.KUBE_CLUSTER_DEV} --certificate-authority=./ca.crt --server=https://${secrets.KUBE_CLUSTER_DEV}
+          kubectl config set-credentials deploy-user --token=${{secrets.KUBE_TOKEN_DEV }}
+          kubectl config set-context ${secrets.KUBE_CLUSTER_DEV} --cluster=${secrets.KUBE_CLUSTER_DEV} --user=deploy-user --namespace=${secrets.KUBE_NAMESPACE_DEV}
+          kubectl config use-context ${secrets.KUBE_CLUSTER_DEV}
           kubectl -n ${secrets.KUBE_NAMESPACE_DEV} apply -f deployments/dev/
         env:
-          KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
-          KUBE_CLUSTER: ${{ secrets.KUBE_CLUSTER_DEV }}
+          KUBE_NAMESPACE: ${{secrets.KUBE_NAMESPACE_DEV}}
+          KUBE_CLUSTER: ${{secrets.KUBE_CLUSTER_DEV}}
 
   build-and-deploy-to-uat:
     environment: uat # Points to the set of environment secrets kept in github secrets
