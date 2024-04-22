@@ -1,12 +1,12 @@
 logging:
   level:
-    root: INFO
+    root: DEBUG
     org:
       springframework:
         security: INFO
-        jdbc:
-          core:
-            JdbcTemplate: INFO
-            StatementCreatorUtils: INFO
+        jdbc: DEBUG
+        #          core:
+        #            JdbcTemplate: INFO
+        #            StatementCreatorUtils: INFO
         transaction: INFO
         web.client.RestTemplate: INFO
