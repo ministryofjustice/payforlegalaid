@@ -163,16 +163,16 @@ jobs:
           IMAGE_TAG: ${{ github.sha }} # Tags ECR image with commit sha
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: ${{ vars.ECR_REPOSITORY }}
-          NAMESPACE: ${{ secrets.KUBE_NAMESPACE }}
+          NAMESPACE: ${{ secrets.KUBE_NAMESPACE_UAT }}
 
       # authenticates with the Cloud Platform and deploys the container image to the namespace
       - run: |
-          echo "${{ secrets.KUBE_CERT }}" > ca.crt
+          echo "${{ secrets.KUBE_CERT_UAT }}" > ca.crt
           kubectl config set-cluster ${KUBE_CLUSTER} --certificate-authority=./ca.crt --server=https://${KUBE_CLUSTER}
           kubectl config set-credentials deploy-user --token=${{ secrets.KUBE_TOKEN }}
           kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
           kubectl config use-context ${KUBE_CLUSTER}
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments/uat/
         env:
-          KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE }}
-          KUBE_CLUSTER: ${{ secrets.KUBE_CLUSTER }}
+          KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_UAT }}
+          KUBE_CLUSTER: ${{ secrets.KUBE_CLUSTER_UAT }}

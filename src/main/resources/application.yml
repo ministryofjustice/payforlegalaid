@@ -10,3 +10,35 @@ logging:
             StatementCreatorUtils: INFO
         transaction: INFO
         web.client.RestTemplate: INFO
+
+
+gpfd:
+  # DEV MOJFIN database config (also used by GPFD in UAT):
+  datasource:
+    read-only:
+      url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
+      username: ${MOJFIN_DEV_READ_USERNAME}
+      password: ${MOJFIN_DEV_READ_PASSWORD}
+      driver-class-name: oracle.jdbc.OracleDriver
+    write:
+      url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
+      username: ${MOJFIN_DEV_WRITE_USERNAME}
+      password: ${MOJFIN_DEV_WRITE_PASSWORD}
+      driver-class-name: oracle.jdbc.OracleDriver
+
+
+#SSL configuration for the dev and uat environment #todo - switch to using a platform handled cert, as detailed in this task: LPF-415
+server:
+  port: 8443
+  forward-headers-strategy: native # not sure if needed
+  shutdown: graceful
+  servlet:
+    session:
+      cookie:
+        secure: true
+  ssl:
+    key-store: classpath:gpfd-ssl-keystore.p12
+    key-store-password: ${SSL-DEV-KEY-STORE-PASSWORD}
+    key-store-type: PKCS12
+    key-alias: gpfd-dev-ssl-key
+    key-password: ${SSL-DEV-KEY-STORE-PASSWORD}
