@@ -6,3 +6,18 @@ gpfd:
 
 
 
+#SSL configuration for the dev and uat environment #todo - switch to using a platform handled cert, as detailed in this task: LPF-415
+server:
+  port: 8443
+  forward-headers-strategy: native # not sure if needed
+  shutdown: graceful
+  servlet:
+    session:
+      cookie:
+        secure: true
+  ssl:
+    key-store: classpath:gpfd-ssl-keystore.p12
+    key-store-password: ${SSL-DEV-KEY-STORE-PASSWORD}
+    key-store-type: PKCS12
+    key-alias: gpfd-dev-ssl-key
+    key-password: ${SSL-DEV-KEY-STORE-PASSWORD}
