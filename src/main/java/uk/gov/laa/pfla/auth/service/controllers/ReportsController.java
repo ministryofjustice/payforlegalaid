@@ -93,6 +93,7 @@ public class ReportsController {
     //This method is just for development, for testing that graph is working properly. It displays the details of the current SSO user
 //    @GetMapping("/graph")
 //    @ResponseBody
+//
 //    public String graph(
 //            @RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient
 //    ) throws UserServiceException {
