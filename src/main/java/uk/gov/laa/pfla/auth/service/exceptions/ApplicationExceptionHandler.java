@@ -35,6 +35,8 @@ public class ApplicationExceptionHandler {
         errorMap.put(ERROR_STRING, e.getMessage());
 
         log.error("DatabaseReadException Thrown: %s".formatted(errorMap));
+        log.error("DatabaseReadException stacktrace: %s".formatted(e.getStackTrace()));
+
 
         return new ResponseEntity<>(errorMap, HttpStatus.INTERNAL_SERVER_ERROR);
 
