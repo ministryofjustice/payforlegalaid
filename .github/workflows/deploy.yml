@@ -102,77 +102,77 @@ jobs:
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments/dev/
 
 
-  build-and-deploy-to-uat:
-    environment: uat # Points to the set of environment secrets kept in github secrets
-    runs-on: ubuntu-latest
-    #    if: github.ref == 'refs/heads/main' #Only run on main branch #todo -uncomment, its commented for testing CICD only
-    permissions:
-      id-token: write # This is required for requesting the JWT
-      contents: read  # This is required for actions/checkout
-    steps:
-      # Checkout GitHub repository
-      - name: checkout
-        uses: actions/checkout@v3
-
-      # Setup Javax
-      - uses: actions/setup-java@v3
-        with:
-          distribution: 'corretto'
-          java-version: '17'
-
-      # Run Tests
-      - name: Run tests
-        run: mvn -B clean test
-        env:
-          SPRING_PROFILES_ACTIVE: test
-
-      # Build and package JAR
-      - name: Build with Maven
-        run: mvn -B -DskipTests clean package
-
-
-      # Assume role in Cloud Platform
-      - uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: ${{ secrets.ECR_ROLE_TO_ASSUME }}
-          aws-region: ${{ vars.ECR_REGION }}
-
-      # Login to container repository
-      - uses: aws-actions/amazon-ecr-login@v1
-        id: login-ecr
-
-      - name: Set Spring profile
-        run: echo "SPRING_PROFILES_ACTIVE=uat" >> $GITHUB_ENV
-
-      # Build and push a Docker image to the container repository
-      - run: |
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: ${{ vars.ECR_REPOSITORY }}
-          IMAGE_TAG: ${{ github.sha }}
-
-      # Generate Kubernetes files from the deployments/dev/*.yml files
-      - run: |
-          echo $NAMESPACE
-          cat deployments/uat/deployment.tpl | envsubst > deployments/uat/deployment.yml
-          cat deployments/uat/ingress.tpl | envsubst > deployments/uat/ingress.yml
-          cat deployments/uat/service.tpl | envsubst > deployments/uat/service.yml
-        env:
-          IMAGE_TAG: ${{ github.sha }} # Tags ECR image with commit sha
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: ${{ vars.ECR_REPOSITORY }}
-          NAMESPACE: ${{ secrets.KUBE_NAMESPACE_UAT }}
-
-      # authenticates with the Cloud Platform and deploys the container image to the namespace
-      - run: |
-          echo "${{ secrets.KUBE_CERT_UAT }}" > ca.crt
-          kubectl config set-cluster ${KUBE_CLUSTER} --certificate-authority=./ca.crt --server=https://${KUBE_CLUSTER}
-          kubectl config set-credentials deploy-user --token=${{ secrets.KUBE_TOKEN_UAT }}
-          kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
-          kubectl config use-context ${KUBE_CLUSTER}
-          kubectl -n ${KUBE_NAMESPACE} apply -f deployments/uat/
-        env:
-          KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_UAT }}
-          KUBE_CLUSTER: ${{ secrets.KUBE_CLUSTER_UAT }}
+#  build-and-deploy-to-uat:
+#    environment: uat # Points to the set of environment secrets kept in github secrets
+#    runs-on: ubuntu-latest
+#    #    if: github.ref == 'refs/heads/main' #Only run on main branch #todo -uncomment, its commented for testing CICD only
+#    permissions:
+#      id-token: write # This is required for requesting the JWT
+#      contents: read  # This is required for actions/checkout
+#    steps:
+#      # Checkout GitHub repository
+#      - name: checkout
+#        uses: actions/checkout@v3
+#
+#      # Setup Javax
+#      - uses: actions/setup-java@v3
+#        with:
+#          distribution: 'corretto'
+#          java-version: '17'
+#
+#      # Run Tests
+#      - name: Run tests
+#        run: mvn -B clean test
+#        env:
+#          SPRING_PROFILES_ACTIVE: test
+#
+#      # Build and package JAR
+#      - name: Build with Maven
+#        run: mvn -B -DskipTests clean package
+#
+#
+#      # Assume role in Cloud Platform
+#      - uses: aws-actions/configure-aws-credentials@v2
+#        with:
+#          role-to-assume: ${{ secrets.ECR_ROLE_TO_ASSUME }}
+#          aws-region: ${{ vars.ECR_REGION }}
+#
+#      # Login to container repository
+#      - uses: aws-actions/amazon-ecr-login@v1
+#        id: login-ecr
+#
+#      - name: Set Spring profile
+#        run: echo "SPRING_PROFILES_ACTIVE=uat" >> $GITHUB_ENV
+#
+#      # Build and push a Docker image to the container repository
+#      - run: |
+#          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+#          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+#        env:
+#          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+#          IMAGE_TAG: ${{ github.sha }}
+#
+#      # Generate Kubernetes files from the deployments/dev/*.yml files
+#      - run: |
+#          echo $NAMESPACE
+#          cat deployments/uat/deployment.tpl | envsubst > deployments/uat/deployment.yml
+#          cat deployments/uat/ingress.tpl | envsubst > deployments/uat/ingress.yml
+#          cat deployments/uat/service.tpl | envsubst > deployments/uat/service.yml
+#        env:
+#          IMAGE_TAG: ${{ github.sha }} # Tags ECR image with commit sha
+#          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+#          NAMESPACE: ${{ secrets.KUBE_NAMESPACE_UAT }}
+#
+#      # authenticates with the Cloud Platform and deploys the container image to the namespace
+#      - run: |
+#          echo "${{ secrets.KUBE_CERT_UAT }}" > ca.crt
+#          kubectl config set-cluster ${KUBE_CLUSTER} --certificate-authority=./ca.crt --server=https://${KUBE_CLUSTER}
+#          kubectl config set-credentials deploy-user --token=${{ secrets.KUBE_TOKEN_UAT }}
+#          kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
+#          kubectl config use-context ${KUBE_CLUSTER}
+#          kubectl -n ${KUBE_NAMESPACE} apply -f deployments/uat/
+#        env:
+#          KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_UAT }}
+#          KUBE_CLUSTER: ${{ secrets.KUBE_CLUSTER_UAT }}
