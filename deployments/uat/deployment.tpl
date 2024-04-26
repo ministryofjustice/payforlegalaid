@@ -36,42 +36,42 @@ spec:
             - name: AZURE_CLIENT_SECRET_UAT
               valueFrom:
                 secretKeyRef:
-                  name: gpfd-UAT-secret
+                  name: gpfd-uat-secret
                   key: client-secret-uat
             - name: AZURE_CLIENT_ID_UAT
               valueFrom:
                 secretKeyRef:
-                  name: gpfd-UAT-secret
+                  name: gpfd-uat-secret
                   key: client-id-uat
             - name: AZURE_TENANT_ID_UAT
               valueFrom:
                 secretKeyRef:
-                  name: gpfd-UAT-secret
+                  name: gpfd-uat-secret
                   key: tenant-id-uat
             - name: MOJFIN_DEV_READ_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: gpfd-UAT-secret
+                  name: gpfd-uat-secret
                   key: mojfin-dev-read-username
             - name: MOJFIN_DEV_READ_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: gpfd-UAT-secret
+                  name: gpfd-uat-secret
                   key: mojfin-dev-read-password
             - name: SSL-DEV-KEY-STORE-PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: gpfd-UAT-secret
+                  name: gpfd-uat-secret
                   key: ssl-dev-key-store-password
             - name: MOJFIN_DEV_WRITE_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: gpfd-UAT-secret
+                  name: gpfd-uat-secret
                   key: mojfin-dev-write-username
             - name: MOJFIN_DEV_WRITE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: gpfd-UAT-secret
+                  name: gpfd-uat-secret
                   key: mojfin-dev-write-password
 #      volumes:
 #        - name: csv-storage
