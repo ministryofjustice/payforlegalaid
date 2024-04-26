@@ -33,45 +33,45 @@ spec:
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: "uat"                  #TODO - use a configmap once more environments are added
-            - name: AZURE_CLIENT_SECRET
+            - name: AZURE_CLIENT_SECRET_UAT
               valueFrom:
                 secretKeyRef:
-                  name: gpfd-test-secret-01 #todo - change this to a more descriptive name in a cloud platform PR
-                  key: client-secret
-            - name: AZURE_CLIENT_ID
+                  name: gpfd-UAT-secret
+                  key: client-secret-uat
+            - name: AZURE_CLIENT_ID_UAT
               valueFrom:
                 secretKeyRef:
-                  name: gpfd-test-secret-01
-                  key: client-id
-            - name: AZURE_TENANT_ID
+                  name: gpfd-UAT-secret
+                  key: client-id-uat
+            - name: AZURE_TENANT_ID_UAT
               valueFrom:
                 secretKeyRef:
-                  name: gpfd-test-secret-01
-                  key: tenant-id
+                  name: gpfd-UAT-secret
+                  key: tenant-id-uat
             - name: MOJFIN_DEV_READ_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: gpfd-test-secret-01
+                  name: gpfd-UAT-secret
                   key: mojfin-dev-read-username
             - name: MOJFIN_DEV_READ_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: gpfd-test-secret-01
+                  name: gpfd-UAT-secret
                   key: mojfin-dev-read-password
             - name: SSL-DEV-KEY-STORE-PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: gpfd-test-secret-01
+                  name: gpfd-UAT-secret
                   key: ssl-dev-key-store-password
             - name: MOJFIN_DEV_WRITE_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: gpfd-test-secret-01
+                  name: gpfd-UAT-secret
                   key: mojfin-dev-write-username
             - name: MOJFIN_DEV_WRITE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: gpfd-test-secret-01
+                  name: gpfd-UAT-secret
                   key: mojfin-dev-write-password
 #      volumes:
 #        - name: csv-storage

@@ -6,6 +6,23 @@ gpfd:
 
 
 
+# Azure AD and Graph config
+spring:
+  cloud:
+    azure:
+      active-directory:
+        enabled: true
+        profile:
+          tenant-id: ${AZURE_TENANT_ID_UAT}
+        credential:
+          client-id: ${AZURE_CLIENT_ID_UAT}
+          client-secret: ${AZURE_CLIENT_SECRET_UAT}
+        redirect-uri-template: ${gpfd.redirect-uri-template}
+        authorization-clients:
+          graph:
+            scopes:
+              - https://graph.microsoft.com/User.Read
+
 #SSL configuration for the dev and uat environment #todo - switch to using a platform handled cert, as detailed in this task: LPF-415
 server:
   port: 8443
