@@ -29,6 +29,7 @@ public class MappingTableService {
 
     public List<ReportListEntry> fetchReportListEntries() throws DatabaseReadException {
         List<ReportListEntry> reportListEntries = new ArrayList<>();
+        // Test pipe
 
         //Fetching reportList items from database
         List<MappingTableModel> mappingTableObjectList = mappingTableDao.fetchReportList();
