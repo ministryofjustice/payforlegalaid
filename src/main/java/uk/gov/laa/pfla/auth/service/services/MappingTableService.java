@@ -31,6 +31,7 @@ public class MappingTableService {
         List<ReportListEntry> reportListEntries = new ArrayList<>();
 
         //Fetching reportList items from database
+        //TESTIng pipeline
         List<MappingTableModel> mappingTableObjectList = mappingTableDao.fetchReportList();
 
         mappingTableObjectList.forEach(obj -> {
