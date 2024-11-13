@@ -91,7 +91,7 @@ https://dsdmoj.atlassian.net/wiki/spaces/LPF/pages/4736516940/GPFD+Environments
 ## Running The App
 
 - This application is in an MVP state and currently does not have a local run setup, but some of the unit tests run
-  against a H2 database, which could be used to create a local run configuration.
+  against an H2 database, which could be used to create a local run configuration.
 
 - There is currently a gpfd-ssl-keystore.p12 and custom ssl key used in the application (despite cloud platform
   providing its own TLS protection on the platform level), because a https url is required by the Active Directory
