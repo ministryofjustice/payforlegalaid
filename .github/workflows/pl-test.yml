@@ -4,9 +4,16 @@ jobs:
   my-job:
     runs-on: ubuntu-latest
     steps:
-      - name: my-step
-        run: echo "Hello World!"
-          # Run Tests
+      # Checkout GitHub repository
+      - uses: actions/checkout@v3
+
+      # Setup Javax
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: '17'
+
+      # Run Tests
       - name: Run tests
         run: mvn -B clean test
         env:
