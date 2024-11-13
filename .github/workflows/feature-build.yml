@@ -1,5 +1,9 @@
 name: Feature build and test
-'on': [workflow_dispatch, push]
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, reopened,synchronize]
+
 jobs:
   my-job:
     runs-on: ubuntu-latest
