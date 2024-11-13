@@ -6,3 +6,8 @@ jobs:
     steps:
       - name: my-step
         run: echo "Hello World!"
+          # Run Tests
+      - name: Run tests
+        run: mvn -B clean test
+        env:
+          SPRING_PROFILES_ACTIVE: test
