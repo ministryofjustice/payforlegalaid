@@ -1,0 +1,19 @@
+name: My Composite Action
+description: A reusable action for setting up environment and running checks
+
+inputs:
+  version:
+    description: 'Version of the environment to set up'
+    required: true
+    default: 'latest'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up environment
+      run: |
+        echo "Running tests..."
+
+    - name: Run checks
+      run: |
+        echo "Running checks..."
