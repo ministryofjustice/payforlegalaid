@@ -10,4 +10,4 @@ runs:
   using: "composite"
   steps:
     - name: Print version
-      run: echo "Using version foo"
+      run: echo "Using version ${{ inputs.version }}"
