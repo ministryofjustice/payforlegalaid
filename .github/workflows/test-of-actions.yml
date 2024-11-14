@@ -10,6 +10,4 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Use composite action
-        uses: /home/runner/work/payforlegalaid/payforlegalaid/github/actions
-        with:
-          version: '2.0'
+        uses: ./github/actions
