@@ -22,3 +22,11 @@ jobs:
         run: mvn -B clean test
         env:
           SPRING_PROFILES_ACTIVE: test
+
+      # Shouldn't actually be on PR just wanting to see if it works...
+  scan-docker-image:
+    uses: ministryofjustice/laa-reusable-github-actions/.github/workflows/snyk.yml@main
+    with:
+      tag: "payforlegalaid"
+    secrets:
+      snyk_token: ${{ secrets.SNYK_TOKEN }}
