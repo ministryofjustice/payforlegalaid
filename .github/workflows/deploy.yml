@@ -95,6 +95,7 @@ jobs:
           KUBE_CLUSTER: ${{ secrets.KUBE_CLUSTER_DEV }}
         run: |
           echo "${{ secrets.KUBE_CERT_DEV }}" > ca.crt
+          echo "${{ secrets.KUBE_CERT_UAT }}" > ca2.crt
           kubectl config set-cluster ${KUBE_CLUSTER} --certificate-authority=./ca.crt --server=https://${KUBE_CLUSTER}
           kubectl config set-credentials deploy-user --token=${{ secrets.KUBE_TOKEN_DEV }}
           kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
