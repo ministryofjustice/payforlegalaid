@@ -14,7 +14,7 @@ spec:
       labels:
         app: gpfd-dev
     spec:
-      serviceAccountName: example-name #This relates to the IRSA module in our namespace, within the cloud-platform-environments repo
+      serviceAccountName: laa-get-payments-finance-data-dev-service #This relates to the IRSA module in our namespace, within the cloud-platform-environments repo
       #      initContainers:
       #        - name: create-directory
       #          image: busybox
