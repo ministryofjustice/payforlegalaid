@@ -62,10 +62,10 @@ jobs:
           cat deployments/dev/ingress.tpl | envsubst > deployments/dev/ingress.yml
           cat deployments/dev/service.tpl | envsubst > deployments/dev/service.yml
 
-      - env:
+      - run: |
+          echo "${{ secrets.KUBE_CERT_DEV }}" > ca.crt
+          kubectl config set-cluster ${{ secrets.KUBE_CLUSTER_DEV }} --certificate-authority=./ca.crt --server=https://${{ secrets.KUBE_CLUSTER_DEV }}
+        env:
           KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
           KUBE_CLUSTER: ${{ secrets.KUBE_CLUSTER_DEV }}
-        run: |
-          echo "${{ secrets.KUBE_CERT_DEV }}" > ca.crt
-          kubectl config set-cluster ${KUBE_CLUSTER_DEV} --certificate-authority=./ca.crt --server=https://${KUBE_CLUSTER_DEV}
       
