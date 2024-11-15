@@ -1,12 +1,13 @@
 name: Rob's to the dev env fairy tail
 
 on:
+  workflow_dispatch:
   push:
-    branches:
-      - '*'
+
 
 jobs:
-  branch-job:
+  feature_branch:
+
     runs-on: ubuntu-latest
     permissions:
       contents: read  # This is required for actions/checkout
