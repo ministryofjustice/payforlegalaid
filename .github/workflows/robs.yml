@@ -7,10 +7,8 @@ on:
 
 
 jobs:
-  secrets: inherit
 
   feature_branch:
-    secrets: inherit
 
     runs-on: ubuntu-latest
     permissions:
