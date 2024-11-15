@@ -67,4 +67,5 @@ jobs:
           KUBE_CLUSTER: ${{ secrets.KUBE_CLUSTER_DEV }}
         run: |
           echo "${{ secrets.KUBE_CERT_DEV }}" > ca.crt
+          kubectl config set-cluster ${KUBE_CLUSTER} --certificate-authority=./ca.crt --server=https://${KUBE_CLUSTER}
       
