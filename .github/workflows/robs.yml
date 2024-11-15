@@ -58,6 +58,7 @@ jobs:
           NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
         run: |
           echo $NAMESPACE
+          echo $KUBE_NAMESPACE
           echo $REPOSITORY
           echo test
           cat deployments/dev/deployment.tpl | envsubst > deployments/dev/deployment.yml
@@ -69,5 +70,6 @@ jobs:
           kubectl -n ${KUBE_NAMESPACE_DEV} apply -f deployments/
         env:
           KUBE_NAMESPACE_DEV: ${{ secrets.KUBE_NAMESPACE_DEV }}
+          KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE }}
           KUBE_CLUSTER_DEV: ${{ secrets.KUBE_CLUSTER_DEV }}
       
