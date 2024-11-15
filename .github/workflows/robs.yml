@@ -70,6 +70,6 @@ jobs:
           kubectl -n ${KUBE_NAMESPACE_DEV} apply -f deployments/
         env:
           KUBE_NAMESPACE_DEV: ${{ secrets.KUBE_NAMESPACE_DEV }}
-          KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE }}
+          KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
           KUBE_CLUSTER_DEV: ${{ secrets.KUBE_CLUSTER_DEV }}
       
