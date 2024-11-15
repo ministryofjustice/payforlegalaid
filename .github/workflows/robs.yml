@@ -1,12 +1,16 @@
 name: Rob's to the dev env fairy tail
 
 on:
-  workflow_dispatch:
   push:
+    branches:
+      - '*'
 
 
 jobs:
+  secrets: inherit
+
   feature_branch:
+    secrets: inherit
 
     runs-on: ubuntu-latest
     permissions:
