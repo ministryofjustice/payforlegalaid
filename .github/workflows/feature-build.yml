@@ -8,7 +8,17 @@ jobs:
   feature_branch:
     runs-on: ubuntu-latest
     steps:
+      # Checkout GitHub repository
       - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
 
-      - uses: ./.github/checkout-and-test
+      # Setup Javax
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: '17'
+
+      # Run Tests
+      - name: Run tests
+        run: mvn -B clean test
+        env:
+          SPRING_PROFILES_ACTIVE: test
