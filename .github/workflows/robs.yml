@@ -2,8 +2,6 @@ name: Rob's to the dev env fairy tail
 
 on:
   push:
-    branches:
-      - '*'
 
 
 jobs:
