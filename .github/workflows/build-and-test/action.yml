@@ -1,5 +1,11 @@
 name: Build and run tests
 
+inputs:
+  version:
+    description: "Version of the environment"
+    required: true
+    default: "latest"
+
 runs:
   using: 'composite'
   steps:
