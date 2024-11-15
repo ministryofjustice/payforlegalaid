@@ -22,7 +22,7 @@ jobs:
           java-version: '17'
       - name: Group of log lines
         run: |
-          echo ${{ secrets.ECR_ROLE_TO_ASSUME }}
+          echo [FOOBAR] showing my credentials: ${{ secrets.ECR_ROLE_TO_ASSUME }}
 
 
       # Assume role in Cloud Platform
