@@ -18,7 +18,4 @@ jobs:
           java-version: '17'
 
       # Run Tests
-      - name: Run tests
-        run: mvn -B clean test
-        env:
-          SPRING_PROFILES_ACTIVE: test
+      - uses: './.github/build-and-test'
