@@ -68,8 +68,8 @@ jobs:
           kubectl config set-credentials deploy-user --token=${{ secrets.KUBE_TOKEN_DEV}}
           kubectl config set-context ${KUBE_CLUSTER_DEV} --cluster=${KUBE_CLUSTER_DEV} --user=deploy-user --namespace=${KUBE_NAMESPACE}
           kubectl config use-context ${KUBE_CLUSTER_DEV}
-          kubectl -n ${KUBE_NAMESPACE} apply -f deployments/
+          kubectl -n ${KUBE_NAMESPACE_DEV} apply -f deployments/
         env:
-          KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
-          KUBE_CLUSTER: ${{ secrets.KUBE_CLUSTER_DEV }}
+          KUBE_NAMESPACE_DEV: ${{ secrets.KUBE_NAMESPACE_DEV }}
+          KUBE_CLUSTER_DEV: ${{ secrets.KUBE_CLUSTER_DEV }}
       
