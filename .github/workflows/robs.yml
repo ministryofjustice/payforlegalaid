@@ -31,6 +31,17 @@ jobs:
       - name: Set Spring profile
         run: echo "SPRING_PROFILES_ACTIVE=dev" >> $GITHUB_ENV
 
+      # Setup Javax
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: '17'
+
+      # Build and package JAR
+      - name: Build with Maven
+        run: mvn -B -DskipTests clean package
+
+
       - run: |
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
