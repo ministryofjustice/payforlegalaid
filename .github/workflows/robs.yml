@@ -13,26 +13,18 @@ jobs:
       contents: read  # This is required for actions/checkout
     steps:
       # Checkout GitHub repository
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      # Setup Javax
-      - uses: actions/setup-java@v3
-        with:
-          distribution: 'corretto'
-          java-version: '17'
       - name: Group of log lines
         run: |
           echo [FOOBAR] showing my credentials: ${{ secrets.ECR_ROLE_TO_ASSUME }}
 
 
-      # Assume role in Cloud Platform
       - uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: ${{ secrets.ECR_ROLE_TO_ASSUME }}
           aws-region: ${{ vars.ECR_REGION }}
-
-
-      - uses: aws-actions/amazon-ecr-login@v1
+      - uses: aws-actions/amazon-ecr-login@v2
         id: login-ecr
 
       - name: Set Spring profile
