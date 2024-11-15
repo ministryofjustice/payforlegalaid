@@ -30,7 +30,6 @@ public class MappingTableService {
     public List<ReportListEntry> fetchReportListEntries() throws DatabaseReadException {
         List<ReportListEntry> reportListEntries = new ArrayList<>();
 
-        //Fetching reportList items from database
         List<MappingTableModel> mappingTableObjectList = mappingTableDao.fetchReportList();
 
         mappingTableObjectList.forEach(obj -> {
@@ -44,6 +43,7 @@ public class MappingTableService {
         return reportListEntries;
     }
 
+    //test
     /**
      * Create a ReportListResponse with report metadata such as reportname, obtained from the CSV to SQL mapping table
      *
