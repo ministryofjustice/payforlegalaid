@@ -5,6 +5,12 @@ runs:
   steps:
     - uses: actions/checkout@v4
 
+      # Setup Javax
+    - uses: actions/setup-java@v4
+      with:
+        distribution: 'corretto'
+        java-version: '17'
+
     # Run Tests
     - name: Run tests
       run: mvn -B clean test

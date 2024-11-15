@@ -11,11 +11,5 @@ jobs:
       # Checkout GitHub repository
       - uses: actions/checkout@v4
 
-      # Setup Javax
-      - uses: actions/setup-java@v4
-        with:
-          distribution: 'corretto'
-          java-version: '17'
-
       # Run Tests
       - uses: './.github/build-and-test'
