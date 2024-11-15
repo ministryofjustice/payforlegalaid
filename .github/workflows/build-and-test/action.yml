@@ -3,6 +3,8 @@ name: Build and run tests
 runs:
   using: composite
   steps:
+    - uses: actions/checkout@v4
+
     # Run Tests
     - name: Run tests
       run: mvn -B clean test
