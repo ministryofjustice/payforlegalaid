@@ -20,6 +20,10 @@ jobs:
         with:
           distribution: 'corretto'
           java-version: '17'
+      - name: Group of log lines
+        run: |
+          echo ${{ secrets.ECR_ROLE_TO_ASSUME }}
+
 
       # Assume role in Cloud Platform
       - uses: aws-actions/configure-aws-credentials@v2
