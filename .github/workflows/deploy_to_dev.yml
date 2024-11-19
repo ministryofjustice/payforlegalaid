@@ -19,17 +19,19 @@ jobs:
 
       - uses: './.github/build-and-test'
 
-      - uses: './.github/login-to-aws/dev'
+      - uses: './.github/login-to-aws'
         env:
           ROLE: ${{ secrets.ECR_ROLE_TO_ASSUME }}
           AWS_REGION: ${{ vars.ECR_REGION }}
-
-
 
       - name: Set Spring profile
         run: echo "SPRING_PROFILES_ACTIVE=dev" >> $GITHUB_ENV
 
       - uses: './.github/build-push-docker-image'
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+          IMAGE_TAG: ${{ github.sha }}
 
       # Generate Kubernetes files from the deployments/dev/*.yml files
       - env:
