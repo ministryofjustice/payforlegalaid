@@ -27,6 +27,6 @@ runs:
 
     # Move JAR to a directory
     - name: Move JAR
-      run: mv *.jar /tmp/compiledJar.jar
+      run: mv target/*.jar /tmp/compiledJar.jar
       shell:
         bash
