@@ -6,7 +6,7 @@ on:
 jobs:
 
   build-and-deploy-to-dev:
-    environment: dev # Points to the set of environment secrets kept in GitHub secrets
+    environment: development # Points to the set of environment secrets kept in GitHub secrets
     runs-on: ubuntu-latest
     permissions:
       id-token: write # This is required for requesting the JWT
@@ -25,12 +25,7 @@ jobs:
           AWS_REGION: ${{ vars.ECR_REGION }}
 
       - name: Set Spring profile
-        run: |
-          echo "SPRING_PROFILES_ACTIVE=dev" >> $GITHUB_ENV
-          echo "foo"
-          echo ${{ vars.ECR_REPOSITORY }}
-          echo "monkey"
-          echo ${{ github.sha }}
+        run: echo "SPRING_PROFILES_ACTIVE=dev" >> $GITHUB_ENV
 
       - uses: './.github/build-push-docker-image'
         env:
