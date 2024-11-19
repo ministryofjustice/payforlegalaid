@@ -21,7 +21,7 @@ jobs:
 
       - uses: './.github/login-to-aws/dev'
         env:
-          ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+          ROLE: ${{ secrets.ECR_ROLE_TO_ASSUME }}
 
 
       - name: Set Spring profile

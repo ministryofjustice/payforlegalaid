@@ -10,7 +10,7 @@ runs:
     # Assume role in Cloud Platform
     - uses: aws-actions/configure-aws-credentials@v4
       with:
-        role-to-assume: ${{ secrets.ECR_ROLE_TO_ASSUME }}
+        role-to-assume: ${{ env.ROLE }}
         aws-region: ${{ vars.ECR_REGION }}
 
     # Login to container repository
