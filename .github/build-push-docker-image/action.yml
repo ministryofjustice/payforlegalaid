@@ -12,6 +12,8 @@ runs:
 
     # Build and push a Docker image to the container repository
     - run: |
+        echo debugging here
+        ls ./target | cat
         docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
         docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
