@@ -14,8 +14,10 @@ runs:
     - run: |
         docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
         docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-        echo "foobar"
-        echo ${{ env.REGISTRY }}
+        echo "bar"
+        echo ${{ env.REPOSITORY }}
+        echo "business"
+        echo ${{ env.IMAGE_TAG }}
       env:
         REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         REPOSITORY: ${{ env.REPOSITORY }}
