@@ -22,6 +22,8 @@ jobs:
       - uses: './.github/login-to-aws/dev'
         env:
           ROLE: ${{ secrets.ECR_ROLE_TO_ASSUME }}
+          AWS_REGION: ${{ vars.ECR_REGION }}
+
 
 
       - name: Set Spring profile
