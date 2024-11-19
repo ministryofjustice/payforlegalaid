@@ -14,6 +14,6 @@ runs:
         docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
       env:
         REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+        REPOSITORY: ${{ env.ECR_REPOSITORY }}
         IMAGE_TAG: ${{ github.sha }}
       shell: bash
