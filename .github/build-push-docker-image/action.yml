@@ -6,6 +6,12 @@ runs:
   steps:
     - uses: actions/checkout@v4
 
+    # Build and package JAR
+    - name: Build with Maven
+      run: mvn -B -DskipTests clean package
+      shell:
+        bash
+
     # Login to container repository
     - uses: aws-actions/amazon-ecr-login@v2
       id: login-ecr
