@@ -25,21 +25,16 @@ jobs:
           AWS_REGION: ${{ vars.ECR_REGION }}
 
       - name: Set Spring profile
-        run: |
-          echo "SPRING_PROFILES_ACTIVE=dev" >> $GITHUB_ENV
-          echo "foobar workflow"
-          echo ${{ steps.login-ecr.outputs.registry }}
+        run: echo "SPRING_PROFILES_ACTIVE=dev" >> $GITHUB_ENV
 
       - uses: './.github/build-push-docker-image'
         env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: ${{ vars.ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
 
       # Generate Kubernetes files from the deployments/dev/*.yml files
       - env:
           IMAGE_TAG: ${{ github.sha }} # Tags ECR image with commit sha
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: ${{ vars.ECR_REPOSITORY }}
           NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
         run: |
