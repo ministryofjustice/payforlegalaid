@@ -2,6 +2,8 @@ name: Build and push docker image
 
 runs:
   using: 'composite'
+  environment: dev # Points to the set of environment secrets kept in GitHub secrets
+
   steps:
     - uses: actions/checkout@v4
 

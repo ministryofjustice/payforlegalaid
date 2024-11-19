@@ -2,6 +2,8 @@ name: Login to AWS
 
 runs:
   using: 'composite'
+  environment: uat # Points to the set of environment secrets kept in github secrets
+
   steps:
     - uses: actions/checkout@v4
 

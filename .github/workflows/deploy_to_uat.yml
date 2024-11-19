@@ -20,7 +20,7 @@ jobs:
       # Run Tests
       - uses: './.github/build-and-test'
 
-      - uses: './.github/login-to-aws'
+      - uses: './.github/login-to-aws/uat'
 
       - name: Set Spring profile
         run: echo "SPRING_PROFILES_ACTIVE=uat" >> $GITHUB_ENV
