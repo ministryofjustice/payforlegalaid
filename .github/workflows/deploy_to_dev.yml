@@ -33,6 +33,9 @@ jobs:
           REPOSITORY: ${{ vars.ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
 
+        run: echo $steps.login-ecr.outputs.registry
+
+
       # Generate Kubernetes files from the deployments/dev/*.yml files
       - env:
           IMAGE_TAG: ${{ github.sha }} # Tags ECR image with commit sha

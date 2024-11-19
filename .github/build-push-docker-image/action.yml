@@ -10,8 +10,10 @@ runs:
     - run: |
         docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
         docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+        echo $env.REGISTRY
       env:
         REGISTRY: ${{ env.REGISTRY }}
         REPOSITORY: ${{ env.REPOSITORY }}
         IMAGE_TAG: ${{ env.IMAGE_TAG }}
       shell: bash
+
