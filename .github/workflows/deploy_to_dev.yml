@@ -28,7 +28,7 @@ jobs:
         run: |
           echo "SPRING_PROFILES_ACTIVE=dev" >> $GITHUB_ENV
           echo "foobar workflow"
-          echo $steps.login-ecr.outputs.registry
+          echo ${{ steps.login-ecr.outputs.registry }}
 
       - uses: './.github/build-push-docker-image'
         env:
