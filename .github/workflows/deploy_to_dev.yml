@@ -45,6 +45,9 @@ jobs:
           NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
         run: |
           echo $NAMESPACE
+          echo $KUBE_NAMESPACE
+          echo $REPOSITORY
+          echo test
           cat deployments/dev/deployment.tpl | envsubst > deployments/dev/deployment.yml
           cat deployments/dev/ingress.tpl | envsubst > deployments/dev/ingress.yml
           cat deployments/dev/service.tpl | envsubst > deployments/dev/service.yml
