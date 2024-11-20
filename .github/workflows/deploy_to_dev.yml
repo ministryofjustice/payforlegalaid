@@ -22,10 +22,16 @@ jobs:
       - name: Set Spring profile
         run: echo "SPRING_PROFILES_ACTIVE=dev" >> $GITHUB_ENV
 
-      - uses: './.github/login-to-aws'
-        env:
-          ROLE: ${{ secrets.ECR_ROLE_TO_ASSUME }}
-          AWS_REGION: ${{ vars.ECR_REGION }}
+     # - uses: './.github/login-to-aws'
+      #  env:
+       #   ROLE: ${{ secrets.ECR_ROLE_TO_ASSUME }}
+        #  AWS_REGION: ${{ vars.ECR_REGION }}
+
+      # Assume role in Cloud Platform
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.ECR_ROLE_TO_ASSUME }}
+          aws-region: ${{ vars.ECR_REGION }}
 
       # Login to container repository
       - uses: aws-actions/amazon-ecr-login@v2
