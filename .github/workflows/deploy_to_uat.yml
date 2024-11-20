@@ -6,41 +6,49 @@ on:
 jobs:
 
   build-and-deploy-to-uat:
-    environment: uat # Points to the set of environment secrets kept in github secrets
+    environment: uat # Points to the set of environment secrets kept in GitHub secrets
     runs-on: ubuntu-latest
     permissions:
       id-token: write # This is required for requesting the JWT
       contents: read  # This is required for actions/checkout
 
     steps:
-      # Checkout GitHub repository
-      - name: checkout
+      - name: Checkout Github Repository
         uses: actions/checkout@v4
 
-      # Run Tests
       - uses: './.github/build-and-test'
-
-      - uses: './.github/login-to-aws'
 
       - name: Set Spring profile
         run: echo "SPRING_PROFILES_ACTIVE=uat" >> $GITHUB_ENV
 
-      - uses: './.github/build-push-docker-image'
+      - uses: './.github/login-to-aws'
+        env:
+          ROLE: ${{ secrets.ECR_ROLE_TO_ASSUME }}
+          AWS_REGION: ${{ vars.ECR_REGION }}
 
-      # Generate Kubernetes files from the deployments/dev/*.yml files
-      - env:
+      - name: Login to container repository
+        uses: aws-actions/amazon-ecr-login@v2
+        id: login-ecr
+
+      - uses: './.github/build-push-docker-image'
+        env:
+          REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+          IMAGE_TAG: ${{ github.sha }}
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+
+      - name: Generate Kubernetes files from templates
+        env:
           IMAGE_TAG: ${{ github.sha }} # Tags ECR image with commit sha
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: ${{ vars.ECR_REPOSITORY }}
           NAMESPACE: ${{ secrets.KUBE_NAMESPACE_UAT }}
         run: |
-          echo $NAMESPACE
           cat deployments/uat/deployment.tpl | envsubst > deployments/uat/deployment.yml
           cat deployments/uat/ingress.tpl | envsubst > deployments/uat/ingress.yml
           cat deployments/uat/service.tpl | envsubst > deployments/uat/service.yml
 
-      # authenticates with the Cloud Platform and deploys the container image to the namespace
-      - env:
+      - name: Authenticate with Cloud Platform and Deploy
+        env:
           KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_UAT }}
           KUBE_CLUSTER: ${{ secrets.KUBE_CLUSTER_UAT }}
         run: |
