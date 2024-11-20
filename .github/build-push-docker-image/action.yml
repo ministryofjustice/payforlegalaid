@@ -13,8 +13,8 @@ runs:
         bash
 
     # Login to container repository
-    - uses: aws-actions/amazon-ecr-login@v2
-      id: login-ecr
+    #- uses: aws-actions/amazon-ecr-login@v2
+     # id: login-ecr
 
     # Build and push a Docker image to the container repository
     - run: |
@@ -26,4 +26,3 @@ runs:
         REPOSITORY: ${{ env.REPOSITORY }}
         IMAGE_TAG: ${{ env.IMAGE_TAG }}
       shell: bash
-

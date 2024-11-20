@@ -21,11 +21,14 @@ jobs:
       - name: Set Spring profile
         run: echo "SPRING_PROFILES_ACTIVE=dev" >> $GITHUB_ENV
 
-
       - uses: './.github/login-to-aws'
         env:
           ROLE: ${{ secrets.ECR_ROLE_TO_ASSUME }}
           AWS_REGION: ${{ vars.ECR_REGION }}
+
+      # Login to container repository
+      - uses: aws-actions/amazon-ecr-login@v2
+        id: login-ecr
 
       - uses: './.github/build-push-docker-image'
         env:
