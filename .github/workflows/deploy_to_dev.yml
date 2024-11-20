@@ -17,7 +17,26 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - uses: './.github/build-and-test'
+    #  - uses: './.github/build-and-test'
+        # Setup Javax
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: '17'
+
+      # Run Tests
+      - name: Run tests
+        run: mvn -B clean test
+        env:
+          SPRING_PROFILES_ACTIVE: test
+        shell:
+          bash
+
+      # Build and package JAR
+      - name: Build with Maven
+        run: mvn -B -DskipTests clean package
+        shell:
+          bash
 
       - name: Set Spring profile
         run: echo "SPRING_PROFILES_ACTIVE=dev" >> $GITHUB_ENV
