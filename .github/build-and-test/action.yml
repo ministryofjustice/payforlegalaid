@@ -24,9 +24,3 @@ runs:
       run: mvn -B -DskipTests clean package
       shell:
         bash
-
-    # Move JAR to a directory
-    - name: Move JAR
-      run: mv target/*.jar /tmp/compiledJar.jar
-      shell:
-        bash
