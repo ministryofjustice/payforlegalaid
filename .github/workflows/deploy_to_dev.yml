@@ -24,6 +24,10 @@ jobs:
           ROLE: ${{ secrets.ECR_ROLE_TO_ASSUME }}
           AWS_REGION: ${{ vars.ECR_REGION }}
 
+      # Login to container repository
+      - uses: aws-actions/amazon-ecr-login@v2
+        id: login-ecr
+
       - name: Set Spring profile
         run: echo "SPRING_PROFILES_ACTIVE=dev" >> $GITHUB_ENV
 
@@ -31,10 +35,12 @@ jobs:
         env:
           REPOSITORY: ${{ vars.ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
 
       # Generate Kubernetes files from the deployments/dev/*.yml files
       - env:
           IMAGE_TAG: ${{ github.sha }} # Tags ECR image with commit sha
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: ${{ vars.ECR_REPOSITORY }}
           NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
         run: |

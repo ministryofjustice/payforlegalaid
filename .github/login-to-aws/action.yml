@@ -11,4 +11,3 @@ runs:
       with:
         role-to-assume: ${{ env.ROLE }}
         aws-region: ${{ env.AWS_REGION }}
-
