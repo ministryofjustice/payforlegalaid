@@ -26,8 +26,8 @@ jobs:
           ROLE: ${{ secrets.ECR_ROLE_TO_ASSUME }}
           AWS_REGION: ${{ vars.ECR_REGION }}
 
-      # Login to container repository
-      - uses: aws-actions/amazon-ecr-login@v2
+      - name: Login to container repository
+        uses: aws-actions/amazon-ecr-login@v2
         id: login-ecr
 
       - uses: './.github/build-push-docker-image'
@@ -47,7 +47,6 @@ jobs:
           cat deployments/dev/ingress.tpl | envsubst > deployments/dev/ingress.yml
           cat deployments/dev/service.tpl | envsubst > deployments/dev/service.yml
 
-      # authenticates with the Cloud Platform and deploys the container image to the namespace
       - name: Authenticate with Cloud Platform and Deploy
         env:
           KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}

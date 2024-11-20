@@ -3,24 +3,18 @@ name: Build and run tests
 runs:
   using: 'composite'
   steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      # Setup Javax
-    - uses: actions/setup-java@v4
+    - name: Setup Java
+      uses: actions/setup-java@v4
       with:
         distribution: 'corretto'
         java-version: '17'
 
-    # Run Tests
     - name: Run tests
       run: mvn -B clean test
       env:
         SPRING_PROFILES_ACTIVE: test
-      shell:
-        bash
-
-    # Build and package JAR
-    - name: Build with Maven
-      run: mvn -B -DskipTests clean package
       shell:
         bash

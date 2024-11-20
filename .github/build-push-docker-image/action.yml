@@ -4,20 +4,16 @@ runs:
   using: 'composite'
 
   steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-    # Build and package JAR
     - name: Build with Maven
       run: mvn -B -DskipTests clean package
       shell:
         bash
 
-    # Login to container repository
-    #- uses: aws-actions/amazon-ecr-login@v2
-     # id: login-ecr
-
-    # Build and push a Docker image to the container repository
-    - run: |
+    - name: Build and push Docker image to container repository
+      run: |
         docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
         docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
