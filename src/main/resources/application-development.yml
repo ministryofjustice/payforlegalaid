@@ -1,5 +1,5 @@
 gpfd:
-  redirect-uri-template: https://laa-get-payments-finance-data-uat.apps.live.cloud-platform.service.justice.gov.uk/login/oauth2/code/gpfd-azure-uat
+  redirect-uri-template: https://laa-get-payments-finance-data-dev.apps.live.cloud-platform.service.justice.gov.uk/login/oauth2/code/gpfd-azure-dev
 
 spring:
   cloud:
@@ -7,10 +7,10 @@ spring:
       active-directory:
         enabled: true
         profile:
-          tenant-id: ${AZURE_TENANT_ID_UAT}
+          tenant-id: ${AZURE_TENANT_ID}
         credential:
-          client-id: ${AZURE_CLIENT_ID_UAT}
-          client-secret: ${AZURE_CLIENT_SECRET_UAT}
+          client-id: ${AZURE_CLIENT_ID}
+          client-secret: ${AZURE_CLIENT_SECRET}
         redirect-uri-template: ${gpfd.redirect-uri-template}
         authorization-clients:
           graph:
@@ -31,3 +31,5 @@ server:
     key-store-type: PKCS12
     key-alias: gpfd-dev-ssl-key
     key-password: ${SSL-DEV-KEY-STORE-PASSWORD}
+
+
