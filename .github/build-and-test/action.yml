@@ -1,0 +1,20 @@
+name: Build and run tests
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'corretto'
+        java-version: '17'
+
+    - name: Run tests
+      run: mvn -B clean test
+      env:
+        SPRING_PROFILES_ACTIVE: test
+      shell:
+        bash
