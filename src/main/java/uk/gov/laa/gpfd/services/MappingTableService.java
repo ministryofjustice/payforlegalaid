@@ -7,8 +7,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.laa.gpfd.dao.MappingTableDao;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
-import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
-import uk.gov.laa.gpfd.model.MappingTable;
+import uk.gov.laa.gpfd.model.*;
 
 import java.util.ArrayList;
 import java.util.List;

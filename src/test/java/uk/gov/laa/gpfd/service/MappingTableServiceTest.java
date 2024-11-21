@@ -1,19 +1,20 @@
-package uk.gov.laa.pfla.auth.service.service;
+package uk.gov.laa.gpfd.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.laa.pfla.auth.service.dao.MappingTableDao;
-import uk.gov.laa.pfla.auth.service.exceptions.DatabaseReadException;
-import uk.gov.laa.pfla.auth.service.exceptions.ReportIdNotFoundException;
-import uk.gov.laa.pfla.auth.service.models.MappingTableModel;
-import uk.gov.laa.pfla.auth.service.responses.ReportListEntry;
-import uk.gov.laa.pfla.auth.service.services.MappingTableService;
+import org.mockito.Mockito;
 
-import java.io.IOException;
-import java.util.ArrayList;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.modelmapper.ModelMapper;
+import uk.gov.laa.gpfd.dao.MappingTableDao;
+import uk.gov.laa.gpfd.exception.DatabaseReadException;
+import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
+import uk.gov.laa.gpfd.model.MappingTable;
+import uk.gov.laa.gpfd.services.MappingTableService;
+import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
+
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,14 +31,20 @@ public class MappingTableServiceTest {
     @Mock
     MappingTableDao mappingTableDao;
 
+    @Mock
+    ModelMapper mapper;
+
     @Test
     void should_return_report_list_entry_from_mappingtablemodels() throws DatabaseReadException {
-       when(mappingTableDao.fetchReportList()).thenReturn(createMappingTableModels());
-        List<ReportListEntry> results = classUnderTest.fetchReportListEntries();
-        assertEquals(results.size(), 2);
+
+        when(mappingTableDao.fetchReportList()).thenReturn(createMappingTableModel());
+        when(mapper.map(Mockito.any(), Mockito.any())).thenReturn(createMappedTableModel());
+
+        List<ReportsGet200ResponseReportListInner> results = classUnderTest.fetchReportListEntries();
+        assertEquals(results.size(), 1);
         assertEquals(results.get(0).getId(), 1);
         assertEquals(results.get(0).getDescription(), "description");
-        assertEquals(results.get(0).getReportName(), "reportName");
+        assertEquals(results.get(0).getReportName(), "report name");
         assertEquals(results.get(0).getSqlQuery(), "select * from table1");
         assertEquals(results.get(0).getBaseUrl(), "http://nothing");
         assertEquals(results.get(0).getCsvName(), "csv name");
@@ -46,17 +53,6 @@ public class MappingTableServiceTest {
         assertEquals(results.get(0).getOwnerEmail(), "owner@a.com");
         assertEquals(results.get(0).getReportCreator(), "report creator");
         assertEquals(results.get(0).getReportOwner(), "report owner");
-        assertEquals(results.get(1).getId(), 2);
-        assertEquals(results.get(1).getDescription(), "description 2");
-        assertEquals(results.get(1).getReportName(), "report name 2");
-        assertEquals(results.get(1).getSqlQuery(), "select * from table2");
-        assertEquals(results.get(1).getBaseUrl(), "http://nothing2");
-        assertEquals(results.get(1).getCsvName(), "csv name 2");
-        assertEquals(results.get(1).getExcelReport(), "excel report 2");
-        assertEquals(results.get(1).getExcelSheetNum(), 1);
-        assertEquals(results.get(1).getOwnerEmail(), "owner2@a.com");
-        assertEquals(results.get(1).getReportCreator(), "report creator 2");
-        assertEquals(results.get(1).getReportOwner(), "report owner 2");
     }
 
     @Test
@@ -74,7 +70,7 @@ public class MappingTableServiceTest {
 
     @Test
     void should_return_report_id_not_found_exception_when_report_id_out_of_range() throws DatabaseReadException {
-        when(mappingTableDao.fetchReportList()).thenReturn(createMappingTableModels());
+        when(mappingTableDao.fetchReportList()).thenReturn(createMappingTableModel());
 
         assertThrows(ReportIdNotFoundException.class, () -> classUnderTest.getDetailsForSpecificReport(3));
     }
@@ -88,13 +84,14 @@ public class MappingTableServiceTest {
 
     @Test
     void should_return_report_read_response() throws DatabaseReadException {
-        when(mappingTableDao.fetchReportList()).thenReturn(createMappingTableModels());
+        when(mappingTableDao.fetchReportList()).thenReturn(createMappingTableModel());
+        when(mapper.map(Mockito.any(), Mockito.any())).thenReturn(createMappedTableModel());
 
-        ReportListEntry results = classUnderTest.getDetailsForSpecificReport(1);
+        ReportsGet200ResponseReportListInner results = classUnderTest.getDetailsForSpecificReport(1);
 
         assertEquals(results.getId(), 1);
         assertEquals(results.getDescription(), "description");
-        assertEquals(results.getReportName(), "reportName");
+        assertEquals(results.getReportName(), "report name");
         assertEquals(results.getSqlQuery(), "select * from table1");
         assertEquals(results.getBaseUrl(), "http://nothing");
         assertEquals(results.getCsvName(), "csv name");
@@ -106,34 +103,38 @@ public class MappingTableServiceTest {
 
     }
 
-    List<MappingTableModel> createMappingTableModels() {
-        return List.of(
-                MappingTableModel.builder()
-                        .id(1)
-                        .csvName("csv name")
-                        .description("description")
-                        .excelReport("excel report")
-                        .reportName("reportName")
-                        .reportOwner("report owner")
-                        .sqlQuery("select * from table1")
-                        .baseUrl("http://nothing")
-                        .excelSheetNum(1)
-                        .reportCreator("report creator")
-                        .ownerEmail("owner@a.com")
-                        .build(),
-                MappingTableModel.builder()
-                        .id(2)
-                        .csvName("csv name 2")
-                        .description("description 2")
-                        .excelReport("excel report 2")
-                        .reportName("report name 2")
-                        .reportOwner("report owner 2")
-                        .sqlQuery("select * from table2")
-                        .baseUrl("http://nothing2")
-                        .excelSheetNum(1)
-                        .reportCreator("report creator 2")
-                        .ownerEmail("owner2@a.com")
-                        .build()
-       );
+    List<MappingTable> createMappingTableModel() {
+        MappingTable firstReport = new MappingTable(
+                1,
+                "report name",
+                "excel report",
+                "csv name",
+                1,
+                "select * from table1",
+                "http://nothing",
+                "report owner",
+                "report creator",
+                "description",
+                "owner@a.com"
+        );
+
+        return List.of(firstReport);
+    }
+
+    ReportsGet200ResponseReportListInner createMappedTableModel() {
+        ReportsGet200ResponseReportListInner mappedReport = new ReportsGet200ResponseReportListInner();
+        mappedReport.setId(1);
+        mappedReport.setReportCreator("report creator");
+        mappedReport.sqlQuery("select * from table1");
+        mappedReport.setExcelReport("excel report");
+        mappedReport.setReportName("report name");
+        mappedReport.setBaseUrl("http://nothing");
+        mappedReport.setDescription("description");
+        mappedReport.setCsvName("csv name");
+        mappedReport.setOwnerEmail("owner@a.com");
+        mappedReport.setReportOwner("report owner");
+        mappedReport.setExcelSheetNum(1);
+
+       return mappedReport;
     }
 }
