@@ -1,15 +1,15 @@
 logging:
   level:
-    root: INFO
+    root: TRACE
     org:
       springframework:
-        security: INFO
+        security: TRACE
         jdbc:
           core:
-            JdbcTemplate: INFO
-            StatementCreatorUtils: INFO
-        transaction: INFO
-        web.client.RestTemplate: INFO
+            JdbcTemplate: TRACE
+            StatementCreatorUtils: TRACE
+        transaction: TRACE
+        web.client.RestTemplate: TRACE
 
 
 gpfd:
