@@ -28,7 +28,7 @@ public class SpringDocConfig {
      * @return a new instance of {@link SpringDocConfiguration}.
      */
     @Bean
-    SpringDocConfiguration springDocConfiguration(){
+    SpringDocConfiguration springDocConfiguration() {
         return new SpringDocConfiguration();
     }
 
@@ -60,7 +60,7 @@ public class SpringDocConfig {
      * @return a new instance of {@link ObjectMapperProvider}.
      */
     @Bean
-    ObjectMapperProvider objectMapperProvider(SpringDocConfigProperties springDocConfigProperties){
+    ObjectMapperProvider objectMapperProvider(SpringDocConfigProperties springDocConfigProperties) {
         return new ObjectMapperProvider(springDocConfigProperties);
     }
 
@@ -76,7 +76,7 @@ public class SpringDocConfig {
      * @return a new instance of {@link SpringDocUIConfiguration} with the provided configuration.
      */
     @Bean
-    SpringDocUIConfiguration SpringDocUIConfiguration(Optional<SwaggerUiConfigProperties> optionalSwaggerUiConfigProperties){
+    SpringDocUIConfiguration SpringDocUIConfiguration(Optional<SwaggerUiConfigProperties> optionalSwaggerUiConfigProperties) {
         return new SpringDocUIConfiguration(optionalSwaggerUiConfigProperties);
     }
 

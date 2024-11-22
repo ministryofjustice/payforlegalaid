@@ -54,7 +54,7 @@ public class AuthorizeHttpRequestsBuilder
      * </p>
      *
      * @param authorizationManagerRequestMatcherRegistry the {@link AuthorizeHttpRequestsConfigurer.HttpSecurity.AuthorizationManagerRequestMatcherRegistry} object
-     *                                                    used to configure the authorization rules for various HTTP request patterns.
+     *                                                   used to configure the authorization rules for various HTTP request patterns.
      */
     @Override
     public void customize(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorizationManagerRequestMatcherRegistry) {

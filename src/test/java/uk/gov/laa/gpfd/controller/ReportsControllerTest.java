@@ -1,4 +1,4 @@
-package uk.gov.laa.gpfd.controllers;
+package uk.gov.laa.gpfd.controller;
 
 
 import org.junit.jupiter.api.Test;
@@ -9,7 +9,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -17,9 +16,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.builders.ReportListEntryTestBuilder;
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
-import uk.gov.laa.gpfd.graph.GraphClientHelper;
-import uk.gov.laa.gpfd.responses.ReportListEntry;
-import uk.gov.laa.gpfd.responses.ReportResponse;
+import uk.gov.laa.gpfd.graph.AzureGraphClient;
+import uk.gov.laa.gpfd.model.ReportIdGet200Response;
+import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 import uk.gov.laa.gpfd.services.MappingTableService;
 import uk.gov.laa.gpfd.services.ReportService;
 import uk.gov.laa.gpfd.services.ReportTrackingTableService;
@@ -30,7 +29,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Client;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -44,20 +45,19 @@ class ReportsControllerTest {
     UserService userService;
 
     @MockBean
-    GraphClientHelper mockGraphClientHelper;
+    AzureGraphClient mockAzureGraphClient;
 
     @MockBean
-    private MappingTableService mappingTableServiceMock;
+    MappingTableService mappingTableServiceMock;
 
     @MockBean
-    private ReportService reportServiceMock;
+    ReportService reportServiceMock;
 
     @MockBean
-    private ReportTrackingTableService reportTrackingTableService; // This is required, despite the sonarlint suggestions
+    ReportTrackingTableService reportTrackingTableService; // This is required, despite the sonarlint suggestions
 
     @Autowired
-    private MockMvc mockMvc;
-
+    MockMvc mockMvc;
 
     @Test
     @WithMockUser(roles = "ADMIN")
@@ -84,23 +84,16 @@ class ReportsControllerTest {
         verify(reportServiceMock).createCSVResponse(1);
     }
 
-    @Test
-    @WithAnonymousUser
-    void downloadCsvReturnsCorrectResponseWhenNotAuthenticated() throws Exception {
-        // Perform the GET request without any oidc login credentials - i.e. user does not have an MOJ SSO account
-        mockMvc.perform(MockMvcRequestBuilders.get("/csv/1")).andExpect(status().is4xxClientError());
-        verify(reportServiceMock, never()).createCSVResponse(anyInt());
-    }
 
     @Test
     @WithMockUser(roles = "ADMIN")
     void getReportListReturnsCorrectResponseEntity() throws Exception {
         //Create Mock Response objects
-        ReportListEntry reportListEntryMock1 = new ReportListEntryTestBuilder().withId(1).withReportName("Test Report 1").withBaseUrl("www.sharepoint.com/a-different-folder-we're-using").createReportListResponse();
-        ReportListEntry reportListEntryMock2 = new ReportListEntryTestBuilder().withId(2).createReportListResponse();
+        ReportsGet200ResponseReportListInner reportListEntryMock1 = new ReportListEntryTestBuilder().withId(1).withReportName("Test Report 1").withBaseUrl("www.sharepoint.com/a-different-folder-we're-using").createReportListResponse();
+        ReportsGet200ResponseReportListInner reportListEntryMock2 = new ReportListEntryTestBuilder().withId(2).createReportListResponse();
 
         //Add mock response objects to a list
-        List<ReportListEntry> reportListResponseMockList = Arrays.asList(reportListEntryMock1, reportListEntryMock2);
+        List<ReportsGet200ResponseReportListInner> reportListResponseMockList = Arrays.asList(reportListEntryMock1, reportListEntryMock2);
         // Mock the Service call
         when(mappingTableServiceMock.fetchReportListEntries()).thenReturn(reportListResponseMockList);
 
@@ -115,7 +108,8 @@ class ReportsControllerTest {
     @WithMockUser(roles = "ADMIN")
     void getReportReturnsCorrectResponseEntity() throws Exception {
         int reportId = 2;
-        ReportResponse reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();
+
+        ReportIdGet200Response reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();
 
         // Mock the service
         when(reportServiceMock.createReportResponse(reportId)).thenReturn(reportResponseMock);

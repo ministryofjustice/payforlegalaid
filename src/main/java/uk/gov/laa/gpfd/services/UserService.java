@@ -2,28 +2,26 @@ package uk.gov.laa.gpfd.services;
 
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.models.User;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import uk.gov.laa.gpfd.beans.UserDetails;
-import uk.gov.laa.gpfd.exceptions.AuthUserNotFoundException;
-import uk.gov.laa.gpfd.exceptions.UserServiceException;
+import uk.gov.laa.gpfd.bean.UserDetails;
+import uk.gov.laa.gpfd.exception.AuthUserNotFoundException;
+import uk.gov.laa.gpfd.exception.UserServiceException;
 import uk.gov.laa.gpfd.graph.GraphClient;
 
 /**
  * Component to encapsulate the retrieval of user information from an
  * external directory (Microsoft Graph)
  */
-@Component
 @Slf4j
+@Component
+@RequiredArgsConstructor
 public class UserService {
 
     private final GraphClient graphClientHelper;
-
-    public UserService(GraphClient graphClientHelper) {
-        this.graphClientHelper = graphClientHelper;
-    }
 
     /**
      * Retrieve the details for the currently authenticated User, based on the
@@ -33,7 +31,7 @@ public class UserService {
      * @return a populated UserDetails
      * @throws UserServiceException if an error, or no details, are returned from the external directory
      */
-    public UserDetails getUserDetails(OAuth2AuthorizedClient client) throws UserServiceException {
+    public UserDetails getUserDetails(OAuth2AuthorizedClient client) {
         User graphUser;
         try {
             graphUser = graphClientHelper.getGraphUserDetails(client);
@@ -45,14 +43,13 @@ public class UserService {
             throw new UserServiceException("Failed to retrieve Graph User", e);
         }
 
-        UserDetails userDetails = new UserDetails();
-        userDetails.setUserPrincipalName(graphUser.userPrincipalName);
-        userDetails.setGivenName(graphUser.givenName);
-        userDetails.setSurname(graphUser.surname);
-        userDetails.setPreferredName(graphUser.preferredName);
-        userDetails.setEmail(graphUser.mail);
-
-        return userDetails;
+        return UserDetails.builder()
+                .userPrincipalName(graphUser.userPrincipalName)
+                .givenName(graphUser.givenName)
+                .surname(graphUser.surname)
+                .preferredName(graphUser.preferredName)
+                .email(graphUser.mail)
+                .build();
     }
 
 }

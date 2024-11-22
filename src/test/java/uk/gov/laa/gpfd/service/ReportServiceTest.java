@@ -9,8 +9,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.laa.gpfd.builders.ReportListEntryTestBuilder;
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
 import uk.gov.laa.gpfd.dao.ReportViewsDao;
-import uk.gov.laa.gpfd.responses.ReportListEntry;
-import uk.gov.laa.gpfd.responses.ReportResponse;
+import uk.gov.laa.gpfd.model.ReportIdGet200Response;
+import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 import uk.gov.laa.gpfd.services.MappingTableService;
 import uk.gov.laa.gpfd.services.ReportService;
 
@@ -58,13 +58,13 @@ class ReportServiceTest {
     void createReportResponse_reportResponseMatchesValuesFromMappingTable() throws IOException {
 
         // Mocking the data from mapping table
-        ReportListEntry mockReportListResponse = new ReportListEntryTestBuilder().createReportListResponse();
+        ReportsGet200ResponseReportListInner mockReportListResponse = new ReportListEntryTestBuilder().createReportListResponse();
 
-        ReportResponse expectedReportResponse = new ReportResponseTestBuilder().createReportResponse();
+        ReportIdGet200Response expectedReportResponse = new ReportResponseTestBuilder().createReportResponse();
         when(mappingTableService.getDetailsForSpecificReport(1)).thenReturn(mockReportListResponse);
 
         //Act
-        ReportResponse actualReportResponse = reportService.createReportResponse(1);
+        ReportIdGet200Response actualReportResponse = reportService.createReportResponse(1);
 
         //check something
         assertEquals(expectedReportResponse.getReportName(), actualReportResponse.getReportName());

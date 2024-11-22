@@ -1,6 +1,7 @@
 package uk.gov.laa.gpfd.builders;
 
-import uk.gov.laa.gpfd.responses.ReportListEntry;
+
+import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 
 public class ReportListEntryTestBuilder {
 
@@ -48,48 +49,21 @@ public class ReportListEntryTestBuilder {
         return this;
     }
 
-    public ReportListEntryTestBuilder withCsvName(String csvName) {
-        this.csvName = csvName;
-        return this;
-    }
-
-    public ReportListEntryTestBuilder withExcelSheetNumber(int excelSheetNum) {
-        this.excelSheetNum = excelSheetNum;
-        return this;
-    }
-
-    public ReportListEntryTestBuilder withSqlQuery(String sqlQuery) {
-        this.sqlQuery = sqlQuery;
-        return this;
-    }
-
     public ReportListEntryTestBuilder withBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
         return this;
     }
 
-    public ReportListEntryTestBuilder withReportOwner(String reportOwner) {
-        this.reportOwner = reportOwner;
-        return this;
-    }
-
-    public ReportListEntryTestBuilder withReportCreator(String reportCreator) {
-        this.reportCreator = reportCreator;
-        return this;
-    }
-
-    public ReportListEntryTestBuilder withReportDescription(String description) {
-        this.description = description;
-        return this;
-    }
-
-    public ReportListEntryTestBuilder withOwnerEmail(String ownerEmail) {
-        this.ownerEmail = ownerEmail;
-        return this;
-    }
-
-    public ReportListEntry createReportListResponse() {
-        return new ReportListEntry(id, reportName, excelReport, csvName, excelSheetNum, sqlQuery, baseUrl, reportOwner, reportCreator, description, ownerEmail);
+    public ReportsGet200ResponseReportListInner createReportListResponse() {
+        return new ReportsGet200ResponseReportListInner(){{
+            id(id);
+            reportName(reportName);
+            excelReport(excelReport);
+            csvName(csvName);
+            excelSheetNum(excelSheetNum);
+            sqlQuery(sqlQuery);
+            baseUrl(baseUrl); reportOwner(reportOwner); reportCreator(reportCreator); description(description); ownerEmail(ownerEmail);
+        }};
     }
 
 }
