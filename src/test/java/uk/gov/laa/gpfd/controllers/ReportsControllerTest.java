@@ -62,7 +62,6 @@ class ReportsControllerTest {
     @Test
     @WithMockUser(roles = "ADMIN")
     void downloadCsvReturnsCorrectResponse() throws Exception {
-
         // Mock CSV data
         ByteArrayOutputStream csvDataOutputStream = new ByteArrayOutputStream();
         csvDataOutputStream.write("1,John,Doe\n".getBytes());
@@ -81,10 +80,7 @@ class ReportsControllerTest {
         when(reportServiceMock.createCSVResponse(1)).thenReturn(mockResponseEntity);
 
         // Perform the GET request
-        mockMvc.perform(MockMvcRequestBuilders.get("/csv/1")
-                        .with(oidcLogin())
-                        .with(oauth2Client("graph")))
-                .andExpect(status().isOk()).andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=data.csv"));
+        mockMvc.perform(MockMvcRequestBuilders.get("/csv/1").with(oidcLogin()).with(oauth2Client("graph"))).andExpect(status().isOk()).andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=data.csv"));
         verify(reportServiceMock).createCSVResponse(1);
     }
 
@@ -92,19 +88,15 @@ class ReportsControllerTest {
     @WithAnonymousUser
     void downloadCsvReturnsCorrectResponseWhenNotAuthenticated() throws Exception {
         // Perform the GET request without any oidc login credentials - i.e. user does not have an MOJ SSO account
-        mockMvc.perform(MockMvcRequestBuilders.get("/csv/1"))
-                .andExpect(status().is3xxRedirection());
+        mockMvc.perform(MockMvcRequestBuilders.get("/csv/1")).andExpect(status().is4xxClientError());
         verify(reportServiceMock, never()).createCSVResponse(anyInt());
     }
-
 
     @Test
     @WithMockUser(roles = "ADMIN")
     void getReportListReturnsCorrectResponseEntity() throws Exception {
         //Create Mock Response objects
-        ReportListEntry reportListEntryMock1 = new ReportListEntryTestBuilder().withId(1)
-                .withReportName("Test Report 1")
-                .withBaseUrl("www.sharepoint.com/a-different-folder-we're-using").createReportListResponse();
+        ReportListEntry reportListEntryMock1 = new ReportListEntryTestBuilder().withId(1).withReportName("Test Report 1").withBaseUrl("www.sharepoint.com/a-different-folder-we're-using").createReportListResponse();
         ReportListEntry reportListEntryMock2 = new ReportListEntryTestBuilder().withId(2).createReportListResponse();
 
         //Add mock response objects to a list
@@ -113,12 +105,7 @@ class ReportsControllerTest {
         when(mappingTableServiceMock.fetchReportListEntries()).thenReturn(reportListResponseMockList);
 
         // Perform request and assert results
-        mockMvc.perform(MockMvcRequestBuilders.get("/reports"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.reportList", hasSize(2)))
-                .andExpect(jsonPath("$.reportList[0].id").value(reportListEntryMock1.getId()))
-                .andExpect(jsonPath("$.reportList[0].baseUrl").value(reportListEntryMock1.getBaseUrl()))
-                .andExpect(jsonPath("$.reportList[1].id").value(reportListEntryMock2.getId()));
+        mockMvc.perform(MockMvcRequestBuilders.get("/reports")).andExpect(status().isOk()).andExpect(jsonPath("$.reportList", hasSize(2))).andExpect(jsonPath("$.reportList[0].id").value(reportListEntryMock1.getId())).andExpect(jsonPath("$.reportList[0].baseUrl").value(reportListEntryMock1.getBaseUrl())).andExpect(jsonPath("$.reportList[1].id").value(reportListEntryMock2.getId()));
 
         verify(mappingTableServiceMock, times(1)).fetchReportListEntries();
 
@@ -127,7 +114,6 @@ class ReportsControllerTest {
     @Test
     @WithMockUser(roles = "ADMIN")
     void getReportReturnsCorrectResponseEntity() throws Exception {
-
         int reportId = 2;
         ReportResponse reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();
 
@@ -135,12 +121,8 @@ class ReportsControllerTest {
         when(reportServiceMock.createReportResponse(reportId)).thenReturn(reportResponseMock);
 
         // Perform request and assert results
-        mockMvc.perform(MockMvcRequestBuilders.get("/report/{id}", reportId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(reportId))
-                .andExpect(jsonPath("$.reportName").value(reportResponseMock.getReportName()));
+        mockMvc.perform(MockMvcRequestBuilders.get("/report/{id}", reportId)).andExpect(status().isOk()).andExpect(jsonPath("$.id").value(reportId)).andExpect(jsonPath("$.reportName").value(reportResponseMock.getReportName()));
 
         verify(reportServiceMock, times(1)).createReportResponse(reportId);
-
     }
 }
