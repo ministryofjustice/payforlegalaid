@@ -11,20 +11,8 @@ logging:
         transaction: INFO
         web.client.RestTemplate: INFO
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics,prometheus
-
-springdoc:
-  api-docs:
-    enabled: false
-  swagger-ui:
-    url: /swagger.yml
 
 gpfd:
-  # DEV MOJFIN database config (also used by GPFD in UAT):
   datasource:
     read-only:
       url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
