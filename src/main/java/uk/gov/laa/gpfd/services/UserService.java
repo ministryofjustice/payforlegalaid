@@ -9,7 +9,7 @@ import org.springframework.util.StringUtils;
 import uk.gov.laa.gpfd.beans.UserDetails;
 import uk.gov.laa.gpfd.exceptions.AuthUserNotFoundException;
 import uk.gov.laa.gpfd.exceptions.UserServiceException;
-import uk.gov.laa.gpfd.graph.GraphClientHelper;
+import uk.gov.laa.gpfd.graph.GraphClient;
 
 /**
  * Component to encapsulate the retrieval of user information from an
@@ -19,9 +19,9 @@ import uk.gov.laa.gpfd.graph.GraphClientHelper;
 @Slf4j
 public class UserService {
 
-    private final GraphClientHelper graphClientHelper;
+    private final GraphClient graphClientHelper;
 
-    public UserService(GraphClientHelper graphClientHelper) {
+    public UserService(GraphClient graphClientHelper) {
         this.graphClientHelper = graphClientHelper;
     }
 
