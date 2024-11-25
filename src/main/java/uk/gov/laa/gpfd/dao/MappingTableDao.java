@@ -1,51 +1,35 @@
 package uk.gov.laa.gpfd.dao;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.MappingException;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import uk.gov.laa.gpfd.exceptions.DatabaseReadException;
-import uk.gov.laa.gpfd.models.MappingTableModel;
+import uk.gov.laa.gpfd.exception.DatabaseReadException;
+import uk.gov.laa.gpfd.model.MappingTable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+@Slf4j
 @Repository
+@RequiredArgsConstructor
 public class MappingTableDao {
-
-    private final List<MappingTableModel> mappingTableObjectList = new ArrayList<>();
-
-    public static final Logger log = LoggerFactory.getLogger(MappingTableDao.class);
-
+    private static final String SELECT_SQL = "SELECT * FROM GPFD.CSV_TO_SQL_MAPPING_TABLE";
 
     private final JdbcTemplate readOnlyJdbcTemplate;
-    private final ModelMapper mapper = new ModelMapper();
+    private final ModelMapper mapper;
 
-    // Using the JDBCTemplate bean defined in  PflaApplication (the @SpringBootApplication / run class) which uses the
-    //read only DB datasource/credentials
-    @Autowired
-    public MappingTableDao(JdbcTemplate readOnlyJdbcTemplate) {
-        this.readOnlyJdbcTemplate = readOnlyJdbcTemplate;
-    }
-
-
-    public List<MappingTableModel> fetchReportList() throws DatabaseReadException {
-        mappingTableObjectList.clear(); // Prevent data accumulating after multiple requests
-
+    public List<MappingTable> fetchReportList() throws DatabaseReadException {
+        List<MappingTable> mappingTableObjectList = new ArrayList<>();
         List<Map<String, Object>> resultList;
-
-        String query = "SELECT * FROM GPFD.CSV_TO_SQL_MAPPING_TABLE";
-
 
         try {
             log.info("Reading mapping data");
-            resultList = readOnlyJdbcTemplate.queryForList(query);
+            resultList = readOnlyJdbcTemplate.queryForList(SELECT_SQL);
         } catch (DataAccessException e) {
             throw new DatabaseReadException("Error reading from DB: " + e);
         }
@@ -54,19 +38,15 @@ public class MappingTableDao {
             throw new DatabaseReadException("No results returned from mapping table");
         }
 
-
         try {
             resultList.forEach(obj -> {
-                MappingTableModel mappingTableObject = mapper.map(obj, MappingTableModel.class);
+                MappingTable mappingTableObject = mapper.map(obj, MappingTable.class);
                 mappingTableObjectList.add(mappingTableObject);
             });
         } catch (MappingException e) {
             log.error("Exception with model map loop: %s", e);
         }
 
-
         return mappingTableObjectList;
-
-
     }
 }

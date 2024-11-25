@@ -6,21 +6,17 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-import uk.gov.laa.gpfd.exceptions.DatabaseReadException;
-import uk.gov.laa.gpfd.exceptions.ReportIdNotFoundException;
+import uk.gov.laa.gpfd.exception.DatabaseReadException;
+import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 
 import java.util.List;
 import java.util.Map;
-
 
 @Service
 @Slf4j
 @AllArgsConstructor
 public class ReportViewsDao {
-
-
     private final JdbcTemplate writeJdbcTemplate;
-
 
     @NotNull
     public List<Map<String, Object>> callDataBase(String sqlQuery) throws ReportIdNotFoundException {
@@ -40,6 +36,5 @@ public class ReportViewsDao {
         log.info("returning result list");
         return resultList;
     }
-
 
 }

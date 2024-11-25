@@ -9,10 +9,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import uk.gov.laa.gpfd.beans.UserDetails;
-import uk.gov.laa.gpfd.exceptions.AuthUserNotFoundException;
-import uk.gov.laa.gpfd.exceptions.UserServiceException;
-import uk.gov.laa.gpfd.graph.GraphClientHelper;
+import uk.gov.laa.gpfd.bean.UserDetails;
+import uk.gov.laa.gpfd.exception.AuthUserNotFoundException;
+import uk.gov.laa.gpfd.exception.UserServiceException;
+import uk.gov.laa.gpfd.graph.AzureGraphClient;
 import uk.gov.laa.gpfd.services.UserService;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -24,7 +24,7 @@ class UserServiceTest {
   OAuth2AuthorizedClient mockOAuth2Client;
 
   @Mock
-  GraphClientHelper mockGraphClientHelper;
+  AzureGraphClient mockAzureGraphClient;
 
   @InjectMocks
   UserService userService;
@@ -44,15 +44,15 @@ class UserServiceTest {
   void whenUserIsReturnedFromGraphUserDetailsAreMappedCorrectly() throws Exception {
     User graphUser = createGraphUser();
 
-    when(mockGraphClientHelper.getGraphUserDetails(mockOAuth2Client)).thenReturn(graphUser);
+    when(mockAzureGraphClient.getGraphUserDetails(mockOAuth2Client)).thenReturn(graphUser);
 
     UserDetails result = userService.getUserDetails(mockOAuth2Client);
 
-    assertEquals(graphUser.userPrincipalName, result.getUserPrincipalName());
-    assertEquals(graphUser.givenName, result.getGivenName());
-    assertEquals(graphUser.surname, result.getSurname());
-    assertEquals(graphUser.preferredName, result.getPreferredName());
-    assertEquals(graphUser.mail, result.getEmail());
+    assertEquals(graphUser.userPrincipalName, result.userPrincipalName());
+    assertEquals(graphUser.givenName, result.givenName());
+    assertEquals(graphUser.surname, result.surname());
+    assertEquals(graphUser.preferredName, result.preferredName());
+    assertEquals(graphUser.mail, result.email());
   }
 
   @Test
@@ -62,7 +62,7 @@ class UserServiceTest {
 
   @Test
   void whenGraphExceptionThenUserServiceExceptionIsThrown() {
-    when(mockGraphClientHelper.getGraphUserDetails(mockOAuth2Client)).thenThrow(new ClientException("client error", null));
+    when(mockAzureGraphClient.getGraphUserDetails(mockOAuth2Client)).thenThrow(new ClientException("client error", null));
 
     assertThrows(UserServiceException.class, () -> userService.getUserDetails(mockOAuth2Client));
   }

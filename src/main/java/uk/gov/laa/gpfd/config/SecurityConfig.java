@@ -8,8 +8,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 /**
  * Configuration class to set up Spring Security for the application.
  * <p>
@@ -54,10 +52,9 @@ public class SecurityConfig {
      * @throws Exception if any error occurs during the configuration of HTTP security.
      */
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .authorizeHttpRequests(authorizeHttpRequestsBuilder)  // Apply authorization rules
-                .httpBasic(withDefaults())  // Enable HTTP basic authentication
+                .authorizeHttpRequests(authorizeHttpRequestsBuilder)    // Apply authorization rules
                 .sessionManagement(sessionManagementConfigurerBuilder)  // Apply session management configuration
                 .build();
     }
