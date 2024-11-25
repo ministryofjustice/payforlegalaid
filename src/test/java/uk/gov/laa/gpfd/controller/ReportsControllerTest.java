@@ -14,8 +14,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import uk.gov.laa.gpfd.builders.ReportListEntryTestBuilder;
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
+import uk.gov.laa.gpfd.data.ReportListEntryTestDataFactory;
 import uk.gov.laa.gpfd.graph.AzureGraphClient;
 import uk.gov.laa.gpfd.model.ReportIdGet200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
@@ -91,8 +91,8 @@ class ReportsControllerTest {
     @WithMockUser(roles = "ADMIN")
     void getReportListReturnsCorrectResponseEntity() throws Exception {
         //Create Mock Response objects
-        ReportsGet200ResponseReportListInner reportListEntryMock1 = new ReportListEntryTestBuilder().withId(1).withReportName("Test Report 1").withBaseUrl("www.sharepoint.com/a-different-folder-we're-using").createReportListResponse();
-        ReportsGet200ResponseReportListInner reportListEntryMock2 = new ReportListEntryTestBuilder().withId(2).createReportListResponse();
+        ReportsGet200ResponseReportListInner reportListEntryMock1 = ReportListEntryTestDataFactory.aValidReportsGet200ResponseReportListInner();
+        ReportsGet200ResponseReportListInner reportListEntryMock2 = ReportListEntryTestDataFactory.aValidReportsGet200ResponseReportListInnerWithCustomId(2);
 
         //Add mock response objects to a list
         List<ReportsGet200ResponseReportListInner> reportListResponseMockList = Arrays.asList(reportListEntryMock1, reportListEntryMock2);
