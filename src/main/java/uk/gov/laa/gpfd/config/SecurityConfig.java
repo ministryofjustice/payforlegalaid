@@ -1,10 +1,8 @@
 package uk.gov.laa.gpfd.config;
 
-import com.azure.spring.cloud.autoconfigure.implementation.aad.configuration.AadAutoConfiguration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
@@ -22,7 +20,6 @@ import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
  */
 @Configuration
 @RequiredArgsConstructor
-@Import(AadAutoConfiguration.class)
 public class SecurityConfig {
 
     /**
@@ -58,7 +55,6 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .authorizeHttpRequests(authorizeHttpRequestsBuilder)    // Apply authorization rules
-                .oauth2Client().and()                                   // Enable OAuth2 login (Azure AD's default login page is used)
                 .sessionManagement(sessionManagementConfigurerBuilder)  // Apply session management configuration
                 .build();
     }

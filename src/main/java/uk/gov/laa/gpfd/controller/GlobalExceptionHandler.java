@@ -16,12 +16,21 @@ import uk.gov.laa.gpfd.model.ReportsGet500Response;
 import static org.springframework.http.ResponseEntity.badRequest;
 import static org.springframework.http.ResponseEntity.internalServerError;
 
+/**
+ * Global exception handler for managing exceptions thrown by controllers.
+ */
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
     private static final String ERROR_STRING = "Error: ";
 
+    /**
+     * Handles CsvStreamException and responds with an HTTP 500 Internal Server Error.
+     *
+     * @param e the CsvStreamException thrown when there is an issue in CSV streaming.
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
+     */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(CsvStreamException.class)
     public ResponseEntity<ReportsGet500Response> handleCsvStreamException(CsvStreamException e) {
@@ -34,6 +43,12 @@ public class GlobalExceptionHandler {
         return internalServerError().body(response);
     }
 
+    /**
+     * Handles DatabaseReadException and responds with an HTTP 500 Internal Server Error.
+     *
+     * @param e the DatabaseReadException thrown when there is a database read failure.
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
+     */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(DatabaseReadException.class)
     public ResponseEntity<ReportsGet500Response> handleDatabaseReadException(DatabaseReadException e) {
@@ -47,6 +62,12 @@ public class GlobalExceptionHandler {
         return internalServerError().body(response);
     }
 
+    /**
+     * Handles ReportIdNotFoundException and responds with an HTTP 400 Bad Request.
+     *
+     * @param e the ReportIdNotFoundException thrown when a requested report ID is not found.
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet400Response} with error details.
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ReportIdNotFoundException.class)
     public ResponseEntity<ReportsGet400Response> handleReportIdNotFoundException(ReportIdNotFoundException e) {
@@ -59,6 +80,12 @@ public class GlobalExceptionHandler {
         return badRequest().body(response);
     }
 
+    /**
+     * Handles IndexOutOfBoundsException and responds with an HTTP 400 Bad Request.
+     *
+     * @param e the IndexOutOfBoundsException thrown when an index is accessed out of bounds.
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet400Response} with error details.
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IndexOutOfBoundsException.class)
     public ResponseEntity<ReportsGet400Response> handleIndexOutOfBoundsException(IndexOutOfBoundsException e) {
@@ -71,10 +98,16 @@ public class GlobalExceptionHandler {
         return badRequest().body(response);
     }
 
+    /**
+     * Handles MethodArgumentTypeMismatchException and responds with an HTTP 400 Bad Request.
+     *
+     * @param e the MethodArgumentTypeMismatchException thrown when an argument type is mismatched.
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet400Response} with error details.
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ReportsGet400Response> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
-        String message = ERROR_STRING + "Invalid input for parameter " + e.getName() + ". Expected a numeric value";
+        var message = ERROR_STRING + "Invalid input for parameter " + e.getName() + ". Expected a numeric value";
         var response = new ReportsGet400Response() {{
             setError(message);
         }};

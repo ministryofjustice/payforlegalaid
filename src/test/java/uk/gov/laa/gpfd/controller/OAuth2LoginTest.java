@@ -19,7 +19,7 @@ import uk.gov.laa.gpfd.services.ReportTrackingTableService;
 import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -55,7 +55,8 @@ class OAuth2LoginTest {
         var mock = new ReportListEntryTestBuilder().createReportListResponse();
         when(mappingTableServiceMock.fetchReportListEntries()).thenReturn(singletonList(mock));
 
-        // When //Then
+        // When
+        // Then
         mockMvc.perform(MockMvcRequestBuilders.get("/reports"))
                 .andExpect(status().isOk());
     }
