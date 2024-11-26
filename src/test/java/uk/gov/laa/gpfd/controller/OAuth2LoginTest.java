@@ -10,7 +10,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import uk.gov.laa.gpfd.builders.ReportListEntryTestBuilder;
+import uk.gov.laa.gpfd.data.ReportListEntryTestDataFactory;
 import uk.gov.laa.gpfd.graph.AzureGraphClient;
 import uk.gov.laa.gpfd.services.MappingTableService;
 import uk.gov.laa.gpfd.services.ReportService;
@@ -52,7 +52,7 @@ class OAuth2LoginTest {
     @WithMockUser(roles = "ADMIN")
     void shouldReturnResponseWhenUserIsAuthenticatedWithAdminRole() throws Exception {
         // Given
-        var mock = new ReportListEntryTestBuilder().createReportListResponse();
+        var mock = ReportListEntryTestDataFactory.aValidReportsGet200ResponseReportListInner();
         when(mappingTableServiceMock.fetchReportListEntries()).thenReturn(singletonList(mock));
 
         // When
