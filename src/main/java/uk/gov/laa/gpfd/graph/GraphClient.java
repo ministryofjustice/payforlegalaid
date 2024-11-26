@@ -13,7 +13,7 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
  * @see com.microsoft.graph.models.User
  * @see org.springframework.security.oauth2.client.OAuth2AuthorizedClient
  */
-public interface GraphClient {
+public sealed interface GraphClient permits AzureGraphClient, StubbedGraphClient {
 
     /**
      * Retrieves the details of a user from Microsoft Graph.
@@ -27,11 +27,11 @@ public interface GraphClient {
      *                              to make requests to Microsoft Graph API.
      *                              <b>Must not be null.</b>
      * @return a {@link User} object containing the user details retrieved from Microsoft
-     *         Graph. If no user is found, the behavior depends on the implementation
-     *         (e.g., it might return {@code null} or throw an exception).
+     * Graph. If no user is found, the behavior depends on the implementation
+     * (e.g., it might return {@code null} or throw an exception).
      * @throws IllegalArgumentException if {@code graphAuthorizedClient} is null.
-     * @throws GraphClientException if an error occurs while communicating with the
-     *         Microsoft Graph API.
+     * @throws GraphClientException     if an error occurs while communicating with the
+     *                                  Microsoft Graph API.
      */
     User getGraphUserDetails(OAuth2AuthorizedClient graphAuthorizedClient);
 

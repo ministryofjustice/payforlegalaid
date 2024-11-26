@@ -3,12 +3,14 @@ package uk.gov.laa.gpfd.graph.stubs;
 import com.microsoft.graph.models.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import uk.gov.laa.gpfd.graph.StubbedGraphClient;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class StubbedGraphClientHelperTest {
+class StubbedGraphClientTest {
 
-    private static final StubbedGraphClientHelper OBJECT_UNDER_TEST = new StubbedGraphClientHelper();
+    private static final StubbedGraphClient OBJECT_UNDER_TEST = new StubbedGraphClient();
 
     @Test
     void stubbedTestGraphUserShouldAlwaysReturnStaticUser() {

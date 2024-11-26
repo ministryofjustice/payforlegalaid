@@ -1,6 +1,6 @@
 package uk.gov.laa.gpfd.builders;
 
-import uk.gov.laa.gpfd.models.MappingTableModel;
+import uk.gov.laa.gpfd.model.MappingTable;
 
 public class MappingTableModelTestBuilder {
 
@@ -104,7 +104,7 @@ public class MappingTableModelTestBuilder {
 
 
 
-    public MappingTableModel build() {
-        return new MappingTableModel(id, reportName, excelReport, csvName, excelSheetNum, sqlQuery, baseUrl, reportOwner, reportCreator, description, ownerEmail);
+    public MappingTable build() {
+        return new MappingTable(id, reportName, excelReport, csvName, excelSheetNum, sqlQuery, baseUrl, reportOwner, reportCreator, description, ownerEmail);
     }
 }

@@ -1,14 +1,13 @@
-package uk.gov.laa.gpfd.graph.stubs;
+package uk.gov.laa.gpfd.graph;
 
 import com.microsoft.graph.models.User;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.stereotype.Component;
-import uk.gov.laa.gpfd.graph.GraphClient;
 
 @Component
 @Profile("local")
-public class StubbedGraphClientHelper implements GraphClient {
+public final class StubbedGraphClient implements GraphClient {
 
     @Override
     public User getGraphUserDetails(OAuth2AuthorizedClient graphAuthorizedClient) {

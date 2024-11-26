@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
-import uk.gov.laa.gpfd.models.ReportTrackingTableModel;
+import uk.gov.laa.gpfd.model.ReportTrackingTable;
 import uk.gov.laa.gpfd.utils.FileUtils;
 
 import java.sql.Timestamp;
@@ -69,10 +69,10 @@ class ReportTrackingTableDAOTest {
         int insertedMappingId = 2;
         String insertedReportGeneratedBy = "TestUser";
 
-        ReportTrackingTableModel reportTrackingTableModel = new ReportTrackingTableModel(insertedId, insertedReportName, insertedReportUrl, insertedCreationTime, insertedMappingId, insertedReportGeneratedBy);
+        ReportTrackingTable reportTrackingTable = new ReportTrackingTable(insertedId, insertedReportName, insertedReportUrl, insertedCreationTime, insertedMappingId, insertedReportGeneratedBy);
 
         // Act
-        reportTrackingTableDao.updateTrackingTable(reportTrackingTableModel);
+        reportTrackingTableDao.updateTrackingTable(reportTrackingTable);
 
         // Assert
         List<Map<String, Object>> reportTrackingTableList = reportTrackingTableDao.list();

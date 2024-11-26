@@ -1,9 +1,12 @@
 package uk.gov.laa.gpfd.config.builders;
 
+import lombok.SneakyThrows;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.stereotype.Component;
+
+import static com.azure.spring.cloud.autoconfigure.implementation.aad.security.AadWebApplicationHttpSecurityConfigurer.aadWebApplication;
 
 /**
  * Custom builder for configuring HTTP request authorization in Spring Security.
@@ -54,13 +57,17 @@ public class AuthorizeHttpRequestsBuilder
      * </p>
      *
      * @param authorizationManagerRequestMatcherRegistry the {@link AuthorizeHttpRequestsConfigurer.HttpSecurity.AuthorizationManagerRequestMatcherRegistry} object
-     *                                                    used to configure the authorization rules for various HTTP request patterns.
+     *                                                   used to configure the authorization rules for various HTTP request patterns.
      */
+    @SneakyThrows
     @Override
     public void customize(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorizationManagerRequestMatcherRegistry) {
-        authorizationManagerRequestMatcherRegistry
+        authorizationManagerRequestMatcherRegistry.and()
+                .apply(aadWebApplication()).and()
+                .authorizeHttpRequests()
                 .requestMatchers(API_DOCS_ROOT, SWAGGER_UI, SWAGGER_FILE).permitAll()  // Allow unrestricted access to API docs and Swagger UI
                 .requestMatchers(ACTUATOR_ENDPOINT, HEALTH_ENDPOINT).permitAll()         // Allow unrestricted access to actuator and health endpoints
+                .requestMatchers("/login").permitAll()
                 .anyRequest().authenticated();  // Require authentication for all other requests
     }
 

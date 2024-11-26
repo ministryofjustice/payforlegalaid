@@ -1,18 +1,19 @@
 package uk.gov.laa.gpfd.graph;
 
 import com.microsoft.graph.models.User;
-import com.microsoft.graph.requests.GraphServiceClient;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.stereotype.Component;
 
+import static com.microsoft.graph.requests.GraphServiceClient.builder;
+
 @Component
 @Profile("!local")
-public class GraphClientHelper implements GraphClient {
+public final class AzureGraphClient implements GraphClient {
 
     @Override
     public User getGraphUserDetails(OAuth2AuthorizedClient graphAuthorizedClient) {
-        return GraphServiceClient.builder()
+        return builder()
                 .authenticationProvider(new GraphAuthenticationProvider(graphAuthorizedClient))
                 .buildClient()
                 .me()

@@ -1,42 +1,34 @@
 package uk.gov.laa.gpfd.services;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.dao.ReportViewsDao;
-import uk.gov.laa.gpfd.exceptions.CsvStreamException;
-import uk.gov.laa.gpfd.exceptions.DatabaseReadException;
-import uk.gov.laa.gpfd.exceptions.ReportIdNotFoundException;
-import uk.gov.laa.gpfd.responses.ReportResponse;
-import uk.gov.laa.gpfd.responses.ReportListEntry;
+import uk.gov.laa.gpfd.exception.CsvStreamException;
+import uk.gov.laa.gpfd.exception.DatabaseReadException;
+import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
+import uk.gov.laa.gpfd.model.ReportIdGet200Response;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class ReportService {
 
-    public static final Logger log = LoggerFactory.getLogger(ReportService.class);
-
     private final ReportViewsDao reportViewsDao;
-
     private final MappingTableService mappingTableService;
-
-
-    @Autowired
-    public ReportService(ReportViewsDao reportViewsDao, MappingTableService mappingTableService) {
-        this.reportViewsDao = reportViewsDao;
-        this.mappingTableService = mappingTableService;
-
-    }
-
 
     /**
      * Obtains a resultlist of data from the MOJFIN reports database, and converts it into a CSV data stream
@@ -46,8 +38,6 @@ public class ReportService {
      * @throws IOException - if conversion of the DB data to a CSV stream fails
      */
     public ByteArrayOutputStream createCsvStream(String sqlQuery) throws IOException, DatabaseReadException {
-
-
         // Get report data from DB
         List<Map<String, Object>> resultList = reportViewsDao.callDataBase(sqlQuery);
 
@@ -71,10 +61,6 @@ public class ReportService {
                 csvPrinter.println();
             }
         }
-
-
-//        String csvStreamString = new String(byteArrayOutputStream.toByteArray(), StandardCharsets.UTF_8);
-//        String singleLineContent = csvStreamString.replace("\n", "|"); //For debugging in DEV. If we don't filter out newline chars then kibana will print each line as a separate log message
         log.info("Returning byteArrayOutputStream of CSV data, from createCsvStream method");
 
         return byteArrayOutputStream;
@@ -88,11 +74,8 @@ public class ReportService {
      * @return a ResponseEntity of type 'StreamingResponseBody', containing a stream of CSV data
      */
     public ResponseEntity<StreamingResponseBody> createCSVResponse(int requestedId) throws ReportIdNotFoundException, DatabaseReadException, IndexOutOfBoundsException, CsvStreamException {
-
-
         //Querying the mapping table, to obtain metadata about the report
-        ReportListEntry reportListResponse = mappingTableService.getDetailsForSpecificReport(requestedId);
-
+        var reportListResponse = mappingTableService.getDetailsForSpecificReport(requestedId);
 
         //Get CSV data stream
         ByteArrayOutputStream csvDataOutputStream;
@@ -119,7 +102,6 @@ public class ReportService {
                 .body(responseBody);
     }
 
-
     /**
      * Create a json response to be used by the /report API endpoint. Once a caching system is in place, this response will serve as confirmation that a csv file has been created, and when.
      *
@@ -129,22 +111,18 @@ public class ReportService {
      * @throws ReportIdNotFoundException - From the getDetailsForSpecificReport() method call, if the requested index is not found
      * @throws DatabaseReadException     - From the createReportListResponseList() method call inside getDetailsForSpecificReport()
      */
-    public ReportResponse createReportResponse(int id) throws IndexOutOfBoundsException {
+    public ReportIdGet200Response createReportResponse(int id) throws IndexOutOfBoundsException {
+        var reportListResponse = mappingTableService.getDetailsForSpecificReport(id);
 
-        //Querying the mapping table, to obtain metadata about the report
-        ReportListEntry reportListResponse = mappingTableService.getDetailsForSpecificReport(id);
-
-        ReportResponse reportResponse = new ReportResponse();
-        reportResponse.setId(reportListResponse.getId());
-        reportResponse.setReportName(reportListResponse.getReportName());
-        reportResponse.setReportDownloadUrl("https://laa-pay-for-la-dev.apps.live.cloud-platform.service.justice.gov.uk/" + "csv/" + id);
-
+        var reportResponse = new ReportIdGet200Response() {{
+            setId(reportListResponse.getId());
+            setReportName(reportListResponse.getReportName());
+            setReportDownloadUrl(URI.create("https://laa-pay-for-la-dev.apps.live.cloud-platform.service.justice.gov.uk/" + "csv/" + id));
+        }};
 
         log.info("Returning report response object");
 
         return reportResponse;
-
     }
-
 
 }
