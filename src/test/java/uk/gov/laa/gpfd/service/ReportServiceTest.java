@@ -1,18 +1,11 @@
 package uk.gov.laa.gpfd.service;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
 import uk.gov.laa.gpfd.dao.ReportViewsDao;
-import uk.gov.laa.gpfd.data.ReportListEntryTestDataFactory;
-import uk.gov.laa.gpfd.model.ReportIdGet200Response;
-import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
-import uk.gov.laa.gpfd.services.MappingTableService;
-import uk.gov.laa.gpfd.services.ReportService;
 
 import java.io.*;
 import java.sql.Timestamp;
@@ -30,49 +23,11 @@ class ReportServiceTest {
     @Mock
     MappingTableService mappingTableService;
 
+    @Mock
+    MetadataReportService metadataReportService;
+
     @InjectMocks
     ReportService reportService;
-    List<Map<String, Object>> reportMapMockList = new ArrayList<>();
-
-
-    @BeforeEach
-    void init() {
-
-        Map<String, Object> rowOne = new LinkedHashMap<>();
-        rowOne.put("name", "CCMS Report");
-        rowOne.put("balance", 12300);
-        rowOne.put("system", "ccms");
-        reportMapMockList.add(rowOne);
-
-        Map<String, Object> rowTwo = new LinkedHashMap<>();
-        rowTwo.put("name", "CCMS Report2");
-        rowTwo.put("balance", 16300);
-        rowTwo.put("system", "ccms");
-        reportMapMockList.add(rowTwo);
-
-
-    }
-
-
-    @Test
-    void createReportResponse_reportResponseMatchesValuesFromMappingTable() throws IOException {
-
-        // Mocking the data from mapping table
-        ReportsGet200ResponseReportListInner mockReportListResponse = ReportListEntryTestDataFactory.aValidReportsGet200ResponseReportListInner();
-
-        ReportIdGet200Response expectedReportResponse = new ReportResponseTestBuilder().createReportResponse();
-        when(mappingTableService.getDetailsForSpecificReport(1)).thenReturn(mockReportListResponse);
-
-        //Act
-        ReportIdGet200Response actualReportResponse = reportService.createReportResponse(1);
-
-        //check something
-        assertEquals(expectedReportResponse.getReportName(), actualReportResponse.getReportName());
-        assertEquals(expectedReportResponse.getId(), actualReportResponse.getId());
-//        assertEquals(expectedReportResponse.getReportSharepointUrl(), actualReportResponse.getReportSharepointUrl());
-
-    }
-
 
     @Test
     void createCSVStreamReturnsCorrectContent() throws Exception {

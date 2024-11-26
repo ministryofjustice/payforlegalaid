@@ -9,7 +9,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
-import uk.gov.laa.gpfd.services.ReportService;
+import uk.gov.laa.gpfd.service.MetadataReportService;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class HttpSecuritySessionManagementConfigurerBuilderTest {
 
     @MockBean
-    ReportService reportServiceMock;
+    MetadataReportService metadataReportService;
 
     @Autowired
     MockMvc mockMvc;
@@ -33,9 +33,9 @@ class HttpSecuritySessionManagementConfigurerBuilderTest {
         var reportId = 2;
         var reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();
 
-        when(reportServiceMock.createReportResponse(reportId)).thenReturn(reportResponseMock);
+        when(metadataReportService.createReportResponse(reportId)).thenReturn(reportResponseMock);
 
-        mockMvc.perform(get("/report/{id}", reportId)
+        mockMvc.perform(get("/reports/{id}", reportId)
                         .sessionAttr("SPRING_SECURITY_CONTEXT", "null"))
                 .andExpect(status().is3xxRedirection())  // Should redirect after session expires
                 .andExpect(header().string("Location", "http://localhost/oauth2/authorization/azure"));  // Check that redirection goes to /login?expired
@@ -47,9 +47,9 @@ class HttpSecuritySessionManagementConfigurerBuilderTest {
         var reportId = 2;
         var reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();
 
-        when(reportServiceMock.createReportResponse(reportId)).thenReturn(reportResponseMock);
+        when(metadataReportService.createReportResponse(reportId)).thenReturn(reportResponseMock);
 
-        mockMvc.perform(get("/report/{id}", reportId))
+        mockMvc.perform(get("/reports/{id}", reportId))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(reportId));
     }
 }

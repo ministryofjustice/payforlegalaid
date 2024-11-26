@@ -1,4 +1,4 @@
-package uk.gov.laa.gpfd.services;
+package uk.gov.laa.gpfd.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,13 +12,11 @@ import uk.gov.laa.gpfd.dao.ReportViewsDao;
 import uk.gov.laa.gpfd.exception.CsvStreamException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
-import uk.gov.laa.gpfd.model.ReportIdGet200Response;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
@@ -102,27 +100,5 @@ public class ReportService {
                 .body(responseBody);
     }
 
-    /**
-     * Create a json response to be used by the /report API endpoint. Once a caching system is in place, this response will serve as confirmation that a csv file has been created, and when.
-     *
-     * @param id - id of the requested report
-     * @return reportResponse containing json data about the requested report
-     * @throws IndexOutOfBoundsException - From the getDetailsForSpecificReport() method call, if the requested index is under 0 or over 100
-     * @throws ReportIdNotFoundException - From the getDetailsForSpecificReport() method call, if the requested index is not found
-     * @throws DatabaseReadException     - From the createReportListResponseList() method call inside getDetailsForSpecificReport()
-     */
-    public ReportIdGet200Response createReportResponse(int id) throws IndexOutOfBoundsException {
-        var reportListResponse = mappingTableService.getDetailsForSpecificReport(id);
-
-        var reportResponse = new ReportIdGet200Response() {{
-            setId(reportListResponse.getId());
-            setReportName(reportListResponse.getReportName());
-            setReportDownloadUrl(URI.create("https://laa-pay-for-la-dev.apps.live.cloud-platform.service.justice.gov.uk/" + "csv/" + id));
-        }};
-
-        log.info("Returning report response object");
-
-        return reportResponse;
-    }
 
 }

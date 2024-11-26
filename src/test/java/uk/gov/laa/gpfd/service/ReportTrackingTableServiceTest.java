@@ -12,9 +12,6 @@ import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 import uk.gov.laa.gpfd.model.ReportTrackingTable;
-import uk.gov.laa.gpfd.services.MappingTableService;
-import uk.gov.laa.gpfd.services.ReportTrackingTableService;
-import uk.gov.laa.gpfd.services.UserService;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

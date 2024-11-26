@@ -1,4 +1,4 @@
-package uk.gov.laa.gpfd.services;
+package uk.gov.laa.gpfd.service;
 
 import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.models.User;

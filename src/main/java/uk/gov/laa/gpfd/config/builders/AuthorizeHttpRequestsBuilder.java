@@ -46,6 +46,11 @@ public class AuthorizeHttpRequestsBuilder
     private static final String API_DOCS_ROOT = "/v3/**";
 
     /**
+     * Endpoint for the login page, which allows users to initiate authentication.
+     */
+    private static final String LOGIN_ENDPOINT = "/login";
+
+    /**
      * Customizes HTTP request authorization settings for the application.
      * <p>
      * This method configures the authorization rules for various URL patterns:
@@ -66,9 +71,9 @@ public class AuthorizeHttpRequestsBuilder
                 .apply(aadWebApplication()).and()
                 .authorizeHttpRequests()
                 .requestMatchers(API_DOCS_ROOT, SWAGGER_UI, SWAGGER_FILE).permitAll()  // Allow unrestricted access to API docs and Swagger UI
-                .requestMatchers(ACTUATOR_ENDPOINT, HEALTH_ENDPOINT).permitAll()         // Allow unrestricted access to actuator and health endpoints
-                .requestMatchers("/login").permitAll()
-                .anyRequest().authenticated();  // Require authentication for all other requests
+                .requestMatchers(ACTUATOR_ENDPOINT, HEALTH_ENDPOINT).permitAll()      // Allow unrestricted access to actuator and health endpoints
+                .requestMatchers(LOGIN_ENDPOINT).permitAll()                          // Allow unrestricted access to login endpoint
+                .anyRequest().authenticated();                                        // Require authentication for all other requests
     }
 
 }

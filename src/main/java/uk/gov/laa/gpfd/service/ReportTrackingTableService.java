@@ -1,4 +1,4 @@
-package uk.gov.laa.gpfd.services;
+package uk.gov.laa.gpfd.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

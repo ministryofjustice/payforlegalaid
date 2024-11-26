@@ -9,35 +9,28 @@ import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2Aut
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import uk.gov.laa.gpfd.api.ReportApi;
 import uk.gov.laa.gpfd.api.ReportsApi;
-import uk.gov.laa.gpfd.model.ReportIdGet200Response;
+import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200Response;
-import uk.gov.laa.gpfd.services.MappingTableService;
-import uk.gov.laa.gpfd.services.ReportService;
-import uk.gov.laa.gpfd.services.ReportTrackingTableService;
-
-import java.util.Optional;
+import uk.gov.laa.gpfd.service.MappingTableService;
+import uk.gov.laa.gpfd.service.MetadataReportService;
+import uk.gov.laa.gpfd.service.ReportService;
+import uk.gov.laa.gpfd.service.ReportTrackingTableService;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class ReportsController implements ReportApi, ReportsApi {
+public class ReportsController implements ReportsApi {
 
     private final ReportTrackingTableService reportTrackingTableService;
     private final MappingTableService mappingTableService;
+    private final MetadataReportService metadataReportService;
     private final ReportService reportService;
 
     @Override
-    public Optional<NativeWebRequest> getRequest() {
-        return ReportApi.super.getRequest();
-    }
-
-    @Override
-    public ResponseEntity<ReportIdGet200Response> reportIdGet(Integer id) {
-        var response = reportService.createReportResponse(id);
+    public ResponseEntity<GetReportById200Response> getReportById(Integer id) {
+        var response = metadataReportService.createReportResponse(id);
 
         log.debug("Returning a report response to user");
         return ResponseEntity.ok(response);
@@ -45,11 +38,9 @@ public class ReportsController implements ReportApi, ReportsApi {
 
     @Override
     public ResponseEntity<ReportsGet200Response> reportsGet() {
-        var reportListEntries = mappingTableService.fetchReportListEntries();
-
-        var response = new ReportsGet200Response() {{
-            reportListEntries.forEach(this::addReportListItem);
-        }};
+        var response = mappingTableService.fetchReportListEntries()
+                .stream()
+                .collect(ReportsGet200Response::new, ReportsGet200Response::addReportListItem, (a, b) -> {});
 
         log.debug("Returning a reportListResponse to user");
         return ResponseEntity.ok(response);

@@ -12,7 +12,6 @@ import uk.gov.laa.gpfd.data.AzureGraphUserTestDataFactory;
 import uk.gov.laa.gpfd.exception.AuthUserNotFoundException;
 import uk.gov.laa.gpfd.exception.UserServiceException;
 import uk.gov.laa.gpfd.graph.AzureGraphClient;
-import uk.gov.laa.gpfd.services.UserService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;

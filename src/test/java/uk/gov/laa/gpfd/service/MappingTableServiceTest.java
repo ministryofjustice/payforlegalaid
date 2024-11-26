@@ -1,17 +1,16 @@
 package uk.gov.laa.gpfd.service;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.laa.gpfd.dao.MappingTableDao;
 import uk.gov.laa.gpfd.data.MappingTableTestDataFactory;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.mapper.ReportsGet200ResponseReportListInnerMapper;
 import uk.gov.laa.gpfd.model.MappingTable;
-import uk.gov.laa.gpfd.services.MappingTableService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,18 +25,14 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class MappingTableServiceTest {
 
     @Mock
-    private MappingTableDao mappingTableDao;
+    MappingTableDao mappingTableDao;
 
     @InjectMocks
-    private MappingTableService mappingTableService;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
+    MappingTableService mappingTableService;
 
     @Test
     void shouldReturnReportListEntriesWhenValidReportsExist() {
