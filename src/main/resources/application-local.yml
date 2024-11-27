@@ -30,6 +30,7 @@ spring:
     azure:
       active-directory:
         enabled: true
+        # Stubbed azure content is not used but needed for it to compile right now
         profile:
           tenant-id: ${AZURE_TENANT_ID}
         credential:
