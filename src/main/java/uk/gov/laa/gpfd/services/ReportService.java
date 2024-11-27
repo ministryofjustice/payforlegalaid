@@ -12,7 +12,7 @@ import uk.gov.laa.gpfd.dao.ReportViewsDao;
 import uk.gov.laa.gpfd.exception.CsvStreamException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
-import uk.gov.laa.gpfd.model.ReportIdGet200Response;
+import uk.gov.laa.gpfd.model.GetReportById200Response;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -111,10 +111,10 @@ public class ReportService {
      * @throws ReportIdNotFoundException - From the getDetailsForSpecificReport() method call, if the requested index is not found
      * @throws DatabaseReadException     - From the createReportListResponseList() method call inside getDetailsForSpecificReport()
      */
-    public ReportIdGet200Response createReportResponse(int id) throws IndexOutOfBoundsException {
+    public GetReportById200Response createReportResponse(int id) throws IndexOutOfBoundsException {
         var reportListResponse = mappingTableService.getDetailsForSpecificReport(id);
 
-        var reportResponse = new ReportIdGet200Response() {{
+        var reportResponse = new GetReportById200Response() {{
             setId(reportListResponse.getId());
             setReportName(reportListResponse.getReportName());
             setReportDownloadUrl(URI.create("https://laa-pay-for-la-dev.apps.live.cloud-platform.service.justice.gov.uk/" + "csv/" + id));

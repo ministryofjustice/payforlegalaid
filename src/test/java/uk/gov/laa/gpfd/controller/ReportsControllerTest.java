@@ -17,7 +17,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
 import uk.gov.laa.gpfd.data.ReportListEntryTestDataFactory;
 import uk.gov.laa.gpfd.graph.AzureGraphClient;
-import uk.gov.laa.gpfd.model.ReportIdGet200Response;
+import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 import uk.gov.laa.gpfd.services.MappingTableService;
 import uk.gov.laa.gpfd.services.ReportService;
@@ -111,13 +111,13 @@ class ReportsControllerTest {
     void getReportReturnsCorrectResponseEntity() throws Exception {
         int reportId = 2;
 
-        ReportIdGet200Response reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();
+        GetReportById200Response reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();
 
         // Mock the service
         when(reportServiceMock.createReportResponse(reportId)).thenReturn(reportResponseMock);
 
         // Perform request and assert results
-        mockMvc.perform(MockMvcRequestBuilders.get("/report/{id}", reportId)).andExpect(status().isOk()).andExpect(jsonPath("$.id").value(reportId)).andExpect(jsonPath("$.reportName").value(reportResponseMock.getReportName()));
+        mockMvc.perform(MockMvcRequestBuilders.get("/reports/{id}", reportId)).andExpect(status().isOk()).andExpect(jsonPath("$.id").value(reportId)).andExpect(jsonPath("$.reportName").value(reportResponseMock.getReportName()));
 
         verify(reportServiceMock, times(1)).createReportResponse(reportId);
     }
