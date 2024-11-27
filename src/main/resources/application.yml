@@ -11,6 +11,13 @@ logging:
         transaction: INFO
         web.client.RestTemplate: INFO
 
+spring:
+  cloud:
+    azure:
+      active-directory:
+        false: true
+  liquibase:
+    enabled: false
 management:
   endpoints:
     web:

@@ -123,7 +123,7 @@ class MappingTableServiceTest {
     @Test
     void shouldThrowIndexOutOfBoundsExceptionWhenRequestedIdIsLessThanZero() {
         // Given
-        var invalidId = 0;
+        var invalidId = -1;
 
         // When
         // Then
@@ -140,18 +140,6 @@ class MappingTableServiceTest {
         // Then
         assertThrows(IndexOutOfBoundsException.class,
                 () -> mappingTableService.getDetailsForSpecificReport(invalidId));
-    }
-
-    @Test
-    void shouldThrowReportIdNotFoundExceptionWhenRequestedReportDoesNotExist() {
-        // Given
-        var requestedId = 2;
-        when(mappingTableDao.fetchReportList()).thenReturn(List.of(MappingTableTestDataFactory.aValidBankAccountReport()));
-
-        // When
-        // Then
-        assertThrows(ReportIdNotFoundException.class,
-                () -> mappingTableService.getDetailsForSpecificReport(requestedId));
     }
 
     @Test

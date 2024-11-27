@@ -21,6 +21,8 @@ gpfd:
 
 # Azure AD and Graph config
 spring:
+  liquibase:
+    enabled: false
   cloud:
     azure:
       active-directory:

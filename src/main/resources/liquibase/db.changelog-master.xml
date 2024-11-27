@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="0-create-gpfd-schema" author="robert_buczek">
+        <sql>
+            CREATE SCHEMA GPFD;
+        </sql>
+    </changeSet>
+
+    <changeSet id="1-create-csv-to-sql-mapping-table" author="robert_buczek">
+        <createTable tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
+            <column name="ID" type="NUMBER">
+                <constraints nullable="true"/>
+            </column>
+            <column name="REPORT_NAME" type="VARCHAR(200)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="SQL_QUERY" type="VARCHAR(4000)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="BASE_URL" type="VARCHAR(450)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="REPORT_OWNER" type="VARCHAR(100)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="REPORT_CREATOR" type="VARCHAR(100)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="REPORT_DESCRIPTION" type="VARCHAR(400)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="EXCEL_REPORT" type="VARCHAR(200)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="EXCEL_SHEET_NUM" type="NUMBER">
+                <constraints nullable="true"/>
+            </column>
+            <column name="CSV_NAME" type="VARCHAR(200)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="OWNER_EMAIL" type="VARCHAR(300)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2-create-sequence" author="robert_buczek">
+        <createSequence
+                sequenceName="GPFD_TRACKING_TABLE_SEQUENCE"
+                startValue="1"
+                incrementBy="1"
+                schemaName="GPFD"/>
+    </changeSet>
+
+    <changeSet id="3-create-report-tracking-table" author="robert_buczek">
+        <createTable tableName="REPORT_TRACKING" schemaName="GPFD">
+            <column name="ID" type="INTEGER">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="REPORT_NAME" type="VARCHAR(80)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_URL" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATION_TIME" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MAPPING_ID" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_GENERATED_BY" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="4-insert-data-csv-to-sql-mapping-table" author="robert_buczek">
+        <insert tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
+            <column name="ID" value="1"/>
+            <column name="REPORT_NAME" value="CCMS_invoice_analysis-CIS-to-CCMS-import-analysis-2"/>
+            <column name="SQL_QUERY" value="SELECT * FROM ANY_REPORT.V_CIS_TO_CCMS_INVOICE_SUMMARY"/>
+            <column name="BASE_URL"
+                    value="https://justiceuk.sharepoint.com/:x:/r/sites/FinanceSysReference/Shared%20Documents/General/Monthly%20Accounts/Sharepoint%20base%20reports/General%20CCMS%20Tools/CCMS%20invoice%20analysis.xlsb?d=w7bc78b4b2c94489e899415353a37d234&amp;csf=1&amp;web=1&amp;e=K0h3OD"/>
+            <column name="REPORT_OWNER" value="Chancey Mctavish"/>
+            <column name="REPORT_CREATOR" value="Sophia Patel"/>
+            <column name="REPORT_DESCRIPTION" value="Summary of invoices in CIS and CCMS by original source IT system"/>
+            <column name="EXCEL_REPORT" value="CCMS_invoice_analysis"/>
+            <column name="EXCEL_SHEET_NUM" value="2"/>
+            <column name="CSV_NAME" value="CIS-to-CCMS-import-analysis"/>
+            <column name="OWNER_EMAIL" value="owneremail@email.com"/>
+        </insert>
+
+        <insert tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
+            <column name="ID" value="2"/>
+            <column name="REPORT_NAME" value="CCMS_and_CIS_Bank_Account_Report_w_Category_Code_(MNTH)-MAIN-12"/>
+            <column name="SQL_QUERY" value="SELECT * FROM ANY_REPORT.V_BANK_MONTH"/>
+            <column name="BASE_URL"
+                    value="https://justiceuk.sharepoint.com/sites/FinanceSysReference/Shared%20Documents/Forms/AllItems.aspx?id=%2Fsites%2FFinanceSysReference%2FShared%20Documents%2FGeneral%2FMonthly%20Accounts%2F2023%2D06%2FBank%20reporting&amp;viewid=5d6ec327%2D2975%2D4d7c%2Dbd8d%2D6b793c45868b"/>
+            <column name="REPORT_OWNER" value="Daniel Mctavish"/>
+            <column name="REPORT_CREATOR" value="Brian Limond"/>
+            <column name="REPORT_DESCRIPTION"
+                    value="Summary of all payments made by CCMS/CIS and all cash receipts applied to debt in the previous month"/>
+            <column name="EXCEL_REPORT" value="CCMS_and_CIS_Bank_Account_Report_w_Category_Code_(MNTH)"/>
+            <column name="EXCEL_SHEET_NUM" value="12"/>
+            <column name="CSV_NAME" value="MAIN"/>
+            <column name="OWNER_EMAIL" value="secondowneremail@email.com"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="5-insert-data-update-tracing-table" author="robert_buczek">
+        <insert tableName="REPORT_TRACKING" schemaName="GPFD">
+            <column name="ID" value="1"/>
+            <column name="REPORT_NAME" value="Initial Test Report Name"/>
+            <column name="REPORT_URL" value="https://www.some-url.com"/>
+            <column name="CREATION_TIME" value="2024-03-18T12:10:11.814596"/>
+            <column name="MAPPING_ID" value="2"/>
+            <column name="REPORT_GENERATED_BY" value="Bill Evans"/>
+        </insert>
+    </changeSet>
+
+
+</databaseChangeLog>

@@ -60,11 +60,11 @@ public class MappingTableService {
      * @throws DatabaseReadException if there is an error fetching data from the database
      */
     public ReportsGet200ResponseReportListInner getDetailsForSpecificReport(int requestedId) {
-        if (requestedId <= 0 || requestedId >= 1000) throw new IndexOutOfBoundsException("Report ID needs to be a number between 0 and 1000");
+        if (requestedId < 0 || requestedId > 1000) throw new IndexOutOfBoundsException("Report ID needs to be a number between 0 and 1000");
 
         return mappingTableDao.fetchReportList().stream()
                 .map(ReportsGet200ResponseReportListInnerMapper::map)
-                .filter(o -> o.getId() == requestedId - 1) // Adjust for 0-based index
+                .filter(o -> o.getId() == requestedId) // Adjust for 0-based index
                 .findFirst()
                 .orElseThrow(() -> new ReportIdNotFoundException("Report ID not found with ID: " + requestedId));
     }

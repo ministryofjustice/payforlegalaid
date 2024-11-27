@@ -8,9 +8,11 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
+import uk.gov.laa.gpfd.mapper.MappingTableMapper;
 import uk.gov.laa.gpfd.model.MappingTable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -21,10 +23,8 @@ public class MappingTableDao {
     private static final String SELECT_SQL = "SELECT * FROM GPFD.CSV_TO_SQL_MAPPING_TABLE";
 
     private final JdbcTemplate readOnlyJdbcTemplate;
-    private final ModelMapper mapper;
 
     public List<MappingTable> fetchReportList() throws DatabaseReadException {
-        List<MappingTable> mappingTableObjectList = new ArrayList<>();
         List<Map<String, Object>> resultList;
 
         try {
@@ -39,14 +39,13 @@ public class MappingTableDao {
         }
 
         try {
-            resultList.forEach(obj -> {
-                MappingTable mappingTableObject = mapper.map(obj, MappingTable.class);
-                mappingTableObjectList.add(mappingTableObject);
-            });
+            return resultList.stream()
+                    .map(MappingTableMapper::mapToMappingTable)
+                    .toList();
         } catch (MappingException e) {
             log.error("Exception with model map loop: %s", e);
         }
 
-        return mappingTableObjectList;
+        return Collections.emptyList();
     }
 }
