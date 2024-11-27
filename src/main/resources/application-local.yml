@@ -25,3 +25,18 @@ gpfd:
       password: ${MOJFIN_DEV_WRITE_PASSWORD}
       driver-class-name: oracle.jdbc.OracleDriver
 
+spring:
+  cloud:
+    azure:
+      active-directory:
+        enabled: true
+        profile:
+          tenant-id: ${AZURE_TENANT_ID}
+        credential:
+          client-id: ${AZURE_CLIENT_ID}
+          client-secret: ${AZURE_CLIENT_SECRET}
+        redirect-uri-template: ${gpfd.redirect-uri-template}
+        authorization-clients:
+          graph:
+            scopes:
+              - https://graph.microsoft.com/User.Read
