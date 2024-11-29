@@ -73,33 +73,9 @@ paths:
                         reportName:
                           type: string
                           example: "Invoice_analysis"
-                        excelReport:
-                          type: string
-                          example: "invoice_analysis"
-                        csvName:
-                          type: string
-                          example: "import-analysis"
-                        excelSheetNum:
-                          type: integer
-                          example: 2
-                        sqlQuery:
-                          type: string
-                          example: "SELECT * FROM FOO"
-                        baseUrl:
-                          type: string
-                          example: "/General%20Tools/invoice%20analysis.xlsb"
-                        reportOwner:
-                          type: string
-                          example: "Mr Bean"
-                        reportCreator:
-                          type: string
-                          example: "Mr Bean"
                         description:
                           type: string
                           example: "Summary of invoices by source system"
-                        ownerEmail:
-                          type: string
-                          example: "owneremail@email.com"
         '400':
           $ref: '#/components/responses/BadRequestError'
         '401':

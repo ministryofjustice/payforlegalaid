@@ -22,10 +22,28 @@ public class MappingTableService {
     private final ModelMapper mapper;
     private final MappingTableDao mappingTableDao;
 
+    public MappingTable getDetailsForSpecificMapping(int requestedId)  {
+        List<MappingTable> reportListResponses;
+
+        if (requestedId < 1000 && requestedId > 0) {
+            reportListResponses = mappingTableDao.fetchReportList();
+        } else {
+            throw new IndexOutOfBoundsException("Report ID needs to be a number between 0 and 1000");
+        }
+
+        int indexInt = requestedId - 1;   // The '-1' accounts for the fact that the array index starts at 0, whereas the database index/id starts at 1
+        log.debug("Checking the reportListResponses for the desired reportListResponse object, the requested report index is: {}", indexInt);
+
+        if (indexInt >= reportListResponses.size()) {
+            throw new ReportIdNotFoundException("Report ID not found with ID: " + requestedId);
+        } else {
+            return reportListResponses.get(indexInt);
+        }
+    }
+
     public List<ReportsGet200ResponseReportListInner> fetchReportListEntries() throws DatabaseReadException {
         List<ReportsGet200ResponseReportListInner> reportListEntries = new ArrayList<>();
 
-        //Fetching reportList items from database
         List<MappingTable> mappingTableObjectList = mappingTableDao.fetchReportList();
 
         mappingTableObjectList.forEach(obj -> {
@@ -44,20 +62,8 @@ public class MappingTableService {
      * @return a ReportListResponse from the CSV - SQL mapping table
      */
     public ReportsGet200ResponseReportListInner getDetailsForSpecificReport(int requestedId)  {
-        List<ReportsGet200ResponseReportListInner> reportListResponses;
-        if (requestedId < 1000 && requestedId > 0) {
-            reportListResponses = fetchReportListEntries();
-        } else {
-            throw new IndexOutOfBoundsException("Report ID needs to be a number between 0 and 1000");
-        }
+        MappingTable mappingEntry = getDetailsForSpecificMapping(requestedId);
 
-        int indexInt = requestedId - 1;   // The '-1' accounts for the fact that the array index starts at 0, whereas the database index/id starts at 1
-        log.debug("Checking the reportListResponses for the desired reportListResponse object, the requested report index is: {}", indexInt);
-
-        if (indexInt >= reportListResponses.size()) {
-            throw new ReportIdNotFoundException("Report ID not found with ID: " + requestedId);
-        } else {
-            return reportListResponses.get(indexInt);
-        }
+        return mapper.map(mappingEntry, ReportsGet200ResponseReportListInner.class);
     }
 }
