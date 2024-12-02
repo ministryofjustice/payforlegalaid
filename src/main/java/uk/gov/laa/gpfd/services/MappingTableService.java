@@ -32,7 +32,7 @@ public class MappingTableService {
      * objects, and returns the result.
      * <p>
      * This method retrieves all the report entries from the database, transforms them using the
-     * {@link ReportsGet200ResponseReportListInnerMapper#map(MappingTable)} method, and returns a list
+     *  ReportsGet200ResponseReportListInnerMapper map method, and returns a list
      * of mapped report entries.
      * </p>
      *
@@ -59,7 +59,7 @@ public class MappingTableService {
      * @throws ReportIdNotFoundException if the report with the requested ID is not found
      * @throws DatabaseReadException if there is an error fetching data from the database
      */
-    public ReportsGet200ResponseReportListInner getDetailsForSpecificReport(int requestedId) {
+    public ReportsGet200ResponseReportListInner getDetailsForSpecificReport(int requestedId) throws IndexOutOfBoundsException {
         if (requestedId <= 0 || requestedId >= 1000) throw new IndexOutOfBoundsException("Report ID needs to be a number between 0 and 1000");
 
         return mappingTableDao.fetchReportList().stream()

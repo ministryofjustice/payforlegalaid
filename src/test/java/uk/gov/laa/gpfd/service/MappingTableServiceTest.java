@@ -1,11 +1,9 @@
 package uk.gov.laa.gpfd.service;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.laa.gpfd.dao.MappingTableDao;
 import uk.gov.laa.gpfd.data.MappingTableTestDataFactory;
@@ -137,22 +135,10 @@ class MappingTableServiceTest {
     }
 
     @Test
-    void shouldThrowIndexOutOfBoundsExceptionWhenRequestedIdIsLessThanZero() {
-        // Given
-        var invalidId = -10;
-
-        // When
-        // Then
-        assertThrows(IndexOutOfBoundsException.class,
-                () -> mappingTableService.getDetailsForSpecificReport(invalidId));
-    }
-
-    @Test
     void shouldThrowIndexOutOfBoundsExceptionWhenRequestedIdIsGreaterThan1000() {
         // Given
         var invalidId = 1001;
 
-        // When
         // Then
         assertThrows(IndexOutOfBoundsException.class,
                 () -> mappingTableService.getDetailsForSpecificReport(invalidId));
@@ -164,7 +150,6 @@ class MappingTableServiceTest {
         var requestedId = 2;
         when(mappingTableDao.fetchReportList()).thenReturn(List.of(MappingTableTestDataFactory.aValidBankAccountReport()));
 
-        // When
         // Then
         assertThrows(ReportIdNotFoundException.class,
                 () -> mappingTableService.getDetailsForSpecificReport(requestedId));
@@ -176,7 +161,6 @@ class MappingTableServiceTest {
         var requestedId = 1;
         when(mappingTableDao.fetchReportList()).thenReturn(Collections.emptyList());
 
-        // When
         // Then
         assertThrows(ReportIdNotFoundException.class,
                 () -> mappingTableService.getDetailsForSpecificReport(requestedId));
@@ -187,21 +171,8 @@ class MappingTableServiceTest {
         // Given
         var requestedId = -1;
 
-        // When
         // Then
         assertThrows(IndexOutOfBoundsException.class,
-                () -> mappingTableService.getDetailsForSpecificReport(requestedId));
-    }
-
-    @Test
-    void shouldThrowReportIdNotFoundExceptionWhenRequestedIdExceedsAvailableReports() {
-        // Given
-        var requestedId = 100;
-        when(mappingTableDao.fetchReportList()).thenReturn(List.of(MappingTableTestDataFactory.aValidBankAccountReport()));
-
-        // When
-        // Then
-        assertThrows(ReportIdNotFoundException.class,
                 () -> mappingTableService.getDetailsForSpecificReport(requestedId));
     }
 
