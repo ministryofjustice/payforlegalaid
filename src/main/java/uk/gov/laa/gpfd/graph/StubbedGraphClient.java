@@ -1,12 +1,14 @@
 package uk.gov.laa.gpfd.graph;
 
 import com.microsoft.graph.models.User;
-import org.springframework.context.annotation.Profile;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("local")
+@ConditionalOnExpression(
+        "'${spring.profiles.active}' == 'local' and '${spring.cloud.azure.active-directory.enabled:false}' == 'false'"
+)
 public final class StubbedGraphClient implements GraphClient {
 
     @Override

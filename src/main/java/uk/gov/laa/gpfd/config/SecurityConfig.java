@@ -1,6 +1,7 @@
 package uk.gov.laa.gpfd.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -52,6 +53,7 @@ public class SecurityConfig {
      * @throws Exception if any error occurs during the configuration of HTTP security.
      */
     @Bean
+    @ConditionalOnProperty(name = "spring.cloud.azure.active-directory.enabled", havingValue = "true")
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .authorizeHttpRequests(authorizeHttpRequestsBuilder)    // Apply authorization rules

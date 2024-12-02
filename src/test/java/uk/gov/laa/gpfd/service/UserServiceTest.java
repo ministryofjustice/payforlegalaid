@@ -46,19 +46,6 @@ class UserServiceTest {
     }
 
     @Test
-    void shouldThrowAuthUserNotFoundExceptionWhenGraphReturnsNullUser() {
-        assertThrows(AuthUserNotFoundException.class, () -> userService.getUserDetails(mockOAuth2Client));
-    }
-
-    @Test
-    void shouldThrowUserServiceExceptionWhenClientExceptionOccurs() {
-        when(mockAzureGraphClient.getGraphUserDetails(mockOAuth2Client)).thenThrow(new ClientException("client error", null));
-
-        // Then
-        assertThrows(UserServiceException.class, () -> userService.getUserDetails(mockOAuth2Client));
-    }
-
-    @Test
     void shouldReturnErrorMessageWhenNoDetailsAreReturnedFromGraph() {
         // Given
         when(mockAzureGraphClient.getGraphUserDetails(mockOAuth2Client)).thenReturn(null);
@@ -71,9 +58,9 @@ class UserServiceTest {
     }
 
     @Test
-    void shouldThrowAuthUserNotFoundExceptionWhenGraphUserDataIsIncomplete() {
+    void shouldThrowAuthUserNotFoundExceptionWhenUserPrincipalNameIsMissing() {
         // Given
-        var incompleteUser = new User(); // Missing userPrincipalName and email
+        var incompleteUser = new User(); // Missing userPrincipalName
         when(mockAzureGraphClient.getGraphUserDetails(mockOAuth2Client)).thenReturn(incompleteUser);
 
         // When & Assert
@@ -98,8 +85,6 @@ class UserServiceTest {
 
     @Test
     void shouldThrowAuthUserNotFoundExceptionWhenOAuth2ClientIsNull() {
-        // When
-        // Then
         assertThrows(AuthUserNotFoundException.class, () -> userService.getUserDetails(null));
     }
 

@@ -3,6 +3,8 @@ package uk.gov.laa.gpfd.mapper;
 import uk.gov.laa.gpfd.model.MappingTable;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 
+import java.util.Optional;
+
 /**
  * Utility class responsible for mapping a {@link MappingTable} object to a {@link ReportsGet200ResponseReportListInner} object.
  * <p>
@@ -24,17 +26,16 @@ public class ReportsGet200ResponseReportListInnerMapper {
      */
     public static ReportsGet200ResponseReportListInner map(MappingTable mappingTable) {
         return new ReportsGet200ResponseReportListInner() {{
-            setId(mappingTable.id());
-            setReportName(mappingTable.reportName());
-            setExcelReport(mappingTable.excelReport());
-            setCsvName(mappingTable.csvName());
-            setExcelReport(mappingTable.excelReport());
-            setSqlQuery(mappingTable.sqlQuery());
-            setBaseUrl(mappingTable.baseUrl());
-            reportOwner(mappingTable.reportOwner());
-            reportCreator(mappingTable.reportCreator());
-            description(mappingTable.description());
-            ownerEmail(mappingTable.ownerEmail());
+            setId(mappingTable.id().orElse(null));
+            setReportName(mappingTable.reportName().orElse(null));
+            setExcelReport(mappingTable.excelReport().orElse(null));
+            setCsvName(mappingTable.csvName().orElse(null));
+            setSqlQuery(mappingTable.sqlQuery().orElse(null));
+            setBaseUrl(mappingTable.baseUrl().orElse(null));
+            reportOwner(mappingTable.reportOwner().orElse(null));
+            reportCreator(mappingTable.reportCreator().orElse(null));
+            description(mappingTable.description().orElse(null));
+            ownerEmail(mappingTable.ownerEmail().orElse(null));
         }};
     }
 }
