@@ -38,7 +38,7 @@ class MappingTableTest {
     }
 
     @Test
-    void testMappingTableImmutableProperties() throws NoSuchFieldException, IllegalAccessException {
+    void testMappingTableImmutableProperties() throws NoSuchFieldException {
         var table = new MappingTable(
                 Optional.of(1), Optional.of("ImmutableTest"), Optional.of("Excel.xlsx"), Optional.of("CSV.csv"), Optional.of(1),
                 Optional.of("Query"), Optional.of("http://url"), Optional.of("Owner"), Optional.of("Creator"), Optional.of("Description"), Optional.of("email@example.com")
@@ -57,15 +57,15 @@ class MappingTableTest {
                 Optional.of(""), Optional.of(""), Optional.of(""), Optional.of(""), Optional.of(""), Optional.of("")
         );
 
-        assertEquals("", table.reportName().orElse(""));
-        assertEquals("", table.excelReport().orElse(""));
-        assertEquals("", table.csvName().orElse(""));
-        assertEquals("", table.sqlQuery().orElse(""));
-        assertEquals("", table.baseUrl().orElse(""));
-        assertEquals("", table.reportOwner().orElse(""));
-        assertEquals("", table.reportCreator().orElse(""));
-        assertEquals("", table.description().orElse(""));
-        assertEquals("", table.ownerEmail().orElse(""));
+        assertEquals("", table.reportName().orElseThrow());
+        assertEquals("", table.excelReport().orElseThrow());
+        assertEquals("", table.csvName().orElseThrow());
+        assertEquals("", table.sqlQuery().orElseThrow());
+        assertEquals("", table.baseUrl().orElseThrow());
+        assertEquals("", table.reportOwner().orElseThrow());
+        assertEquals("", table.reportCreator().orElseThrow());
+        assertEquals("", table.description().orElseThrow());
+        assertEquals("", table.ownerEmail().orElseThrow());
     }
 
     @Test
