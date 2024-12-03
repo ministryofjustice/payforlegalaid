@@ -26,15 +26,7 @@ public class ReportListEntryTestDataFactory {
         return new ReportsGet200ResponseReportListInner() {{
             id(1);
             reportName("Excel_Report_Name-CSV-NAME-sheetnumber");
-            excelReport("Excel_Report_Name");
-            csvName("CSV-name");
-            excelSheetNum(7);
-            sqlQuery("SELECT * FROM SOMETHING");
-            baseUrl("www.sharepoint.com/folder-for-storing-created-reports");
-            reportOwner("Chancey Mctavish");
-            reportCreator("Barry Gibb");
             description("List all unpaid AP invoices and all outstanding AR debts at the end of the previous month. Detailed data, one row per invoice");
-            ownerEmail("test-owner-email@example.com");
         }};
     }
 
@@ -52,15 +44,7 @@ public class ReportListEntryTestDataFactory {
         return new ReportsGet200ResponseReportListInner() {{
             id(id);
             reportName("Excel_Report_Name-CSV-NAME-sheetnumber");
-            excelReport("Excel_Report_Name");
-            csvName("CSV-name");
-            excelSheetNum(7);
-            sqlQuery("SELECT * FROM SOMETHING");
-            baseUrl("www.sharepoint.com/folder-for-storing-created-reports");
-            reportOwner("Chancey Mctavish");
-            reportCreator("Barry Gibb");
             description("List all unpaid AP invoices and all outstanding AR debts at the end of the previous month. Detailed data, one row per invoice");
-            ownerEmail("test-owner-email@example.com");
         }};
     }
 }

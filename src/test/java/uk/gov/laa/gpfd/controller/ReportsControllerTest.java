@@ -100,7 +100,10 @@ class ReportsControllerTest {
         when(mappingTableServiceMock.fetchReportListEntries()).thenReturn(reportListResponseMockList);
 
         // Perform request and assert results
-        mockMvc.perform(MockMvcRequestBuilders.get("/reports")).andExpect(status().isOk()).andExpect(jsonPath("$.reportList", hasSize(2))).andExpect(jsonPath("$.reportList[0].id").value(reportListEntryMock1.getId())).andExpect(jsonPath("$.reportList[0].baseUrl").value(reportListEntryMock1.getBaseUrl())).andExpect(jsonPath("$.reportList[1].id").value(reportListEntryMock2.getId()));
+        mockMvc.perform(MockMvcRequestBuilders.get("/reports"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.reportList", hasSize(2)))
+                .andExpect(jsonPath("$.reportList[0].id").value(reportListEntryMock1.getId()))
+                .andExpect(jsonPath("$.reportList[1].id").value(reportListEntryMock2.getId()));
 
         verify(mappingTableServiceMock, times(1)).fetchReportListEntries();
 
