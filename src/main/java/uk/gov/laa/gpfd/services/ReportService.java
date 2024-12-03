@@ -75,13 +75,13 @@ public class ReportService {
      */
     public ResponseEntity<StreamingResponseBody> createCSVResponse(int requestedId) throws ReportIdNotFoundException, DatabaseReadException, IndexOutOfBoundsException, CsvStreamException {
         //Querying the mapping table, to obtain metadata about the report
-        var reportListResponse = mappingTableService.getDetailsForSpecificReport(requestedId);
+        var reportListResponse = mappingTableService.getDetailsForSpecificMapping(requestedId);
 
         //Get CSV data stream
         ByteArrayOutputStream csvDataOutputStream;
         try {
-            log.debug("Creating CSV stream with id: " + reportListResponse.getId());
-            csvDataOutputStream = createCsvStream(reportListResponse.getSqlQuery());
+            log.debug("Creating CSV stream with id: " + reportListResponse.id());
+            csvDataOutputStream = createCsvStream(reportListResponse.sqlQuery().orElseThrow());
         } catch (IOException e) {
             throw new CsvStreamException("Error creating CSV data stream: " + e);
         }
@@ -97,7 +97,7 @@ public class ReportService {
         };
 
         return ResponseEntity.ok()
-                .header("Content-Disposition", "attachment; filename=" + reportListResponse.getReportName() + ".csv")
+                .header("Content-Disposition", "attachment; filename=" + reportListResponse.reportName() + ".csv")
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(responseBody);
     }
