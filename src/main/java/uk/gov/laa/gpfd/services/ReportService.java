@@ -81,7 +81,7 @@ public class ReportService {
         ByteArrayOutputStream csvDataOutputStream;
         try {
             log.debug("Creating CSV stream with id: " + reportListResponse.id());
-            csvDataOutputStream = createCsvStream(reportListResponse.sqlQuery());
+            csvDataOutputStream = createCsvStream(reportListResponse.sqlQuery().orElseThrow());
         } catch (IOException e) {
             throw new CsvStreamException("Error creating CSV data stream: " + e);
         }
