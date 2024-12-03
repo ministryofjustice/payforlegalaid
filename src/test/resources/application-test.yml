@@ -43,7 +43,7 @@ spring:
     #        schema-locations: 'classpath:schema-h2.sql'
     #        data-locations: 'classpath:data-h2.sql'
     #        continue-on-error: true
-    h2:
-      console:
-        enabled: true #Optional, for enabling H2 console for troubleshooting
-        path: /h2-console
+  h2:
+    console:
+      enabled: false # TODO Can't run tests when console is enabled as it conflicts with paths in Azure Security setup
+      path: /h2-console
