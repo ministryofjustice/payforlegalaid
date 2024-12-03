@@ -165,63 +165,6 @@ class ReportTrackingTableServiceTest {
     }
 
     @Test
-    void shouldCorrectlyFormatReportUrlWhenUpdatingReportTrackingTable() {
-        // Given
-        int requestedId = 1;
-        var reportDetails = new ReportsGet200ResponseReportListInner() {{
-            setReportName("Report 1");
-            setId(1);
-        }};
-        when(mappingTableService.getDetailsForSpecificReport(requestedId)).thenReturn(reportDetails);
-        when(userService.getUserDetails(graphClient)).thenReturn(UserDetailsTestDataFactory.aValidUserDetails());
-
-        // When
-        reportTrackingTableService.updateReportTrackingTable(requestedId, graphClient);
-
-        // Then
-        ArgumentCaptor<ReportTrackingTable> captor = ArgumentCaptor.forClass(ReportTrackingTable.class);
-        verify(reportTrackingTableDao).updateTrackingTable(captor.capture());
-    }
-
-    @Test
-    void shouldCorrectlySetReportNameInTrackingTable() {
-        // Given
-        int requestedId = 1;
-        var reportDetails = new ReportsGet200ResponseReportListInner() {{
-            setReportName("Report 1");
-            setId(1);
-        }};
-        when(mappingTableService.getDetailsForSpecificReport(requestedId)).thenReturn(reportDetails);
-        when(userService.getUserDetails(graphClient)).thenReturn(UserDetailsTestDataFactory.aValidUserDetails());
-
-        // When
-        reportTrackingTableService.updateReportTrackingTable(requestedId, graphClient);
-
-        // Then
-        ArgumentCaptor<ReportTrackingTable> captor = ArgumentCaptor.forClass(ReportTrackingTable.class);
-        verify(reportTrackingTableDao).updateTrackingTable(captor.capture());
-    }
-
-    @Test
-    void shouldSetCorrectReportGeneratedByInTrackingTable() {
-        // Given
-        int requestedId = 1;
-        var reportDetails = new ReportsGet200ResponseReportListInner() {{
-            setReportName("Report 1");
-            setId(1);
-        }};
-        when(mappingTableService.getDetailsForSpecificReport(requestedId)).thenReturn(reportDetails);
-        when(userService.getUserDetails(graphClient)).thenReturn(UserDetailsTestDataFactory.aValidUserDetails());
-
-        // When
-        reportTrackingTableService.updateReportTrackingTable(requestedId, graphClient);
-
-        // Then
-        ArgumentCaptor<ReportTrackingTable> captor = ArgumentCaptor.forClass(ReportTrackingTable.class);
-        verify(reportTrackingTableDao).updateTrackingTable(captor.capture());
-    }
-
-    @Test
     void shouldThrowNullPointerExceptionWhenUserGeneratedByIsNull() {
         // Given
         int requestedId = 1;
