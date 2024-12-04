@@ -13,14 +13,12 @@ import uk.gov.laa.gpfd.services.ReportService;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ActiveProfiles("test")
+@ActiveProfiles("local")
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class HttpSecuritySessionManagementConfigurerBuilderTest {
+class HttpSecuritySessionManagementConfigurerBuilderLocalTest {
 
     @MockBean
     ReportService reportServiceMock;
@@ -28,8 +26,9 @@ class HttpSecuritySessionManagementConfigurerBuilderTest {
     @Autowired
     MockMvc mockMvc;
 
+    // Local profile just ignores Azure and requires no login session.
     @Test
-    void shouldNotHaveAccessToSecureEndpointAfterSessionExpires() throws Exception {
+    void shouldNotRedirectToAzureLoginEvenIfNoActiveSession() throws Exception {
         var reportId = 2;
         var reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();
 
@@ -37,13 +36,12 @@ class HttpSecuritySessionManagementConfigurerBuilderTest {
 
         mockMvc.perform(get("/report/{id}", reportId)
                         .sessionAttr("SPRING_SECURITY_CONTEXT", "null"))
-                .andExpect(status().is3xxRedirection())  // Should redirect after session expires
-                .andExpect(header().string("Location", "http://localhost/oauth2/authorization/azure"));  // Check that redirection goes to /login?expired
+                .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(reportId));
     }
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    void shouldValidSessionDoesNotRedirect() throws Exception {
+    void shouldLoadPageIfValidSession() throws Exception {
         var reportId = 2;
         var reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();
 
@@ -52,4 +50,5 @@ class HttpSecuritySessionManagementConfigurerBuilderTest {
         mockMvc.perform(get("/report/{id}", reportId))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(reportId));
     }
+
 }

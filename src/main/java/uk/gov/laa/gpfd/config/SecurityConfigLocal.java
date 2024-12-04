@@ -21,25 +21,8 @@ import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
  */
 @Configuration
 @RequiredArgsConstructor
-@ConditionalOnProperty(name = "spring.cloud.azure.active-directory.enabled", havingValue = "true")
-public class SecurityConfig {
-
-    /**
-     * The custom {@link AuthorizeHttpRequestsBuilder} responsible for configuring
-     * the authorization rules for HTTP requests, such as which endpoints are publicly
-     * accessible and which require authentication.
-     * This dependency is injected via constructor injection due to the
-     * {@link RequiredArgsConstructor} annotation.
-     */
-    private final AuthorizeHttpRequestsBuilder authorizeHttpRequestsBuilder;
-
-    /**
-     * The custom {@link SessionManagementConfigurerBuilder} responsible for configuring
-     * session management, including session concurrency control and session expiration.
-     * This dependency is injected via constructor injection due to the
-     * {@link RequiredArgsConstructor} annotation.
-     */
-    private final SessionManagementConfigurerBuilder sessionManagementConfigurerBuilder;
+@ConditionalOnProperty(name = "spring.cloud.azure.active-directory.enabled", havingValue = "false")
+public class SecurityConfigLocal {
 
     /**
      * Configures the {@link SecurityFilterChain} for the HTTP security settings.
@@ -55,10 +38,7 @@ public class SecurityConfig {
      */
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
-                .authorizeHttpRequests(authorizeHttpRequestsBuilder)    // Apply authorization rules
-                .sessionManagement(sessionManagementConfigurerBuilder)  // Apply session management configuration
-                .build();
+        return httpSecurity.authorizeHttpRequests(auth ->auth.anyRequest().permitAll()).build();
     }
 
 }
