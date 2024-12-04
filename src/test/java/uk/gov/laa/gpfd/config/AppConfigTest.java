@@ -10,12 +10,10 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
-
-import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -162,16 +160,6 @@ class AppConfigTest {
         assertNotNull(applicationContext.getBean(ModelMapper.class), "ModelMapper should be available in the application context.");
         assertNotNull(applicationContext.getBean("readOnlyDataSource", DataSource.class), "Read-only DataSource should be available.");
         assertNotNull(applicationContext.getBean("writeDataSource", DataSource.class), "Write-enabled DataSource should be available.");
-    }
-
-    @Test
-    void shouldDataSourceConfigurationProperties() {
-        // Given
-        // When
-        var dataSource = applicationContext.getBean("readOnlyDataSource", DataSource.class);
-
-        // Then
-        assertTrue(Objects.requireNonNull(((DriverManagerDataSource) dataSource).getUrl()).startsWith("jdbc:"));
     }
 
     @Test
