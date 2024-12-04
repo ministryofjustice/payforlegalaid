@@ -38,7 +38,10 @@ public class SecurityConfigLocal {
      */
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.authorizeHttpRequests(auth ->auth.anyRequest().permitAll()).build();
+        return httpSecurity
+                .headers().frameOptions().disable().disable()
+                .csrf().disable() //For the h2 console - remove this
+                .authorizeHttpRequests(auth ->auth.anyRequest().permitAll()).build();
     }
 
 }

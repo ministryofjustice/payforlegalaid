@@ -49,7 +49,7 @@ public class AppConfig {
      * @return a configured {@link DataSource} for read-only operations.
      */
     @Bean
-    @ConfigurationProperties(prefix = "gpfd.datasource.read-only")
+    @ConfigurationProperties(prefix = "spring.datasource.read-only")
     DataSource readOnlyDataSource() {
         return new DriverManagerDataSource();
     }
@@ -64,7 +64,7 @@ public class AppConfig {
      * @return a configured {@link DataSource} for write operations.
      */
     @Bean
-    @ConfigurationProperties(prefix = "gpfd.datasource.write")
+    @ConfigurationProperties(prefix = "spring.datasource.write")
     DataSource writeDataSource() {
         return new DriverManagerDataSource();
     }

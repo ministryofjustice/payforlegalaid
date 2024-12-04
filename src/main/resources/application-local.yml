@@ -13,17 +13,21 @@ logging:
 
 
 gpfd:
-  datasource:
-    read-only:
-      url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
-      username: ${MOJFIN_DEV_READ_USERNAME}
-      password: ${MOJFIN_DEV_READ_PASSWORD}
-      driver-class-name: oracle.jdbc.OracleDriver
-    write:
-      url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
-      username: ${MOJFIN_DEV_WRITE_USERNAME}
-      password: ${MOJFIN_DEV_WRITE_PASSWORD}
-      driver-class-name: oracle.jdbc.OracleDriver
+#  datasource:
+#    read-only:
+#      url: jdbc:h2:mem:MOJFIN;DB_CLOSE_DELAY=-1;MODE=Oracle
+#      username: sa
+#      password:
+#      driver-class-name: org.h2.Driver
+#      initilization-mode: embedded
+#    #      generate-unique-name: false
+#    write:
+#      url: jdbc:h2:mem:MOJFIN;DB_CLOSE_DELAY=-1;MODE=Oracle
+#      username: sa
+#      password:
+#      driver-class-name: org.h2.Driver
+#      initilization-mode: embedded
+#    #      generate-unique-name: false
 
 spring:
   cloud:
@@ -41,3 +45,44 @@ spring:
           graph:
             scopes:
               - https://graph.microsoft.com/User.Read
+  datasource:
+#    initialization-mode: always
+#    schema: classpath:schema.sql
+#    data: classpath:data.sql
+    read-only:
+      url: jdbc:h2:mem:MOJFIN;DB_CLOSE_DELAY=-1;MODE=Oracle
+      username: sa
+      password:
+      driver-class-name: org.h2.Driver
+      initialization-mode: always
+      schema: classpath:schema.sql
+      data: classpath:data.sql
+      # initilization-mode: embedded
+    #      generate-unique-name: false
+    write:
+      url: jdbc:h2:mem:MOJFIN;DB_CLOSE_DELAY=-1;MODE=Oracle
+      username: sa
+      password:
+      driver-class-name: org.h2.Driver
+      initialization-mode: always
+#      schema: classpath:schema.sql
+#      data: classpath:data.sql
+
+      # initilization-mode: embedded
+    #      generate-unique-name: false
+
+  h2:
+    console:
+      enabled:
+        true
+  jpa:
+    database-platform:
+      org.hibernate.dialect.Oracle12cDialect
+    hibernate:
+      ddl-auto:
+        none
+    generate-ddl: false
+
+  sql:
+    init:
+      mode: always
