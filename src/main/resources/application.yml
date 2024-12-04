@@ -22,32 +22,3 @@ springdoc:
     enabled: false
   swagger-ui:
     url: /swagger.yml
-
-#spring:
-#  redirect-uri-template: https://http://localhost:8080
-#  datasource:
-##    initialization-mode: always
-##    schema: classpath:schema.sql
-##    data: classpath:data.sql
-#    read-only:
-#      url: jdbc:h2:mem:MOJFIN;DB_CLOSE_DELAY=-1;MODE=Oracle
-#      username: sa
-#      password:
-#      driver-class-name: org.h2.Driver
-#      initialization-mode: always
-#      schema: classpath:schema.sql
-#      data: classpath:data.sql
-#      # initilization-mode: embedded
-#    #      generate-unique-name: false
-#    write:
-#      url: jdbc:h2:mem:MOJFIN;DB_CLOSE_DELAY=-1;MODE=Oracle
-#      username: sa
-#      password:
-#      driver-class-name: org.h2.Driver
-#      initialization-mode: always
-##      schema: classpath:schema.sql
-##      data: classpath:data.sql
-#
-#      # initilization-mode: embedded
-#    #      generate-unique-name: false
-

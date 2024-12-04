@@ -1,8 +1,6 @@
 package uk.gov.laa.gpfd.config;
 
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.jdbc.init.DataSourceScriptDatabaseInitializer;
-import org.springframework.boot.sql.init.DatabaseInitializationSettings;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -25,11 +23,8 @@ public class DatabaseConfigLocal {
         ResourceDatabasePopulator schemaPopulator = new ResourceDatabasePopulator();
         schemaPopulator.addScript(new ClassPathResource("schema.sql"));
         schemaPopulator.addScript(new ClassPathResource("data.sql"));
-       // ResourceDatabasePopulator dataPopulator = new ResourceDatabasePopulator();
-        //dataPopulator.addScript(new ClassPathResource("data.sql"));
 
         initialiser.setDatabasePopulator(schemaPopulator);
-        //initialiser.setDatabasePopulator(dataPopulator);
         return initialiser;
     }
 }
