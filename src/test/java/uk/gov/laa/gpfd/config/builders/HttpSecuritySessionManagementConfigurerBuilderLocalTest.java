@@ -14,8 +14,7 @@ import uk.gov.laa.gpfd.services.ReportService;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ActiveProfiles("local")
 @AutoConfigureMockMvc
@@ -63,9 +62,9 @@ class HttpSecuritySessionManagementConfigurerBuilderLocalTest {
         when(reportServiceMock.createReportResponse(reportId)).thenReturn(reportResponseMock);
 
         mockMvc.perform(get("/report/{id}", reportId))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(status().isOk())
                 // This is the header that tells the browser what to allow.
-                .andExpect(MockMvcResultMatchers.header().string("X-Frame-Options", "SAMEORIGIN"));
+                .andExpect(header().string("X-Frame-Options", "SAMEORIGIN"));
     }
 
 }
