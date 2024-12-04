@@ -24,9 +24,9 @@ public class ReportsGet200ResponseReportListInnerMapper {
      */
     public static ReportsGet200ResponseReportListInner map(MappingTable mappingTable) {
         return new ReportsGet200ResponseReportListInner() {{
-            setId(mappingTable.id().orElse(null));
-            setReportName(mappingTable.reportName().orElse(null));
-            description(mappingTable.description().orElse(null));
+            setId(mappingTable.getId());
+            setReportName(mappingTable.getReportName());
+            description(mappingTable.getDescription());
         }};
     }
 }
