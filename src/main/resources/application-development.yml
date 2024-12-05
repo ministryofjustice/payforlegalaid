@@ -1,6 +1,6 @@
 gpfd:
-  # DEV MOJFIN database config (also used by GPFD in UAT):
   redirect-uri-template: https://laa-get-payments-finance-data-dev.apps.live.cloud-platform.service.justice.gov.uk/login/oauth2/code/gpfd-azure-dev
+  # DEV MOJFIN database config (also used by GPFD in UAT):
   datasource:
     read-only:
           url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
