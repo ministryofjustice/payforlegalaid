@@ -4,19 +4,15 @@ gpfd:
   # DEV MOJFIN database config. Test SQL will be written in vanilla ANSI SQL, as H2 still has issues with Oracle syntax - despite the mode being set to oracle
   datasource:
     read-only:
-      url: jdbc:h2:mem:MOJFIN;DB_CLOSE_DELAY=-1;MODE=Oracle
+      url: jdbc:h2:mem:MOJFINTest;DB_CLOSE_DELAY=-1;MODE=Oracle
       username: sa
       password:
       driver-class-name: org.h2.Driver
-      initilization-mode: embedded
-    #      generate-unique-name: false
     write:
-      url: jdbc:h2:mem:MOJFIN;DB_CLOSE_DELAY=-1;MODE=Oracle
+      url: jdbc:h2:mem:MOJFINTest;DB_CLOSE_DELAY=-1;MODE=Oracle
       username: sa
       password:
       driver-class-name: org.h2.Driver
-      initilization-mode: embedded
-    #      generate-unique-name: false
 
 
 # Azure AD and Graph config
@@ -39,10 +35,6 @@ spring:
     init:
       platform: h2
       mode: always
-    #        platform: h2
-    #        schema-locations: 'classpath:schema-h2.sql'
-    #        data-locations: 'classpath:data-h2.sql'
-    #        continue-on-error: true
   h2:
     console:
       enabled: false # TODO Can't run tests when console is enabled as it conflicts with paths in Azure Security setup
