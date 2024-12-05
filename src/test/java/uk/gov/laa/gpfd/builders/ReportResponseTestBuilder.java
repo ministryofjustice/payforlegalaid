@@ -1,6 +1,6 @@
 package uk.gov.laa.gpfd.builders;
 
-import uk.gov.laa.gpfd.model.ReportIdGet200Response;
+import uk.gov.laa.gpfd.model.GetReportById200Response;
 
 import java.net.URI;
 
@@ -30,8 +30,8 @@ public class ReportResponseTestBuilder {
         return this;
     }
 
-    public ReportIdGet200Response createReportResponse() {
-        return new ReportIdGet200Response() {{
+    public GetReportById200Response createReportResponse() {
+        return new GetReportById200Response() {{
             id(id);
             reportName(reportName);
             reportDownloadUrl(URI.create(reportDownloadUrl));
