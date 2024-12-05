@@ -22,18 +22,3 @@ springdoc:
     enabled: false
   swagger-ui:
     url: /swagger.yml
-
-gpfd:
-  # DEV MOJFIN database config (also used by GPFD in UAT):
-  datasource:
-    read-only:
-      url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
-      username: ${MOJFIN_DEV_READ_USERNAME}
-      password: ${MOJFIN_DEV_READ_PASSWORD}
-      driver-class-name: oracle.jdbc.OracleDriver
-    write:
-      url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
-      username: ${MOJFIN_DEV_WRITE_USERNAME}
-      password: ${MOJFIN_DEV_WRITE_PASSWORD}
-      driver-class-name: oracle.jdbc.OracleDriver
-

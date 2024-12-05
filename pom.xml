@@ -251,6 +251,11 @@
             <artifactId>commons-csv</artifactId>
             <version>${apache-commons-csv.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
+        </dependency>
 
         <!-- Test Dependencies-->
         <dependency>
@@ -269,12 +274,6 @@
             <artifactId>mockito-inline</artifactId>
             <version>${mockito-inlin.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>test</scope>
-            <version>${h2.version}</version>
         </dependency>
         <dependency>
             <groupId>net.bytebuddy</groupId>
