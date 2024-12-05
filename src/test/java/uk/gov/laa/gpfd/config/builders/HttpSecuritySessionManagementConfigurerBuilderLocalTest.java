@@ -51,8 +51,6 @@ class HttpSecuritySessionManagementConfigurerBuilderLocalTest {
                 .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(reportId));
     }
 
-    //TODO: a test that confirms h2-console can be accessed? Can't get that test to work currently but would be nice
-
     @Test
     public void shouldOnlyAllowSameOriginExternalFrames() throws Exception {
         var reportId = 2;
