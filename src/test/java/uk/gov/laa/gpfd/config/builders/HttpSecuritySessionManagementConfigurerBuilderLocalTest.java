@@ -51,4 +51,17 @@ class HttpSecuritySessionManagementConfigurerBuilderLocalTest {
                 .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(reportId));
     }
 
+    @Test
+    public void shouldOnlyAllowSameOriginExternalFrames() throws Exception {
+        var reportId = 2;
+        var reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();
+
+        when(reportServiceMock.createReportResponse(reportId)).thenReturn(reportResponseMock);
+
+        mockMvc.perform(get("/report/{id}", reportId))
+                .andExpect(status().isOk())
+                // This is the header that tells the browser what to allow.
+                .andExpect(header().string("X-Frame-Options", "SAMEORIGIN"));
+    }
+
 }
