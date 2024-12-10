@@ -1,0 +1,163 @@
+openapi: 3.0.0
+info:
+  title: PayForLegalAid API
+  version: 1.0.0
+  description: API for accessing financial reports related to legal aid payments.
+  contact:
+    name: Ministry of Justice
+
+components:
+  responses:
+    UnauthorizedError:
+      description: Unauthorized. A valid OAuth2 token is required.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Unauthorized access. OAuth2 token required."
+    NotFoundError:
+      description: Resource not found in the database.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "ReportIdNotFoundException: Resource not found."
+    InternalServerError:
+      description: An unexpected server error occurred.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "InternalServerError: An unknown error occurred."
+    BadRequestError:
+      description: The request is invalid or improperly formatted.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "BadRequestException: The request could not be processed."
+
+paths:
+  /reports:
+    get:
+      summary: List All Available Reports
+      description: Retrieves a list of all available reports, including each report's ID, name, and metadata.
+      responses:
+        '200':
+          description: A JSON array containing metadata for each report.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reportList:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        reportName:
+                          type: string
+                          example: "Invoice_analysis"
+                        description:
+                          type: string
+                          example: "Summary of invoices by source system"
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /report/{id}:
+    get:
+      summary: Retrieve Report Metadata by ID
+      description: Fetches metadata for a specific report using the provided report ID. This includes the report name, ID, and download URL.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: The unique ID of the requested report.
+      responses:
+        '200':
+          description: JSON object with metadata for the specified report.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  reportName:
+                    type: string
+                    example: "Invoice_analysis-analysis"
+                  reportDownloadUrl:
+                    type: string
+                    format: uri
+                    example: "https://<service_destination>/csv/1"
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /csv/{id}:
+    get:
+      summary: Download Report as CSV Stream
+      description: Provides a CSV data stream for a specified report ID. This can trigger a file download when accessed via a browser.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+          description: The unique ID of the requested report.
+      responses:
+        '200':
+          description: A CSV data stream of the report. The data is streamed as an attachment.
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+                example: |
+                  "date","amount","description"
+                  "2023-01-01","1000","Legal Aid Case Payment"
+          headers:
+            Content-Disposition:
+              description: Specifies that the response is a downloadable attachment with a file name.
+              schema:
+                type: string
+                example: "attachment; filename=report.csv"
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'

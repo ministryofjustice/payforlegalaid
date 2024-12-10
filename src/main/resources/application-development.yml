@@ -1,12 +1,12 @@
 gpfd:
-  redirect-uri-template: https://laa-get-payments-finance-data-uat.apps.live.cloud-platform.service.justice.gov.uk/login/oauth2/code/gpfd-azure-uat
-  # DEV MOJFIN database config - needs to change to UAT when that exists:
+  redirect-uri-template: https://laa-get-payments-finance-data-dev.apps.live.cloud-platform.service.justice.gov.uk/login/oauth2/code/gpfd-azure-dev
+  # DEV MOJFIN database config (also used by GPFD in UAT):
   datasource:
     read-only:
-      url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
-      username: ${MOJFIN_DEV_READ_USERNAME}
-      password: ${MOJFIN_DEV_READ_PASSWORD}
-      driver-class-name: oracle.jdbc.OracleDriver
+          url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
+          username: ${MOJFIN_DEV_READ_USERNAME}
+          password: ${MOJFIN_DEV_READ_PASSWORD}
+          driver-class-name: oracle.jdbc.OracleDriver
     write:
       url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
       username: ${MOJFIN_DEV_WRITE_USERNAME}
@@ -19,10 +19,10 @@ spring:
       active-directory:
         enabled: true
         profile:
-          tenant-id: ${AZURE_TENANT_ID_UAT}
+          tenant-id: ${AZURE_TENANT_ID}
         credential:
-          client-id: ${AZURE_CLIENT_ID_UAT}
-          client-secret: ${AZURE_CLIENT_SECRET_UAT}
+          client-id: ${AZURE_CLIENT_ID}
+          client-secret: ${AZURE_CLIENT_SECRET}
         redirect-uri-template: ${gpfd.redirect-uri-template}
         authorization-clients:
           graph:

@@ -1,0 +1,24 @@
+name: Build and push docker image
+
+runs:
+  using: 'composite'
+
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Build with Maven
+      run: mvn -B -DskipTests clean package
+      shell:
+        bash
+
+    - name: Build and push Docker image to container repository
+      run: |
+        docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+        docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+      env:
+        REGISTRY: ${{ env.REGISTRY }}
+        REPOSITORY: ${{ env.REPOSITORY }}
+        IMAGE_TAG: ${{ env.IMAGE_TAG }}
+      shell: bash

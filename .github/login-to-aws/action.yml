@@ -1,0 +1,14 @@
+name: Login to AWS
+
+runs:
+  using: 'composite'
+
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Assume role in Cloud Platform
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ env.ROLE }}
+        aws-region: ${{ env.AWS_REGION }}
