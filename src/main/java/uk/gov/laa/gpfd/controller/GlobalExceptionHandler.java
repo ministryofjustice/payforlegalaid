@@ -11,10 +11,12 @@ import uk.gov.laa.gpfd.exception.CsvStreamException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.model.ReportsGet400Response;
+import uk.gov.laa.gpfd.model.ReportsGet404Response;
 import uk.gov.laa.gpfd.model.ReportsGet500Response;
 
 import static org.springframework.http.ResponseEntity.badRequest;
 import static org.springframework.http.ResponseEntity.internalServerError;
+import static org.springframework.http.ResponseEntity.notFound;
 
 /**
  * Global exception handler for managing exceptions thrown by controllers.
@@ -63,21 +65,21 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles ReportIdNotFoundException and responds with an HTTP 400 Bad Request.
+     * Handles ReportIdNotFoundException and responds with an HTTP 404 Not Found.
      *
      * @param e the ReportIdNotFoundException thrown when a requested report ID is not found.
-     * @return a {@link ResponseEntity} containing a {@link ReportsGet400Response} with error details.
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet404Response} with error details.
      */
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ReportIdNotFoundException.class)
     public ResponseEntity<ReportsGet400Response> handleReportIdNotFoundException(ReportIdNotFoundException e) {
-        var response = new ReportsGet400Response() {{
+        var response = new ReportsGet404Response() {{
             setError(e.getMessage());
         }};
 
         log.error("ReportIdNotFoundException Thrown: %s".formatted(response));
 
-        return badRequest().body(response);
+        return notFound().build();
     }
 
     /**

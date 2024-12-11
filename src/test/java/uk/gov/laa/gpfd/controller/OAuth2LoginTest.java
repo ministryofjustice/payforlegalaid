@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
+@ActiveProfiles("testauth")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class OAuth2LoginTest {
 
@@ -54,8 +54,6 @@ class OAuth2LoginTest {
         // Given
         var mock = ReportListEntryTestDataFactory.aValidReportsGet200ResponseReportListInner();
         when(mappingTableServiceMock.fetchReportListEntries()).thenReturn(singletonList(mock));
-
-        // When
         // Then
         mockMvc.perform(MockMvcRequestBuilders.get("/reports"))
                 .andExpect(status().isOk());
