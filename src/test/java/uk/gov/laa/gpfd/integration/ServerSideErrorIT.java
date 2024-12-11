@@ -33,4 +33,12 @@ class ServerSideErrorIT {
 
         Assertions.assertEquals(500, response.getStatus());
     }
+
+    @Test
+    void getReportWithIdShouldReturn500WhenCannotConnectToDb() throws Exception {
+        MockHttpServletResponse response =  mockMvc.perform(get("/report/1")
+                .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+
+        Assertions.assertEquals(500, response.getStatus());
+    }
 }
