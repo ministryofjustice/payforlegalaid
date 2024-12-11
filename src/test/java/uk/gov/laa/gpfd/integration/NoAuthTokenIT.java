@@ -42,8 +42,18 @@ class NoAuthTokenIT {
         MockHttpServletResponse response = mockMvc.perform(get("/report/1")
                 .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
-//TODO confirm when dev env is fixed is this should be 401 or 302 (redirect)
+        //TODO confirm when dev env is fixed is this should be 401 or 302 (redirect)
         Assertions.assertEquals(302, response.getStatus());
 //        Assertions.assertEquals(401, response.getStatus());
     }
+
+    @Test
+    void getCsvWithIdShouldReturn401WithoutAuthToken() throws Exception {
+        MockHttpServletResponse response =  mockMvc.perform(get("/csv/1")
+                .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+
+//TODO confirm when dev env is fixed is this should be 401 or 302 (redirect)
+        Assertions.assertEquals(302, response.getStatus());
+//        Assertions.assertEquals(401, response.getStatus());
+        }
 }

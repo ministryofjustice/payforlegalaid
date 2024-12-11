@@ -41,4 +41,12 @@ class ServerSideErrorIT {
 
         Assertions.assertEquals(500, response.getStatus());
     }
+
+    @Test
+    void getCsvWithIdShouldReturn500WhenCannotConnectToDb() throws Exception {
+        MockHttpServletResponse response =  mockMvc.perform(get("/csv/1")
+                .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+
+        Assertions.assertEquals(500, response.getStatus());
+    }
 }
