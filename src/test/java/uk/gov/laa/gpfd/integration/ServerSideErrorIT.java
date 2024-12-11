@@ -27,7 +27,7 @@ class ServerSideErrorIT {
     private JdbcTemplate writeJdbcTemplate;
 
     @Test
-    void getReportsShouldReturn401WithoutAuthToken() throws Exception {
+    void getReportsShouldReturn500WhenCannotConnectToDb() throws Exception {
         MockHttpServletResponse response =  mockMvc.perform(get("/reports")
                 .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
