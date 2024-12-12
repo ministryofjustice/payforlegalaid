@@ -17,6 +17,11 @@ jobs:
       - uses: './.github/build-and-test'
 
       # test it works by sticking it here first
+      - name: Build with Maven
+        run: mvn -B -DskipTests clean package
+        shell:
+          bash
+
       - name: Build a Docker image
         run: |
           docker build \
