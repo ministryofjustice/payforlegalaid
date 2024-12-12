@@ -8,6 +8,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
+import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.model.MappingTable;
 
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public class MappingTableDao {
         }
 
         if (resultList.isEmpty()) {
-            throw new DatabaseReadException("No results returned from mapping table");
+            throw new ReportIdNotFoundException("No results returned from mapping table");
         }
 
         try {
