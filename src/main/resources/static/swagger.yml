@@ -10,12 +10,6 @@ info:
   contact:
     name: Ministry of Justice
 
-servers:
-  - url: https://api.apps.live.cloud-platform.service.justice.gov.uk/
-    description: Production server
-  - url: https://<staging>.apps.live.cloud-platform.service.justice.gov.uk/
-    description: Staging server
-
 components:
   links:
     ReportDetailsLink:
