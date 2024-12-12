@@ -5,9 +5,7 @@ info:
   description: >
     API for accessing financial reports related to legal aid payments.
     **Authentication Notice**: 
-    All endpoints are secured using OAuth 2.0 with Azure Graph. A valid access token must be provided 
-    in the `Authorization` header of each request in the following format: 
-    `Authorization: Bearer <ACCESS_TOKEN>`.
+    All endpoints are secured using OAuth 2.0 with Azure Graph.
 
   contact:
     name: Ministry of Justice
@@ -31,11 +29,6 @@ components:
       description: Download the report as a CSV stream using its ID.
       parameters:
         id: $response.body#/id
-  securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
 
   responses:
     UnauthorizedError:
@@ -79,14 +72,9 @@ components:
                 type: string
                 example: "BadRequestException: The request could not be processed."
 
-security:
-  - BearerAuth: []
-
 paths:
   /reports:
     get:
-      security:
-        - BearerAuth: [ ]
       tags:
         - Reports
       summary: List All Available Reports
@@ -131,8 +119,6 @@ paths:
   /reports/{id}:
     get:
       operationId: getReportById
-      security:
-        - BearerAuth: [ ]
       tags:
         - Reports
       summary: Retrieve Report Metadata by ID
@@ -192,8 +178,6 @@ paths:
     get:
       tags:
         - Reports
-      security:
-        - BearerAuth: [ ]
       summary: Download Report as CSV Stream
       description: Provides a CSV data stream for a specified report ID. This can trigger a file download when accessed via a browser.
       parameters:
