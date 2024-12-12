@@ -28,6 +28,11 @@ spring:
           graph:
             scopes:
               - https://graph.microsoft.com/User.Read
+logging:
+  level:
+    com.azure: DEBUG
+    org.springframework.security: DEBUG
+
 
 server:
   port: 8443
