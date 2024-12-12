@@ -36,7 +36,6 @@ class NoAuthTokenIT {
 //        Assertions.assertEquals(401, response.getStatus());
     }
 
-    // 401 response
     @Test
     void getReportWithIdShouldReturn401WithoutAuthToken() throws Exception {
         MockHttpServletResponse response = mockMvc.perform(get("/report/1")
