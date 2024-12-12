@@ -80,8 +80,8 @@ public class ReportService {
         //Get CSV data stream
         ByteArrayOutputStream csvDataOutputStream;
         try {
-            log.debug("Creating CSV stream with id: " + reportListResponse.id());
-            csvDataOutputStream = createCsvStream(reportListResponse.sqlQuery().orElseThrow());
+            log.debug("Creating CSV stream with id: " + reportListResponse.getId());
+            csvDataOutputStream = createCsvStream(reportListResponse.getSqlQuery());
         } catch (IOException e) {
             throw new CsvStreamException("Error creating CSV data stream: " + e);
         }
@@ -97,7 +97,7 @@ public class ReportService {
         };
 
         return ResponseEntity.ok()
-                .header("Content-Disposition", "attachment; filename=" + reportListResponse.reportName() + ".csv")
+                .header("Content-Disposition", "attachment; filename=" + reportListResponse.getReportName() + ".csv")
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(responseBody);
     }

@@ -5,7 +5,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
 
@@ -21,25 +23,8 @@ import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
  */
 @Configuration
 @RequiredArgsConstructor
-@ConditionalOnProperty(name = "spring.cloud.azure.active-directory.enabled", havingValue = "true")
-public class SecurityConfig {
-
-    /**
-     * The custom {@link AuthorizeHttpRequestsBuilder} responsible for configuring
-     * the authorization rules for HTTP requests, such as which endpoints are publicly
-     * accessible and which require authentication.
-     * This dependency is injected via constructor injection due to the
-     * {@link RequiredArgsConstructor} annotation.
-     */
-    private final AuthorizeHttpRequestsBuilder authorizeHttpRequestsBuilder;
-
-    /**
-     * The custom {@link SessionManagementConfigurerBuilder} responsible for configuring
-     * session management, including session concurrency control and session expiration.
-     * This dependency is injected via constructor injection due to the
-     * {@link RequiredArgsConstructor} annotation.
-     */
-    private final SessionManagementConfigurerBuilder sessionManagementConfigurerBuilder;
+@ConditionalOnProperty(name = "spring.cloud.azure.active-directory.enabled", havingValue = "false")
+public class SecurityConfigLocal {
 
     /**
      * Configures the {@link SecurityFilterChain} for the HTTP security settings.
@@ -56,9 +41,11 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .authorizeHttpRequests(authorizeHttpRequestsBuilder)    // Apply authorization rules
-                .sessionManagement(sessionManagementConfigurerBuilder)  // Apply session management configuration
-                .build();
+                // Allow h2-console to ignore CSRF or it won't load
+                .csrf(csrf -> csrf.ignoringRequestMatchers(new AntPathRequestMatcher("/h2-console/**")))
+                // Allow h2-console to display in web-frames
+                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll()).build();
     }
 
 }

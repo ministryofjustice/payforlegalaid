@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @SuppressWarnings("DataFlowIssue")
 class GlobalExceptionHandlerTest {
@@ -64,7 +65,7 @@ class GlobalExceptionHandlerTest {
         var response = globalExceptionHandler.handleReportIdNotFoundException(exception);
 
         // Then
-        assertEquals(BAD_REQUEST, response.getStatusCode());
+        assertEquals(NOT_FOUND, response.getStatusCode());
         assertEquals("", response.getBody().getError());
     }
 
@@ -129,7 +130,7 @@ class GlobalExceptionHandlerTest {
         var response = globalExceptionHandler.handleReportIdNotFoundException(exception);
 
         // Then
-        assertEquals(BAD_REQUEST, response.getStatusCode());
+        assertEquals(NOT_FOUND, response.getStatusCode());
         assertEquals("Report ID not found", response.getBody().getError());
     }
 
@@ -196,7 +197,7 @@ class GlobalExceptionHandlerTest {
         var response = globalExceptionHandler.handleReportIdNotFoundException(exception);
 
         // Then
-        assertEquals(BAD_REQUEST, response.getStatusCode());
+        assertEquals(NOT_FOUND, response.getStatusCode());
         assertEquals(longMessage, response.getBody().getError());
     }
 
@@ -289,7 +290,7 @@ class GlobalExceptionHandlerTest {
         var response = globalExceptionHandler.handleReportIdNotFoundException(exception);
 
         // Then
-        assertEquals(BAD_REQUEST, response.getStatusCode());
+        assertEquals(NOT_FOUND, response.getStatusCode());
         assertEquals("Report   ID   not   found", response.getBody().getError());
     }
 
@@ -342,7 +343,7 @@ class GlobalExceptionHandlerTest {
         var response = globalExceptionHandler.handleReportIdNotFoundException(exception);
 
         // Then
-        assertEquals(BAD_REQUEST, response.getStatusCode());
+        assertEquals(NOT_FOUND, response.getStatusCode());
         assertEquals("Informe no encontrado", response.getBody().getError());
     }
 
@@ -383,7 +384,7 @@ class GlobalExceptionHandlerTest {
         var response = globalExceptionHandler.handleReportIdNotFoundException(exception);
 
         // Then
-        assertEquals(BAD_REQUEST, response.getStatusCode());
+        assertEquals(NOT_FOUND, response.getStatusCode());
         assertEquals("Ni chanfuwyd adnabodwyr adroddiad", response.getBody().getError());
     }
 
@@ -436,7 +437,7 @@ class GlobalExceptionHandlerTest {
         var response = globalExceptionHandler.handleReportIdNotFoundException(exception);
 
         // Then
-        assertEquals(BAD_REQUEST, response.getStatusCode());
+        assertEquals(NOT_FOUND, response.getStatusCode());
         assertEquals("\n\n\n", response.getBody().getError());
     }
 
