@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
@@ -23,12 +22,17 @@ class ServerSideErrorIT {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private JdbcTemplate writeJdbcTemplate;
-
     @Test
     void getReportsShouldReturn500WhenCannotConnectToDb() throws Exception {
         MockHttpServletResponse response =  mockMvc.perform(get("/reports")
+                .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+
+        Assertions.assertEquals(500, response.getStatus());
+    }
+
+    @Test
+    void getReportWithIdShouldReturn500WhenCannotConnectToDb() throws Exception {
+        MockHttpServletResponse response =  mockMvc.perform(get("/report/1")
                 .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
         Assertions.assertEquals(500, response.getStatus());

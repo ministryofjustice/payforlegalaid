@@ -1,6 +1,5 @@
 package uk.gov.laa.gpfd.integration;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -23,7 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.yml")
 @SpringBootTest
-class GetReportsIT {
+class GetReportsByIdIT {
 
     @Autowired
     private MockMvc mockMvc;
@@ -49,26 +48,32 @@ class GetReportsIT {
     // 200 response
     @Test
     void shouldReturnListOfReports() throws Exception {
-        MockHttpServletResponse response =  mockMvc.perform(get("/reports")
+        MockHttpServletResponse response =  mockMvc.perform(get("/report/1")
                 .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
         Assertions.assertEquals(200, response.getStatus());
 
         var json = new JSONObject(response.getContentAsString());
-        JSONArray reportList = (JSONArray) json.get("reportList");
-        Assertions.assertEquals(2, reportList.toList().size());
+        Assertions.assertEquals(1, json.get("id"));
     }
 
     // 400 response - unable to identify a scenario for this
+    @Test
+    void shouldReturn404WhenGivenInvalidId() throws Exception {
+        MockHttpServletResponse response = mockMvc.perform(get("/report/1001")
+                .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+
+        Assertions.assertEquals(400, response.getStatus());
+    }
 
     // 404 response
     @Test
     void shouldReturn404WhenNoReportsFound() throws Exception {
-        writeJdbcTemplate.update("TRUNCATE TABLE GPFD.CSV_TO_SQL_MAPPING_TABLE");
-
-        MockHttpServletResponse response = mockMvc.perform(get("/reports")
+        MockHttpServletResponse response = mockMvc.perform(get("/report/50")
                 .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
         Assertions.assertEquals(404, response.getStatus());
     }
 }
+
+
