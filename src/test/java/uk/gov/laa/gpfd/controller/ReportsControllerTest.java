@@ -111,11 +111,6 @@ class ReportsControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    void getReportListReturnsCorrectResponseEntity2() throws Exception {
-    }
-
-    @Test
-    @WithMockUser(roles = "ADMIN")
     void getReportReturnsCorrectResponseEntity() throws Exception {
         int reportId = 2;
 
