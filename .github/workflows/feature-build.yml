@@ -6,9 +6,35 @@ on:
 
 jobs:
   feature_branch:
+    permissions:
+      security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout GitHub repository
         uses: actions/checkout@v4
 
       - uses: './.github/build-and-test'
+
+      # test it works by sticking it here first
+      - name: Build a Docker image
+        run: |
+          docker build \
+            -t app .
+      - name: Run Snyk to check Docker image for vulnerabilities
+        # Snyk can be used to break the build when it detects vulnerabilities.
+        # In this case we want to upload the issues to GitHub Code Scanning
+        continue-on-error: true
+        uses: snyk/actions/docker@0.4.0
+        env:
+          # In order to use the Snyk Action you will need to have a Snyk API token.
+          # More details in https://github.com/snyk/actions#getting-your-snyk-token
+          # or you can signup for free at https://snyk.io/login
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: app
+          args: --file=Dockerfile --severity-threshold=low --sarif-file-output=snyk.sarif
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: snyk.sarif
