@@ -3,12 +3,8 @@ name: Scan docker image
 on:
   workflow_dispatch:
   schedule:
-#    branches:
-#      - main
     # Run at 7:30AM UTC every day
-    - cron:  '50 15 * * *'
-      branches:
-        - LPF-513/snyk
+    - cron:  '30 07 * * *'
 
 jobs:
   scan-docker-image:
@@ -44,7 +40,7 @@ jobs:
             SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
           with:
             image: payforlegalaid:scan
-            args: --file=Dockerfile
+            args: --file=Dockerfile --sarif-file-output=snyk.sarif
 
         - name: Monitor docker image using Snyk
           uses: snyk/actions/docker@master
