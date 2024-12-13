@@ -48,7 +48,7 @@ class GetReportsByIdIT {
     // 200 response
     @Test
     void shouldReturnListOfReports() throws Exception {
-        MockHttpServletResponse response =  mockMvc.perform(get("/report/1")
+        MockHttpServletResponse response =  mockMvc.perform(get("/reports/1")
                 .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
         Assertions.assertEquals(200, response.getStatus());
@@ -60,7 +60,7 @@ class GetReportsByIdIT {
     // 400 response - unable to identify a scenario for this
     @Test
     void shouldReturn404WhenGivenInvalidId() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get("/report/1001")
+        MockHttpServletResponse response = mockMvc.perform(get("/reports/1001")
                 .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
         Assertions.assertEquals(400, response.getStatus());
@@ -69,7 +69,7 @@ class GetReportsByIdIT {
     // 404 response
     @Test
     void shouldReturn404WhenNoReportsFound() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get("/report/50")
+        MockHttpServletResponse response = mockMvc.perform(get("/reports/50")
                 .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
         Assertions.assertEquals(404, response.getStatus());
