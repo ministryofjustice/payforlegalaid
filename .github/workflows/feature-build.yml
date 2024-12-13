@@ -27,16 +27,16 @@ jobs:
       - name: Check JAVA_HOME
         run: echo $JAVA_HOME
 
-      - name: Stuff
-        run: mvn dependency:tree -DoutputType=dot --batch-mode --non-recursive --file="pom.xml"
-
-
       - uses: snyk/actions/setup@master
       - name: Snyk test
         continue-on-error: true
         run: snyk test --all-projects --sarif-file=snyk.sarif
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      - name: Stuff
+        run: ls -lart | cat
+
 
       - name: Upload Snyk results
         uses: github/codeql-action/upload-sarif@v3
