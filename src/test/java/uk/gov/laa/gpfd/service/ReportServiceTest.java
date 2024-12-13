@@ -9,7 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
 import uk.gov.laa.gpfd.dao.ReportViewsDao;
 import uk.gov.laa.gpfd.data.ReportListEntryTestDataFactory;
-import uk.gov.laa.gpfd.model.ReportIdGet200Response;
+import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 import uk.gov.laa.gpfd.services.MappingTableService;
 import uk.gov.laa.gpfd.services.ReportService;
@@ -60,11 +60,11 @@ class ReportServiceTest {
         // Mocking the data from mapping table
         ReportsGet200ResponseReportListInner mockReportListResponse = ReportListEntryTestDataFactory.aValidReportsGet200ResponseReportListInner();
 
-        ReportIdGet200Response expectedReportResponse = new ReportResponseTestBuilder().createReportResponse();
+        GetReportById200Response expectedReportResponse = new ReportResponseTestBuilder().createReportResponse();
         when(mappingTableService.getDetailsForSpecificReport(1)).thenReturn(mockReportListResponse);
 
         //Act
-        ReportIdGet200Response actualReportResponse = reportService.createReportResponse(1);
+        GetReportById200Response actualReportResponse = reportService.createReportResponse(1);
 
         //check something
         assertEquals(expectedReportResponse.getReportName(), actualReportResponse.getReportName());

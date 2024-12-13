@@ -2,11 +2,28 @@ openapi: 3.0.0
 info:
   title: PayForLegalAid API
   version: 1.0.0
-  description: API for accessing financial reports related to legal aid payments.
+  description: >
+    API for accessing financial reports related to legal aid payments.
+    **Authentication Notice**: 
+    All endpoints are secured using OAuth 2.0 with Azure Graph.
+
   contact:
     name: Ministry of Justice
 
 components:
+  links:
+    ReportDetailsLink:
+      operationId: getReportById
+      description: >
+        Link to retrieve detailed metadata for a specific report using its ID.
+      parameters:
+        id: $response.body#/reportList/{id}
+    CsvDownloadLink:
+      operationId: downloadCsv
+      description: Download the report as a CSV stream using its ID.
+      parameters:
+        id: $response.body#/id
+
   responses:
     UnauthorizedError:
       description: Unauthorized. A valid OAuth2 token is required.
@@ -52,8 +69,13 @@ components:
 paths:
   /reports:
     get:
+      tags:
+        - Reports
       summary: List All Available Reports
-      description: Retrieves a list of all available reports, including each report's ID, name, and metadata.
+      description: >
+        Retrieves a list of all available reports, including each report's ID, name, metadata, 
+        and a link to retrieve detailed metadata for each report.
+        **Note**: The `reportDetailUrl` field in each report provides a direct link to `/report/{id}`.
       responses:
         '200':
           description: A JSON array containing metadata for each report.
@@ -76,6 +98,9 @@ paths:
                         description:
                           type: string
                           example: "Summary of invoices by source system"
+          links:
+            reportDetails:
+              $ref: '#/components/links/ReportDetailsLink'
         '400':
           $ref: '#/components/responses/BadRequestError'
         '401':
@@ -85,8 +110,11 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /report/{id}:
+  /reports/{id}:
     get:
+      operationId: getReportById
+      tags:
+        - Reports
       summary: Retrieve Report Metadata by ID
       description: Fetches metadata for a specific report using the provided report ID. This includes the report name, ID, and download URL.
       parameters:
@@ -102,6 +130,19 @@ paths:
           description: JSON object with metadata for the specified report.
           content:
             application/json:
+              examples:
+                Report1:
+                  summary: Example Retrieve Report Metadata by ID
+                  value:
+                    id: 1
+                    reportName: "Monthly Revenue Report"
+                    reportDownloadUrl: "https://example.com/reports/1"
+                Report2:
+                  summary: Example  Retrieve Report Metadata by ID 2
+                  value:
+                    id: 2
+                    reportName: "Quarterly Profit Analysis"
+                    reportDownloadUrl: "https://example.com/reports/2"
               schema:
                 type: object
                 properties:
@@ -115,6 +156,9 @@ paths:
                     type: string
                     format: uri
                     example: "https://<service_destination>/csv/1"
+          links:
+            downloadCsv:
+              $ref: '#/components/links/CsvDownloadLink'
         '400':
           $ref: '#/components/responses/BadRequestError'
         '401':
@@ -126,6 +170,8 @@ paths:
 
   /csv/{id}:
     get:
+      tags:
+        - Reports
       summary: Download Report as CSV Stream
       description: Provides a CSV data stream for a specified report ID. This can trigger a file download when accessed via a browser.
       parameters:

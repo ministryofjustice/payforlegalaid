@@ -34,7 +34,7 @@ class HttpSecuritySessionManagementConfigurerBuilderLocalTest {
 
         when(reportServiceMock.createReportResponse(reportId)).thenReturn(reportResponseMock);
 
-        mockMvc.perform(get("/report/{id}", reportId)
+        mockMvc.perform(get("/reports/{id}", reportId)
                         .sessionAttr("SPRING_SECURITY_CONTEXT", "null"))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(reportId));
     }
@@ -47,7 +47,7 @@ class HttpSecuritySessionManagementConfigurerBuilderLocalTest {
 
         when(reportServiceMock.createReportResponse(reportId)).thenReturn(reportResponseMock);
 
-        mockMvc.perform(get("/report/{id}", reportId))
+        mockMvc.perform(get("/reports/{id}", reportId))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(reportId));
     }
 
@@ -58,7 +58,7 @@ class HttpSecuritySessionManagementConfigurerBuilderLocalTest {
 
         when(reportServiceMock.createReportResponse(reportId)).thenReturn(reportResponseMock);
 
-        mockMvc.perform(get("/report/{id}", reportId))
+        mockMvc.perform(get("/reports/{id}", reportId))
                 .andExpect(status().isOk())
                 // This is the header that tells the browser what to allow.
                 .andExpect(header().string("X-Frame-Options", "SAMEORIGIN"));
