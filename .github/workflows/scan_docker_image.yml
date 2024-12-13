@@ -7,7 +7,7 @@ on:
 #    branches:
 #      - main
     # Run at 7:30AM UTC every day
-    - cron:  '15 15 * * *'
+    - cron:  '15 20 * * *'
 
 jobs:
   scan-docker-image:
