@@ -30,7 +30,7 @@ jobs:
       - uses: snyk/actions/setup@master
       - name: Snyk test
         continue-on-error: true
-        run: snyk test --all-projects --sarif-file=snyk.sarif
+        run: snyk test -d --all-projects --sarif-file=snyk.sarif
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
