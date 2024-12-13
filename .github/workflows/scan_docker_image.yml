@@ -2,6 +2,7 @@ name: Scan docker image
 
 on:
   workflow_dispatch:
+  push: #remove
   schedule:
 #    branches:
 #      - main
