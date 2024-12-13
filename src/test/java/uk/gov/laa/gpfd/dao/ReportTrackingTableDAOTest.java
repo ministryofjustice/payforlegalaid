@@ -38,6 +38,7 @@ class ReportTrackingTableDAOTest {
 
     @AfterEach
     void resetDatabase() {
+
         writeJdbcTemplate.update("TRUNCATE TABLE GPFD.REPORT_TRACKING");
         writeJdbcTemplate.update("DROP SEQUENCE GPFD_TRACKING_TABLE_SEQUENCE");
         writeJdbcTemplate.update("TRUNCATE TABLE GPFD.CSV_TO_SQL_MAPPING_TABLE");
