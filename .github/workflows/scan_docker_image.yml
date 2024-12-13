@@ -23,6 +23,9 @@ jobs:
 
       steps:
 
+      - name: Checkout GitHub repository
+        uses: actions/checkout@v4
+
       - name: Build with Maven
         run: mvn -B -DskipTests clean package
         shell:
