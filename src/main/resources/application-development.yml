@@ -18,22 +18,21 @@ spring:
     azure:
       active-directory:
         enabled: true
-        authorization-clients:
-          graph:
-            scopes:
-              - https://graph.microsoft.com/User.Read
+        profile:
+          tenant-id: ${AZURE_TENANT_ID}
+        credential:
+          client-id: ${AZURE_CLIENT_ID}
+          client-secret: ${AZURE_CLIENT_SECRET}
+          request:
+            graph:
+              scopes:
+                - https://graph.microsoft.com/User.Read
   security:
     oauth2:
       client:
         registration:
           azure:
             redirect-uri-template: ${gpfd.redirect-uri-template}
-
-azure:
-  activedirectory:
-    client-id:  ${AZURE_TENANT_ID}
-    client-secret: ${AZURE_CLIENT_SECRET}
-    tenant-id: ${AZURE_TENANT_ID}
 
 logging:
   level:
