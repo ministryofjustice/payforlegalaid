@@ -33,8 +33,8 @@ class GetReportsIT {
 
     @BeforeEach
     void setupDatabase() {
-        String sqlSchema = FileUtils.readResourceToString("schema.sql");
-        String sqlData = FileUtils.readResourceToString("data.sql");
+        String sqlSchema = FileUtils.readResourceToString("gpfd_schema.sql");
+        String sqlData = FileUtils.readResourceToString("gpfd_data.sql");
 
         writeJdbcTemplate.execute(sqlSchema);
         writeJdbcTemplate.execute(sqlData);

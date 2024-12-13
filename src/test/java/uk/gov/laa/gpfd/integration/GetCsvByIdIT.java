@@ -1,6 +1,6 @@
 package uk.gov.laa.gpfd.integration;
 
-import org.json.JSONObject;
+import com.microsoft.graph.models.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,8 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ActiveProfiles;
@@ -20,16 +19,16 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.laa.gpfd.graph.AzureGraphClient;
 import uk.gov.laa.gpfd.utils.FileUtils;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Client;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
-@ActiveProfiles("test") // Ensure the test profile is used
+@ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.yml")
 @SpringBootTest
+@Import(OAuth2TestConfig.class)
 class GetCsvByIdIT {
 
     @Autowired
@@ -42,12 +41,16 @@ class GetCsvByIdIT {
     AzureGraphClient mockAzureGraphClient;
 
     @BeforeEach
-    void setupDatabase() throws Exception {
-        String sqlSchema = FileUtils.readResourceToString("schema.sql");
-        String sqlData = FileUtils.readResourceToString("data.sql");
+    void setupDatabase() {
+        String gpfdSqlSchema = FileUtils.readResourceToString("gpfd_schema.sql");
+        String gpfdSqlData = FileUtils.readResourceToString("gpfd_data.sql");
+        writeJdbcTemplate.execute(gpfdSqlSchema);
+        writeJdbcTemplate.execute(gpfdSqlData);
 
-        writeJdbcTemplate.execute(sqlSchema);
-        writeJdbcTemplate.execute(sqlData);
+        String anyReportSqlSchema = FileUtils.readResourceToString("any_report_schema.sql");
+        String anyReportSqlData = FileUtils.readResourceToString("any_report_data.sql");
+        writeJdbcTemplate.execute(anyReportSqlSchema);
+        writeJdbcTemplate.execute(anyReportSqlData);
     }
 
     @AfterEach
@@ -59,26 +62,33 @@ class GetCsvByIdIT {
 
     // 200 response
     @Test
-    void shouldReturnListOfReports() throws Exception {
+    void shouldReturnCsvWithMatchingId() throws Exception {
+        User user = new User();
+        user.userPrincipalName = "Test User";
 
-        MockHttpServletResponse response =  mockMvc.perform(MockMvcRequestBuilders.get("/csv/1").with(oidcLogin()).with(oauth2Client("graph"))).andReturn().getResponse();
+        when(mockAzureGraphClient.getGraphUserDetails(any())).thenReturn(user);
 
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get("/csv/1")
+                .with(oidcLogin()
+                        .idToken(token -> token.subject("mockUser")))
+                .with(oauth2Client("graph"))).andReturn().getResponse();
 
-
-//                .andExpect(status().isOk()).andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=data.csv"));
-        System.out.println(response);
-
-//        Assertions.assertEquals(200, response.getStatus());
-//
-//        var json = new JSONObject(response.getContentAsString());
-//        Assertions.assertEquals(1, json.get("id"));
+        Assertions.assertEquals(200, response.getStatus());
+        Assertions.assertEquals("attachment; filename=CCMS_invoice_analysis-CIS-to-CCMS-import-analysis-2.csv", response.getHeader("Content-Disposition"));
     }
 
-    // 400 response - unable to identify a scenario for this
+    // 400 response
     @Test
     void shouldReturn404WhenGivenInvalidId() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get("/csv/1001")
-                .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+        User user = new User();
+        user.userPrincipalName = "Test User";
+
+        when(mockAzureGraphClient.getGraphUserDetails(any())).thenReturn(user);
+
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get("/csv/1001")
+                .with(oidcLogin()
+                        .idToken(token -> token.subject("mockUser")))
+                .with(oauth2Client("graph"))).andReturn().getResponse();
 
         Assertions.assertEquals(400, response.getStatus());
     }
@@ -86,10 +96,15 @@ class GetCsvByIdIT {
     // 404 response
     @Test
     void shouldReturn404WhenNoReportsFound() throws Exception {
-        writeJdbcTemplate.update("TRUNCATE TABLE GPFD.CSV_TO_SQL_MAPPING_TABLE");
+        User user = new User();
+        user.userPrincipalName = "Test User";
 
-        MockHttpServletResponse response = mockMvc.perform(get("/csv/1")
-                .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+        when(mockAzureGraphClient.getGraphUserDetails(any())).thenReturn(user);
+
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get("/csv/999")
+                .with(oidcLogin()
+                        .idToken(token -> token.subject("mockUser")))
+                .with(oauth2Client("graph"))).andReturn().getResponse();
 
         Assertions.assertEquals(404, response.getStatus());
     }

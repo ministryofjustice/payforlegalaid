@@ -32,8 +32,8 @@ class GetReportsByIdIT {
 
     @BeforeEach
     void setupDatabase() {
-        String sqlSchema = FileUtils.readResourceToString("schema.sql");
-        String sqlData = FileUtils.readResourceToString("data.sql");
+        String sqlSchema = FileUtils.readResourceToString("gpfd_schema.sql");
+        String sqlData = FileUtils.readResourceToString("gpfd_data.sql");
 
         writeJdbcTemplate.execute(sqlSchema);
         writeJdbcTemplate.execute(sqlData);
@@ -48,7 +48,7 @@ class GetReportsByIdIT {
 
     // 200 response
     @Test
-    void shouldReturnListOfReports() throws Exception {
+    void shouldReturnSingleReportWithMatchingId() throws Exception {
         MockHttpServletResponse response =  mockMvc.perform(get("/report/1")
                 .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
@@ -58,7 +58,7 @@ class GetReportsByIdIT {
         Assertions.assertEquals(1, json.get("id"));
     }
 
-    // 400 response - unable to identify a scenario for this
+    // 400 response
     @Test
     void shouldReturn404WhenGivenInvalidId() throws Exception {
         MockHttpServletResponse response = mockMvc.perform(get("/report/1001")
