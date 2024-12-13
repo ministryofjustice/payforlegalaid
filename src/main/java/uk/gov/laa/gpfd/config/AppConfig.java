@@ -39,6 +39,9 @@ public class AppConfig {
         return new ModelMapper();
     }
 
+
+    public String downloadUrl;
+
     /**
      * Configures a read-only {@link DataSource} using properties prefixed with
      * "gpfd.datasource.read-only" in the application's configuration file.

@@ -117,7 +117,7 @@ public class ReportService {
         var reportResponse = new GetReportById200Response() {{
             setId(reportListResponse.getId());
             setReportName(reportListResponse.getReportName());
-            setReportDownloadUrl(URI.create("https://laa-pay-for-la-dev.apps.live.cloud-platform.service.justice.gov.uk/" + "csv/" + id));
+            setReportDownloadUrl(URI.create("https://laa-pay-for-la-dev.apps.live.cloud-platform.service.justice.gov.uk/csv" + "/" + id));
         }};
 
         log.info("Returning report response object");
