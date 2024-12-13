@@ -27,6 +27,9 @@ jobs:
       - name: Check JAVA_HOME
         run: echo $JAVA_HOME
 
+      - name: Stuff
+        run: mvn dependency:tree -DoutputType=dot --batch-mode --non-recursive --file="pom.xml"
+
 
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/maven-3-jdk-17@master
