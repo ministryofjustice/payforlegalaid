@@ -20,15 +20,11 @@ jobs:
         uses: snyk/actions/iac@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          command: monitor
-          image: payforlegalaid:scan
-          args: --file=Dockerfile --sarif-file-output=iacsnyk.sarif
 
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: iacsnyk.sarif
+          sarif_file: snyk.sarif
 
 #      # test it works by sticking it here first
 #      - name: Build with Maven
