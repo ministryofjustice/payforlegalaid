@@ -19,6 +19,11 @@ jobs:
       steps:
         - uses: actions/checkout@v4
 
+        - name: Debug Docker info
+          run: |
+            docker info
+            ls -al
+
         - name: Build docker image
           run: |
             docker build \
