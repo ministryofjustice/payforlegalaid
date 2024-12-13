@@ -2,7 +2,10 @@ name: Scan docker image
 
 on:
   workflow_dispatch:
+  push:
   schedule:
+#    branches:
+#      - main
     # Run at 7:30AM UTC every day
     - cron:  '30 14 * * *'
 
