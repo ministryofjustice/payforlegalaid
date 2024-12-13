@@ -5,12 +5,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
-import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
 
@@ -29,7 +24,6 @@ import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
 @ConditionalOnProperty(name = "spring.cloud.azure.active-directory.enabled", havingValue = "true")
 public class SecurityConfig {
 
-    private final ClientRegistrationRepository clientRegistrationRepository;
     /**
      * The custom {@link AuthorizeHttpRequestsBuilder} responsible for configuring
      * the authorization rules for HTTP requests, such as which endpoints are publicly
@@ -59,31 +53,12 @@ public class SecurityConfig {
      * @return a configured {@link SecurityFilterChain} object.
      * @throws Exception if any error occurs during the configuration of HTTP security.
      */
-
-
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .authorizeHttpRequests(authorizeHttpRequestsBuilder::customize)
-            .sessionManagement(sessionManagementConfigurerBuilder::customize)
-            .oauth2Login(oauth2LoginConfigurer ->
-                oauth2LoginConfigurer.userInfoEndpoint(userInfoEndpointConfigurer ->
-                    userInfoEndpointConfigurer.oidcUserService(oidcUserService())
-                )
-            )
-            .logout(logoutConfigurer -> logoutConfigurer.logoutSuccessHandler(logoutConfigurer()));
-
-        return http.build();
+    SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity
+                .authorizeHttpRequests(authorizeHttpRequestsBuilder)    // Apply authorization rules
+                .sessionManagement(sessionManagementConfigurerBuilder)  // Apply session management configuration
+                .build();
     }
 
-        private OidcUserService oidcUserService(){
-        return new OidcUserService();
-    }
-
-    private LogoutSuccessHandler logoutConfigurer() {
-        OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler =
-            new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
-        oidcLogoutSuccessHandler.setPostLogoutRedirectUri("{baseUrl}/");
-        return oidcLogoutSuccessHandler;
-    }
 }
