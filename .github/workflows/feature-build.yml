@@ -24,6 +24,10 @@ jobs:
           distribution: 'corretto'
           java-version: '17'
 
+      - name: Check JAVA_HOME
+        run: echo $JAVA_HOME
+
+
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/maven-3-jdk-17@master
         continue-on-error: true # To make sure that SARIF upload gets called
