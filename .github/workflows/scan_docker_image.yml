@@ -14,9 +14,9 @@ jobs:
       permissions:
         security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
 
-      runs-on: ubuntu-latest
+#      runs-on: ubuntu-latest
 
-      steps:
+#      steps:
 
 #      - name: Checkout GitHub repository
 #        uses: actions/checkout@v4
@@ -54,9 +54,9 @@ jobs:
 #        with:
 #          sarif_file: snyk.sarif
 
-      - uses: ministryofjustice/laa-reusable-github-actions/.github/workflows/snyk.yml@main
-        with:
-          tag: "payforlegalaid"
-        secrets:
-          snyk_token: ${{ secrets.SNYK_TOKEN }}
+      uses: ministryofjustice/laa-reusable-github-actions/.github/workflows/snyk.yml@main
+      with:
+        tag: "payforlegalaid"
+      secrets:
+        snyk_token: ${{ secrets.SNYK_TOKEN }}
 
