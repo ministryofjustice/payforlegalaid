@@ -1,0 +1,15 @@
+name: Scan docker image
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Run at 7:30AM UTC every day
+    - cron:  '30 14 * * *'
+
+jobs:
+  scan-docker-image:
+    uses: ministryofjustice/laa-reusable-github-actions/.github/workflows/snyk.yml@main
+    with:
+      tag: "payforlegalaid"
+    secrets:
+      snyk_token: ${{ secrets.SNYK_TOKEN }}
