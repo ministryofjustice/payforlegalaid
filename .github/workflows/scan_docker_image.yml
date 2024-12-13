@@ -6,7 +6,9 @@ on:
 #    branches:
 #      - main
     # Run at 7:30AM UTC every day
-    - cron:  '58 15 * * *'
+    - cron:  '50 15 * * *'
+      branches:
+        - LPF-513/snyk
 
 jobs:
   scan-docker-image:
