@@ -26,4 +26,4 @@ jobs:
 
       - uses: './.github/snyk-scan'
         env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKENb}}
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN}}
