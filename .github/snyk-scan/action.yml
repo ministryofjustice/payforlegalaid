@@ -8,13 +8,14 @@ runs:
     - name: Snyk test
       run: snyk test -d --all-projects --severity-threshold=high --sarif-file-output=snyk.sarif
       env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        SNYK_TOKEN: ${{ env.SNYK_TOKEN }}
+      shell: bash
 
     - name: Replace security-severity undefined for license-related findings
       run: |
         sed -i "s/\"security-severity\": \"undefined\"/\"security-severity\": \"0\"/g" snyk.sarif
         sed -i "s/\"security-severity\": \"null\"/\"security-severity\": \"0\"/g" snyk.sarif
-
+      shell: bash
 
     - name: Upload Snyk results
       uses: github/codeql-action/upload-sarif@v3

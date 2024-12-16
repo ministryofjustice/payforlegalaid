@@ -25,3 +25,5 @@ jobs:
           java-version: '17'
 
       - uses: './.github/snyk-scan'
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKENb}}
