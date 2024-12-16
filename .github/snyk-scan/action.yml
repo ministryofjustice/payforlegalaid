@@ -3,9 +3,6 @@ name: Snyk Scan
 runs:
   using: 'composite'
 
-permissions:
-  security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
-
   steps:
     - name: Setup Snyk CLI
       uses: snyk/actions/setup@master
