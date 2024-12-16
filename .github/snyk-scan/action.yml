@@ -8,7 +8,7 @@ runs:
       uses: snyk/actions/setup@master
 
     - name: Run Snyk scan
-      run: snyk test -d --all-projects --severity-threshold=high --sarif-file-output=snyk.sarif
+      run: snyk test -d --all-projects --fail-on=high --sarif-file-output=snyk.sarif
       continue-on-error: true
       env:
         SNYK_TOKEN: ${{ env.SNYK_TOKEN }}
