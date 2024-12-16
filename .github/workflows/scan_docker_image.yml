@@ -52,6 +52,7 @@ jobs:
             args: --file=Dockerfile
 
         - name: Replace security-severity undefined for license-related findings
+          # See https://github.com/github/codeql-action/issues/2187 for details
           run: |
             sed -i "s/\"security-severity\": \"undefined\"/\"security-severity\": \"0\"/g" snyk.sarif
             sed -i "s/\"security-severity\": \"null\"/\"security-severity\": \"0\"/g" snyk.sarif

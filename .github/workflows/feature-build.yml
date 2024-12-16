@@ -4,9 +4,6 @@ on:
   pull_request:
     types: [opened, reopened, synchronize]
 
-permissions:
-  security-events: write # to upload SARIF results
-
 jobs:
   feature_branch:
 

@@ -9,12 +9,6 @@ runs:
 
     - name: Run Snyk scan
       run: snyk test -d --all-projects --severity-threshold=high --sarif-file-output=snyk.sarif
-      continue-on-error: true
       env:
         SNYK_TOKEN: ${{ env.SNYK_TOKEN }}
       shell: bash
-
-    - name: Upload Snyk results
-      uses: github/codeql-action/upload-sarif@v3
-      with:
-        sarif_file: snyk.sarif
