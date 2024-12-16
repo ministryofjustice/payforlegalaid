@@ -24,4 +24,4 @@ jobs:
           distribution: 'corretto'
           java-version: '17'
 
-      - uses: './github/snyk-scan'
+      - uses: './.github/snyk-scan'
