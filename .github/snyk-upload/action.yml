@@ -1,0 +1,17 @@
+name: Snyk Scan
+
+runs:
+  using: 'composite'
+
+  steps:
+
+    - name: Replace security-severity undefined for license-related findings
+      # Without this the sarif can't be uploaded to GitHub
+      # https://github.com/github/codeql-action/issues/2187
+      run: |
+        sed -i "s/\"security-severity\": \"undefined\"/\"security-severity\": \"0\"/g" snyk.sarif
+        sed -i "s/\"security-severity\": \"null\"/\"security-severity\": \"0\"/g" snyk.sarif
+      shell: bash
+
+    - name: Upload Snyk results
+      uses: './.github/snyk-scan'
