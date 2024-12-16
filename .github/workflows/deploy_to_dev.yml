@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - main
+      - development-env
 
 jobs:
 
@@ -19,7 +20,7 @@ jobs:
       - uses: './.github/build-and-test'
 
       - name: Set Spring profile
-        run: echo "SPRING_PROFILES_ACTIVE=development" >> $GITHUB_ENV
+        run: echo "SPRING_PROFILES_ACTIVE=dev" >> $GITHUB_ENV
 
       - uses: './.github/login-to-aws'
         env:
