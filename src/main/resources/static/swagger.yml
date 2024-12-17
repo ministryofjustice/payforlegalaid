@@ -79,8 +79,6 @@ security:
 paths:
   /reports:
     get:
-      security:
-        - BearerAuth: [ ]
       tags:
         - Reports
       summary: List All Available Reports
@@ -125,8 +123,6 @@ paths:
   /reports/{id}:
     get:
       operationId: getReportById
-      security:
-        - BearerAuth: [ ]
       tags:
         - Reports
       summary: Retrieve Report Metadata by ID
@@ -186,8 +182,6 @@ paths:
     get:
       tags:
         - Reports
-      security:
-        - BearerAuth: [ ]
       summary: Download Report as CSV Stream
       description: Provides a CSV data stream for a specified report ID. This can trigger a file download when accessed via a browser.
       parameters:
