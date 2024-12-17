@@ -60,7 +60,6 @@ class GetCsvByIdIT {
         writeJdbcTemplate.update("TRUNCATE TABLE GPFD.CSV_TO_SQL_MAPPING_TABLE");
     }
 
-    // 200 response
     @Test
     void shouldReturnCsvWithMatchingId() throws Exception {
         User user = new User();
@@ -77,14 +76,8 @@ class GetCsvByIdIT {
         Assertions.assertEquals("attachment; filename=CCMS_invoice_analysis-CIS-to-CCMS-import-analysis-2.csv", response.getHeader("Content-Disposition"));
     }
 
-    // 400 response
     @Test
-    void shouldReturn404WhenGivenInvalidId() throws Exception {
-        User user = new User();
-        user.userPrincipalName = "Test User";
-
-        when(mockAzureGraphClient.getGraphUserDetails(any())).thenReturn(user);
-
+    void shouldReturn400WhenGivenInvalidId() throws Exception {
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get("/csv/1001")
                 .with(oidcLogin()
                         .idToken(token -> token.subject("mockUser")))
@@ -93,14 +86,8 @@ class GetCsvByIdIT {
         Assertions.assertEquals(400, response.getStatus());
     }
 
-    // 404 response
     @Test
     void shouldReturn404WhenNoReportsFound() throws Exception {
-        User user = new User();
-        user.userPrincipalName = "Test User";
-
-        when(mockAzureGraphClient.getGraphUserDetails(any())).thenReturn(user);
-
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get("/csv/999")
                 .with(oidcLogin()
                         .idToken(token -> token.subject("mockUser")))

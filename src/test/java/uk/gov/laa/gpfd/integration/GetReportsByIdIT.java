@@ -45,7 +45,6 @@ class GetReportsByIdIT {
         writeJdbcTemplate.execute("DROP TABLE IF EXISTS GPFD.CSV_TO_SQL_MAPPING_TABLE");
     }
 
-    // 200 response
     @Test
     void shouldReturnSingleReportWithMatchingId() throws Exception {
         MockHttpServletResponse response =  mockMvc.perform(get("/reports/1")
@@ -57,16 +56,14 @@ class GetReportsByIdIT {
         Assertions.assertEquals(1, json.get("id"));
     }
 
-    // 400 response
     @Test
-    void shouldReturn404WhenGivenInvalidId() throws Exception {
+    void shouldReturn400WhenGivenInvalidId() throws Exception {
         MockHttpServletResponse response = mockMvc.perform(get("/reports/1001")
                 .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
         Assertions.assertEquals(400, response.getStatus());
     }
 
-    // 404 response
     @Test
     void shouldReturn404WhenNoReportsFound() throws Exception {
         MockHttpServletResponse response = mockMvc.perform(get("/reports/50")
