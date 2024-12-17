@@ -58,24 +58,17 @@ class ServerSideErrorIT {
 
     @Test
     void getCsvWithIdShouldReturn500WhenCannotConnectToDbForMappingTable() throws Exception {
-        setupDatabase();
-        User user = new User();
-        user.userPrincipalName = "Test User";
-
-        when(mockAzureGraphClient.getGraphUserDetails(any())).thenReturn(user);
-
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get("/csv/1")
                 .with(oidcLogin()
                         .idToken(token -> token.subject("mockUser")))
                 .with(oauth2Client("graph"))).andReturn().getResponse();
 
         Assertions. assertEquals(500, response.getStatus());
-        resetDatabase();
     }
 
     @Test
     void getCsvWithIdShouldReturn500WhenCannotConnectToDbForReportTable() throws Exception {
-        setupDatabase();
+        setupGpfdDatabase();
         User user = new User();
         user.userPrincipalName = "Test User";
 
@@ -90,7 +83,7 @@ class ServerSideErrorIT {
         resetDatabase();
     }
 
-    private void setupDatabase() {
+    private void setupGpfdDatabase() {
         String gpfdSqlSchema = FileUtils.readResourceToString("gpfd_schema.sql");
         String gpfdSqlData = FileUtils.readResourceToString("gpfd_data.sql");
         writeJdbcTemplate.execute(gpfdSqlSchema);
