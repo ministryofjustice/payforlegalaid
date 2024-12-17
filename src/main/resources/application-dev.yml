@@ -1,8 +1,20 @@
 gpfd:
   #This is the url which the Active directory dev app registration will redirect to after SSO is complete
-  redirect-uri-template: https://laa-pay-for-la-dev.apps.live.cloud-platform.service.justice.gov.uk/login/oauth2/code/gpfd-azure-dev
+  redirect-uri-template: https://laa-get-payments-finance-data-dev.apps.live.cloud-platform.service.justice.gov.uk/login/oauth2/code/gpfd-azure-dev
   # Note,"gpfd-azure-dev" is also known as the Oauth2 'registrationId'
 
+  # DEV MOJFIN database config (also used by GPFD in UAT):
+  datasource:
+    read-only:
+          url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
+          username: ${MOJFIN_DEV_READ_USERNAME}
+          password: ${MOJFIN_DEV_READ_PASSWORD}
+          driver-class-name: oracle.jdbc.OracleDriver
+    write:
+      url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
+      username: ${MOJFIN_DEV_WRITE_USERNAME}
+      password: ${MOJFIN_DEV_WRITE_PASSWORD}
+      driver-class-name: oracle.jdbc.OracleDriver
 
 # Azure AD and Graph config
 spring:
@@ -20,9 +32,6 @@ spring:
           graph:
             scopes:
               - https://graph.microsoft.com/User.Read
-
-
-
 
 #SSL configuration for the dev and uat environment #todo - switch to using a platform handled cert, as detailed in this task: LPF-415
 server:
