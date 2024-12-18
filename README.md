@@ -12,7 +12,7 @@ skeleton UAT env. There is a UI planned for future phases, but in the current MV
    DEV: https://mojodevl.sharepoint.com/sites/FinanceSysReference-DEV (you will need a DEV active directory user/account
    to authenticate into this site.)
 2. This will send a request to the GPFD API with a request parameter,
-   e.g. : https://laa-pay-for-la-dev.apps.live.cloud-platform.service.justice.gov.uk/csv/1
+   e.g. : https://laa-get-payments-finance-data-dev.apps.live.cloud-platform.service.justice.gov.uk/csv/1
    The three endpoints are:
    /csv/{id} (returns the csv data stream for the requested report),
    /report/{id} (returns metadata about the requested report)

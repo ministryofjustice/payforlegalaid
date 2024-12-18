@@ -115,6 +115,7 @@ public class ReportService {
      */
     public GetReportById200Response createReportResponse(int id) throws IndexOutOfBoundsException {
         var reportListResponse = mappingTableService.getDetailsForSpecificReport(id);
+
         var reportResponse = new GetReportById200Response() {{
             setId(reportListResponse.getId());
             setReportName(reportListResponse.getReportName());
