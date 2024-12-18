@@ -1,6 +1,7 @@
 package uk.gov.laa.gpfd.config;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,17 +12,23 @@ import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@TestPropertySource(properties = { "gpfd.url=http://localhost"})
 class AppConfigTest {
 
     @Autowired
     ApplicationContext applicationContext;
+
+    @Autowired
+    AppConfig classUnderTest;
 
     @Test
     void shouldModelMapperIsNotNull() {
@@ -251,4 +258,9 @@ class AppConfigTest {
                 "RestTemplate should have interceptors.");
     }
 
+    @Test
+    void shouldReturnServiceUrl() {
+
+        assertTrue(classUnderTest.getServiceUrl().contentEquals("http://localhost"));
+    }
 }

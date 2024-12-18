@@ -1,7 +1,9 @@
 package uk.gov.laa.gpfd.config;
 
+import lombok.Getter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,6 +40,10 @@ public class AppConfig {
     ModelMapper modelMapper() {
         return new ModelMapper();
     }
+
+    @Getter
+    @Value("${gpfd.url}")
+    private String serviceUrl;
 
     /**
      * Configures a read-only {@link DataSource} using properties prefixed with
