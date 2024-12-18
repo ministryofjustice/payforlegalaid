@@ -63,7 +63,7 @@ class AuthTokenIT {
 
     @ParameterizedTest
     @ValueSource(strings = {"/reports", "/reports/1", "/csv/1"})
-    void getReportsShouldReturnRedirectToLoginWithoutAuthToken(String endpoint) throws Exception {
+    void shouldRedirectToLoginWithoutAuthToken(String endpoint) throws Exception {
         MockHttpServletResponse response = mockMvc.perform(get(endpoint)
                 .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
@@ -73,7 +73,7 @@ class AuthTokenIT {
 
     @ParameterizedTest
     @ValueSource(strings = {"/reports", "/reports/1"})
-    void getReportsShouldReturn200WhenLoginAuthTokenProvided(String endpoint) throws Exception {
+    void shouldReturn200WhenLoginAuthTokenProvided(String endpoint) throws Exception {
         MockHttpServletResponse response = mockMvc.perform(get(endpoint)
                 .with(SecurityMockMvcRequestPostProcessors.oauth2Login())
                 .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
