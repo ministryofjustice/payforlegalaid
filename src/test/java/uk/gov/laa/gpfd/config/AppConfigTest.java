@@ -12,6 +12,7 @@ import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
@@ -20,12 +21,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@TestPropertySource(properties = { "gpfd.url=http://localhost"})
 class AppConfigTest {
 
     @Autowired
     ApplicationContext applicationContext;
 
-    @Mock AppConfig classUnderTest;
+    @Autowired
+    AppConfig classUnderTest;
 
     @Test
     void shouldModelMapperIsNotNull() {
@@ -258,8 +261,6 @@ class AppConfigTest {
     @Test
     void shouldReturnServiceUrl() {
 
-        String dummyUrl = "http://localhost";
-        when (classUnderTest.getServiceUrl()).thenReturn(dummyUrl);
-        assertEquals(classUnderTest.getServiceUrl(), dummyUrl);
+        assertTrue(classUnderTest.getServiceUrl().contentEquals("http://localhost"));
     }
 }
