@@ -61,4 +61,20 @@ public class ReportsController implements ReportsApi {
         return reportService.createCSVResponse(requestedId);
     }
 
+
+    /**
+     * Sends a report to the user in the form of a CSV data stream. If the user requests via a web browser this response then triggers the browser to download the file.
+     *
+     * @param requestedId - id of the requested report
+     * @return CSV data stream or reports data
+     */
+    @RequestMapping(value = "/csv2222/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<StreamingResponseBody> getCSV2222(@PathVariable(value = "id") int requestedId,
+                                                        @RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient) {
+        reportTrackingTableService.updateReportTrackingTable(requestedId, graphClient);
+
+        log.debug("Returning a CSV response to user");
+        return reportService.createCSVResponse(requestedId);
+    }
+
 }
