@@ -26,7 +26,7 @@ public class OAuth2TestConfig {
                 .authorizationUri("authorizationUri")
                 .tokenUri("tokenUri")
                 .redirectUri("redirectUri")
-                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE) // Specify the authorization grant type
+                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .build();
 
         return new InMemoryClientRegistrationRepository(graphRegistration);
