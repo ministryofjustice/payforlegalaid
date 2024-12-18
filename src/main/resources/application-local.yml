@@ -14,7 +14,7 @@ logging:
 
 gpfd:
   url: https://http://localhost:8080
-  redirect-uri-template: ${gpfd.domain}/login/oauth2/code/gpfd-azure-dev
+  redirect-uri-template: ${gpfd.url}/login/oauth2/code/gpfd-azure-dev
 
   datasource:
     read-only:
