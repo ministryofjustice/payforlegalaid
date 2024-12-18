@@ -29,8 +29,8 @@ class ReportTrackingTableDAOTest {
 
     @BeforeEach
     void setup() {
-        String sqlSchema = FileUtils.readResourceToString("schema.sql");
-        String sqlData = FileUtils.readResourceToString("data.sql");
+        String sqlSchema = FileUtils.readResourceToString("gpfd_schema.sql");
+        String sqlData = FileUtils.readResourceToString("gpfd_data.sql");
 
         writeJdbcTemplate.execute(sqlSchema);
         writeJdbcTemplate.execute(sqlData);
@@ -38,6 +38,7 @@ class ReportTrackingTableDAOTest {
 
     @AfterEach
     void resetDatabase() {
+
         writeJdbcTemplate.update("TRUNCATE TABLE GPFD.REPORT_TRACKING");
         writeJdbcTemplate.update("DROP SEQUENCE GPFD_TRACKING_TABLE_SEQUENCE");
         writeJdbcTemplate.update("TRUNCATE TABLE GPFD.CSV_TO_SQL_MAPPING_TABLE");
@@ -83,6 +84,5 @@ class ReportTrackingTableDAOTest {
         assertEquals(reportCreationTime, insertedCreationTime);
         assertEquals(insertedMappingId, reportTrackingTableList.get(1).get("MAPPING_ID"));
         assertEquals(insertedReportGeneratedBy, reportTrackingTableList.get(1).get("REPORT_GENERATED_BY"));
-
     }
 }
