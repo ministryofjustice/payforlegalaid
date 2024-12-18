@@ -32,14 +32,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @SpringBootTest
 class AuthTokenIT {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private JdbcTemplate writeJdbcTemplate;
-
     @MockBean
     AzureGraphClient mockAzureGraphClient;
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private JdbcTemplate writeJdbcTemplate;
 
     @BeforeEach
     void setupDatabase() {
@@ -121,5 +119,4 @@ class AuthTokenIT {
 
         Assertions.assertEquals(200, response.getStatus());
     }
-
 }
