@@ -5,6 +5,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -59,49 +61,24 @@ class AuthTokenIT {
         writeJdbcTemplate.update("TRUNCATE TABLE GPFD.CSV_TO_SQL_MAPPING_TABLE");
     }
 
-    @Test
-    void getReportsShouldReturnRedirectToLoginWithoutAuthToken() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get("/reports")
+    @ParameterizedTest
+    @ValueSource(strings = {"/reports", "/reports/1", "/csv/1"})
+    void getReportsShouldReturnRedirectToLoginWithoutAuthToken(String endpoint) throws Exception {
+        MockHttpServletResponse response = mockMvc.perform(get(endpoint)
                 .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
         Assertions.assertEquals(302, response.getStatus());
         Assertions.assertTrue(response.getRedirectedUrl().contains("/oauth2/authorization/azure"));
     }
 
-    @Test
-    void getReportsShouldReturn200WhenLoginAuthTokenProvided() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get("/reports")
+    @ParameterizedTest
+    @ValueSource(strings = {"/reports", "/reports/1"})
+    void getReportsShouldReturn200WhenLoginAuthTokenProvided(String endpoint) throws Exception {
+        MockHttpServletResponse response = mockMvc.perform(get(endpoint)
                 .with(SecurityMockMvcRequestPostProcessors.oauth2Login())
                 .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
         Assertions.assertEquals(200, response.getStatus());
-    }
-
-    @Test
-    void getReportWithIdShouldReturnRedirectToLoginWithoutAuthToken() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get("/reports/1")
-                .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
-
-        Assertions.assertEquals(302, response.getStatus());
-        Assertions.assertTrue(response.getRedirectedUrl().contains("/oauth2/authorization/azure"));
-    }
-
-    @Test
-    void getReportWithIdShouldReturn200WhenLoginAuthTokenProvided() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get("/reports/1")
-                .with(SecurityMockMvcRequestPostProcessors.oauth2Login())
-                .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
-
-        Assertions.assertEquals(200, response.getStatus());
-    }
-
-    @Test
-    void getCsvWithIdShouldReturnRedirectToLoginWithoutAuthToken() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get("/csv/1")
-                .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
-
-        Assertions.assertEquals(302, response.getStatus());
-        Assertions.assertTrue(response.getRedirectedUrl().contains("/oauth2/authorization/azure"));
     }
 
     @Test
