@@ -13,8 +13,7 @@ logging:
 
 
 gpfd:
-  domain: https://http://localhost:8080
-  download-url: ${gpfd.domain}/csv
+  url: https://http://localhost:8080
   redirect-uri-template: ${gpfd.domain}/login/oauth2/code/gpfd-azure-dev
 
   datasource:

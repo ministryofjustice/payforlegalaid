@@ -1,7 +1,6 @@
 gpfd:
-  domain: https://laa-get-payments-finance-data-dev.apps.live.cloud-platform.service.justice.gov.uk
-  download-url: ${gpfd.domain}/csv
-  redirect-uri-template: ${gpfd.domain}/login/oauth2/code/gpfd-azure-dev
+  url: https://laa-get-payments-finance-data-dev.apps.live.cloud-platform.service.justice.gov.uk
+  redirect-uri-template: ${gpfd.url}/login/oauth2/code/gpfd-azure-dev
 
   # DEV MOJFIN database config (also used by GPFD in UAT):
   datasource:

@@ -2,6 +2,7 @@ package uk.gov.laa.gpfd.config;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,8 +40,10 @@ public class AppConfig {
         return new ModelMapper();
     }
 
+    @Value("$gpfd.url")
+    private String serviceUrl;
 
-    public String downloadUrl;
+    public String getServiceUrl() {return serviceUrl;}
 
     /**
      * Configures a read-only {@link DataSource} using properties prefixed with

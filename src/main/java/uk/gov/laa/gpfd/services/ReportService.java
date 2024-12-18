@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import uk.gov.laa.gpfd.config.AppConfig;
 import uk.gov.laa.gpfd.dao.ReportViewsDao;
 import uk.gov.laa.gpfd.exception.CsvStreamException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
@@ -29,6 +30,7 @@ public class ReportService {
 
     private final ReportViewsDao reportViewsDao;
     private final MappingTableService mappingTableService;
+    private final AppConfig appConfig;
 
     /**
      * Obtains a resultlist of data from the MOJFIN reports database, and converts it into a CSV data stream
@@ -113,11 +115,10 @@ public class ReportService {
      */
     public GetReportById200Response createReportResponse(int id) throws IndexOutOfBoundsException {
         var reportListResponse = mappingTableService.getDetailsForSpecificReport(id);
-
         var reportResponse = new GetReportById200Response() {{
             setId(reportListResponse.getId());
             setReportName(reportListResponse.getReportName());
-            setReportDownloadUrl(URI.create("https://laa-pay-for-la-dev.apps.live.cloud-platform.service.justice.gov.uk/csv" + "/" + id));
+            setReportDownloadUrl(URI.create(appConfig.getServiceUrl() + "/csv/" + id));
         }};
 
         log.info("Returning report response object");

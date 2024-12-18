@@ -1,6 +1,5 @@
 gpfd:
-  domain: https://laa-get-payments-finance-data-uat.apps.live.cloud-platform.service.justice.gov.uk
-  download-url: ${gpfd.domain}/csv
+  url: https://laa-get-payments-finance-data-uat.apps.live.cloud-platform.service.justice.gov.uk
   redirect-uri-template: ${gpfd.domain}/login/oauth2/code/gpfd-azure-uat
   # DEV MOJFIN database config - needs to change to UAT when that exists:
   datasource:
