@@ -31,9 +31,7 @@ jobs:
         uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: |
-            AZURE_CLIENT_ID
-            AZURE_TENANT_ID
-            AZURE_CLIENT_SECRET
+            gpfd-test-secret-01
 
       - name: Login to container repository
         uses: aws-actions/amazon-ecr-login@v2
