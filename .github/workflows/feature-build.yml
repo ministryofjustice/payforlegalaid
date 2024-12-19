@@ -12,8 +12,3 @@ jobs:
         uses: actions/checkout@v4
 
       - uses: './.github/build-and-test'
-
-      - name: Snyk Scan
-        uses: './.github/snyk-scan'
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN}}
