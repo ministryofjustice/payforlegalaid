@@ -9,34 +9,25 @@ import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2Aut
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import uk.gov.laa.gpfd.api.ReportApi;
 import uk.gov.laa.gpfd.api.ReportsApi;
-import uk.gov.laa.gpfd.model.ReportIdGet200Response;
+import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200Response;
 import uk.gov.laa.gpfd.services.MappingTableService;
 import uk.gov.laa.gpfd.services.ReportService;
 import uk.gov.laa.gpfd.services.ReportTrackingTableService;
 
-import java.util.Optional;
-
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class ReportsController implements ReportApi, ReportsApi {
+public class ReportsController implements ReportsApi {
 
     private final ReportTrackingTableService reportTrackingTableService;
     private final MappingTableService mappingTableService;
     private final ReportService reportService;
 
     @Override
-    public Optional<NativeWebRequest> getRequest() {
-        return ReportApi.super.getRequest();
-    }
-
-    @Override
-    public ResponseEntity<ReportIdGet200Response> reportIdGet(Integer id) {
+    public ResponseEntity<GetReportById200Response> getReportById(Integer id) {
         var response = reportService.createReportResponse(id);
 
         log.debug("Returning a report response to user");

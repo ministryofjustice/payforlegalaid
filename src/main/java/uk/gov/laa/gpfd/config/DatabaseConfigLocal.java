@@ -14,15 +14,14 @@ import javax.sql.DataSource;
 @Profile("local")
 public class DatabaseConfigLocal {
 
-
     @Bean
     public DataSourceInitializer dataSourceInitializer(@Qualifier("writeDataSource") DataSource dataSource) {
         DataSourceInitializer initialiser = new DataSourceInitializer();
         initialiser.setDataSource(dataSource);
 
         ResourceDatabasePopulator schemaPopulator = new ResourceDatabasePopulator();
-        schemaPopulator.addScript(new ClassPathResource("schema.sql"));
-        schemaPopulator.addScript(new ClassPathResource("data.sql"));
+        schemaPopulator.addScript(new ClassPathResource("gpfd_schema.sql"));
+        schemaPopulator.addScript(new ClassPathResource("gpfd_data.sql"));
 
         initialiser.setDatabasePopulator(schemaPopulator);
         return initialiser;

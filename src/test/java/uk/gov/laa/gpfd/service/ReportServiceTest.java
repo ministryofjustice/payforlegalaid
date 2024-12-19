@@ -7,9 +7,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
+import uk.gov.laa.gpfd.config.AppConfig;
 import uk.gov.laa.gpfd.dao.ReportViewsDao;
 import uk.gov.laa.gpfd.data.ReportListEntryTestDataFactory;
-import uk.gov.laa.gpfd.model.ReportIdGet200Response;
+import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 import uk.gov.laa.gpfd.services.MappingTableService;
 import uk.gov.laa.gpfd.services.ReportService;
@@ -24,6 +25,9 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ReportServiceTest {
+    @Mock
+    AppConfig appConfig;
+
     @Mock
     ReportViewsDao reportViewsDAO;
 
@@ -57,19 +61,20 @@ class ReportServiceTest {
     @Test
     void createReportResponse_reportResponseMatchesValuesFromMappingTable() throws IOException {
 
+        when(appConfig.getServiceUrl()).thenReturn("http://localhost");
+
         // Mocking the data from mapping table
         ReportsGet200ResponseReportListInner mockReportListResponse = ReportListEntryTestDataFactory.aValidReportsGet200ResponseReportListInner();
 
-        ReportIdGet200Response expectedReportResponse = new ReportResponseTestBuilder().createReportResponse();
+        GetReportById200Response expectedReportResponse = new ReportResponseTestBuilder().createReportResponse();
         when(mappingTableService.getDetailsForSpecificReport(1)).thenReturn(mockReportListResponse);
 
         //Act
-        ReportIdGet200Response actualReportResponse = reportService.createReportResponse(1);
+        GetReportById200Response actualReportResponse = reportService.createReportResponse(1);
 
         //check something
         assertEquals(expectedReportResponse.getReportName(), actualReportResponse.getReportName());
         assertEquals(expectedReportResponse.getId(), actualReportResponse.getId());
-//        assertEquals(expectedReportResponse.getReportSharepointUrl(), actualReportResponse.getReportSharepointUrl());
 
     }
 
@@ -108,5 +113,19 @@ class ReportServiceTest {
         verify(reportViewsDAO).callDataBase(sqlQuery);
     }
 
+    @Test
+    void createReportResponse_ReturnsCorrectUrl() throws IOException {
+
+        when(appConfig.getServiceUrl()).thenReturn("http://localhost");
+
+        ReportsGet200ResponseReportListInner mockReportListResponseDev = ReportListEntryTestDataFactory.aValidReportsGet200ResponseReportListInner();
+
+        when(mappingTableService.getDetailsForSpecificReport(1)).thenReturn(mockReportListResponseDev);
+
+        GetReportById200Response actualReportResponseDev = reportService.createReportResponse(1);
+
+        assertTrue(actualReportResponseDev.getReportDownloadUrl().toString().contentEquals("http://localhost/csv/1"));
+
+    }
 
 }

@@ -33,8 +33,8 @@ class GetReportsIT {
 
     @BeforeEach
     void setupDatabase() {
-        String sqlSchema = FileUtils.readResourceToString("schema.sql");
-        String sqlData = FileUtils.readResourceToString("data.sql");
+        String sqlSchema = FileUtils.readResourceToString("gpfd_schema.sql");
+        String sqlData = FileUtils.readResourceToString("gpfd_data.sql");
 
         writeJdbcTemplate.execute(sqlSchema);
         writeJdbcTemplate.execute(sqlData);
@@ -46,7 +46,6 @@ class GetReportsIT {
         writeJdbcTemplate.execute("DROP TABLE IF EXISTS GPFD.CSV_TO_SQL_MAPPING_TABLE");
     }
 
-    // 200 response
     @Test
     void shouldReturnListOfReports() throws Exception {
         MockHttpServletResponse response =  mockMvc.perform(get("/reports")
@@ -59,9 +58,6 @@ class GetReportsIT {
         Assertions.assertEquals(2, reportList.toList().size());
     }
 
-    // 400 response - unable to identify a scenario for this
-
-    // 404 response
     @Test
     void shouldReturn404WhenNoReportsFound() throws Exception {
         writeJdbcTemplate.update("TRUNCATE TABLE GPFD.CSV_TO_SQL_MAPPING_TABLE");
