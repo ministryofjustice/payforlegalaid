@@ -52,7 +52,7 @@ class ReportTrackingTableDAOTest {
 
         assertEquals(1, reportTrackingTableList.size());
         assertEquals(1, reportTrackingTableList.get(0).get("ID"));
-        assertEquals("Initial Test Report Name", reportName); // Testing the data.sql test data has populated into the DB properly
+        assertEquals("Initial Test Report Name", reportName); // Testing the gpfd_data.sql test data has populated into the DB properly
     }
 
 
@@ -75,7 +75,7 @@ class ReportTrackingTableDAOTest {
         // Assert
         List<Map<String, Object>> reportTrackingTableList = reportTrackingTableDao.list();
         String reportName = reportTrackingTableList.get(1).get("REPORT_NAME").toString();
-        Timestamp reportCreationTime = (Timestamp) reportTrackingTableList.get(1).get("CREATION_TIME"); //index 1 because index 0 is populated by data.sql
+        Timestamp reportCreationTime = (Timestamp) reportTrackingTableList.get(1).get("CREATION_TIME"); //index 1 because index 0 is populated by gpfd_data.sql
 
         assertEquals(2, reportTrackingTableList.size());
         assertEquals(2, reportTrackingTableList.get(1).get("ID")); //2 is the value of the id since the database sequence will increment up to 2 after inserting 2 rows of data
