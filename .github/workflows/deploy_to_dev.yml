@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - main
+      - LPF-532
 
 jobs:
 
@@ -58,4 +59,8 @@ jobs:
           kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
           kubectl config use-context ${KUBE_CLUSTER}
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments/development/
-    
+
+      - name: Run acceptance tests
+        uses: './.github/build-and-test-acceptance'
+
+#  Run acceptance test pass in values for env vars as part of command to tests

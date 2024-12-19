@@ -1,0 +1,17 @@
+name: Build and run tests
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout acceptance test code repo
+      uses: actions/checkout@v4
+      with:
+        repository: ministryofjustice/payforlegalaid-tests
+        path: testCode
+
+    - name: Run acceptance tests
+      run: |
+        cd testCode
+        mvn -B clean test -Pdev
+      shell:
+        bash
