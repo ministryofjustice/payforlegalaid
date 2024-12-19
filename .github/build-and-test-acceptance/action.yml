@@ -7,6 +7,7 @@ runs:
       uses: actions/checkout@v4
       with:
         repository: ministryofjustice/payforlegalaid-tests
+        ref: LPF-532
         path: testCode
 
     - name: Run acceptance tests
