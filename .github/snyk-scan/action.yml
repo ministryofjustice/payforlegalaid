@@ -1,0 +1,14 @@
+name: Snyk Scan
+
+runs:
+  using: 'composite'
+
+  steps:
+    - name: Setup Snyk CLI
+      uses: snyk/actions/setup@master
+
+    - name: Run Snyk scan
+      run: snyk test -d --all-projects --severity-threshold=high --sarif-file-output=snyk.sarif
+      env:
+        SNYK_TOKEN: ${{ env.SNYK_TOKEN }}
+      shell: bash
