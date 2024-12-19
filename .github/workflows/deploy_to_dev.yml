@@ -27,6 +27,14 @@ jobs:
           ROLE: ${{ secrets.ECR_ROLE_TO_ASSUME }}
           AWS_REGION: ${{ vars.ECR_REGION }}
 
+      - name: Get secrets from AWS
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            AZURE_CLIENT_ID, 
+            AZURE_TENANT_ID, 
+            AZURE_CLIENT_SECRET
+
       - name: Login to container repository
         uses: aws-actions/amazon-ecr-login@v2
         id: login-ecr
@@ -62,5 +70,9 @@ jobs:
 
       - name: Run acceptance tests
         uses: './.github/build-and-test-acceptance'
+        env:
+          CLIENT_ID: ${{ vars.ECR_REPOSITORY }}
+          CLIENT_SECRET: ${{ github.sha }}
+          TENANT_ID: ${{ steps.login-ecr.outputs.registry }}
 
 #  Run acceptance test pass in values for env vars as part of command to tests
