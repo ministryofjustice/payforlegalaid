@@ -9,4 +9,12 @@ ignore:
           CVE-2018-10054 for details
         expires: 2025-01-17T17:40:56.565Z
         created: 2024-12-18T17:40:56.567Z
+  SNYK-JAVA-ORGAPACHETOMCATEMBED-8523186:
+    - '*':
+        reason: >-
+          Spring has yet to upgrade their versions with the new tomcat, as this
+          is a very recent cre. Check again when this ignore times out next
+          month
+        expires: 2025-01-18T13:36:23.710Z
+        created: 2024-12-19T13:36:23.725Z
 patch: {}
