@@ -2,7 +2,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: gpfd-dev-service-monitor
-  namespace: laa-get-payments-finance-data-dev
+  namespace: ${NAMESPACE}
 spec:
   selector:
     matchLabels:

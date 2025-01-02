@@ -2,7 +2,7 @@ kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
   name: allow-prometheus-scraping
-  namespace: laa-get-payments-finance-data-dev
+  namespace: ${NAMESPACE}
 spec:
   podSelector:
     matchLabels:
