@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - main
+      - LPF-548-prometheus-metrics
 
 jobs:
 
@@ -46,6 +47,8 @@ jobs:
           cat deployments/uat/deployment.tpl | envsubst > deployments/uat/deployment.yml
           cat deployments/uat/ingress.tpl | envsubst > deployments/uat/ingress.yml
           cat deployments/uat/service.tpl | envsubst > deployments/uat/service.yml
+          cat deployments/uat/network-policy.tpl | envsubst > deployments/uat/network-policy.yml
+          cat deployments/uat/service-monitor.tpl | envsubst > deployments/uat/service-monitor.yml
 
       - name: Authenticate with Cloud Platform and Deploy
         env:

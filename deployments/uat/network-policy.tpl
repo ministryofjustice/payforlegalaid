@@ -6,7 +6,7 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      app: gpfd-dev-service
+      app: gpfd-uat-service
   policyTypes:
     - Ingress
   ingress:
