@@ -12,6 +12,8 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -25,7 +27,7 @@ import java.util.List;
  * </p>
  */
 @Configuration
-public class AppConfig {
+public class AppConfig implements WebMvcConfigurer {
 
     /**
      * Creates and configures a {@link ModelMapper} bean for object-to-object mapping.
@@ -127,6 +129,11 @@ public class AppConfig {
                     new ByteArrayHttpMessageConverter()
             ));
         }};
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new HandlerInterceptorAdapter());
     }
 
 }
