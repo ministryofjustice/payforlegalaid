@@ -147,7 +147,7 @@ class MappingTableServiceTest {
     @Test
     void shouldThrowReportIdNotFoundExceptionWhenRequestedReportDoesNotExist() {
         // Given
-        var requestedId = 2;
+        var requestedId = 3;
         when(mappingTableDao.fetchReportList()).thenReturn(List.of(MappingTableTestDataFactory.aValidBankAccountReport()));
 
         // Then
