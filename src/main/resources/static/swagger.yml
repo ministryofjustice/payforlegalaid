@@ -26,10 +26,20 @@ components:
       parameters:
         id: $response.body#/id
   securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+    CookieAuth:
+      type: apiKey
+      in: cookie
+      name: JSESSIONID
+      description: |
+        This security scheme uses a cookie named "JSESSIONID" for authentication. 
+        Clients must include the cookie in the request headers to access protected resources.
+        The cookie value should be in the following format: 
+        
+        **Example Cookie Value:**
+        ```
+        JSESSIONID=I_LIKE_PANCAKES
+        ```
+
 
   responses:
     UnauthorizedError:
@@ -74,7 +84,7 @@ components:
                 example: "BadRequestException: The request could not be processed."
 
 security:
-  - BearerAuth: [ ]
+  - CookieAuth: [ ]
 
 paths:
   /reports:
