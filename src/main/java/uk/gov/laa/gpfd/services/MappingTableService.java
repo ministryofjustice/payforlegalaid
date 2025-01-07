@@ -71,24 +71,12 @@ public class MappingTableService {
 
         log.debug("Checking the reportListResponses for the desired reportListResponse object, the requested report ID is: {}", requestedId);
 
-        return getMappingTable(requestedId, reportListResponses);
-    }
-
-    public MappingTable getMappingTable(int requestedId, List<MappingTable> reportListResponses) {
-
-        MappingTable foundMappingTable = null;
-
         for (MappingTable item : reportListResponses) {
             if (item.getId() == requestedId) {
-                foundMappingTable = item;
-                break;
+                return item;
             }
         }
-
-        if (foundMappingTable == null) {
-            throw new ReportIdNotFoundException("Report ID not found with ID: " + requestedId);
-        }
-        return foundMappingTable;
+        throw new ReportIdNotFoundException("Report ID not found with ID: " + requestedId);
     }
 
     /**
