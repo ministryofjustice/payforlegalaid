@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doThrow;
 
 @ExtendWith(MockitoExtension.class)
 class MappingTableServiceTest {
@@ -147,23 +148,21 @@ class MappingTableServiceTest {
     @Test
     void shouldThrowReportIdNotFoundExceptionWhenRequestedReportDoesNotExist() {
         // Given
-        var requestedId = 3;
-        when(mappingTableDao.fetchReportList()).thenReturn(List.of(MappingTableTestDataFactory.aValidBankAccountReport()));
+        doThrow(new ReportIdNotFoundException("")).when(mappingTableDao).fetchReport(3);
 
         // Then
         assertThrows(ReportIdNotFoundException.class,
-                () -> mappingTableService.getDetailsForSpecificReport(requestedId));
+                () -> mappingTableService.getDetailsForSpecificReport(3));
     }
 
     @Test
-    void shouldThrowReportIdNotFoundExceptionWhenReportListIsEmpty() {
+    void shouldThrowDatabaseReadExceptionWhenDatabaseNotRead() {
         // Given
-        var requestedId = 1;
-        when(mappingTableDao.fetchReportList()).thenReturn(Collections.emptyList());
+        doThrow(new DatabaseReadException("")).when(mappingTableDao).fetchReport(1);
 
         // Then
-        assertThrows(ReportIdNotFoundException.class,
-                () -> mappingTableService.getDetailsForSpecificReport(requestedId));
+        assertThrows(DatabaseReadException.class,
+                () -> mappingTableService.getDetailsForSpecificReport(1));
     }
 
     @Test
