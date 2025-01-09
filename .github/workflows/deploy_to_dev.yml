@@ -2,7 +2,6 @@ on:
   push:
     branches:
       - main
-      - LPF-548-prometheus-metrics
 
 jobs:
 
