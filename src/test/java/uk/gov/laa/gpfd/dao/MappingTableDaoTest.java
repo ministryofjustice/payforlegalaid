@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest // This uses the whole spring context, switch to @JdbcTest if you switch to a H2 DB
 @ActiveProfiles("test")
-public class MappingTableDaoTest {
+class MappingTableDaoTest {
     @Autowired
     private JdbcTemplate readOnlyJdbcTemplate;
 
