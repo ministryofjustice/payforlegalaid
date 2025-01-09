@@ -33,3 +33,13 @@ spring:
           graph:
             scopes:
               - https://graph.microsoft.com/User.Read
+
+#SSL configuration for the dev and uat environment #todo - switch to using a platform handled cert, as detailed in this task: LPF-415
+server:
+  port: 8443
+  forward-headers-strategy: native # not sure if needed
+  shutdown: graceful
+  servlet:
+    session:
+      cookie:
+        secure: true
