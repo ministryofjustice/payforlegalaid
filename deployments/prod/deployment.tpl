@@ -33,7 +33,7 @@ spec:
                 secretKeyRef:
                   name: gpfd-prod-secret-01
                   key: client-id-prod
-            - name: AZURE_TENANT_ID_
+            - name: AZURE_TENANT_ID
               valueFrom:
                 secretKeyRef:
                   name: gpfd-prod-secret-01
