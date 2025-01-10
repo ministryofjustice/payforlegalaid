@@ -11,9 +11,9 @@ spec:
   ingressClassName: default
   tls:
     - hosts:
-        - apps.live.cloud-platform.service.justice.gov.uk
+        - ${NAMESPACE}.apps.live.cloud-platform.service.justice.gov.uk
   rules:
-    - host: apps.live.cloud-platform.service.justice.gov.uk
+    - host: ${NAMESPACE}.apps.live.cloud-platform.service.justice.gov.uk
       http:
         paths:
           - path: /
