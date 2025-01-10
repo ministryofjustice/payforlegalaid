@@ -13,7 +13,7 @@ spec:
     - hosts:
         - ${NAMESPACE}.apps.live.cloud-platform.service.justice.gov.uk
   rules:
-    - host: ${NAMESPACE}.apps.live.cloud-platform.service.justice.gov.uk
+    - host: get-legal-aid-data.service.justice.gov.uk
       http:
         paths:
           - path: /
