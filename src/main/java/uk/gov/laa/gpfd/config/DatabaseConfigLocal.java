@@ -22,6 +22,8 @@ public class DatabaseConfigLocal {
         ResourceDatabasePopulator schemaPopulator = new ResourceDatabasePopulator();
         schemaPopulator.addScript(new ClassPathResource("gpfd_schema.sql"));
         schemaPopulator.addScript(new ClassPathResource("gpfd_data.sql"));
+        schemaPopulator.addScript(new ClassPathResource("any_report_schema.sql"));
+        schemaPopulator.addScript(new ClassPathResource("any_report_data.sql"));
 
         initialiser.setDatabasePopulator(schemaPopulator);
         return initialiser;
