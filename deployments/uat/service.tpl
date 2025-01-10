@@ -2,6 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: gpfd-uat-service
+  labels:
+    app: gpfd-uat-service
 spec:
   selector:
     app: gpfd-uat
