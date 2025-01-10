@@ -23,17 +23,17 @@ spec:
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: "prod"                  #TODO - use a configmap once more environments are added
-            - name: AZURE_CLIENT_SECRET_PROD
+            - name: AZURE_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
                   name: gpfd-prod-secret-01
                   key: client-secret-prod
-            - name: AZURE_CLIENT_ID_PROD
+            - name: AZURE_CLIENT_ID
               valueFrom:
                 secretKeyRef:
                   name: gpfd-prod-secret-01
                   key: client-id-prod
-            - name: AZURE_TENANT_ID_PROD
+            - name: AZURE_TENANT_ID_
               valueFrom:
                 secretKeyRef:
                   name: gpfd-prod-secret-01
