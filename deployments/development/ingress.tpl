@@ -12,12 +12,25 @@ spec:
   tls:
     - hosts:
         - ${NAMESPACE}.apps.live.cloud-platform.service.justice.gov.uk
+    - hosts:
+      - 'dev.get-legal-aid-data.service.justice.gov.uk'
+      secretName: tls-certificate
   rules:
     - host: ${NAMESPACE}.apps.live.cloud-platform.service.justice.gov.uk
       http:
         paths:
           - path: /
             pathType: ImplementationSpecific
+            backend:
+              service:
+                name: gpfd-dev-service
+                port:
+                  number: 8443
+    - host: 'dev.get-legal-aid-data.service.justice.gov.uk'
+      http:
+        paths:
+        - path: /
+          pathType: ImplementationSpecific
             backend:
               service:
                 name: gpfd-dev-service
