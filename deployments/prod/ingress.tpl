@@ -1,9 +1,9 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: gpfd-uat-ingress
+  name: gpfd-prod-ingress
   annotations:
-    external-dns.alpha.kubernetes.io/set-identifier: gpfd-uat-ingress-${NAMESPACE}-green
+    external-dns.alpha.kubernetes.io/set-identifier: gpfd-prod-ingress-${NAMESPACE}-green
     external-dns.alpha.kubernetes.io/aws-weight: "100"
     nginx.ingress.kubernetes.io/backend-protocol: https
     nginx.ingress.kubernetes.io/affinity: "cookie"
@@ -20,7 +20,7 @@ spec:
             pathType: ImplementationSpecific
             backend:
               service:
-                name: gpfd-uat-service
+                name: gpfd-prod-service
                 port:
                   number: 8443
 
