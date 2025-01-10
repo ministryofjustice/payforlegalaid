@@ -42,7 +42,11 @@ server:
   servlet:
     session:
       cookie:
-        secure: true
+        secure: flase
+      jwt:
+        issuer:
+        sub:
+
   ssl:
     key-store: classpath:gpfd-ssl-keystore.p12
     key-store-password: ${SSL-DEV-KEY-STORE-PASSWORD}
