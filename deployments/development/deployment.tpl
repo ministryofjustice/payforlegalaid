@@ -69,3 +69,5 @@ spec:
               - ALL
             runAsNonRoot: true
             allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault
