@@ -1,17 +1,16 @@
 gpfd:
   url: https://laa-get-payments-finance-data-uat.apps.live.cloud-platform.service.justice.gov.uk
   redirect-uri-template: ${gpfd.url}/login/oauth2/code/gpfd-azure-uat
-  # DEV MOJFIN database config - needs to change to UAT when that exists:
   datasource:
     read-only:
-      url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
-      username: ${MOJFIN_DEV_READ_USERNAME}
-      password: ${MOJFIN_DEV_READ_PASSWORD}
+      url: jdbc:oracle:thin:@rds.mojfin.laa-preproduction.modernisation-platform.service.justice.gov.uk:1521/MOJFIN
+      username: ${MOJFIN_UAT_READ_USERNAME}
+      password: ${MOJFIN_UAT_READ_PASSWORD}
       driver-class-name: oracle.jdbc.OracleDriver
     write:
-      url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
-      username: ${MOJFIN_DEV_WRITE_USERNAME}
-      password: ${MOJFIN_DEV_WRITE_PASSWORD}
+      url: jdbc:oracle:thin:@rds.mojfin.laa-preproduction.modernisation-platform.service.justice.gov.uk:1521/MOJFIN
+      username: ${MOJFIN_UAT_WRITE_USERNAME}
+      password: ${MOJFIN_UAT_WRITE_PASSWORD}
       driver-class-name: oracle.jdbc.OracleDriver
 
 spring:

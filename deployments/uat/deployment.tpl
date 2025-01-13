@@ -38,12 +38,12 @@ spec:
                 secretKeyRef:
                   name: gpfd-uat-secret-01
                   key: tenant-id-uat
-            - name: MOJFIN_DEV_READ_USERNAME
+            - name: MOJFIN_UAT_READ_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: gpfd-uat-secret-01
                   key: mojfin-dev-read-username
-            - name: MOJFIN_DEV_READ_PASSWORD
+            - name: MOJFIN_UAT_READ_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: gpfd-uat-secret-01
@@ -53,12 +53,12 @@ spec:
                 secretKeyRef:
                   name: gpfd-uat-secret-01
                   key: ssl-dev-key-store-password
-            - name: MOJFIN_DEV_WRITE_USERNAME
+            - name: MOJFIN_UAT_WRITE_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: gpfd-uat-secret-01
                   key: mojfin-dev-write-username
-            - name: MOJFIN_DEV_WRITE_PASSWORD
+            - name: MOJFIN_UAT_WRITE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: gpfd-uat-secret-01
