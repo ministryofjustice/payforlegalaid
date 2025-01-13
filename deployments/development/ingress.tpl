@@ -5,7 +5,7 @@ metadata:
   annotations:
     external-dns.alpha.kubernetes.io/set-identifier: gpfd-dev-ingress-${NAMESPACE}-green
     external-dns.alpha.kubernetes.io/aws-weight: "100"
-    nginx.ingress.kubernetes.io/backend-protocol: https
+    nginx.ingress.kubernetes.io/backend-protocol: http
     nginx.ingress.kubernetes.io/affinity: "cookie"
 spec:
   ingressClassName: default
@@ -25,7 +25,7 @@ spec:
               service:
                 name: gpfd-dev-service
                 port:
-                  number: 8443
+                  number: 8080
     - host: 'dev.get-legal-aid-data.service.justice.gov.uk'
       http:
         paths:
@@ -35,5 +35,5 @@ spec:
             service:
               name: gpfd-dev-service
               port:
-                number: 8443
+                number: 8080
 
