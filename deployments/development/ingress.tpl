@@ -31,9 +31,9 @@ spec:
         paths:
         - path: /
           pathType: ImplementationSpecific
-            backend:
-              service:
-                name: gpfd-dev-service
-                port:
-                  number: 8443
+          backend:
+            service:
+              name: gpfd-dev-service
+              port:
+                number: 8443
 
