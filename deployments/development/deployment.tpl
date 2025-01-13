@@ -67,4 +67,5 @@ spec:
             capabilities:
               drop:
               - ALL
+            runAsNonRoot: true
             allowPrivilegeEscalation: false
