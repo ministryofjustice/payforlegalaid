@@ -64,4 +64,7 @@ spec:
                   name: gpfd-test-secret-01
                   key: mojfin-dev-write-password
           securityContext:
+            capabilities:
+              drop:
+              - ALL
             allowPrivilegeEscalation: false
