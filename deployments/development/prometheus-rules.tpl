@@ -15,7 +15,7 @@ groups:
       expr: secretsmanager_put_secret_value_sum{exported_job="secretsmanager", secret_id="arn:aws:secretsmanager:eu-west-2:754256621582:secret:<your-secret-arn>"} > 0
       for: 1m
       labels:
-        severity: <severity>
+        severity: laa-get-legal-aid-data-dev
       annotations:
         message: |
           {{ $labels.secret_id }} has had {{ $value }} PutSecretValue operations recently.
@@ -38,7 +38,7 @@ groups:
         > 90
       for: 15m
       labels:
-        severity: warning
+        severity: laa-get-legal-aid-data-dev
     - alert: KubePodCrashLooping
       annotations:
         message: Pod {{ $labels.namespace }}/{{ $labels.pod }} ({{ $labels.container }}) is restarting {{ printf "%.2f" $value }} times / 5 minutes.
@@ -51,7 +51,7 @@ groups:
         * 60 * 5 > 0
       for: 1h
       labels:
-        severity: warning
+        severity: laa-get-legal-aid-data-dev
     - alert: KubePodNotReady
       annotations:
         message: Pod {{ $labels.namespace }}/{{ $labels.pod }} has been in a non-ready
@@ -65,7 +65,7 @@ groups:
         > 0
       for: 1h
       labels:
-        severity: warning
+        severity: laa-get-legal-aid-data-dev
     - alert: KubeDeploymentGenerationMismatch
       annotations:
         message: Deployment generation for {{ $labels.namespace }}/{{ $labels.deployment }} does not match, this indicates that the Deployment has failed but has
@@ -80,7 +80,7 @@ groups:
         kube_deployment_metadata_generation{job="kube-state-metrics"}
       for: 15m
       labels:
-        severity: warning
+        severity: laa-get-legal-aid-data-dev
     - alert: KubeDeploymentReplicasMismatch
       annotations:
         message: Deployment {{ $labels.namespace }}/{{ $labels.deployment }} has not
@@ -94,7 +94,7 @@ groups:
         != kube_deployment_status_replicas_available{job="kube-state-metrics"}
       for: 1h
       labels:
-        severity: warning
+        severity: laa-get-legal-aid-data-dev
     - alert: KubeStatefulSetReplicasMismatch
       annotations:
         message: StatefulSet {{ $labels.namespace }}/{{ $labels.statefulset }} has
@@ -109,7 +109,7 @@ groups:
         kube_statefulset_status_replicas{job="kube-state-metrics"}
       for: 15m
       labels:
-        severity: warning
+        severity: laa-get-legal-aid-data-dev
     - alert: KubeStatefulSetGenerationMismatch
       annotations:
         message: StatefulSet generation for {{ $labels.namespace }}/{{ $labels.statefulset }} does not match, this indicates that the StatefulSet has failed but has
@@ -150,7 +150,7 @@ groups:
         )
       for: 15m
       labels:
-        severity: warning
+        severity: laa-get-legal-aid-data-dev
       annotations:
         message: '{{ $value }} Pods of DaemonSet {{ $labels.namespace }}/{{ $labels.daemonset
           }} are running where they are not supposed to run.'
@@ -163,7 +163,7 @@ groups:
         > 0
       for: 10m
       labels:
-        severity: warning
+        severity: laa-get-legal-aid-data-dev
     - alert: KubeCronJobRunning
       annotations:
         message: CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} is taking more
@@ -177,7 +177,7 @@ groups:
         > 3600
       for: 1h
       labels:
-        severity: warning
+        severity: laa-get-legal-aid-data-dev
     - alert: KubeJobCompletion
       annotations:
         message: Job {{ $labels.namespace }}/{{ $labels.job_name }} is taking more
@@ -191,7 +191,7 @@ groups:
         > 0
       for: 1h
       labels:
-        severity: warning
+        severity: laa-get-legal-aid-data-dev
     - alert: KubeJobFailed
       annotations:
         message: Job {{ $labels.namespace }}/{{ $labels.job_name }} failed to complete.
@@ -204,4 +204,4 @@ groups:
         > 0
       for: 1h
       labels:
-        severity: warning
+        severity: laa-get-legal-aid-data-dev
