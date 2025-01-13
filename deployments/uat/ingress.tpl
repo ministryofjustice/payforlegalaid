@@ -33,7 +33,7 @@ spec:
           pathType: ImplementationSpecific
           backend:
             service:
-              name: gpfd-dev-service
+              name: gpfd-uat-service
               port:
                 number: 8080
 
