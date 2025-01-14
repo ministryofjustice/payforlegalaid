@@ -51,6 +51,8 @@ jobs:
           cat deployments/development/deployment.tpl | envsubst > deployments/development/deployment.yml
           cat deployments/development/ingress.tpl | envsubst > deployments/development/ingress.yml
           cat deployments/development/service.tpl | envsubst > deployments/development/service.yml
+          cat deployments/development/service-monitor.tpl | envsubst > deployments/development/service-monitor.yml
+          cat deployments/development/network-policy.tpl | envsubst > deployments/development/network-policy.yml
 
       - name: Authenticate with Cloud Platform and Deploy
         env:
@@ -63,4 +65,3 @@ jobs:
           kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
           kubectl config use-context ${KUBE_CLUSTER}
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments/development/
-    

@@ -61,22 +61,18 @@ public class MappingTableService {
      * @throws DatabaseReadException if there is an error fetching data from the database
      */
     public MappingTable getDetailsForSpecificMapping(int requestedId)  {
-        List<MappingTable> reportListResponses;
+        MappingTable reportListResponse = null;
 
         if (requestedId < 1000 && requestedId > 0) {
-            reportListResponses = mappingTableDao.fetchReportList();
+            reportListResponse = mappingTableDao.fetchReport(requestedId);
+
         } else {
             throw new IndexOutOfBoundsException("Report ID needs to be a number between 0 and 1000");
         }
 
-        int indexInt = requestedId - 1;   // The '-1' accounts for the fact that the array index starts at 0, whereas the database index/id starts at 1
-        log.debug("Checking the reportListResponses for the desired reportListResponse object, the requested report index is: {}", indexInt);
+        log.debug("Checking the reportListResponses for the desired reportListResponse object, the requested report ID is: {}", requestedId);
 
-        if (indexInt >= reportListResponses.size()) {
-            throw new ReportIdNotFoundException("Report ID not found with ID: " + requestedId);
-        } else {
-            return reportListResponses.get(indexInt);
-        }
+        return reportListResponse;
     }
 
     /**
