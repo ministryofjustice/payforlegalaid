@@ -16,7 +16,13 @@ jobs:
       - name: Checkout Github Repository
         uses: actions/checkout@v4
 
-      - uses: './.github/build-and-test'
+      - name: Build and test the code
+        uses: './.github/build-and-test'
+
+      - name: Run Snyk security suite
+        uses: './.github/snyk-scan'
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN}}
 
       - name: Set Spring profile
         run: echo "SPRING_PROFILES_ACTIVE=dev" >> $GITHUB_ENV
@@ -30,7 +36,8 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
         id: login-ecr
 
-      - uses: './.github/build-push-docker-image'
+      - name: Build the docker image and push it to the repository
+        uses: './.github/build-push-docker-image'
         env:
           REPOSITORY: ${{ vars.ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
@@ -60,4 +67,3 @@ jobs:
           kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
           kubectl config use-context ${KUBE_CLUSTER}
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments/development/
-    

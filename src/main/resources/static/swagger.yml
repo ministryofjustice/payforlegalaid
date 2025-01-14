@@ -12,6 +12,16 @@ info:
   contact:
     name: Ministry of Justice
 
+
+servers:
+  - url: https://laa-get-payments-finance-data.apps.live.cloud-platform.service.justice.gov.uk/
+    description: Production Environment
+  - url: https://laa-get-payments-finance-data-uat.apps.live.cloud-platform.service.justice.gov.uk/
+    description: UAT Test Environment
+  - url: https://laa-get-payments-finance-data-dev.apps.live.cloud-platform.service.justice.gov.uk/
+    description: Development Environment
+
+
 components:
   links:
     ReportDetailsLink:

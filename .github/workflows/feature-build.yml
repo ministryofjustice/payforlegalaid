@@ -6,9 +6,16 @@ on:
 
 jobs:
   feature_branch:
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout GitHub repository
         uses: actions/checkout@v4
 
-      - uses: './.github/build-and-test'
+      - name: Build and test
+        uses: './.github/build-and-test'
+
+      - name: Snyk Scan
+        uses: './.github/snyk-scan'
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN}}
