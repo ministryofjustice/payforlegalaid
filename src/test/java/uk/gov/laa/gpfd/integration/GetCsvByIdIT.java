@@ -67,28 +67,18 @@ class GetCsvByIdIT {
 
         when(mockAzureGraphClient.getGraphUserDetails(any())).thenReturn(user);
 
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get("/csv/1")
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d3")
                 .with(oidcLogin()
                         .idToken(token -> token.subject("mockUser")))
                 .with(oauth2Client("graph"))).andReturn().getResponse();
 
         Assertions.assertEquals(200, response.getStatus());
-        Assertions.assertEquals("attachment; filename=CCMS_invoice_analysis-CIS-to-CCMS-import-analysis-2.csv", response.getHeader("Content-Disposition"));
-    }
-
-    @Test
-    void shouldReturn400WhenGivenInvalidId() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get("/csv/1001")
-                .with(oidcLogin()
-                        .idToken(token -> token.subject("mockUser")))
-                .with(oauth2Client("graph"))).andReturn().getResponse();
-
-        Assertions.assertEquals(400, response.getStatus());
+        Assertions.assertEquals("attachment; filename=CIS to CCMS payment value Defined.csv", response.getHeader("Content-Disposition"));
     }
 
     @Test
     void shouldReturn404WhenNoReportsFound() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get("/csv/999")
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get("/csv/0d4da9ec-b0b3-4371-af10-321")
                 .with(oidcLogin()
                         .idToken(token -> token.subject("mockUser")))
                 .with(oauth2Client("graph"))).andReturn().getResponse();

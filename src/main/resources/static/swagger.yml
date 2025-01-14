@@ -120,8 +120,9 @@ paths:
                       type: object
                       properties:
                         id:
-                          type: integer
-                          example: 1
+                          type: string
+                          format: uuid
+                          example: "3fa85f64-5717-4562-b3fc-2c963f007e86"
                         reportName:
                           type: string
                           example: "Invoice_analysis"
@@ -152,8 +153,9 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
-            example: 1
+            type: string
+            format: uuid
+            example: "3fa85f64-5717-4562-b3fc-2c963f007e86"
           description: The unique ID of the requested report.
       responses:
         '200':
@@ -177,8 +179,9 @@ paths:
                 type: object
                 properties:
                   id:
-                    type: integer
-                    example: 1
+                    type: string
+                    format: uuid
+                    example: "3fa85f64-5717-4562-b3fc-2c963f007e86"
                   reportName:
                     type: string
                     example: "Invoice_analysis-analysis"
@@ -209,8 +212,9 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
-            example: 1
+            type: string
+            format: uuid
+            example: "3fa85f64-5717-4562-b3fc-2c963f007e86"
           description: The unique ID of the requested report.
       responses:
         '200':

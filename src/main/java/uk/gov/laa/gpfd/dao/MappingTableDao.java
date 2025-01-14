@@ -14,6 +14,7 @@ import uk.gov.laa.gpfd.model.MappingTable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @Repository
@@ -57,7 +58,7 @@ public class MappingTableDao {
         }
     }
 
-    public MappingTable fetchReport(int requestId) throws DatabaseReadException {
+    public MappingTable fetchReport(UUID requestId) throws DatabaseReadException {
         List<MappingTable> mappingTableObjectList = new ArrayList<>();
         fetchReportResults(mappingTableObjectList, SELECT_SINGLE_ITEM_SQL, requestId);
         return mappingTableObjectList.get(0);
