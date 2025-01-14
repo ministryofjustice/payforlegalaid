@@ -22,7 +22,7 @@ spec:
             - containerPort: 8080
           env:
             - name: SPRING_PROFILES_ACTIVE
-              value: "uat"                  #TODO - use a configmap once more environments are added
+              value: "uat"
             - name: AZURE_CLIENT_SECRET_UAT
               valueFrom:
                 secretKeyRef:
