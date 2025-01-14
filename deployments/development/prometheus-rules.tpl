@@ -15,7 +15,7 @@ spec:
         expr: secretsmanager_put_secret_value_sum{exported_job="secretsmanager", secret_id="arn:aws:secretsmanager:eu-west-2:754256621582:secret:live-laa-get-payments-finance-data-dev-d4def64b8869d886-jJRZ1c"} > 0
         for: 1m
         labels:
-          severity: laa-get-legal-aid-data-dev
+          severity: ${ALERT_SEVERITY}
         annotations:
           message: |
             {{ $labels.secret_id }} has had {{ $value }} PutSecretValue operations recently.
@@ -37,7 +37,7 @@ spec:
           > 90
         for: 15m
         labels:
-          severity: laa-get-legal-aid-data-dev
+          severity: ${ALERT_SEVERITY}
       - alert: KubePodCrashLooping
         annotations:
           message: Pod {{ $labels.namespace }}/{{ $labels.pod }} ({{ $labels.container }}) is restarting {{ printf "%.2f" $value }} times / 5 minutes.
@@ -50,7 +50,7 @@ spec:
           * 60 * 5 > 0
         for: 1h
         labels:
-          severity: laa-get-legal-aid-data-dev
+          severity: ${ALERT_SEVERITY}
       - alert: KubePodNotReady
         annotations:
           message: Pod {{ $labels.namespace }}/{{ $labels.pod }} has been in a non-ready
@@ -64,7 +64,7 @@ spec:
           > 0
         for: 1h
         labels:
-          severity: laa-get-legal-aid-data-dev
+          severity: ${ALERT_SEVERITY}
       - alert: KubeDeploymentGenerationMismatch
         annotations:
           message: Deployment generation for {{ $labels.namespace }}/{{ $labels.deployment }} does not match, this indicates that the Deployment has failed but has
@@ -79,7 +79,7 @@ spec:
           kube_deployment_metadata_generation{job="kube-state-metrics"}
         for: 15m
         labels:
-          severity: laa-get-legal-aid-data-dev
+          severity: ${ALERT_SEVERITY}
       - alert: KubeDeploymentReplicasMismatch
         annotations:
           message: Deployment {{ $labels.namespace }}/{{ $labels.deployment }} has not
@@ -93,7 +93,7 @@ spec:
           != kube_deployment_status_replicas_available{job="kube-state-metrics"}
         for: 1h
         labels:
-          severity: laa-get-legal-aid-data-dev
+          severity: ${ALERT_SEVERITY}
       - alert: KubeStatefulSetReplicasMismatch
         annotations:
           message: StatefulSet {{ $labels.namespace }}/{{ $labels.statefulset }} has
@@ -108,7 +108,7 @@ spec:
           kube_statefulset_status_replicas{job="kube-state-metrics"}
         for: 15m
         labels:
-          severity: laa-get-legal-aid-data-dev
+          severity: ${ALERT_SEVERITY}
       - alert: KubeStatefulSetGenerationMismatch
         annotations:
           message: StatefulSet generation for {{ $labels.namespace }}/{{ $labels.statefulset }} does not match, this indicates that the StatefulSet has failed but has
@@ -149,7 +149,7 @@ spec:
           )
         for: 15m
         labels:
-          severity: laa-get-legal-aid-data-dev
+          severity: ${ALERT_SEVERITY}
         annotations:
           message: '{{ $value }} Pods of DaemonSet {{ $labels.namespace }}/{{ $labels.daemonset
             }} are running where they are not supposed to run.'
@@ -162,7 +162,7 @@ spec:
           > 0
         for: 10m
         labels:
-          severity: laa-get-legal-aid-data-dev
+          severity: ${ALERT_SEVERITY}
       - alert: KubeCronJobRunning
         annotations:
           message: CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} is taking more
@@ -176,7 +176,7 @@ spec:
           > 3600
         for: 1h
         labels:
-          severity: laa-get-legal-aid-data-dev
+          severity: ${ALERT_SEVERITY}
       - alert: KubeJobCompletion
         annotations:
           message: Job {{ $labels.namespace }}/{{ $labels.job_name }} is taking more
@@ -190,7 +190,7 @@ spec:
           > 0
         for: 1h
         labels:
-          severity: laa-get-legal-aid-data-dev
+          severity: ${ALERT_SEVERITY}
       - alert: KubeJobFailed
         annotations:
           message: Job {{ $labels.namespace }}/{{ $labels.job_name }} failed to complete.
@@ -203,4 +203,4 @@ spec:
           > 0
         for: 1h
         labels:
-          severity: laa-get-legal-aid-data-dev
+          severity: ${ALERT_SEVERITY}
