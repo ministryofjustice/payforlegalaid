@@ -1,0 +1,60 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+
+  build-and-deploy-to-prod:
+    environment: prod # Points to the set of environment secrets kept in GitHub secrets
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # This is required for requesting the JWT
+      contents: read  # This is required for actions/checkout
+
+    steps:
+      - name: Checkout Github Repository
+        uses: actions/checkout@v4
+
+      - uses: './.github/build-and-test'
+
+      - name: Set Spring profile
+        run: echo "SPRING_PROFILES_ACTIVE=prod" >> $GITHUB_ENV
+
+      - uses: './.github/login-to-aws'
+        env:
+          ROLE: ${{ secrets.PROD_ECR_ROLE_TO_ASSUME }}
+          AWS_REGION: ${{ vars.ECR_REGION }}
+
+      - name: Login to container repository
+        uses: aws-actions/amazon-ecr-login@v2
+        id: login-ecr
+
+      - uses: './.github/build-push-docker-image'
+        env:
+          REPOSITORY: ${{ vars.PROD_ECR_REPOSITORY }}
+          IMAGE_TAG: ${{ github.sha }}
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+
+      - name: Generate Kubernetes files from templates
+        env:
+          IMAGE_TAG: ${{ github.sha }} # Tags ECR image with commit sha
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: ${{ vars.PROD_ECR_REPOSITORY }}
+          NAMESPACE: ${{ secrets.KUBE_NAMESPACE_prod }}
+        run: |
+          cat deployments/prod/deployment.tpl | envsubst > deployments/prod/deployment.yml
+          cat deployments/prod/ingress.tpl | envsubst > deployments/prod/ingress.yml
+          cat deployments/prod/service.tpl | envsubst > deployments/prod/service.yml
+
+      - name: Authenticate with Cloud Platform and Deploy
+        env:
+          KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_PROD }}
+          KUBE_CLUSTER: ${{ secrets.KUBE_CLUSTER_PROD }}
+        run: |
+          echo "${{ secrets.KUBE_CERT_PROD }}" > ca.crt
+          kubectl config set-cluster ${KUBE_CLUSTER} --certificate-authority=./ca.crt --server=https://${KUBE_CLUSTER}
+          kubectl config set-credentials deploy-user --token=${{ secrets.KUBE_TOKEN_PROD }}
+          kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
+          kubectl config use-context ${KUBE_CLUSTER}
+          kubectl -n ${KUBE_NAMESPACE} apply -f deployments/prod/
