@@ -6,7 +6,7 @@ metadata:
     prometheus: prometheus-operator
     role: alert-rules
     release: prometheus-operator
-  name: prometheus-custom-rules-secretsmanager
+  name: prometheus-custom-rules-laa-gpfd-api
 spec:
   groups:
     - name: secretmanager-rules
