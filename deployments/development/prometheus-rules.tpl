@@ -204,3 +204,19 @@ spec:
         for: 1h
         labels:
           severity: ${ALERT_SEVERITY}
+      - alert: 5xxErrorResponses
+        annotations:
+          message: Ingress {{ $labels.exported_namespace }}/{{ $labels.ingress }} is serving 5xx responses.
+          summary: 5xx server errors.
+        expr: avg by (ingress, exported_namespace) (rate(nginx_ingress_controller_requests{exported_namespace="${NAMESPACE}",status=~"5.*"}[1m]) > 0)
+        for: 1m
+        labels:
+          severity: ${ALERT_SEVERITY}
+      - alert: 4xxErrorResponses
+        annotations:
+          message: Ingress {{ $labels.exported_namespace }}/{{ $labels.ingress }} is serving 4xx responses.
+          summary: 4xx client errors.
+        expr: avg by (ingress, exported_namespace) (rate(nginx_ingress_controller_requests{exported_namespace="${NAMESPACE}",status=~"4.*"}[1m]) > 0)
+        for: 1m
+        labels:
+          severity: ${ALERT_SEVERITY}
