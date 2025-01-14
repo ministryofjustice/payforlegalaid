@@ -22,7 +22,7 @@ spec:
             - containerPort: 8080
           env:
             - name: SPRING_PROFILES_ACTIVE
-              value: "prod"                  #TODO - use a configmap once more environments are added
+              value: "prod"
             - name: AZURE_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
