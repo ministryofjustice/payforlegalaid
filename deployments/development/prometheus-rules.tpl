@@ -94,75 +94,6 @@ spec:
         for: 1h
         labels:
           severity: ${ALERT_SEVERITY}
-      - alert: KubeStatefulSetReplicasMismatch
-        annotations:
-          message: StatefulSet {{ $labels.namespace }}/{{ $labels.statefulset }} has
-            not matched the expected number of replicas for longer than 15 minutes.
-          runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubestatefulsetreplicasmismatch
-        expr: |-
-          kube_statefulset_status_replicas_ready{job="kube-state-metrics"}
-          * on (namespace)
-          group_left()
-          kube_namespace_annotations{annotation_cloud_platform_out_of_hours_alert="true"}
-          !=
-          kube_statefulset_status_replicas{job="kube-state-metrics"}
-        for: 15m
-        labels:
-          severity: ${ALERT_SEVERITY}
-      - alert: KubeStatefulSetGenerationMismatch
-        annotations:
-          message: StatefulSet generation for {{ $labels.namespace }}/{{ $labels.statefulset }} does not match, this indicates that the StatefulSet has failed but has
-            not been rolled back.
-          runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubestatefulsetgenerationmismatch
-        expr: |-
-          kube_statefulset_status_observed_generation{job="kube-state-metrics"}
-          * on (namespace)
-          group_left()
-          kube_namespace_annotations{annotation_cloud_platform_out_of_hours_alert="true"}
-          !=
-          kube_statefulset_metadata_generation{job="kube-state-metrics"}
-        for: 15m
-        labels:
-          severity: critical
-      - alert: KubeStatefulSetUpdateNotRolledOut
-        annotations:
-          message: StatefulSet {{ $labels.namespace }}/{{ $labels.statefulset }} update
-            has not been rolled out.
-          runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubestatefulsetupdatenotrolledout
-        expr: |-
-          max without (revision) (
-            kube_statefulset_status_current_revision{job="kube-state-metrics"}
-            * on (namespace)
-            group_left()
-            kube_namespace_annotations{annotation_cloud_platform_out_of_hours_alert="true"}
-              unless
-            kube_statefulset_status_update_revision{job="kube-state-metrics"}
-          )
-            *
-          (
-            kube_statefulset_replicas{job="kube-state-metrics"}
-            * on (namespace)
-            group_left()
-            kube_namespace_annotations{annotation_cloud_platform_out_of_hours_alert="true"}
-            !=
-            kube_statefulset_status_replicas_updated{job="kube-state-metrics"}
-          )
-        for: 15m
-        labels:
-          severity: ${ALERT_SEVERITY}
-        annotations:
-          message: '{{ $value }} Pods of DaemonSet {{ $labels.namespace }}/{{ $labels.daemonset
-            }} are running where they are not supposed to run.'
-          runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubedaemonsetmisscheduled
-        expr: |-
-          kube_daemonset_status_number_misscheduled{job="kube-state-metrics"}
-          * on (namespace)
-          group_left()
-          kube_namespace_annotations{annotation_cloud_platform_out_of_hours_alert="true"}
-          > 0
-        for: 10m
-        labels:
-          severity: ${ALERT_SEVERITY}
       - alert: KubeCronJobRunning
         annotations:
           message: CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} is taking more
@@ -204,6 +135,8 @@ spec:
         for: 1h
         labels:
           severity: ${ALERT_SEVERITY}
+    - name: application-rules
+      rules:
       - alert: 5xxErrorResponses
         annotations:
           message: Ingress {{ $labels.exported_namespace }}/{{ $labels.ingress }} is serving 5xx responses.
