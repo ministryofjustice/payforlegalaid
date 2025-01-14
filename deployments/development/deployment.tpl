@@ -19,7 +19,7 @@ spec:
         - name: gpfd-api-container-dev
           image: ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
           ports:
-            - containerPort: 8443
+            - containerPort: 8080
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: "dev"
@@ -63,4 +63,11 @@ spec:
                 secretKeyRef:
                   name: gpfd-test-secret-01
                   key: mojfin-dev-write-password
-
+          securityContext:
+            capabilities:
+              drop:
+              - ALL
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault

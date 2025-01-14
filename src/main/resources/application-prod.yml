@@ -1,10 +1,10 @@
 gpfd:
-  url: https://laa-get-payments-finance-data-dev.apps.live.cloud-platform.service.justice.gov.uk
+  url: https://get-legal-aid-data.service.justice.gov.uk/
   #This is the url which the Active directory dev app registration will redirect to after SSO is complete
-  redirect-uri-template: ${gpfd.url}/login/oauth2/code/gpfd-azure-dev
+  redirect-uri-template: ${gpfd.url}/login/oauth2/code/gpfd-azure-prod
   # Note,"gpfd-azure-dev" is also known as the Oauth2 'registrationId'
 
-  # DEV MOJFIN database config
+  # MOJFIN database config
   datasource:
     read-only:
           url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
@@ -34,7 +34,6 @@ spring:
             scopes:
               - https://graph.microsoft.com/User.Read
 
-#SSL configuration for the dev and uat environment #todo - switch to using a platform handled cert, as detailed in this task: LPF-415
 server:
   port: 8080
   forward-headers-strategy: native # not sure if needed

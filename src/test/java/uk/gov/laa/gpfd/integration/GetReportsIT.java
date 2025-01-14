@@ -55,7 +55,7 @@ class GetReportsIT {
 
         var json = new JSONObject(response.getContentAsString());
         JSONArray reportList = (JSONArray) json.get("reportList");
-        Assertions.assertEquals(2, reportList.toList().size());
+        Assertions.assertEquals(3, reportList.toList().size());
     }
 
     @Test

@@ -1,7 +1,8 @@
 gpfd:
-  url: https://laa-get-payments-finance-data-uat.apps.live.cloud-platform.service.justice.gov.uk
+  url: https://uat.get-legal-aid-data.service.justice.gov.uk/
   redirect-uri-template: ${gpfd.url}/login/oauth2/code/gpfd-azure-uat
-  # DEV MOJFIN database config - needs to change to UAT when that exists:
+
+  # MOJFIN database config
   datasource:
     read-only:
       url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
@@ -31,16 +32,10 @@ spring:
               - https://graph.microsoft.com/User.Read
 
 server:
-  port: 8443
+  port: 8080
   forward-headers-strategy: native # not sure if needed
   shutdown: graceful
   servlet:
     session:
       cookie:
         secure: true
-  ssl:
-    key-store: classpath:gpfd-ssl-keystore.p12
-    key-store-password: ${SSL-DEV-KEY-STORE-PASSWORD}
-    key-store-type: PKCS12
-    key-alias: gpfd-dev-ssl-key
-    key-password: ${SSL-DEV-KEY-STORE-PASSWORD}

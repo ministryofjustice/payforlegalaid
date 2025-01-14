@@ -1,12 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: gpfd-uat-service
-  labels:
-    app: gpfd-uat-service
+  name: gpfd-prod-service
 spec:
   selector:
-    app: gpfd-uat
+    app: gpfd-prod
   ports:
     - name: http
       port: 8080

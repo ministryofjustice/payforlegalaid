@@ -57,6 +57,17 @@ class GetReportsByIdIT {
     }
 
     @Test
+    void shouldReturnSingleReportWhenNotInOrderOfId() throws Exception {
+        MockHttpServletResponse response =  mockMvc.perform(get("/reports/4")
+                .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+
+        Assertions.assertEquals(200, response.getStatus());
+
+        var json = new JSONObject(response.getContentAsString());
+        Assertions.assertEquals(4, json.get("id"));
+    }
+
+    @Test
     void shouldReturn400WhenGivenInvalidId() throws Exception {
         MockHttpServletResponse response = mockMvc.perform(get("/reports/1001")
                 .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
