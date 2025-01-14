@@ -4,7 +4,7 @@ gpfd:
   redirect-uri-template: ${gpfd.url}/login/oauth2/code/gpfd-azure-dev
   # Note,"gpfd-azure-dev" is also known as the Oauth2 'registrationId'
 
-  # DEV MOJFIN database config (also used by GPFD in UAT):
+  # DEV MOJFIN database config
   datasource:
     read-only:
           url: jdbc:oracle:thin:@RDS.MOJFIN.LAA-DEVELOPMENT.MODERNISATION-PLATFORM.SERVICE.JUSTICE.GOV.UK:1521/MOJFIN
