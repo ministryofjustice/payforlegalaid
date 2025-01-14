@@ -27,7 +27,7 @@
         <apache-commons-csv.version>1.10.0</apache-commons-csv.version>
 
         <swagger-annotations.version>2.2.10</swagger-annotations.version>
-        <springdoc-oas.version>2.6.0</springdoc-oas.version>
+        <springdoc-oas.version>2.8.3</springdoc-oas.version>
 
         <bytebudy.version>1.15.10</bytebudy.version>
         <mockito-inlin.version>3.11.2</mockito-inlin.version>
