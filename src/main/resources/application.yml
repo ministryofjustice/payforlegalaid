@@ -1,6 +1,6 @@
 logging:
   level:
-    root: TRACE
+    root: INFO
     org:
       springframework:
         security: INFO
