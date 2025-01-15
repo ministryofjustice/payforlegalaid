@@ -12,12 +12,16 @@ import uk.gov.laa.gpfd.model.MappingTable;
 import uk.gov.laa.gpfd.utils.FileUtils;
 
 import java.util.List;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest // This uses the whole spring context, switch to @JdbcTest if you switch to a H2 DB
 @ActiveProfiles("test")
 class MappingTableDaoTest {
+    public static final UUID DEFAULT_ID = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
+
     @Autowired
     private JdbcTemplate readOnlyJdbcTemplate;
 
@@ -46,22 +50,21 @@ class MappingTableDaoTest {
         List<MappingTable> results = mappingTableDao.fetchReportList();
 
         assertEquals(3, results.size());
-        assertEquals(1, results.get(0).getId());
-        assertEquals(2, results.get(1).getId());
-        assertEquals(4, results.get(2).getId());
+        assertEquals("0d4da9ec-b0b3-4371-af10-f375330d85d1", results.get(0).getId().toString());
+        assertEquals("0d4da9ec-b0b3-4371-af10-f375330d85d2", results.get(1).getId().toString());
+        assertEquals("0d4da9ec-b0b3-4371-af10-f375330d85d3", results.get(2).getId().toString());
     }
 
     @Test
     void shouldReturnSingleReport() {
-        MappingTable result = mappingTableDao.fetchReport(4);
+        MappingTable result = mappingTableDao.fetchReport(DEFAULT_ID);
 
-        assertEquals(4, result.getId());
+        assertEquals("0d4da9ec-b0b3-4371-af10-f375330d85d1", result.getId().toString());
     }
 
     @Test
     void shouldThrowExceptionIfReportNotFound() {
-        assertThrows(ReportIdNotFoundException.class,
-                () -> mappingTableDao.fetchReport(3));
-
+        var requestId = UUID.fromString("1d4da9ec-b0b3-4371-af10-f375330d85d1");
+        assertThrows(ReportIdNotFoundException.class, () -> mappingTableDao.fetchReport(requestId));
     }
 }

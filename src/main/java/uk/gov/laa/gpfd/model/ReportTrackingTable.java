@@ -3,6 +3,7 @@ package uk.gov.laa.gpfd.model;
 import lombok.Builder;
 
 import java.sql.Timestamp;
+import java.util.UUID;
 //TODO - This class will be a bean, dont forget to annotate it with  @org.springframework.beans.factory.annotation.Autowired to make sonarlint happy
 // Bean guide: https://www.baeldung.com/spring-bean
 
@@ -11,10 +12,10 @@ import java.sql.Timestamp;
  */
 @Builder
 public record ReportTrackingTable(
-        int id,
+        UUID id,
         String reportName,
         String reportUrl,
         Timestamp creationTime,
-        int mappingId,
+        UUID mappingId,
         String reportGeneratedBy
 ) {}

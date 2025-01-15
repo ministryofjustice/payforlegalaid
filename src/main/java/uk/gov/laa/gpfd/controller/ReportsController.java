@@ -17,6 +17,8 @@ import uk.gov.laa.gpfd.services.MappingTableService;
 import uk.gov.laa.gpfd.services.ReportService;
 import uk.gov.laa.gpfd.services.ReportTrackingTableService;
 
+import java.util.UUID;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -27,7 +29,7 @@ public class ReportsController implements ReportsApi {
     private final ReportService reportService;
 
     @Override
-    public ResponseEntity<GetReportById200Response> getReportById(Integer id) {
+    public ResponseEntity<GetReportById200Response> getReportById(UUID id) {
         var response = reportService.createReportResponse(id);
 
         log.debug("Returning a report response to user");
@@ -53,7 +55,7 @@ public class ReportsController implements ReportsApi {
      * @return CSV data stream or reports data
      */
     @RequestMapping(value = "/csv/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<StreamingResponseBody> getCSV(@PathVariable(value = "id") int requestedId,
+    public ResponseEntity<StreamingResponseBody> getCSV(@PathVariable(value = "id") UUID requestedId,
                                                         @RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient) {
         reportTrackingTableService.updateReportTrackingTable(requestedId, graphClient);
 

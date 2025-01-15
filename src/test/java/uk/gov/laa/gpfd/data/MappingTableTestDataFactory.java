@@ -2,7 +2,12 @@ package uk.gov.laa.gpfd.data;
 
 import uk.gov.laa.gpfd.model.MappingTable;
 
+import java.util.UUID;
+
 public class MappingTableTestDataFactory {
+
+    private static final UUID id = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
+
 
     /**
      * Creates a valid MappingTable record for the first report entry.
@@ -11,7 +16,7 @@ public class MappingTableTestDataFactory {
      */
     public static MappingTable aValidInvoiceAnalysisReport() {
         return new MappingTable(
-                1,
+                id,
                 "CCMS_invoice_analysis-CIS-to-CCMS-import-analysis-2",
                 "CCMS_invoice_analysis",
                 "CIS-to-CCMS-import-analysis",
@@ -32,7 +37,7 @@ public class MappingTableTestDataFactory {
      */
     public static MappingTable aValidBankAccountReport() {
         return new MappingTable(
-                2,
+                id,
                 "CCMS_and_CIS_Bank_Account_Report_w_Category_Code_(MNTH)-MAIN-12",
                 "CCMS_and_CIS_Bank_Account_Report_w_Category_Code_(MNTH)",
                 "MAIN",

@@ -14,12 +14,16 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest // This uses the whole spring context, switch to @JdbcTest if you switch to a H2 DB
 @ActiveProfiles("test")
 class ReportTrackingTableDAOTest {
+
+    public static final UUID DEFAULT_ID = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
 
     @Autowired
     private JdbcTemplate writeJdbcTemplate;
@@ -38,9 +42,7 @@ class ReportTrackingTableDAOTest {
 
     @AfterEach
     void resetDatabase() {
-
         writeJdbcTemplate.update("TRUNCATE TABLE GPFD.REPORT_TRACKING");
-        writeJdbcTemplate.update("DROP SEQUENCE GPFD_TRACKING_TABLE_SEQUENCE");
         writeJdbcTemplate.update("TRUNCATE TABLE GPFD.CSV_TO_SQL_MAPPING_TABLE");
     }
 
@@ -51,7 +53,7 @@ class ReportTrackingTableDAOTest {
         String reportName = reportTrackingTableList.get(0).get("REPORT_NAME").toString();
 
         assertEquals(1, reportTrackingTableList.size());
-        assertEquals(1, reportTrackingTableList.get(0).get("ID"));
+        assertEquals("0d4da9ec-b0b3-4371-af10-f375330d85d3", reportTrackingTableList.get(0).get("ID").toString());
         assertEquals("Initial Test Report Name", reportName); // Testing the gpfd_data.sql test data has populated into the DB properly
     }
 
@@ -59,15 +61,13 @@ class ReportTrackingTableDAOTest {
     @Test
     void testUpdateTrackingTable() {
         // Arrange
-        int insertedId = 0; //This will be overridden  when the DAO uses an Oracle sequence to populate the id
         String insertedReportName = "Test Report";
         String insertedReportUrl = "http://example.com/report";
         LocalDateTime creationTime = LocalDateTime.now();
         Timestamp insertedCreationTime = Timestamp.valueOf(creationTime.withNano(0));
-        int insertedMappingId = 2;
         String insertedReportGeneratedBy = "TestUser";
 
-        ReportTrackingTable reportTrackingTable = new ReportTrackingTable(insertedId, insertedReportName, insertedReportUrl, insertedCreationTime, insertedMappingId, insertedReportGeneratedBy);
+        ReportTrackingTable reportTrackingTable = new ReportTrackingTable(DEFAULT_ID, insertedReportName, insertedReportUrl, insertedCreationTime, DEFAULT_ID, insertedReportGeneratedBy);
 
         // Act
         reportTrackingTableDao.updateTrackingTable(reportTrackingTable);
@@ -78,11 +78,11 @@ class ReportTrackingTableDAOTest {
         Timestamp reportCreationTime = (Timestamp) reportTrackingTableList.get(1).get("CREATION_TIME"); //index 1 because index 0 is populated by gpfd_data.sql
 
         assertEquals(2, reportTrackingTableList.size());
-        assertEquals(2, reportTrackingTableList.get(1).get("ID")); //2 is the value of the id since the database sequence will increment up to 2 after inserting 2 rows of data
+        assertNotNull(reportTrackingTableList.get(1).get("ID"));
         assertEquals(insertedReportName, reportName);
         assertEquals(insertedReportUrl, reportTrackingTableList.get(1).get("REPORT_URL"));
         assertEquals(reportCreationTime, insertedCreationTime);
-        assertEquals(insertedMappingId, reportTrackingTableList.get(1).get("MAPPING_ID"));
+        assertEquals("0d4da9ec-b0b3-4371-af10-f375330d85d1", reportTrackingTableList.get(1).get("MAPPING_ID").toString());
         assertEquals(insertedReportGeneratedBy, reportTrackingTableList.get(1).get("REPORT_GENERATED_BY"));
     }
 }

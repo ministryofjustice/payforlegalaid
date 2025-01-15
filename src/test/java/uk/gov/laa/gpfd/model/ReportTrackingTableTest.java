@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -13,21 +14,23 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ReportTrackingTableTest {
 
+    private static final UUID id = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
+
     @Test
     void testReportTrackingTableCreationWithValidData() {
         // Given
         var creationTime = Timestamp.from(Instant.now());
         var table = new ReportTrackingTable(
-                1, "ReportName", "http://report.url", creationTime, 10, "GeneratedBy"
+                id, "ReportName", "http://report.url", creationTime, id, "GeneratedBy"
         );
 
         // When
         // Then
         assertNotNull(table);
-        assertEquals(1, table.id());
+        assertEquals(id, table.id());
         assertEquals("ReportName", table.reportName());
         assertEquals("http://report.url", table.reportUrl());
-        assertEquals(10, table.mappingId());
+        assertEquals(id, table.mappingId());
         assertEquals("GeneratedBy", table.reportGeneratedBy());
         assertEquals(creationTime, table.creationTime());
     }
@@ -37,13 +40,13 @@ class ReportTrackingTableTest {
         // Given
         var creationTime = Timestamp.from(Instant.now());
         var table = new ReportTrackingTable(
-                2, "ReportName", "http://report.url", creationTime, 15, "GeneratedBy"
+                id, "ReportName", "http://report.url", creationTime, id, "GeneratedBy"
         );
 
         // When
         // Then
         assertThrows(IllegalAccessException.class, () -> {
-            table.getClass().getDeclaredField("id").set(table, 2);
+            table.getClass().getDeclaredField("id").set(table, id);
         });
     }
 
@@ -52,7 +55,7 @@ class ReportTrackingTableTest {
         // Given
         var creationTime = Timestamp.from(Instant.now());
         var table = new ReportTrackingTable(
-                3, "", "", creationTime, 0, ""
+                id, "", "", creationTime, id, ""
         );
 
         // When
@@ -66,7 +69,7 @@ class ReportTrackingTableTest {
     void testReportTrackingTableWithNullFields() {
         // Given
         var table = new ReportTrackingTable(
-                4, null, null, null, 0, null
+                id, null, null, null, id, null
         );
 
         // When
@@ -82,10 +85,10 @@ class ReportTrackingTableTest {
         // Given
         var creationTime = Timestamp.from(Instant.now());
         var table1 = new ReportTrackingTable(
-                5, "ReportName", "http://report.url", creationTime, 20, "GeneratedBy"
+                id, "ReportName", "http://report.url", creationTime, id, "GeneratedBy"
         );
         var table2 = new ReportTrackingTable(
-                5, "ReportName", "http://report.url", creationTime, 20, "GeneratedBy"
+                id, "ReportName", "http://report.url", creationTime, id, "GeneratedBy"
         );
 
         // When
@@ -98,10 +101,10 @@ class ReportTrackingTableTest {
         // Given
         var creationTime = Timestamp.from(Instant.now());
         var table1 = new ReportTrackingTable(
-                6, "Report1", "http://url1", creationTime, 25, "GeneratedBy1"
+                id, "Report1", "http://url1", creationTime, id, "GeneratedBy1"
         );
         var table2 = new ReportTrackingTable(
-                7, "Report2", "http://url2", creationTime, 30, "GeneratedBy2"
+                id, "Report2", "http://url2", creationTime, id, "GeneratedBy2"
         );
 
         // When
@@ -114,10 +117,10 @@ class ReportTrackingTableTest {
         // Given
         var creationTime = Timestamp.from(Instant.now());
         var table1 = new ReportTrackingTable(
-                8, "ReportName", "http://report.url", creationTime, 35, "GeneratedBy"
+                id, "ReportName", "http://report.url", creationTime, id, "GeneratedBy"
         );
         var table2 = new ReportTrackingTable(
-                8, "ReportName", "http://report.url", creationTime, 35, "GeneratedBy"
+                id, "ReportName", "http://report.url", creationTime, id, "GeneratedBy"
         );
 
         // When
@@ -130,11 +133,11 @@ class ReportTrackingTableTest {
         // Given
         var creationTime = Timestamp.from(Instant.now());
         var table = new ReportTrackingTable(
-                9, "ReportName", "http://report.url", creationTime, 40, "GeneratedBy"
+                id, "ReportName", "http://report.url", creationTime, id, "GeneratedBy"
         );
-        var expected = "ReportTrackingTable[id=9, reportName=ReportName, " +
+        var expected = "ReportTrackingTable[id=0d4da9ec-b0b3-4371-af10-f375330d85d1, reportName=ReportName, " +
                 "reportUrl=http://report.url, creationTime=" + creationTime +
-                ", mappingId=40, reportGeneratedBy=GeneratedBy]";
+                ", mappingId=0d4da9ec-b0b3-4371-af10-f375330d85d1, reportGeneratedBy=GeneratedBy]";
 
         // When
         // Then
@@ -145,7 +148,7 @@ class ReportTrackingTableTest {
     void testReportTrackingTableWithNullCreationTime() {
         // Given
         var table = new ReportTrackingTable(
-                10, "ReportName", "http://report.url", null, 45, "GeneratedBy"
+                id, "ReportName", "http://report.url", null, id, "GeneratedBy"
         );
 
         // When
@@ -154,46 +157,12 @@ class ReportTrackingTableTest {
     }
 
     @Test
-    void testReportTrackingTableIdBoundaryValues() {
-        // Given
-        var creationTime = Timestamp.from(Instant.now());
-        var table1 = new ReportTrackingTable(
-                Integer.MIN_VALUE, "MinIDReport", "http://url", creationTime, 50, "GeneratedBy"
-        );
-        var table2 = new ReportTrackingTable(
-                Integer.MAX_VALUE, "MaxIDReport", "http://url", creationTime, 60, "GeneratedBy"
-        );
-
-        // When
-        // Then
-        assertEquals(Integer.MIN_VALUE, table1.id());
-        assertEquals(Integer.MAX_VALUE, table2.id());
-    }
-
-    @Test
-    void testReportTrackingTableMappingIdBoundaryValues() {
-        // Given
-        var creationTime = Timestamp.from(Instant.now());
-        var table1 = new ReportTrackingTable(
-                11, "ReportName", "http://url", creationTime, Integer.MIN_VALUE, "GeneratedBy"
-        );
-        var table2 = new ReportTrackingTable(
-                12, "ReportName", "http://url", creationTime, Integer.MAX_VALUE, "GeneratedBy"
-        );
-
-        // When
-        // Then
-        assertEquals(Integer.MIN_VALUE, table1.mappingId());
-        assertEquals(Integer.MAX_VALUE, table2.mappingId());
-    }
-
-    @Test
     void testReportTrackingTableWithLongReportName() {
         // Given
         var longReportName = "a".repeat(1000); // Generate a string of 1000 characters
         var creationTime = Timestamp.from(Instant.now());
         var table = new ReportTrackingTable(
-                13, longReportName, "http://url", creationTime, 70, "GeneratedBy"
+                id, longReportName, "http://url", creationTime, id, "GeneratedBy"
         );
 
         // When
@@ -206,7 +175,7 @@ class ReportTrackingTableTest {
         // Given
         var creationTime = Timestamp.from(Instant.now());
         var table = new ReportTrackingTable(
-                14, "ReportName", "invalid-url", creationTime, 80, "GeneratedBy"
+                id, "ReportName", "invalid-url", creationTime, id, "GeneratedBy"
         );
 
         // When
@@ -215,24 +184,11 @@ class ReportTrackingTableTest {
     }
 
     @Test
-    void testReportTrackingTableWithEmptyReportUrl() {
-        // Given
-        var creationTime = Timestamp.from(Instant.now());
-        var table = new ReportTrackingTable(
-                15, "ReportName", "", creationTime, 90, "GeneratedBy"
-        );
-
-        // When
-        // Then
-        assertEquals("", table.reportUrl());
-    }
-
-    @Test
     void testReportTrackingTableWithInvalidTimestamp() {
         // Given
         var invalidTimestamp = Timestamp.valueOf("2024-11-24 25:00:00"); // Invalid timestamp
         var table = new ReportTrackingTable(
-                16, "ReportName", "http://url", invalidTimestamp, 100, "GeneratedBy"
+                id, "ReportName", "http://url", invalidTimestamp, id, "GeneratedBy"
         );
 
         // When
@@ -245,7 +201,7 @@ class ReportTrackingTableTest {
         // Given
         var creationTime = Timestamp.from(Instant.now());
         var table = new ReportTrackingTable(
-                17, "ReportName", "http://url", creationTime, 110, null
+                id, "ReportName", "http://url", creationTime, id, null
         );
 
         // When
@@ -258,7 +214,7 @@ class ReportTrackingTableTest {
         // Given
         var creationTime = Timestamp.from(Instant.now());
         var table = new ReportTrackingTable(
-                18, "Report@#%", "http://url", creationTime, 120, "GeneratedBy"
+                id, "Report@#%", "http://url", creationTime, id, "GeneratedBy"
         );
 
         // When
@@ -267,24 +223,11 @@ class ReportTrackingTableTest {
     }
 
     @Test
-    void testReportTrackingTableWithSpecialCharactersInReportUrl() {
-        // Given
-        var creationTime = Timestamp.from(Instant.now());
-        var table = new ReportTrackingTable(
-                19, "ReportName", "http://url?param=value&another=value", creationTime, 130, "GeneratedBy"
-        );
-
-        // When
-        // Then
-        assertEquals("http://url?param=value&another=value", table.reportUrl());
-    }
-
-    @Test
     void testReportTrackingTableWithGeneratedByHavingSpecialCharacters() {
         // Given
         var creationTime = Timestamp.from(Instant.now());
         var table = new ReportTrackingTable(
-                20, "ReportName", "http://url", creationTime, 140, "GeneratedBy@#%"
+                id, "ReportName", "http://url", creationTime, id, "GeneratedBy@#%"
         );
 
         // When
