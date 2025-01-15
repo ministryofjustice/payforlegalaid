@@ -1,7 +1,9 @@
 package uk.gov.laa.gpfd.config;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.h2.tools.DeleteDbFiles;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,8 +30,18 @@ public class DatabaseConfigLocal {
 
         initialiser.setDatabasePopulator(schemaPopulator);
 
-        // Make sure we clean up at the end of this session
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+        return initialiser;
+    }
+
+    @Bean
+    public DatabaseCleanupBean databaseCleanupBean() {
+        return new DatabaseCleanupBean();
+    }
+
+    public static class DatabaseCleanupBean implements DisposableBean {
+
+        @Override
+        public void destroy() throws Exception {
             try {
                 log.info("Attempting to delete local H2 database files");
                 DeleteDbFiles.execute("~", "localGpfdDb", false);
@@ -37,8 +49,7 @@ public class DatabaseConfigLocal {
             } catch (Exception e) {
                 log.error("Error deleting database files: {}", e.getMessage());
             }
-        }));
+        }
 
-        return initialiser;
     }
 }
