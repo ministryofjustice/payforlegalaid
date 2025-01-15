@@ -106,6 +106,6 @@ spec:
           message: Ingress {{ $labels.exported_namespace }}/{{ $labels.ingress }} is serving 4xx responses.
           summary: 4xx client errors.
         expr: avg by (ingress, exported_namespace) (rate(nginx_ingress_controller_requests{exported_namespace="${NAMESPACE}",status=~"4.*"}[1m]) > 0)
-        for: 1m
+        for: 0m
         labels:
           severity: ${ALERT_SEVERITY}
