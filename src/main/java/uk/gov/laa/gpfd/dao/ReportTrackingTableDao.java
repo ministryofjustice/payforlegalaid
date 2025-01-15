@@ -22,7 +22,7 @@ public class ReportTrackingTableDao {
     public void updateTrackingTable(ReportTrackingTable trackingModel) {
         log.info("Updating tracking information");
         int numberOfRowsAffected = this.writeJdbcTemplate.update(INSERT_SQL, UUID.randomUUID().toString(), trackingModel.reportName(), trackingModel.reportUrl(),
-                trackingModel.creationTime(), trackingModel.mappingId(), trackingModel.reportGeneratedBy());
+                trackingModel.creationTime(), trackingModel.mappingId().toString(), trackingModel.reportGeneratedBy());
         log.debug("Number of database rows affected by insert to report tracking table: " + numberOfRowsAffected);
     }
 
