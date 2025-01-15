@@ -60,7 +60,7 @@ public class MappingTableDao {
 
     public MappingTable fetchReport(UUID requestId) throws DatabaseReadException {
         List<MappingTable> mappingTableObjectList = new ArrayList<>();
-        fetchReportResults(mappingTableObjectList, SELECT_SINGLE_ITEM_SQL, requestId);
+        fetchReportResults(mappingTableObjectList, SELECT_SINGLE_ITEM_SQL, requestId.toString());
         return mappingTableObjectList.get(0);
     }
 
