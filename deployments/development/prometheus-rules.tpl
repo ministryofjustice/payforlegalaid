@@ -18,8 +18,7 @@ spec:
           severity: ${ALERT_SEVERITY}
         annotations:
           message: |
-            {{ $labels.secret_id }} has had {{ $value }} PutSecretValue operations recently.
-            {{ $labels.user_arn }} has had {{ $value }} PutSecretValue operations recently.
+            {{ $labels.user_arn }} has updated secrets.
           runbook_url: https://dsdmoj.atlassian.net/wiki/spaces/LPF/pages/5297832119/Runbooks
     - name: kubernetes-rules
       rules:
@@ -106,6 +105,6 @@ spec:
           message: Ingress {{ $labels.exported_namespace }}/{{ $labels.ingress }} is serving 4xx responses.
           summary: 4xx client errors.
         expr: avg by (ingress, exported_namespace) (rate(nginx_ingress_controller_requests{exported_namespace="${NAMESPACE}",status=~"4.*"}[1m]) > 0)
-        for: 0m
+        for: 1m
         labels:
           severity: ${ALERT_SEVERITY}
