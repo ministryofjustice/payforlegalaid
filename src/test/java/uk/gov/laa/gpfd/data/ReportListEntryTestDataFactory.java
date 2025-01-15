@@ -2,6 +2,8 @@ package uk.gov.laa.gpfd.data;
 
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 
+import java.util.UUID;
+
 /**
  * Factory class to generate test data for instances of {@link ReportsGet200ResponseReportListInner}.
  * This class provides methods to generate valid instances of {@link ReportsGet200ResponseReportListInner}
@@ -12,6 +14,7 @@ import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
  * </p>
  */
 public class ReportListEntryTestDataFactory {
+    private static final UUID id = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
 
     /**
      * Generates a valid {@link ReportsGet200ResponseReportListInner} instance with default values.
@@ -24,7 +27,7 @@ public class ReportListEntryTestDataFactory {
      */
     public static ReportsGet200ResponseReportListInner aValidReportsGet200ResponseReportListInner() {
         return new ReportsGet200ResponseReportListInner() {{
-            id(1);
+            id(id);
             reportName("Excel_Report_Name-CSV-NAME-sheetnumber");
             description("List all unpaid AP invoices and all outstanding AR debts at the end of the previous month. Detailed data, one row per invoice");
         }};
@@ -40,7 +43,7 @@ public class ReportListEntryTestDataFactory {
      * @param id The custom report ID to assign to the generated report entry.
      * @return A new instance of {@link ReportsGet200ResponseReportListInner} with the specified ID and valid default data.
      */
-    public static ReportsGet200ResponseReportListInner aValidReportsGet200ResponseReportListInnerWithCustomId(int id) {
+    public static ReportsGet200ResponseReportListInner aValidReportsGet200ResponseReportListInnerWithCustomId(UUID id) {
         return new ReportsGet200ResponseReportListInner() {{
             id(id);
             reportName("Excel_Report_Name-CSV-NAME-sheetnumber");

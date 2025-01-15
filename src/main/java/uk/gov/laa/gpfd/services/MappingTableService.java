@@ -11,6 +11,7 @@ import uk.gov.laa.gpfd.model.MappingTable;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Service class responsible for interacting with the MappingTable and transforming its data
@@ -48,27 +49,14 @@ public class MappingTableService {
 
     /**
      * Retrieves the details of a specific report based on the provided report ID.
-     * <p>
-     * This method checks that the report ID is within a valid range (1-999) and attempts to find the report
-     * by its ID. If the report is found, it returns the mappable Report
-     * object. If the report ID is out of range or the report is not found, appropriate exceptions are thrown.
-     * </p>
      *
      * @param requestedId the ID of the requested report
      * @return a {@link MappingTable} object containing the details of the requested report
-     * @throws IndexOutOfBoundsException if the requested ID is outside the valid range (1-999)
      * @throws ReportIdNotFoundException if the report with the requested ID is not found
      * @throws DatabaseReadException if there is an error fetching data from the database
      */
-    public MappingTable getDetailsForSpecificMapping(int requestedId)  {
-        MappingTable reportListResponse = null;
-
-        if (requestedId < 1000 && requestedId > 0) {
-            reportListResponse = mappingTableDao.fetchReport(requestedId);
-
-        } else {
-            throw new IndexOutOfBoundsException("Report ID needs to be a number between 0 and 1000");
-        }
+    public MappingTable getDetailsForSpecificMapping(UUID requestedId)  {
+        MappingTable reportListResponse = mappingTableDao.fetchReport(requestedId);
 
         log.debug("Checking the reportListResponses for the desired reportListResponse object, the requested report ID is: {}", requestedId);
 
@@ -85,9 +73,9 @@ public class MappingTableService {
      * @param requestedId the ID of the requested report
      * @return a {@link ReportsGet200ResponseReportListInner} object containing the details of the requested report
      */
-    public ReportsGet200ResponseReportListInner getDetailsForSpecificReport(int requestedId) {
+    public ReportsGet200ResponseReportListInner getDetailsForSpecificReport(UUID requestedId) {
         MappingTable mappingEntry = getDetailsForSpecificMapping(requestedId);
         return ReportsGet200ResponseReportListInnerMapper.map(mappingEntry);
     }
 
-    }
+}

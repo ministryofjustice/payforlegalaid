@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -30,6 +31,8 @@ import static org.mockito.Mockito.doThrow;
 @ExtendWith(MockitoExtension.class)
 class MappingTableServiceTest {
 
+    public static final UUID DEFAULT_ID = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
+
     @Mock
     private MappingTableDao mappingTableDao;
 
@@ -41,12 +44,6 @@ class MappingTableServiceTest {
         when(mappingTableDao.fetchReportList()).thenThrow(DatabaseReadException.class);
 
         assertThrows(DatabaseReadException.class, () -> mappingTableService.fetchReportListEntries());
-    }
-
-    @Test
-    void should_return_out_of_range_exception_when_report_id_out_of_range() throws DatabaseReadException {
-        assertThrows(IndexOutOfBoundsException.class, () -> mappingTableService.getDetailsForSpecificReport(0));
-        assertThrows(IndexOutOfBoundsException.class, () -> mappingTableService.getDetailsForSpecificReport(1000));
     }
 
     @Test
@@ -122,7 +119,7 @@ class MappingTableServiceTest {
     void shouldReturnValidReportsAndIgnoreInvalidData() throws DatabaseReadException {
         // Given
         var mappingTable1 = MappingTableTestDataFactory.aValidInvoiceAnalysisReport();
-        var mappingTable2 = new MappingTable(999, null, null, null, 0, null, null, null, null, null, null); // Invalid data
+        var mappingTable2 = new MappingTable(DEFAULT_ID, null, null, null, 0, null, null, null, null, null, null); // Invalid data
         var list = Arrays.asList(mappingTable1, mappingTable2);
         when(mappingTableDao.fetchReportList()).thenReturn(list);
 
@@ -136,43 +133,23 @@ class MappingTableServiceTest {
     }
 
     @Test
-    void shouldThrowIndexOutOfBoundsExceptionWhenRequestedIdIsGreaterThan1000() {
-        // Given
-        var invalidId = 1001;
-
-        // Then
-        assertThrows(IndexOutOfBoundsException.class,
-                () -> mappingTableService.getDetailsForSpecificReport(invalidId));
-    }
-
-    @Test
     void shouldThrowReportIdNotFoundExceptionWhenRequestedReportDoesNotExist() {
         // Given
-        doThrow(new ReportIdNotFoundException("")).when(mappingTableDao).fetchReport(3);
+        doThrow(new ReportIdNotFoundException("")).when(mappingTableDao).fetchReport(DEFAULT_ID);
 
         // Then
         assertThrows(ReportIdNotFoundException.class,
-                () -> mappingTableService.getDetailsForSpecificReport(3));
+                () -> mappingTableService.getDetailsForSpecificReport(DEFAULT_ID));
     }
 
     @Test
     void shouldThrowDatabaseReadExceptionWhenDatabaseNotRead() {
         // Given
-        doThrow(new DatabaseReadException("")).when(mappingTableDao).fetchReport(1);
+        doThrow(new DatabaseReadException("")).when(mappingTableDao).fetchReport(DEFAULT_ID);
 
         // Then
         assertThrows(DatabaseReadException.class,
-                () -> mappingTableService.getDetailsForSpecificReport(1));
-    }
-
-    @Test
-    void shouldThrowIndexOutOfBoundsExceptionWhenRequestedIdIsNegative() {
-        // Given
-        var requestedId = -1;
-
-        // Then
-        assertThrows(IndexOutOfBoundsException.class,
-                () -> mappingTableService.getDetailsForSpecificReport(requestedId));
+                () -> mappingTableService.getDetailsForSpecificReport(DEFAULT_ID));
     }
 
 }

@@ -9,6 +9,7 @@ import uk.gov.laa.gpfd.model.ReportTrackingTable;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 
 /**
@@ -54,7 +55,7 @@ public class ReportTrackingTableService {
      * @throws ReportIdNotFoundException if the requested report ID is not found in the mapping table.
      * @throws DatabaseReadException if there is an error interacting with the database.
      */
-    public synchronized void updateReportTrackingTable(int requestedId, OAuth2AuthorizedClient graphClient) {
+    public synchronized void updateReportTrackingTable(UUID requestedId, OAuth2AuthorizedClient graphClient) {
         var reportListResponse = mappingTableService.getDetailsForSpecificReport(requestedId);
         var user = userService.getUserDetails(graphClient);
 

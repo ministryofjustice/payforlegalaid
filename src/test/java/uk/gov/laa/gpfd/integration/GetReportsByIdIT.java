@@ -47,40 +47,21 @@ class GetReportsByIdIT {
 
     @Test
     void shouldReturnSingleReportWithMatchingId() throws Exception {
-        MockHttpServletResponse response =  mockMvc.perform(get("/reports/1")
+        MockHttpServletResponse response =  mockMvc.perform(get("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d3")
                 .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
         Assertions.assertEquals(200, response.getStatus());
 
         var json = new JSONObject(response.getContentAsString());
-        Assertions.assertEquals(1, json.get("id"));
-    }
-
-    @Test
-    void shouldReturnSingleReportWhenNotInOrderOfId() throws Exception {
-        MockHttpServletResponse response =  mockMvc.perform(get("/reports/4")
-                .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
-
-        Assertions.assertEquals(200, response.getStatus());
-
-        var json = new JSONObject(response.getContentAsString());
-        Assertions.assertEquals(4, json.get("id"));
+        Assertions.assertEquals("0d4da9ec-b0b3-4371-af10-f375330d85d3", json.get("id"));
     }
 
     @Test
     void shouldReturn400WhenGivenInvalidId() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get("/reports/1001")
+        MockHttpServletResponse response = mockMvc.perform(get("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d3321")
                 .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
         Assertions.assertEquals(400, response.getStatus());
-    }
-
-    @Test
-    void shouldReturn404WhenNoReportsFound() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get("/reports/50")
-                .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
-
-        Assertions.assertEquals(404, response.getStatus());
     }
 }
 

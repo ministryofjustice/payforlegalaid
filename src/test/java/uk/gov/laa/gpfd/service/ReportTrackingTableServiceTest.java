@@ -17,6 +17,8 @@ import uk.gov.laa.gpfd.services.ReportTrackingTableService;
 import uk.gov.laa.gpfd.services.UserService;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -28,6 +30,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ReportTrackingTableServiceTest {
+    private static final UUID id = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
 
     @Mock
     ReportTrackingTableDao reportTrackingTableDao;
@@ -47,10 +50,10 @@ class ReportTrackingTableServiceTest {
     @Test
     void shouldSuccessfullyUpdateReportTrackingTableWhenValidDataIsProvided() {
         // Given
-        var requestedId = 1;
+        var requestedId = id;
         var reportDetails = new ReportsGet200ResponseReportListInner() {{
             setReportName("Report 1");
-            setId(1);
+            setId(id);
         }};
 
         when(mappingTableService.getDetailsForSpecificReport(requestedId)).thenReturn(reportDetails);
@@ -73,7 +76,7 @@ class ReportTrackingTableServiceTest {
     @Test
     void shouldThrowReportIdNotFoundExceptionWhenInvalidReportIdIsProvided() {
         // Given
-        int invalidId = 9999;  // Non-existing ID
+        var invalidId = id;  // Non-existing ID
         when(mappingTableService.getDetailsForSpecificReport(invalidId)).thenThrow(ReportIdNotFoundException.class);
 
         // When
@@ -85,10 +88,10 @@ class ReportTrackingTableServiceTest {
     @Test
     void shouldThrowNullPointerExceptionWhenUserDetailsAreNull() {
         // Given
-        int requestedId = 1;
+        var requestedId = id;
         var reportDetails = new ReportsGet200ResponseReportListInner() {{
             setReportName("Report 1");
-            setId(1);
+            setId(id);
         }};
         when(mappingTableService.getDetailsForSpecificReport(requestedId)).thenReturn(reportDetails);
         when(userService.getUserDetails(graphClient)).thenReturn(null);  // Simulate null user details
@@ -102,7 +105,7 @@ class ReportTrackingTableServiceTest {
     @Test
     void shouldThrowNullPointerExceptionWhenReportListIsEmpty() {
         // Given
-        int requestedId = 1;
+        var requestedId = id;
         when(mappingTableService.getDetailsForSpecificReport(requestedId)).thenReturn(null);  // Simulate empty report list
 
         // When
@@ -114,10 +117,10 @@ class ReportTrackingTableServiceTest {
     @Test
     void shouldThrowDatabaseReadExceptionWhenDatabaseErrorOccurs() {
         // Given
-        int requestedId = 1;
+        var requestedId = id;
         var reportDetails = new ReportsGet200ResponseReportListInner() {{
             setReportName("Report 1");
-            setId(1);
+            setId(id);
         }};
         when(mappingTableService.getDetailsForSpecificReport(requestedId)).thenReturn(reportDetails);
         when(userService.getUserDetails(graphClient)).thenReturn(UserDetailsTestDataFactory.aValidUserDetails());
@@ -133,10 +136,10 @@ class ReportTrackingTableServiceTest {
     @Test
     void shouldEnsureThreadSafetyWhenMultipleThreadsCallUpdateReportTrackingTable() throws InterruptedException {
         // Given
-        var requestedId = 1;
+        var requestedId = id;
         var reportDetails = new ReportsGet200ResponseReportListInner() {{
             setReportName("Report 1");
-            setId(1);
+            setId(id);
         }};
 
         when(mappingTableService.getDetailsForSpecificReport(requestedId)).thenReturn(reportDetails);
@@ -167,10 +170,10 @@ class ReportTrackingTableServiceTest {
     @Test
     void shouldThrowNullPointerExceptionWhenUserGeneratedByIsNull() {
         // Given
-        int requestedId = 1;
+        var requestedId = id;
         var reportDetails = new ReportsGet200ResponseReportListInner() {{
             setReportName("Report 1");
-            setId(1);
+            setId(id);
         }};
         when(mappingTableService.getDetailsForSpecificReport(requestedId)).thenReturn(reportDetails);
         when(userService.getUserDetails(graphClient)).thenReturn(null);  // Simulate null user details

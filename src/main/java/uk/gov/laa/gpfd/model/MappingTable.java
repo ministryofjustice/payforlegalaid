@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 /**
  * A class representing the data in the MOJFIN 'CSV - SQL Mapping' Table. A subset of this data will eventually be
  * returned to the user via the /reports endpoint, in the form of a ReportListResponse
@@ -14,7 +16,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MappingTable {
-    private int id;
+    private UUID id;
     private String reportName;
     private String excelReport;
     private String csvName;

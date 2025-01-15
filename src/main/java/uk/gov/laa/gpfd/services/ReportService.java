@@ -22,6 +22,7 @@ import java.io.Writer;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -75,7 +76,7 @@ public class ReportService {
      * @param requestedId - the ID of the requested report
      * @return a ResponseEntity of type 'StreamingResponseBody', containing a stream of CSV data
      */
-    public ResponseEntity<StreamingResponseBody> createCSVResponse(int requestedId) throws ReportIdNotFoundException, DatabaseReadException, IndexOutOfBoundsException, CsvStreamException {
+    public ResponseEntity<StreamingResponseBody> createCSVResponse(UUID requestedId) throws ReportIdNotFoundException, DatabaseReadException, IndexOutOfBoundsException, CsvStreamException {
         //Querying the mapping table, to obtain metadata about the report
         var reportListResponse = mappingTableService.getDetailsForSpecificMapping(requestedId);
 
@@ -109,11 +110,10 @@ public class ReportService {
      *
      * @param id - id of the requested report
      * @return reportResponse containing json data about the requested report
-     * @throws IndexOutOfBoundsException - From the getDetailsForSpecificReport() method call, if the requested index is under 0 or over 100
      * @throws ReportIdNotFoundException - From the getDetailsForSpecificReport() method call, if the requested index is not found
      * @throws DatabaseReadException     - From the createReportListResponseList() method call inside getDetailsForSpecificReport()
      */
-    public GetReportById200Response createReportResponse(int id) throws IndexOutOfBoundsException {
+    public GetReportById200Response createReportResponse(UUID id) {
         var reportListResponse = mappingTableService.getDetailsForSpecificReport(id);
 
         var reportResponse = new GetReportById200Response() {{

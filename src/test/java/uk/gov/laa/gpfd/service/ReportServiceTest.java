@@ -25,6 +25,8 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ReportServiceTest {
+    private static final UUID id = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
+
     @Mock
     AppConfig appConfig;
 
@@ -67,10 +69,10 @@ class ReportServiceTest {
         ReportsGet200ResponseReportListInner mockReportListResponse = ReportListEntryTestDataFactory.aValidReportsGet200ResponseReportListInner();
 
         GetReportById200Response expectedReportResponse = new ReportResponseTestBuilder().createReportResponse();
-        when(mappingTableService.getDetailsForSpecificReport(1)).thenReturn(mockReportListResponse);
+        when(mappingTableService.getDetailsForSpecificReport(id)).thenReturn(mockReportListResponse);
 
         //Act
-        GetReportById200Response actualReportResponse = reportService.createReportResponse(1);
+        GetReportById200Response actualReportResponse = reportService.createReportResponse(id);
 
         //check something
         assertEquals(expectedReportResponse.getReportName(), actualReportResponse.getReportName());
@@ -120,11 +122,11 @@ class ReportServiceTest {
 
         ReportsGet200ResponseReportListInner mockReportListResponseDev = ReportListEntryTestDataFactory.aValidReportsGet200ResponseReportListInner();
 
-        when(mappingTableService.getDetailsForSpecificReport(1)).thenReturn(mockReportListResponseDev);
+        when(mappingTableService.getDetailsForSpecificReport(id)).thenReturn(mockReportListResponseDev);
 
-        GetReportById200Response actualReportResponseDev = reportService.createReportResponse(1);
+        GetReportById200Response actualReportResponseDev = reportService.createReportResponse(id);
 
-        assertTrue(actualReportResponseDev.getReportDownloadUrl().toString().contentEquals("http://localhost/csv/1"));
+        assertTrue(actualReportResponseDev.getReportDownloadUrl().toString().contentEquals("http://localhost/csv/0d4da9ec-b0b3-4371-af10-f375330d85d1"));
 
     }
 

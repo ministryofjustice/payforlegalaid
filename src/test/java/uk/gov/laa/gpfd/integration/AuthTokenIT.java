@@ -57,12 +57,11 @@ class AuthTokenIT {
     @AfterEach
     void resetDatabase() {
         writeJdbcTemplate.update("TRUNCATE TABLE GPFD.REPORT_TRACKING");
-        writeJdbcTemplate.update("DROP SEQUENCE GPFD_TRACKING_TABLE_SEQUENCE");
         writeJdbcTemplate.update("TRUNCATE TABLE GPFD.CSV_TO_SQL_MAPPING_TABLE");
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"/reports", "/reports/1", "/csv/1"})
+    @ValueSource(strings = {"/reports", "/reports/0d4da9ec-b0b3-4371-af10-f375330d85d3", "/csv/0d4da9ec-b0b3-4371-af10-f375330d85d3"})
     void shouldRedirectToLoginWithoutAuthToken(String endpoint) throws Exception {
         MockHttpServletResponse response = mockMvc.perform(get(endpoint)
                 .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
@@ -72,7 +71,7 @@ class AuthTokenIT {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"/reports", "/reports/1"})
+    @ValueSource(strings = {"/reports", "/reports/0d4da9ec-b0b3-4371-af10-f375330d85d3"})
     void shouldReturn200WhenLoginAuthTokenProvided(String endpoint) throws Exception {
         MockHttpServletResponse response = mockMvc.perform(get(endpoint)
                 .with(SecurityMockMvcRequestPostProcessors.oauth2Login())
@@ -88,7 +87,7 @@ class AuthTokenIT {
 
         when(mockAzureGraphClient.getGraphUserDetails(any())).thenReturn(user);
 
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get("/csv/1")
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d3")
                 .with(SecurityMockMvcRequestPostProcessors.oauth2Login())
                 .with(oidcLogin()
                         .idToken(token -> token.subject("mockUser")))
