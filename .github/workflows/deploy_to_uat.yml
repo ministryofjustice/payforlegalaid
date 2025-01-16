@@ -49,12 +49,14 @@ jobs:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: ${{ vars.UAT_ECR_REPOSITORY }}
           NAMESPACE: ${{ secrets.KUBE_NAMESPACE_UAT }}
+          ALERT_SEVERITY: laa-get-legal-aid-data-uat
         run: |
           cat deployments/uat/deployment.tpl | envsubst > deployments/uat/deployment.yml
           cat deployments/uat/ingress.tpl | envsubst > deployments/uat/ingress.yml
           cat deployments/uat/service.tpl | envsubst > deployments/uat/service.yml
           cat deployments/uat/network-policy.tpl | envsubst > deployments/uat/network-policy.yml
           cat deployments/uat/service-monitor.tpl | envsubst > deployments/uat/service-monitor.yml
+          cat deployments/development/prometheus-rules.tpl | envsubst > deployments/development/prometheus-rules.yml
 
       - name: Authenticate with Cloud Platform and Deploy
         env:
