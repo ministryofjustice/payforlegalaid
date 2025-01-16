@@ -2,7 +2,6 @@ on:
   push:
     branches:
       - main
-      - LPF-559-missing-label
 
 jobs:
 
