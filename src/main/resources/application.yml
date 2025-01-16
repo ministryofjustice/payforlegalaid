@@ -12,14 +12,16 @@ logging:
         web.client.RestTemplate: INFO
 
 management:
+  metrics:
+    enable:
+      spring:
+        security: false
+    tags:
+      application: gpfd-dev-service
   endpoints:
     web:
       exposure:
         include: health,info,metrics,prometheus
-  endpoint:
-    health:
-      probes:
-        enabled: true  # Enable health probes support for Kubernetes
 
 springdoc:
   api-docs:
