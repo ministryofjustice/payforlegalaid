@@ -16,8 +16,6 @@ management:
     enable:
       spring:
         security: false
-    tags:
-      application: gpfd-dev-service
   endpoints:
     web:
       exposure:
