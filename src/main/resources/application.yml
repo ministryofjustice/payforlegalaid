@@ -12,10 +12,6 @@ logging:
         web.client.RestTemplate: INFO
 
 management:
-  metrics:
-    enable:
-      spring:
-        security: false
   endpoints:
     web:
       exposure:
