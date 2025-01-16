@@ -13,4 +13,4 @@ spec:
   endpoints:
     - port: http # this is the port name you grabbed from your running service
       interval: 15s
-      path: /actuator/prometheus # this is the endpoint exposed by springboot app
+      path: /actuator/metrics # this is the endpoint exposed by springboot app
