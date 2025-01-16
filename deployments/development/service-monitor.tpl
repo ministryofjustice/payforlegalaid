@@ -7,6 +7,9 @@ spec:
   selector:
     matchLabels:
       app: gpfd-dev-service # this needs to match the label in the service under metadata:labels:app
+  namespaceSelector:
+    matchNames:
+      - ${NAMESPACE}
   endpoints:
     - port: http # this is the port name you grabbed from your running service
       interval: 15s
