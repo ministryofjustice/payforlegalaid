@@ -29,7 +29,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 @TestPropertySource(locations = "classpath:application-test.yml")
 @SpringBootTest
 @Import(OAuth2TestConfig.class)
-class GetCsvByIdIT {
+class GetCsvByIdIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
