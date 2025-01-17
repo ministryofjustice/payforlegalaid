@@ -47,9 +47,9 @@ jobs:
           cat deployments/prod/deployment.tpl | envsubst > deployments/prod/deployment.yml
           cat deployments/prod/ingress.tpl | envsubst > deployments/prod/ingress.yml
           cat deployments/prod/service.tpl | envsubst > deployments/prod/service.yml
-          cat deployments/development/service-monitor.tpl | envsubst > deployments/development/service-monitor.yml
-          cat deployments/development/network-policy.tpl | envsubst > deployments/development/network-policy.yml
-          cat deployments/development/prometheus-rules.tpl | envsubst > deployments/development/prometheus-rules.yml
+          cat deployments/prod/service-monitor.tpl | envsubst > deployments/prod/service-monitor.yml
+          cat deployments/prod/network-policy.tpl | envsubst > deployments/prod/network-policy.yml
+          cat deployments/prod/prometheus-rules.tpl | envsubst > deployments/prod/prometheus-rules.yml
 
       - name: Authenticate with Cloud Platform and Deploy
         env:

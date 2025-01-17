@@ -31,6 +31,7 @@
 
         <bytebudy.version>1.15.10</bytebudy.version>
         <mockito-inlin.version>3.11.2</mockito-inlin.version>
+        <maven-surefire-junit5-tree-reporte.version>1.1.0</maven-surefire-junit5-tree-reporte.version>
 
         <spring-cloud-azure-dependencies.version>5.19.0</spring-cloud-azure-dependencies.version>
     </properties>
@@ -80,6 +81,20 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>me.fabriciorby</groupId>
+                        <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
+                        <version>${maven-surefire-junit5-tree-reporte.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <reportFormat>plain</reportFormat>
+                    <consoleOutputReporter>
+                        <disable>true</disable>
+                    </consoleOutputReporter>
+                    <statelessTestsetInfoReporter  implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporterUnicode"/>
+                </configuration>
                 <version>3.2.3</version>
             </plugin>
             <plugin>
@@ -245,6 +260,11 @@
             <artifactId>h2</artifactId>
             <version>${h2.version}</version>
         </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
+        </dependency>
 
         <!-- Test Dependencies-->
         <dependency>
@@ -268,12 +288,6 @@
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
             <version>${bytebudy.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${commons-io.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
