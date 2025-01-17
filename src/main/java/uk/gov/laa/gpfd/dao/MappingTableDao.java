@@ -45,7 +45,7 @@ public class MappingTableDao {
         }
 
         if (resultList.isEmpty()) {
-            throw new ReportIdNotFoundException("No results returned from mapping table");
+            throw new ReportIdNotFoundException("Report with unrecognised ID");
         }
 
         try {
