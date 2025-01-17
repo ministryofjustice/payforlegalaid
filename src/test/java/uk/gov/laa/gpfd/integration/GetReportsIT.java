@@ -1,5 +1,6 @@
 package uk.gov.laa.gpfd.integration;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -22,7 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.yml")
 @SpringBootTest
-class GetReportsByIdIntegrationTest {
+class GetReportsIT {
 
     @Autowired
     private MockMvc mockMvc;
@@ -46,23 +47,24 @@ class GetReportsByIdIntegrationTest {
     }
 
     @Test
-    void shouldReturnSingleReportWithMatchingId() throws Exception {
-        MockHttpServletResponse response =  mockMvc.perform(get("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d3")
+    void shouldReturnListOfReports() throws Exception {
+        MockHttpServletResponse response =  mockMvc.perform(get("/reports")
                 .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
         Assertions.assertEquals(200, response.getStatus());
 
         var json = new JSONObject(response.getContentAsString());
-        Assertions.assertEquals("0d4da9ec-b0b3-4371-af10-f375330d85d3", json.get("id"));
+        JSONArray reportList = (JSONArray) json.get("reportList");
+        Assertions.assertEquals(3, reportList.toList().size());
     }
 
     @Test
-    void shouldReturn400WhenGivenInvalidId() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d3321")
+    void shouldReturn404WhenNoReportsFound() throws Exception {
+        writeJdbcTemplate.update("TRUNCATE TABLE GPFD.CSV_TO_SQL_MAPPING_TABLE");
+
+        MockHttpServletResponse response = mockMvc.perform(get("/reports")
                 .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
-        Assertions.assertEquals(400, response.getStatus());
+        Assertions.assertEquals(404, response.getStatus());
     }
 }
-
-

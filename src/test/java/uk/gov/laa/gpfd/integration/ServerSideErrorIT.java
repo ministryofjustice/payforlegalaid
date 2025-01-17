@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @TestPropertySource(locations = "classpath:application-test.yml")
 @SpringBootTest
 @Import(OAuth2TestConfig.class)
-class ServerSideErrorIntegrationTest {
+class ServerSideErrorIT {
 
     @Autowired
     private MockMvc mockMvc;

@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @ActiveProfiles("testauth")
 @TestPropertySource(locations = "classpath:application-testauth.yml")
 @SpringBootTest
-class AuthTokenIntegrationTest {
+class AuthTokenIT {
 
     @MockitoBean
     AzureGraphClient mockAzureGraphClient;
