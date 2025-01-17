@@ -56,7 +56,7 @@ jobs:
           cat deployments/uat/service.tpl | envsubst > deployments/uat/service.yml
           cat deployments/uat/network-policy.tpl | envsubst > deployments/uat/network-policy.yml
           cat deployments/uat/service-monitor.tpl | envsubst > deployments/uat/service-monitor.yml
-          cat deployments/development/prometheus-rules.tpl | envsubst > deployments/development/prometheus-rules.yml
+          cat deployments/uat/prometheus-rules.tpl | envsubst > deployments/uat/prometheus-rules.yml
 
       - name: Authenticate with Cloud Platform and Deploy
         env:
