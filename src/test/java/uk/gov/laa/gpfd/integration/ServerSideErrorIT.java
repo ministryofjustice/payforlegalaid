@@ -28,7 +28,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.yml")
 @SpringBootTest
-@Import(OAuth2TestConfig.class)
 class ServerSideErrorIT {
 
     @Autowired
@@ -50,7 +49,7 @@ class ServerSideErrorIT {
 
     @Test
     void getReportWithIdShouldReturn500WhenCannotConnectToDb() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get("/reports/1")
+        MockHttpServletResponse response = mockMvc.perform(get("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d3")
                 .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
         Assertions.assertEquals(500, response.getStatus());
@@ -58,7 +57,7 @@ class ServerSideErrorIT {
 
     @Test
     void getCsvWithIdShouldReturn500WhenCannotConnectToDbForMappingTable() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get("/csv/1")
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d3")
                 .with(oidcLogin()
                         .idToken(token -> token.subject("mockUser")))
                 .with(oauth2Client("graph"))).andReturn().getResponse();
@@ -74,7 +73,7 @@ class ServerSideErrorIT {
 
         when(mockAzureGraphClient.getGraphUserDetails(any())).thenReturn(user);
 
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get("/csv/1")
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d3")
                 .with(oidcLogin()
                         .idToken(token -> token.subject("mockUser")))
                 .with(oauth2Client("graph"))).andReturn().getResponse();
