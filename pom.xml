@@ -294,7 +294,10 @@
             <artifactId>commons-io</artifactId>
             <version>${commons-io.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
         <!-- Test Dependencies-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
