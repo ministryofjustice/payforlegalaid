@@ -11,6 +11,10 @@ logging:
         transaction: INFO
         web.client.RestTemplate: INFO
 
+spring:
+  liquibase:
+    enabled: true
+
 management:
   endpoints:
     web:
