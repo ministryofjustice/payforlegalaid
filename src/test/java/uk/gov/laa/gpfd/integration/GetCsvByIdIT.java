@@ -28,7 +28,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 @ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.yml")
 @SpringBootTest
-@Import(OAuth2TestConfig.class)
 class GetCsvByIdIT {
 
     @Autowired
