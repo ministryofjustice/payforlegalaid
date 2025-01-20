@@ -77,6 +77,25 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <executions>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                        <configuration>
+                            <compileSourceRoots>
+                                <compileSourceRoot>src/test/java</compileSourceRoot>
+                                <compileSourceRoot>src/it/java</compileSourceRoot>
+                            </compileSourceRoots>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -89,6 +108,12 @@
                     </dependency>
                 </dependencies>
                 <configuration>
+
+                    <includes>
+                        <include>**/*Tests.java</include>
+                        <include>**/*Test.java</include>
+                        <include>**/*IT.java</include>
+                    </includes>
                     <reportFormat>plain</reportFormat>
                     <consoleOutputReporter>
                         <disable>true</disable>
