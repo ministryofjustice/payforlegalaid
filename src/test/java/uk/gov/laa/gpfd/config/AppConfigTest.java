@@ -20,7 +20,7 @@ import javax.sql.DataSource;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@SpringBootTest(classes = AppConfig.class)
 @TestPropertySource(properties = { "gpfd.url=http://localhost"})
 class AppConfigTest {
 

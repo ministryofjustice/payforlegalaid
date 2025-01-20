@@ -56,3 +56,7 @@ spring:
       ddl-auto:
         none
     generate-ddl: false
+
+  liquibase:
+    url: jdbc:h2:file:~/localGpfdDb;MODE=Oracle
+    change-log: liquibase/db.changelog-master.xml

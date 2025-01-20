@@ -16,7 +16,7 @@
             <column name="ID" type="CHAR (36)">
                 <constraints nullable="true"/>
             </column>
-            <column name="REPORT_NAME" type="VARCHAR(200)"
+            <column name="REPORT_NAME" type="VARCHAR(200)">
                 <constraints nullable="true"/>
             </column>
             <column name="SQL_QUERY" type="VARCHAR(4000)">
@@ -73,17 +73,20 @@
     </changeSet>
 
     <changeSet id="3-create-utils_pkg" author="robert_buczek">
-        <sql>
+        <sql dbms="oracle">
           CREATE OR REPLACE PACKAGE utils_pkg
           AS
             FUNCTION generate_uuid
             RETURN VARCHAR2;
           END utils_pkg;
         </sql>
+        <sql dbms="h2">
+            CREATE SCHEMA IF NOT EXISTS utils_pkg;
+        </sql>
     </changeSet>
 
     <changeSet id="4-generate_uuid" author="robert_buczek">
-        <sql>
+        <sql dbms="oracle">
           CREATE OR REPLACE PACKAGE BODY utils_pkg
           AS
             FUNCTION generate_uuid
@@ -98,6 +101,9 @@
               RETURN v_uuid;
             END generate_uuid;
           END utils_pkg;
+        </sql>
+        <sql dbms="h2">
+            CREATE ALIAS utils_pkg.generate_uuid FOR "java.util.UUID.randomUUID";
         </sql>
     </changeSet>
 
