@@ -2,6 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: gpfd-prod-service
+  labels:
+    app: gpfd-prod-service
 spec:
   selector:
     app: gpfd-prod
