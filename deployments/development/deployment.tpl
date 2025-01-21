@@ -58,6 +58,11 @@ spec:
                 secretKeyRef:
                   name: gpfd-test-secret-01
                   key: mojfin-dev-write-password
+            - name: MOJFIN_DB_URL
+              valueFrom:
+                secretKeyRef:
+                  name: gpfd-test-secret-01
+                  key: mojfin-db-url
           securityContext:
             capabilities:
               drop:
