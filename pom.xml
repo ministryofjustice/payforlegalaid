@@ -23,7 +23,7 @@
         <h2.version>2.3.232</h2.version>
         <slf4j.version>2.0.16</slf4j.version>
 
-        <commons-io.version>2.16.0</commons-io.version>
+        <commons-io.version>2.18.0</commons-io.version>
         <apache-commons-csv.version>1.12.0</apache-commons-csv.version>
 
         <swagger-annotations.version>2.2.27</swagger-annotations.version>
@@ -77,6 +77,25 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <executions>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                        <configuration>
+                            <compileSourceRoots>
+                                <compileSourceRoot>src/test/java</compileSourceRoot>
+                                <compileSourceRoot>src/it/java</compileSourceRoot>
+                            </compileSourceRoots>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -89,11 +108,21 @@
                     </dependency>
                 </dependencies>
                 <configuration>
+
+                    <includes>
+                        <include>**/*Tests.java</include>
+                        <include>**/*Test.java</include>
+                        <include>**/*IT.java</include>
+                    </includes>
                     <reportFormat>plain</reportFormat>
                     <consoleOutputReporter>
                         <disable>true</disable>
                     </consoleOutputReporter>
                     <statelessTestsetInfoReporter  implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporterUnicode"/>
+                    <includes>
+                        <include>**/*Test.java</include>  <!-- Unit tests -->
+                        <include>**/*IT.java</include>  <!-- Integration tests -->
+                    </includes>
                 </configuration>
                 <version>3.2.3</version>
             </plugin>

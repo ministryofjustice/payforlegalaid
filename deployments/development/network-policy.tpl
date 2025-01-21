@@ -8,9 +8,9 @@ spec:
     matchLabels:
       app: gpfd-dev-service
   policyTypes:
-    - Ingress
+  - Ingress
   ingress:
-    - from:
-        - namespaceSelector:
-            matchLabels:
-              component: monitoring
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          component: monitoring

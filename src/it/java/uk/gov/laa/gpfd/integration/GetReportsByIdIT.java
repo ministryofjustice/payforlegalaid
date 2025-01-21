@@ -1,13 +1,15 @@
 package uk.gov.laa.gpfd.integration;
 
 import org.json.JSONObject;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -18,10 +20,12 @@ import uk.gov.laa.gpfd.utils.FileUtils;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
+@SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@Import(OAuth2TestConfig.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestPropertySource(locations = "classpath:application-test.yml")
-@SpringBootTest
 class GetReportsByIdIT {
 
     @Autowired
@@ -30,7 +34,7 @@ class GetReportsByIdIT {
     @Autowired
     private JdbcTemplate writeJdbcTemplate;
 
-    @BeforeEach
+    @BeforeAll
     void setupDatabase() {
         String sqlSchema = FileUtils.readResourceToString("gpfd_schema.sql");
         String sqlData = FileUtils.readResourceToString("gpfd_data.sql");
@@ -39,7 +43,7 @@ class GetReportsByIdIT {
         writeJdbcTemplate.execute(sqlData);
     }
 
-    @AfterEach
+    @AfterAll
     void resetDatabase() {
         writeJdbcTemplate.execute("DROP TABLE IF EXISTS GPFD.REPORT_TRACKING");
         writeJdbcTemplate.execute("DROP TABLE IF EXISTS GPFD.CSV_TO_SQL_MAPPING_TABLE");
