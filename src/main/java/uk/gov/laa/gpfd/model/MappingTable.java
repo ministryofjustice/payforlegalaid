@@ -17,6 +17,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class MappingTable {
     private UUID id;
+
     private String reportName;
     private String excelReport;
     private String csvName;
