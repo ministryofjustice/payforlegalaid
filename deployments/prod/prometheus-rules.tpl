@@ -9,17 +9,6 @@ metadata:
   name: prometheus-custom-rules-laa-gpfd-api
 spec:
   groups:
-    - name: secretmanager-rules
-      rules:
-      - alert: SecretsManagerPutSecretValue
-        expr: secretsmanager_put_secret_value_sum{exported_job="secretsmanager", secret_id="arn:aws:secretsmanager:eu-west-2:754256621582:secret:live-laa-get-payments-finance-data-prod-82bbb46d21e0b817-hnN2RT"} > 0
-        for: 1m
-        labels:
-          severity: ${ALERT_SEVERITY}
-        annotations:
-          message: |
-            {{ $labels.user_arn }} has updated secrets.
-          runbook_url: https://dsdmoj.atlassian.net/wiki/spaces/LPF/pages/5297832119/Runbooks
     - name: kubernetes-rules
       rules:
         - alert: KubeQuotaAlmostFull
