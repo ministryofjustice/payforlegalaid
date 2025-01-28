@@ -3,6 +3,7 @@ on:
     branches:
       - main
       - LPF-562-liquibase
+
 jobs:
 
   build-and-deploy-to-dev:
