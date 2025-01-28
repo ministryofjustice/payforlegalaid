@@ -7,11 +7,17 @@
 
     <changeSet id="0-create-gpfd-schema" author="robert_buczek">
         <sql>
+            DROP SCHEMA GPFD;
+        </sql>
+    </changeSet>
+
+    <changeSet id="1-create-gpfd-schema" author="robert_buczek">
+        <sql>
             CREATE SCHEMA GPFD;
         </sql>
     </changeSet>
 
-    <changeSet id="1-create-csv-to-sql-mapping-table" author="robert_buczek">
+    <changeSet id="2-create-csv-to-sql-mapping-table" author="robert_buczek">
         <createTable tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
             <column name="ID" type="CHAR (36)">
                 <constraints nullable="true"/>
@@ -49,7 +55,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="2-create-report-tracking-table" author="robert_buczek">
+    <changeSet id="3-create-report-tracking-table" author="robert_buczek">
         <createTable tableName="REPORT_TRACKING" schemaName="GPFD">
             <column name="ID" type="INTEGER">
                 <constraints primaryKey="true" nullable="false"/>
