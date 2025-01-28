@@ -5,13 +5,14 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
-    <changeSet id="0-create-gpfd-schema" author="robert_buczek">
-        <sql>
-            DROP SCHEMA GPFD CASCADE;
-        </sql>
-    </changeSet>
+  <changeSet author="liquibase-docs" id="dropTable-example">
+      <preConditions onFail="MARK_RAN"><tableExists schemaName="GPFD" tableName="CSV_TO_SQL_MAPPING_TABLE"/></preConditions>
+      <dropTable cascadeConstraints="true"
+              schemaName="GPFD"
+              tableName="CSV_TO_SQL_MAPPING_TABLE"/>
+  </changeSet>
 
-    <changeSet id="1-create-gpfd-schema" author="robert_buczek">
+    <changeSet  id="1"  author="Liquibase User">
         <sql>
             CREATE SCHEMA GPFD;
         </sql>
