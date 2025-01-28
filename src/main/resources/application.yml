@@ -21,6 +21,9 @@ management:
     web:
       exposure:
         include: health,info,metrics,prometheus
+  metrics:
+    tags:
+      application: gpfd-api-app
 
 springdoc:
   api-docs:
