@@ -6,14 +6,8 @@
                     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
     <changeSet  id="1"  author="Liquibase User">
-        <preConditions  onFail="WARN">
-            <not>
-                <tableExists schemaName="GPFD" />
-            </not>
-        </preConditions>
-
         <sql>
-            CREATE SCHEMA GPFD;
+            CREATE SCHEMA GPFD IF NOT EXISTS;
         </sql>
     </changeSet>
 
