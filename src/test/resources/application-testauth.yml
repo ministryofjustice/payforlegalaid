@@ -32,8 +32,6 @@ spring:
           graph:
             scopes:
               - https://graph.microsoft.com/User.Read
-  liquibase:
-    enabled: false
   sql:
     init:
       platform: h2

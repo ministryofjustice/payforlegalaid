@@ -12,9 +12,9 @@ runs:
         distribution: 'corretto'
         java-version: '17'
 
-    # - name: Run tests
-    #   run: mvn -B clean test
-    #   env:
-    #     SPRING_PROFILES_ACTIVE: test
-    #   shell:
-    #     bash
+    - name: Run tests
+      run: mvn -B clean test
+      env:
+        SPRING_PROFILES_ACTIVE: test
+      shell:
+        bash

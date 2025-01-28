@@ -17,8 +17,11 @@ gpfd:
       password: ${MOJFIN_DEV_WRITE_PASSWORD}
       driver-class-name: oracle.jdbc.OracleDriver
 
+
 # Azure AD and Graph config
 spring:
+  liquibase:
+    enabled: true
   cloud:
     azure:
       active-directory:

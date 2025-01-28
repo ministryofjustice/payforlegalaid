@@ -29,6 +29,8 @@ gpfd:
       driver-class-name: org.h2.Driver
 
 spring:
+  liquibase:
+    enabled: true
   cloud:
     azure:
       active-directory:
@@ -56,7 +58,3 @@ spring:
       ddl-auto:
         none
     generate-ddl: false
-
-  liquibase:
-    url: jdbc:h2:file:~/localGpfdDb;MODE=Oracle
-    change-log: liquibase/db.changelog-master.xml

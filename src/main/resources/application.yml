@@ -13,7 +13,7 @@ logging:
 
 spring:
   liquibase:
-    enabled: true
+    enabled: false
 
 management:
   endpoints:
