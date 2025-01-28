@@ -29,7 +29,7 @@ jobs:
 
       - uses: './.github/login-to-aws'
         env:
-          ROLE: ${{ secrets.ECR_ROLE_TO_ASSUME }}
+          ROLE: ${{ secrets.DEV_ECR_ROLE_TO_ASSUME }}
           AWS_REGION: ${{ vars.ECR_REGION }}
 
       - name: Login to container repository
@@ -39,7 +39,7 @@ jobs:
       - name: Build the docker image and push it to the repository
         uses: './.github/build-push-docker-image'
         env:
-          REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+          REPOSITORY: ${{ vars.DEV_ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
 
@@ -47,7 +47,7 @@ jobs:
         env:
           IMAGE_TAG: ${{ github.sha }} # Tags ECR image with commit sha
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+          REPOSITORY: ${{ vars.DEV_ECR_REPOSITORY }}
           NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
           ALERT_SEVERITY: laa-get-legal-aid-data-dev
         run: |
