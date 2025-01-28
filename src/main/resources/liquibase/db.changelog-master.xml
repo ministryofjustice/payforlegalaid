@@ -77,7 +77,7 @@
     </changeSet>
 
     <changeSet id="5-generate_uuid" author="robert_buczek">
-        <sql dbms="oracle">
+        <sql>
           CREATE OR REPLACE PACKAGE BODY utils_pkg
           AS
             FUNCTION generate_uuid
@@ -92,9 +92,6 @@
               RETURN v_uuid;
             END generate_uuid;
           END utils_pkg;
-        </sql>
-        <sql dbms="h2">
-            CREATE ALIAS utils_pkg.generate_uuid FOR "java.util.UUID.randomUUID";
         </sql>
     </changeSet>
 
