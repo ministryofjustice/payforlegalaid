@@ -5,12 +5,6 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
-    <changeSet  id="1"  author="Liquibase User">
-        <sql>
-            CREATE SCHEMA GPFD IF NOT EXISTS;
-        </sql>
-    </changeSet>
-
     <changeSet id="2-create-csv-to-sql-mapping-table" author="robert_buczek">
         <createTable tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
             <column name="ID" type="CHAR (36)">
