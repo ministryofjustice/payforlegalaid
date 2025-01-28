@@ -7,7 +7,7 @@
 
     <changeSet id="0-create-gpfd-schema" author="robert_buczek">
         <sql>
-            DROP SCHEMA GPFD;
+            DROP SCHEMA GPFD CASCADE;
         </sql>
     </changeSet>
 
