@@ -66,20 +66,17 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="3-create-utils_pkg" author="robert_buczek">
-        <sql dbms="oracle">
+    <changeSet id="4-create-utils_pkg" author="robert_buczek">
+        <sql>
           CREATE OR REPLACE PACKAGE utils_pkg
           AS
             FUNCTION generate_uuid
             RETURN VARCHAR2;
           END utils_pkg;
         </sql>
-        <sql dbms="h2">
-            CREATE SCHEMA IF NOT EXISTS utils_pkg;
-        </sql>
     </changeSet>
 
-    <changeSet id="4-generate_uuid" author="robert_buczek">
+    <changeSet id="5-generate_uuid" author="robert_buczek">
         <sql dbms="oracle">
           CREATE OR REPLACE PACKAGE BODY utils_pkg
           AS
@@ -101,7 +98,7 @@
         </sql>
     </changeSet>
 
-    <changeSet id="5-insert-data-csv-to-sql-mapping-table" author="robert_buczek">
+    <changeSet id="6-insert-data-csv-to-sql-mapping-table" author="robert_buczek">
         <sql>
             Insert into GPFD.CSV_TO_SQL_MAPPING_TABLE (ID,REPORT_NAME,SQL_QUERY,BASE_URL,REPORT_OWNER,REPORT_CREATOR,REPORT_DESCRIPTION,EXCEL_REPORT,EXCEL_SHEET_NUM,CSV_NAME,OWNER_EMAIL) values (utils_pkg.generate_uuid(), 'CCMS_invoice_analysis-CIS-to-CCMS-import-analysis-2','SELECT * FROM ANY_REPORT.V_CIS_TO_CCMS_INVOICE_SUMMARY',' https://justiceuk.sharepoint.com/:x:/r/sites/FinanceSysReference/Shared%20Documents/General/Monthly%20Accounts/Sharepoint%20base%20reports/General%20CCMS%20Tools/CCMS%20invoice%20analysis.xlsb?d=w7bc78b4b2c94489e899415353a37d234','Chancey Mctavish','Sophia Patel','Summary of invoices in CIS and CCMS by original source IT system','CCMS_invoice_analysis',2,'CIS-to-CCMS-import-analysis','owneremail@email.com');
         </sql>
