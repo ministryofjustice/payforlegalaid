@@ -52,7 +52,7 @@
                         </goals>
                         <configuration>
                             <inputSpec>
-                                ${project.basedir}/src/main/resources/static/swagger.yml
+                                ${project.basedir}/../payforlegalaid-swagger/src/main/resources/static/swagger.yml
                             </inputSpec>
                             <typeMappings>
                                 <typeMapping>string+binary=StreamingResponseBody</typeMapping>
