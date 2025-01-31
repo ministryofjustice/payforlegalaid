@@ -62,9 +62,9 @@ spec:
             runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/blob/master/runbook.md#alert-name-kubedeploymentreplicasmismatch
             summary: Deployment has not matched the expected number of replicas.
           expr: (kube_deployment_spec_replicas{job="kube-state-metrics",namespace="${NAMESPACE}"} != kube_deployment_status_replicas_available{job="kube-state-metrics",namespace="${NAMESPACE}"})
-            for: 15m
-            labels:
-              severity: ${ALERT_SEVERITY}
+          for: 15m
+          labels:
+            severity: ${ALERT_SEVERITY}
         - alert: "Kubernetes Container OOM Killer"
           annotations:
             message: The Prometheus server uses a lot of memory and has ocassionally OOMKilled bringing down prometheus. Bump the node group monitoring instance size
