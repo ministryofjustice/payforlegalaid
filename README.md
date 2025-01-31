@@ -100,6 +100,9 @@ https://dsdmoj.atlassian.net/wiki/spaces/LPF/pages/4736516940/GPFD+Environments
 
 - There is a shared password-manager group account for the GPFD team, ask the manager of the team for access. This group has a number of test users which can be used to access the Dev environment - these accounts have been registered with the DEV environment's active directory, and so will pass the SSO authentication.
 
+- To compile this app, you must have the payforlegalaid-openapi project in a folder at the same level as payforlegalaid because it provides common openapi definitions.
+    For example <i><b>src\laa\payforlegalaid</b></i> and <i><b>src\laa\payforlegalaid-openapi</b></i>
+
 ## Tests
 
 There are unit tests which use mocked services and an H2 database. Config for the latter is located in the
