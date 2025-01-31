@@ -8,6 +8,7 @@
 /dataSources.local.xml
 
 HELP.md
+src/main/resources/static/swagger.yml
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
