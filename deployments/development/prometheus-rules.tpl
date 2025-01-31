@@ -3,9 +3,7 @@ kind: PrometheusRule
 metadata:
   namespace: ${NAMESPACE}
   labels:
-    prometheus: prometheus-operator
     role: alert-rules
-    release: prometheus-operator
   name: prometheus-custom-rules-laa-gpfd-api
 spec:
   groups:
