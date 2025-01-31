@@ -29,6 +29,8 @@ gpfd:
       driver-class-name: org.h2.Driver
 
 spring:
+  liquibase:
+    enabled: true
   cloud:
     azure:
       active-directory:
