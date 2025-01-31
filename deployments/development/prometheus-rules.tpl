@@ -16,11 +16,7 @@ spec:
             description: Namespace {{ $labels.namespace }} is using {{ $value | humanizePercentage }} of its {{ $labels.resource }} quota.
             runbook_url: https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubequotaalmostfull
             summary: Namespace quota is going to be full.
-          expr: |
-            kube_resourcequota{job="kube-state-metrics", type="used"}
-              / ignoring(instance, job, type)
-            (kube_resourcequota{job="kube-state-metrics", type="hard"} > 0)
-              > 0.9 < 1
+          expr: kube_resourcequota{job="kube-state-metrics", type="used"} / ignoring(instance, job, type) (kube_resourcequota{job="kube-state-metrics", type="hard"} > 0) > 0.9 < 1
           for: 15m
           labels:
             severity: ${ALERT_SEVERITY}
@@ -29,10 +25,7 @@ spec:
             message: Namespace {{ $labels.namespace }} is using {{ printf "%0.0f" $value
               }}% of its {{ $labels.resource }} quota.
             runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubequotaexceeded
-          expr: |-
-            100 * kube_resourcequota{job="kube-state-metrics", type="used", namespace="$${NAMESPACE}"}
-            / ignoring(instance, job, type)
-            (kube_resourcequota{job="kube-state-metrics", type="hard", namespace="$${NAMESPACE}"} > 0)
+          expr: (100 * kube_resourcequota{job="kube-state-metrics",namespace="${NAMESPACE}",type="used"} / ignoring (instance, job, type) (kube_resourcequota{job="kube-state-metrics",namespace="${NAMESPACE}",type="hard"} > 0) > 90)
             > 90
           for: 15m
           labels:
@@ -52,9 +45,7 @@ spec:
             message: Pod {{ $labels.namespace }}/{{ $labels.pod }} has been in a non-ready
               state for longer than an hour.
             runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubepodnotready
-          expr: |-
-            sum by (namespace, pod) (kube_pod_status_phase{job="kube-state-metrics", phase=~"Pending|Unknown", namespace="${NAMESPACE}"})
-            > 0
+          expr: sum by (namespace, pod) (kube_pod_status_phase{job="kube-state-metrics",namespace="${NAMESPACE}",phase=~"Pending|Unknown"}) > 0
           for: 1h
           labels:
             severity: ${ALERT_SEVERITY}
@@ -64,10 +55,7 @@ spec:
               }} does not match, this indicates that the Deployment has failed but has
               not been rolled back.
             runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubedeploymentgenerationmismatch
-          expr: |-
-            kube_deployment_status_observed_generation{job="kube-state-metrics", namespace="${NAMESPACE}"}
-            !=
-            kube_deployment_metadata_generation{job="kube-state-metrics", namespace="${NAMESPACE}"}
+          expr: (kube_deployment_status_observed_generation{job="kube-state-metrics",namespace="${NAMESPACE}"} != kube_deployment_metadata_generation{job="kube-state-metrics",namespace="${NAMESPACE}"})
           for: 15m
           labels:
             severity: ${ALERT_SEVERITY}
