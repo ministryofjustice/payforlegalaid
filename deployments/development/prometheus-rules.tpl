@@ -22,28 +22,23 @@ spec:
             severity: ${ALERT_SEVERITY}
         - alert: KubeQuota-Exceeded
           annotations:
-            message: Namespace {{ $labels.namespace }} is using {{ printf "%0.0f" $value
-              }}% of its {{ $labels.resource }} quota.
+            message: Namespace {{ $labels.namespace }} is using {{ printf "%0.0f" $value }}% of its {{ $labels.resource }} quota.
             runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubequotaexceeded
-          expr: (100 * kube_resourcequota{job="kube-state-metrics",namespace="${NAMESPACE}",type="used"} / ignoring (instance, job, type) (kube_resourcequota{job="kube-state-metrics",namespace="${NAMESPACE}",type="hard"} > 0) > 90)
-            > 90
+          expr: (100 * kube_resourcequota{job="kube-state-metrics",namespace="${NAMESPACE}",type="used"} / ignoring (instance, job, type) (kube_resourcequota{job="kube-state-metrics",namespace="${NAMESPACE}",type="hard"} > 0) > 90) > 90
           for: 15m
           labels:
             severity: ${ALERT_SEVERITY}
         - alert: KubePodCrashLooping
           annotations:
-            message: Pod {{ $labels.namespace }}/{{ $labels.pod }} ({{ $labels.container
-              }}) is restarting {{ printf "%.2f" $value }} times / 5 minutes.
+            message: Pod {{ $labels.namespace }}/{{ $labels.pod }} ({{ $labels.container }}) is restarting {{ printf "%.2f" $value }} times / 5 minutes.
             runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubepodcrashlooping
-          expr: |-
-            rate(kube_pod_container_status_restarts_total{job="kube-state-metrics", namespace="${NAMESPACE}"}[15m]) * 60 * 5 > 0
+          expr: rate(kube_pod_container_status_restarts_total{job="kube-state-metrics",namespace="${NAMESPACE}"}[15m]) * 60 * 5 > 0
           for: 1h
           labels:
             severity: ${ALERT_SEVERITY}
         - alert: KubePodNotReady
           annotations:
-            message: Pod {{ $labels.namespace }}/{{ $labels.pod }} has been in a non-ready
-              state for longer than an hour.
+            message: Pod {{ $labels.namespace }}/{{ $labels.pod }} has been in a non-ready state for longer than an hour.
             runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubepodnotready
           expr: sum by (namespace, pod) (kube_pod_status_phase{job="kube-state-metrics",namespace="${NAMESPACE}",phase=~"Pending|Unknown"}) > 0
           for: 1h
