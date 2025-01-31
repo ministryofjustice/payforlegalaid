@@ -57,11 +57,11 @@ spec:
           labels:
             severity: ${ALERT_SEVERITY}
         - alert: KubeDeploymentReplicasMismatch
-            annotations:
-              message: Deployment {{ $labels.namespace }}/{{ $labels.deployment }} has not matched the expected number of replicas for longer 15 minutes.
-              runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/blob/master/runbook.md#alert-name-kubedeploymentreplicasmismatch
-              summary: Deployment has not matched the expected number of replicas.
-            expr: (kube_deployment_spec_replicas{job="kube-state-metrics",namespace="${NAMESPACE}"} != kube_deployment_status_replicas_available{job="kube-state-metrics",namespace="${NAMESPACE}"})
+          annotations:
+            message: Deployment {{ $labels.namespace }}/{{ $labels.deployment }} has not matched the expected number of replicas for longer 15 minutes.
+            runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/blob/master/runbook.md#alert-name-kubedeploymentreplicasmismatch
+            summary: Deployment has not matched the expected number of replicas.
+          expr: (kube_deployment_spec_replicas{job="kube-state-metrics",namespace="${NAMESPACE}"} != kube_deployment_status_replicas_available{job="kube-state-metrics",namespace="${NAMESPACE}"})
             for: 15m
             labels:
               severity: ${ALERT_SEVERITY}
