@@ -11,15 +11,6 @@ spec:
   groups:
     - name: kubernetes-rules
       rules:
-        - alert: KubeQuotaAlmostFull
-          annotations:
-            message: Namespace {{ $labels.namespace }} is using {{ $value }} of its {{ $labels.resource }} quota.
-            runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/blob/master/runbook.md#alert-name-kubequotaalmostfull
-            summary: Namespace quota is going to be full.
-          expr: kube_resourcequota{job="kube-state-metrics", namespace="${NAMESPACE}", type="used"} / ignoring (instance, job, type) (kube_resourcequota{job="kube-state-metrics", namespace="${NAMESPACE}", type="hard"} > 0) > 0.7
-          for: 15m
-          labels:
-            severity: ${ALERT_SEVERITY}
         - alert: KubeQuota-Exceeded
           annotations:
             message: Namespace {{ $labels.namespace }} is using {{ printf "%0.0f" $value }}% of its {{ $labels.resource }} quota.
