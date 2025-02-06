@@ -4,9 +4,7 @@ metadata:
   name: allow-prometheus-scraping
   namespace: ${NAMESPACE}
 spec:
-  podSelector:
-    matchLabels:
-      app: gpfd-dev-service
+  podSelector: {}
   policyTypes:
   - Ingress
   ingress:
