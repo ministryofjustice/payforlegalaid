@@ -1170,7 +1170,7 @@ data:
       },
       "timezone": "browser",
       "title": "LAA Get Payment & Finance Data DEV Dashboard",
-      "uid": "laa-get-payments-finance-data-dev-dashboard",
+      "uid": "gpfd-dev-dashboard",
       "version": 1,
       "weekStart": ""
     }
