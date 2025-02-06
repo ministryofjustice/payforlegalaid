@@ -2,12 +2,12 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: ${NAMESPACE}-dashboard
-  namespace: ${NAMESPACE}
+  name: laa-get-payments-finance-data-dev-dashboard
+  namespace: laa-get-payments-finance-data-dev
   labels:
-    grafana_dashboard: ${NAMESPACE}-dashboard
+    grafana_dashboard: laa-get-payments-finance-data-dev-dashboard
 data:
-  ${NAMESPACE}-dashboard.json: |
+  laa-get-payments-finance-data-dev-dashboard.json: |
     {
       "annotations": {
         "list": [
@@ -109,7 +109,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "builder",
-              "expr": "sum(kube_pod_container_info{namespace='${NAMESPACE}'})",
+              "expr": "sum(kube_pod_container_info{namespace='laa-get-payments-finance-data-dev'})",
               "legendFormat": "Total",
               "range": true,
               "refId": "A"
@@ -120,7 +120,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "sum({namespace='${NAMESPACE}',phase='Running',pod=~'.*deployment.*'} + 0)",
+              "expr": "sum({namespace='laa-get-payments-finance-data-dev',phase='Running',pod=~'.*deployment.*'} + 0)",
               "hide": false,
               "legendFormat": "Running",
               "range": true,
@@ -132,7 +132,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "builder",
-              "expr": "sum({namespace='${NAMESPACE}',phase='Pending',pod=~'.*deployment.*'} + 0)",
+              "expr": "sum({namespace='laa-get-payments-finance-data-dev',phase='Pending',pod=~'.*deployment.*'} + 0)",
               "hide": false,
               "legendFormat": "Pending",
               "range": true,
@@ -144,7 +144,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "sum({namespace='${NAMESPACE}',phase='Failed',pod=~'.*deployment.*'} + 0)",
+              "expr": "sum({namespace='laa-get-payments-finance-data-dev',phase='Failed',pod=~'.*deployment.*'} + 0)",
               "hide": false,
               "legendFormat": "Failed",
               "range": true,
@@ -241,7 +241,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "sum by(application) (increase(http_server_requests_seconds_count{namespace='${NAMESPACE}', status='401'}[$__rate_interval]))",
+              "expr": "sum by(application) (increase(http_server_requests_seconds_count{namespace='laa-get-payments-finance-data-dev', status='401'}[$__rate_interval]))",
               "legendFormat": "__auto",
               "range": true,
               "refId": "A"
@@ -337,7 +337,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "sum by(instance) (increase(http_server_requests_seconds_count{namespace='${NAMESPACE}',application='gpfd-api-app', status='200'}[$__rate_interval])) ",
+              "expr": "sum by(instance) (increase(http_server_requests_seconds_count{namespace='laa-get-payments-finance-data-dev',application='gpfd-api-app', status='200'}[$__rate_interval])) ",
               "legendFormat": "__auto",
               "range": true,
               "refId": "A"
@@ -433,7 +433,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "sum by(uri) (increase(http_server_requests_seconds_count{namespace='${NAMESPACE}', uri!~'.*actuator.*|.*swagger.*|.*reports*|.*csv.*', status='200'}[$__rate_interval])) ",
+              "expr": "sum by(uri) (increase(http_server_requests_seconds_count{namespace='laa-get-payments-finance-data-dev', uri!~'.*actuator.*|.*swagger.*|.*reports*|.*csv.*', status='200'}[$__rate_interval])) ",
               "legendFormat": "{{uri}}",
               "range": true,
               "refId": "A"
@@ -530,7 +530,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "sum by(uri) (rate(http_server_requests_seconds_sum{namespace='${NAMESPACE}',application='gpfd-api-app', uri!~'.*actuator.*|.*swagger.*|.*reports*|.*csv.*', status='200'}[1m])) / sum by(uri) (rate(http_server_requests_seconds_count{namespace='${NAMESPACE}',application='gpfd-api-app', uri!~'.*actuator.*|.*swagger.*|.*reports*|.*csv.*', status='200'}[$__rate_interval]))",
+              "expr": "sum by(uri) (rate(http_server_requests_seconds_sum{namespace='laa-get-payments-finance-data-dev',application='gpfd-api-app', uri!~'.*actuator.*|.*swagger.*|.*reports*|.*csv.*', status='200'}[1m])) / sum by(uri) (rate(http_server_requests_seconds_count{namespace='laa-get-payments-finance-data-dev',application='gpfd-api-app', uri!~'.*actuator.*|.*swagger.*|.*reports*|.*csv.*', status='200'}[$__rate_interval]))",
               "legendFormat": "__auto",
               "range": true,
               "refId": "A"
@@ -627,7 +627,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "max by(uri) (http_server_requests_seconds_max{namespace='${NAMESPACE}',application='gpfd-api-app', uri!~'.*actuator.*|.*swagger.*|.*reports*|.*csv.*', status='200'}) ",
+              "expr": "max by(uri) (http_server_requests_seconds_max{namespace='laa-get-payments-finance-data-dev',application='gpfd-api-app', uri!~'.*actuator.*|.*swagger.*|.*reports*|.*csv.*', status='200'}) ",
               "legendFormat": "__auto",
               "range": true,
               "refId": "A"
@@ -716,7 +716,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "jvm_memory_max_bytes{namespace='${NAMESPACE}',application='gpfd-api-app', area='heap', id='Survivor Space', namespace='${NAMESPACE}'} / 1000000",
+              "expr": "jvm_memory_max_bytes{namespace='laa-get-payments-finance-data-dev',application='gpfd-api-app', area='heap', id='Survivor Space', namespace='laa-get-payments-finance-data-dev'} / 1000000",
               "legendFormat": "{{instance}}",
               "range": true,
               "refId": "A"
@@ -812,7 +812,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "jvm_memory_used_bytes{namespace='${NAMESPACE}',application='gpfd-api-app',area='heap',id='Survivor Space',}/1000000",
+              "expr": "jvm_memory_used_bytes{namespace='laa-get-payments-finance-data-dev',application='gpfd-api-app',area='heap',id='Survivor Space',}/1000000",
               "legendFormat": "{{instance}}",
               "range": true,
               "refId": "A"
@@ -874,7 +874,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "jvm_memory_max_bytes{namespace='${NAMESPACE}',application='gpfd-api-app',area='heap',id='Eden Space',}/1000000",
+              "expr": "jvm_memory_max_bytes{namespace='laa-get-payments-finance-data-dev',application='gpfd-api-app',area='heap',id='Eden Space',}/1000000",
               "legendFormat": "{{instance}}",
               "range": true,
               "refId": "A"
@@ -970,7 +970,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "jvm_memory_used_bytes{namespace='${NAMESPACE}',application='gpfd-api-app',area='heap',id='Eden Space'}/1000000",
+              "expr": "jvm_memory_used_bytes{namespace='laa-get-payments-finance-data-dev',application='gpfd-api-app',area='heap',id='Eden Space'}/1000000",
               "legendFormat": "{{instance}}",
               "range": true,
               "refId": "A"
@@ -1032,7 +1032,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "jvm_memory_max_bytes{namespace='${NAMESPACE}',application='gpfd-api-app',area='heap',id='Tenured Gen',} /1000000",
+              "expr": "jvm_memory_max_bytes{namespace='laa-get-payments-finance-data-dev',application='gpfd-api-app',area='heap',id='Tenured Gen',} /1000000",
               "legendFormat": "{{instance}}",
               "range": true,
               "refId": "A"
@@ -1128,7 +1128,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "jvm_memory_used_bytes{namespace='${NAMESPACE}',application='gpfd-api-app',area='heap',id='Tenured Gen',} /1000000",
+              "expr": "jvm_memory_used_bytes{namespace='laa-get-payments-finance-data-dev',application='gpfd-api-app',area='heap',id='Tenured Gen',} /1000000",
               "legendFormat": "{{instance}}",
               "range": true,
               "refId": "A"
