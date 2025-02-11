@@ -2,12 +2,12 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: laa-get-payments-finance-data-uat-dashboard
-  namespace: laa-get-payments-finance-data-uat
+  name: ${NAMESPACE}-dashboard
+  namespace: ${NAMESPACE}
   labels:
-    grafana_dashboard: laa-get-payments-finance-data-uat-dashboard
+    grafana_dashboard: ${NAMESPACE}-dashboard
 data:
-  laa-get-payments-finance-data-uat-dashboard.json: |
+  ${NAMESPACE}-dashboard.json: |
     {
       "annotations": {
         "list": [
@@ -1157,8 +1157,8 @@ data:
         ]
       },
       "timezone": "browser",
-      "title": "LAA GPFD Get Payment & Finance Data UAT Dashboard",
-      "uid": "laa-gpfd-uat",
+      "title": "LAA GPFD Get Payment & Finance Data ${ENV_NAME} Dashboard",
+      "uid": "laa-gpfd-${ENV_NAME}",
       "version": 1,
       "weekStart": ""
     }
