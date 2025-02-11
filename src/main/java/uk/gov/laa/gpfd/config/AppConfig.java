@@ -47,6 +47,9 @@ public class AppConfig {
     @Value("${gpfd.url}")
     private String serviceUrl;
 
+    @Value("${spring.liquibase.changelog}")
+    private String liquibaseChangeLog;
+
     /**
      * Configures a read-only {@link DataSource} using properties prefixed with
      * "gpfd.datasource.read-only" in the application's configuration file.
@@ -150,7 +153,7 @@ public class AppConfig {
     public SpringLiquibase liquibase(@Qualifier("writeDataSource") DataSource dataSource) {
         SpringLiquibase liquibase = new SpringLiquibase();
         liquibase.setDataSource(dataSource);
-        liquibase.setChangeLog("classpath:liquibase/db.changelog-master.xml");
+        liquibase.setChangeLog(liquibaseChangeLog);
         liquibase.setShouldRun(true);
         return liquibase;
     }

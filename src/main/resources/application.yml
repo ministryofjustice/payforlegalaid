@@ -14,6 +14,7 @@ logging:
 spring:
   liquibase:
     enabled: false
+    change-log: classpath:liquibase/db.changelog-master.xml
 
 management:
   endpoints:
