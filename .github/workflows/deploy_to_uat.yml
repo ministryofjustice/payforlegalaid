@@ -58,6 +58,7 @@ jobs:
           cat deployments/uat/network-policy.tpl | envsubst > deployments/uat/network-policy.yml
           cat deployments/uat/service-monitor.tpl | envsubst > deployments/uat/service-monitor.yml
           cat deployments/uat/prometheus-rules.tpl | envsubst > deployments/uat/prometheus-rules.yml
+          cat deployments/development/grafana-dashboard.yml | envsubst > deployments/development/grafana-dashboard.yml
 
       - name: Authenticate with Cloud Platform and Deploy
         env:
