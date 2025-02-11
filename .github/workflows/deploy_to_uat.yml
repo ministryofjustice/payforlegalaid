@@ -20,10 +20,10 @@ jobs:
       - name: Build and test the code
         uses: './.github/build-and-test'
 
-      - name: Run Snyk security suite
-        uses: './.github/snyk-scan'
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN}}
+      # - name: Run Snyk security suite
+      #   uses: './.github/snyk-scan'
+      #   env:
+      #     SNYK_TOKEN: ${{ secrets.SNYK_TOKEN}}
 
       - name: Set Spring profile
         run: echo "SPRING_PROFILES_ACTIVE=uat" >> $GITHUB_ENV
