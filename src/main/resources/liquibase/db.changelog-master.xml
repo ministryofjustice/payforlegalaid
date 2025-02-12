@@ -5,6 +5,195 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
+    <changeSet id="create-report-output-types-table" author="jason smallman">
+        <createTable tableName="REPORT_OUTPUT_TYPES" schemaName="GPFD">
+            <column name="ID" type="CHAR (36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="EXTENSION" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="grant-select-report-output-types-table" author="jason smallman">
+        <sql>
+            GRANT SELECT ON "GPFD"."REPORT_OUTPUT_TYPES" TO "ANY_REPORT"
+        </sql>
+    </changeSet>
+
+    <changeSet id="create-reports-table" author="jason smallman">
+        <createTable tableName="REPORTS" schemaName="GPFD">
+            <column name="ID" type="CHAR (36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TEMPLATE_SECURE_DOCUMENT_ID" type="VARCHAR(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_CREATION_DATE" type="DATE">
+                <constraints nullable="true"/>
+            </column>
+            <column name="LAST_DATABASE_REFRESH_DATETIME" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(4000)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="NUM_DAYS_TO_KEEP" type="int">
+                <constraints nullable="true"/>
+            </column>
+            <column name="REPORT_OUTPUT_TYPE" type="CHAR (36)">
+                <constraints nullable="false" foreignKeyName="FK_ReportOutputTypeId" references="REPORT_OUTPUT_TYPES(id)" />
+            </column>
+            <column name="REPORT_CREATOR_ID" type="CHAR (36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_CREATOR_NAME" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_CREATOR_EMAIL" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_OWNER_ID" type="CHAR (36)">
+                <constraints nullable="false" />
+            </column>
+            <column name="REPORT_OWNER_NAME" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_OWNER_EMAIL" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="8-grant-select-reports-table" author="jason smallman">
+        <sql>
+            GRANT SELECT ON "GPFD"."REPORTS" TO "ANY_REPORT"
+        </sql>
+    </changeSet>
+
+    <changeSet id="create-report-groups-table" author="jason smallman">
+        <createTable tableName="REPORT_GROUPS" schemaName="GPFD">
+            <column name="REPORT_ID" type="CHAR (36)">
+                <constraints nullable="false" foreignKeyName="FK_ReportId" references="REPORTS(id)"/>
+            </column>
+            <column name="GROUP_ID" type="CHAR (36)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="grant-select-report-groups-table" author="jason smallman">
+        <sql>
+            GRANT SELECT ON "GPFD"."REPORT_GROUPS" TO "ANY_REPORT"
+        </sql>
+    </changeSet>
+
+    <changeSet id="create-field-attributes-table" author="jason smallman">
+        <createTable tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" type="CHAR (36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="REPORT_QUERY_ID" type="CHAR (36)">
+                <constraints nullable="false" foreignKeyName="FK_ReportQueryId" references="REPORT_QUERIES(id)" />
+            </column>
+            <column name="SOURCE_NAME" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MAPPED_NAME" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FORMAT" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FORMAT_TYPE" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="COLUMN_WIDTH" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="grant-select-field-attributes-table" author="jason smallman">
+        <sql>
+            GRANT SELECT ON "GPFD"."FIELD_ATTRIBUTES" TO "ANY_REPORT"
+        </sql>
+    </changeSet>
+
+    <changeSet id="create-report-queries-table" author="jason smallman">
+        <createTable tableName="REPORT_QUERIES" schemaName="GPFD">
+            <column name="ID" type="CHAR (36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="REPORT_ID" type="CHAR (36)">
+                <constraints nullable="false" foreignKeyName="FK_ReportId" references="REPORTS(id)" />
+            </column>
+            <column name="QUERY" type="VARCHAR(4000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TAB_NAME" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="grant-select-report-queries-table" author="jason smallman">
+        <sql>
+            GRANT SELECT ON "GPFD"."REPORT_QUERIES" TO "ANY_REPORT"
+        </sql>
+    </changeSet>
+
+    <changeSet id="create-reports-tracking-table" author="jason smallman">
+        <createTable tableName="REPORTS_TRACKING" schemaName="GPFD">
+            <column name="ID" type="CHAR (36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_ID" type="CHAR (36)">
+                <constraints nullable="false" foreignKeyName="FK_ReportId" references="REPORTS(id)"/>
+            </column>
+            <column name="CREATION_DATE" type="DATE">
+                <constraints nullable="true"/>
+            </column>
+            <column name="REPORT_DOWNLOADED_BY" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_GENERATED_BY" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_CREATOR" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_OWNER" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_OUTPUT_TYPE" type="VARCHAR(150)">
+                <constraints nullable="false" />
+            </column>
+            <column name="TEMPLATE_URL" type="VARCHAR(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_URL" type="VARCHAR(300)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="grant-select-to-reports-tracking-any-report" author="jason smallman">
+        <sql>
+            GRANT SELECT ON "GPFD"."REPORTS_TRACKING" TO "ANY_REPORT"
+        </sql>
+    </changeSet>
+
     <changeSet id="1-create-csv-to-sql-mapping-table" author="robert_buczek">
         <createTable tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
             <column name="ID" type="CHAR (36)">
@@ -78,7 +267,7 @@
         </sql>
     </changeSet>
 
-    <changeSet id="5-create-utils_pkg" author="robert_buczek">
+    <changeSet id="create-utils_pkg" author="robert_buczek">
         <sql splitStatements="false">
             <![CDATA[
                 CREATE OR REPLACE PACKAGE utils_pkg
@@ -90,7 +279,7 @@
         </sql>
     </changeSet>
 
-    <changeSet id="6-create-geerat-id-function_pkg" author="robert_buczek">
+    <changeSet id="create-geerat-id-function_pkg" author="robert_buczek">
         <sql splitStatements="false">
             <![CDATA[
                 CREATE OR REPLACE PACKAGE BODY utils_pkg
@@ -117,9 +306,7 @@
         </rollback>
     </changeSet>
 
-    <changeSet id="7-insert-data-csv-to-sql-mapping-table" author="robert_buczek">
-
-        <comment>Insert initial data into CSV_TO_SQL_MAPPING_TABLE</comment>
+    <changeSet id="insert-reference-data" author="jason smallman">
 
         <insert tableName="CSV_TO_SQL_MAPPING_TABLE">
             <column name="ID" valueComputed="utils_pkg.generate_uuid()"/>
@@ -295,19 +482,5 @@
         </insert>
 
     </changeSet>
-
-<!--    <changeSet id="8-create-prevent-insert-update-trigger" author="robert_buczek">-->
-<!--        <sql splitStatements="false">-->
-<!--            <![CDATA[-->
-<!--                CREATE OR REPLACE TRIGGER PreventInsertUpdateOnTable-->
-<!--                BEFORE INSERT OR UPDATE ON GPFD.CSV_TO_SQL_MAPPING_TABLE-->
-<!--                FOR EACH ROW-->
-<!--                BEGIN-->
-<!--                    RAISE_APPLICATION_ERROR(-20005, 'Inserts and updates are not allowed on the CSV_TO_SQL_MAPPING_TABLE table.');-->
-<!--                END;-->
-<!--            /-->
-<!--            ]]>-->
-<!--        </sql>-->
-<!--    </changeSet>-->
 
 </databaseChangeLog>
