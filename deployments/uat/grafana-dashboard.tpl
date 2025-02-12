@@ -703,7 +703,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "jvm_memory_max_bytes{namespace='${NAMESPACE}',area="heap",id="G1 Survivor Space"} / 1000000",
+              "expr": "jvm_memory_max_bytes{namespace='${NAMESPACE}',area='heap',id='G1 Survivor Space'} / 1000000",
               "legendFormat": "{{instance}}",
               "range": true,
               "refId": "A"
@@ -799,7 +799,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "jvm_memory_used_bytes{namespace='${NAMESPACE}',area="heap",id="G1 Survivor Space"}/1000000",
+              "expr": "jvm_memory_used_bytes{namespace='${NAMESPACE}',area='heap',id='G1 Survivor Space'}/1000000",
               "legendFormat": "{{instance}}",
               "range": true,
               "refId": "A"
@@ -861,7 +861,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "jvm_memory_max_bytes{namespace='${NAMESPACE}',area="heap",id="G1 Eden Space"}/1000000",
+              "expr": "jvm_memory_max_bytes{namespace='${NAMESPACE}',area='heap',id='G1 Eden Space'}/1000000",
               "legendFormat": "{{instance}}",
               "range": true,
               "refId": "A"
@@ -957,7 +957,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "jvm_memory_used_bytes{namespace='${NAMESPACE}',area="heap",id="G1 Eden Space"}/1000000",
+              "expr": "jvm_memory_used_bytes{namespace='${NAMESPACE}',area='heap',id='G1 Eden Space'}/1000000",
               "legendFormat": "{{instance}}",
               "range": true,
               "refId": "A"
