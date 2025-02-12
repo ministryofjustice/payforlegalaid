@@ -8,14 +8,20 @@ ignore:
           H2 have not fixed because only affects insecure environments. See
           CVE-2018-10054 for more details.
           H2 is only enabled in local and test environment
-        expires: 2025-02-17T17:40:56.565Z
-        created: 2024-12-18T17:40:56.567Z
-  SNYK-JAVA-ORGAPACHETOMCATEMBED-8523186:
+        expires: 2025-03-12T17:40:56.565Z
+        created: 2024-02-12T17:40:56.567Z
+  SNYK-JAVA-IONETTY-8707739:
     - '*':
         reason: >-
-          Spring has yet to upgrade their versions with the new tomcat, as this
-          is a very recent cre. Check again when this ignore times out next
-          month
-        expires: 2025-01-18T13:36:23.710Z
-        created: 2024-12-19T13:36:23.725Z
+          Spring has yet to upgrade their versions with the new netty-handler.
+          See CVE-2025-24970 for more details
+        expires: 2025-03-12T13:36:23.710Z
+        created: 2025-02-12T13:36:23.725Z
+  SNYK-JAVA-NETMINIDEV-8689573:
+      - '*':
+          reason: >-
+            Spring has yet to upgrade their versions with the new json-smart.
+            See CVE-2024-57699 for more details
+          expires: 2025-03-12T13:36:23.710Z
+          created: 2025-02-12T13:36:23.725Z
 patch: {}
