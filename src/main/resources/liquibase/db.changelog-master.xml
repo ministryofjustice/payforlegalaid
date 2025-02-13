@@ -306,7 +306,7 @@
         </rollback>
     </changeSet>
 
-    <changeSet id="insert-reference-data" author="jason smallman">
+    <changeSet id="insert-old-reference-data" author="jason smallman">
 
         <insert tableName="CSV_TO_SQL_MAPPING_TABLE">
             <column name="ID" valueComputed="utils_pkg.generate_uuid()"/>
