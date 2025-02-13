@@ -315,6 +315,12 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="0002002-grant-select-to-report-output-types" author="jason smallman">
+        <sql>
+            GRANT SELECT ON "GPFD"."REPORT_OUTPUT_TYPES" TO "ANY_REPORT"
+        </sql>
+    </changeSet>
+
     <changeSet id="0002020-create-reports-table" author="jason smallman" >
 
         <comment>Create REPORTS</comment>
@@ -371,6 +377,13 @@
         </sql>
     </changeSet>
 
+    <changeSet id="0002022-grant-select-to-reports" author="jason smallman">
+        <sql>
+            GRANT SELECT ON "GPFD"."REPORTS" TO "ANY_REPORT"
+        </sql>
+    </changeSet>
+
+
     <changeSet id="0002030-create-report-groups-table" author="jason smallman" >
 
         <comment>Create REPORT_GROUPS</comment>
@@ -388,6 +401,12 @@
     <changeSet id="0002031-add-report-id-fk" author="jason smallman" >
         <sql>
             ALTER TABLE GPFD.REPORT_GROUPS ADD FOREIGN KEY (REPORT_ID) REFERENCES REPORTS(id)
+        </sql>
+    </changeSet>
+
+    <changeSet id="0002032-grant-select-to-report-groups" author="jason smallman">
+        <sql>
+            GRANT SELECT ON "GPFD"."REPORT_GROUPS" TO "ANY_REPORT"
         </sql>
     </changeSet>
 
@@ -417,6 +436,13 @@
             ALTER TABLE GPFD.REPORT_QUERIES ADD FOREIGN KEY (REPORT_ID) REFERENCES REPORTS(id)
         </sql>
     </changeSet>
+
+    <changeSet id="0002042-grant-select-to-report-groups" author="jason smallman">
+        <sql>
+            GRANT SELECT ON "GPFD"."REPORT_QUERIES" TO "ANY_REPORT"
+        </sql>
+    </changeSet>
+
 
     <changeSet id="0002050-create-field-attributes-table" author="jason smallman" >
 
@@ -450,6 +476,12 @@
     <changeSet id="0002051-add-report-query-fk" author="jason smallman" >
         <sql>
             ALTER TABLE GPFD.FIELD_ATTRIBUTES ADD FOREIGN KEY (REPORT_QUERY_ID) REFERENCES REPORT_QUERIES(id)
+        </sql>
+    </changeSet>
+
+    <changeSet id="0002052-grant-select-to-field-attributes" author="jason smallman">
+        <sql>
+            GRANT SELECT ON "GPFD"."FIELD_ATTRIBUTES" TO "ANY_REPORT"
         </sql>
     </changeSet>
 
@@ -496,6 +528,12 @@
     <changeSet id="0002061-add-reports-fk" author="jason smallman" >
         <sql>
             ALTER TABLE GPFD.REPORTS_TRACKING ADD FOREIGN KEY (REPORT_ID) REFERENCES REPORTS(id)
+        </sql>
+    </changeSet>
+
+    <changeSet id="0002062-grant-select-to-reports-tracking" author="jason smallman">
+        <sql>
+            GRANT SELECT ON "GPFD"."REPORTS_TRACKING" TO "ANY_REPORT"
         </sql>
     </changeSet>
 
