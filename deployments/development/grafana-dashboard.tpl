@@ -36,7 +36,7 @@ data:
       "editable": true,
       "fiscalYearStartMonth": 0,
       "graphTooltip": 0,
-      "id": 189,
+      "id": 187,
       "links": [],
       "panels": [
         {
@@ -46,6 +46,249 @@ data:
             "w": 24,
             "x": 0,
             "y": 0
+          },
+          "id": 47,
+          "panels": [],
+          "title": "CPU",
+          "type": "row"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 1
+          },
+          "id": 49,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "11.3.0",
+          "targets": [
+            {
+              "disableTextWrap": false,
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"${NAMESPACE}\", pod=~'gpfd.*'}[5m])) by (pod_name, container_name)",
+              "fullMetaSearch": false,
+              "includeNullMetadata": true,
+              "instant": false,
+              "interval": "",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A",
+              "useBackend": false
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "disableTextWrap": false,
+              "editorMode": "code",
+              "expr": "sum(kube_pod_container_resource_limits{namespace=\"${NAMESPACE}\", pod=~'gpfd.*', resource='cpu'}) by (pod)",
+              "fullMetaSearch": false,
+              "hide": false,
+              "includeNullMetadata": true,
+              "instant": false,
+              "legendFormat": "limit",
+              "range": true,
+              "refId": "B",
+              "useBackend": false
+            },
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+              },
+              "disableTextWrap": false,
+              "editorMode": "code",
+              "expr": "sum(kube_pod_container_resource_requests{namespace='${NAMESPACE}', pod=~'gpfd.*', resource='cpu'}) by (pod)",
+              "fullMetaSearch": false,
+              "hide": false,
+              "includeNullMetadata": true,
+              "instant": false,
+              "legendFormat": "request",
+              "range": true,
+              "refId": "C",
+              "useBackend": false
+            }
+          ],
+          "title": "CPU: percentage of limit",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "description": "Top 3 CPU Used Per Instance",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 1
+          },
+          "id": 48,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "11.3.0",
+          "targets": [
+            {
+              "disableTextWrap": false,
+              "editorMode": "code",
+              "expr": "topk(3, max by (pod, container)(rate(container_cpu_usage_seconds_total{image!='', namespace='${NAMESPACE}',pod=~\"gpfd.*\"}[$__rate_interval]))) / 1",
+              "fullMetaSearch": false,
+              "includeNullMetadata": true,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A",
+              "useBackend": false
+            }
+          ],
+          "title": "CPU Usage Per Instance",
+          "type": "timeseries"
+        },
+        {
+          "collapsed": false,
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 9
           },
           "id": 40,
           "panels": [],
@@ -83,7 +326,7 @@ data:
             "h": 10,
             "w": 2,
             "x": 0,
-            "y": 1
+            "y": 10
           },
           "id": 2,
           "options": {
@@ -218,7 +461,7 @@ data:
             "h": 10,
             "w": 4,
             "x": 2,
-            "y": 1
+            "y": 10
           },
           "id": 20,
           "options": {
@@ -241,13 +484,13 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "increase(http_server_requests_seconds_count{namespace='${NAMESPACE}', status='401'}[$__rate_interval])",
+              "expr": "sum by(instance) (increase(http_server_requests_seconds_count{namespace='${NAMESPACE}', status='401'}[$__rate_interval]))",
               "legendFormat": "__auto",
               "range": true,
               "refId": "A"
             }
           ],
-          "title": "Unauthorised Requests",
+          "title": "Unauthorised Requests 401",
           "type": "timeseries"
         },
         {
@@ -314,7 +557,7 @@ data:
             "h": 10,
             "w": 6,
             "x": 6,
-            "y": 1
+            "y": 10
           },
           "id": 46,
           "options": {
@@ -343,7 +586,7 @@ data:
               "refId": "A"
             }
           ],
-          "title": "Per Pod Requests",
+          "title": "Successful Requests Per Instance",
           "type": "timeseries"
         },
         {
@@ -410,7 +653,7 @@ data:
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 1
+            "y": 10
           },
           "id": 4,
           "options": {
@@ -433,13 +676,13 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "sum by(uri) (increase(http_server_requests_seconds_count{namespace='${NAMESPACE}', uri!~'.*swagger.*|.*reports*|.*csv.*', status='200'}[$__rate_interval])) ",
+              "expr": "sum by(uri) (increase(http_server_requests_seconds_count{namespace='${NAMESPACE}', uri!~'.*swagger.*|.*actuator.*', status='200'}[$__rate_interval])) ",
               "legendFormat": "{{uri}}",
               "range": true,
               "refId": "A"
             }
           ],
-          "title": "Api Endpoints Requests",
+          "title": "Successful Requests Per Api Endpoints",
           "type": "timeseries"
         },
         {
@@ -507,7 +750,7 @@ data:
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 11
+            "y": 20
           },
           "id": 42,
           "options": {
@@ -530,13 +773,13 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "sum by(uri) (rate(http_server_requests_seconds_sum{namespace='${NAMESPACE}', uri!~'.*|.*swagger.*|.*reports*|.*csv.*', status='200'}[1m])) / sum by(uri) (rate(http_server_requests_seconds_count{namespace='${NAMESPACE}', uri!~'.*|.*swagger.*|.*reports*|.*csv.*', status='200'}[$__rate_interval]))",
+              "expr": "sum by(uri) (rate(http_server_requests_seconds_sum{namespace='${NAMESPACE}', uri!~'.*|.*swagger.*|.*actuator.*', status='200'}[1m])) / sum by(uri) (rate(http_server_requests_seconds_count{namespace='${NAMESPACE}', uri!~'.*|.*swagger.*|.*actuator.*', status='200'}[$__rate_interval]))",
               "legendFormat": "__auto",
               "range": true,
               "refId": "A"
             }
           ],
-          "title": "Average Response Time",
+          "title": "Average Response Time Per Uri",
           "type": "timeseries"
         },
         {
@@ -604,7 +847,7 @@ data:
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 11
+            "y": 20
           },
           "id": 44,
           "options": {
@@ -627,7 +870,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "max by(uri) (http_server_requests_seconds_max{namespace='${NAMESPACE}', uri!~'.*|.*swagger.*|.*reports*|.*csv.*', status='200'}) ",
+              "expr": "max by(uri) (http_server_requests_seconds_max{namespace='${NAMESPACE}', uri!~'.*|.*swagger.*|.*actuator.*', status='200'}) ",
               "legendFormat": "__auto",
               "range": true,
               "refId": "A"
@@ -642,7 +885,7 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 21
+            "y": 30
           },
           "id": 36,
           "panels": [],
@@ -676,7 +919,7 @@ data:
             "h": 10,
             "w": 2,
             "x": 0,
-            "y": 32
+            "y": 31
           },
           "id": 16,
           "options": {
@@ -776,7 +1019,7 @@ data:
             "h": 10,
             "w": 6,
             "x": 2,
-            "y": 22
+            "y": 31
           },
           "id": 10,
           "options": {
@@ -835,7 +1078,7 @@ data:
             "h": 10,
             "w": 2,
             "x": 8,
-            "y": 22
+            "y": 31
           },
           "id": 18,
           "options": {
@@ -934,7 +1177,7 @@ data:
             "h": 10,
             "w": 6,
             "x": 10,
-            "y": 22
+            "y": 31
           },
           "id": 8,
           "options": {
@@ -993,7 +1236,7 @@ data:
             "h": 10,
             "w": 2,
             "x": 16,
-            "y": 22
+            "y": 31
           },
           "id": 14,
           "options": {
@@ -1092,7 +1335,7 @@ data:
             "h": 10,
             "w": 6,
             "x": 18,
-            "y": 22
+            "y": 31
           },
           "id": 12,
           "options": {
@@ -1157,8 +1400,8 @@ data:
         ]
       },
       "timezone": "browser",
-      "title": "LAA GPFD Get Payment & Finance Data ${ENV_NAME} Dashboard",
+      "title": "LAA GPFD Get Payment & Finance Data ${ENV_NAME} dashboard",
       "uid": "laa-gpfd-${ENV_NAME}",
-      "version": 1,
+      "version": 2,
       "weekStart": ""
     }
