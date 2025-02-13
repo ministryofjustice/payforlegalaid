@@ -109,7 +109,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "builder",
-              "expr": "sum(kube_pod_container_info{namespace='${NAMESPACE}'})",
+              "expr": "sum(kube_pod_container_info{namespace='${NAMESPACE}',pod=~'.*gpfd.*'})",
               "legendFormat": "Total",
               "range": true,
               "refId": "A"
@@ -120,7 +120,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "sum({namespace='${NAMESPACE}',phase='Running',pod=~'.*deployment.*'} + 0)",
+              "expr": "sum({namespace='${NAMESPACE}',phase='Running',pod=~'.*gpfd.*'} + 0)",
               "hide": false,
               "legendFormat": "Running",
               "range": true,
@@ -132,7 +132,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "builder",
-              "expr": "sum({namespace='${NAMESPACE}',phase='Pending',pod=~'.*deployment.*'} + 0)",
+              "expr": "sum({namespace='${NAMESPACE}',phase='Pending',pod=~'.*gpfd.*'} + 0)",
               "hide": false,
               "legendFormat": "Pending",
               "range": true,
@@ -144,7 +144,7 @@ data:
                 "uid": "prometheus"
               },
               "editorMode": "code",
-              "expr": "sum({namespace='${NAMESPACE}',phase='Failed',pod=~'.*deployment.*'} + 0)",
+              "expr": "sum({namespace='${NAMESPACE}',phase='Failed',pod=~'.*gpfd.*'} + 0)",
               "hide": false,
               "legendFormat": "Failed",
               "range": true,
