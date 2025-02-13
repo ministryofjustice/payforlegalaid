@@ -7,12 +7,164 @@
 
     <changeSet id="0-schema" author="buczek_robert">
         <sql>
-            CREATE SCHEMA GPFD;
+            CREATE SCHEMA IF NOT EXISTS GPFD;
         </sql>
     </changeSet>
 
+    <changeSet id="1-create-report-output-types-table" author="jason smallman">
+        <createTable tableName="REPORT_OUTPUT_TYPES" schemaName="GPFD">
+            <column name="ID" type="CHAR (36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="EXTENSION" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
 
-    <changeSet id="3-create-report-tracking-table" author="robert_buczek">
+    <changeSet id="2-create-reports-table" author="jason smallman">
+        <createTable tableName="REPORTS" schemaName="GPFD">
+            <column name="ID" type="CHAR (36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TEMPLATE_SECURE_DOCUMENT_ID" type="VARCHAR(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_CREATION_DATE" type="DATE">
+                <constraints nullable="true"/>
+            </column>
+            <column name="LAST_DATABASE_REFRESH_DATETIME" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(4000)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="NUM_DAYS_TO_KEEP" type="int">
+                <constraints nullable="true"/>
+            </column>
+            <column name="REPORT_OUTPUT_TYPE" type="CHAR (36)">
+                <constraints nullable="false" foreignKeyName="FK_ReportOutputTypeId" references="REPORT_OUTPUT_TYPES(id)" />
+            </column>
+            <column name="REPORT_CREATOR_ID" type="CHAR (36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_CREATOR_NAME" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_CREATOR_EMAIL" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_OWNER_ID" type="CHAR (36)">
+                <constraints nullable="false" />
+            </column>
+            <column name="REPORT_OWNER_NAME" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_OWNER_EMAIL" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3-create-report-groups-table" author="jason smallman">
+        <createTable tableName="REPORT_GROUPS" schemaName="GPFD">
+            <column name="REPORT_ID" type="CHAR (36)">
+                <constraints nullable="false" foreignKeyName="FK_ReportId" references="REPORTS(id)"/>
+            </column>
+            <column name="GROUP_ID" type="CHAR (36)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="4-create-field-attributes-table" author="jason smallman">
+        <createTable tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" type="CHAR (36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="REPORT_QUERY_ID" type="CHAR (36)">
+                <constraints nullable="false" foreignKeyName="FK_ReportQueryId" references="REPORT_QUERIES(id)" />
+            </column>
+            <column name="SOURCE_NAME" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MAPPED_NAME" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FORMAT" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FORMAT_TYPE" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="COLUMN_WIDTH" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="5-create-report-queries-table" author="jason smallman">
+        <createTable tableName="REPORT_QUERIES" schemaName="GPFD">
+            <column name="ID" type="CHAR (36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="REPORT_ID" type="CHAR (36)">
+                <constraints nullable="false" foreignKeyName="FK_ReportId" references="REPORTS(id)" />
+            </column>
+            <column name="QUERY" type="VARCHAR(4000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TAB_NAME" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="6-create-reports-tracking-table" author="jason smallman">
+        <createTable tableName="REPORTS_TRACKING" schemaName="GPFD">
+            <column name="ID" type="CHAR (36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_ID" type="CHAR (36)">
+                <constraints nullable="false" foreignKeyName="FK_ReportId" references="REPORTS(id)"/>
+            </column>
+            <column name="CREATION_DATE" type="DATE">
+                <constraints nullable="true"/>
+            </column>
+            <column name="REPORT_DOWNLOADED_BY" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_GENERATED_BY" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_CREATOR" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_OWNER" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_OUTPUT_TYPE" type="VARCHAR(150)">
+                <constraints nullable="false" />
+            </column>
+            <column name="TEMPLATE_URL" type="VARCHAR(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_URL" type="VARCHAR(300)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="7-create-report-tracking-table" author="robert_buczek">
         <createTable tableName="REPORT_TRACKING" schemaName="GPFD">
             <column name="ID" type="CHAR (36)">
                 <constraints primaryKey="true" nullable="false"/>
@@ -36,7 +188,7 @@
     </changeSet>
 
 
-    <changeSet id="1-create-csv-to-sql-mapping-table" author="robert_buczek">
+    <changeSet id="8-create-csv-to-sql-mapping-table" author="robert_buczek">
         <createTable tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
             <column name="ID" type="CHAR (36)">
                 <constraints primaryKey="true" nullable="false"/>
@@ -74,7 +226,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="7-insert-data-csv-to-sql-mapping-table" author="robert_buczek">
+    <changeSet id="9-insert-data-csv-to-sql-mapping-table" author="robert_buczek">
 
         <comment>Insert initial data into CSV_TO_SQL_MAPPING_TABLE</comment>
 

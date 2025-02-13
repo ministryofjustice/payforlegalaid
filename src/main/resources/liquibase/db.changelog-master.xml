@@ -72,7 +72,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="8-grant-select-reports-table" author="jason smallman">
+    <changeSet id="grant-select-reports-table" author="jason smallman">
         <sql>
             GRANT SELECT ON "GPFD"."REPORTS" TO "ANY_REPORT"
         </sql>
