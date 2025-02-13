@@ -5,13 +5,10 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
-    <changeSet id="0-schema" author="buczek_robert">
-        <sql>
-            CREATE SCHEMA IF NOT EXISTS GPFD;
-        </sql>
-    </changeSet>
+    <changeSet id="000002" author="jason smallman" >
 
-    <changeSet id="1-create-report-output-types-table" author="jason smallman">
+        <comment>Create REPORT_OUTPUT_TYPES</comment>
+
         <createTable tableName="REPORT_OUTPUT_TYPES" schemaName="GPFD">
             <column name="ID" type="CHAR (36)">
                 <constraints primaryKey="true" nullable="false"/>
@@ -23,9 +20,9 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-    </changeSet>
 
-    <changeSet id="2-create-reports-table" author="jason smallman">
+        <comment>Create REPORTS</comment>
+
         <createTable tableName="REPORTS" schemaName="GPFD">
             <column name="ID" type="CHAR (36)">
                 <constraints primaryKey="true" nullable="false"/>
@@ -70,9 +67,9 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-    </changeSet>
 
-    <changeSet id="3-create-report-groups-table" author="jason smallman">
+        <comment>Create REPORT_GROUPS</comment>
+
         <createTable tableName="REPORT_GROUPS" schemaName="GPFD">
             <column name="REPORT_ID" type="CHAR (36)">
                 <constraints nullable="false" foreignKeyName="FK_ReportId" references="REPORTS(id)"/>
@@ -81,9 +78,9 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-    </changeSet>
 
-    <changeSet id="4-create-field-attributes-table" author="jason smallman">
+        <comment>Create FIELD_ATTRIBUTES</comment>
+
         <createTable tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
             <column name="ID" type="CHAR (36)">
                 <constraints primaryKey="true" nullable="false"/>
@@ -107,9 +104,9 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-    </changeSet>
 
-    <changeSet id="5-create-report-queries-table" author="jason smallman">
+        <comment>Create REPORT_QUERIES</comment>
+
         <createTable tableName="REPORT_QUERIES" schemaName="GPFD">
             <column name="ID" type="CHAR (36)">
                 <constraints primaryKey="true" nullable="false"/>
@@ -124,9 +121,9 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-    </changeSet>
 
-    <changeSet id="6-create-reports-tracking-table" author="jason smallman">
+        <comment>Create REPORTS_TRACKING</comment>
+
         <createTable tableName="REPORTS_TRACKING" schemaName="GPFD">
             <column name="ID" type="CHAR (36)">
                 <constraints primaryKey="true" nullable="false"/>
@@ -164,7 +161,15 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="7-create-report-tracking-table" author="robert_buczek">
+    <changeSet id="000001" author="buczek_robert">
+        <comment>Create schema GPFD</comment>
+
+        <sql>
+            CREATE SCHEMA GPFD;
+        </sql>
+
+        <comment>Create REPORT_TRACKING</comment>
+
         <createTable tableName="REPORT_TRACKING" schemaName="GPFD">
             <column name="ID" type="CHAR (36)">
                 <constraints primaryKey="true" nullable="false"/>
@@ -185,10 +190,9 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-    </changeSet>
 
+        <comment>Create CSV_TO_SQL_MAPPING_TABLE</comment>
 
-    <changeSet id="8-create-csv-to-sql-mapping-table" author="robert_buczek">
         <createTable tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
             <column name="ID" type="CHAR (36)">
                 <constraints primaryKey="true" nullable="false"/>
@@ -224,9 +228,6 @@
                 <constraints nullable="true"/>
             </column>
         </createTable>
-    </changeSet>
-
-    <changeSet id="9-insert-data-csv-to-sql-mapping-table" author="robert_buczek">
 
         <comment>Insert initial data into CSV_TO_SQL_MAPPING_TABLE</comment>
 
