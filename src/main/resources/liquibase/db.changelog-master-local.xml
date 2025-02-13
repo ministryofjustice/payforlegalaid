@@ -5,17 +5,13 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
-    <changeSet id="0001001-create-schema" author="buczek_robert">
-        <comment>Create schema GPFD</comment>
-
+    <changeSet id="0-schema" author="buczek_robert">
         <sql>
             CREATE SCHEMA GPFD;
         </sql>
     </changeSet>
 
-    <changeSet id="0001010-create-report-tracking" author="buczek_robert">
-        <comment>Create REPORT_TRACKING</comment>
-
+    <changeSet id="3-create-report-tracking-table" author="robert_buczek">
         <createTable tableName="REPORT_TRACKING" schemaName="GPFD">
             <column name="ID" type="CHAR (36)">
                 <constraints primaryKey="true" nullable="false"/>
@@ -38,10 +34,8 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="0001020-create-csv-to-sql-table" author="buczek_robert">
 
-        <comment>Create CSV_TO_SQL_MAPPING_TABLE</comment>
-
+    <changeSet id="1-create-csv-to-sql-mapping-table" author="robert_buczek">
         <createTable tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
             <column name="ID" type="CHAR (36)">
                 <constraints primaryKey="true" nullable="false"/>
@@ -79,7 +73,7 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="0001030-populate-csv-to-sql" author="buczek_robert">
+    <changeSet id="7-insert-data-csv-to-sql-mapping-table" author="robert_buczek">
 
         <comment>Insert initial data into CSV_TO_SQL_MAPPING_TABLE</comment>
 

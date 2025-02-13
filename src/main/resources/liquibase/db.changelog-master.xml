@@ -5,38 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
-    <changeSet id="0001010-create-report-tracking" author="buczek_robert">
-        <comment>Create REPORT_TRACKING</comment>
-
-        <createTable tableName="REPORT_TRACKING" schemaName="GPFD">
-            <column name="ID" type="CHAR (36)">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="REPORT_NAME" type="VARCHAR(80)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="REPORT_URL" type="VARCHAR(500)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="CREATION_TIME" type="TIMESTAMP">
-                <constraints nullable="false"/>
-            </column>
-            <column name="MAPPING_ID" type="CHAR (36)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="REPORT_GENERATED_BY" type="VARCHAR(500)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
-
-    <changeSet id="0001011-grant-select-to-report-tracking-any-report" author="robert_buczek">
-        <sql>
-            GRANT SELECT ON "GPFD"."REPORT_TRACKING" TO "ANY_REPORT"
-        </sql>
-    </changeSet>
-
-    <changeSet id="0001020-create-csv-to-sql-table" author="buczek_robert">
+    <changeSet id="1-create-csv-to-sql-mapping-table" author="robert_buczek">
         <createTable tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
             <column name="ID" type="CHAR (36)">
                 <constraints primaryKey="true" nullable="false"/>
@@ -74,13 +43,42 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="0001021-grant-select-csv-to-sql-to-any-report" author="buczek_robert">
+    <changeSet id="2-grant-select-csv-to-sql-to-any-report" author="robert_buczek">
         <sql>
             GRANT SELECT ON "GPFD"."CSV_TO_SQL_MAPPING_TABLE" TO "ANY_REPORT"
         </sql>
     </changeSet>
 
-    <changeSet id="0001022-create-utils_pkg" author="buczek_robert">
+    <changeSet id="3-create-report-tracking-table" author="robert_buczek">
+        <createTable tableName="REPORT_TRACKING" schemaName="GPFD">
+            <column name="ID" type="CHAR (36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="REPORT_NAME" type="VARCHAR(80)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_URL" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATION_TIME" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MAPPING_ID" type="CHAR (36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_GENERATED_BY" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="4-grant-select-to-report-tracking-any-report" author="robert_buczek">
+        <sql>
+            GRANT SELECT ON "GPFD"."REPORT_TRACKING" TO "ANY_REPORT"
+        </sql>
+    </changeSet>
+
+    <changeSet id="5-create-utils_pkg" author="robert_buczek">
         <sql splitStatements="false">
             <![CDATA[
             CREATE OR REPLACE PACKAGE utils_pkg
@@ -92,7 +90,7 @@
         </sql>
     </changeSet>
 
-    <changeSet id="0001023-create-geerat-id-function_pkg" author="buczek_robert">
+    <changeSet id="6-create-geerat-id-function_pkg" author="robert_buczek">
         <sql splitStatements="false">
             <![CDATA[
             CREATE OR REPLACE PACKAGE BODY utils_pkg
@@ -119,7 +117,7 @@
         </rollback>
     </changeSet>
 
-    <changeSet id="0001030-populate-csv-to-sql" author="buczek_robert">
+    <changeSet id="7-insert-data-csv-to-sql-mapping-table" author="robert_buczek">
 
         <comment>Insert initial data into CSV_TO_SQL_MAPPING_TABLE</comment>
 
