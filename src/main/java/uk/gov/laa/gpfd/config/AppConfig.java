@@ -158,4 +158,9 @@ public class AppConfig {
         return liquibase;
     }
 
+    @Bean
+    public AuthorizationManagerImplementation authManager() {
+        return new AuthorizationManagerImplementation();
+    }
+
 }
