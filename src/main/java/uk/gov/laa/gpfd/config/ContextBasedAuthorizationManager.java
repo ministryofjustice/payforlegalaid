@@ -20,7 +20,7 @@ public class ContextBasedAuthorizationManager implements AuthorizationManager<Re
 
         Authentication authentication = authenticationSupplier.get();
         if (authentication == null || !authentication.isAuthenticated()) {
-            log.warning("Unauthenticated access attempt");
+            log.warn("Unauthenticated access attempt");
             return new AuthorizationDecision(false);
         }
 
