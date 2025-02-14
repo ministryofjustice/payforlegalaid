@@ -164,7 +164,7 @@ public class AppConfig {
      * Creates an {@link AuthorizationManager} bean to allow customization of the Authorization flow.
      * This allows the Authorization flow to be tailed to specific run profile, as needed
      *
-     * @return An instance of the AuthorizationManager confiigured for the payforlegalaid service
+     * @return An instance of the AuthorizationManager configured for the payforlegalaid service
      */
     @Bean
     public AuthorizationManager<RequestAuthorizationContext> authManager() {
