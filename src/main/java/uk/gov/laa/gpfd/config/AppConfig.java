@@ -13,6 +13,8 @@ import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.security.authorization.AuthorizationManager;
+import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
@@ -158,9 +160,15 @@ public class AppConfig {
         return liquibase;
     }
 
+    /**
+     * Creates an {@link AuthorizationManager} bean to allow customization of the Authorization flow.
+     * This allows the Authorization flow to be tailed to specific run profile, as needed
+     *
+     * @return An instance of the AuthorizationManager confiigured for the payforlegalaid service
+     */
     @Bean
-    public AuthorizationManagerImplementation authManager() {
-        return new AuthorizationManagerImplementation();
+    public AuthorizationManager<RequestAuthorizationContext> authManager() {
+        return new ContextBasedAuthorizationManager();
     }
 
 }
