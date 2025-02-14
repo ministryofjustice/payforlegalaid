@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - feature/lpf-622
+      - main
 
 jobs:
 
