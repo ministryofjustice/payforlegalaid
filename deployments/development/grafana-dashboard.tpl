@@ -1189,7 +1189,7 @@ data:
             {
               "disableTextWrap": false,
               "editorMode": "code",
-              "expr": "aws_ecr_repository_image_count{repository_name=~\"payforlegalaid/${NAMESPACE}\"}",
+              "expr": "sum(aws_ecr_repository_image_count{repository_name=~'payforlegalaid/.*'}) by (repository_name)",
               "fullMetaSearch": false,
               "includeNullMetadata": true,
               "legendFormat": "ECR Image Count",
