@@ -1609,33 +1609,7 @@ data:
               ]
             },
             "unit": "percent"
-          },
-          "overrides": [
-            {
-              "__systemRef": "hideSeriesFrom",
-              "matcher": {
-                "id": "byNames",
-                "options": {
-                  "mode": "exclude",
-                  "names": [
-                    "{namespace=\"${NAMESPACE}\", pod=\"gpfd-dev-deployment-8b858c59b-ckfql\"}"
-                  ],
-                  "prefix": "All except:",
-                  "readOnly": true
-                }
-              },
-              "properties": [
-                {
-                  "id": "custom.hideFrom",
-                  "value": {
-                    "legend": false,
-                    "tooltip": false,
-                    "viz": true
-                  }
-                }
-              ]
-            }
-          ]
+          }
         },
         "gridPos": {
           "h": 9,
