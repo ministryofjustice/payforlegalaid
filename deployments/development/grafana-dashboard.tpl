@@ -306,7 +306,7 @@ data:
           },
           "gridPos": {
             "h": 10,
-            "w": 6,
+            "w": 7,
             "x": 17,
             "y": 1
           },
@@ -1302,7 +1302,7 @@ data:
               "expr": "round(\n  100 *\n    sum(container_memory_working_set_bytes{image!='',namespace='${NAMESPACE}',pod=~\"gpfd.*\"}) by (container, pod)\n      /\n    sum(kube_pod_container_resource_requests{resource='memory', namespace='${NAMESPACE}',pod=~\"gpfd.*\"} > 0) by (container, pod)\n)",
               "fullMetaSearch": false,
               "includeNullMetadata": true,
-              "legendFormat": "__auto",
+              "legendFormat": "{{pod}}",
               "range": true,
               "refId": "A",
               "useBackend": false
@@ -1399,7 +1399,7 @@ data:
               "expr": "round(\n  100 *\n    sum(container_memory_working_set_bytes{image!=\"\", namespace='${NAMESPACE}', container_name!=\"gpfd.*\"}) by (container, pod)\n      /\n    sum(kube_pod_container_resource_requests{namespace='${NAMESPACE}', container_name!=\"gpfd.*\",resource=\"memory\"} > 0) by (container, pod)\n)",
               "fullMetaSearch": false,
               "includeNullMetadata": true,
-              "legendFormat": "__auto",
+              "legendFormat": "{{pod}}",
               "range": true,
               "refId": "A",
               "useBackend": false
@@ -1520,7 +1520,7 @@ data:
               "expr": "container_memory_usage_bytes{namespace=\"${NAMESPACE}\", pod=~'gpfd.*'}",
               "fullMetaSearch": false,
               "includeNullMetadata": true,
-              "legendFormat": "__auto",
+              "legendFormat": "{{pod}}",
               "range": true,
               "refId": "A",
               "useBackend": false
@@ -1537,7 +1537,7 @@ data:
               "hide": false,
               "includeNullMetadata": true,
               "instant": false,
-              "legendFormat": "__auto",
+              "legendFormat": "{{pod}}",
               "range": true,
               "refId": "B",
               "useBackend": false
