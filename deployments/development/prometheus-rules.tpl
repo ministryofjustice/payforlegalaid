@@ -51,7 +51,6 @@ spec:
           annotations:
             message: Deployment has not matched the expected number of replicas.
             runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/blob/master/runbook.md#alert-name-kubedeploymentreplicasmismatch
-            summary: Deployment has not matched the expected number of replicas.
             dashboard_url: "https://grafana.live.cloud-platform.service.justice.gov.uk/d/laa-gpfd-dev/4d98ec1"
           expr: (kube_deployment_spec_replicas{job="kube-state-metrics",namespace="${NAMESPACE}"} != kube_deployment_status_replicas_available{job="kube-state-metrics",namespace="${NAMESPACE}"})
           for: 15m
@@ -61,7 +60,6 @@ spec:
           annotations:
             message: The Prometheus server uses a lot of memory and has ocassionally OOMKilled bringing down prometheus. Bump the node group monitoring instance size
             runbook_url: https://github.com/ministryofjustice/cloud-platform-infrastructure/commit/3dc05e588c9115c7aa44c2a9b5e26feff985f965
-            summary: Kubernetes container OOM killed (instance {{ $labels.instance }})
             dashboard_url: "https://grafana.live.cloud-platform.service.justice.gov.uk/d/laa-gpfd-dev/4d98ec1"
           expr: sum_over_time(kube_pod_container_status_last_terminated_reason{reason="OOMKilled", namespace="${NAMESPACE}"}[5m]) > 0
           for: 0m

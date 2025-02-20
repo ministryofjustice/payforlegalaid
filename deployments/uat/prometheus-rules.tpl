@@ -70,6 +70,7 @@ spec:
       - alert: nginx-SlowResponses
         annotations:
           message: Ingress is serving slow responses over 2 seconds.
+          dashboard_url: "https://grafana.live.cloud-platform.service.justice.gov.uk/d/laa-gpfd-uat/87bfec2"
         expr: |-
           avg(rate(nginx_ingress_controller_request_duration_seconds_sum{exported_namespace = "${NAMESPACE}"}[5m])
           /
