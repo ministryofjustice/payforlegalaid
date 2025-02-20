@@ -50,6 +50,7 @@ jobs:
           REPOSITORY: ${{ vars.UAT_ECR_REPOSITORY }}
           NAMESPACE: ${{ secrets.KUBE_NAMESPACE_UAT }}
           ALERT_SEVERITY: laa-get-legal-aid-data-uat
+          ENV_NAME: uat
         run: |
           cat deployments/uat/deployment.tpl | envsubst > deployments/uat/deployment.yml
           cat deployments/uat/ingress.tpl | envsubst > deployments/uat/ingress.yml
@@ -57,6 +58,7 @@ jobs:
           cat deployments/uat/network-policy.tpl | envsubst > deployments/uat/network-policy.yml
           cat deployments/uat/service-monitor.tpl | envsubst > deployments/uat/service-monitor.yml
           cat deployments/uat/prometheus-rules.tpl | envsubst > deployments/uat/prometheus-rules.yml
+          cat deployments/uat/grafana-dashboard.tpl | envsubst '$ENV_NAME,$NAMESPACE' > deployments/uat/grafana-dashboard.yml
 
       - name: Authenticate with Cloud Platform and Deploy
         env:

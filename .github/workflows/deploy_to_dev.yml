@@ -50,6 +50,7 @@ jobs:
           REPOSITORY: ${{ vars.DEV_ECR_REPOSITORY }}
           NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
           ALERT_SEVERITY: laa-get-legal-aid-data-dev
+          ENV_NAME: dev
         run: |
           cat deployments/development/deployment.tpl | envsubst > deployments/development/deployment.yml
           cat deployments/development/ingress.tpl | envsubst > deployments/development/ingress.yml
@@ -57,6 +58,7 @@ jobs:
           cat deployments/development/service-monitor.tpl | envsubst > deployments/development/service-monitor.yml
           cat deployments/development/network-policy.tpl | envsubst > deployments/development/network-policy.yml
           cat deployments/development/prometheus-rules.tpl | envsubst > deployments/development/prometheus-rules.yml
+          cat deployments/development/grafana-dashboard.tpl | envsubst '$ENV_NAME,$NAMESPACE' > deployments/development/grafana-dashboard.yml
 
       - name: Authenticate with Cloud Platform and Deploy
         env:
