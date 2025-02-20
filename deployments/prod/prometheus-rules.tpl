@@ -33,7 +33,7 @@ spec:
           annotations:
             message: Pod has been in a non-ready state for more than 1 hour.
             runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubepodnotready
-            dashboard_url: "https://grafana.live.cloud-platform.service.justice.gov.uk/d/laa-gpfd-prod/12fca58
+            dashboard_url: "https://grafana.live.cloud-platform.service.justice.gov.uk/d/laa-gpfd-prod/12fca58"
           expr: sum by (namespace, pod) (kube_pod_status_phase{job="kube-state-metrics",namespace="${NAMESPACE}",phase=~"Pending|Unknown"}) > 0
           for: 1h
           labels:
