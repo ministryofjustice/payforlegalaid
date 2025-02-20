@@ -446,7 +446,7 @@ data:
               "useBackend": false
             }
           ],
-          "title": "HTTP Code 5xx",
+          "title": "HTTP Code 4xx",
           "type": "timeseries"
         },
         {
@@ -542,7 +542,7 @@ data:
               "useBackend": false
             }
           ],
-          "title": "HTTP Code 4xx",
+          "title": "HTTP Code 5xx",
           "type": "timeseries"
         },
         {
