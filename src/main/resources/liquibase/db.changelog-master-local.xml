@@ -596,7 +596,7 @@
             <column name="REPORT_QUERY_ID" value="1dc32729-f50d-418e-a2af-ad83d9248bb0"/>
             <column name="SOURCE_NAME" value="THE_SYSTEM"/>
             <column name="MAPPED_NAME" value="THE_SYSTEM"/>
-            <column name="FORMAT" value="%s"/>
+            <column name="FORMAT" value=""/>
             <column name="FORMAT_TYPE" value="string"/>
             <column name="COLUMN_WIDTH" value="22.83"/>
         </insert>
@@ -607,7 +607,7 @@
             <column name="SOURCE_NAME" value="CIS_VALUE"/>
             <column name="MAPPED_NAME" value="CIS_VALUE"/>
             <column name="FORMAT" value="#.00"/>
-            <column name="FORMAT_TYPE" value="number"/>
+            <column name="FORMAT_TYPE" value="double"/>
             <column name="COLUMN_WIDTH" value="10.17"/>
         </insert>
 
@@ -617,70 +617,144 @@
             <column name="SOURCE_NAME" value="CCMS_VALUE"/>
             <column name="MAPPED_NAME" value="CCMS_VALUE"/>
             <column name="FORMAT" value="#.00"/>
-            <column name="FORMAT_TYPE" value="number"/>
+            <column name="FORMAT_TYPE" value="double"/>
             <column name="COLUMN_WIDTH" value="11.83"/>
         </insert>
 
     </changeSet>
 
-
     <changeSet id="0002100-insert-data-for-field-attributes-ccms-xls-import-exceptions" author="jason smallman">
 
         <comment>Insert initial data into FIELD_ATTRIBUTES for CCMS Excel report, tab import exceptions</comment>
-a
+
         <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
             <column name="ID" value="8f0fb820-640a-41a9-b5a1-e74c336a19a1"/>
             <column name="REPORT_QUERY_ID" value="1dc32729-f50d-418e-a2af-ad83d9248bb1"/>
-            <column name="SOURCE_NAME" value=""/>
-            <column name="MAPPED_NAME" value=""/>
+            <column name="SOURCE_NAME" value="ACC_CODE"/>
+            <column name="MAPPED_NAME" value="ACC_CODE"/>
             <column name="FORMAT" value=""/>
-            <column name="FORMAT_TYPE" value=""/>
-            <column name="COLUMN_WIDTH" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="9.33"/>
         </insert>
-b
+
         <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
             <column name="ID" value="8f0fb820-640a-41a9-b5a1-e74c336a19a2"/>
             <column name="REPORT_QUERY_ID" value="1dc32729-f50d-418e-a2af-ad83d9248bb1"/>
-            <column name="SOURCE_NAME" value=""/>
-            <column name="MAPPED_NAME" value=""/>
+            <column name="SOURCE_NAME" value="ACCO_HELD_BY_TYPE"/>
+            <column name="MAPPED_NAME" value="ACCO_HELD_BY_TYPE"/>
             <column name="FORMAT" value=""/>
-            <column name="FORMAT_TYPE" value=""/>
-            <column name="COLUMN_WIDTH" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="18.67"/>
         </insert>
-c
+
         <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
             <column name="ID" value="8f0fb820-640a-41a9-b5a1-e74c336a19a3"/>
             <column name="REPORT_QUERY_ID" value="1dc32729-f50d-418e-a2af-ad83d9248bb1"/>
-            <column name="SOURCE_NAME" value=""/>
-            <column name="MAPPED_NAME" value=""/>
+            <column name="SOURCE_NAME" value="DTYP_DOC_TYPE_ID"/>
+            <column name="MAPPED_NAME" value="DTYP_DOC_TYPE_ID"/>
             <column name="FORMAT" value=""/>
-            <column name="FORMAT_TYPE" value=""/>
-            <column name="COLUMN_WIDTH" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="17.33"/>
         </insert>
-d
+
         <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
             <column name="ID" value="8f0fb820-640a-41a9-b5a1-e74c336a19a4"/>
             <column name="REPORT_QUERY_ID" value="1dc32729-f50d-418e-a2af-ad83d9248bb1"/>
-            <column name="SOURCE_NAME" value=""/>
-            <column name="MAPPED_NAME" value=""/>
+            <column name="SOURCE_NAME" value="THE_SYSTEM"/>
+            <column name="MAPPED_NAME" value="THE_SYSTEM"/>
             <column name="FORMAT" value=""/>
-            <column name="FORMAT_TYPE" value=""/>
-            <column name="COLUMN_WIDTH" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="11.17"/>
         </insert>
-e
+
         <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
             <column name="ID" value="8f0fb820-640a-41a9-b5a1-e74c336a19a5"/>
             <column name="REPORT_QUERY_ID" value="1dc32729-f50d-418e-a2af-ad83d9248bb1"/>
-            <column name="SOURCE_NAME" value=""/>
-            <column name="MAPPED_NAME" value=""/>
-            <column name="FORMAT" value=""/>
-            <column name="FORMAT_TYPE" value=""/>
-            <column name="COLUMN_WIDTH" value=""/>
+            <column name="SOURCE_NAME" value="DATE_CREATED_CIS"/>
+            <column name="MAPPED_NAME" value="DATE_CREATED_CIS"/>
+            <column name="FORMAT" value="dd-MMM-yy"/>
+            <column name="FORMAT_TYPE" value="date"/>
+            <column name="COLUMN_WIDTH" value="17.17"/>
         </insert>
-f
+
         <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
             <column name="ID" value="8f0fb820-640a-41a9-b5a1-e74c336a19a6"/>
             <column name="REPORT_QUERY_ID" value="1dc32729-f50d-418e-a2af-ad83d9248bb1"/>
+            <column name="SOURCE_NAME" value="DATE_AUTHORISED_CIS"/>
+            <column name="MAPPED_NAME" value="DATE_AUTHORISED_CIS"/>
+            <column name="FORMAT" value="dd-MMM-yy"/>
+            <column name="FORMAT_TYPE" value="date"/>
+            <column name="COLUMN_WIDTH" value="20.67"/>
+        </insert>
+
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="8f0fb820-640a-41a9-b5a1-e74c336a19a7"/>
+            <column name="REPORT_QUERY_ID" value="1dc32729-f50d-418e-a2af-ad83d9248bb1"/>
+            <column name="SOURCE_NAME" value="TRANS_INT_ID"/>
+            <column name="MAPPED_NAME" value="TRANS_INT_ID"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="long"/>
+            <column name="COLUMN_WIDTH" value="12.67"/>
+        </insert>
+
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="8f0fb820-640a-41a9-b5a1-e74c336a19a8"/>
+            <column name="REPORT_QUERY_ID" value="1dc32729-f50d-418e-a2af-ad83d9248bb1"/>
+            <column name="SOURCE_NAME" value="VOLUME"/>
+            <column name="MAPPED_NAME" value="VOLUME"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="long"/>
+            <column name="COLUMN_WIDTH" value="7.67"/>
+        </insert>
+
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="8f0fb820-640a-41a9-b5a1-e74c336a19a9"/>
+            <column name="REPORT_QUERY_ID" value="1dc32729-f50d-418e-a2af-ad83d9248bb1"/>
+            <column name="SOURCE_NAME" value="VALUE"/>
+            <column name="MAPPED_NAME" value="VALUE"/>
+            <column name="FORMAT" value="#.00"/>
+            <column name="FORMAT_TYPE" value="double"/>
+            <column name="COLUMN_WIDTH" value="9.17"/>
+        </insert>
+
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="8f0fb820-640a-41a9-b5a1-e74c336a19b1"/>
+            <column name="REPORT_QUERY_ID" value="1dc32729-f50d-418e-a2af-ad83d9248bb1"/>
+            <column name="SOURCE_NAME" value="INVOICE_ID"/>
+            <column name="MAPPED_NAME" value="INVOICE_ID"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="10"/>
+        </insert>
+
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="8f0fb820-640a-41a9-b5a1-e74c336a19b2"/>
+            <column name="REPORT_QUERY_ID" value="1dc32729-f50d-418e-a2af-ad83d9248bb1"/>
+            <column name="SOURCE_NAME" value="GL_DATE"/>
+            <column name="MAPPED_NAME" value="GL_DATE"/>
+            <column name="FORMAT" value="dd-MMM-yy"/>
+            <column name="FORMAT_TYPE" value="date"/>
+            <column name="COLUMN_WIDTH" value="7.67"/>
+        </insert>
+
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="8f0fb820-640a-41a9-b5a1-e74c336a19b3"/>
+            <column name="REPORT_QUERY_ID" value="1dc32729-f50d-418e-a2af-ad83d9248bb1"/>
+            <column name="SOURCE_NAME" value="INVOICE_AMOUNT"/>
+            <column name="MAPPED_NAME" value="INVOICE_AMOUNT"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="long"/>
+            <column name="COLUMN_WIDTH" value="16.5"/>
+        </insert>
+   </changeSet>
+
+    <changeSet id="0002105-insert-data-for-field-attributes-ccms-xls-payment-value-defined" author="jason smallman">
+
+        <comment>Insert initial data into FIELD_ATTRIBUTES for CCMS Excel report, tab payment value defined</comment>
+
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value=""/>
+            <column name="REPORT_QUERY_ID" value=""/>
             <column name="SOURCE_NAME" value=""/>
             <column name="MAPPED_NAME" value=""/>
             <column name="FORMAT" value=""/>
@@ -688,67 +762,7 @@ f
             <column name="COLUMN_WIDTH" value=""/>
         </insert>
 
-g
-        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
-            <column name="ID" value="8f0fb820-640a-41a9-b5a1-e74c336a19a7"/>
-            <column name="REPORT_QUERY_ID" value="1dc32729-f50d-418e-a2af-ad83d9248bb1"/>
-            <column name="SOURCE_NAME" value=""/>
-            <column name="MAPPED_NAME" value=""/>
-            <column name="FORMAT" value=""/>
-            <column name="FORMAT_TYPE" value=""/>
-            <column name="COLUMN_WIDTH" value=""/>
-        </insert>
-h
-        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
-            <column name="ID" value="8f0fb820-640a-41a9-b5a1-e74c336a19a8"/>
-            <column name="REPORT_QUERY_ID" value="1dc32729-f50d-418e-a2af-ad83d9248bb1"/>
-            <column name="SOURCE_NAME" value=""/>
-            <column name="MAPPED_NAME" value=""/>
-            <column name="FORMAT" value=""/>
-            <column name="FORMAT_TYPE" value=""/>
-            <column name="COLUMN_WIDTH" value=""/>
-        </insert>
-i
-        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
-            <column name="ID" value="8f0fb820-640a-41a9-b5a1-e74c336a19a9"/>
-            <column name="REPORT_QUERY_ID" value="1dc32729-f50d-418e-a2af-ad83d9248bb1"/>
-            <column name="SOURCE_NAME" value=""/>
-            <column name="MAPPED_NAME" value=""/>
-            <column name="FORMAT" value=""/>
-            <column name="FORMAT_TYPE" value=""/>
-            <column name="COLUMN_WIDTH" value=""/>
-        </insert>
-j
-        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
-            <column name="ID" value="8f0fb820-640a-41a9-b5a1-e74c336a19b1"/>
-            <column name="REPORT_QUERY_ID" value="1dc32729-f50d-418e-a2af-ad83d9248bb1"/>
-            <column name="SOURCE_NAME" value=""/>
-            <column name="MAPPED_NAME" value=""/>
-            <column name="FORMAT" value=""/>
-            <column name="FORMAT_TYPE" value=""/>
-            <column name="COLUMN_WIDTH" value=""/>
-        </insert>
-k
-        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
-            <column name="ID" value="8f0fb820-640a-41a9-b5a1-e74c336a19b2"/>
-            <column name="REPORT_QUERY_ID" value="1dc32729-f50d-418e-a2af-ad83d9248bb1"/>
-            <column name="SOURCE_NAME" value=""/>
-            <column name="MAPPED_NAME" value=""/>
-            <column name="FORMAT" value=""/>
-            <column name="FORMAT_TYPE" value=""/>
-            <column name="COLUMN_WIDTH" value=""/>
-        </insert>
-l
-        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
-            <column name="ID" value="8f0fb820-640a-41a9-b5a1-e74c336a19b3"/>
-            <column name="REPORT_QUERY_ID" value="1dc32729-f50d-418e-a2af-ad83d9248bb1"/>
-            <column name="SOURCE_NAME" value=""/>
-            <column name="MAPPED_NAME" value=""/>
-            <column name="FORMAT" value=""/>
-            <column name="FORMAT_TYPE" value=""/>
-            <column name="COLUMN_WIDTH" value=""/>
-        </insert>
-   </changeSet>
+    </changeSet>
 
     <!-- changeset for csv reports
         <changeSet id="0002200-insert-reference-data-for-reports-csv" author="jason smallman">
