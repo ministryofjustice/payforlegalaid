@@ -495,7 +495,7 @@
         <comment>add REPORTS.FILE_NAME</comment>
 
         <sql>
-            ALTER TABLE GPFD.REPORTS ADD COLUMN FILE_NAME VARCHAR(100)
+            ALTER TABLE GPFD.REPORTS ADD COLUMN FILE_NAME VARCHAR(150)
         </sql>
     </changeSet>
 
@@ -542,7 +542,7 @@
         <insert tableName="REPORTS" schemaName="GPFD">
             <column name="ID" value="b36f9bbb-1178-432c-8f99-8090e285f2d3"/>
             <column name="NAME" value="CCMS Invoice Analysis (CIS to CCMS)"/>
-            <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="0f840fe3-062a-4525-b89c-9eb8451277d7"/>
+            <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="00000000-0000-0000-0000-000000000000"/>
             <column name="REPORT_CREATION_DATE" value="17-Feb-2025"/>
             <column name="DESCRIPTION" value="Summary of invoices in CIS and CCMS by original source IT system"/>
             <column name="NUM_DAYS_TO_KEEP" value="30"/>
@@ -1002,35 +1002,20 @@
 
     </changeSet>
 
-    <insert tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
-        <column name="ID" value="de30650e-dd90-475f-b2b1-6bc546b419d5"/>
-        <column name="REPORT_NAME" value="CCMS_invoice_analysis-CIS-to-CCMS-import-analysis-2"/>
-        <column name="SQL_QUERY" value="SELECT * FROM ANY_REPORT.V_CIS_TO_CCMS_INVOICE_SUMMARY"/>
-        <column name="BASE_URL"
-                value="sharepoint"/>
-        <column name="REPORT_OWNER" value="Chancey Mctavish"/>
-        <column name="REPORT_CREATOR" value="Sophia Patel"/>
-        <column name="REPORT_DESCRIPTION" value="Summary of invoices in CIS and CCMS by original source IT system"/>
-        <column name="EXCEL_REPORT" value="CCMS_invoice_analysis"/>
-        <column name="EXCEL_SHEET_NUM" value="2"/>
-        <column name="CSV_NAME" value="CIS-to-CCMS-import-analysis"/>
-        <column name="OWNER_EMAIL" value="owneremail@email.com"/>
-    </insert>
-
-    <changeSet id="0002300-insert-reference-data-for-ccms-invoice-analysis-csv" author="jason smallman">
+    <changeSet id="0002300-insert-reference-data-for-ccms-invoice-analysis-csv-reports" author="jason smallman">
 
         <comment>Insert initial data into REPORTS for ccms invoice analysis CSV</comment>
 
         <insert tableName="REPORTS" schemaName="GPFD">
-            <column name="ID" value="b36f9bbb-1178-432c-8f99-8090e285f2d3"/>
+            <column name="ID" value="f46b4d3d-c100-429a-bf9a-6c3305dbdbf1"/>
             <column name="NAME" value="CCMS Invoice Analysis (CIS to CCMS)"/>
-            <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="0f840fe3-062a-4525-b89c-9eb8451277d7"/>
+            <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="00000000-0000-0000-0000-000000000000"/>
             <column name="REPORT_CREATION_DATE" value="17-Feb-2025"/>
             <column name="DESCRIPTION" value="Summary of invoices in CIS and CCMS by original source IT system"/>
             <column name="NUM_DAYS_TO_KEEP" value="30"/>
             <column name="FILE_NAME" value="CCMS_invoice_analysis" />
             <column name="ACTIVE" value="Y" />
-            <column name="REPORT_OUTPUT_TYPE" value="bd098666-94e4-4b0e-822c-8e5dfb04c908"/>
+            <column name="REPORT_OUTPUT_TYPE" value="6ebd27ac-4d83-485d-a4fd-3e45f9a53484"/>
             <column name="REPORT_OWNER_ID" value="00000000-0000-0000-0000-000000000001"/>
             <column name="REPORT_OWNER_NAME" value="Chancey Mctavish"/>
             <column name="REPORT_OWNER_EMAIL" value="owneremail@email.com"/>
@@ -1038,205 +1023,232 @@
 
     </changeSet>
 
+    <changeSet id="0002305-insert-reference-data-for-ccms-invoice-analysis-csv-report-queries" author="jason smallman">
+
+        <comment>Insert initial data into REPORT_QUERIES for ccms invoice analysis CSV</comment>
+
+        <insert tableName="REPORT_QUERIES" schemaName="GPFD">
+            <column name="ID" value="f46b4d3d-c100-429a-bf9a-6c3305dbdbe1"/>
+            <column name="REPORT_ID" value="f46b4d3d-c100-429a-bf9a-6c3305dbdbf1"/>
+            <column name="QUERY" value="SELECT * FROM ANY_REPORT.V_CIS_TO_CCMS_INVOICE_SUMMARY"/>
+            <column name="TAB_NAME" value="MAIN"/>
+        </insert>
+
+    </changeSet>
+
+    <changeSet id="0002310-insert-reference-data-for-ccms-all-payments-csv-reports" author="jason smallman">
+
+        <comment>Insert initial data into REPORTS for ccms invoice analysis all payments CSV</comment>
+
+        <insert tableName="REPORTS" schemaName="GPFD">
+            <column name="ID" value="f46b4d3d-c100-429a-bf9a-6c3305dbdbf2"/>
+            <column name="NAME" value="CCMS_and_CIS_Bank_Account_Report_w_Category_Code_(MNTH)-MAIN-12"/>
+            <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="00000000-0000-0000-0000-000000000000"/>
+            <column name="REPORT_CREATION_DATE" value="17-Feb-2025"/>
+            <column name="DESCRIPTION" value="Summary of all payments made by CCMS/CIS and all cash receipts applied to debt in the previous month"/>
+            <column name="NUM_DAYS_TO_KEEP" value="30"/>
+            <column name="FILE_NAME" value="CCMS_and_CIS_Bank_Account_Report_w_Category_Code_(MNTH)" />
+            <column name="ACTIVE" value="Y" />
+            <column name="REPORT_OUTPUT_TYPE" value="6ebd27ac-4d83-485d-a4fd-3e45f9a53484"/>
+            <column name="REPORT_OWNER_ID" value="00000000-0000-0000-0000-000000000002"/>
+            <column name="REPORT_OWNER_NAME" value="Daniel Mctavish"/>
+            <column name="REPORT_OWNER_EMAIL" value="owneremail@email.com"/>
+        </insert>
+
+    </changeSet>
+
+    <changeSet id="0002315-insert-reference-data-for-ccms-all-payments-csv-report-queries" author="jason smallman">
+
+        <comment>Insert initial data into REPORT_QUERIES for ccms all payments CSV</comment>
+
+        <insert tableName="REPORT_QUERIES" schemaName="GPFD">
+            <column name="ID" value="f46b4d3d-c100-429a-bf9a-6c3305dbdbe2"/>
+            <column name="REPORT_ID" value="f46b4d3d-c100-429a-bf9a-6c3305dbdbf2"/>
+            <column name="QUERY" value="SELECT * FROM ANY_REPORT.V_BANK_MONTH"/>
+            <column name="TAB_NAME" value="MAIN"/>
+        </insert>
+
+    </changeSet>
+
+    <changeSet id="0002320-insert-reference-data-for-ccms-exception-csv-reports" author="jason smallman">
+
+        <comment>Insert initial data into REPORTS for ccms invoice analysis exceptions CSV</comment>
+
+        <insert tableName="REPORTS" schemaName="GPFD">
+            <column name="ID" value="f46b4d3d-c100-429a-bf9a-6c3305dbdbf3"/>
+            <column name="NAME" value="CIS to CCMS import exceptions"/>
+            <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="00000000-0000-0000-0000-000000000000"/>
+            <column name="REPORT_CREATION_DATE" value="17-Feb-2025"/>
+            <column name="DESCRIPTION" value="Details of invoices transferred from CIS to CCMS by Legal Aid Scheme"/>
+            <column name="NUM_DAYS_TO_KEEP" value="30"/>
+            <column name="FILE_NAME" value="CIS_TO_CCMS_IMPORT_EXCEPTIONS" />
+            <column name="ACTIVE" value="Y" />
+            <column name="REPORT_OUTPUT_TYPE" value="6ebd27ac-4d83-485d-a4fd-3e45f9a53484"/>
+            <column name="REPORT_OWNER_ID" value="00000000-0000-0000-0000-000000000003"/>
+            <column name="REPORT_OWNER_NAME" value="William Moran"/>
+            <column name="REPORT_OWNER_EMAIL" value="William.Moran@Justice.gov.uk"/>
+        </insert>
+
+    </changeSet>
+
+    <changeSet id="0002325-insert-reference-data-for-ccms-exceptions-csv-report-queries" author="jason smallman">
+
+        <comment>Insert initial data into REPORT_QUERIES for ccms exceptions CSV</comment>
+
+        <insert tableName="REPORT_QUERIES" schemaName="GPFD">
+            <column name="ID" value="f46b4d3d-c100-429a-bf9a-6c3305dbdbe3"/>
+            <column name="REPORT_ID" value="f46b4d3d-c100-429a-bf9a-6c3305dbdbf3"/>
+            <column name="QUERY" value="SELECT * FROM ANY_REPORT.V_CIS_TO_CCMS_INVOICE_EXCEPTIONS"/>
+            <column name="TAB_NAME" value="MAIN"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="0002330-insert-reference-data-for-ccms-defined-csv-reports" author="jason smallman">
+
+        <comment>Insert initial data into REPORTS for ccms invoice analysis defined CSV</comment>
+
+        <insert tableName="REPORTS" schemaName="GPFD">
+            <column name="ID" value="f46b4d3d-c100-429a-bf9a-6c3305dbdbf4"/>
+            <column name="NAME" value="CIS to CCMS payment value Defined"/>
+            <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="00000000-0000-0000-0000-000000000000"/>
+            <column name="REPORT_CREATION_DATE" value="17-Feb-2025"/>
+            <column name="DESCRIPTION" value="Details of invoices transferred from CIS to CCMS by Legal Aid Scheme"/>
+            <column name="NUM_DAYS_TO_KEEP" value="30"/>
+            <column name="FILE_NAME" value="CIS_TO_CCMS_PAYMENT_VALUE_DEFINED" />
+            <column name="ACTIVE" value="Y" />
+            <column name="REPORT_OUTPUT_TYPE" value="6ebd27ac-4d83-485d-a4fd-3e45f9a53484"/>
+            <column name="REPORT_OWNER_ID" value="00000000-0000-0000-0000-000000000003"/>
+            <column name="REPORT_OWNER_NAME" value="William Moran"/>
+            <column name="REPORT_OWNER_EMAIL" value="William.Moran@Justice.gov.uk"/>
+        </insert>
+
+    </changeSet>
+
+    <changeSet id="0002335-insert-reference-data-for-ccms-defined-csv-report-queries" author="jason smallman">
+        <comment>Insert initial data into REPORT_QUERIES for ccms defined CSV</comment>
+
+        <insert tableName="REPORT_QUERIES" schemaName="GPFD">
+            <column name="ID" value="f46b4d3d-c100-429a-bf9a-6c3305dbdbe4"/>
+            <column name="REPORT_ID" value="f46b4d3d-c100-429a-bf9a-6c3305dbdbf4"/>
+            <column name="QUERY" value="SELECT * FROM ANY_REPORT.V_CIS_TO_CCMS_INVOICE_DEFINED_PAYMENT_GROUPS"/>
+            <column name="TAB_NAME" value="MAIN"/>
+        </insert>
+    </changeSet>
+
+
     <!-- changeset for csv reports
-
+    -------------
         <insert tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
-            <column name="ID" value="0fbec75b-2d72-44f5-a0e3-2dcb29d92f79"/>
-            <column name="REPORT_NAME" value="CCMS_and_CIS_Bank_Account_Report_w_Category_Code_(MNTH)-MAIN-12"/>
-            <column name="SQL_QUERY" value="SELECT * FROM ANY_REPORT.V_BANK_MONTH"/>
-            <column name="BASE_URL"
-                    value="https://justiceuk.sharepoint.com/sites/FinanceSysReference/Shared%20Documents/Forms/AllItems.aspx?id=%2Fsites%2FFinanceSysReference%2FShared%20Documents%2FGeneral%2FMonthly%20Accounts%2F2023%2D06%2FBank%20reporting"/>
-            <column name="REPORT_OWNER" value="Daniel Mctavish"/>
-            <column name="REPORT_CREATOR" value="Brian Limond"/>
-            <column name="REPORT_DESCRIPTION"
-                    value="Summary of all payments made by CCMS/CIS and all cash receipts applied to debt in the previous month"/>
-            <column name="EXCEL_REPORT" value="CCMS_and_CIS_Bank_Account_Report_w_Category_Code_(MNTH)"/>
-            <column name="EXCEL_SHEET_NUM" value="12"/>
-            <column name="CSV_NAME" value="MAIN"/>
-            <column name="OWNER_EMAIL" value="secondowneremail@email.com"/>
-        </insert>
-
-        <insert tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
-            <column name="ID" value="74fe1701-75d3-49cc-836b-f8e85feff8de"/>
-            <column name="REPORT_NAME" value="CIS to CCMS import exceptions"/>
-            <column name="SQL_QUERY" value="SELECT * FROM ANY_REPORT.V_CIS_TO_CCMS_INVOICE_EXCEPTIONS"/>
-            <column name="BASE_URL"
-                    value="https://justiceuk.sharepoint.com/sites/FinanceSysReference/SitePages/GPFD-Test-Site-page.aspx"/>
-            <column name="REPORT_OWNER" value="William Moran"/>
-            <column name="REPORT_CREATOR" value="William Unwin"/>
-            <column name="REPORT_DESCRIPTION"
-                    value="Details of invoices transferred from CIS to CCMS by Legal Aid Scheme"/>
-            <column name="EXCEL_REPORT" value="CIS_TO_CCMS_IMPORT_EXCEPTIONS"/>
-            <column name="EXCEL_SHEET_NUM" value="3"/>
-            <column name="CSV_NAME" value="MAIN"/>
-            <column name="OWNER_EMAIL" value="William.Moran@Justice.gov.uk"/>
-        </insert>
-
-        <insert tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
-            <column name="ID" value="c622c85b-afbc-49b0-be47-d67a0b002bf6"/>
-            <column name="REPORT_NAME" value="CIS to CCMS payment value Defined"/>
-            <column name="SQL_QUERY" value="SELECT * FROM ANY_REPORT.V_CIS_TO_CCMS_INVOICE_DEFINED_PAYMENT_GROUPS"/>
-            <column name="BASE_URL"
-                    value="https://justiceuk.sharepoint.com/sites/FinanceSysReference/SitePages/GPFD-Test-Site-page.aspx"/>
-            <column name="REPORT_OWNER" value="William Moran"/>
-            <column name="REPORT_CREATOR" value="William Unwin"/>
-            <column name="REPORT_DESCRIPTION"
-                    value="Details of invoices transferred from CIS to CCMS by Legal Aid Scheme"/>
-            <column name="EXCEL_REPORT" value="CIS_TO_CCMS_PAYMENT_VALUE_DEFINED"/>
-            <column name="EXCEL_SHEET_NUM" value="4"/>
-            <column name="CSV_NAME" value="MAIN"/>
-            <column name="OWNER_EMAIL" value="William.Moran@Justice.gov.uk"/>
-        </insert>
-
-        <insert tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
-            <column name="ID" value="e0d4db9f-354d-48bc-9eb8-8de1a066aef5"/>
             <column name="REPORT_NAME" value="CIS to CCMS payment value Not Defined"/>
             <column name="SQL_QUERY" value="SELECT * FROM ANY_REPORT.V_CIS_TO_CCMS_INVOICE_NOT_DEFINED_PAYMENT_GROUPS"/>
-            <column name="BASE_URL"
-                    value="https://justiceuk.sharepoint.com/sites/FinanceSysReference/SitePages/GPFD-Test-Site-page.aspx"/>
             <column name="REPORT_OWNER" value="William Moran"/>
-            <column name="REPORT_CREATOR" value="William Unwin"/>
             <column name="REPORT_DESCRIPTION"
                     value="Details of invoices transferred from CIS to CCMS by Legal Aid Scheme"/>
             <column name="EXCEL_REPORT" value="CIS_TO_CCMS_PAYMENT_VALUE_NOT_DEFINED"/>
-            <column name="EXCEL_SHEET_NUM" value="5"/>
-            <column name="CSV_NAME" value="MAIN"/>
             <column name="OWNER_EMAIL" value="William.Moran@Justice.gov.uk"/>
         </insert>
+           <insert tableName="REPORTS" schemaName="GPFD">
+            <column name="ID" value=""/>
+            <column name="NAME" value=""/>
+            <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="00000000-0000-0000-0000-000000000000"/>
+            <column name="REPORT_CREATION_DATE" value="17-Feb-2025"/>
+            <column name="DESCRIPTION" value=""/>
+            <column name="NUM_DAYS_TO_KEEP" value="30"/>
+            <column name="FILE_NAME" value="" />
+            <column name="ACTIVE" value="Y" />
+            <column name="REPORT_OUTPUT_TYPE" value="6ebd27ac-4d83-485d-a4fd-3e45f9a53484"/>
+            <column name="REPORT_OWNER_ID" value="00000000-0000-0000-0000-000000000001"/>
+            <column name="REPORT_OWNER_NAME" value="Chancey Mctavish"/>
+            <column name="REPORT_OWNER_EMAIL" value="owneremail@email.com"/>
+        </insert>
+        <insert tableName="REPORT_QUERIES" schemaName="GPFD">
+            <column name="ID" value=""/>
+            <column name="REPORT_ID" value=""/>
+            <column name="QUERY" value=""/>
+            <column name="TAB_NAME" value="MAIN"/>
+        </insert>
 
+
+-----------------
+           <insert tableName="REPORTS" schemaName="GPFD">
+            <column name="ID" value=""/>
+            <column name="NAME" value=""/>
+            <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="00000000-0000-0000-0000-000000000000"/>
+            <column name="REPORT_CREATION_DATE" value="17-Feb-2025"/>
+            <column name="DESCRIPTION" value=""/>
+            <column name="NUM_DAYS_TO_KEEP" value="30"/>
+            <column name="FILE_NAME" value="" />
+            <column name="ACTIVE" value="Y" />
+            <column name="REPORT_OUTPUT_TYPE" value="6ebd27ac-4d83-485d-a4fd-3e45f9a53484"/>
+            <column name="REPORT_OWNER_ID" value="00000000-0000-0000-0000-000000000001"/>
+            <column name="REPORT_OWNER_NAME" value="Chancey Mctavish"/>
+            <column name="REPORT_OWNER_EMAIL" value="owneremail@email.com"/>
+        </insert>
+        <insert tableName="REPORT_QUERIES" schemaName="GPFD">
+            <column name="ID" value=""/>
+            <column name="REPORT_ID" value=""/>
+            <column name="QUERY" value=""/>
+            <column name="TAB_NAME" value="MAIN"/>
+        </insert>
+--------------
         <insert tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
-            <column name="ID" value="6c96f3b6-9002-451a-aed3-264830f4d4e1"/>
             <column name="REPORT_NAME" value="CCMS Held Payments"/>
             <column name="SQL_QUERY" value="SELECT * FROM ANY_REPORT.V_CIS_TO_CCMS_INVOICE_HELD_PAYMENTS"/>
-            <column name="BASE_URL"
-                    value="https://justiceuk.sharepoint.com/sites/FinanceSysReference/SitePages/GPFD-Test-Site-page.aspx"/>
             <column name="REPORT_OWNER" value="William Moran"/>
-            <column name="REPORT_CREATOR" value="William Unwin"/>
             <column name="REPORT_DESCRIPTION"
                     value="Details of invoices transferred from CIS to CCMS by Legal Aid Scheme"/>
             <column name="EXCEL_REPORT" value="CCMS_HELD_PAYMENTS"/>
-            <column name="EXCEL_SHEET_NUM" value="6"/>
-            <column name="CSV_NAME" value="MAIN"/>
             <column name="OWNER_EMAIL" value="William.Moran@Justice.gov.uk"/>
         </insert>
 
         <insert tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
-            <column name="ID" value="22196bb2-5989-449d-8495-ab9ec08e771b"/>
             <column name="REPORT_NAME" value="CCMS AP Debtors"/>
             <column name="SQL_QUERY" value="SELECT * FROM ANY_REPORT.V_CIS_TO_CCMS_INVOICE_CCMS_AP_DEBTS"/>
-            <column name="BASE_URL"
-                    value="https://justiceuk.sharepoint.com/sites/FinanceSysReference/SitePages/GPFD-Test-Site-page.aspx"/>
             <column name="REPORT_OWNER" value="William Moran"/>
-            <column name="REPORT_CREATOR" value="William Unwin"/>
             <column name="REPORT_DESCRIPTION"
                     value="Details of invoices transferred from CIS to CCMS by Legal Aid Scheme"/>
             <column name="EXCEL_REPORT" value="CCMS_AP_DEBTORS"/>
-            <column name="EXCEL_SHEET_NUM" value="7"/>
-            <column name="CSV_NAME" value="MAIN"/>
             <column name="OWNER_EMAIL" value="William.Moran@Justice.gov.uk"/>
         </insert>
 
         <insert tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
-            <column name="ID" value="3d88a36e-091c-4dcc-9b1b-441f4e027f18"/>
             <column name="REPORT_NAME" value="CCMS_and_CIS_Bank_Account_Report_w_Category_Code_YTD"/>
             <column name="SQL_QUERY" value="SELECT * FROM ANY_REPORT.V_BANK_YTD"/>
-            <column name="BASE_URL"
-                    value="https://justiceuk.sharepoint.com/sites/FinanceSysReference/SitePages/GPFD-Test-Site-page.aspx"/>
             <column name="REPORT_OWNER" value="William Moran"/>
-            <column name="REPORT_CREATOR" value="William Unwin"/>
             <column name="REPORT_DESCRIPTION"
                     value="Summary of all payments made by CCMS/CIS and all cash receipts applied to debt YTD"/>
             <column name="EXCEL_REPORT" value="CCMS_and_CIS_Bank_Account_Report_w_Category_Code_YTD"/>
-            <column name="EXCEL_SHEET_NUM" value="8"/>
-            <column name="CSV_NAME" value="MAIN"/>
             <column name="OWNER_EMAIL" value="William.Moran@Justice.gov.uk"/>
         </insert>
 
         <insert tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
-            <column name="ID" value="3fd2c085-18a6-4e01-87d9-15ee537cdf0f"/>
             <column name="REPORT_NAME" value="CCMS General Ledger (tiny columns multiple periods)"/>
             <column name="SQL_QUERY" value="SELECT * FROM ANY_REPORT.V_CCMS_GL_EXTRACTOR_YTD"/>
-            <column name="BASE_URL"
-                    value="https://justiceuk.sharepoint.com/sites/FinanceSysReference/SitePages/GPFD-Test-Site-page.aspx"/>
             <column name="REPORT_OWNER" value="William Moran"/>
             <column name="REPORT_CREATOR" value="William Unwin"/>
             <column name="REPORT_DESCRIPTION" value="CCMS General ledger extractor (tiny columns multiple periods)"/>
             <column name="EXCEL_REPORT" value="CCMS_GEN_LEDGER_TINYCOL_MULPERIODS"/>
-            <column name="EXCEL_SHEET_NUM" value="9"/>
-            <column name="CSV_NAME" value="MAIN"/>
             <column name="OWNER_EMAIL" value="William.Moran@Justice.gov.uk"/>
         </insert>
 
         <insert tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
-            <column name="ID" value="7b907f2d-8937-4488-b8d1-b56f5c5deb0c"/>
             <column name="REPORT_NAME" value="CCMS General Ledger (tiny columns multiple periods manual)"/>
             <column name="SQL_QUERY" value="SELECT * FROM ANY_REPORT.V_CCMS_GL_EXTRACTOR_MANUAL_YTD"/>
-            <column name="BASE_URL"
-                    value="https://justiceuk.sharepoint.com/sites/FinanceSysReference/SitePages/GPFD-Test-Site-page.aspx"/>
             <column name="REPORT_OWNER" value="William Moran"/>
-            <column name="REPORT_CREATOR" value="William Unwin"/>
             <column name="REPORT_DESCRIPTION"
                     value="CCMS General ledger extractor (tiny columns multiple periods manual)"/>
             <column name="EXCEL_REPORT" value="CCMS_GEN_LEDGER_TINYCOL_MULPERIODS_MANUAL"/>
-            <column name="EXCEL_SHEET_NUM" value="10"/>
-            <column name="CSV_NAME" value="MAIN"/>
             <column name="OWNER_EMAIL" value="William.Moran@Justice.gov.uk"/>
         </insert>
 
         <insert tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
-            <column name="ID" value="92457e1c-f01f-4eae-b684-73a92c90cc8f"/>
             <column name="REPORT_NAME" value="CCMS Authorised expenditure (Contracting live system)"/>
             <column name="SQL_QUERY" value="SELECT * FROM ANY_REPORT.V_CCMS_AUTHORISED_INVS_CONTRACTING"/>
-            <column name="BASE_URL"
-                    value="https://justiceuk.sharepoint.com/sites/FinanceSysReference/SitePages/GPFD-Test-Site-page.aspx"/>
             <column name="REPORT_OWNER" value="William Moran"/>
-            <column name="REPORT_CREATOR" value="William Unwin"/>
             <column name="REPORT_DESCRIPTION" value="CCMS Authorised expenditure (Contracting live system)"/>
             <column name="EXCEL_REPORT" value="CCMS_AUTH_EXPEND_CONTRACTING"/>
-            <column name="EXCEL_SHEET_NUM" value="11"/>
-            <column name="CSV_NAME" value="MAIN"/>
             <column name="OWNER_EMAIL" value="William.Moran@Justice.gov.uk"/>
         </insert>
-
-
-        <changeSet id="0002202-insert-reference-data-for-report-queries-csv" author="jason smallman">
-            <comment>Insert initial data into REPORT_QUERIES for CSV</comment>
-            <insert tableName="REPORT_QUERIES" schemaName="GPFD">
-                <column name="ID" value="1dc32729-f50d-418e-a2af-ad83d9248bc0"/>
-                <column name="REPORT_ID" value=""/>
-                <column name="QUERY" value="SELECT * FROM ANY_REPORT.V_CIS_TO_CCMS_INVOICE_SUMMARY"/>
-                <column name="TAB_NAME" value="CIS to CCMS import analysis"/>
-            </insert>
-            <insert tableName="REPORT_QUERIES" schemaName="GPFD">
-                <column name="ID" value="1dc32729-f50d-418e-a2af-ad83d9248bc1"/>
-                <column name="REPORT_ID" value=""/>
-                <column name="QUERY" value="SELECT * FROM ANY_REPORT.V_CIS_TO_CCMS_INVOICE_EXCEPTIONS"/>
-                <column name="TAB_NAME" value="CIS to CCMS import exceptions"/>
-            </insert>
-            <insert tableName="REPORT_QUERIES" schemaName="GPFD">
-                <column name="ID" value="1dc32729-f50d-418e-a2af-ad83d9248bc2"/>
-                <column name="REPORT_ID" value=""/>
-                <column name="QUERY" value="SELECT * FROM ANY_REPORT.V_CIS_TO_CCMS_INVOICE_DEFINED_PAYMENT_GROUPS"/>
-                <column name="TAB_NAME" value="CCMS Payment value(defined)"/>
-            </insert>
-            <insert tableName="REPORT_QUERIES" schemaName="GPFD">
-                <column name="ID" value="1dc32729-f50d-418e-a2af-ad83d9248bc3"/>
-                <column name="REPORT_ID" value=""/>
-                <column name="QUERY" value="SELECT * FROM ANY_REPORT.V_CIS_TO_CCMS_INVOICE_NOT_DEFINED_PAYMENT_GROUPS"/>
-                <column name="TAB_NAME" value="CCMS Payment value(not defined)"/>
-            </insert>
-            <insert tableName="REPORT_QUERIES" schemaName="GPFD">
-                <column name="ID" value="1dc32729-f50d-418e-a2af-ad83d9248bc4"/>
-                <column name="REPORT_ID" value=""/>
-                <column name="QUERY" value="SELECT * FROM ANY_REPORT.V_CIS_TO_CCMS_INVOICE_HELD_PAYMENTS"/>
-                <column name="TAB_NAME" value="CCMS Held payments"/>
-            </insert>
-            <insert tableName="REPORT_QUERIES" schemaName="GPFD">
-                <column name="ID" value="1dc32729-f50d-418e-a2af-ad83d9248bc5"/>
-                <column name="REPORT_ID" value=""/>
-                <column name="QUERY" value="SELECT * FROM ANY_REPORT.V_CIS_TO_CCMS_INVOICE_CCMS_AP_DEBTS"/>
-                <column name="TAB_NAME" value="CCMS AP Debtors"/>
-            </insert>
 
         </changeSet>
     -->
