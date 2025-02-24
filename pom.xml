@@ -41,45 +41,6 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.openapitools</groupId>
-                <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>7.10.0</version>
-                <configuration>
-                    <skip>false</skip>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <inputSpec>
-                                ${project.basedir}/src/main/resources/static/swagger.yml
-                            </inputSpec>
-                            <typeMappings>
-                                <typeMapping>string+binary=StreamingResponseBody</typeMapping>
-                            </typeMappings>
-                            <importMappings>
-                                <importMapping>StreamingResponseBody=org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody</importMapping>
-                            </importMappings>
-                            <generatorName>spring</generatorName>
-                            <apiPackage>uk.gov.laa.gpfd.api</apiPackage>
-                            <modelPackage>uk.gov.laa.gpfd.model</modelPackage>
-                            <supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
-                            <configOptions>
-                                <library>spring-boot</library>
-                                <oas3>false</oas3>
-                                <interfaceOnly>true</interfaceOnly>
-                                <dateLibrary>java8</dateLibrary>
-                                <openApiNullable>false</openApiNullable>
-                                <hideGenerationTimestamp>true</hideGenerationTimestamp>
-                                <useJakartaEe>true</useJakartaEe>
-                            </configOptions>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <executions>
