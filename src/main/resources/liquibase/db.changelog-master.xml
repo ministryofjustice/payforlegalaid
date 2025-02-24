@@ -535,6 +535,80 @@
         </sql>
     </changeSet>
 
+    <changeSet id="0002070-make-report-creator-id-nullable" author="jason smallman" >
+
+        <comment>make REPORTS.REPORT_CREATOR_ID nullable</comment>
+
+        <sql>
+            ALTER TABLE GPFD.REPORTS MODIFY REPORT_CREATOR_ID NULL
+        </sql>
+    </changeSet>
+
+    <changeSet id="0002075-make-report-creator-name-nullable" author="jason smallman" >
+
+        <comment>make REPORTS.REPORT_CREATOR_NAME nullable</comment>
+
+        <sql>
+            ALTER TABLE GPFD.REPORTS MODIFY REPORT_CREATOR_NAME NULL
+        </sql>
+    </changeSet>
+
+    <changeSet id="0002080-make-report-creator-email-nullable" author="jason smallman" >
+
+        <comment>make REPORTS.REPORT_CREATOR_EMAIL nullable</comment>
+
+        <sql>
+            ALTER TABLE GPFD.REPORTS MODIFY REPORT_CREATOR_EMAIL NULL
+        </sql>
+    </changeSet>
+
+    <changeSet id="0002085-make-template-secure-document-id-nullable" author="jason smallman" >
+
+        <comment>make REPORTS.TEMPLATE_SECURE_DOCUMENT_ID nullable</comment>
+
+        <sql>
+            ALTER TABLE GPFD.REPORTS MODIFY TEMPLATE_SECURE_DOCUMENT_ID NULL
+        </sql>
+
+    </changeSet>
+
+    <changeSet id="0002090-add-filename-column" author="jason smallman" >
+
+        <comment>add REPORTS.FILE_NAME</comment>
+
+        <sql>
+            ALTER TABLE GPFD.REPORTS ADD COLUMN FILE_NAME VARCHAR(150)
+        </sql>
+    </changeSet>
+
+    <changeSet id="0002095-add-active-column" author="jason smallman" >
+
+        <comment>add REPORTS.ACTIVE</comment>
+
+        <sql>
+            ALTER TABLE GPFD.REPORTS ADD COLUMN ACTIVE CHAR(1)
+        </sql>
+    </changeSet>
+
+    <changeSet id="0002100-make-column-width-double" author="jason smallman" >
+
+        <comment>make FIELD_ATTRIBUTES.COLUMN_WIDTH a double</comment>
+
+        <sql>
+            ALTER TABLE GPFD.FIELD_ATTRIBUTES ALTER COLUMN COLUMN_WIDTH NUMBER(6,2)
+        </sql>
+    </changeSet>
+
+    <changeSet id="0002105-make-format-nullable" author="jason smallman" >
+
+        <comment>make FIELD_ATTRIBUTES.FORMAT nullable</comment>
+
+        <sql>
+            ALTER TABLE GPFD.FIELD_ATTRIBUTES MODIFY FORMAT NULL
+        </sql>
+
+    </changeSet>
+
     <!-- add report output types -->
 
 </databaseChangeLog>
