@@ -34,6 +34,8 @@
         <maven-surefire-junit5-tree-reporte.version>1.1.0</maven-surefire-junit5-tree-reporte.version>
 
         <spring-cloud-azure-dependencies.version>5.19.0</spring-cloud-azure-dependencies.version>
+
+        <payforlegalaid-openapi.version>0.0.1</payforlegalaid-openapi.version>
     </properties>
 
     <build>
@@ -177,6 +179,11 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>uk.gov.laa</groupId>
+            <artifactId>payforlegalaid-openapi</artifactId>
+            <version>${payforlegalaid-openapi.version}</version>
+        </dependency>
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations</artifactId>
