@@ -301,11 +301,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    <repositories>
-        <repository>
-            <id>github</id>
-            <name>payforlegalaid-openapi</name>
-            <url>https://maven.pkg.github.com/ministryofjustice/payforlegalaid-openapi</url>
-        </repository>
-    </repositories>
 </project>
