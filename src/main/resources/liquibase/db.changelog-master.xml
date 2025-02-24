@@ -535,4 +535,6 @@
         </sql>
     </changeSet>
 
+    <!-- add report output types -->
+
 </databaseChangeLog>
