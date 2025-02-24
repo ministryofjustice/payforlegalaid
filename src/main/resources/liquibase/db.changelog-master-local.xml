@@ -527,6 +527,24 @@
 
     </changeSet>
 
+    <changeSet id="0002110-make-reports-tracking-report-downloaded-by-nullable" author="jason smallman" >
+
+        <comment>make REPORTS_TRACKING.REPORT_DOWNLOADED_BY nullable</comment>
+
+        <sql>
+            ALTER TABLE GPFD.REPORTS_TRACKING MODIFY REPORT_DOWNLOADED_BY NULL
+        </sql>
+    </changeSet>
+
+    <changeSet id="0002115-make-reports-tracking-report-generated-by-nullable" author="jason smallman" >
+
+        <comment>make REPORTS_TRACKING.REPORT_GENERATED_BY nullable</comment>
+
+        <sql>
+            ALTER TABLE GPFD.REPORTS_TRACKING MODIFY REPORT_GENERATED_BY NULL
+        </sql>
+    </changeSet>
+
     <changeSet id="0002200-insert-reference-data-for-reports-output-types" author="jason smallman">
 
         <comment>Insert initial data into REPORT_OUTPUT_TYPES</comment>
