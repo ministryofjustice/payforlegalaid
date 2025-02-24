@@ -535,18 +535,4 @@
         </sql>
     </changeSet>
 
-    <!--    <changeSet id="8-create-prevent-insert-update-trigger" author="robert_buczek">-->
-    <!--        <sql splitStatements="false">-->
-    <!--            <![CDATA[-->
-    <!--                CREATE OR REPLACE TRIGGER PreventInsertUpdateOnTable-->
-    <!--                BEFORE INSERT OR UPDATE ON GPFD.CSV_TO_SQL_MAPPING_TABLE-->
-    <!--                FOR EACH ROW-->
-    <!--                BEGIN-->
-    <!--                    RAISE_APPLICATION_ERROR(-20005, 'Inserts and updates are not allowed on the CSV_TO_SQL_MAPPING_TABLE table.');-->
-    <!--                END;-->
-    <!--            /-->
-    <!--            ]]>-->
-    <!--        </sql>-->
-    <!--    </changeSet>-->
-
 </databaseChangeLog>
