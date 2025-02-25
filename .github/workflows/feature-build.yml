@@ -19,12 +19,6 @@ jobs:
       - name: Build and test
         uses: './.github/build-and-test'
 
-      - name: Check contemt
-        run: |
-          echo 'CHECKING CONTENT ******************"
-          echo ${{ env.USERNAME }}
-
-
       - name: Snyk Scan
         uses: './.github/snyk-scan'
         env:

@@ -24,8 +24,20 @@ runs:
 #            "password": "another invalid thing"
 #          }]
 
+    - name: Set up Maven settings
+      run: |
+        mkdir -p ~/.m2
+        cp .github/settings.xml  # Adjust this path to your settings.xml
+      shell:
+        bash
+
+    - name: Build with Maven
+      run: mvn clean install --settings ~/.m2/settings.xml
+      shell:
+        bash
+
     - name: Run tests
-      run: mvn -B clean test
+      run: mvn -B test
       env:
         SPRING_PROFILES_ACTIVE: test
       shell:
