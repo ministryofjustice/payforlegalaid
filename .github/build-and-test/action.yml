@@ -14,30 +14,8 @@ runs:
         java-version: '17'
         overwrite-settings: false
 
-#    - name: Set values in settings.xml
-#      uses: s4u/maven-settings-action@v3.1.0
-#      with:
-#        servers: |
-#          [{
-#            "id": "github",
-#            "username": "something invalid",
-#            "password": "another invalid thing"
-#          }]
-
-    - name: Set up Maven settings
-      run: |
-        mkdir -p ~/.m2
-        cp .github/settings.xml ~/.m2/settings.xml
-      shell:
-        bash
-
-    - name: Build with Maven
-      run: mvn clean install --settings ~/.m2/settings.xml
-      shell:
-        bash
-
     - name: Run tests
-      run: mvn -B test
+      run: mvn -B clean test
       env:
         SPRING_PROFILES_ACTIVE: test
       shell:
