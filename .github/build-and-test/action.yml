@@ -3,6 +3,7 @@ name: Build and run tests
 runs:
   using: 'composite'
   steps:
+
     - name: Checkout repository
       uses: actions/checkout@v4
 
@@ -16,5 +17,7 @@ runs:
       run: mvn -B clean test
       env:
         SPRING_PROFILES_ACTIVE: test
+        USERNAME: ${{ secrets.USERNAME }}
+        PASSWORD: ${{ secrets.PASSWORD }}
       shell:
         bash
