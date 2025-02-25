@@ -20,7 +20,7 @@ jobs:
         uses: './.github/build-and-test'
 
       - name: Check contemt
-        uses: ${{ env.USERNAME }}
+        run: ${{ env.USERNAME }}
 
       - name: Snyk Scan
         uses: './.github/snyk-scan'
