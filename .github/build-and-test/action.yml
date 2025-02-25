@@ -12,11 +12,7 @@ runs:
       with:
         distribution: 'corretto'
         java-version: '17'
-        server-id: github
-        server-username: ${{ env.USERNAME }}
-        server-password: ${{ env.PASSWORD }}
-        repository-id: github
-        repository-url: https://maven.pkg.github.com/ministryofjustice/payforlegalaid-openapi
+        overwrite-settings: false
 
 #    - name: Set values in settings.xml
 #      uses: s4u/maven-settings-action@v3.1.0
