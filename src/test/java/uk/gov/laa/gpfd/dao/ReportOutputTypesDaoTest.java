@@ -33,11 +33,6 @@ public class ReportOutputTypesDaoTest {
         readOnlyJdbcTemplate.execute(sqlData);
     }
 
-    @AfterEach
-    void resetDatabase() {
-        readOnlyJdbcTemplate.update("TRUNCATE TABLE GPFD.REPORT_OUTPUT_TYPES");
-    }
-
     @Test
     void shouldReturnAllReportsInOrder() {
         List<ReportOutputType> results = reportOutputTypesDao.fetchReportOutputTypes();
