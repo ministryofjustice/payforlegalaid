@@ -557,7 +557,7 @@
 
         <insert tableName="REPORT_OUTPUT_TYPES" schemaName="GPFD">
             <column name="ID" value="bd098666-94e4-4b0e-822c-8e5dfb04c908"/>
-            <column name="EXTENSION" value="xls"/>
+            <column name="EXTENSION" value="xlsx"/>
             <column name="DESCRIPTION" value="Excel Document"/>
         </insert>
 
