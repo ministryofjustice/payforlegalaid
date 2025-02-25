@@ -5,8 +5,8 @@ on:
     types: [opened, reopened, synchronize]
 
 env:
-  USERNAME: ${{ secrets.USERNAME}}
-  PASSWORD: ${{ secrets.PASSWORD}}
+  USERNAME: ${{ secrets.USERNAME }}
+  PASSWORD: ${{ secrets.PASSWORD }}
 
 jobs:
   feature_branch:
@@ -21,7 +21,7 @@ jobs:
 
       - name: Check contemt
         run: |
-          echo "CHECKING CONTENT ******************"
+          echo 'CHECKING CONTENT ******************"
           echo ${{ env.USERNAME }}
 
 
