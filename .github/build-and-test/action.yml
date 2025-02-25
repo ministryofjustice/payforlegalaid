@@ -14,7 +14,7 @@ runs:
         java-version: '17'
 
     - name: Run tests
-      run: mvn -B clean test
+      run: mvn -B -X clean test
       env:
         SPRING_PROFILES_ACTIVE: test
       shell:
