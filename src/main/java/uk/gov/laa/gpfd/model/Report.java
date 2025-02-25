@@ -12,7 +12,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Reports {
+public class Report {
     private UUID reportId;
     private String name;
     private String templateSecureDocumentId;
