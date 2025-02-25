@@ -14,6 +14,10 @@ jobs:
 
       - name: Build and test
         uses: './.github/build-and-test'
+        env:
+          USERNAME: ${{ secrets.USERNAME}}
+          PASSWORD: ${{ secrets.PASSWORD}}
+
 
       - name: Snyk Scan
         uses: './.github/snyk-scan'
