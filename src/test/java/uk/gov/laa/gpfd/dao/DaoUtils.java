@@ -14,7 +14,7 @@ public class DaoUtils {
     }
 
     public static void clearDatabase(JdbcTemplate jdbcTemplate) {
-        //jdbcTemplate.update("TRUNCATE TABLE GPFD.REPORTS");
+        jdbcTemplate.update("TRUNCATE TABLE GPFD.REPORTS");
         //jdbcTemplate.update("TRUNCATE TABLE GPFD.REPORT_OUTPUT_TYPES");
     }
 }
