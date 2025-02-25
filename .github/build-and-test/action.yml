@@ -27,7 +27,7 @@ runs:
     - name: Set up Maven settings
       run: |
         mkdir -p ~/.m2
-        cp .github/settings.xml  # Adjust this path to your settings.xml
+        cp .github/settings.xml ~/.m2/settings.xml
       shell:
         bash
 
