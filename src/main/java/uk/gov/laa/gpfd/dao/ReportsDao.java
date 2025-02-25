@@ -25,7 +25,7 @@ public class ReportsDao {
             List<Map<String, Object>> resultList = readOnlyJdbcTemplate.queryForList(SELECT_SQL);
 
             resultList.forEach(obj -> {
-                ReportGroup reportObject = modelMapper.map(obj, ReportGroup.class);
+                Report reportObject = modelMapper.map(obj, ReportGroup.class);
                 reportList.add(reportObject);
             });
             return reportList;
