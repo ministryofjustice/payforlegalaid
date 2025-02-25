@@ -17,7 +17,5 @@ runs:
       run: mvn -B clean test
       env:
         SPRING_PROFILES_ACTIVE: test
-        USERNAME: ${{ secrets.USERNAME }}
-        PASSWORD: ${{ secrets.PASSWORD }}
       shell:
         bash
