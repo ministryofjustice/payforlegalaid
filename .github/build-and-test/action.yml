@@ -24,10 +24,8 @@ runs:
 #          }]
 
     - name: Run tests
-      run: mvn -B -X clean test
+      run: mvn -B clean test
       env:
         SPRING_PROFILES_ACTIVE: test
-        USERNAME: ${{ env.USERNAME }}
-        PASSWORD: ${{ env.PASSWORD }}
       shell:
         bash
