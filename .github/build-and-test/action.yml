@@ -13,19 +13,21 @@ runs:
         distribution: 'corretto'
         java-version: '17'
 
-    - name: Set values in settings.xml
-      uses: s4u/maven-settings-action@v3.1.0
-      with:
-        servers: |
-          [{
-            "id": "github",
-            "username": "something invalid",
-            "password": "another invalid thing"
-          }]
+#    - name: Set values in settings.xml
+#      uses: s4u/maven-settings-action@v3.1.0
+#      with:
+#        servers: |
+#          [{
+#            "id": "github",
+#            "username": "something invalid",
+#            "password": "another invalid thing"
+#          }]
 
     - name: Run tests
       run: mvn -B -X clean test
       env:
         SPRING_PROFILES_ACTIVE: test
+        USERNAME: ${{ secrets.USERNAME }}
+        PASSWORD: ${{ secrets.PASSWORD }}
       shell:
         bash
