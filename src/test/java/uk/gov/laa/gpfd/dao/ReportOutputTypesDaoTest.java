@@ -7,13 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
-import uk.gov.laa.gpfd.model.MappingTable;
 import uk.gov.laa.gpfd.model.ReportOutputType;
-import uk.gov.laa.gpfd.utils.FileUtils;
-
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static uk.gov.laa.gpfd.dao.DaoUtils.initialiseDatabase;
+import static uk.gov.laa.gpfd.dao.DaoUtils.clearDatabase;
 
 @SpringBootTest // This uses the whole spring context, switch to @JdbcTest if you switch to a H2 DB
 @ActiveProfiles("test")
@@ -26,18 +25,13 @@ public class ReportOutputTypesDaoTest {
 
     @BeforeEach
     void setup() {
-        String sqlSchema = FileUtils.readResourceToString("gpfd_reports_schema.sql");
-        String sqlData = FileUtils.readResourceToString("gpfd_reports_data.sql");
-
-        readOnlyJdbcTemplate.execute(sqlSchema);
-        readOnlyJdbcTemplate.execute(sqlData);
+        initialiseDatabase(readOnlyJdbcTemplate);
     }
 
     @AfterEach
     void resetDatabase() {
-
+        clearDatabase(readOnlyJdbcTemplate);
     }
-
 
     @Test
     void shouldReturnAllReportTypesInOrder() {
