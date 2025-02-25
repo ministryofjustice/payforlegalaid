@@ -18,8 +18,8 @@ jobs:
           servers: |
             [{
               "id": "github",
-              "username": "${{ secrets.USERNAME }}",
-              "password": "${{ secrets.PASSWORD }}"
+              "username": "something invalid",
+              "password": "another invalid thing"
             }]
 
       - name: Build and test
