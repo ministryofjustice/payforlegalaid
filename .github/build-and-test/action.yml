@@ -12,7 +12,21 @@ runs:
       with:
         distribution: 'corretto'
         java-version: '17'
-        overwrite-settings: false
+
+    - name: maven-settings
+      uses: s4u/maven-settings-action@v2
+      with:
+          servers: '[{"id": "github", "username": "${USERNAME}", "password": "${PASSWORD}"}]'
+          githubServer: false
+    - name: Run Tests with Maven
+      run: mvn test
+      env:
+        USERNAME: ${{ env.USERNAME }}
+        PASSWORD: ${{ env.PASSWORD }}
+
+      shell:
+        bash
+
 
     - name: Run tests
       run: mvn -B clean test
