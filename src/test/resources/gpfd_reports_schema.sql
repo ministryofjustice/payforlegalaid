@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS GPFD.REPORTS
     REPORT_CREATOR_NAME            VARCHAR(150)  NULL,
     REPORT_CREATOR_EMAIL           VARCHAR(150)  NULL,
     REPORT_OWNER_ID                UUID          NOT NULL,
-    REPORT_OWNER_NAME              UUID          NOT NULL,
+    REPORT_OWNER_NAME              VARCHAR(150)  NOT NULL,
     REPORT_OWNER_EMAIL             VARCHAR(150)  NOT NULL,
     FILE_NAME                      VARCHAR(150)  NULL,
     ACTIVE                         CHAR(1)       NULL,

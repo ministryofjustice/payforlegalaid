@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Report {
-    private UUID reportId;
+    private UUID id;
     private String name;
     private String templateSecureDocumentId;
     Timestamp reportCreationTime;

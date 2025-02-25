@@ -4,3 +4,19 @@ VALUES
     ('bd098666-94e4-4b0e-822c-8e5dfb04c908','xlsx','Excel Document')
 ;
 
+INSERT INTO GPFD.REPORTS(ID,NAME,TEMPLATE_SECURE_DOCUMENT_ID,REPORT_CREATION_DATE,DESCRIPTION,NUM_DAYS_TO_KEEP,FILE_NAME,ACTIVE,REPORT_OUTPUT_TYPE,REPORT_OWNER_ID,REPORT_OWNER_NAME,REPORT_OWNER_EMAIL)
+VALUES
+    ('b36f9bbb-1178-432c-8f99-8090e285f2d3',
+     'CCMS Invoice Analysis (CIS to CCMS)',
+     '00000000-0000-0000-0000-000000000000',
+     '2025-02-15 00:00:00',
+     'Summary of invoices in CIS and CCMS by original source IT system',
+     30,
+    'CCMS_invoice_analysis',
+    'Y',
+    'bd098666-94e4-4b0e-822c-8e5dfb04c908',
+    '00000000-0000-0000-0000-000000000001',
+    'Chancey Mctavish',
+    'owneremail@email.com'
+)
+;

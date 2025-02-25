@@ -7,8 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
-import uk.gov.laa.gpfd.model.MappingTable;
-import uk.gov.laa.gpfd.model.ReportOutputType;
+import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.utils.FileUtils;
 
 import java.util.List;
@@ -17,12 +16,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest // This uses the whole spring context, switch to @JdbcTest if you switch to a H2 DB
 @ActiveProfiles("test")
-public class ReportOutputTypesDaoTest {
+public class ReportsDaoTest {
     @Autowired
     private JdbcTemplate readOnlyJdbcTemplate;
 
     @Autowired
-    private ReportOutputTypesDao reportOutputTypesDao;
+    private ReportsDao reportsDao;
 
     @BeforeEach
     void setup() {
@@ -35,17 +34,16 @@ public class ReportOutputTypesDaoTest {
 
     @AfterEach
     void resetDatabase() {
-
     }
-
 
     @Test
-    void shouldReturnAllReportTypesInOrder() {
-        List<ReportOutputType> results = reportOutputTypesDao.fetchReportOutputTypes();
+    void shouldReturnAllReportsInOrder() {
+        List<Report> results = reportsDao.fetchAllReports();
 
-        assertEquals(2, results.size());
-        assertEquals("6ebd27ac-4d83-485d-a4fd-3e45f9a53484", results.get(0).getId().toString());
-        assertEquals("xlsx", results.get(1).getExtension());
+        assertEquals(1, results.size());
+        assertEquals("b36f9bbb-1178-432c-8f99-8090e285f2d3", results.get(0).getId().toString());
+        assertEquals(30, results.get(0).getNumDaysToKeep());
     }
+
 
 }

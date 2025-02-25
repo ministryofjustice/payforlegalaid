@@ -17,7 +17,7 @@ import java.util.Map;
 @Repository
 @RequiredArgsConstructor
 public class ReportsDao {
-    private static final String SELECT_ALL_REPORTS = "SELECT * FROM GPFD.V_REPORTS";
+    private static final String SELECT_ALL_REPORTS = "SELECT * FROM GPFD.REPORTS";
 
     private final JdbcTemplate readOnlyJdbcTemplate;
     private final ModelMapper modelMapper;
