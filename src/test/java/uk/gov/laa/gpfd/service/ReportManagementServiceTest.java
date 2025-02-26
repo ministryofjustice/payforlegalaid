@@ -37,7 +37,7 @@ public class ReportManagementServiceTest {
     @Test
     void shouldReturnReportListEntriesWhenValidReportsExist() {
         // Given
-        var mappingTable1 = MappingTableTestDataFactory.aValidBankAccountReport();
+        var mappingTable1 = ReportsTestDataFactory.aValidBankAccountReport();
         var mappingTable2 = MappingTableTestDataFactory.aValidInvoiceAnalysisReport();
         var list = Arrays.asList(mappingTable1, mappingTable2);
         var expected = list.stream().map(ReportsGet200ResponseReportListInnerMapper::mapData).toList();
