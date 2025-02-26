@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.laa.gpfd.data.ReportListEntryTestDataFactory;
 import uk.gov.laa.gpfd.graph.AzureGraphClient;
 import uk.gov.laa.gpfd.services.MappingTableService;
+import uk.gov.laa.gpfd.services.ReportManagementService;
 import uk.gov.laa.gpfd.services.ReportService;
 import uk.gov.laa.gpfd.services.ReportTrackingTableService;
 
@@ -30,7 +31,7 @@ class OAuth2LoginTest {
     AzureGraphClient mockAzureGraphClient;
 
     @MockitoBean
-    MappingTableService mappingTableServiceMock;
+    ReportManagementService reportManagementServiceMock;
 
     @MockitoBean
     ReportService reportServiceMock;
@@ -53,7 +54,7 @@ class OAuth2LoginTest {
     void shouldReturnResponseWhenUserIsAuthenticatedWithAdminRole() throws Exception {
         // Given
         var mock = ReportListEntryTestDataFactory.aValidReportsGet200ResponseReportListInner();
-        when(mappingTableServiceMock.fetchReportListEntries()).thenReturn(singletonList(mock));
+        when(reportManagementServiceMock.fetchReportListEntries()).thenReturn(singletonList(mock));
 
         // Then
         mockMvc.perform(MockMvcRequestBuilders.get("/reports"))

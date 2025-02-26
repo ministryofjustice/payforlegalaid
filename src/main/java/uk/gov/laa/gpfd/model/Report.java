@@ -21,6 +21,7 @@ public class Report {
     private int numDaysToKeep;
     private UUID reportOutputType;
     private UUID reportCreatorId;
+    private String description;
     private String reportCreatorName;
     private String reportCreatorEmail;
     private UUID reportOwnerId;
