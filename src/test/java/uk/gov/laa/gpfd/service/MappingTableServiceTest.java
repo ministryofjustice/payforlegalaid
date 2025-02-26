@@ -39,98 +39,98 @@ class MappingTableServiceTest {
     @InjectMocks
     private MappingTableService mappingTableService;
 
-//    @Test
-//    void should_return_exception_in_fetch_report_list_entries() throws DatabaseReadException {
-//        when(mappingTableDao.fetchReportList()).thenThrow(DatabaseReadException.class);
-//
-//        assertThrows(DatabaseReadException.class, () -> mappingTableService.fetchReportListEntries());
-//    }
-//
-//    @Test
-//    void shouldReturnReportListEntriesWhenValidReportsExist() {
-//        // Given
-//        var mappingTable1 = MappingTableTestDataFactory.aValidBankAccountReport();
-//        var mappingTable2 = MappingTableTestDataFactory.aValidInvoiceAnalysisReport();
-//        var list = Arrays.asList(mappingTable1, mappingTable2);
-//        var expected = list.stream().map(ReportsGet200ResponseReportListInnerMapper::map).toList();
-//
-//        when(mappingTableDao.fetchReportList()).thenReturn(list);
-//
-//        // When
-//        var result = mappingTableService.fetchReportListEntries();
-//
-//        // Then
-//        assertNotNull(result);
-//        assertEquals(expected.size(), result.size());
-//        assertEquals(expected, result);
-//        verify(mappingTableDao, times(1)).fetchReportList();
-//    }
-//
-//    @Test
-//    void shouldReturnEmptyListWhenNoReportsExist() {
-//        // Given
-//        when(mappingTableDao.fetchReportList()).thenReturn(Collections.emptyList());
-//
-//        // When
-//        var result = mappingTableService.fetchReportListEntries();
-//
-//        // Then
-//        assertNotNull(result);
-//        assertTrue(result.isEmpty());
-//        verify(mappingTableDao, times(1)).fetchReportList();
-//    }
-//
-//    @Test
-//    void shouldReturnSingleReportWhenOnlyOneReportExists() throws DatabaseReadException {
-//        // Given
-//        var singleReport = MappingTableTestDataFactory.aValidInvoiceAnalysisReport();
-//        when(mappingTableDao.fetchReportList()).thenReturn(Collections.singletonList(singleReport));
-//        var expected = List.of(ReportsGet200ResponseReportListInnerMapper.map(singleReport));
-//
-//        // When
-//        var result = mappingTableService.fetchReportListEntries();
-//
-//        // Then
-//        assertNotNull(result);
-//        assertEquals(expected.size(), result.size());
-//        assertEquals(expected, result);
-//        verify(mappingTableDao, times(1)).fetchReportList();
-//    }
-//
-//    @Test
-//    void shouldHandleSizeLimitExceededAndReturnAllReports() throws DatabaseReadException {
-//        // Given
-//        var largeList = new ArrayList<MappingTable>();
-//        for (int i = 0; i < 1001; i++) {  // Exceed the size limit
-//            largeList.add(MappingTableTestDataFactory.aValidInvoiceAnalysisReport());
-//        }
-//        when(mappingTableDao.fetchReportList()).thenReturn(largeList);
-//
-//        // When
-//        var result = mappingTableService.fetchReportListEntries();
-//
-//        // Then
-//        assertNotNull(result);
-//        assertEquals(largeList.size(), result.size());
-//        verify(mappingTableDao, times(1)).fetchReportList();
-//    }
-//
-//    @Test
-//    void shouldReturnValidReportsAndIgnoreInvalidData() throws DatabaseReadException {
-//        // Given
-//        var mappingTable1 = MappingTableTestDataFactory.aValidInvoiceAnalysisReport();
-//        var mappingTable2 = new MappingTable(DEFAULT_ID, null, null, null, 0, null, null, null, null, null, null); // Invalid data
-//        var list = Arrays.asList(mappingTable1, mappingTable2);
-//        when(mappingTableDao.fetchReportList()).thenReturn(list);
-//
-//        // When
-//        var result = mappingTableService.fetchReportListEntries();
-//
-//        // Then
-//        assertNotNull(result);
-//        assertEquals(2, result.size());  // Only one valid mapping should be returned
-//        verify(mappingTableDao, times(1)).fetchReportList();
-//    }
+    @Test
+    void should_return_exception_in_fetch_report_list_entries() throws DatabaseReadException {
+        when(mappingTableDao.fetchReportList()).thenThrow(DatabaseReadException.class);
+
+        assertThrows(DatabaseReadException.class, () -> mappingTableService.fetchReportListEntries());
+    }
+
+    @Test
+    void shouldReturnReportListEntriesWhenValidReportsExist() {
+        // Given
+        var mappingTable1 = MappingTableTestDataFactory.aValidBankAccountReport();
+        var mappingTable2 = MappingTableTestDataFactory.aValidInvoiceAnalysisReport();
+        var list = Arrays.asList(mappingTable1, mappingTable2);
+        var expected = list.stream().map(ReportsGet200ResponseReportListInnerMapper::map).toList();
+
+        when(mappingTableDao.fetchReportList()).thenReturn(list);
+
+        // When
+        var result = mappingTableService.fetchReportListEntries();
+
+        // Then
+        assertNotNull(result);
+        assertEquals(expected.size(), result.size());
+        assertEquals(expected, result);
+        verify(mappingTableDao, times(1)).fetchReportList();
+    }
+
+    @Test
+    void shouldReturnEmptyListWhenNoReportsExist() {
+        // Given
+        when(mappingTableDao.fetchReportList()).thenReturn(Collections.emptyList());
+
+        // When
+        var result = mappingTableService.fetchReportListEntries();
+
+        // Then
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(mappingTableDao, times(1)).fetchReportList();
+    }
+
+    @Test
+    void shouldReturnSingleReportWhenOnlyOneReportExists() throws DatabaseReadException {
+        // Given
+        var singleReport = MappingTableTestDataFactory.aValidInvoiceAnalysisReport();
+        when(mappingTableDao.fetchReportList()).thenReturn(Collections.singletonList(singleReport));
+        var expected = List.of(ReportsGet200ResponseReportListInnerMapper.map(singleReport));
+
+        // When
+        var result = mappingTableService.fetchReportListEntries();
+
+        // Then
+        assertNotNull(result);
+        assertEquals(expected.size(), result.size());
+        assertEquals(expected, result);
+        verify(mappingTableDao, times(1)).fetchReportList();
+    }
+
+    @Test
+    void shouldHandleSizeLimitExceededAndReturnAllReports() throws DatabaseReadException {
+        // Given
+        var largeList = new ArrayList<MappingTable>();
+        for (int i = 0; i < 1001; i++) {  // Exceed the size limit
+            largeList.add(MappingTableTestDataFactory.aValidInvoiceAnalysisReport());
+        }
+        when(mappingTableDao.fetchReportList()).thenReturn(largeList);
+
+        // When
+        var result = mappingTableService.fetchReportListEntries();
+
+        // Then
+        assertNotNull(result);
+        assertEquals(largeList.size(), result.size());
+        verify(mappingTableDao, times(1)).fetchReportList();
+    }
+
+    @Test
+    void shouldReturnValidReportsAndIgnoreInvalidData() throws DatabaseReadException {
+        // Given
+        var mappingTable1 = MappingTableTestDataFactory.aValidInvoiceAnalysisReport();
+        var mappingTable2 = new MappingTable(DEFAULT_ID, null, null, null, 0, null, null, null, null, null, null); // Invalid data
+        var list = Arrays.asList(mappingTable1, mappingTable2);
+        when(mappingTableDao.fetchReportList()).thenReturn(list);
+
+        // When
+        var result = mappingTableService.fetchReportListEntries();
+
+        // Then
+        assertNotNull(result);
+        assertEquals(2, result.size());  // Only one valid mapping should be returned
+        verify(mappingTableDao, times(1)).fetchReportList();
+    }
 
     @Test
     void shouldThrowReportIdNotFoundExceptionWhenRequestedReportDoesNotExist() {

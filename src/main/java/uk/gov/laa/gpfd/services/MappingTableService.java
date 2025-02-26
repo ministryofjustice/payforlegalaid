@@ -41,7 +41,7 @@ public class MappingTableService {
      * @return a list of {@link ReportsGet200ResponseReportListInner} objects containing the report data
      * @throws DatabaseReadException if there is an error fetching data from the database
      */
-    public List<ReportsGet200ResponseReportListInner> fetch_ReportListEntries() {
+    public List<ReportsGet200ResponseReportListInner> fetchReportListEntries() {
         return mappingTableDao.fetchReportList().stream()
                 .map(ReportsGet200ResponseReportListInnerMapper::map)
                 .toList();
