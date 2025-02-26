@@ -16,7 +16,7 @@ public class Report {
     private UUID id;
     private String name;
     private String templateSecureDocumentId;
-    Timestamp reportCreationTime;
+    Timestamp reportCreationDate;
     Timestamp lastDatabaseRefreshDate;
     private int numDaysToKeep;
     private UUID reportOutputType;
@@ -28,6 +28,6 @@ public class Report {
     private String reportOwnerName;
     private String reportOwnerEmail;
     private String fileName;
-    private Boolean active;
+    private String active;
     private String extension;
 }

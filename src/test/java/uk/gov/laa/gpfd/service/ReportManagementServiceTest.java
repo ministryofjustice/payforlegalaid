@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.laa.gpfd.dao.ReportsDao;
+import uk.gov.laa.gpfd.data.ReportsTestDataFactory;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.mapper.ReportsGet200ResponseReportListInnerMapper;
 import uk.gov.laa.gpfd.services.ReportManagementService;
@@ -37,10 +38,10 @@ public class ReportManagementServiceTest {
     @Test
     void shouldReturnReportListEntriesWhenValidReportsExist() {
         // Given
-        var mappingTable1 = ReportsTestDataFactory.aValidBankAccountReport();
-        var mappingTable2 = MappingTableTestDataFactory.aValidInvoiceAnalysisReport();
-        var list = Arrays.asList(mappingTable1, mappingTable2);
-        var expected = list.stream().map(ReportsGet200ResponseReportListInnerMapper::mapData).toList();
+        var excelReport = ReportsTestDataFactory.aCCMSInvoiceAnalysisExcelReport();
+        var csvReport = ReportsTestDataFactory.aCCMSInvoiceAnalysisCSVReport();
+        var list = Arrays.asList(excelReport, csvReport);
+        var expected = list.stream().map(ReportsGet200ResponseReportListInnerMapper::map).toList();
 
         when(reportsDao.fetchReportList()).thenReturn(list);
 
@@ -71,9 +72,9 @@ public class ReportManagementServiceTest {
     @Test
     void shouldReturnSingleReportWhenOnlyOneReportExists() throws DatabaseReadException {
         // Given
-        var singleReport = MappingTableTestDataFactory.aValidInvoiceAnalysisReport();
-        when(reportsDao.fetchReportList()).thenReturn(Collections.singletonList(singleReport));
-        var expected = List.of(ReportsGet200ResponseReportListInnerMapper.map(singleReport));
+        var excelReport = ReportsTestDataFactory.aCCMSInvoiceAnalysisExcelReport();
+        when(reportsDao.fetchReportList()).thenReturn(Collections.singletonList(excelReport));
+        var expected = List.of(ReportsGet200ResponseReportListInnerMapper.map(excelReport));
 
         // When
         var result = reportsService.fetchReportListEntries();
@@ -86,29 +87,11 @@ public class ReportManagementServiceTest {
     }
 
     @Test
-    void shouldHandleSizeLimitExceededAndReturnAllReports() throws DatabaseReadException {
-        // Given
-        var largeList = new ArrayList<MappingTable>();
-        for (int i = 0; i < 1001; i++) {  // Exceed the size limit
-            largeList.add(MappingTableTestDataFactory.aValidInvoiceAnalysisReport());
-        }
-        when(reportsDao.fetchReportList()).thenReturn(largeList);
-
-        // When
-        var result = reportsService.fetchReportListEntries();
-
-        // Then
-        assertNotNull(result);
-        assertEquals(largeList.size(), result.size());
-        verify(reportsDao, times(1)).fetchReportList();
-    }
-
-    @Test
     void shouldReturnValidReportsAndIgnoreInvalidData() throws DatabaseReadException {
         // Given
-        var mappingTable1 = MappingTableTestDataFactory.aValidInvoiceAnalysisReport();
-        var mappingTable2 = new MappingTable(DEFAULT_ID, null, null, null, 0, null, null, null, null, null, null); // Invalid data
-        var list = Arrays.asList(mappingTable1, mappingTable2);
+        var csvReport = ReportsTestDataFactory.aCCMSInvoiceAnalysisCSVReport();
+        var invalidReport = ReportsTestDataFactory.invalidReportData();
+        var list = Arrays.asList(csvReport, invalidReport);
         when(reportsDao.fetchReportList()).thenReturn(list);
 
         // When

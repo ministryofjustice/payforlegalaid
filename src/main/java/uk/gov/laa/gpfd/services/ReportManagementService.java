@@ -17,7 +17,7 @@ public class ReportManagementService {
 
     public List<ReportsGet200ResponseReportListInner> fetchReportListEntries() {
         return reportsDao.fetchReportList().stream()
-                .map(ReportsGet200ResponseReportListInnerMapper::mapData)
+                .map(ReportsGet200ResponseReportListInnerMapper::map)
                 .toList();
     }
 

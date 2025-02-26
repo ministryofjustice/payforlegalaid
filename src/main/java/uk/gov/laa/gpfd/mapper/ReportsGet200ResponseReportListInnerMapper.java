@@ -31,7 +31,7 @@ public class ReportsGet200ResponseReportListInnerMapper {
         }};
     }
 
-    public static ReportsGet200ResponseReportListInner mapData(Report reportData) {
+    public static ReportsGet200ResponseReportListInner map(Report reportData) {
         return new ReportsGet200ResponseReportListInner() {{
             setId(reportData.getId());
             setReportName(reportData.getName());
