@@ -93,11 +93,33 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>3.6.1</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>uk.gov.laa</groupId>
+                                    <artifactId>payforlegalaid-openapi</artifactId>
+                                    <version>${payforlegalaid-openapi.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.basedir}/src/main/resources/static</outputDirectory>
+                                    <includes>swagger.yml</includes>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <classifier>exec</classifier>
                     <mainClass>uk.gov.laa.gpfd.Application</mainClass>
                     <layers>
                         <enabled>true</enabled> <!-- Enables layered JAR for container optimization -->

@@ -26,6 +26,12 @@ class AuthorizeHttpRequestsBuilderTest {
     }
 
     @Test
+    void shouldSwaggerYamlAccessibleWithoutAuthentication() throws Exception {
+        mockMvc.perform(get("/swagger.yml"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     void shouldOpenAPIDocsDoesNotExist() throws Exception {
         mockMvc.perform(get("/v3/api-docs"))
                 .andExpect(status().isNotFound());
