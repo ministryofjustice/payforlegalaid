@@ -28,5 +28,5 @@ public class Report {
     private String reportOwnerEmail;
     private String fileName;
     private Boolean active;
-
+    private String extension;
 }

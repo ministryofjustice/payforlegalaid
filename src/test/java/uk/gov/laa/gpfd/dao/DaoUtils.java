@@ -14,7 +14,12 @@ public class DaoUtils {
     }
 
     public static void clearDatabase(JdbcTemplate jdbcTemplate) {
-        jdbcTemplate.update("TRUNCATE TABLE GPFD.REPORTS");
-        //jdbcTemplate.update("TRUNCATE TABLE GPFD.REPORT_OUTPUT_TYPES");
+
+        jdbcTemplate.update("DROP TABLE GPFD.REPORTS_TRACKING");
+        jdbcTemplate.update("DROP TABLE GPFD.FIELD_ATTRIBUTES");
+        jdbcTemplate.update("DROP TABLE GPFD.REPORT_QUERIES");
+        jdbcTemplate.update("DROP TABLE GPFD.REPORT_GROUPS");
+        jdbcTemplate.update("DROP TABLE GPFD.REPORTS");
+        jdbcTemplate.update("DROP TABLE GPFD.REPORT_OUTPUT_TYPES");
     }
 }
