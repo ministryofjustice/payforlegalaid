@@ -37,15 +37,25 @@ class GetReportsIT {
     void setupDatabase() {
         String sqlSchema = FileUtils.readResourceToString("gpfd_schema.sql");
         String sqlData = FileUtils.readResourceToString("gpfd_data.sql");
+        String sqlReportSchema = FileUtils.readResourceToString("gpfd_reports_schema.sql");
+        String sqlReportData = FileUtils.readResourceToString("gpfd_reports_data.sql");
 
         writeJdbcTemplate.execute(sqlSchema);
         writeJdbcTemplate.execute(sqlData);
+        writeJdbcTemplate.execute(sqlReportSchema);
+        writeJdbcTemplate.execute(sqlReportData);
     }
 
     @AfterAll
     void resetDatabase() {
         writeJdbcTemplate.execute("DROP TABLE IF EXISTS GPFD.REPORT_TRACKING");
         writeJdbcTemplate.execute("DROP TABLE IF EXISTS GPFD.CSV_TO_SQL_MAPPING_TABLE");
+        writeJdbcTemplate.execute("DROP TABLE GPFD.REPORTS_TRACKING");
+        writeJdbcTemplate.execute("DROP TABLE GPFD.FIELD_ATTRIBUTES");
+        writeJdbcTemplate.execute("DROP TABLE GPFD.REPORT_QUERIES");
+        writeJdbcTemplate.execute("DROP TABLE GPFD.REPORT_GROUPS");
+        writeJdbcTemplate.execute("DROP TABLE GPFD.REPORTS");
+        writeJdbcTemplate.execute("DROP TABLE GPFD.REPORT_OUTPUT_TYPES");
     }
 
     @Test
