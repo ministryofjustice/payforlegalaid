@@ -2,6 +2,9 @@ package uk.gov.laa.gpfd.config;
 
 import liquibase.integration.spring.SpringLiquibase;
 import lombok.Getter;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,9 +19,21 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.web.client.RestTemplate;
+import uk.gov.laa.gpfd.model.FieldAttributes;
+import uk.gov.laa.gpfd.services.TemplateService;
+import uk.gov.laa.gpfd.services.excel.editor.CellValueSetter;
+import uk.gov.laa.gpfd.services.excel.editor.SheetDataWriter;
+import uk.gov.laa.gpfd.services.excel.formatting.CellFormatter;
+import uk.gov.laa.gpfd.services.excel.formatting.CellFormatting;
+import uk.gov.laa.gpfd.services.excel.formatting.ColumnFormatting;
+import uk.gov.laa.gpfd.services.excel.formatting.Formatting;
+import uk.gov.laa.gpfd.services.excel.tempalte.LocalTemplateClient;
+import uk.gov.laa.gpfd.services.excel.tempalte.TemplateClient;
 
 import javax.sql.DataSource;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
 * Configuration class for application-level beans and settings.
@@ -171,4 +186,95 @@ public class AppConfig {
         return new ContextBasedAuthorizationManager();
     }
 
+    /**
+     * Creates a {@link TemplateClient} which returns local template.
+     *
+     * @return a {@link LocalTemplateClient} instance
+     */
+    @Bean
+    public TemplateClient localTemplateClient() {
+        return new LocalTemplateClient();
+    }
+
+    /**
+     * Creates a {@link TemplateService} bean that delegates to the provided {@link TemplateClient}
+     * for loading Excel templates.
+     *
+     * @param templateClient the {@link TemplateClient} used to retrieve templates
+     * @return a {@link TemplateService} instance
+     */
+    @Bean
+    public TemplateService templateService(TemplateClient templateClient) {
+        return new TemplateService() {
+            @Override
+            public Workbook findTemplateById(String id) {
+                return findTemplateById(templateClient, id);
+            }
+        };
+    }
+
+    /**
+     * Creates a {@link CellValueSetter} bean for setting cell values in Excel sheets.
+     *
+     * @return a {@link CellValueSetter} instance
+     */
+    @Bean
+    public CellValueSetter cellValueSetterSupplier() {
+        return new CellValueSetter() {};
+    }
+
+    /**
+     * Creates a {@link CellFormatter} bean that applies formatting strategies to cells in Excel sheets.
+     *
+     * @param strategies a collection of {@link Formatting} strategies to apply
+     * @return a {@link CellFormatter} instance
+     */
+    @Bean
+    public CellFormatter cellFormatter(Collection<Formatting> strategies) {
+        return new CellFormatter() {
+            @Override
+            public void applyFormatting(Sheet sheet, Cell cell, FieldAttributes fieldAttribute) {
+                applyFormatting(strategies,sheet,cell,fieldAttribute);
+            }
+        };
+    }
+
+    /**
+     * Creates a {@link SheetDataWriter} bean for writing data to Excel sheets. This bean uses
+     * the provided {@link CellValueSetter} and {@link CellFormatter} to set cell values and apply formatting.
+     *
+     * @param cellValueSetterSupplier the {@link CellValueSetter} used to set cell values
+     * @param cellFormatter the {@link CellFormatter} used to apply cell formatting
+     * @return a {@link SheetDataWriter} instance
+     */
+    @Bean
+    public SheetDataWriter sheetDataWriter(CellValueSetter cellValueSetterSupplier, CellFormatter cellFormatter) {
+        return new SheetDataWriter() {
+            @Override
+            public void writeDataToSheet(Sheet sheet, List<Map<String, Object>> data, Collection<FieldAttributes> fieldAttributes) {
+                writeDataToSheet(cellValueSetterSupplier, cellFormatter, sheet, data, fieldAttributes);
+            }
+        };
+    }
+
+    /**
+     * Creates a {@link CellFormatting} bean for applying cell-level formatting strategies.
+     *
+     * @return a {@link CellFormatting} instance
+     */
+    @Bean
+    public CellFormatting cellFormattingStrategy() {
+        return new CellFormatting() {};
+    }
+
+    /**
+     * Creates a {@link ColumnFormatting} bean for applying column-level formatting strategies,
+     * such as setting column widths.
+     *
+     * @return a {@link ColumnFormatting} instance
+     */
+    @Bean
+    public ColumnFormatting columnWidthStrategy() {
+        return new ColumnFormatting() {};
+    }
 }
