@@ -20,10 +20,7 @@ public class Report {
     Timestamp lastDatabaseRefreshDate;
     private int numDaysToKeep;
     private UUID reportOutputType;
-    private UUID reportCreatorId;
     private String description;
-    private String reportCreatorName;
-    private String reportCreatorEmail;
     private UUID reportOwnerId;
     private String reportOwnerName;
     private String reportOwnerEmail;
