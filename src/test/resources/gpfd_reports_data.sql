@@ -16,7 +16,7 @@ VALUES
      'CCMS_invoice_analysis',
      'Y',
      'bd098666-94e4-4b0e-822c-8e5dfb04c908',
-     '00000000-0000-0000-0000-000000000001',
+     'b36f9bbb-1178-432c-8f99-8090e285f2d3',
      'Chancey Mctavish',
      'owneremail@email.com'
     ),
