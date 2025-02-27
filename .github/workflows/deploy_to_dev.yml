@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - main
+      - feature/lpf-570
 
 jobs:
 
