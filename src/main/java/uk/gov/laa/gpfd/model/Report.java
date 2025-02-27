@@ -12,6 +12,9 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+/**
+ * A class representing the data in the GPFD REPORTS Table.
+ */
 public class Report {
     private UUID id;
     private String name;

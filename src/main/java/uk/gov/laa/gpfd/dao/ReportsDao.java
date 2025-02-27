@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.model.Report;
+import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,11 @@ import java.util.UUID;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
+/**
+ * Fetches a list of report entries from the database, returns as {@link Report} objects, either list or single.
+ * @throws DatabaseReadException if there is an error fetching data from the database
+ * @throws ReportIdNotFoundException if there is no report with that Id found in the database
+ */
 public class ReportsDao {
     private static final String SELECT_ALL_REPORTS_SQL =
             "SELECT r.*, o.EXTENSION FROM GPFD.REPORTS r, GPFD.REPORT_OUTPUT_TYPES o " +
