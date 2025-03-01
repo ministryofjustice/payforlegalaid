@@ -453,30 +453,30 @@
         </sql>
     </changeSet>
 
-    <changeSet id="0002070-make-report-creator-id-nullable" author="jason smallman" >
+    <changeSet id="0002070-drop-report-creator-id" author="jason smallman" >
 
-        <comment>make REPORTS.REPORT_CREATOR_ID nullable</comment>
+        <comment>drop REPORTS.REPORT_CREATOR_ID</comment>
 
         <sql>
-            ALTER TABLE GPFD.REPORTS MODIFY REPORT_CREATOR_ID NULL
+            ALTER TABLE GPFD.REPORTS DROP COLUMN REPORT_CREATOR_ID
         </sql>
     </changeSet>
 
-    <changeSet id="0002075-make-report-creator-name-nullable" author="jason smallman" >
+    <changeSet id="0002075-drop-report-creator-name" author="jason smallman" >
 
-        <comment>make REPORTS.REPORT_CREATOR_NAME nullable</comment>
+        <comment>drop REPORTS.REPORT_CREATOR_NAME</comment>
 
         <sql>
-            ALTER TABLE GPFD.REPORTS MODIFY REPORT_CREATOR_NAME NULL
+            ALTER TABLE GPFD.REPORTS DROP COLUMN REPORT_CREATOR_NAME
         </sql>
     </changeSet>
 
-    <changeSet id="0002080-make-report-creator-email-nullable" author="jason smallman" >
+    <changeSet id="0002080-drop-report-creator-email" author="jason smallman" >
 
-        <comment>make REPORTS.REPORT_CREATOR_EMAIL nullable</comment>
+        <comment>drop REPORTS.REPORT_CREATOR_EMAIL</comment>
 
         <sql>
-            ALTER TABLE GPFD.REPORTS MODIFY REPORT_CREATOR_EMAIL NULL
+            ALTER TABLE GPFD.REPORTS DROP COLUMN REPORT_CREATOR_EMAIL
         </sql>
     </changeSet>
 
@@ -527,6 +527,33 @@
 
     </changeSet>
 
+    <changeSet id="0002110-make-reports-tracking-report-downloaded-by-nullable" author="jason smallman" >
+
+        <comment>make REPORTS_TRACKING.REPORT_DOWNLOADED_BY nullable</comment>
+
+        <sql>
+            ALTER TABLE GPFD.REPORTS_TRACKING MODIFY REPORT_DOWNLOADED_BY NULL
+        </sql>
+    </changeSet>
+
+    <changeSet id="0002115-make-reports-tracking-report-generated-by-nullable" author="jason smallman" >
+
+        <comment>make REPORTS_TRACKING.REPORT_GENERATED_BY nullable</comment>
+
+        <sql>
+            ALTER TABLE GPFD.REPORTS_TRACKING MODIFY REPORT_GENERATED_BY NULL
+        </sql>
+    </changeSet>
+
+    <changeSet id="0002200-drop-report-downloaded-by" author="jason smallman" >
+
+        <comment>drop REPORTS_TRACKING.REPORT_DOWNLOADED_BY</comment>
+
+        <sql>
+            ALTER TABLE GPFD.REPORTS_TRACKING DROP COLUMN REPORT_DOWNLOADED_BY
+        </sql>
+    </changeSet>
+
     <changeSet id="0002200-insert-reference-data-for-reports-output-types" author="jason smallman">
 
         <comment>Insert initial data into REPORT_OUTPUT_TYPES</comment>
@@ -539,7 +566,7 @@
 
         <insert tableName="REPORT_OUTPUT_TYPES" schemaName="GPFD">
             <column name="ID" value="bd098666-94e4-4b0e-822c-8e5dfb04c908"/>
-            <column name="EXTENSION" value="xls"/>
+            <column name="EXTENSION" value="xlsx"/>
             <column name="DESCRIPTION" value="Excel Document"/>
         </insert>
 
