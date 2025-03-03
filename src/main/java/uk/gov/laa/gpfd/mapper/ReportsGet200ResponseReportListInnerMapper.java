@@ -31,11 +31,12 @@ public class ReportsGet200ResponseReportListInnerMapper {
         }};
     }
 
+    @SuppressWarnings("java:S3599")
     public static ReportsGet200ResponseReportListInner map(Report reportData) {
-        ReportsGet200ResponseReportListInner result = new ReportsGet200ResponseReportListInner();
-        result.setId(reportData.getId());
-        result.setReportName(reportData.getName());
-        result.setDescription(reportData.getDescription());
-        return result;
+        return new ReportsGet200ResponseReportListInner() {{
+            setId(reportData.getId());
+            setReportName(reportData.getName());
+            description(reportData.getDescription());
+        }};
     }
 }

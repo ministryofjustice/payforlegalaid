@@ -49,7 +49,7 @@ public class ReportsDaoTest {
     }
 
     @Test
-    void shouldReturnSingleReport() {
+    void shouldReturnSingleReportById() {
         Report report = reportsDao.fetchReport(DEFAULT_REPORT_ID);
         assertEquals("b36f9bbb-1178-432c-8f99-8090e285f2d3", report.getId().toString());
 

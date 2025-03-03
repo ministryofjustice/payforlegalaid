@@ -36,11 +36,11 @@ public class ReportsDao {
     private final JdbcTemplate readOnlyJdbcTemplate;
     private final ModelMapper modelMapper;
 
-    private void fetchReportResults(List<Report> reportsList,
+    private List<Report> fetchReportResults(List<Report> reportsList,
                                     String sqlCommand,
                                     Object ... args)
             throws DatabaseReadException, ReportIdNotFoundException {
-        List<Map<String, Object>> resultList = null;
+        List<Map<String, Object>> resultList = new ArrayList<>();
 
         try {
             log.info("Reading reports");
@@ -66,19 +66,15 @@ public class ReportsDao {
         } catch (MappingException e) {
             log.error("Exception with model map loop: %s", e);
         }
-    }
-
-    public List<Report> fetchReportList() throws DatabaseReadException {
-        List<Report> reportsList = new ArrayList<>();
-
-        fetchReportResults(reportsList, SELECT_ALL_REPORTS_SQL);
 
         return reportsList;
     }
 
-    public Report fetchReport(UUID reportId) throws DatabaseReadException {
-        List<Report> reportList = new ArrayList<>();
-        fetchReportResults(reportList, SELECT_SINGLE_REPORT_SQL, reportId.toString());
-        return reportList.get(0);
+    public List<Report> fetchReportList() throws DatabaseReadException, ReportIdNotFoundException {
+        return fetchReportResults(new ArrayList<>(), SELECT_ALL_REPORTS_SQL);
+    }
+
+    public Report fetchReport(UUID reportId) throws DatabaseReadException, ReportIdNotFoundException {
+        return fetchReportResults(new ArrayList<>(), SELECT_SINGLE_REPORT_SQL, reportId.toString()).get(0);
     }
 }
