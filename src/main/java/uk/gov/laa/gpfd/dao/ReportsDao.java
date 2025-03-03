@@ -12,10 +12,8 @@ import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.sql.Timestamp;
+import java.util.*;
 
 @Slf4j
 @Repository
@@ -36,12 +34,12 @@ public class ReportsDao {
     private final JdbcTemplate readOnlyJdbcTemplate;
     private final ModelMapper modelMapper;
 
-    private List<Report> fetchReportResults(List<Report> reportsList,
+    private List<Report> fetchReportResults(
                                     String sqlCommand,
                                     Object ... args)
             throws DatabaseReadException, ReportIdNotFoundException {
         List<Map<String, Object>> resultList = new ArrayList<>();
-
+        List<Report> reportsList = new ArrayList<>();
         try {
             log.info("Reading reports");
             if (args != null && args.length > 0) {
@@ -59,10 +57,10 @@ public class ReportsDao {
         }
 
         try {
-            resultList.forEach(obj -> {
-                Report report = modelMapper.map(obj, Report.class);
-                reportsList.add(report);
-            });
+            reportsList = resultList.stream()
+                    .map(ReportsDao::map)
+                    .toList();
+
         } catch (MappingException e) {
             log.error("Exception with model map loop: %s", e);
         }
@@ -70,11 +68,33 @@ public class ReportsDao {
         return reportsList;
     }
 
+    @SuppressWarnings("java:S3599")
+    public static Report map(Map<String, Object> reportData) {
+
+        return new Report() {{
+            setId(UUID.fromString(reportData.get("ID").toString()));
+            setReportOutputType(UUID.fromString(reportData.get("REPORT_OUTPUT_TYPE").toString()));
+            setReportOwnerId(UUID.fromString(reportData.get("REPORT_OWNER_ID").toString()));
+            setName(reportData.get("NAME").toString());
+            setDescription(reportData.get("DESCRIPTION").toString());
+            setTemplateSecureDocumentId(reportData.get("TEMPLATE_SECURE_DOCUMENT_ID").toString());
+            setReportOwnerName(reportData.get("REPORT_OWNER_NAME").toString());
+            setReportOwnerEmail(reportData.get("REPORT_OWNER_EMAIL").toString());
+            setFileName(reportData.get("FILE_NAME").toString());
+            setExtension(reportData.get("EXTENSION").toString());
+            setActive(reportData.get("ACTIVE").toString().contentEquals("Y"));
+            setReportCreationDate(Timestamp.valueOf(reportData.get("REPORT_CREATION_DATE").toString()));
+            setLastDatabaseRefreshDate(Timestamp.valueOf(reportData.get("LAST_DATABASE_REFRESH_DATETIME").toString()));
+            setNumDaysToKeep(Integer.valueOf(reportData.get("NUM_DAYS_TO_KEEP").toString()));
+
+        }};
+    }
+
     public List<Report> fetchReportList() throws DatabaseReadException, ReportIdNotFoundException {
-        return fetchReportResults(new ArrayList<>(), SELECT_ALL_REPORTS_SQL);
+        return fetchReportResults(SELECT_ALL_REPORTS_SQL);
     }
 
     public Report fetchReport(UUID reportId) throws DatabaseReadException, ReportIdNotFoundException {
-        return fetchReportResults(new ArrayList<>(), SELECT_SINGLE_REPORT_SQL, reportId.toString()).get(0);
+        return fetchReportResults(SELECT_SINGLE_REPORT_SQL, reportId.toString()).get(0);
     }
 }

@@ -21,7 +21,7 @@ public class Report {
     private String templateSecureDocumentId;
     Timestamp reportCreationDate;
     Timestamp lastDatabaseRefreshDate;
-    private int numDaysToKeep;
+    private Integer numDaysToKeep;
     private UUID reportOutputType;
     private String description;
     private UUID reportOwnerId;
