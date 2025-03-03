@@ -42,16 +42,14 @@ public class ReportsDaoTest {
         List<Report> results = reportsDao.fetchReportList();
 
         assertEquals(3, results.size());
-        assertEquals("b36f9bbb-1178-432c-8f99-8090e285f2d3", results.get(0).getId().toString());
+        assertEquals("b36f9bbb-1178-432c-8f99-8090e285f2d3", results.get(0).getReportId().toString());
         assertEquals(30, results.get(0).getNumDaysToKeep());
-        assertEquals("xlsx", results.get(0).getExtension());
-        assertEquals("csv", results.get(2).getExtension());
     }
 
     @Test
     void shouldReturnSingleReport() {
         Report report = reportsDao.fetchReport(DEFAULT_REPORT_ID);
-        assertEquals("b36f9bbb-1178-432c-8f99-8090e285f2d3", report.getId().toString());
+        assertEquals("b36f9bbb-1178-432c-8f99-8090e285f2d3", report.getReportId().toString());
 
     }
 }

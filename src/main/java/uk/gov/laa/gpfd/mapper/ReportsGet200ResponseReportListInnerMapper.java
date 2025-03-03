@@ -31,9 +31,10 @@ public class ReportsGet200ResponseReportListInnerMapper {
         }};
     }
 
+    @SuppressWarnings("java:S3599")
     public static ReportsGet200ResponseReportListInner map(Report reportData) {
         return new ReportsGet200ResponseReportListInner() {{
-            setId(reportData.getId());
+            setId(reportData.getReportId());
             setReportName(reportData.getName());
             description(reportData.getDescription());
         }};

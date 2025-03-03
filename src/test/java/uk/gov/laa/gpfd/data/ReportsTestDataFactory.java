@@ -1,6 +1,8 @@
 package uk.gov.laa.gpfd.data;
 
+import uk.gov.laa.gpfd.model.ImmutableReportOutputType;
 import uk.gov.laa.gpfd.model.Report;
+import uk.gov.laa.gpfd.model.ReportOutputType;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -8,61 +10,39 @@ import java.util.UUID;
 
 public class ReportsTestDataFactory {
     public static Report aCCMSInvoiceAnalysisExcelReport (){
-        return new Report(
-        UUID.fromString("b36f9bbb-1178-432c-8f99-8090e285f2d3"),
-        "CCMS Invoice Analysis (CIS to CCMS)",
-        "00000000-0000-0000-0000-000000000000",
-        new Timestamp(System.currentTimeMillis()),
-        null,
-        30,
-        UUID.fromString("bd098666-94e4-4b0e-822c-8e5dfb04c908"),
-        "Summary of invoices in CIS and CCMS by original source IT system",
-        UUID.fromString("00000000-0000-0000-0000-000000000001"),
-        "Chancey Mctavish",
-        "owneremail@email.com",
-        "CCMS_invoice_analysis",
-        "Y",
-        "xlsx"
-        );
+        return Report.builder()
+                .name("CCMS Invoice Analysis (CIS to CCMS)")
+                .reportId(UUID.fromString("b36f9bbb-1178-432c-8f99-8090e285f2d3"))
+                .templateSecureDocumentId( "00000000-0000-0000-0000-000000000000")
+                .reportOwnerEmail("owneremail@email.com")
+                .reportCreationTime(new Timestamp(System.currentTimeMillis()))
+                .reportOwnerId(UUID.fromString("bd098666-94e4-4b0e-822c-8e5dfb04c908"))
+                .numDaysToKeep(30)
+                .active(true)
+                .reportOwnerName("Chancey Mctavish")
+                .reportOutputType(ImmutableReportOutputType.builder().extension("xls").description("Sample description").build())
+                .build();
     }
 
     public static Report aCCMSInvoiceAnalysisCSVReport () {
-        return new Report(
-                UUID.fromString("f46b4d3d-c100-429a-bf9a-6c3305dbdbf5"),
-                "CIS to CCMS payment value Not Defined",
-                "00000000-0000-0000-0000-000000000000",
-                new Timestamp(System.currentTimeMillis()),
-                null,
-                60,
-                UUID.fromString("6ebd27ac-4d83-485d-a4fd-3e45f9a53484"),
-                "Details of invoices transferred from CIS to CCMS by Legal Aid Scheme",
-                UUID.fromString("00000000-0000-0000-0000-000000000003"),
-                "William Moore",
-                "William.Moore@Justicedept.gov.uk",
-                "CIS_TO_CCMS_PAYMENT_VALUE_NOT_DEFINED",
-                "Y",
-                "csv"
-        );
+        return Report.builder()
+                .name("CCMS Invoice Analysis (CIS to CCMS)")
+                .reportId(UUID.fromString("b36f9bbb-1178-432c-8f99-8090e285f2d3"))
+                .templateSecureDocumentId( "00000000-0000-0000-0000-000000000000")
+                .reportOwnerEmail("owneremail@email.com")
+                .reportCreationTime(new Timestamp(System.currentTimeMillis()))
+                .reportOwnerId(UUID.fromString("bd098666-94e4-4b0e-822c-8e5dfb04c908"))
+                .numDaysToKeep(30)
+                .active(true)
+                .reportOwnerName("William Moore")
+                .reportOwnerEmail("William.Moore@Justicedept.gov.uk")
+                .templateSecureDocumentId("00000000-0000-0000-0000-000000000000")
+                .reportOutputType(ImmutableReportOutputType.builder().extension("csv").description("Sample description").build())
+                .build();
 
     }
     public static Report invalidReportData () {
-        return new Report(
-                null,
-                null,
-                null,
-                null,
-                null,
-                0,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                "Y",
-                null
-        );
-
+        return Report.builder().build();
     }
 
 }
