@@ -545,12 +545,12 @@
         </sql>
     </changeSet>
 
-    <changeSet id="0002200-drop-report-downloaded-by" author="jason smallman" >
+    <changeSet id="0002120-drop-report-generated-by" author="jason smallman" >
 
-        <comment>drop REPORTS_TRACKING.REPORT_DOWNLOADED_BY</comment>
+        <comment>drop REPORTS_TRACKING.REPORT_GENERATED_BY</comment>
 
         <sql>
-            ALTER TABLE GPFD.REPORTS_TRACKING DROP COLUMN REPORT_DOWNLOADED_BY
+            ALTER TABLE GPFD.REPORTS_TRACKING DROP COLUMN REPORT_GENERATED_BY
         </sql>
     </changeSet>
 
