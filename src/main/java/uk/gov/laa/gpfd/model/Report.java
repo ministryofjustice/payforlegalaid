@@ -28,6 +28,6 @@ public class Report {
     private String reportOwnerName;
     private String reportOwnerEmail;
     private String fileName;
-    private String active;
+    private Boolean active;
     private String extension;
 }

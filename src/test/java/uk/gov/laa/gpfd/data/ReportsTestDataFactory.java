@@ -21,7 +21,7 @@ public class ReportsTestDataFactory {
         "Chancey Mctavish",
         "owneremail@email.com",
         "CCMS_invoice_analysis",
-        "Y",
+        false,
         "xlsx"
         );
     }
@@ -40,7 +40,7 @@ public class ReportsTestDataFactory {
                 "William Moore",
                 "William.Moore@Justicedept.gov.uk",
                 "CIS_TO_CCMS_PAYMENT_VALUE_NOT_DEFINED",
-                "Y",
+                true,
                 "csv"
         );
 
@@ -59,7 +59,7 @@ public class ReportsTestDataFactory {
                 null,
                 null,
                 null,
-                "Y",
+                true,
                 null
         );
 
