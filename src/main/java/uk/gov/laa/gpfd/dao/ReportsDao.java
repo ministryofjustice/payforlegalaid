@@ -19,9 +19,8 @@ import java.util.*;
 @Repository
 @RequiredArgsConstructor
 /**
- * Fetches a list of report entries from the database, returns as {@link Report} objects, either list or single.
- * @throws DatabaseReadException if there is an error fetching data from the database
- * @throws ReportIdNotFoundException if there is no report with that Id found in the database
+ * Data access class responsible for interacting with the Reports table and transforming its data
+ * into a format suitable for other services.
  */
 public class ReportsDao {
     private static final String SELECT_ALL_REPORTS_SQL =
@@ -34,6 +33,11 @@ public class ReportsDao {
     private final JdbcTemplate readOnlyJdbcTemplate;
     private final ModelMapper modelMapper;
 
+    /**
+     * Fetches a list of report entries from the database, returns as {@link Report} objects, either list or single.
+     * @throws DatabaseReadException if there is an error fetching data from the database
+     * @throws ReportIdNotFoundException if there is no report with that Id found in the database
+     */
     private List<Report> fetchReportResults(
                                     String sqlCommand,
                                     Object ... args)
