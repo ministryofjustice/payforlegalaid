@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.laa.gpfd.dao.ReportsDao;
 import uk.gov.laa.gpfd.data.ReportsTestDataFactory;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
+import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.mapper.ReportsGet200ResponseReportListInnerMapper;
 import uk.gov.laa.gpfd.services.ReportManagementService;
 
@@ -101,5 +102,21 @@ public class ReportManagementServiceTest {
         assertNotNull(result);
         assertEquals(2, result.size());  // Only one valid mapping should be returned
         verify(reportsDao, times(1)).fetchReportList();
+    }
+
+    @Test
+    void shouldRaiseDatbaseReadExceptionWhenDatabaseReadException() throws DatabaseReadException {
+        when(reportsDao.fetchReportList()).thenThrow(DatabaseReadException.class);
+
+        assertThrows(DatabaseReadException.class,
+                () -> reportsService.fetchReportListEntries());
+    }
+
+    @Test
+    void shouldRaiseReportIdNotFoundExceptionWhenReportIdNotFoundException() throws ReportIdNotFoundException {
+        when(reportsDao.fetchReportList()).thenThrow(ReportIdNotFoundException.class);
+
+        assertThrows(ReportIdNotFoundException.class,
+                () -> reportsService.fetchReportListEntries());
     }
 }

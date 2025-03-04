@@ -76,21 +76,88 @@ public class ReportsDao {
     public static Report map(Map<String, Object> reportData) {
 
         return new Report() {{
-            setId(UUID.fromString(reportData.get("ID").toString()));
-            setReportOutputType(UUID.fromString(reportData.get("REPORT_OUTPUT_TYPE").toString()));
-            setReportOwnerId(UUID.fromString(reportData.get("REPORT_OWNER_ID").toString()));
-            setName(reportData.get("NAME").toString());
-            setDescription(reportData.get("DESCRIPTION").toString());
-            setTemplateSecureDocumentId(reportData.get("TEMPLATE_SECURE_DOCUMENT_ID").toString());
-            setReportOwnerName(reportData.get("REPORT_OWNER_NAME").toString());
-            setReportOwnerEmail(reportData.get("REPORT_OWNER_EMAIL").toString());
-            setFileName(reportData.get("FILE_NAME").toString());
-            setExtension(reportData.get("EXTENSION").toString());
-            setActive(reportData.get("ACTIVE").toString().contentEquals("Y"));
-            setReportCreationDate(Timestamp.valueOf(reportData.get("REPORT_CREATION_DATE").toString()));
-            setLastDatabaseRefreshDate(Timestamp.valueOf(reportData.get("LAST_DATABASE_REFRESH_DATETIME").toString()));
-            setNumDaysToKeep(Integer.valueOf(reportData.get("NUM_DAYS_TO_KEEP").toString()));
+            if (reportData.get("ID") != null) {
+                setId(UUID.fromString(reportData.get("ID").toString()));
+            } else {
+                setId(null);
+            }
+            if (reportData.get("REPORT_OUTPUT_TYPE") != null) {
+                setReportOutputType(UUID.fromString(reportData.get("REPORT_OUTPUT_TYPE").toString()));
+            } else {
+                setReportOutputType(null);
+            }
 
+            if (reportData.get("REPORT_OWNER_ID") != null) {
+                setReportOwnerId(UUID.fromString(reportData.get("REPORT_OWNER_ID").toString()));
+            } else {
+                setReportOwnerId(null);
+            }
+
+            if (reportData.get("NAME") != null) {
+                setName(reportData.get("NAME").toString());
+            } else {
+                setName("");
+            }
+
+            if (reportData.get("DESCRIPTION") != null) {
+                setDescription(reportData.get("DESCRIPTION").toString());
+            } else {
+                setDescription("");
+            }
+
+            if (reportData.get("TEMPLATE_SECURE_DOCUMENT_ID") != null) {
+                setTemplateSecureDocumentId(reportData.get("TEMPLATE_SECURE_DOCUMENT_ID").toString());
+            } else {
+                setTemplateSecureDocumentId(null);
+            }
+
+            if (reportData.get("REPORT_OWNER_NAME") != null) {
+                setReportOwnerName(reportData.get("REPORT_OWNER_NAME").toString());
+            } else {
+                setReportOwnerName("");
+            }
+
+            if (reportData.get("REPORT_OWNER_EMAIL") != null) {
+                setReportOwnerEmail(reportData.get("REPORT_OWNER_EMAIL").toString());
+            } else {
+                setReportOwnerEmail("");
+            }
+
+            if (reportData.get("FILE_NAME") != null) {
+                setFileName(reportData.get("FILE_NAME").toString());
+            } else {
+                setFileName("");
+            }
+
+            if (reportData.get("EXTENSION") != null) {
+                setExtension(reportData.get("EXTENSION").toString());
+            } else {
+                setExtension("");
+            }
+
+            if (reportData.get("ACTIVE") != null) {
+                setActive(reportData.get("ACTIVE").toString().contentEquals("Y"));
+            } else {
+                setActive(false);
+            }
+
+            if (reportData.get("NUM_DAYS_TO_KEEP") != null) {
+                setNumDaysToKeep(Integer.valueOf(reportData.get("NUM_DAYS_TO_KEEP").toString()));
+            } else {
+                setNumDaysToKeep(0);
+            }
+
+            if (reportData.get("REPORT_CREATION_DATE") != null) {
+                setReportCreationDate(Timestamp.valueOf(reportData.get("REPORT_CREATION_DATE").toString()));
+            } else {
+                setReportCreationDate(null);
+            }
+
+            if (reportData.get("LAST_DATABASE_REFRESH_DATE") != null) {
+                setLastDatabaseRefreshDate(Timestamp.valueOf(reportData.get("LAST_DATABASE_REFRESH_DATE").toString()));
+            } else {
+                setLastDatabaseRefreshDate(null);
+            }
         }};
     }
 
