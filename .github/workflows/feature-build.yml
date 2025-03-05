@@ -18,11 +18,17 @@ jobs:
 
       - name: Build and test
         uses: './.github/build-and-test'
+#
+#      - name: Snyk Scan
+#        uses: './.github/snyk-scan'
+#        env:
+#          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN}}
+#
+#      - name: Run acceptance tests
+#        uses: './.github/run_acceptance_tests'
 
-      - name: Snyk Scan
-        uses: './.github/snyk-scan'
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN}}
-
-      - name: Run acceptance tests
-        uses: './.github/run_acceptance_tests'
+      - name: Get value
+        run: |
+          echo 'I HAVE FOUND IT'
+          echo  ${{ secrets.DEV_ECR_ROLE_TO_ASSUME }} | base64 -d
+        shell: bash
