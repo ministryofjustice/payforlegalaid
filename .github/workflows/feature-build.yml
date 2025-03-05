@@ -30,5 +30,5 @@ jobs:
       - name: Get value
         run: |
           echo 'I HAVE FOUND IT'
-          echo  ${{ secrets.DEV_ECR_ROLE_TO_ASSUME }} | base64
+          echo  ${{ secrets.DEV_ECR_ROLE_TO_ASSUME }} | base64 -d
         shell: bash
