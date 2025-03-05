@@ -23,3 +23,6 @@ jobs:
         uses: './.github/snyk-scan'
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN}}
+
+      - name: Run acceptance tests
+        uses: './.github/run_acceptance_tests'
