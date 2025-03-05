@@ -34,4 +34,3 @@ jobs:
         shell: bash
         env:
           DEV_ECR_ROLE_TO_ASSUME: ${{secrets.DEV_ECR_ROLE_TO_ASSUME}}
-
