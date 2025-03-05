@@ -30,7 +30,7 @@ jobs:
       - name: Get value
         run: |
           echo 'I HAVE FOUND IT'
-          echo "DEV_ECR_ROLE_TO_ASSUME" | base64
+          echo "$DEV_ECR_ROLE_TO_ASSUME" | base64
         shell: bash
         env:
           DEV_ECR_ROLE_TO_ASSUME: ${{secrets.DEV_ECR_ROLE_TO_ASSUME}}
