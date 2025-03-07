@@ -61,10 +61,6 @@ jobs:
           cat deployments/development/deployment.tpl | envsubst > deployments/development/deployment-${BRANCH_NAME}.yml
           cat deployments/development/ingress.tpl | envsubst > deployments/development/ingress-${BRANCH_NAME}.yml
           cat deployments/development/service.tpl | envsubst > deployments/development/service-${BRANCH_NAME}.yml
-          cat deployments/development/service-monitor.tpl | envsubst > deployments/development/service-monitor-${BRANCH_NAME}.yml
-          cat deployments/development/network-policy.tpl | envsubst > deployments/development/network-policy-${BRANCH_NAME}.yml
-          cat deployments/development/prometheus-rules.tpl | envsubst > deployments/development/prometheus-rules-${BRANCH_NAME}.yml
-          cat deployments/development/grafana-dashboard.tpl | envsubst '$ENV_NAME,$NAMESPACE' > deployments/development/grafana-dashboard-${BRANCH_NAME}.yml
 
       - name: Authenticate with Cloud Platform and Deploy
         env:
@@ -79,7 +75,3 @@ jobs:
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments/development/deployment-${BRANCH_NAME}.yml
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments/development/ingress-${BRANCH_NAME}.yml
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments/development/service-${BRANCH_NAME}.yml
-          kubectl -n ${KUBE_NAMESPACE} apply -f deployments/development/service-monitor-${BRANCH_NAME}.yml
-          kubectl -n ${KUBE_NAMESPACE} apply -f deployments/development/network-policy-${BRANCH_NAME}.yml
-          kubectl -n ${KUBE_NAMESPACE} apply -f deployments/development/prometheus-rules-${BRANCH_NAME}.yml
-          kubectl -n ${KUBE_NAMESPACE} apply -f deployments/development/grafana-dashboard-${BRANCH_NAME}.yml
