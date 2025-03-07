@@ -88,6 +88,6 @@ jobs:
       - name: Trigger Acceptance Test Workflow
         run: |
           curl -X POST -H "Accept: application/vnd.github.everest-preview+json" \
-               -H "Authorization: token ${{ secrets.RUN_AT_WORKFLOW }}" \
+               -H "Authorization: token ${{ secrets.TEST_REPO_ACCESS_TOKEN }}" \
                https://api.github.com/repos/ministryofjustice/payforlegalaid-tests/dispatches \
                -d '{"event_type": "trigger-tests"}'
