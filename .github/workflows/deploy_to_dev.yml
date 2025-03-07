@@ -1,7 +1,16 @@
 on:
+  workflow_dispatch:
+    inputs:
+      target_service:
+        description: 'ministryofjustice/payforlegalaid-tests'
+        required: true
+      target_version:
+        description: '0.0.1-SNAPSHOT'
+        required: true
   push:
     branches:
       - main
+      - feature/lpf-535
 
 jobs:
 
@@ -75,3 +84,10 @@ jobs:
           kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
           kubectl config use-context ${KUBE_CLUSTER}
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments/development/
+
+      - name: Trigger Acceptance Test Workflow
+        run: |
+          curl -X POST -H "Accept: application/vnd.github.everest-preview+json" \
+               -H "Authorization: token ${{ secrets.TEST_REPO_ACCESS_TOKEN }}" \
+               https://api.github.com/repos/ministryofjustice/payforlegalaid-tests/dispatches \
+               -d '{"event_type": "trigger-tests"}'
