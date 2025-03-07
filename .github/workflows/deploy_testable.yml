@@ -69,6 +69,7 @@ jobs:
         env:
           KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
           KUBE_CLUSTER: ${{ secrets.KUBE_CLUSTER_DEV }}
+          BRANCH_NAME: ${{ github.ref_name }}
         run: |
           echo "${{ secrets.KUBE_CERT_DEV }}" > ca.crt
           kubectl config set-cluster ${KUBE_CLUSTER} --certificate-authority=./ca.crt --server=https://${KUBE_CLUSTER}
