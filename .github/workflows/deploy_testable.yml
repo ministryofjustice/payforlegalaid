@@ -60,7 +60,7 @@ jobs:
           REPOSITORY: ${{ vars.DEV_ECR_REPOSITORY }}
           NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
           BRANCH_NAME: ${{ github.ref_name }}
-          GPFD_URL: https://test-${BRANCH_NAME}-gpfd.apps.live.cloud-platform.service.justice.gov.uk
+          GPFD_URL: https://test-${{ github.ref_name }}-gpfd.apps.live.cloud-platform.service.justice.gov.uk
         run: |
           cat deployments/dev/deployment.tpl | envsubst > deployments/dev/deployment-${BRANCH_NAME}.yml
           cat deployments/dev/ingress.tpl | envsubst > deployments/dev/ingress-${BRANCH_NAME}.yml
