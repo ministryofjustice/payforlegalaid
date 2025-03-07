@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ${BRANCH_NAME}-gpfd-dev-service
+  name: test-${BRANCH_NAME}-gpfd-dev-service
 spec:
   selector:
     app: gpfd-dev

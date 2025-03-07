@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   name: test-${BRANCH_NAME}-gpfd-dev-ingress
   annotations:
-    external-dns.alpha.kubernetes.io/set-identifier: gpfd-dev-ingress-${NAMESPACE}-green
+    external-dns.alpha.kubernetes.io/set-identifier: test-${BRANCH_NAME}-gpfd-dev-ingress-${NAMESPACE}-green
     external-dns.alpha.kubernetes.io/aws-weight: "100"
     nginx.ingress.kubernetes.io/backend-protocol: http
     nginx.ingress.kubernetes.io/affinity: "cookie"
