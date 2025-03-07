@@ -63,6 +63,8 @@ spec:
                 secretKeyRef:
                   name: gpfd-test-secret-01
                   key: mojfin-db-url
+            - name: GPFD_URL
+              value: {GPFD_URL}
           securityContext:
             capabilities:
               drop:
