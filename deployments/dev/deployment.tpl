@@ -4,6 +4,7 @@ metadata:
   name: test-${BRANCH_NAME}-gpfd-dev-deployment
   labels:
     app: gpfd-dev
+    branch: ${BRANCH_NAME}
 spec:
   replicas: 1
   selector:

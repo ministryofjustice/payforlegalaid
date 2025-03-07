@@ -7,6 +7,8 @@ metadata:
     external-dns.alpha.kubernetes.io/aws-weight: "100"
     nginx.ingress.kubernetes.io/backend-protocol: http
     nginx.ingress.kubernetes.io/affinity: "cookie"
+  labels:
+    branch: ${BRANCH_NAME}
 spec:
   ingressClassName: default
   tls:
