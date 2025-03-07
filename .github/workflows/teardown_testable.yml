@@ -38,4 +38,5 @@ jobs:
         run: |
           kubectl delete service -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE} || true
           kubectl delete ingress -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE} || true
-          kubectl delete pod -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE}
+          kubectl delete pods -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE} || true
+          kubectl delete deployment -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE}
