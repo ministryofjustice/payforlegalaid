@@ -1,11 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: gpfd-dev-deployment
+  name: testable-${BRANCH_NAME}-gpfd-dev-deployment
   labels:
     app: gpfd-dev
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: gpfd-dev
@@ -14,29 +14,19 @@ spec:
       labels:
         app: gpfd-dev
     spec:
-      serviceAccountName: example-name #This relates to the IRSA module in our namespace, within the cloud-platform-environments repo
-      #      initContainers:
-      #        - name: create-directory
-      #          image: busybox
-      #          command: ["sh", "-c", "mkdir -p /app/csv-files"]
-      #          volumeMounts:
-      #            - name: csv-storage
-      #              mountPath: /app/csv-files
+      serviceAccountName: laa-get-payments-finance-data-dev-service
       containers:
         - name: gpfd-api-container-dev
           image: ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
-          #          volumeMounts:
-          #            - name: csv-storage
-          #              mountPath: /app/csv-files
           ports:
-            - containerPort: 8443
+            - containerPort: 8080
           env:
             - name: SPRING_PROFILES_ACTIVE
-              value: "dev"                  #TODO - use a configmap once more environments are added
+              value: "dev"
             - name: AZURE_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: gpfd-test-secret-01 #todo - change this to a more descriptive name in a cloud platform PR
+                  name: gpfd-test-secret-01
                   key: client-secret
             - name: AZURE_CLIENT_ID
               valueFrom:
@@ -68,10 +58,16 @@ spec:
                 secretKeyRef:
                   name: gpfd-test-secret-01
                   key: mojfin-dev-write-password
-#      volumes:
-#        - name: csv-storage
-#          emptyDir: {} #Using ephemeral storage which is shared between pods and is deleted when a pod is shut down
-
-
-# This is a generic file that creates a Kubernetes deployment in our namespace. A deployment is a collection of pods
-# that runs one or more containers. In this application, currently only one container is run in the pod.
+            - name: MOJFIN_DB_URL
+              valueFrom:
+                secretKeyRef:
+                  name: gpfd-test-secret-01
+                  key: mojfin-db-url
+          securityContext:
+            capabilities:
+              drop:
+              - ALL
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault
