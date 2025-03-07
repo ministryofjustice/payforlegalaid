@@ -4,6 +4,9 @@ on:
   delete:
     branches:
       - 'testable*'
+  push:
+    branches:
+      - deploy-feature-dev
 
 jobs:
   cleanup-testable:
