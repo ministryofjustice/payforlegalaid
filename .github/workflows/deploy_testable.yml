@@ -50,7 +50,8 @@ jobs:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
 
       - name: Echo branch name
-        run: echo "Branch name: ${{ github.ref_name }}"
+        run: |
+          echo "Branch name: ${{ github.ref_name }}"
 
       - name: Generate Kubernetes files from templates
         env:
