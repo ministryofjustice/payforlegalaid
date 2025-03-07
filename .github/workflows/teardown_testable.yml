@@ -1,0 +1,33 @@
+name: Tear Down Testable Environment
+
+on:
+  delete:
+    branches:
+      - 'testable*'
+
+jobs:
+  cleanup-testable:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Github Repository
+        uses: actions/checkout@v4
+
+      - name: Authenticate with Cloud Platform
+        env:
+          KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
+          KUBE_CLUSTER: ${{ secrets.KUBE_CLUSTER_DEV }}
+        run: |
+          echo "${{ secrets.KUBE_CERT_DEV }}" > ca.crt
+          kubectl config set-cluster ${KUBE_CLUSTER} --certificate-authority=./ca.crt --server=https://${KUBE_CLUSTER}
+          kubectl config set-credentials deploy-user --token=${{ secrets.KUBE_TOKEN_DEV }}
+          kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
+          kubectl config use-context ${KUBE_CLUSTER}
+
+      - name: Delete Kubernetes resources
+        env:
+          BRANCH_NAME: ${{ github.ref_name }}
+        run: |
+          kubectl -n ${KUBE_NAMESPACE} delete -f deployments/dev/deployment-${BRANCH_NAME}.yml || true
+          kubectl -n ${KUBE_NAMESPACE} delete -f deployments/dev/ingress-${BRANCH_NAME}.yml || true
+          kubectl -n ${KUBE_NAMESPACE} delete -f deployments/dev/service-${BRANCH_NAME}.yml
