@@ -7,24 +7,83 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import uk.gov.laa.gpfd.exception.CsvStreamException;
-import uk.gov.laa.gpfd.exception.DatabaseReadException;
-import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
+import uk.gov.laa.gpfd.exception.*;
 import uk.gov.laa.gpfd.model.ReportsGet400Response;
 import uk.gov.laa.gpfd.model.ReportsGet404Response;
 import uk.gov.laa.gpfd.model.ReportsGet500Response;
 
 import static org.springframework.http.ResponseEntity.badRequest;
 import static org.springframework.http.ResponseEntity.internalServerError;
+import static uk.gov.laa.gpfd.exception.TemplateResourceException.ExcelTemplateCreationException;
+import static uk.gov.laa.gpfd.exception.TemplateResourceException.LocalTemplateReadException;
+import static uk.gov.laa.gpfd.exception.TransferException.StreamException.ExcelStreamWriteException;
 
 /**
  * Global exception handler for managing exceptions thrown by controllers.
  */
 @Slf4j
 @ControllerAdvice
+@SuppressWarnings({"java:S1171", "java:S3599"}) //Disabling due to generated code
 public class GlobalExceptionHandler {
 
     private static final String ERROR_STRING = "Error: ";
+
+    /**
+     * Handles LocalTemplateReadException and responds with an HTTP 500 Internal Server Error.
+     *
+     * @param e the LocalTemplateReadException thrown when there is an issue reading a local template resource.
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
+     */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(LocalTemplateReadException.class)
+    public ResponseEntity<ReportsGet500Response> handleLocalTemplateReadException(LocalTemplateReadException e) {
+        var response = new ReportsGet500Response() {{
+            setError(e.getMessage());
+        }};
+
+        log.error("LocalTemplateReadException Thrown: {}", response.getError());
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
+    /**
+     * Handles ExcelTemplateCreationException and responds with an HTTP 500 Internal Server Error.
+     *
+     * @param e the ExcelTemplateCreationException thrown when there is an issue creating an Excel template.
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
+     */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(ExcelTemplateCreationException.class)
+    public ResponseEntity<ReportsGet500Response> handleExcelTemplateCreationException(ExcelTemplateCreationException e) {
+        var response = new ReportsGet500Response() {{
+            setError(e.getMessage());
+        }};
+
+        log.error("ExcelTemplateCreationException Thrown: {}", response.getError());
+        if (e.getCause() != null) {
+            log.error("Caused by: {}", e.getCause().getMessage());
+        }
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
+    /**
+     * Handles ExcelStreamWriteException and responds with an HTTP 500 Internal Server Error.
+     *
+     * @param e the ExcelStreamWriteException thrown when there is an issue writing an Excel file to a stream.
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
+     */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(ExcelStreamWriteException.class)
+    public ResponseEntity<ReportsGet500Response> handleExcelStreamWriteException(ExcelStreamWriteException e) {
+        var response = new ReportsGet500Response() {{
+            setError(e.getMessage());
+        }};
+
+        log.error("ExcelStreamWriteException Thrown: {}", response.getError());
+
+        return internalServerError().body(response);
+    }
 
     /**
      * Handles CsvStreamException and responds with an HTTP 500 Internal Server Error.

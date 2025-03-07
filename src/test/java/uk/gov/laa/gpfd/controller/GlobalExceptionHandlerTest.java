@@ -4,12 +4,15 @@ import org.junit.jupiter.api.Test;
 import uk.gov.laa.gpfd.exception.CsvStreamException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
+import uk.gov.laa.gpfd.exception.TransferException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static uk.gov.laa.gpfd.exception.TemplateResourceException.ExcelTemplateCreationException;
+import static uk.gov.laa.gpfd.exception.TemplateResourceException.LocalTemplateReadException;
 
 @SuppressWarnings("DataFlowIssue")
 class GlobalExceptionHandlerTest {
@@ -102,6 +105,45 @@ class GlobalExceptionHandlerTest {
 
         // When
         var response = globalExceptionHandler.handleCsvStreamException(exception);
+
+        // Then
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("CSV Stream Error", response.getBody().getError());
+    }
+
+    @Test
+    void shouldHandleLocalTemplateReadException() {
+        // Given
+        var exception = new LocalTemplateReadException("Could not find template");
+
+        // When
+        var response = globalExceptionHandler.handleLocalTemplateReadException(exception);
+
+        // Then
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Could not find template", response.getBody().getError());
+    }
+
+    @Test
+    void shouldHandleExcelTemplateCreationException() {
+        // Given
+        var exception = new ExcelTemplateCreationException("Meh, doesnt work on my machine!", new RuntimeException());
+
+        // When
+        var response = globalExceptionHandler.handleExcelTemplateCreationException(exception);
+
+        // Then
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Meh, doesnt work on my machine!", response.getBody().getError());
+    }
+
+    @Test
+    void shouldHandleExcelStreamWriteException() {
+        // Given
+        var exception = new TransferException.StreamException.ExcelStreamWriteException("CSV Stream Error", new RuntimeException());
+
+        // When
+        var response = globalExceptionHandler.handleExcelStreamWriteException(exception);
 
         // Then
         assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
