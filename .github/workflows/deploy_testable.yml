@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - 'testable*'
-      - deploy-feature-dev
+      # - deploy-feature-dev
 
 jobs:
   build-and-deploy-to-testable:
