@@ -14,6 +14,7 @@ spec:
     metadata:
       labels:
         app: gpfd-dev
+        branch: ${BRANCH_NAME}
     spec:
       serviceAccountName: laa-get-payments-finance-data-dev-service
       containers:
