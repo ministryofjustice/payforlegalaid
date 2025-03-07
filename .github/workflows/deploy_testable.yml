@@ -59,9 +59,9 @@ jobs:
           ALERT_SEVERITY: laa-get-legal-aid-data-dev
           ENV_NAME: dev
         run: |
-          cat deployments/development/deployment.tpl | envsubst > deployments/development/deployment-${BRANCH_NAME}.yml
-          cat deployments/development/ingress.tpl | envsubst > deployments/development/ingress-${BRANCH_NAME}.yml
-          cat deployments/development/service.tpl | envsubst > deployments/development/service-${BRANCH_NAME}.yml
+          cat deployments/development/deployment.tpl | envsubst > deployments/development/deployment.yml
+          cat deployments/development/ingress.tpl | envsubst > deployments/development/ingress.yml
+          cat deployments/development/service.tpl | envsubst > deployments/development/service.yml
 
       - name: Authenticate with Cloud Platform and Deploy
         env:
@@ -73,6 +73,6 @@ jobs:
           kubectl config set-credentials deploy-user --token=${{ secrets.KUBE_TOKEN_DEV }}
           kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
           kubectl config use-context ${KUBE_CLUSTER}
-          kubectl -n ${KUBE_NAMESPACE} apply -f deployments/development/deployment-${BRANCH_NAME}.yml
-          kubectl -n ${KUBE_NAMESPACE} apply -f deployments/development/ingress-${BRANCH_NAME}.yml
-          kubectl -n ${KUBE_NAMESPACE} apply -f deployments/development/service-${BRANCH_NAME}.yml
+          kubectl -n ${KUBE_NAMESPACE} apply -f deployments/development/deployment.yml
+          kubectl -n ${KUBE_NAMESPACE} apply -f deployments/development/ingress.yml
+          kubectl -n ${KUBE_NAMESPACE} apply -f deployments/development/service.yml
