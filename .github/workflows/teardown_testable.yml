@@ -35,6 +35,6 @@ jobs:
         env:
           BRANCH_NAME: ${{ github.ref_name }}
         run: |
-          kubectl -n ${KUBE_NAMESPACE} delete service -l branch=${BRANCH_NAME} || true
-          kubectl -n ${KUBE_NAMESPACE} delete ingress -l branch=${BRANCH_NAME} || true
-          kubectl -n ${KUBE_NAMESPACE} delete pod -l branch=${BRANCH_NAME}
+          kubectl delete service -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE} || true
+          kubectl delete ingress -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE} || true
+          kubectl delete pod -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE}
