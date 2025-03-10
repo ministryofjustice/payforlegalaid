@@ -52,6 +52,12 @@ public class AppConfig {
     @Value("${gpfd.allowed.redirect-uri}")
     private List<String> allowedRedirectUri;
 
+    /**
+     * Validates if a given URI is on the whitelist for allowed Redirect URIs, which is set in the application properties.
+     *
+     * @param testUri The URI that has been supplied as a redirect URI
+     * @return True if testUri is in the whitelist
+     */
     public boolean isValidRedirectUri(String testUri) {
         return allowedRedirectUri.contains(testUri);
     }
@@ -146,7 +152,6 @@ public class AppConfig {
     /**
      * Creates and configures a {@link SpringLiquibase} bean to be used for database,
      * if the property `spring.liquibase.enabled` is set to `true` in the application properties.
-     * <p>
      * This method will set the data source to the specified {@link DataSource} bean, configure the
      * change log file to be used by Liquibase, and ensure that the migrations are executed by
      * setting {@code setShouldRun(true)}.
