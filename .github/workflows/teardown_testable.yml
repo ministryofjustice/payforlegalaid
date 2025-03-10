@@ -12,7 +12,7 @@ jobs:
   cleanup-testable:
     if: |
       github.event.ref_type == 'branch' &&
-      github.event.action == 'deleted' &&
+      github.event.deleted == true &&
       startswith(github.event.ref, 'deploy-feature-dev')
     environment: development
     runs-on: ubuntu-latest
