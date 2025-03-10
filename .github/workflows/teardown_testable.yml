@@ -2,6 +2,8 @@ name: Tear Down Testable Environment
 
 on:
   delete:
+    branches:
+      - '**'
 
 jobs:
   cleanup-testable:
