@@ -1,16 +1,23 @@
 name: Tear Down Testable Environment
 
 on:
+  push:
+    branches:
+      - 'testable*'
+      - deploy-feature-dev
   delete:
 
 
 jobs:
   cleanup-testable:
+    if: |
+      startswith(github.event.ref, 'refs/heads/deploy-feature-dev') &&
+      github.event.deleted == true
     environment: development
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
+    # permissions:
+    #   id-token: write
+    #   contents: read
 
     steps:
       - name: Trace GitHub Event
