@@ -2,6 +2,12 @@ gpfd:
   url: https://uat.get-legal-aid-data.service.justice.gov.uk
   redirect-uri-template: ${gpfd.url}/login/oauth2/code/gpfd-azure-uat
 
+  # URIs the UI can pass in as a valid redirect UI
+  # Can add multiple using comma separated list
+  allowed:
+    # TODO replace with UI baseURI for uat
+    redirect-uri: http://localhost:3000/redirect
+
   # MOJFIN database config
   datasource:
     read-only:

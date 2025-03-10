@@ -25,6 +25,8 @@ import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
 @ConditionalOnProperty(name = "spring.cloud.azure.active-directory.enabled", havingValue = "true")
 public class SecurityConfig {
 
+    private final AppConfig appConfig;
+
     /**
      * The custom {@link AuthorizeHttpRequestsBuilder} responsible for configuring
      * the authorization rules for HTTP requests, such as which endpoints are publicly
@@ -60,7 +62,7 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 // Save any supplied redirect uri so we can use it later
-                .addFilterBefore(new RedirectUriFilter(), OAuth2AuthorizationRequestRedirectFilter.class)
+                .addFilterBefore(new RedirectUriFilter(appConfig), OAuth2AuthorizationRequestRedirectFilter.class)
                 // Handle redirecting after logging in
                 .oauth2Login(login -> login.successHandler(customAuthSuccessHandler))
                 .authorizeHttpRequests(authorizeHttpRequestsBuilder)    // Apply authorization rules

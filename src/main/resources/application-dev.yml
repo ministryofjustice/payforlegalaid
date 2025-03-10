@@ -4,6 +4,12 @@ gpfd:
   redirect-uri-template: ${gpfd.url}/login/oauth2/code/gpfd-azure-dev
   # Note,"gpfd-azure-dev" is also known as the Oauth2 'registrationId'
 
+  # URIs the UI can pass in as a valid redirect UI
+  # Can add multiple using comma separated list
+  allowed:
+  # TODO replace with UI baseURI for dev
+    redirect-uri: http://localhost:3000/redirect
+
   # DEV MOJFIN database config
   datasource:
     read-only:

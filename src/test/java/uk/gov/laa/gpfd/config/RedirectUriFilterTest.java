@@ -22,8 +22,11 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class RedirectUriFilterTest {
 
+    @Mock
+    private AppConfig appConfig;
+
     @InjectMocks
-    private final RedirectUriFilter redirectUriFilter = new RedirectUriFilter();
+    private final RedirectUriFilter redirectUriFilter = new RedirectUriFilter(appConfig);
 
     @Mock
     private HttpServletRequest mockRequest;
@@ -40,20 +43,35 @@ public class RedirectUriFilterTest {
     @BeforeEach
     public void beforeEach() {
         reset(mockRequest, mockResponse, mockFilterChain, mockSession);
-        when(mockRequest.getSession()).thenReturn(mockSession);
     }
 
     @SneakyThrows
     @Test
-    public void shouldStoreRedirectUriIfSupplied() {
+    public void shouldStoreRedirectUriIfSuppliedAndWhiteListed() {
 
         when(mockRequest.getParameter(eq("redirect_uri"))).thenReturn("/hi");
+        when(appConfig.isValidRedirectUri(eq("/hi"))).thenReturn(true);
+        when(mockRequest.getSession()).thenReturn(mockSession);
 
         redirectUriFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
 
         verify(mockSession).setAttribute(eq("redirect_uri"), eq("/hi"));
 
     }
+
+    @SneakyThrows
+    @Test
+    public void shouldNotAttemptToStoreRedirectUriIfNotWhiteListed() {
+
+        when(mockRequest.getParameter(eq("redirect_uri"))).thenReturn("/hi");
+        when(appConfig.isValidRedirectUri(eq("/hi"))).thenReturn(false);
+
+        redirectUriFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
+
+        verify(mockSession, times(0)).setAttribute(eq("redirect_uri"), any());
+
+    }
+
 
     @SneakyThrows
     @Test
@@ -69,7 +87,7 @@ public class RedirectUriFilterTest {
 
     @SneakyThrows
     @Test
-    public void shouldNotAttemptToStoreRedirectUriIfEmptyString() {
+    public void shouldNotAttemptToStoreRedirectUriIfEmpty() {
 
         when(mockRequest.getParameter(eq("redirect_uri"))).thenReturn("");
 
@@ -78,4 +96,5 @@ public class RedirectUriFilterTest {
         verify(mockSession, times(0)).setAttribute(eq("redirect_uri"), any());
 
     }
+
 }

@@ -21,7 +21,7 @@ import javax.sql.DataSource;
 import java.util.List;
 
 /**
-* Configuration class for application-level beans and settings.
+ * Configuration class for application-level beans and settings.
  * <p>
  * This class defines various beans such as data sources, JDBC templates,
  * model mapper, and a RestTemplate with custom message converters. These configurations
@@ -48,6 +48,13 @@ public class AppConfig {
     @Getter
     @Value("${gpfd.url}")
     private String serviceUrl;
+
+    @Value("${gpfd.allowed.redirect-uri}")
+    private List<String> allowedRedirectUri;
+
+    public boolean isValidRedirectUri(String testUri) {
+        return allowedRedirectUri.contains(testUri);
+    }
 
     @Value("${spring.liquibase.changelog}")
     private String liquibaseChangeLog;
@@ -139,14 +146,13 @@ public class AppConfig {
     /**
      * Creates and configures a {@link SpringLiquibase} bean to be used for database,
      * if the property `spring.liquibase.enabled` is set to `true` in the application properties.
-     *
+     * <p>
      * This method will set the data source to the specified {@link DataSource} bean, configure the
      * change log file to be used by Liquibase, and ensure that the migrations are executed by
      * setting {@code setShouldRun(true)}.
      *
      * @param dataSource The {@link DataSource} bean to be used by Liquibase for database connectivity.
      * @return A configured {@link SpringLiquibase} instance ready for migration.
-     *
      * @see SpringLiquibase
      * @see DataSource
      */
