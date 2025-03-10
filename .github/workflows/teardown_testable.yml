@@ -1,5 +1,10 @@
 name: Tear Down Testable Environment
 
+on:
+  push:
+    branches:
+      - 'testable*'
+      - deploy-feature-dev
 on: delete
 
 jobs:
