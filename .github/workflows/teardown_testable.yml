@@ -10,9 +10,7 @@ on:
 
 jobs:
   cleanup-testable:
-    if: |
-      startswith(github.event.ref, 'refs/heads/deploy-feature-dev') &&
-      github.event.deleted == true
+    if: startswith(github.event.ref, 'refs/heads/deploy-feature-dev')
     environment: development
     runs-on: ubuntu-latest
     # permissions:
