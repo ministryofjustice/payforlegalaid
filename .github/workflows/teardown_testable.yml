@@ -22,7 +22,6 @@ jobs:
     steps:
       - name: Trace GitHub Event
         run: |
-          echo "GitHub Event: ${{ toJson(github.event) }}"
           echo "GitHub Event Ref: ${{ github.event.ref }}"
           echo "GitHub Event Ref Type: ${{ github.event.ref_type }}"
           echo "GitHub Event Action: ${{ github.event.action }}"
