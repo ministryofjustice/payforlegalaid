@@ -14,7 +14,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.savedrequest.SavedRequest;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
@@ -22,7 +21,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class CustomAuthSuccessHandlerTest {
+class CustomAuthSuccessHandlerTest {
 
     @Mock
     private AppConfig appConfig;
@@ -43,17 +42,17 @@ public class CustomAuthSuccessHandlerTest {
     private HttpSession mockSession;
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         reset(mockRequest, mockResponse, mockAuthentication, mockSession, appConfig);
         when(mockRequest.getSession()).thenReturn(mockSession);
     }
 
     @SneakyThrows
     @Test
-    public void shouldFollowRedirectUrlIfDefinedAndNonEmptyAndWhiteListed() {
+    void shouldFollowRedirectUrlIfDefinedAndNonEmptyAndWhiteListed() {
 
-        when(mockSession.getAttribute(eq("redirect_uri"))).thenReturn("/hi");
-        when(appConfig.isValidRedirectUri(eq("/hi"))).thenReturn(true);
+        when(mockSession.getAttribute("redirect_uri")).thenReturn("/hi");
+        when(appConfig.isValidRedirectUri("/hi")).thenReturn(true);
 
         customAuthSuccessHandler.onAuthenticationSuccess(mockRequest, mockResponse, mockAuthentication);
 
@@ -63,10 +62,10 @@ public class CustomAuthSuccessHandlerTest {
 
     @SneakyThrows
     @Test
-    public void shouldNotFollowRedirectUrlIfNotWhiteListed() {
+    void shouldNotFollowRedirectUrlIfNotWhiteListed() {
 
-        when(mockSession.getAttribute(eq("redirect_uri"))).thenReturn("/hi");
-        when(appConfig.isValidRedirectUri(eq("/hi"))).thenReturn(false);
+        when(mockSession.getAttribute("redirect_uri")).thenReturn("/hi");
+        when(appConfig.isValidRedirectUri("/hi")).thenReturn(false);
 
         customAuthSuccessHandler.onAuthenticationSuccess(mockRequest, mockResponse, mockAuthentication);
 
@@ -76,13 +75,13 @@ public class CustomAuthSuccessHandlerTest {
 
     @SneakyThrows
     @Test
-    public void shouldFollowRedirectUrlIfDefinedAndSavedRequestAlsoDefined() {
+    void shouldFollowRedirectUrlIfDefinedAndSavedRequestAlsoDefined() {
 
         SavedRequest savedRequest = mock(SavedRequest.class);
 
-        when(mockSession.getAttribute(eq("redirect_uri"))).thenReturn("/hi");
-        when(mockSession.getAttribute(eq("SPRING_SECURITY_SAVED_REQUEST"))).thenReturn(savedRequest);
-        when(appConfig.isValidRedirectUri(eq("/hi"))).thenReturn(true);
+        when(mockSession.getAttribute("redirect_uri")).thenReturn("/hi");
+        when(mockSession.getAttribute("SPRING_SECURITY_SAVED_REQUEST")).thenReturn(savedRequest);
+        when(appConfig.isValidRedirectUri("/hi")).thenReturn(true);
 
         customAuthSuccessHandler.onAuthenticationSuccess(mockRequest, mockResponse, mockAuthentication);
 
@@ -92,12 +91,12 @@ public class CustomAuthSuccessHandlerTest {
 
     @SneakyThrows
     @Test
-    public void shouldFollowSavedRequestIfDefinedAndRedirectUrlIsNot() {
+    void shouldFollowSavedRequestIfDefinedAndRedirectUrlIsNot() {
 
         SavedRequest savedRequest = mock(SavedRequest.class);
 
-        when(mockSession.getAttribute(eq("redirect_uri"))).thenReturn(null);
-        when(mockSession.getAttribute(eq("SPRING_SECURITY_SAVED_REQUEST"))).thenReturn(savedRequest);
+        when(mockSession.getAttribute("redirect_uri")).thenReturn(null);
+        when(mockSession.getAttribute("SPRING_SECURITY_SAVED_REQUEST")).thenReturn(savedRequest);
         when(savedRequest.getRedirectUrl()).thenReturn("/hello");
 
         customAuthSuccessHandler.onAuthenticationSuccess(mockRequest, mockResponse, mockAuthentication);
@@ -108,10 +107,10 @@ public class CustomAuthSuccessHandlerTest {
 
     @SneakyThrows
     @Test
-    public void shouldNotRedirectIfNeitherRedirectUriNorSavedRequestDefined() {
+    void shouldNotRedirectIfNeitherRedirectUriNorSavedRequestDefined() {
 
-        when(mockSession.getAttribute(eq("redirect_uri"))).thenReturn(null);
-        when(mockSession.getAttribute(eq("SPRING_SECURITY_SAVED_REQUEST"))).thenReturn(null);
+        when(mockSession.getAttribute("redirect_uri")).thenReturn(null);
+        when(mockSession.getAttribute("SPRING_SECURITY_SAVED_REQUEST")).thenReturn(null);
 
         customAuthSuccessHandler.onAuthenticationSuccess(mockRequest, mockResponse, mockAuthentication);
 
@@ -121,10 +120,10 @@ public class CustomAuthSuccessHandlerTest {
 
     @SneakyThrows
     @Test
-    public void shouldNotFollowRedirectUriIfItIsEmptyString() {
+    void shouldNotFollowRedirectUriIfItIsEmptyString() {
 
-        when(mockSession.getAttribute(eq("redirect_uri"))).thenReturn("");
-        when(mockSession.getAttribute(eq("SPRING_SECURITY_SAVED_REQUEST"))).thenReturn(null);
+        when(mockSession.getAttribute("redirect_uri")).thenReturn("");
+        when(mockSession.getAttribute("SPRING_SECURITY_SAVED_REQUEST")).thenReturn(null);
 
         customAuthSuccessHandler.onAuthenticationSuccess(mockRequest, mockResponse, mockAuthentication);
 

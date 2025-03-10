@@ -5,7 +5,7 @@ gpfd:
   # URIs the UI can pass in as a valid redirect UI
   # Can add multiple using comma separated list
   allowed:
-    # TODO replace with UI baseURI for uat
+    # replace with UI baseURI for uat
     redirect-uri: http://localhost:3000/redirect
 
   # MOJFIN database config
