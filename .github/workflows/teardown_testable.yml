@@ -4,9 +4,9 @@ on: delete
 
 jobs:
   cleanup-testable:
-    if: |
-      github.event.ref_type =='branch' &&
-      startswith(github.event.ref, 'deploy-feature-dev')
+    # if: |
+    #   github.event.ref_type =='branch' &&
+    #   startswith(github.event.ref, 'deploy-feature-dev')
     environment: development
     runs-on: ubuntu-latest
     permissions:
@@ -14,26 +14,34 @@ jobs:
       contents: read
 
     steps:
-      - name: Checkout Github Repository
-        uses: actions/checkout@v4
-
-      - name: Authenticate with Cloud Platform
-        env:
-          KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
-          KUBE_CLUSTER: ${{ secrets.KUBE_CLUSTER_DEV }}
+      - name: Trace GitHub Event
         run: |
-          echo "${{ secrets.KUBE_CERT_DEV }}" > ca.crt
-          kubectl config set-cluster ${KUBE_CLUSTER} --certificate-authority=./ca.crt --server=https://${KUBE_CLUSTER}
-          kubectl config set-credentials deploy-user --token=${{ secrets.KUBE_TOKEN_DEV }}
-          kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
-          kubectl config use-context ${KUBE_CLUSTER}
+          echo "GitHub Event: ${{ toJson(github.event) }}"
+          echo "GitHub Event Ref: ${{ github.event.ref }}"
+          echo "GitHub Event Ref Type: ${{ github.event.ref_type }}"
+          echo "GitHub Event Action: ${{ github.event.action }}"
+          echo "GitHub Event Workflow: ${{ github.event.workflow }}"
 
-      - name: Delete Kubernetes resources
-        env:
-          BRANCH_NAME: ${{ github.ref_name }}
-          KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
-        run: |
-          kubectl delete service -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE} || true
-          kubectl delete ingress -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE} || true
-          kubectl delete pods -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE} || true
-          kubectl delete deployment -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE}
+      # - name: Checkout Github Repository
+      #   uses: actions/checkout@v4
+
+      # - name: Authenticate with Cloud Platform
+      #   env:
+      #     KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
+      #     KUBE_CLUSTER: ${{ secrets.KUBE_CLUSTER_DEV }}
+      #   run: |
+      #     echo "${{ secrets.KUBE_CERT_DEV }}" > ca.crt
+      #     kubectl config set-cluster ${KUBE_CLUSTER} --certificate-authority=./ca.crt --server=https://${KUBE_CLUSTER}
+      #     kubectl config set-credentials deploy-user --token=${{ secrets.KUBE_TOKEN_DEV }}
+      #     kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
+      #     kubectl config use-context ${KUBE_CLUSTER}
+
+      # - name: Delete Kubernetes resources
+      #   env:
+      #     BRANCH_NAME: ${{ github.ref_name }}
+      #     KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
+      #   run: |
+      #     kubectl delete service -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE} || true
+      #     kubectl delete ingress -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE} || true
+      #     kubectl delete pods -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE} || true
+      #     kubectl delete deployment -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE}
