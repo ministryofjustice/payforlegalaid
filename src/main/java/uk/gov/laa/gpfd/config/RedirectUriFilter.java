@@ -9,11 +9,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
 @AllArgsConstructor
 @Slf4j
+@Component
 class RedirectUriFilter implements Filter {
 
     AppConfig appConfig;

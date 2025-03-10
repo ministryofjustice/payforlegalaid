@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -67,7 +68,7 @@ class RedirectUriFilterTest {
 
         redirectUriFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
 
-        verify(mockSession, times(0)).setAttribute("redirect_uri", any());
+        verify(mockSession, times(0)).setAttribute(eq("redirect_uri"), any());
 
     }
 
@@ -80,7 +81,7 @@ class RedirectUriFilterTest {
 
         redirectUriFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
 
-        verify(mockSession, times(0)).setAttribute("redirect_uri", any());
+        verify(mockSession, times(0)).setAttribute(eq("redirect_uri"), any());
 
     }
 
@@ -92,7 +93,7 @@ class RedirectUriFilterTest {
 
         redirectUriFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
 
-        verify(mockSession, times(0)).setAttribute("redirect_uri", any());
+        verify(mockSession, times(0)).setAttribute(eq("redirect_uri"), any());
 
     }
 
