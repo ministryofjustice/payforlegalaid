@@ -6,7 +6,7 @@ jobs:
   cleanup-testable:
     if: |
       github.event.ref_type =='branch' &&
-      startsWith(github.ref, 'refs/heads/testable') || github.ref == 'refs/heads/deploy-feature-dev'
+      startswith(github.event.ref, 'refs/heads/testable') || startswith(github.event.ref, 'refs/heads/deploy-feature-dev')
     environment: development
     runs-on: ubuntu-latest
     permissions:
