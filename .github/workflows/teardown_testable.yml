@@ -10,9 +10,10 @@ on:
 
 jobs:
   cleanup-testable:
-    # if: |
-    #   github.event.ref_type =='branch' &&
-    #   startswith(github.event.ref, 'deploy-feature-dev')
+    if: |
+      github.event.ref_type == 'branch' &&
+      github.event.action == 'deleted' &&
+      startswith(github.event.ref, 'deploy-feature-dev')
     environment: development
     runs-on: ubuntu-latest
     permissions:
