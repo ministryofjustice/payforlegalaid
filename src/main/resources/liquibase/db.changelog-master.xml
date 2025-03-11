@@ -577,7 +577,7 @@
         <comment>add REPORTS.FILE_NAME</comment>
 
         <sql>
-            ALTER TABLE GPFD.REPORTS ADD COLUMN FILE_NAME VARCHAR(150)
+            ALTER TABLE GPFD.REPORTS ADD FILE_NAME VARCHAR(150)
         </sql>
     </changeSet>
 
@@ -586,7 +586,7 @@
         <comment>add REPORTS.ACTIVE</comment>
 
         <sql>
-            ALTER TABLE GPFD.REPORTS ADD COLUMN ACTIVE CHAR(1)
+            ALTER TABLE GPFD.REPORTS ADD ACTIVE CHAR(1)
         </sql>
     </changeSet>
 

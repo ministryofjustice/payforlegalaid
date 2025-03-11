@@ -501,7 +501,7 @@
         <comment>add REPORTS.FILE_NAME</comment>
 
         <sql>
-            ALTER TABLE GPFD.REPORTS ADD FILE_NAME VARCHAR(150)
+            ALTER TABLE GPFD.REPORTS ADD COLUMN FILE_NAME VARCHAR(150)
         </sql>
     </changeSet>
 
@@ -510,7 +510,7 @@
         <comment>add REPORTS.ACTIVE</comment>
 
         <sql>
-            ALTER TABLE GPFD.REPORTS ADD ACTIVE CHAR(1)
+            ALTER TABLE GPFD.REPORTS ADD COLUMN ACTIVE CHAR(1)
         </sql>
     </changeSet>
 
@@ -1436,230 +1436,230 @@
         </insert>
         <!-- Add more insert statements for the remaining rows -->
     </changeSet>
-        <changeSet id="11" author="buczek_robert">
-            <createTable tableName="V_CIS_TO_CCMS_INVOICE_HELD_PAYMENTS" schemaName="ANY_REPORT">
-                <column name="VENDOR_SITE_CODE" type="VARCHAR(50)">
-                    <constraints primaryKey="true" nullable="false"/>
-                </column>
-                <column name="VENDOR_SITE_NAME" type="VARCHAR(255)"/>
-                <column name="FIRST_GL_DATE" type="DATE"/>
-                <column name="LATEST_GL_DATE" type="DATE"/>
-                <column name="TOTAL_INC_MEDIATION" type="DECIMAL(18, 2)"/>
-            </createTable>
-        </changeSet>
+    <changeSet id="11" author="buczek_robert">
+        <createTable tableName="V_CIS_TO_CCMS_INVOICE_HELD_PAYMENTS" schemaName="ANY_REPORT">
+            <column name="VENDOR_SITE_CODE" type="VARCHAR(50)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VENDOR_SITE_NAME" type="VARCHAR(255)"/>
+            <column name="FIRST_GL_DATE" type="DATE"/>
+            <column name="LATEST_GL_DATE" type="DATE"/>
+            <column name="TOTAL_INC_MEDIATION" type="DECIMAL(18, 2)"/>
+        </createTable>
+    </changeSet>
 
-        <changeSet id="22" author="buczek_robert">
-            <insert tableName="V_CIS_TO_CCMS_INVOICE_HELD_PAYMENTS" schemaName="ANY_REPORT">
-                <column name="VENDOR_SITE_CODE" value="0R038W"/>
-                <column name="VENDOR_SITE_NAME" value="LANGLEYS LLP"/>
-                <column name="FIRST_GL_DATE" value="2022-03-25"/>
-                <column name="LATEST_GL_DATE" value="2023-08-07"/>
-                <column name="TOTAL_INC_MEDIATION" value="489695.61"/>
-            </insert>
-            <insert tableName="V_CIS_TO_CCMS_INVOICE_HELD_PAYMENTS" schemaName="ANY_REPORT">
-                <column name="VENDOR_SITE_CODE" value="0D484M"/>
-                <column name="VENDOR_SITE_NAME" value="BERNARD CHILL AXTELL"/>
-                <column name="FIRST_GL_DATE" value="2017-04-10"/>
-                <column name="LATEST_GL_DATE" value="2022-11-28"/>
-                <column name="TOTAL_INC_MEDIATION" value="352559.28"/>
-            </insert>
-            <insert tableName="V_CIS_TO_CCMS_INVOICE_HELD_PAYMENTS" schemaName="ANY_REPORT">
-                <column name="VENDOR_SITE_CODE" value="0L012H"/>
-                <column name="VENDOR_SITE_NAME" value="E REX MAKIN CO"/>
-                <column name="FIRST_GL_DATE" value="2013-10-18"/>
-                <column name="LATEST_GL_DATE" value="2020-02-12"/>
-                <column name="TOTAL_INC_MEDIATION" value="242610.75"/>
-            </insert>
-            <insert tableName="V_CIS_TO_CCMS_INVOICE_HELD_PAYMENTS" schemaName="ANY_REPORT">
-                <column name="VENDOR_SITE_CODE" value="1G205V"/>
-                <column name="VENDOR_SITE_NAME" value="KARIM CO SOLICITORS"/>
-                <column name="FIRST_GL_DATE" value="2023-05-06"/>
-                <column name="LATEST_GL_DATE" value="2023-06-06"/>
-                <column name="TOTAL_INC_MEDIATION" value="234639.37"/>
-            </insert>
-            <insert tableName="V_CIS_TO_CCMS_INVOICE_HELD_PAYMENTS" schemaName="ANY_REPORT">
-                <column name="VENDOR_SITE_CODE" value="0U657T"/>
-                <column name="VENDOR_SITE_NAME" value="LANGLEYS LLP"/>
-                <column name="FIRST_GL_DATE" value="2022-03-23"/>
-                <column name="LATEST_GL_DATE" value="2023-07-27"/>
-                <column name="TOTAL_INC_MEDIATION" value="193722.84"/>
-            </insert>
-            <insert tableName="V_CIS_TO_CCMS_INVOICE_HELD_PAYMENTS" schemaName="ANY_REPORT">
-                <column name="VENDOR_SITE_CODE" value="0B311A"/>
-                <column name="VENDOR_SITE_NAME" value="MATHIS-INTERVENTION"/>
-                <column name="FIRST_GL_DATE" value="2012-10-20"/>
-                <column name="LATEST_GL_DATE" value="2022-03-04"/>
-                <column name="TOTAL_INC_MEDIATION" value="140817.24"/>
-            </insert>
-            <insert tableName="V_CIS_TO_CCMS_INVOICE_HELD_PAYMENTS" schemaName="ANY_REPORT">
-                <column name="VENDOR_SITE_CODE" value="2N959L"/>
-                <column name="VENDOR_SITE_NAME" value="BIRMINGHAM LAW PRACTICE LTD"/>
-                <column name="FIRST_GL_DATE" value="2018-09-15"/>
-                <column name="LATEST_GL_DATE" value="2020-12-22"/>
-                <column name="TOTAL_INC_MEDIATION" value="111330.91"/>
-            </insert>
-            <insert tableName="V_CIS_TO_CCMS_INVOICE_HELD_PAYMENTS" schemaName="ANY_REPORT">
-                <column name="VENDOR_SITE_CODE" value="0L932H"/>
-                <column name="VENDOR_SITE_NAME" value="STEELE FORD NEWTON"/>
-                <column name="FIRST_GL_DATE" value="2017-08-14"/>
-                <column name="LATEST_GL_DATE" value="2022-02-23"/>
-                <column name="TOTAL_INC_MEDIATION" value="62318.93"/>
-            </insert>
-            <insert tableName="V_CIS_TO_CCMS_INVOICE_HELD_PAYMENTS" schemaName="ANY_REPORT">
-                <column name="VENDOR_SITE_CODE" value="02AGH"/>
-                <column name="VENDOR_SITE_NAME" value="MACKESYS SOLICITORS-ADVOCATE"/>
-                <column name="FIRST_GL_DATE" value="2014-11-07"/>
-                <column name="LATEST_GL_DATE" value="2017-05-30"/>
-                <column name="TOTAL_INC_MEDIATION" value="59135.36"/>
-            </insert>
-            <insert tableName="V_CIS_TO_CCMS_INVOICE_HELD_PAYMENTS" schemaName="ANY_REPORT">
-                <column name="VENDOR_SITE_CODE" value="2Q023T"/>
-                <column name="VENDOR_SITE_NAME" value="KINGSWRIGHT SOLICITORS-INTERVENTION"/>
-                <column name="FIRST_GL_DATE" value="2023-07-28"/>
-                <column name="LATEST_GL_DATE" value="2023-07-28"/>
-                <column name="TOTAL_INC_MEDIATION" value="54876.28"/>
-            </insert>
-            <insert tableName="V_CIS_TO_CCMS_INVOICE_HELD_PAYMENTS" schemaName="ANY_REPORT">
-                <column name="VENDOR_SITE_CODE" value="2M135D"/>
-                <column name="VENDOR_SITE_NAME" value="GORDONS LLP RE: HANSON YOUNG CO SOLICITORS-INTERVENTION"/>
-                <column name="FIRST_GL_DATE" value="2016-11-11"/>
-                <column name="LATEST_GL_DATE" value="2019-06-03"/>
-                <column name="TOTAL_INC_MEDIATION" value="49186.71"/>
-            </insert>
-            <createTable tableName="V_CIS_TO_CCMS_INVOICE_SUMMARY" schemaName="ANY_REPORT">
-                <column name="DATE_AUTHORISED_CIS" type="date">
-                    <constraints nullable="false"/>
-                </column>
-                <column name="THE_SYSTEM" type="varchar(255)">
-                    <constraints nullable="false"/>
-                </column>
-                <column name="CIS_VALUE" type="decimal(18, 2)">
-                    <constraints nullable="false"/>
-                </column>
-                <column name="CCMS_VALUE" type="decimal(18, 2)">
-                    <constraints nullable="false"/>
-                </column>
-            </createTable>
-            <insert tableName="V_CIS_TO_CCMS_INVOICE_SUMMARY" schemaName="ANY_REPORT">
-                <column name="DATE_AUTHORISED_CIS" value="2024-12-25"/>
-                <column name="THE_SYSTEM" value="CWA Crime Lower Contract"/>
-                <column name="CIS_VALUE" value="2"/>
-                <column name="CCMS_VALUE" value="2"/>
-            </insert>
+    <changeSet id="22" author="buczek_robert">
+        <insert tableName="V_CIS_TO_CCMS_INVOICE_HELD_PAYMENTS" schemaName="ANY_REPORT">
+            <column name="VENDOR_SITE_CODE" value="0R038W"/>
+            <column name="VENDOR_SITE_NAME" value="LANGLEYS LLP"/>
+            <column name="FIRST_GL_DATE" value="2022-03-25"/>
+            <column name="LATEST_GL_DATE" value="2023-08-07"/>
+            <column name="TOTAL_INC_MEDIATION" value="489695.61"/>
+        </insert>
+        <insert tableName="V_CIS_TO_CCMS_INVOICE_HELD_PAYMENTS" schemaName="ANY_REPORT">
+            <column name="VENDOR_SITE_CODE" value="0D484M"/>
+            <column name="VENDOR_SITE_NAME" value="BERNARD CHILL AXTELL"/>
+            <column name="FIRST_GL_DATE" value="2017-04-10"/>
+            <column name="LATEST_GL_DATE" value="2022-11-28"/>
+            <column name="TOTAL_INC_MEDIATION" value="352559.28"/>
+        </insert>
+        <insert tableName="V_CIS_TO_CCMS_INVOICE_HELD_PAYMENTS" schemaName="ANY_REPORT">
+            <column name="VENDOR_SITE_CODE" value="0L012H"/>
+            <column name="VENDOR_SITE_NAME" value="E REX MAKIN CO"/>
+            <column name="FIRST_GL_DATE" value="2013-10-18"/>
+            <column name="LATEST_GL_DATE" value="2020-02-12"/>
+            <column name="TOTAL_INC_MEDIATION" value="242610.75"/>
+        </insert>
+        <insert tableName="V_CIS_TO_CCMS_INVOICE_HELD_PAYMENTS" schemaName="ANY_REPORT">
+            <column name="VENDOR_SITE_CODE" value="1G205V"/>
+            <column name="VENDOR_SITE_NAME" value="KARIM CO SOLICITORS"/>
+            <column name="FIRST_GL_DATE" value="2023-05-06"/>
+            <column name="LATEST_GL_DATE" value="2023-06-06"/>
+            <column name="TOTAL_INC_MEDIATION" value="234639.37"/>
+        </insert>
+        <insert tableName="V_CIS_TO_CCMS_INVOICE_HELD_PAYMENTS" schemaName="ANY_REPORT">
+            <column name="VENDOR_SITE_CODE" value="0U657T"/>
+            <column name="VENDOR_SITE_NAME" value="LANGLEYS LLP"/>
+            <column name="FIRST_GL_DATE" value="2022-03-23"/>
+            <column name="LATEST_GL_DATE" value="2023-07-27"/>
+            <column name="TOTAL_INC_MEDIATION" value="193722.84"/>
+        </insert>
+        <insert tableName="V_CIS_TO_CCMS_INVOICE_HELD_PAYMENTS" schemaName="ANY_REPORT">
+            <column name="VENDOR_SITE_CODE" value="0B311A"/>
+            <column name="VENDOR_SITE_NAME" value="MATHIS-INTERVENTION"/>
+            <column name="FIRST_GL_DATE" value="2012-10-20"/>
+            <column name="LATEST_GL_DATE" value="2022-03-04"/>
+            <column name="TOTAL_INC_MEDIATION" value="140817.24"/>
+        </insert>
+        <insert tableName="V_CIS_TO_CCMS_INVOICE_HELD_PAYMENTS" schemaName="ANY_REPORT">
+            <column name="VENDOR_SITE_CODE" value="2N959L"/>
+            <column name="VENDOR_SITE_NAME" value="BIRMINGHAM LAW PRACTICE LTD"/>
+            <column name="FIRST_GL_DATE" value="2018-09-15"/>
+            <column name="LATEST_GL_DATE" value="2020-12-22"/>
+            <column name="TOTAL_INC_MEDIATION" value="111330.91"/>
+        </insert>
+        <insert tableName="V_CIS_TO_CCMS_INVOICE_HELD_PAYMENTS" schemaName="ANY_REPORT">
+            <column name="VENDOR_SITE_CODE" value="0L932H"/>
+            <column name="VENDOR_SITE_NAME" value="STEELE FORD NEWTON"/>
+            <column name="FIRST_GL_DATE" value="2017-08-14"/>
+            <column name="LATEST_GL_DATE" value="2022-02-23"/>
+            <column name="TOTAL_INC_MEDIATION" value="62318.93"/>
+        </insert>
+        <insert tableName="V_CIS_TO_CCMS_INVOICE_HELD_PAYMENTS" schemaName="ANY_REPORT">
+            <column name="VENDOR_SITE_CODE" value="02AGH"/>
+            <column name="VENDOR_SITE_NAME" value="MACKESYS SOLICITORS-ADVOCATE"/>
+            <column name="FIRST_GL_DATE" value="2014-11-07"/>
+            <column name="LATEST_GL_DATE" value="2017-05-30"/>
+            <column name="TOTAL_INC_MEDIATION" value="59135.36"/>
+        </insert>
+        <insert tableName="V_CIS_TO_CCMS_INVOICE_HELD_PAYMENTS" schemaName="ANY_REPORT">
+            <column name="VENDOR_SITE_CODE" value="2Q023T"/>
+            <column name="VENDOR_SITE_NAME" value="KINGSWRIGHT SOLICITORS-INTERVENTION"/>
+            <column name="FIRST_GL_DATE" value="2023-07-28"/>
+            <column name="LATEST_GL_DATE" value="2023-07-28"/>
+            <column name="TOTAL_INC_MEDIATION" value="54876.28"/>
+        </insert>
+        <insert tableName="V_CIS_TO_CCMS_INVOICE_HELD_PAYMENTS" schemaName="ANY_REPORT">
+            <column name="VENDOR_SITE_CODE" value="2M135D"/>
+            <column name="VENDOR_SITE_NAME" value="GORDONS LLP RE: HANSON YOUNG CO SOLICITORS-INTERVENTION"/>
+            <column name="FIRST_GL_DATE" value="2016-11-11"/>
+            <column name="LATEST_GL_DATE" value="2019-06-03"/>
+            <column name="TOTAL_INC_MEDIATION" value="49186.71"/>
+        </insert>
+        <createTable tableName="V_CIS_TO_CCMS_INVOICE_SUMMARY" schemaName="ANY_REPORT">
+            <column name="DATE_AUTHORISED_CIS" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="THE_SYSTEM" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CIS_VALUE" type="decimal(18, 2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CCMS_VALUE" type="decimal(18, 2)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <insert tableName="V_CIS_TO_CCMS_INVOICE_SUMMARY" schemaName="ANY_REPORT">
+            <column name="DATE_AUTHORISED_CIS" value="2024-12-25"/>
+            <column name="THE_SYSTEM" value="CWA Crime Lower Contract"/>
+            <column name="CIS_VALUE" value="2"/>
+            <column name="CCMS_VALUE" value="2"/>
+        </insert>
 
-            <insert tableName="V_CIS_TO_CCMS_INVOICE_SUMMARY" schemaName="ANY_REPORT">
-                <column name="DATE_AUTHORISED_CIS" value="2023-08-02"/>
-                <column name="THE_SYSTEM" value="2dwddw"/>
-                <column name="CIS_VALUE" value="2"/>
-                <column name="CCMS_VALUE" value="2"/>
-            </insert>
+        <insert tableName="V_CIS_TO_CCMS_INVOICE_SUMMARY" schemaName="ANY_REPORT">
+            <column name="DATE_AUTHORISED_CIS" value="2023-08-02"/>
+            <column name="THE_SYSTEM" value="2dwddw"/>
+            <column name="CIS_VALUE" value="2"/>
+            <column name="CCMS_VALUE" value="2"/>
+        </insert>
 
-            <insert tableName="V_CIS_TO_CCMS_INVOICE_SUMMARY" schemaName="ANY_REPORT">
-                <column name="DATE_AUTHORISED_CIS" value="2023-08-02"/>
-                <column name="THE_SYSTEM" value="2"/>
-                <column name="CIS_VALUE" value="2"/>
-                <column name="CCMS_VALUE" value="2"/>
-            </insert>
+        <insert tableName="V_CIS_TO_CCMS_INVOICE_SUMMARY" schemaName="ANY_REPORT">
+            <column name="DATE_AUTHORISED_CIS" value="2023-08-02"/>
+            <column name="THE_SYSTEM" value="2"/>
+            <column name="CIS_VALUE" value="2"/>
+            <column name="CCMS_VALUE" value="2"/>
+        </insert>
 
-            <insert tableName="V_CIS_TO_CCMS_INVOICE_SUMMARY" schemaName="ANY_REPORT">
-                <column name="DATE_AUTHORISED_CIS" value="2023-08-07"/>
-                <column name="THE_SYSTEM" value="2"/>
-                <column name="CIS_VALUE" value="10466.08"/>
-                <column name="CCMS_VALUE" value="10466.08"/>
-            </insert>
-            <insert tableName="V_CIS_TO_CCMS_INVOICE_SUMMARY" schemaName="ANY_REPORT">
-                <column name="DATE_AUTHORISED_CIS" value="2023-08-07"/>
-                <column name="THE_SYSTEM" value="AGFS scheme"/>
-                <column name="CIS_VALUE" value="1258037.63"/>
-                <column name="CCMS_VALUE" value="1256489.69"/>
-            </insert>
-            <insert tableName="V_CIS_TO_CCMS_INVOICE_SUMMARY" schemaName="ANY_REPORT">
-                <column name="DATE_AUTHORISED_CIS" value="2023-07-26"/>
-                <column name="THE_SYSTEM" value="eForms"/>
-                <column name="CIS_VALUE" value="16231.76"/>
-                <column name="CCMS_VALUE" value="16231.76"/>
-            </insert>
-            <insert tableName="V_CIS_TO_CCMS_INVOICE_SUMMARY" schemaName="ANY_REPORT">
-                <column name="DATE_AUTHORISED_CIS" value="2023-07-26"/>
-                <column name="THE_SYSTEM" value="AGFS scheme"/>
-                <column name="CIS_VALUE" value="1345210.89"/>
-                <column name="CCMS_VALUE" value="1345210.89"/>
-            </insert>
-            <createTable tableName="V_CIS_TO_CCMS_INVOICE_EXCEPTIONS" schemaName="ANY_REPORT">
-                <column name="ACC_CODE" type="varchar(50)">
-                    <constraints nullable="false"/>
-                </column>
+        <insert tableName="V_CIS_TO_CCMS_INVOICE_SUMMARY" schemaName="ANY_REPORT">
+            <column name="DATE_AUTHORISED_CIS" value="2023-08-07"/>
+            <column name="THE_SYSTEM" value="2"/>
+            <column name="CIS_VALUE" value="10466.08"/>
+            <column name="CCMS_VALUE" value="10466.08"/>
+        </insert>
+        <insert tableName="V_CIS_TO_CCMS_INVOICE_SUMMARY" schemaName="ANY_REPORT">
+            <column name="DATE_AUTHORISED_CIS" value="2023-08-07"/>
+            <column name="THE_SYSTEM" value="AGFS scheme"/>
+            <column name="CIS_VALUE" value="1258037.63"/>
+            <column name="CCMS_VALUE" value="1256489.69"/>
+        </insert>
+        <insert tableName="V_CIS_TO_CCMS_INVOICE_SUMMARY" schemaName="ANY_REPORT">
+            <column name="DATE_AUTHORISED_CIS" value="2023-07-26"/>
+            <column name="THE_SYSTEM" value="eForms"/>
+            <column name="CIS_VALUE" value="16231.76"/>
+            <column name="CCMS_VALUE" value="16231.76"/>
+        </insert>
+        <insert tableName="V_CIS_TO_CCMS_INVOICE_SUMMARY" schemaName="ANY_REPORT">
+            <column name="DATE_AUTHORISED_CIS" value="2023-07-26"/>
+            <column name="THE_SYSTEM" value="AGFS scheme"/>
+            <column name="CIS_VALUE" value="1345210.89"/>
+            <column name="CCMS_VALUE" value="1345210.89"/>
+        </insert>
+        <createTable tableName="V_CIS_TO_CCMS_INVOICE_EXCEPTIONS" schemaName="ANY_REPORT">
+            <column name="ACC_CODE" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
 
-            </createTable>
+        </createTable>
 
-            <insert tableName="V_CIS_TO_CCMS_INVOICE_EXCEPTIONS" schemaName="ANY_REPORT">
-                <column name="ACC_CODE" value="02BZR"/>
+        <insert tableName="V_CIS_TO_CCMS_INVOICE_EXCEPTIONS" schemaName="ANY_REPORT">
+            <column name="ACC_CODE" value="02BZR"/>
 
-            </insert>
+        </insert>
 
-            <createTable tableName="V_CIS_TO_CCMS_INVOICE_DEFINED_PAYMENT_GROUPS" schemaName="ANY_REPORT">
-                <column name="VENDOR_SITE_CODE" type="varchar(50)">
-                    <constraints nullable="false"/>
-                </column>
-                <column name="VENDOR_SITE_NAME" type="varchar(255)">
-                    <constraints nullable="false"/>
-                </column>
-                <column name="FIRST_GL_DATE" type="date">
-                    <constraints nullable="false"/>
-                </column>
-                <column name="LATEST_GL_DATE" type="date">
-                    <constraints nullable="false"/>
-                </column>
-                <column name="TOTAL" type="decimal(18, 2)">
-                    <constraints nullable="false"/>
-                </column>
-            </createTable>
+        <createTable tableName="V_CIS_TO_CCMS_INVOICE_DEFINED_PAYMENT_GROUPS" schemaName="ANY_REPORT">
+            <column name="VENDOR_SITE_CODE" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VENDOR_SITE_NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FIRST_GL_DATE" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="LATEST_GL_DATE" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TOTAL" type="decimal(18, 2)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
 
-            <insert tableName="V_CIS_TO_CCMS_INVOICE_DEFINED_PAYMENT_GROUPS" schemaName="ANY_REPORT">
-                <column name="VENDOR_SITE_CODE" value="0E787D"/>
-                <column name="VENDOR_SITE_NAME" value="GWYN JAMES LEGAL LTD"/>
-                <column name="FIRST_GL_DATE" value="2023-08-03"/>
-                <column name="LATEST_GL_DATE" value="2023-08-04"/>
-                <column name="TOTAL" value="0"/>
-            </insert>
+        <insert tableName="V_CIS_TO_CCMS_INVOICE_DEFINED_PAYMENT_GROUPS" schemaName="ANY_REPORT">
+            <column name="VENDOR_SITE_CODE" value="0E787D"/>
+            <column name="VENDOR_SITE_NAME" value="GWYN JAMES LEGAL LTD"/>
+            <column name="FIRST_GL_DATE" value="2023-08-03"/>
+            <column name="LATEST_GL_DATE" value="2023-08-04"/>
+            <column name="TOTAL" value="0"/>
+        </insert>
 
-            <createTable tableName="V_CIS_TO_CCMS_INVOICE_NOT_DEFINED_PAYMENT_GROUPS" schemaName="ANY_REPORT">
-                <column name="VENDOR_SITE_CODE" type="varchar(50)">
-                    <constraints nullable="false"/>
-                </column>
-                <column name="VENDOR_SITE_NAME" type="varchar(255)">
-                    <constraints nullable="false"/>
-                </column>
-                <column name="PAY_GROUP_LOOKUP_CODE" type="varchar(50)">
-                    <constraints nullable="false"/>
-                </column>
-                <column name="FIRST_GL_DATE" type="date">
-                    <constraints nullable="false"/>
-                </column>
-                <column name="LATEST_GL_DATE" type="date">
-                    <constraints nullable="false"/>
-                </column>
-                <column name="TOTAL" type="decimal(18, 2)">
-                    <constraints nullable="false"/>
-                </column>
-            </createTable>
-            <insert tableName="V_CIS_TO_CCMS_INVOICE_NOT_DEFINED_PAYMENT_GROUPS" schemaName="ANY_REPORT">
-                <column name="VENDOR_SITE_CODE" value="020ED"/>
-                <column name="VENDOR_SITE_NAME" value="DAVID O'BRIEN"/>
-                <column name="PAY_GROUP_LOOKUP_CODE" value="OFFLINE 3"/>
-                <column name="FIRST_GL_DATE" value="2017-12-08"/>
-                <column name="LATEST_GL_DATE" value="2017-12-08"/>
-                <column name="TOTAL" value="0"/>
-            </insert>
+        <createTable tableName="V_CIS_TO_CCMS_INVOICE_NOT_DEFINED_PAYMENT_GROUPS" schemaName="ANY_REPORT">
+            <column name="VENDOR_SITE_CODE" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VENDOR_SITE_NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PAY_GROUP_LOOKUP_CODE" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FIRST_GL_DATE" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="LATEST_GL_DATE" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TOTAL" type="decimal(18, 2)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <insert tableName="V_CIS_TO_CCMS_INVOICE_NOT_DEFINED_PAYMENT_GROUPS" schemaName="ANY_REPORT">
+            <column name="VENDOR_SITE_CODE" value="020ED"/>
+            <column name="VENDOR_SITE_NAME" value="DAVID O'BRIEN"/>
+            <column name="PAY_GROUP_LOOKUP_CODE" value="OFFLINE 3"/>
+            <column name="FIRST_GL_DATE" value="2017-12-08"/>
+            <column name="LATEST_GL_DATE" value="2017-12-08"/>
+            <column name="TOTAL" value="0"/>
+        </insert>
 
-            <insert tableName="V_CIS_TO_CCMS_INVOICE_NOT_DEFINED_PAYMENT_GROUPS" schemaName="ANY_REPORT">
-                <column name="VENDOR_SITE_CODE" value="027EP"/>
-                <column name="VENDOR_SITE_NAME" value="JAYNE PYE"/>
-                <column name="PAY_GROUP_LOOKUP_CODE" value="APCRSWEEP"/>
-                <column name="FIRST_GL_DATE" value="2020-10-27"/>
-                <column name="LATEST_GL_DATE" value="2020-10-27"/>
-                <column name="TOTAL" value="2"/>
-            </insert>
-        </changeSet>
+        <insert tableName="V_CIS_TO_CCMS_INVOICE_NOT_DEFINED_PAYMENT_GROUPS" schemaName="ANY_REPORT">
+            <column name="VENDOR_SITE_CODE" value="027EP"/>
+            <column name="VENDOR_SITE_NAME" value="JAYNE PYE"/>
+            <column name="PAY_GROUP_LOOKUP_CODE" value="APCRSWEEP"/>
+            <column name="FIRST_GL_DATE" value="2020-10-27"/>
+            <column name="LATEST_GL_DATE" value="2020-10-27"/>
+            <column name="TOTAL" value="2"/>
+        </insert>
+    </changeSet>
 
 </databaseChangeLog>
