@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Trace GitHub Event
-        if:  github.ref == 'refs/heads/deploy-feature-dev'
+        if:  startsWith(github.ref, 'refs/heads/deploy-feature-dev')
         run: |
           echo "GitHub Event: ${{ toJson(github.event) }}"
           echo "GitHub Event Ref: ${{ github.event.ref }}"
