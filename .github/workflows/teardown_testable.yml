@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Trace GitHub Event
-        if:  startsWith(github.ref, 'refs/heads/deploy-feature-dev')
+        # if:  github.event.ref_type == 'branch' && startsWith(github.ref, 'refs/heads/deploy-feature-dev')
         run: |
           echo "GitHub Event: ${{ toJson(github.event) }}"
           echo "GitHub Event Ref: ${{ github.event.ref }}"
@@ -21,6 +21,10 @@ jobs:
           echo "GitHub Event Workflow: ${{ github.event.workflow }}"
           echo "GitHub Event Deleted: ${{ github.event.deleted }}"
           echo "GitHub Ref: ${{ github.ref }}"
+          echo "GitHub Event Head Ref: ${{ github.event.head.ref }}"
+          echo "GitHub Event Head Ref: ${{ github.event.head.label }}"
+          echo "Vars : ${{ toJson(vars).event }} "
+          echo "Event : ${{ toJson(github).event }} "
 
       # - name: Checkout Github Repository
       #   uses: actions/checkout@v4
