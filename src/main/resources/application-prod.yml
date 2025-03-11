@@ -4,11 +4,9 @@ gpfd:
   redirect-uri-template: ${gpfd.url}/login/oauth2/code/gpfd-azure-prod
   # Note,"gpfd-azure-dev" is also known as the Oauth2 'registrationId'
 
-  # URIs the UI can pass in as a valid redirect UI
-  # Can add multiple using comma separated list
-  allowed:
-    # replace with UI baseURI for prod
-    redirect-uri: http://localhost:3000/redirect
+  # Base URI for the key information needed to validate a JWT
+  # The JWT Spring decoder automatically appends .well-known/openid-configuration
+  jwks-uri: https://sts.windows.net/${spring.cloud.azure.active-directory.profile.tenant-id}/
 
   # MOJFIN database config
   datasource:

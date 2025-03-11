@@ -49,21 +49,20 @@ public class AppConfig {
     @Value("${gpfd.url}")
     private String serviceUrl;
 
-    @Value("${gpfd.allowed.redirect-uri}")
-    private List<String> allowedRedirectUri;
-
-    /**
-     * Validates if a given URI is on the whitelist for allowed Redirect URIs, which is set in the application properties.
-     *
-     * @param testUri The URI that has been supplied as a redirect URI
-     * @return True if testUri is in the whitelist
-     */
-    public boolean isValidRedirectUri(String testUri) {
-        return allowedRedirectUri.contains(testUri);
-    }
-
     @Value("${spring.liquibase.changelog}")
     private String liquibaseChangeLog;
+
+    @Getter
+    @Value("${spring.cloud.azure.active-directory.credential.client-id}")
+    private String entraIdClientId;
+
+    @Getter
+    @Value("${spring.cloud.azure.active-directory.profile.tenant-id}")
+    private String entraIdTenantId;
+
+    @Getter
+    @Value("${gpfd.jwks-uri}")
+    private String jwksUri;
 
     /**
      * Configures a read-only {@link DataSource} using properties prefixed with

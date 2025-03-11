@@ -3,10 +3,10 @@ gpfd:
   redirect-uri-template: http://localhost:8080
   # Note,"gpfd-azure-dev" is also known as the Oauth2 'registrationId'
 
-  # URIs the UI can pass in as a valid redirect UI
-  # Can add multiple using comma separated list
-  allowed:
-    redirect-uri: http://localhost:3000/redirect
+  # Base URI for the key information needed to validate a JWT
+  # The JWT Spring decoder automatically appends .well-known/openid-configuration
+  jwks-uri: https://sts.windows.net/${spring.cloud.azure.active-directory.profile.tenant-id}/
+
 
   # DEV MOJFIN database config. Test SQL will be written in vanilla ANSI SQL, as H2 still has issues with Oracle syntax - despite the mode being set to oracle
   datasource:

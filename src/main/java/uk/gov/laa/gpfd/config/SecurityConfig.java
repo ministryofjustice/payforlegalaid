@@ -1,14 +1,13 @@
 package uk.gov.laa.gpfd.config;
 
-import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
 
@@ -44,21 +43,8 @@ public class SecurityConfig {
      */
     private final SessionManagementConfigurerBuilder sessionManagementConfigurerBuilder;
 
-    /**
-     * The custom {@link AuthenticationSuccessHandler} responsible for handling
-     * where the app goes after authentication, which can change depending on what has called it.
-     * This dependency is injected via constructor injection due to the
-     * {@link RequiredArgsConstructor} annotation.
-     */
-    private final CustomAuthSuccessHandler customAuthSuccessHandler;
-
-    /**
-     * The custom {@link Filter} that is called before the app will redirect the user to Microsoft Entra
-     * We use it to capture some useful information before it goes and loses some of the request details.
-     * This dependency is injected via constructor injection due to the
-     * {@link RequiredArgsConstructor} annotation.
-     */
-    private final RedirectUriFilter redirectUriFilter;
+    private final JwtDecoder jwtDecoder;
+    private final AppConfig appConfig;
 
     /**
      * Configures the {@link SecurityFilterChain} for the HTTP security settings.
@@ -75,10 +61,8 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                // Save any supplied redirect uri so we can use it later
-                .addFilterBefore(redirectUriFilter, OAuth2AuthorizationRequestRedirectFilter.class)
-                // Handle redirecting after logging in
-                .oauth2Login(login -> login.successHandler(customAuthSuccessHandler))
+                //Validate JWT first - if it's not valid, it will fall back to normal session cookie or log in flows
+                .addFilterBefore(new JwtAuthenticationFilter(jwtDecoder, appConfig), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorizeHttpRequestsBuilder)    // Apply authorization rules
                 .sessionManagement(sessionManagementConfigurerBuilder)  // Apply session management configuration
                 .build();

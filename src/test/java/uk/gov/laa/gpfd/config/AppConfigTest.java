@@ -18,7 +18,6 @@ import javax.sql.DataSource;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -26,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @SpringBootTest(classes = AppConfig.class)
-@TestPropertySource(properties = {"gpfd.url=http://localhost", "gpfd.allowed.redirect-uri: http://localhost, http://localhos:3000"})
+@TestPropertySource(properties = {"gpfd.url=http://localhost"})
 class AppConfigTest {
 
     @Autowired
@@ -269,17 +268,4 @@ class AppConfigTest {
         assertTrue(classUnderTest.getServiceUrl().contentEquals("http://localhost"));
     }
 
-    @Test
-    void shouldReturnTrueIfUriIsInWhiteList() {
-
-        assertTrue(classUnderTest.isValidRedirectUri("http://localhos:3000"));
-
-    }
-
-    @Test
-    void shouldReturnFalseIfUriIsNotInWhiteList() {
-
-        assertFalse(classUnderTest.isValidRedirectUri("http://localhost:3000"));
-
-    }
 }
