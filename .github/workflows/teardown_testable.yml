@@ -6,6 +6,7 @@ on:
     branches:
       - 'testable*'
       - deploy-feature-dev
+      - main
   delete:
 
 jobs:
