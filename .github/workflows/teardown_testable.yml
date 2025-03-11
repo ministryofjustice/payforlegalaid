@@ -17,14 +17,12 @@ jobs:
 
     steps:
       - name: Trace GitHub Event
-        # if:  github.event.ref_type == 'branch' && startsWith(github.ref, 'refs/heads/deploy-feature-dev')
+        if:  startsWith(github.head_ref, 'refs/heads/deploy-feature-dev')
         env:
           GH: ${{ toJson(github) }}
-          VARS: ${{ toJson(vars) }}
         run: |
           echo "GitHub : $GH"
           echo "GitHub Event: ${{ github.event }}"
-          echo "Vars: : $VARS"
           echo "GitHub Event Ref: ${{ github.event.ref }}"
           echo "GitHub Event Ref Type: ${{ github.event.ref_type }}"
           echo "GitHub Event Action: ${{ github.event.action }}"
