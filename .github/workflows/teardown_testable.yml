@@ -1,10 +1,16 @@
 name: Tear Down Testable Environment
 
-on: delete
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - 'testable*'
+      - deploy-feature-dev
+  delete:
 
 jobs:
   cleanup-testable:
-    if: startswith(github.ref, 'refs/heads/deploy-feature-dev') || startsWith(github.head_ref, 'deploy-feature-dev/')
+    # if: startswith(github.ref, 'refs/heads/deploy-feature-dev') || startsWith(github.head_ref, 'deploy-feature-dev/')
     environment: development
     runs-on: ubuntu-latest
     # permissions:
