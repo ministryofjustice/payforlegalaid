@@ -18,8 +18,13 @@ jobs:
     steps:
       - name: Trace GitHub Event
         # if:  github.event.ref_type == 'branch' && startsWith(github.ref, 'refs/heads/deploy-feature-dev')
+        env:
+          GH: ${{ toJson(github) }}
+          VARS: ${{ toJson(vars) }}
         run: |
-          echo "GitHub Event: ${{ toJson(github.event) }}"
+          echo "GitHub : $GH"
+          echo "GitHub Event: ${{ GH.event }}"
+          echo "Vars: : $VARS"
           echo "GitHub Event Ref: ${{ github.event.ref }}"
           echo "GitHub Event Ref Type: ${{ github.event.ref_type }}"
           echo "GitHub Event Action: ${{ github.event.action }}"
@@ -27,9 +32,7 @@ jobs:
           echo "GitHub Event Deleted: ${{ github.event.deleted }}"
           echo "GitHub Ref: ${{ github.ref }}"
           echo "GitHub Event Head Ref: ${{ github.event.head.ref }}"
-          echo "GitHub Event Head Ref: ${{ github.event.head.label }}"
-          echo "Vars : ${{ toJson(vars).event }} "
-          echo "Event : ${{ toJson(github).event }} "
+          echo "GitHub Event Head Label: ${{ github.event.head.label }}"
 
       # - name: Checkout Github Repository
       #   uses: actions/checkout@v4
