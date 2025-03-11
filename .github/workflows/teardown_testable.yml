@@ -1,6 +1,11 @@
 name: Tear Down Testable Environment
 
-on: delete
+
+on:
+  delete:
+  pull_request:
+    types:
+      - closed
 
 jobs:
   cleanup-testable:
