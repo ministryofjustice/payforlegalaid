@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - feature/lpf-690
+      - main
 
 jobs:
 
