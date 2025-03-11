@@ -28,11 +28,10 @@ jobs:
           echo "GitHub Event Ref: ${{ github.event.ref }}"
           echo "GitHub Event Ref Type: ${{ github.event.ref_type }}"
           echo "GitHub Event Action: ${{ github.event.action }}"
-          echo "GitHub Event Workflow: ${{ github.event.workflow }}"
+          echo "GitHub Workflow: ${{ github.workflow }}"
           echo "GitHub Event Deleted: ${{ github.event.deleted }}"
           echo "GitHub Ref: ${{ github.ref }}"
-          echo "GitHub Event Head Ref: ${{ github.event.head.ref }}"
-          echo "GitHub Event Head Label: ${{ github.event.head.label }}"
+          echo "GitHub Head Ref: ${{ github.head_ref }}"
 
       # - name: Checkout Github Repository
       #   uses: actions/checkout@v4
