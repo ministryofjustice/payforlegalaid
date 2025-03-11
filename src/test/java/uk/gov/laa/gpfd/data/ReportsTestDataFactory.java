@@ -1,14 +1,15 @@
 package uk.gov.laa.gpfd.data;
 
 import uk.gov.laa.gpfd.model.Report;
+import uk.gov.laa.gpfd.model.ReportDetails;
 
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.UUID;
 
 public class ReportsTestDataFactory {
-    public static Report aCCMSInvoiceAnalysisExcelReport (){
-        return new Report(
+    public static ReportDetails aCCMSInvoiceAnalysisExcelReport (){
+        return new ReportDetails(
         UUID.fromString("b36f9bbb-1178-432c-8f99-8090e285f2d3"),
         "CCMS Invoice Analysis (CIS to CCMS)",
         "00000000-0000-0000-0000-000000000000",
@@ -26,8 +27,8 @@ public class ReportsTestDataFactory {
         );
     }
 
-    public static Report aCCMSInvoiceAnalysisCSVReport () {
-        return new Report(
+    public static ReportDetails aCCMSInvoiceAnalysisCSVReport () {
+        return new ReportDetails(
                 UUID.fromString("f46b4d3d-c100-429a-bf9a-6c3305dbdbf5"),
                 "CIS to CCMS payment value Not Defined",
                 "00000000-0000-0000-0000-000000000000",
@@ -45,8 +46,8 @@ public class ReportsTestDataFactory {
         );
 
     }
-    public static Report invalidReportData () {
-        return new Report(
+    public static ReportDetails invalidReportData () {
+        return new ReportDetails(
                 null,
                 null,
                 null,

@@ -5,14 +5,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.laa.gpfd.dao.ReportsDao;
+import uk.gov.laa.gpfd.dao.ReportDetailsDao;
 import uk.gov.laa.gpfd.data.ReportsTestDataFactory;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.mapper.ReportsGet200ResponseReportListInnerMapper;
 import uk.gov.laa.gpfd.services.ReportManagementService;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -24,14 +23,14 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class ReportManagementServiceTest {
     @Mock
-    private ReportsDao reportsDao;
+    private ReportDetailsDao reportDetailsDao;
 
     @InjectMocks
     private ReportManagementService reportsService;
 
     @Test
     void should_return_exception_in_fetch_report_list_entries() throws DatabaseReadException {
-        when(reportsDao.fetchReportList()).thenThrow(DatabaseReadException.class);
+        when(reportDetailsDao.fetchReportList()).thenThrow(DatabaseReadException.class);
 
         assertThrows(DatabaseReadException.class, () -> reportsService.fetchReportListEntries());
     }
@@ -44,7 +43,7 @@ public class ReportManagementServiceTest {
         var list = Arrays.asList(excelReport, csvReport);
         var expected = list.stream().map(ReportsGet200ResponseReportListInnerMapper::map).toList();
 
-        when(reportsDao.fetchReportList()).thenReturn(list);
+        when(reportDetailsDao.fetchReportList()).thenReturn(list);
 
         // When
         var result = reportsService.fetchReportListEntries();
@@ -53,13 +52,13 @@ public class ReportManagementServiceTest {
         assertNotNull(result);
         assertEquals(expected.size(), result.size());
         assertEquals(expected, result);
-        verify(reportsDao, times(1)).fetchReportList();
+        verify(reportDetailsDao, times(1)).fetchReportList();
     }
 
     @Test
     void shouldReturnEmptyListWhenNoReportsExist() {
         // Given
-        when(reportsDao.fetchReportList()).thenReturn(Collections.emptyList());
+        when(reportDetailsDao.fetchReportList()).thenReturn(Collections.emptyList());
 
         // When
         var result = reportsService.fetchReportListEntries();
@@ -67,14 +66,14 @@ public class ReportManagementServiceTest {
         // Then
         assertNotNull(result);
         assertTrue(result.isEmpty());
-        verify(reportsDao, times(1)).fetchReportList();
+        verify(reportDetailsDao, times(1)).fetchReportList();
     }
 
     @Test
     void shouldReturnSingleReportWhenOnlyOneReportExists() throws DatabaseReadException {
         // Given
         var excelReport = ReportsTestDataFactory.aCCMSInvoiceAnalysisExcelReport();
-        when(reportsDao.fetchReportList()).thenReturn(Collections.singletonList(excelReport));
+        when(reportDetailsDao.fetchReportList()).thenReturn(Collections.singletonList(excelReport));
         var expected = List.of(ReportsGet200ResponseReportListInnerMapper.map(excelReport));
 
         // When
@@ -84,7 +83,7 @@ public class ReportManagementServiceTest {
         assertNotNull(result);
         assertEquals(expected.size(), result.size());
         assertEquals(expected, result);
-        verify(reportsDao, times(1)).fetchReportList();
+        verify(reportDetailsDao, times(1)).fetchReportList();
     }
 
     @Test
@@ -93,7 +92,7 @@ public class ReportManagementServiceTest {
         var csvReport = ReportsTestDataFactory.aCCMSInvoiceAnalysisCSVReport();
         var invalidReport = ReportsTestDataFactory.invalidReportData();
         var list = Arrays.asList(csvReport, invalidReport);
-        when(reportsDao.fetchReportList()).thenReturn(list);
+        when(reportDetailsDao.fetchReportList()).thenReturn(list);
 
         // When
         var result = reportsService.fetchReportListEntries();
@@ -101,12 +100,12 @@ public class ReportManagementServiceTest {
         // Then
         assertNotNull(result);
         assertEquals(2, result.size());  // Only one valid mapping should be returned
-        verify(reportsDao, times(1)).fetchReportList();
+        verify(reportDetailsDao, times(1)).fetchReportList();
     }
 
     @Test
     void shouldRaiseDatbaseReadExceptionWhenDatabaseReadException() throws DatabaseReadException {
-        when(reportsDao.fetchReportList()).thenThrow(DatabaseReadException.class);
+        when(reportDetailsDao.fetchReportList()).thenThrow(DatabaseReadException.class);
 
         assertThrows(DatabaseReadException.class,
                 () -> reportsService.fetchReportListEntries());
@@ -114,7 +113,7 @@ public class ReportManagementServiceTest {
 
     @Test
     void shouldRaiseReportIdNotFoundExceptionWhenReportIdNotFoundException() throws ReportIdNotFoundException {
-        when(reportsDao.fetchReportList()).thenThrow(ReportIdNotFoundException.class);
+        when(reportDetailsDao.fetchReportList()).thenThrow(ReportIdNotFoundException.class);
 
         assertThrows(ReportIdNotFoundException.class,
                 () -> reportsService.fetchReportListEntries());

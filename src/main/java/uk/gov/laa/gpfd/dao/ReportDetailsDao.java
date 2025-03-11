@@ -9,8 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
-import uk.gov.laa.gpfd.model.Report;
-import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
+import uk.gov.laa.gpfd.model.ReportDetails;
 
 import java.sql.Timestamp;
 import java.util.*;
@@ -22,7 +21,7 @@ import java.util.*;
  * Data access class responsible for interacting with the Reports table and transforming its data
  * into a format suitable for other services.
  */
-public class ReportsDao {
+public class ReportDetailsDao {
     private static final String SELECT_ALL_REPORTS_SQL =
             "SELECT r.*, o.EXTENSION FROM GPFD.REPORTS r, GPFD.REPORT_OUTPUT_TYPES o " +
             "WHERE r.REPORT_OUTPUT_TYPE = o.ID";
@@ -38,12 +37,12 @@ public class ReportsDao {
      * @throws DatabaseReadException if there is an error fetching data from the database
      * @throws ReportIdNotFoundException if there is no report with that Id found in the database
      */
-    private List<Report> fetchReportResults(
+    private List<ReportDetails> fetchReportResults(
                                     String sqlCommand,
                                     Object ... args)
             throws DatabaseReadException, ReportIdNotFoundException {
         List<Map<String, Object>> resultList = new ArrayList<>();
-        List<Report> reportsList = new ArrayList<>();
+        List<ReportDetails> reportsList = new ArrayList<>();
         try {
             log.info("Reading reports");
             if (args != null && args.length > 0) {
@@ -62,7 +61,7 @@ public class ReportsDao {
 
         try {
             reportsList = resultList.stream()
-                    .map(ReportsDao::map)
+                    .map(ReportDetailsDao::map)
                     .toList();
 
         } catch (MappingException e) {
@@ -73,9 +72,9 @@ public class ReportsDao {
     }
 
     @SuppressWarnings("java:S3599")
-    public static Report map(Map<String, Object> reportData) {
+    public static ReportDetails map(Map<String, Object> reportData) {
 
-        return new Report() {{
+        return new ReportDetails() {{
             if (reportData.get("ID") != null) {
                 setId(UUID.fromString(reportData.get("ID").toString()));
             } else {
@@ -161,11 +160,11 @@ public class ReportsDao {
         }};
     }
 
-    public List<Report> fetchReportList() throws DatabaseReadException, ReportIdNotFoundException {
+    public List<ReportDetails> fetchReportList() throws DatabaseReadException, ReportIdNotFoundException {
         return fetchReportResults(SELECT_ALL_REPORTS_SQL);
     }
 
-    public Report fetchReport(UUID reportId) throws DatabaseReadException, ReportIdNotFoundException {
+    public ReportDetails fetchReport(UUID reportId) throws DatabaseReadException, ReportIdNotFoundException {
         return fetchReportResults(SELECT_SINGLE_REPORT_SQL, reportId.toString()).get(0);
     }
 }

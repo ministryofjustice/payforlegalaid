@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
-import uk.gov.laa.gpfd.model.Report;
+import uk.gov.laa.gpfd.model.ReportDetails;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,12 +22,12 @@ import static uk.gov.laa.gpfd.dao.DaoUtils.initialiseDatabase;
 
 @SpringBootTest // This uses the whole spring context, switch to @JdbcTest if you switch to a H2 DB
 @ActiveProfiles("test")
-public class ReportsDaoTest {
+public class ReportDetailsDaoTest {
     @Autowired
     private JdbcTemplate readOnlyJdbcTemplate;
 
     @Autowired
-    private ReportsDao reportsDao;
+    private ReportDetailsDao reportDetailsDao;
 
     UUID DEFAULT_REPORT_ID = UUID.fromString("b36f9bbb-1178-432c-8f99-8090e285f2d3");
     UUID NOTFOUND_REPORT_ID = UUID.fromString("b36f9bbb-0178-430c-8f09-8090e205f2d3");
@@ -44,7 +44,7 @@ public class ReportsDaoTest {
 
     @Test
     void shouldReturnAllReportsInOrder() {
-        List<Report> results = reportsDao.fetchReportList();
+        List<ReportDetails> results = reportDetailsDao.fetchReportList();
 
         assertEquals(3, results.size());
         assertEquals("b36f9bbb-1178-432c-8f99-8090e285f2d3", results.get(0).getId().toString());
@@ -55,7 +55,7 @@ public class ReportsDaoTest {
 
     @Test
     void shouldReturnSingleReportById() {
-        Report report = reportsDao.fetchReport(DEFAULT_REPORT_ID);
+        ReportDetails report = reportDetailsDao.fetchReport(DEFAULT_REPORT_ID);
         assertEquals("b36f9bbb-1178-432c-8f99-8090e285f2d3", report.getId().toString());
 
     }
@@ -65,7 +65,7 @@ public class ReportsDaoTest {
         dropDatabaseTables(readOnlyJdbcTemplate);
 
         assertThrows(DatabaseReadException.class,
-                () -> reportsDao.fetchReportList());
+                () -> reportDetailsDao.fetchReportList());
     }
 
     @Test
@@ -73,7 +73,7 @@ public class ReportsDaoTest {
         dropDatabaseTables(readOnlyJdbcTemplate);
 
         assertThrows(DatabaseReadException.class,
-                () -> reportsDao.fetchReport(DEFAULT_REPORT_ID));
+                () -> reportDetailsDao.fetchReport(DEFAULT_REPORT_ID));
     }
 
     @Test
@@ -82,14 +82,14 @@ public class ReportsDaoTest {
         clearReportsTable(readOnlyJdbcTemplate);
 
         assertThrows(ReportIdNotFoundException.class,
-                () -> reportsDao.fetchReportList());
+                () -> reportDetailsDao.fetchReportList());
     }
 
     @Test
     void shouldThrowReportIdNotFoundExceptionWhenQueryForListReturnsEmptyListForOneReport() {
 
         assertThrows(ReportIdNotFoundException.class,
-                () -> reportsDao.fetchReport(NOTFOUND_REPORT_ID));
+                () -> reportDetailsDao.fetchReport(NOTFOUND_REPORT_ID));
     }
 
 }

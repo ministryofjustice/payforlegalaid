@@ -3,7 +3,7 @@ package uk.gov.laa.gpfd.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import uk.gov.laa.gpfd.dao.ReportsDao;
+import uk.gov.laa.gpfd.dao.ReportDetailsDao;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.mapper.ReportsGet200ResponseReportListInnerMapper;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
@@ -24,7 +24,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ReportManagementService {
-    private final ReportsDao reportsDao;
+    private final ReportDetailsDao reportDetailsDao;
 
     /**
      * Fetches a list of report entries from the database, maps them into {@link ReportsGet200ResponseReportListInner}
@@ -39,7 +39,7 @@ public class ReportManagementService {
      * @throws DatabaseReadException if there is an error fetching data from the database
      */
     public List<ReportsGet200ResponseReportListInner> fetchReportListEntries() {
-        return reportsDao.fetchReportList().stream()
+        return reportDetailsDao.fetchReportList().stream()
                 .map(ReportsGet200ResponseReportListInnerMapper::map)
                 .toList();
     }
