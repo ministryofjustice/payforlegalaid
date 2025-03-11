@@ -16,41 +16,28 @@ jobs:
       contents: read
 
     steps:
-      - name: Trace GitHub Event
-        if:  startsWith(github.head_ref, 'deploy-feature-dev')
+      - name: Checkout Github Repository
+        uses: actions/checkout@v4
+
+      - name: Authenticate with Cloud Platform
+        if:  startsWith(github.head_ref, 'deploy-feature')
         env:
-          GH: ${{ toJson(github) }}
+          KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
+          KUBE_CLUSTER: ${{ secrets.KUBE_CLUSTER_DEV }}
         run: |
-          echo "GitHub : $GH"
-          echo "GitHub Event: ${{ github.event }}"
-          echo "GitHub Event Ref: ${{ github.event.ref }}"
-          echo "GitHub Event Ref Type: ${{ github.event.ref_type }}"
-          echo "GitHub Event Action: ${{ github.event.action }}"
-          echo "GitHub Workflow: ${{ github.workflow }}"
-          echo "GitHub Event Deleted: ${{ github.event.deleted }}"
-          echo "GitHub Ref: ${{ github.ref }}"
-          echo "GitHub Head Ref: ${{ github.head_ref }}"
+          echo "${{ secrets.KUBE_CERT_DEV }}" > ca.crt
+          kubectl config set-cluster ${KUBE_CLUSTER} --certificate-authority=./ca.crt --server=https://${KUBE_CLUSTER}
+          kubectl config set-credentials deploy-user --token=${{ secrets.KUBE_TOKEN_DEV }}
+          kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
+          kubectl config use-context ${KUBE_CLUSTER}
 
-      # - name: Checkout Github Repository
-      #   uses: actions/checkout@v4
-
-      # - name: Authenticate with Cloud Platform
-      #   env:
-      #     KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
-      #     KUBE_CLUSTER: ${{ secrets.KUBE_CLUSTER_DEV }}
-      #   run: |
-      #     echo "${{ secrets.KUBE_CERT_DEV }}" > ca.crt
-      #     kubectl config set-cluster ${KUBE_CLUSTER} --certificate-authority=./ca.crt --server=https://${KUBE_CLUSTER}
-      #     kubectl config set-credentials deploy-user --token=${{ secrets.KUBE_TOKEN_DEV }}
-      #     kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
-      #     kubectl config use-context ${KUBE_CLUSTER}
-
-      # - name: Delete Kubernetes resources
-      #   env:
-      #     BRANCH_NAME: ${{ github.ref_name }}
-      #     KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
-      #   run: |
-      #     kubectl delete service -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE} || true
-      #     kubectl delete ingress -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE} || true
-      #     kubectl delete pods -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE} || true
-      #     kubectl delete deployment -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE}
+      - name: Delete Kubernetes resources
+        if:  startsWith(github.head_ref, 'deploy-feature')
+        env:
+          BRANCH_NAME: ${{ github.ref_name }}
+          KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
+        run: |
+          kubectl delete service -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE} || true
+          kubectl delete ingress -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE} || true
+          kubectl delete pods -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE} || true
+          kubectl delete deployment -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE}
