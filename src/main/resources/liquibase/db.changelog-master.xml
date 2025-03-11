@@ -595,7 +595,7 @@
         <comment>make FIELD_ATTRIBUTES.COLUMN_WIDTH a double</comment>
 
         <sql>
-            ALTER TABLE GPFD.FIELD_ATTRIBUTES ALTER COLUMN COLUMN_WIDTH NUMBER(6,2)
+            ALTER TABLE GPFD.FIELD_ATTRIBUTE MODIFY COLUMN COLUMN_WIDTH NUMBER(6,2)
         </sql>
     </changeSet>
 
