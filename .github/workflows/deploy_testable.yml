@@ -1,10 +1,9 @@
-name: Deploy to Testable Environment
+name: Deploy to Test Environment
 
 on:
   push:
     branches:
-      - 'testable*'
-      # - deploy-feature-dev
+      - 'test-*'
 
 jobs:
   build-and-deploy-to-testable:
@@ -17,6 +16,7 @@ jobs:
     env:
       USERNAME: ${{ secrets.OPENAPI_PACKAGE_USER }}
       PASSWORD: ${{ secrets.OPENAPI_PACKAGE_PASSWORD }}
+      BRANCH_NAME: ${{ github.ref_name }}
 
     steps:
       - name: Checkout Github Repository
@@ -49,17 +49,12 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
 
-      - name: Echo branch name
-        run: |
-          echo "Branch name: ${{ github.ref_name }}"
-
       - name: Generate Kubernetes files from templates
         env:
           IMAGE_TAG: ${{ github.sha }}
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: ${{ vars.DEV_ECR_REPOSITORY }}
           NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
-          BRANCH_NAME: ${{ github.ref_name }}
           GPFD_URL: https://dev.get-legal-aid-data.service.justice.gov.uk
         run: |
           cat deployments/dev/deployment.tpl | envsubst > deployments/dev/deployment-${BRANCH_NAME}.yml
@@ -70,7 +65,6 @@ jobs:
         env:
           KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
           KUBE_CLUSTER: ${{ secrets.KUBE_CLUSTER_DEV }}
-          BRANCH_NAME: ${{ github.ref_name }}
         run: |
           echo "${{ secrets.KUBE_CERT_DEV }}" > ca.crt
           kubectl config set-cluster ${KUBE_CLUSTER} --certificate-authority=./ca.crt --server=https://${KUBE_CLUSTER}

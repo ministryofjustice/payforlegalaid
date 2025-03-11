@@ -1,9 +1,13 @@
-name: Tear Down Testable Environment
+name: Tear Down Test Environment
 
 on:
   pull_request:
     types:
       - closed
+
+env:
+  KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
+  PREFIX: 'test-'
 
 jobs:
   cleanup-testable:
@@ -18,9 +22,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Authenticate with Cloud Platform
-        if:  startsWith(github.head_ref, 'deploy-feature')
+        if:  startsWith(github.head_ref, env.PREFIX)
         env:
-          KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
           KUBE_CLUSTER: ${{ secrets.KUBE_CLUSTER_DEV }}
         run: |
           echo "${{ secrets.KUBE_CERT_DEV }}" > ca.crt
@@ -30,10 +33,9 @@ jobs:
           kubectl config use-context ${KUBE_CLUSTER}
 
       - name: Delete Kubernetes resources
-        if:  startsWith(github.head_ref, 'deploy-feature')
+        if:  startsWith(github.head_ref, env.PREFIX)
         env:
           BRANCH_NAME: ${{ github.head_ref }}
-          KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
         run: |
           kubectl delete service -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE} || true
           kubectl delete ingress -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE} || true
