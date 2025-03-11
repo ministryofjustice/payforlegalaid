@@ -2,12 +2,14 @@ package uk.gov.laa.gpfd.controller;
 
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -21,7 +23,7 @@ import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 import uk.gov.laa.gpfd.services.MappingTableService;
 import uk.gov.laa.gpfd.services.ReportService;
-import uk.gov.laa.gpfd.services.ReportTrackingTableService;
+import uk.gov.laa.gpfd.services.ReportsTrackingService;
 import uk.gov.laa.gpfd.services.UserService;
 
 import java.io.ByteArrayOutputStream;
@@ -59,7 +61,10 @@ class ReportsControllerTest {
     ReportService reportServiceMock;
 
     @MockitoBean
-    ReportTrackingTableService reportTrackingTableService; // This is required, despite the sonarlint suggestions
+    ReportsTrackingService reportsTrackingService; // This is required, despite the sonarlint suggestions
+
+    @Mock
+    OAuth2AuthorizedClient graphClient;
 
     @Autowired
     MockMvc mockMvc;
@@ -82,11 +87,11 @@ class ReportsControllerTest {
         ResponseEntity<StreamingResponseBody> mockResponseEntity = ResponseEntity.ok().header("Content-Disposition", "attachment; filename=data.csv").contentType(MediaType.APPLICATION_OCTET_STREAM).body(responseBody);
 
         // Mock method call
-        when(reportServiceMock.createCSVResponse(DEFAULT_ID)).thenReturn(mockResponseEntity);
+        when(reportServiceMock.createCSVResponse(DEFAULT_ID, graphClient)).thenReturn(mockResponseEntity);
 
         // Perform the GET request
         mockMvc.perform(MockMvcRequestBuilders.get("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d1").with(oidcLogin()).with(oauth2Client("graph"))).andExpect(status().isOk()).andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=data.csv"));
-        verify(reportServiceMock).createCSVResponse(DEFAULT_ID);
+        verify(reportServiceMock).createCSVResponse(DEFAULT_ID, graphClient);
     }
 
 
