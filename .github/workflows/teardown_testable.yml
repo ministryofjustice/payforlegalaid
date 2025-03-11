@@ -23,7 +23,7 @@ jobs:
           VARS: ${{ toJson(vars) }}
         run: |
           echo "GitHub : $GH"
-          echo "GitHub Event: ${{ GH.event }}"
+          echo "GitHub Event: ${{ github.event }}"
           echo "Vars: : $VARS"
           echo "GitHub Event Ref: ${{ github.event.ref }}"
           echo "GitHub Event Ref Type: ${{ github.event.ref_type }}"
