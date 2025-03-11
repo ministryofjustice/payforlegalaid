@@ -1,8 +1,6 @@
 name: Tear Down Testable Environment
 
-
 on:
-  delete:
   pull_request:
     types:
       - closed
@@ -34,7 +32,7 @@ jobs:
       - name: Delete Kubernetes resources
         if:  startsWith(github.head_ref, 'deploy-feature')
         env:
-          BRANCH_NAME: ${{ github.ref_name }}
+          BRANCH_NAME: ${{ github.head_ref }}
           KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
         run: |
           kubectl delete service -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE} || true
