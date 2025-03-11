@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: test-${BRANCH_NAME}-gpfd-dev-service
+  name: ${BRANCH_NAME}-gpfd-dev-service
   labels:
     branch: ${BRANCH_NAME}
 spec:

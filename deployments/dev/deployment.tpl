@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: test-${BRANCH_NAME}-gpfd-dev-deployment
+  name: ${BRANCH_NAME}-gpfd-dev-deployment
   labels:
     app: gpfd-dev
     branch: ${BRANCH_NAME}
