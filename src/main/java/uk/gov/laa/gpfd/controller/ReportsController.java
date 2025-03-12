@@ -15,9 +15,8 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import uk.gov.laa.gpfd.api.ReportsApi;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200Response;
-import uk.gov.laa.gpfd.services.MappingTableService;
 import uk.gov.laa.gpfd.services.ReportService;
-import uk.gov.laa.gpfd.services.ReportTrackingTableService;
+import uk.gov.laa.gpfd.services.ReportsTrackingService;
 import uk.gov.laa.gpfd.services.StreamingService;
 import uk.gov.laa.gpfd.services.ReportManagementService;
 
@@ -28,7 +27,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ReportsController implements ReportsApi {
 
-    private final ReportTrackingTableService reportTrackingTableService;
+    private final ReportsTrackingService reportsTrackingService;
     private final ReportService reportService;
     private final ReportManagementService reportManagementService;
     private final StreamingService streamingService;
@@ -63,7 +62,8 @@ public class ReportsController implements ReportsApi {
     public ResponseEntity<StreamingResponseBody> getCSV(@PathVariable(value = "id") UUID requestedId,
                                                         @RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient) {
         log.debug("Returning a CSV response to user");
-        return reportService.createCSVResponse(requestedId, graphClient);
+        reportsTrackingService.saveReportsTracking(requestedId, graphClient);
+        return reportService.createCSVResponse(requestedId);
     }
 
     /**

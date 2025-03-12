@@ -6,7 +6,6 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.config.AppConfig;
@@ -32,7 +31,6 @@ public class ReportService {
 
     private final ReportViewsDao reportViewsDao;
     private final MappingTableService mappingTableService;
-    private final ReportsTrackingService reportsTrackingService;
     private final AppConfig appConfig;
 
     /**
@@ -77,13 +75,10 @@ public class ReportService {
      * '/csv' endpoint. Also saves the report tracking information to the database.
      *
      * @param requestedId - the ID of the requested report
-     * @param graphClient - the OAuth2AuthorizedClient object, used to retrieve user details
      * @return a ResponseEntity of type 'StreamingResponseBody', containing a stream of CSV data
      */
-    public ResponseEntity<StreamingResponseBody> createCSVResponse(UUID requestedId,
-        OAuth2AuthorizedClient graphClient) throws ReportIdNotFoundException, DatabaseReadException, IndexOutOfBoundsException, CsvStreamException {
+    public ResponseEntity<StreamingResponseBody> createCSVResponse(UUID requestedId) throws ReportIdNotFoundException, DatabaseReadException, IndexOutOfBoundsException, CsvStreamException {
 
-        reportsTrackingService.saveReportsTracking(requestedId, graphClient);
 
         //Querying the mapping table, to obtain metadata about the report
         var reportListResponse = mappingTableService.getDetailsForSpecificMapping(requestedId);

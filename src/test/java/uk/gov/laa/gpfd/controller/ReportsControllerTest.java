@@ -52,9 +52,6 @@ class ReportsControllerTest {
     UserService userService;
 
     @MockitoBean
-    AzureGraphClient mockAzureGraphClient;
-
-    @MockitoBean
     ReportManagementService reportManagementServiceMock;
 
     @MockitoBean
@@ -87,11 +84,11 @@ class ReportsControllerTest {
         ResponseEntity<StreamingResponseBody> mockResponseEntity = ResponseEntity.ok().header("Content-Disposition", "attachment; filename=data.csv").contentType(MediaType.APPLICATION_OCTET_STREAM).body(responseBody);
 
         // Mock method call
-        when(reportServiceMock.createCSVResponse(DEFAULT_ID, graphClient)).thenReturn(mockResponseEntity);
+        when(reportServiceMock.createCSVResponse(DEFAULT_ID)).thenReturn(mockResponseEntity);
 
         // Perform the GET request
         mockMvc.perform(MockMvcRequestBuilders.get("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d1").with(oidcLogin()).with(oauth2Client("graph"))).andExpect(status().isOk()).andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=data.csv"));
-        verify(reportServiceMock).createCSVResponse(DEFAULT_ID, graphClient);
+        verify(reportServiceMock).createCSVResponse(DEFAULT_ID);
     }
 
 
