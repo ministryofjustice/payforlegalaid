@@ -19,6 +19,7 @@ import uk.gov.laa.gpfd.services.MappingTableService;
 import uk.gov.laa.gpfd.services.ReportService;
 import uk.gov.laa.gpfd.services.ReportTrackingTableService;
 import uk.gov.laa.gpfd.services.StreamingService;
+import uk.gov.laa.gpfd.services.ReportManagementService;
 
 import java.util.UUID;
 
@@ -28,8 +29,8 @@ import java.util.UUID;
 public class ReportsController implements ReportsApi {
 
     private final ReportTrackingTableService reportTrackingTableService;
-    private final MappingTableService mappingTableService;
     private final ReportService reportService;
+    private final ReportManagementService reportManagementService;
     private final StreamingService streamingService;
 
     @Override
@@ -42,7 +43,7 @@ public class ReportsController implements ReportsApi {
 
     @Override
     public ResponseEntity<ReportsGet200Response> reportsGet() {
-        var reportListEntries = mappingTableService.fetchReportListEntries();
+        var reportListEntries = reportManagementService.fetchReportListEntries();
 
         var response = new ReportsGet200Response() {{
             reportListEntries.forEach(this::addReportListItem);
