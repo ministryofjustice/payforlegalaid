@@ -1,6 +1,7 @@
 package uk.gov.laa.gpfd.mapper;
 
 import uk.gov.laa.gpfd.model.MappingTable;
+import uk.gov.laa.gpfd.model.ReportDetails;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 
 /**
@@ -27,6 +28,15 @@ public class ReportsGet200ResponseReportListInnerMapper {
             setId(mappingTable.getId());
             setReportName(mappingTable.getReportName());
             description(mappingTable.getDescription());
+        }};
+    }
+
+    @SuppressWarnings("java:S3599")
+    public static ReportsGet200ResponseReportListInner map(ReportDetails reportData) {
+        return new ReportsGet200ResponseReportListInner() {{
+            setId(reportData.getId());
+            setReportName(reportData.getName());
+            description(reportData.getDescription());
         }};
     }
 }

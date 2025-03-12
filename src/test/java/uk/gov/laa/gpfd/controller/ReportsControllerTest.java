@@ -21,7 +21,7 @@ import uk.gov.laa.gpfd.data.ReportListEntryTestDataFactory;
 import uk.gov.laa.gpfd.graph.AzureGraphClient;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
-import uk.gov.laa.gpfd.services.MappingTableService;
+import uk.gov.laa.gpfd.services.ReportManagementService;
 import uk.gov.laa.gpfd.services.ReportService;
 import uk.gov.laa.gpfd.services.ReportsTrackingService;
 import uk.gov.laa.gpfd.services.UserService;
@@ -55,7 +55,7 @@ class ReportsControllerTest {
     AzureGraphClient mockAzureGraphClient;
 
     @MockitoBean
-    MappingTableService mappingTableServiceMock;
+    ReportManagementService reportManagementServiceMock;
 
     @MockitoBean
     ReportService reportServiceMock;
@@ -105,7 +105,7 @@ class ReportsControllerTest {
         //Add mock response objects to a list
         List<ReportsGet200ResponseReportListInner> reportListResponseMockList = Arrays.asList(reportListEntryMock1, reportListEntryMock2);
         // Mock the Service call
-        when(mappingTableServiceMock.fetchReportListEntries()).thenReturn(reportListResponseMockList);
+        when(reportManagementServiceMock.fetchReportListEntries()).thenReturn(reportListResponseMockList);
 
         // Perform request and assert results
         mockMvc.perform(MockMvcRequestBuilders.get("/reports"))
@@ -113,7 +113,7 @@ class ReportsControllerTest {
                 .andExpect(jsonPath("$.reportList[0].id").value(reportListEntryMock1.getId().toString()))
                 .andExpect(jsonPath("$.reportList[1].id").value(reportListEntryMock2.getId().toString()));
 
-        verify(mappingTableServiceMock, times(1)).fetchReportListEntries();
+        verify(reportManagementServiceMock, times(1)).fetchReportListEntries();
 
     }
 
