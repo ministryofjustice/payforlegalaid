@@ -66,6 +66,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                     throw new JwtException("Expected scope values are missing");
                 }
 
+                log.info("JWT validated successfully");
+
                 // Create the authentication object and set it in the SecurityContext
                 // This tells it we are using this jwt and not the default session cookie stuff
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
