@@ -20,6 +20,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import uk.gov.laa.gpfd.config.TestAuthConfig;
 import uk.gov.laa.gpfd.graph.AzureGraphClient;
 import uk.gov.laa.gpfd.utils.FileUtils;
 
@@ -34,7 +35,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @ActiveProfiles("testauth")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestPropertySource(locations = "classpath:application-testauth.yml")
-class AuthTokenIT {
+class AuthTokenIT extends TestAuthConfig {
 
     @MockitoBean
     AzureGraphClient mockAzureGraphClient;
