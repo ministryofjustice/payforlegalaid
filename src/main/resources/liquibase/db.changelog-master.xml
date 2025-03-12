@@ -656,7 +656,7 @@
 
     <changeSet id="0002205-insert-reference-data-for-reports-ccms-xls" author="jason smallman">
 
-        <comment>Insert initial data into REPORTS for CCMS Excel report.</comment>
+        <comment>Insert initial data into REPORTS for CCMS Excel report</comment>
 
         <insert tableName="REPORTS" schemaName="GPFD">
             <column name="ID" value="b36f9bbb-1178-432c-8f99-8090e285f2d3"/>
