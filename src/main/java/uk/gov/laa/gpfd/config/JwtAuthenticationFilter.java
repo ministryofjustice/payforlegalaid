@@ -54,11 +54,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                     throw new JwtException("Application Id mismatch");
                 }
 
-                if (decodedToken.getExpiresAt() != null && decodedToken.getExpiresAt().isBefore(Instant.now())) {
+                if (isTokenExpired(decodedToken)) {
                     throw new JwtException("Token has expired");
                 }
 
-                if (decodedToken.getNotBefore() != null && decodedToken.getNotBefore().isAfter(Instant.now())) {
+                if (isTokenFromTheFuture(decodedToken)) {
                     throw new JwtException("Token is not yet valid");
                 }
 
@@ -79,6 +79,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         }
 
         filterChain.doFilter(servletRequest, servletResponse);
+    }
+
+    private static boolean isTokenFromTheFuture(Jwt decodedToken) {
+        return decodedToken.getNotBefore() != null && decodedToken.getNotBefore().isAfter(Instant.now());
+    }
+
+    private static boolean isTokenExpired(Jwt decodedToken) {
+        return decodedToken.getExpiresAt() != null && decodedToken.getExpiresAt().isBefore(Instant.now());
     }
 
     private String extractJwtToken(HttpServletRequest request) {
