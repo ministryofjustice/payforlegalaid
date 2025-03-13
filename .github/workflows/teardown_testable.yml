@@ -36,8 +36,4 @@ jobs:
         if:  startsWith(github.head_ref, env.PREFIX)
         env:
           BRANCH_NAME: ${{ github.head_ref }}
-        run: |
-          kubectl delete service -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE} || true
-          kubectl delete ingress -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE} || true
-          kubectl delete pods -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE} || true
-          kubectl delete deployment -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE}
+        run: kubectl delete service,ingress,pod,deployment -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE} --grace-period=0 --force --ignore-not-found=true
