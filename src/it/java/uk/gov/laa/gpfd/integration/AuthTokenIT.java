@@ -50,6 +50,10 @@ class AuthTokenIT extends TestAuthConfig {
         String gpfdSqlData = FileUtils.readResourceToString("gpfd_data.sql");
         writeJdbcTemplate.execute(gpfdSqlSchema);
         writeJdbcTemplate.execute(gpfdSqlData);
+        String gpfdSqlReportsSchema = FileUtils.readResourceToString("gpfd_reports_schema.sql");
+        String gpfdSqlReportsData = FileUtils.readResourceToString("gpfd_reports_data.sql");
+        writeJdbcTemplate.execute(gpfdSqlReportsSchema);
+        writeJdbcTemplate.execute(gpfdSqlReportsData);
 
         String anyReportSqlSchema = FileUtils.readResourceToString("any_report_schema.sql");
         String anyReportSqlData = FileUtils.readResourceToString("any_report_data.sql");
@@ -61,6 +65,12 @@ class AuthTokenIT extends TestAuthConfig {
     void resetDatabase() {
         writeJdbcTemplate.update("TRUNCATE TABLE GPFD.REPORT_TRACKING");
         writeJdbcTemplate.update("TRUNCATE TABLE GPFD.CSV_TO_SQL_MAPPING_TABLE");
+        writeJdbcTemplate.execute("DROP TABLE GPFD.REPORTS_TRACKING");
+        writeJdbcTemplate.execute("DROP TABLE GPFD.FIELD_ATTRIBUTES");
+        writeJdbcTemplate.execute("DROP TABLE GPFD.REPORT_QUERIES");
+        writeJdbcTemplate.execute("DROP TABLE GPFD.REPORT_GROUPS");
+        writeJdbcTemplate.execute("DROP TABLE GPFD.REPORTS");
+        writeJdbcTemplate.execute("DROP TABLE GPFD.REPORT_OUTPUT_TYPES");
     }
 
     @ParameterizedTest

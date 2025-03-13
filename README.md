@@ -92,7 +92,7 @@ https://dsdmoj.atlassian.net/wiki/spaces/LPF/pages/4736516940/GPFD+Environments
 
 - `mvn clean install`
 
-- `java -jar -Dspring.profiles.active=local target/pay-for-legal-aid-0.0.1-SNAPSHOT.jar`
+- `java -jar -Dspring.profiles.active=local target/pay-for-legal-aid-0.0.1-SNAPSHOT-exec.jar`
 
 - This application is in an MVP state and currently does not have a local run setup, but some of the unit tests run
   against an H2 database, which could be used to create a local run configuration.
