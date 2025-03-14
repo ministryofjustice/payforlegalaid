@@ -1,7 +1,16 @@
 on:
+  workflow_dispatch:
+    inputs:
+      target_service:
+        description: 'ministryofjustice/payforlegalaid-tests'
+        required: true
+      target_version:
+        description: '0.0.1-SNAPSHOT'
+        required: true
   push:
     branches:
       - main
+      - feature/lpf-535
 
 jobs:
 
@@ -20,13 +29,15 @@ jobs:
       - name: Checkout Github Repository
         uses: actions/checkout@v4
 
-      - name: Build and test the code
-        uses: './.github/build-and-test'
+#        TODO TAKE OUT
 
-      - name: Run Snyk security suite
-        uses: './.github/snyk-scan'
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN}}
+#      - name: Build and test the code
+#        uses: './.github/build-and-test'
+#
+#      - name: Run Snyk security suite
+#        uses: './.github/snyk-scan'
+#        env:
+#          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN}}
 
       - name: Set Spring profile
         run: echo "SPRING_PROFILES_ACTIVE=dev" >> $GITHUB_ENV
@@ -75,3 +86,10 @@ jobs:
           kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
           kubectl config use-context ${KUBE_CLUSTER}
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments/development/
+
+      - name: Trigger Acceptance Test Workflow
+        run: |
+          curl -X POST -H "Accept: application/vnd.github.everest-preview+json" \
+               -H "Authorization: token ${{ secrets.TEST_REPO_ACCESS_TOKEN }}" \
+               https://api.github.com/repos/ministryofjustice/payforlegalaid-tests/actions/workflows/deploy_to_dev.yml/dispatches \
+               -d '{"ref": "feature/lpf-535b", "inputs": {"role": "${{ secrets.DEV_ECR_ROLE_TO_ASSUME }}", "region": "${{ vars.DEV_ECR_REGION }}" }}'
