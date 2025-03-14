@@ -2,8 +2,6 @@ package uk.gov.laa.gpfd.integration;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,22 +13,14 @@ public abstract class BaseIT {
   @Autowired
   protected JdbcTemplate writeJdbcTemplate;
 
-  @BeforeEach
-  void logTestName(TestInfo testInfo) {
-    System.out.println("Running test: " + testInfo.getDisplayName());
-  }
-
   @BeforeAll
   void setupDatabase() {
-    System.out.println("vvvv Running BeforeAll");
     String gpfdSqlSchema = FileUtils.readResourceToString("gpfd_schema.sql");
     String gpfdSqlData = FileUtils.readResourceToString("gpfd_data.sql");
     writeJdbcTemplate.execute(gpfdSqlSchema);
     writeJdbcTemplate.execute(gpfdSqlData);
     String gpfdSqlReportsSchema = FileUtils.readResourceToString("gpfd_reports_schema.sql");
-    System.out.println("vvvv BeforeAll: before gpfdSqlReportsData");
     String gpfdSqlReportsData = FileUtils.readResourceToString("gpfd_reports_data.sql");
-    System.out.println("vvvv BeforeAll: before gpfdSqlReportsData");
     writeJdbcTemplate.execute(gpfdSqlReportsSchema);
     writeJdbcTemplate.execute(gpfdSqlReportsData);
 
@@ -45,6 +35,7 @@ public abstract class BaseIT {
   void resetDatabase() {
     System.out.println("vvvv Running AfterAll");
     writeJdbcTemplate.execute("DROP TABLE IF EXISTS GPFD.CSV_TO_SQL_MAPPING_TABLE");
+    writeJdbcTemplate.execute("DROP TABLE IF EXISTS GPFD.REPORT_TRACKING");
     writeJdbcTemplate.execute("DROP TABLE IF EXISTS GPFD.REPORTS_TRACKING");
     writeJdbcTemplate.execute("DROP TABLE IF EXISTS GPFD.FIELD_ATTRIBUTES");
     writeJdbcTemplate.execute("DROP TABLE IF EXISTS GPFD.REPORT_QUERIES");
