@@ -92,4 +92,4 @@ jobs:
           curl -X POST -H "Accept: application/vnd.github.everest-preview+json" \
                -H "Authorization: token ${{ secrets.TEST_REPO_ACCESS_TOKEN }}" \
                https://api.github.com/repos/ministryofjustice/payforlegalaid-tests/actions/workflows/deploy_to_dev.yml/dispatches \
-               -d '{"ref": "feature/lpf-535b", "inputs": {"role": ${{ secrets.DEV_ECR_ROLE_TO_ASSUME }}, "region": ${{ vars.DEV_ECR_REGION }} }}'
+               -d '{"ref": "feature/lpf-535b", "inputs": {"role": "${{ secrets.DEV_ECR_ROLE_TO_ASSUME }}", "region": "${{ vars.DEV_ECR_REGION }}" }}'
