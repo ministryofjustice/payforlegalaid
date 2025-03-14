@@ -1,71 +1,66 @@
 package uk.gov.laa.gpfd.services;
 
 
-import jakarta.servlet.http.HttpServletResponse;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.http.MediaType;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatusCode;
+import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.model.Report;
 
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class StreamingServiceTest {
+    private static final String APPLICATION_EXCEL = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+    @Mock
+    private Workbook workbook;
+
+    @Mock
+    private Report report;
 
     @Mock
     private ExcelService excelService;
 
-    @Mock
-    private HttpServletResponse response;
-
     @InjectMocks
     private StreamingService streamingService;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
-
     @Test
-    void testStreamExcel_Success() {
+    void shouldSuccessfullyCreateExcel() {
         // Given
         var uuid = UUID.fromString("b36f9bbb-1178-432c-8f99-8090e285f2d3");
-        var report = mock(Report.class);
-        Workbook workbook = mock(Workbook.class);
-
         when(excelService.createExcel(uuid)).thenReturn(Pair.of(report, workbook));
 
         // When
-        var deferredResult = streamingService.streamExcel(response, uuid);
+        var response = streamingService.streamExcel(uuid);
 
         // Then
-        assertNotNull(deferredResult);
-        verify(response).setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-        assertTrue(deferredResult.hasResult());
+        assertNotNull(response);
+        assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
+        assertEquals(APPLICATION_EXCEL, response.getHeaders().getFirst("Content-Type"));
+        assertEquals("attachment; filename=null.xlsx", response.getHeaders().getFirst("Content-Disposition"));
     }
 
     @Test
-    void testStreamExcel_Error() {
+    @SneakyThrows
+    void shouldFailWhenCouldNotFindReport() {
         // Given
         var uuid = UUID.fromString("b36f9bbb-1178-432c-8f99-8090e285f2d3");
-        when(excelService.createExcel(uuid)).thenThrow(new RuntimeException("Excel creation failed"));
+        when(excelService.createExcel(uuid)).thenThrow(new ReportIdNotFoundException("Report not found for ID: %s".formatted(uuid.toString())));
 
-        // When
-        var deferredResult = streamingService.streamExcel(response, uuid);
-
-        // Then
-        assertNotNull(deferredResult);
-        assertTrue(deferredResult.hasResult());
+        // When & Then
+        assertThrows(ReportIdNotFoundException.class, () -> streamingService.streamExcel(uuid));
     }
 
 }
