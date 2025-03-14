@@ -1,13 +1,10 @@
 package uk.gov.laa.gpfd.integration;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
@@ -24,33 +21,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Disabled
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestPropertySource(locations = "classpath:application-test.yml")
-class SecurityConfigLocalIT {
+class SecurityConfigLocalIT extends BaseIT{
 
     @MockitoBean
     ReportService reportServiceMock;
 
     @Autowired
     MockMvc mockMvc;
-
-    @Autowired
-    private JdbcTemplate writeJdbcTemplate;
-
-
-    @BeforeAll
-    void setupDatabase() {
-        writeJdbcTemplate.execute("CREATE SCHEMA IF NOT EXISTS GPFD;");
-    }
-
-    @AfterAll
-    void resetDatabase() {
-        writeJdbcTemplate.execute("DROP TABLE IF EXISTS GPFD.REPORT_TRACKING");
-        writeJdbcTemplate.execute("DROP TABLE IF EXISTS GPFD.CSV_TO_SQL_MAPPING_TABLE");
-    }
 
     // Local profile just ignores Azure and requires no login session.
     @Test

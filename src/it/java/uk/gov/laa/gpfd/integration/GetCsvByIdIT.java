@@ -1,24 +1,20 @@
 package uk.gov.laa.gpfd.integration;
 
 import com.microsoft.graph.models.User;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import uk.gov.laa.gpfd.dao.ReportsTrackingDao;
 import uk.gov.laa.gpfd.graph.AzureGraphClient;
-import uk.gov.laa.gpfd.utils.FileUtils;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -29,37 +25,17 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 @AutoConfigureMockMvc
 @ActiveProfiles("testauth")
 @Import(OAuth2TestConfig.class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestPropertySource(locations = "classpath:application-test.yml")
-class GetCsvByIdIT {
+class GetCsvByIdIT extends BaseIT {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private JdbcTemplate writeJdbcTemplate;
-
     @MockitoBean
     private AzureGraphClient mockAzureGraphClient;
 
-    @BeforeAll
-    void setupDatabase() {
-        String gpfdSqlSchema = FileUtils.readResourceToString("gpfd_schema.sql");
-        String gpfdSqlData = FileUtils.readResourceToString("gpfd_data.sql");
-        writeJdbcTemplate.execute(gpfdSqlSchema);
-        writeJdbcTemplate.execute(gpfdSqlData);
-
-        String anyReportSqlSchema = FileUtils.readResourceToString("any_report_schema.sql");
-        String anyReportSqlData = FileUtils.readResourceToString("any_report_data.sql");
-        writeJdbcTemplate.execute(anyReportSqlSchema);
-        writeJdbcTemplate.execute(anyReportSqlData);
-    }
-
-    @AfterAll
-    void resetDatabase() {
-        writeJdbcTemplate.execute("DROP TABLE IF EXISTS GPFD.REPORT_TRACKING");
-        writeJdbcTemplate.execute("DROP TABLE IF EXISTS GPFD.CSV_TO_SQL_MAPPING_TABLE");
-    }
+    @Autowired
+    private ReportsTrackingDao reportsTrackingDao;
 
     @Test
     void shouldReturnCsvWithMatchingId() throws Exception {
@@ -73,6 +49,11 @@ class GetCsvByIdIT {
                         .idToken(token -> token.subject("mockUser")))
                 .with(oauth2Client("graph"))).andReturn().getResponse();
 
+        var reportTrackingData = reportsTrackingDao.list().stream()
+            .filter(record -> "0d4da9ec-b0b3-4371-af10-f375330d85d3".equals(record.get("REPORT_ID").toString()))
+            .toList();
+        Assertions.assertEquals(1, reportTrackingData.size());
+        Assertions.assertEquals("0d4da9ec-b0b3-4371-af10-f375330d85d3", reportTrackingData.get(0).get("REPORT_ID").toString());
         Assertions.assertEquals(200, response.getStatus());
         Assertions.assertEquals("attachment; filename=CIS to CCMS payment value Defined.csv", response.getHeader("Content-Disposition"));
     }
@@ -83,7 +64,11 @@ class GetCsvByIdIT {
                 .with(oidcLogin()
                         .idToken(token -> token.subject("mockUser")))
                 .with(oauth2Client("graph"))).andReturn().getResponse();
+        var reportTrackingData = reportsTrackingDao.list().stream()
+            .filter(record -> "0d4da9ec-b0b3-4371-af10-321".equals(record.get("REPORT_ID").toString()))
+            .toList();
 
+        Assertions.assertEquals(0, reportTrackingData.size());
         Assertions.assertEquals(404, response.getStatus());
     }
 }

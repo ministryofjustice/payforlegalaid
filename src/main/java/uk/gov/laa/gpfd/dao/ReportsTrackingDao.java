@@ -16,7 +16,7 @@ public class ReportsTrackingDao {
   private static final String INSERT_SQL = "INSERT INTO GPFD.REPORTS_TRACKING"
       + " (ID, NAME, REPORT_ID, CREATION_DATE, REPORT_DOWNLOADED_BY, REPORT_CREATOR, REPORT_OWNER, REPORT_OUTPUT_TYPE, TEMPLATE_URL, REPORT_URL)"
       + " VALUES (?,?,?,?,?,?,?,?,?,?)";
-  private static final String SELECT_SQL = "SELECT * from GPFD.REPORT_TRACKING";
+  private static final String SELECT_SQL = "SELECT * from GPFD.REPORTS_TRACKING";
 
   private final JdbcTemplate writeJdbcTemplate;
 

@@ -16,20 +16,23 @@ import uk.gov.laa.gpfd.dao.ReportsTrackingDao;
 public class ReportsTrackingService {
 
     private final ReportsTrackingDao reportsTrackingDao;
-    private final MappingTableService mappingTableService;
+    private final ReportManagementService reportManagementService;
     private final UserService userService;
 
     public void saveReportsTracking(UUID requestedId, OAuth2AuthorizedClient graphClient) {
-        var reportListResponse = mappingTableService.getDetailsForSpecificReport(requestedId);
+        var reportDetails = reportManagementService.getDetailsForSpecificReport(requestedId);
         var user = userService.getUserDetails(graphClient);
 
         var reportsTracking = ReportsTracking.builder()
             .id(UUID.randomUUID())
-            .name(reportListResponse.getReportName())
+            .name(reportDetails.getName())
             .reportUrl("www.sharepoint.com/place-where-we-will-create-report")
             .creationDate(Timestamp.valueOf(LocalDateTime.now()))
-            .reportId(reportListResponse.getId())
+            .reportId(reportDetails.getId())
             .reportCreator(user.givenName() + " " + user.surname())
+            .reportOwner(reportDetails.getReportOwnerName())
+            .reportOutputType(reportDetails.getReportOutputType().toString())
+            .templateUrl(reportDetails.getTemplateSecureDocumentId())
             .build();
 
         log.info("Saving report tracking information");

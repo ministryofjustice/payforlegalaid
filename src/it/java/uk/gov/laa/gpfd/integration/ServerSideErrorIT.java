@@ -34,13 +34,13 @@ class ServerSideErrorIT {
     private JdbcTemplate writeJdbcTemplate;
 
     @BeforeAll
-    void setupDatabase() {
-        writeJdbcTemplate.execute("CREATE SCHEMA IF NOT EXISTS GPFD;");
+    void setupEmptyDatabase() {
+        writeJdbcTemplate.execute("CREATE SCHEMA IF NOT EXISTS GPFD;"); //Create an empty schema so that we get a 500 error
     }
 
     @AfterAll
     void resetDatabase() {
-        writeJdbcTemplate.execute("DROP TABLE IF EXISTS GPFD.REPORT_TRACKING");
+        writeJdbcTemplate.execute("DROP TABLE IF EXISTS GPFD.REPORTS_TRACKING");
         writeJdbcTemplate.execute("DROP TABLE IF EXISTS GPFD.CSV_TO_SQL_MAPPING_TABLE");
     }
 
