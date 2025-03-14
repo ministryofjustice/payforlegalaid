@@ -54,6 +54,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                     throw new JwtException("Application Id mismatch");
                 }
 
+                // TODO clock skew?
                 if (isTokenExpired(decodedToken)) {
                     throw new JwtException("Token has expired");
                 }
