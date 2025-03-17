@@ -17,18 +17,13 @@ public abstract class BaseDaoTest {
   protected JdbcTemplate writeJdbcTemplate;
 
   @BeforeEach
-  void setup() throws Exception {
+  void setup() {
     databaseUtils.setUpDatabase();
   }
 
   @AfterEach
   void resetDatabase() {
     databaseUtils.cleanUpDatabase();
-  }
-
-  public void clearReportsTable() {
-    writeJdbcTemplate.update("DELETE FROM GPFD.REPORTS_TRACKING");
-    writeJdbcTemplate.update("DELETE FROM GPFD.REPORTS");
   }
 
 }

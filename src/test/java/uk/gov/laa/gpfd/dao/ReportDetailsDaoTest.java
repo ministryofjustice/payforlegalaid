@@ -74,4 +74,10 @@ public class ReportDetailsDaoTest extends BaseDaoTest{
                 () -> reportDetailsDao.fetchReport(NOTFOUND_REPORT_ID));
     }
 
+    public void clearReportsTable() {
+        writeJdbcTemplate.update("DELETE FROM GPFD.REPORTS_TRACKING");
+        writeJdbcTemplate.update("DELETE FROM GPFD.REPORTS");
+    }
+
+
 }
