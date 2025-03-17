@@ -29,7 +29,7 @@ class ReportsTrackingDaoTest extends BaseDaoTest{
 
         assertEquals(1, reportsTrackingList.size());
         assertEquals("00000000-0000-0000-0001-000000000001", reportsTrackingList.get(0).get("ID").toString());
-        assertEquals("Test Report Name", reportsTrackingList.get(0).get("NAME").toString()); // Testing the gpfd_data.sql test data has populated into the DB properly
+        assertEquals("Test Report Name", reportsTrackingList.get(0).get("NAME").toString()); // Testing the gpfd test data has populated into the DB properly
     }
 
 
@@ -55,7 +55,7 @@ class ReportsTrackingDaoTest extends BaseDaoTest{
         // Assert
         List<Map<String, Object>> reportsTrackingList = reportsTrackingDao.list();
         String reportName = reportsTrackingList.get(1).get("NAME").toString();
-        Timestamp reportCreationTime = (Timestamp) reportsTrackingList.get(1).get("CREATION_DATE"); //index 1 because index 0 is populated by gpfd_data.sql
+        Timestamp reportCreationTime = (Timestamp) reportsTrackingList.get(1).get("CREATION_DATE"); //index 1 because index 0 is populated by liquibase
 
         assertEquals(2, reportsTrackingList.size());
         Assertions.assertNotNull(reportsTrackingList.get(1).get("ID"));

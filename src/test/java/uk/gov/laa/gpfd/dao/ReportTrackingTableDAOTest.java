@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest // This uses the whole spring context, switch to @JdbcTest if you switch to a H2 DB
 @ActiveProfiles("test")
-class ReportTrackingTableDAOTest {
+class ReportTrackingTableDAOTest extends BaseDaoTest{
 
     public static final UUID DEFAULT_ID = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
 
@@ -31,21 +31,6 @@ class ReportTrackingTableDAOTest {
     @Autowired
     private ReportTrackingTableDao reportTrackingTableDao;
 
-    @BeforeEach
-    void setup() {
-        String sqlSchema = FileUtils.readResourceToString("gpfd_schema.sql");
-        String sqlData = FileUtils.readResourceToString("gpfd_data.sql");
-
-        writeJdbcTemplate.execute(sqlSchema);
-        writeJdbcTemplate.execute(sqlData);
-    }
-
-    @AfterEach
-    void resetDatabase() {
-        writeJdbcTemplate.update("TRUNCATE TABLE GPFD.REPORT_TRACKING");
-        writeJdbcTemplate.update("TRUNCATE TABLE GPFD.CSV_TO_SQL_MAPPING_TABLE");
-    }
-
     @Test
     void list_ShouldReturnAllreportTrackingTableObjects() {
         List<Map<String, Object>> reportTrackingTableList = reportTrackingTableDao.list();
@@ -54,7 +39,7 @@ class ReportTrackingTableDAOTest {
 
         assertEquals(1, reportTrackingTableList.size());
         assertEquals("0d4da9ec-b0b3-4371-af10-f375330d85d3", reportTrackingTableList.get(0).get("ID").toString());
-        assertEquals("Initial Test Report Name", reportName); // Testing the gpfd_data.sql test data has populated into the DB properly
+        assertEquals("Initial Test Report Name", reportName); // Testing the gpfd test data has populated into the DB properly
     }
 
 
@@ -75,7 +60,7 @@ class ReportTrackingTableDAOTest {
         // Assert
         List<Map<String, Object>> reportTrackingTableList = reportTrackingTableDao.list();
         String reportName = reportTrackingTableList.get(1).get("REPORT_NAME").toString();
-        Timestamp reportCreationTime = (Timestamp) reportTrackingTableList.get(1).get("CREATION_TIME"); //index 1 because index 0 is populated by gpfd_data.sql
+        Timestamp reportCreationTime = (Timestamp) reportTrackingTableList.get(1).get("CREATION_TIME"); //index 1 because index 0 is populated by liquibase
 
         assertEquals(2, reportTrackingTableList.size());
         assertNotNull(reportTrackingTableList.get(1).get("ID"));
