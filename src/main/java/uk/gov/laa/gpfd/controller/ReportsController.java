@@ -56,6 +56,7 @@ public class ReportsController implements ReportsApi {
      * Sends a report to the user in the form of a CSV data stream. If the user requests via a web browser this response then triggers the browser to download the file.
      *
      * @param requestedId - id of the requested report
+     * @param graphClient - the OAuth2AuthorizedClient for the graph API
      * @return CSV data stream or reports data
      */
     @RequestMapping(value = "/csv/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -82,11 +83,15 @@ public class ReportsController implements ReportsApi {
      *
      * @param response    the {@link HttpServletResponse} to which the Excel file will be streamed
      * @param requestedId the unique identifier (UUID) of the report to be generated and streamed
+     * @param graphClient - the OAuth2AuthorizedClient for the graph API
      * @return a {@link DeferredResult} representing the asynchronous result of the streaming operation
      */
     @SuppressWarnings("java:S6856") // Expose later endpoint
-    public DeferredResult<StreamingResponseBody> getExcel(HttpServletResponse response, @PathVariable(value = "id") UUID requestedId) {
+    public DeferredResult<StreamingResponseBody> getExcel(HttpServletResponse response,
+        @PathVariable(value = "id") UUID requestedId,
+        @RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient) {
         log.info("Request received for streaming Excel file with ID: {}", requestedId);
+        reportsTrackingService.saveReportsTracking(requestedId, graphClient);
         return streamingService.streamExcel(response, requestedId);
     }
 

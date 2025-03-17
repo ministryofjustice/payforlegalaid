@@ -71,15 +71,12 @@ public class ReportService {
 
 
     /**
-     * Create a Response entity with a CSV data stream inside the body, for use by the controller's
-     * '/csv' endpoint. Also saves the report tracking information to the database.
+     * Create a Response entity with a CSV data stream inside the body, for use by the controller's '/csv' endpoint
      *
      * @param requestedId - the ID of the requested report
      * @return a ResponseEntity of type 'StreamingResponseBody', containing a stream of CSV data
      */
     public ResponseEntity<StreamingResponseBody> createCSVResponse(UUID requestedId) throws ReportIdNotFoundException, DatabaseReadException, IndexOutOfBoundsException, CsvStreamException {
-
-
         //Querying the mapping table, to obtain metadata about the report
         var reportListResponse = mappingTableService.getDetailsForSpecificMapping(requestedId);
 
