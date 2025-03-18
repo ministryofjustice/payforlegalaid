@@ -14,7 +14,7 @@ runs:
         java-version: '17'
 
     - name: Run tests
-      run: mvn -B clean test -s .github/settings.xml -DtrimStackTrace=false
+      run: mvn -B clean test -s .github/settings.xml
       env:
         SPRING_PROFILES_ACTIVE: test
       shell:
