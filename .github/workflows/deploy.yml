@@ -1,0 +1,28 @@
+name: One to deploy them all
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  To_Dev:
+    name: Deploy to dev
+    uses: ./.github/workflows/deploy_to_env.yml
+    with:
+      github_environment: development
+      environment_name: dev
+      ecr_repository: DEV_ECR_REPOSITORY
+      ecr_region: DEV_ECR_REGION
+      gpfd_url: https://dev.get-legal-aid-data.service.justice.gov.uk
+      alert_severity: laa-get-legal-aid-data-dev
+      secret_name: gpfd_test_secret_01
+    secrets:
+      openapi_package_user: ${{ secrets.OPENAPI_PACKAGE_USER }}
+      openapi_package_password: ${{ secrets.OPENAPI_PACKAGE_PASSWORD }}
+      snyk_token: ${{ secrets.SNYK_TOKEN }}
+      ecr_role_to_assume: ${{ secrets.DEV_ECR_ROLE_TO_ASSUME }}
+      kube_namespace: ${{ secrets.KUBE_NAMESPACE_DEV }}
+      kube_cluster: ${{ secrets.KUBE_CLUSTER_DEV }}
+      kube_token: ${{ secrets.KUBE_TOKEN_DEV }}
+      kube_cert: ${{ secrets.KUBE_CERT_DEV }}

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gpfd-${ENV_NAME}-service
+  labels:
+    app: gpfd-${ENV_NAME}-service
+spec:
+  selector:
+    app: gpfd-${ENV_NAME}
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+
