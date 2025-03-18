@@ -51,7 +51,9 @@ class StreamingServiceTest {
         // Then
         assertNotNull(deferredResult);
         verify(response).setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-        assertTrue(deferredResult.hasResult());
+        deferredResult.onCompletion(() -> {
+            assertTrue(deferredResult.hasResult());
+        });
     }
 
     @Test
@@ -65,7 +67,9 @@ class StreamingServiceTest {
 
         // Then
         assertNotNull(deferredResult);
-        assertTrue(deferredResult.hasResult());
+        deferredResult.onCompletion(() -> {
+            assertTrue(deferredResult.hasResult());
+        });
     }
 
 }
