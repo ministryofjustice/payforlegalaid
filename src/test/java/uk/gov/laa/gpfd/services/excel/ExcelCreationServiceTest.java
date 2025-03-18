@@ -11,6 +11,8 @@ import uk.gov.laa.gpfd.model.Report;
 
 import uk.gov.laa.gpfd.dao.ReportViewsDao;
 import uk.gov.laa.gpfd.services.TemplateService;
+import uk.gov.laa.gpfd.services.excel.editor.FormulaCalculator;
+import uk.gov.laa.gpfd.services.excel.editor.PivotTableRefresher;
 import uk.gov.laa.gpfd.services.excel.editor.SheetDataWriter;
 
 import java.util.Collections;
@@ -34,6 +36,12 @@ class ExcelCreationServiceTest {
 
     @Mock
     private SheetDataWriter sheetDataWriter;
+
+    @Mock
+    private PivotTableRefresher pivotTableRefresher;
+
+    @Mock
+    private FormulaCalculator formulaCalculator;
 
     @InjectMocks
     private ExcelCreationService excelCreationService;
@@ -68,6 +76,8 @@ class ExcelCreationServiceTest {
 
         // Verify interactions
         verify(templateLoader).findTemplateById("TEMPLATE_123");
+        verify(pivotTableRefresher).refreshPivotTables(workbook);
+        verify(formulaCalculator).evaluateAllFormulaCells(workbook, "MAIN");
     }
 
     @Test
@@ -117,6 +127,8 @@ class ExcelCreationServiceTest {
 
         // Verify interactions
         verify(templateLoader).findTemplateById("TEMPLATE_123");
+        verify(pivotTableRefresher).refreshPivotTables(workbook);
+        verify(formulaCalculator).evaluateAllFormulaCells(workbook, "MAIN");
         verify(sheetDataWriter, never()).writeDataToSheet(any(), any(), any());
     }
 
@@ -151,5 +163,7 @@ class ExcelCreationServiceTest {
 
         // Verify interactions
         verify(templateLoader).findTemplateById("TEMPLATE_123");
+        verify(pivotTableRefresher).refreshPivotTables(workbook);
+        verify(formulaCalculator).evaluateAllFormulaCells(workbook, "MAIN");
     }
 }
