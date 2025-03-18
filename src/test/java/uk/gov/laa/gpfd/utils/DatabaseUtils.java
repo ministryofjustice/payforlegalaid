@@ -11,6 +11,7 @@ import liquibase.resource.ClassLoaderResourceAccessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import uk.gov.laa.gpfd.exception.DatabaseReadException;
 
 @Component
 @RequiredArgsConstructor
@@ -35,7 +36,7 @@ public class DatabaseUtils {
       applyLiquibaseXml("db.changelog-any-report-schema.xml", database);
       applyLiquibaseXml("db.changelog-any-report-data.xml", database);
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      throw new DatabaseReadException("Exception when setting up test database:" + e.getMessage());
     }
 
   }
@@ -58,7 +59,7 @@ public class DatabaseUtils {
         liquibase.dropAll(schemas);
       }
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      throw new DatabaseReadException("Exception when cleaning up test database:" + e.getMessage());
     }
   }
 
