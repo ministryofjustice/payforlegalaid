@@ -1,5 +1,5 @@
 gpfd:
-  url: https://dev.get-legal-aid-data.service.justice.gov.uk
+  url: ${GPFD_URL}
   #This is the url which the Active directory dev app registration will redirect to after SSO is complete
   redirect-uri-template: ${gpfd.url}/login/oauth2/code/gpfd-azure-dev
   # Note,"gpfd-azure-dev" is also known as the Oauth2 'registrationId'
