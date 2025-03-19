@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.1</version>
+        <version>3.4.3</version>
     </parent>
 
     <properties>
@@ -32,51 +32,15 @@
         <bytebudy.version>1.15.10</bytebudy.version>
         <mockito-inlin.version>3.11.2</mockito-inlin.version>
         <maven-surefire-junit5-tree-reporte.version>1.1.0</maven-surefire-junit5-tree-reporte.version>
-
+        <poi.version>5.4.0</poi.version>
+        <immutables.version>2.10.1</immutables.version>
         <spring-cloud-azure-dependencies.version>5.19.0</spring-cloud-azure-dependencies.version>
+
+        <payforlegalaid-openapi.version>0.0.2</payforlegalaid-openapi.version>
     </properties>
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.openapitools</groupId>
-                <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>7.10.0</version>
-                <configuration>
-                    <skip>false</skip>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <inputSpec>
-                                ${project.basedir}/src/main/resources/static/swagger.yml
-                            </inputSpec>
-                            <typeMappings>
-                                <typeMapping>string+binary=StreamingResponseBody</typeMapping>
-                            </typeMappings>
-                            <importMappings>
-                                <importMapping>StreamingResponseBody=org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody</importMapping>
-                            </importMappings>
-                            <generatorName>spring</generatorName>
-                            <apiPackage>uk.gov.laa.gpfd.api</apiPackage>
-                            <modelPackage>uk.gov.laa.gpfd.model</modelPackage>
-                            <supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
-                            <configOptions>
-                                <library>spring-boot</library>
-                                <oas3>false</oas3>
-                                <interfaceOnly>true</interfaceOnly>
-                                <dateLibrary>java8</dateLibrary>
-                                <openApiNullable>false</openApiNullable>
-                                <hideGenerationTimestamp>true</hideGenerationTimestamp>
-                                <useJakartaEe>true</useJakartaEe>
-                            </configOptions>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
@@ -130,11 +94,33 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>3.6.1</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>uk.gov.laa</groupId>
+                                    <artifactId>payforlegalaid-openapi</artifactId>
+                                    <version>${payforlegalaid-openapi.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.basedir}/src/main/resources/static</outputDirectory>
+                                    <includes>swagger.yml</includes>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <classifier>exec</classifier>
                     <mainClass>uk.gov.laa.gpfd.Application</mainClass>
                     <layers>
                         <enabled>true</enabled> <!-- Enables layered JAR for container optimization -->
@@ -161,6 +147,14 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.2</version>
+                <configuration>
+                    <attachClasses>true</attachClasses>
+                    <classesClassifier>classes</classesClassifier>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -177,6 +171,28 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>org.immutables</groupId>
+            <artifactId>value</artifactId>
+            <version>${immutables.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.gov.laa</groupId>
+            <artifactId>payforlegalaid-openapi</artifactId>
+            <version>${payforlegalaid-openapi.version}</version>
+        </dependency>
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations</artifactId>
@@ -333,4 +349,11 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>payforlegalaid-openapi</id>
+            <url>https://github.com/ministryofjustice/payforlegalaid-openapi/</url>
+        </repository>
+    </repositories>
 </project>

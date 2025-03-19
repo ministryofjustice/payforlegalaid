@@ -4,6 +4,10 @@ on:
   pull_request:
     types: [opened, reopened, synchronize]
 
+env:
+  USERNAME: ${{ secrets.OPENAPI_PACKAGE_USER }}
+  PASSWORD: ${{ secrets.OPENAPI_PACKAGE_PASSWORD }}
+
 jobs:
   feature_branch:
 
@@ -19,3 +23,6 @@ jobs:
         uses: './.github/snyk-scan'
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN}}
+
+      - name: Run acceptance tests
+        uses: './.github/run_acceptance_tests'

@@ -3,6 +3,7 @@ name: Build and run tests
 runs:
   using: 'composite'
   steps:
+
     - name: Checkout repository
       uses: actions/checkout@v4
 
@@ -13,7 +14,7 @@ runs:
         java-version: '17'
 
     - name: Run tests
-      run: mvn -B clean test
+      run: mvn -B clean test -s .github/settings.xml
       env:
         SPRING_PROFILES_ACTIVE: test
       shell:

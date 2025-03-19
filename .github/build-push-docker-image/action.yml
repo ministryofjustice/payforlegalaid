@@ -8,7 +8,7 @@ runs:
       uses: actions/checkout@v4
 
     - name: Build with Maven
-      run: mvn -B -DskipTests clean package
+      run: mvn -B -DskipTests clean package -s .github/settings.xml
       shell:
         bash
 

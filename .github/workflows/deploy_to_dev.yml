@@ -12,6 +12,10 @@ jobs:
       id-token: write # This is required for requesting the JWT
       contents: read  # This is required for actions/checkout
 
+    env:
+      USERNAME: ${{ secrets.OPENAPI_PACKAGE_USER }}
+      PASSWORD: ${{ secrets.OPENAPI_PACKAGE_PASSWORD }}
+
     steps:
       - name: Checkout Github Repository
         uses: actions/checkout@v4
@@ -51,6 +55,7 @@ jobs:
           NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
           ALERT_SEVERITY: laa-get-legal-aid-data-dev
           ENV_NAME: dev
+          GPFD_URL: https://dev.get-legal-aid-data.service.justice.gov.uk
         run: |
           cat deployments/development/deployment.tpl | envsubst > deployments/development/deployment.yml
           cat deployments/development/ingress.tpl | envsubst > deployments/development/ingress.yml
