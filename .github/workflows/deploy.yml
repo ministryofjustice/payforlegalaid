@@ -13,8 +13,8 @@ jobs:
     with:
       github_environment: development
       environment_name: dev
-      ecr_repository: DEV_ECR_REPOSITORY
-      ecr_region: DEV_ECR_REGION
+      ecr_repository: ${{ vars.DEV_ECR_REPOSITORY }}
+      ecr_region: ${{ vars.DEV_ECR_REGION }}
       gpfd_url: https://dev.get-legal-aid-data.service.justice.gov.uk
       alert_severity: laa-get-legal-aid-data-dev
       secret_name: gpfd_test_secret_01
