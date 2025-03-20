@@ -8,13 +8,15 @@ import uk.gov.laa.gpfd.dao.ReportViewsDao;
 import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.model.ReportQuery;
 import uk.gov.laa.gpfd.services.TemplateService;
+import uk.gov.laa.gpfd.services.excel.editor.FormulaCalculator;
+import uk.gov.laa.gpfd.services.excel.editor.PivotTableRefresher;
 import uk.gov.laa.gpfd.services.excel.editor.SheetDataWriter;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-import static java.util.concurrent.CompletableFuture.allOf;
+import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.CompletableFuture.runAsync;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 import static uk.gov.laa.gpfd.services.excel.util.SheetUtils.findSheetByName;
@@ -36,7 +38,9 @@ import static uk.gov.laa.gpfd.services.excel.util.SheetUtils.findSheetByName;
 public record ExcelCreationService(
         TemplateService templateLoader,
         ReportViewsDao dataFetcher,
-        SheetDataWriter sheetDataWriter
+        SheetDataWriter sheetDataWriter,
+        PivotTableRefresher pivotTableRefresher,
+        FormulaCalculator formulaCalculator
 ) {
 
     /**
@@ -65,15 +69,18 @@ public record ExcelCreationService(
      * @param report   the report containing the queries and field attributes
      */
     private void updateTemplateWithData(Workbook workbook, Report report) {
-        var futures = report.getQueries().parallelStream()
+        report.getQueries().parallelStream()
                 .flatMap(query -> findSheetByName(workbook, query.getTabName())
                         .stream()
                         .map(sheet -> new SheetToQuery(sheet, query)))
                 .map(sheetToQuery -> fetchData(sheetToQuery)
                         .thenCompose(data -> writeDataToSheet(sheetToQuery, data)))
-                .toList();
+                .reduce(CompletableFuture::allOf)
+                .orElse(completedFuture(null))
+                .join();
 
-        allOf(futures.toArray(new CompletableFuture[0])).join();
+        pivotTableRefresher.refreshPivotTables(workbook);
+        formulaCalculator.evaluateAllFormulaCells(workbook, "MAIN");
     }
 
     /**

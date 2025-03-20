@@ -22,6 +22,8 @@ import org.springframework.web.client.RestTemplate;
 import uk.gov.laa.gpfd.model.FieldAttributes;
 import uk.gov.laa.gpfd.services.TemplateService;
 import uk.gov.laa.gpfd.services.excel.editor.CellValueSetter;
+import uk.gov.laa.gpfd.services.excel.editor.FormulaCalculator;
+import uk.gov.laa.gpfd.services.excel.editor.PivotTableRefresher;
 import uk.gov.laa.gpfd.services.excel.editor.SheetDataWriter;
 import uk.gov.laa.gpfd.services.excel.formatting.CellFormatter;
 import uk.gov.laa.gpfd.services.excel.formatting.CellFormatting;
@@ -277,4 +279,27 @@ public class AppConfig {
     public ColumnFormatting columnWidthStrategy() {
         return new ColumnFormatting() {};
     }
+
+    /**
+     * Creates and returns a {@link PivotTableRefresher} bean. This bean is responsible for
+     * refreshing pivot tables in Excel workbooks.
+     *
+     * @return a {@link PivotTableRefresher} instance
+     */
+    @Bean
+    public PivotTableRefresher pivotTableRefresher() {
+        return new PivotTableRefresher() {};
+    }
+
+    /**
+     * Creates and returns a {@link FormulaCalculator} bean. This bean is responsible for
+     * evaluate formula cells in Excel workbooks.
+     *
+     * @return a {@link FormulaCalculator} instance
+     */
+    @Bean
+    public FormulaCalculator formulaCalculator() {
+        return new FormulaCalculator() {};
+    }
+
 }

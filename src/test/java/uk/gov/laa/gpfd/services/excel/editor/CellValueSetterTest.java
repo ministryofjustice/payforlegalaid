@@ -13,21 +13,19 @@ import java.util.stream.Stream;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-class CellValueSetterTest {
+class CellValueSetterTest implements CellValueSetter {
 
-    private CellValueSetter cellValueSetter;
     private Cell cell;
 
     @BeforeEach
     void setUp() {
-        cellValueSetter = new CellValueSetter() {};
         cell = mock(Cell.class);
     }
 
     @ParameterizedTest
     @MethodSource("provideTestCases")
     void shouldSetCellValueCorrectly(Object value, Verifier verifier) {
-        cellValueSetter.setCellValue(cell, value);
+        setCellValue(cell, value);
 
         verifier.verify(cell, value);
     }
