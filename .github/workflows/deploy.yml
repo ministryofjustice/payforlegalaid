@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - deployment-template
 
 jobs:
   To_Dev:
