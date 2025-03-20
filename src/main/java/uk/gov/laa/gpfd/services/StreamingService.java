@@ -1,97 +1,60 @@
 package uk.gov.laa.gpfd.services;
 
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import org.springframework.web.context.request.async.DeferredResult;
+import uk.gov.laa.gpfd.exception.TransferException;
 
-import java.io.OutputStream;
+import java.io.IOException;
 import java.util.UUID;
 
-import static jakarta.servlet.http.HttpServletResponse.SC_REQUEST_TIMEOUT;
-import static java.util.concurrent.CompletableFuture.runAsync;
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
-import static uk.gov.laa.gpfd.exception.TransferException.StreamException.ExcelStreamWriteException;
 
 @Slf4j
 @Service
 public record StreamingService(ExcelService excelService) {
 
+    private static final String APPLICATION_EXCEL = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
     /**
-     * Initiates the streaming of an Excel file to the client. This method sets up a {@link DeferredResult}
-     * to handle the asynchronous generation and streaming of the file. It also configures the response
-     * headers and handles timeouts and errors.
+     * Streams an Excel file as a response for the given UUID.
+     * <p>
+     * This method generates an Excel file using the provided UUID, streams it directly to the client,
+     * and sets the appropriate headers for file download. The method ensures efficient streaming
+     * by avoiding loading the entire file into memory.
+     * </p>
      *
-     * @param response the {@link HttpServletResponse} to which the Excel file will be streamed
-     * @param uuid     the unique identifier for the report to be generated
-     * @return a {@link DeferredResult} representing the asynchronous result of the streaming operation
+     * @param uuid The unique identifier for the report or data to be streamed as an Excel file.
+     * @return A {@link ResponseEntity} containing a {@link StreamingResponseBody} for the Excel file.
+     * @throws TransferException.StreamException.ExcelStreamWriteException If an error occurs while streaming the Excel data.
      */
-    public DeferredResult<StreamingResponseBody> streamExcel(HttpServletResponse response, UUID uuid) {
+    public ResponseEntity<StreamingResponseBody> streamExcel(UUID uuid) {
         log.info("Starting Excel streaming process for UUID: {}", uuid);
-        final DeferredResult<StreamingResponseBody> deferredResult = new DeferredResult<>(60000L);
-        response.setContentType(APPLICATION_OCTET_STREAM_VALUE);
         log.debug("Response content type set to: {}", APPLICATION_OCTET_STREAM_VALUE);
 
-        runAsync(() -> processExcel(response, uuid, deferredResult))
-                .exceptionally((Throwable ex) -> {
-                    log.error("An error occurred while processing Excel for UUID: {}", uuid, ex);
-                    deferredResult.setErrorResult(ex);
-                    return null;
-                });
+        var excel = excelService.createExcel(uuid);
+        var filename = "%s.%s".formatted(excel.getLeft().getName(), "xlsx");
+        var contentDisposition = "attachment; filename=%s".formatted(filename);
+        log.debug("Set Content-Disposition header: {}", contentDisposition);
 
-        deferredResult.onTimeout(() -> {
-            log.warn("Request timed out for UUID: {}", uuid);
-            handleTimeout(response, deferredResult);
-        });
-        log.info("DeferredResult created successfully for UUID: {}", uuid);
-        return deferredResult;
-    }
-
-    /**
-     * Processes the Excel file generation and streaming. This method is executed asynchronously and
-     * sets the result or error on the {@link DeferredResult}.
-     *
-     * @param response      the {@link HttpServletResponse} to which the Excel file will be streamed
-     * @param uuid          the unique identifier for the report to be generated
-     * @param deferredResult the {@link DeferredResult} to which the result or error will be set
-     */
-    private void processExcel(HttpServletResponse response, UUID uuid, DeferredResult<StreamingResponseBody> deferredResult) {
-        try {
-            deferredResult.setResult(writeExcelToStream(response, uuid));
-        } catch (Exception e) {
-            deferredResult.setErrorResult(e);
-        }
-    }
-
-    private StreamingResponseBody writeExcelToStream(HttpServletResponse response, UUID uuid) {
-        return (OutputStream outputStream) -> {
-            try {
-                log.debug("Creating Excel file for UUID: {}", uuid);
-                var excel = excelService.createExcel(uuid);
-
-                var report = excel.getLeft();
-                log.debug("Retrieved report: {}", report.getName());
-                String contentDisposition = "attachment; filename=%s.%s".formatted(report.getName(), "xlsx");
-                response.setHeader("Content-Disposition", contentDisposition);
-                log.debug("Set Content-Disposition header: {}", contentDisposition);
-
-                log.debug("Writing Excel file to output stream for UUID: {}", uuid);
-                excel.getRight().write(outputStream);
-
-                log.debug("Flushing output stream for UUID: {}", uuid);
-                outputStream.flush();
-
-                log.info("Successfully wrote Excel file to stream for UUID: {}", uuid);
-            } catch (Exception e) {
-                log.error("An error occurred while writing Excel file to stream for UUID: {}", uuid, e);
-                throw new ExcelStreamWriteException("Failed to write Excel file to stream", e);
+        StreamingResponseBody responseBody = outputStream -> {
+            try(var workbook = excel.getRight()) {
+                log.debug("Starting to stream Excel file for UUID: {}", uuid);
+                workbook.write(outputStream);
+                log.debug("Successfully streamed Excel file for UUID: {}", uuid);
+            } catch (IOException e) {
+                log.error("Error streaming Excel data to response for UUID: {}", uuid, e);
+                throw new TransferException.StreamException.ExcelStreamWriteException("Error streaming Excel data to response", e);
             }
         };
+
+        log.debug("Building response for Excel file streaming for UUID: {}", uuid);
+        return ResponseEntity.ok()
+                .header("Content-Disposition", contentDisposition)
+                .contentType(MediaType.parseMediaType(APPLICATION_EXCEL))
+                .body(responseBody);
     }
 
-    private void handleTimeout(HttpServletResponse response, DeferredResult<StreamingResponseBody> deferredResult) {
-        response.setStatus(SC_REQUEST_TIMEOUT);
-        deferredResult.setErrorResult("Request timed out");
-    }
 }
