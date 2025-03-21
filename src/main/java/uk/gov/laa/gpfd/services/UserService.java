@@ -4,7 +4,10 @@ import com.microsoft.graph.core.ClientException;
 import com.microsoft.graph.models.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import uk.gov.laa.gpfd.bean.UserDetails;
@@ -50,6 +53,22 @@ public class UserService {
                 .preferredName(graphUser.preferredName)
                 .email(graphUser.mail)
                 .build();
+    }
+
+    public String getCurrentUserName() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = "Unknown";
+        if (authentication  != null && authentication.getPrincipal() != null) {
+            Object principal = authentication.getPrincipal();
+
+            if (principal instanceof DefaultOidcUser) {
+                username = ((DefaultOidcUser) principal).getAttribute("preferred_username");
+            } else {
+                username = principal.toString()
+                    .substring(0, 100); // Fallback in case it's a simple string
+            }
+        }
+        return username;
     }
 
 }
