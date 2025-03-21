@@ -39,12 +39,26 @@ jobs:
 #        env:
 #          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN}}
 
+      - name: Create JSON Payload
+        run: |
+          cat <<EOF > payload.json
+          {
+            "ref": "feature/lpf-535b",
+            "inputs": {
+              "namespace": "${{ secrets.KUBE_NAMESPACE_DEV }}",
+              "cluster": "${{ secrets.KUBE_CLUSTER_DEV }}",
+              "cert": "${{ secrets.KUBE_CERT_DEV }}",
+              "token": "${{ secrets.KUBE_TOKEN_DEV }}"
+            }
+          }
+          EOF
+
       - name: Trigger Acceptance Test Workflow
         run: |
           curl -X POST -H "Accept: application/vnd.github.everest-preview+json" \
                -H "Authorization: token ${{ secrets.TEST_REPO_ACCESS_TOKEN }}" \
                https://api.github.com/repos/ministryofjustice/payforlegalaid-tests/actions/workflows/deploy_to_dev.yml/dispatches \
-               -d "{\"ref\": \"feature/lpf-535b\", \"inputs\": {\"namespace\": \"${{ secrets.KUBE_NAMESPACE_DEV }}\", \"cluster\": \"${{ secrets.KUBE_CLUSTER_DEV }}\", \"cert\": \"${{ secrets.KUBE_CERT_DEV }}\", \"token\": \"${{ secrets.KUBE_TOKEN_DEV }}\" }}"
+               -d @payload.json
 
 
 #      - name: Set Spring profile
