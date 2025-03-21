@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+  <changeSet id="6001" author="user">
+    <insert tableName="V_CIS_TO_CCMS_INVOICE_SUMMARY" schemaName="ANY_REPORT">
+      <column name="DATE_AUTHORISED_CIS" value="Auth Date"/>
+      <column name="THE_SYSTEM" value="Test System"/>
+      <column name="CIS_VALUE" value="Test Value"/>
+      <column name="CCMS_VALUE" value="Test Value"/>
+    </insert>
+  </changeSet>
+
+  <changeSet id="6002" author="user">
+    <insert tableName="V_CIS_TO_CCMS_INVOICE_DEFINED_PAYMENT_GROUPS" schemaName="ANY_REPORT">
+      <column name="DATE_AUTHORISED_CIS" value="Auth Date"/>
+      <column name="THE_SYSTEM" value="Test System"/>
+      <column name="CIS_VALUE" value="Test Value"/>
+      <column name="CCMS_VALUE" value="Test Value"/>
+    </insert>
+  </changeSet>
+
+</databaseChangeLog>
