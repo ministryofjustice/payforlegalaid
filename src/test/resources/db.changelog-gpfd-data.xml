@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+  <changeSet id="3001" author="user">
+    <insert tableName="REPORT_TRACKING" schemaName="GPFD">
+      <column name="ID" value="0d4da9ec-b0b3-4371-af10-f375330d85d3"/>
+      <column name="REPORT_NAME" value="Initial Test Report Name"/>
+      <column name="REPORT_URL" value="https://www.some-url.com"/>
+      <column name="CREATION_TIME" value="2024-03-18T12:10:11.814596"/>
+      <column name="MAPPING_ID" value="0d4da9ec-b0b3-4371-af10-f375330d85d3"/>
+      <column name="REPORT_GENERATED_BY" value="Bill Evans"/>
+    </insert>
+
+    <insert tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
+      <column name="ID" value="0d4da9ec-b0b3-4371-af10-f375330d85d3"/>
+      <column name="REPORT_NAME" value="CIS to CCMS payment value Defined"/>
+      <column name="SQL_QUERY" value="SELECT * FROM ANY_REPORT.V_CIS_TO_CCMS_INVOICE_DEFINED_PAYMENT_GROUPS"/>
+      <column name="BASE_URL" value="https://justiceuk.sharepoint.com/sites/FinanceSysReference/SitePages/GPFD-Test-Site-page.aspx"/>
+      <column name="REPORT_OWNER" value="William Moran"/>
+      <column name="REPORT_CREATOR" value="William Unwin"/>
+      <column name="REPORT_DESCRIPTION" value="Details of invoices transferred from CIS to CCMS by Legal Aid Scheme"/>
+      <column name="EXCEL_REPORT" value="CIS_TO_CCMS_PAYMENT_VALUE_DEFINED"/>
+    </insert>
+
+    <insert tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
+      <column name="ID" value="0d4da9ec-b0b3-4371-af10-f375330d85d1"/>
+      <column name="REPORT_NAME" value="CIS-to-CCMS-import-analysis-2"/>
+      <column name="SQL_QUERY" value="SELECT * FROM ANY_REPORT.V_CIS_TO_CCMS_INVOICE_SUMMARY"/>
+      <column name="BASE_URL" value="https://justiceuk.sharepoint.com/:x:/r/sites/FinanceSysReference/Shared%20Documents/General/Monthly%20Accounts/Sharepoint%20base%20reports/General%20CCMS%20Tools/CCMS%20invoice%20analysis.xlsb?d=w7bc78b4b2c94489e899415353a37d234&amp;csf=1&amp;web=1&amp;e=K0h3OD"/>
+      <column name="REPORT_OWNER" value="Chancey Mctavish"/>
+      <column name="REPORT_CREATOR" value="Sophia Patel"/>
+      <column name="REPORT_DESCRIPTION" value="Summary of invoices in CIS and CCMS by original source IT system"/>
+      <column name="EXCEL_REPORT" value="CCMS_invoice_analysis"/>
+    </insert>
+
+    <insert tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
+      <column name="ID" value="0d4da9ec-b0b3-4371-af10-f375330d85d2"/>
+      <column name="REPORT_NAME" value="CCMS_and_CIS_Bank_Account_Report_w_Category_Code_(MNTH)-MAIN-12"/>
+      <column name="SQL_QUERY" value="SELECT * FROM ANY_REPORT.V_BANK_MONTH"/>
+      <column name="BASE_URL" value="https://justiceuk.sharepoint.com/sites/FinanceSysReference/Shared%20Documents/Forms/AllItems.aspx?id=%2Fsites%2FFinanceSysReference%2FShared%20Documents%2FGeneral%2FMonthly%20Accounts%2F2023%2D06%2FBank%20reporting&amp;viewid=5d6ec327%2D2975%2D4d7c%2Dbd8d%2D6b793c45868b"/>
+      <column name="REPORT_OWNER" value="Daniel Mctavish"/>
+      <column name="REPORT_CREATOR" value="Brian Limond"/>
+      <column name="REPORT_DESCRIPTION" value="Summary of all payments made by CCMS/CIS and all cash receipts applied to debt in the previous month"/>
+      <column name="EXCEL_REPORT" value="CCMS_and_CIS_Bank_Account_Report_w_Category_Code_(MNTH)"/>
+    </insert>
+  </changeSet>
+
+</databaseChangeLog>

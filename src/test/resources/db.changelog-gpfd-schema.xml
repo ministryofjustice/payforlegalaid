@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+  <changeSet id="1001" author="user">
+    <sql>CREATE SCHEMA IF NOT EXISTS GPFD;</sql>
+  </changeSet>
+
+  <changeSet id="1002" author="user">
+    <createSequence sequenceName="GPFD_TRACKING_TABLE_SEQUENCE" schemaName="GPFD" startValue="1" incrementBy="1"/>
+  </changeSet>
+
+  <changeSet id="1003" author="user">
+    <createTable tableName="REPORT_TRACKING" schemaName="GPFD">
+      <column name="ID" type="UUID">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="pk_report_tracking_id"/>
+      </column>
+      <column name="REPORT_NAME" type="VARCHAR(80)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="REPORT_URL" type="VARCHAR(500)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="CREATION_TIME" type="TIMESTAMP">
+        <constraints nullable="false"/>
+      </column>
+      <column name="MAPPING_ID" type="UUID">
+        <constraints nullable="false"/>
+      </column>
+      <column name="REPORT_GENERATED_BY" type="VARCHAR(500)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+    <sql>ALTER TABLE GPFD.REPORT_TRACKING ALTER COLUMN ID SET DEFAULT sys_guid();</sql>
+  </changeSet>
+
+  <changeSet id="1004" author="user">
+    <createTable tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
+      <column name="ID" type="UUID">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="pk_csv_to_sql_mapping_table_id"/>
+      </column>
+      <column name="REPORT_NAME" type="VARCHAR(500)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="SQL_QUERY" type="VARCHAR(500)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="BASE_URL" type="VARCHAR(500)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="REPORT_OWNER" type="VARCHAR(500)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="REPORT_CREATOR" type="VARCHAR(500)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="REPORT_DESCRIPTION" type="VARCHAR(500)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="EXCEL_REPORT" type="VARCHAR(500)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+    <sql>ALTER TABLE GPFD.CSV_TO_SQL_MAPPING_TABLE ALTER COLUMN ID SET DEFAULT sys_guid();</sql>
+  </changeSet>
+
+</databaseChangeLog>

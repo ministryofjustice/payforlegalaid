@@ -14,10 +14,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Client;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @SpringBootTest
@@ -25,7 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestPropertySource(locations = "classpath:application-test.yml")
-class ServerSideErrorIT {
+class ServerSideErrorIT extends BaseIT {
 
     @Autowired
     private MockMvc mockMvc;
@@ -34,13 +31,15 @@ class ServerSideErrorIT {
     private JdbcTemplate writeJdbcTemplate;
 
     @BeforeAll
-    void setupDatabase() {
-        writeJdbcTemplate.execute("CREATE SCHEMA IF NOT EXISTS GPFD;");
+    @Override
+    void setUpDatabase() {
+        writeJdbcTemplate.execute("CREATE SCHEMA IF NOT EXISTS GPFD;"); //Create an empty schema so that we get a 500 error
     }
 
     @AfterAll
-    void resetDatabase() {
-        writeJdbcTemplate.execute("DROP TABLE IF EXISTS GPFD.REPORT_TRACKING");
+    @Override
+    void cleanUpDatabase() {
+        writeJdbcTemplate.execute("DROP TABLE IF EXISTS GPFD.REPORTS_TRACKING");
         writeJdbcTemplate.execute("DROP TABLE IF EXISTS GPFD.CSV_TO_SQL_MAPPING_TABLE");
     }
 
@@ -62,20 +61,14 @@ class ServerSideErrorIT {
 
     @Test
     void getCsvWithIdShouldReturn500WhenCannotConnectToDbForMappingTable() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d9")
-                .with(oidcLogin()
-                        .idToken(token -> token.subject("mockUser")))
-                .with(oauth2Client("graph"))).andReturn().getResponse();
+        MockHttpServletResponse response = getResponseForAuthenticatedRequest("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d9");
 
         Assertions.assertEquals(500, response.getStatus());
     }
 
     @Test
     void getCsvWithIdShouldReturn500WhenCannotConnectToDbForReportTable() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d9")
-                .with(oidcLogin()
-                        .idToken(token -> token.subject("mockUser")))
-                .with(oauth2Client("graph"))).andReturn().getResponse();
+        MockHttpServletResponse response = getResponseForAuthenticatedRequest("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d9");
 
         Assertions.assertEquals(500, response.getStatus());
     }

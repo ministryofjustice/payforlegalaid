@@ -1,0 +1,153 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+  <changeSet id="2001" author="liquibase">
+    <sql>CREATE SCHEMA IF NOT EXISTS GPFD;</sql>
+  </changeSet>
+
+  <changeSet id="2002" author="liquibase">
+    <createTable tableName="REPORT_OUTPUT_TYPES" schemaName="GPFD">
+      <column name="ID" type="UUID">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="pk_report_output_types_id"/>
+      </column>
+      <column name="EXTENSION" type="VARCHAR(20)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="DESCRIPTION" type="VARCHAR(150)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+    <sql>ALTER TABLE GPFD.REPORT_OUTPUT_TYPES ALTER COLUMN ID SET DEFAULT sys_guid();</sql>
+  </changeSet>
+
+  <changeSet id="2003" author="liquibase">
+    <createTable tableName="REPORTS" schemaName="GPFD">
+      <column name="ID" type="UUID">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="pk_reports_id"/>
+      </column>
+      <column name="NAME" type="VARCHAR(150)"/>
+      <column name="TEMPLATE_SECURE_DOCUMENT_ID" type="VARCHAR(300)"/>
+      <column name="REPORT_CREATION_DATE" type="DATE"/>
+      <column name="LAST_DATABASE_REFRESH_DATETIME" type="TIMESTAMP"/>
+      <column name="DESCRIPTION" type="VARCHAR(4000)"/>
+      <column name="NUM_DAYS_TO_KEEP" type="INT"/>
+      <column name="REPORT_OUTPUT_TYPE" type="UUID"/>
+      <column name="REPORT_OWNER_ID" type="UUID"/>
+      <column name="REPORT_OWNER_NAME" type="VARCHAR(150)"/>
+      <column name="REPORT_OWNER_EMAIL" type="VARCHAR(150)"/>
+      <column name="FILE_NAME" type="VARCHAR(150)"/>
+      <column name="ACTIVE" type="CHAR(1)"/>
+    </createTable>
+    <sql>ALTER TABLE GPFD.REPORTS ALTER COLUMN ID SET DEFAULT sys_guid();</sql>
+  </changeSet>
+
+  <changeSet id="2004" author="liquibase">
+    <addForeignKeyConstraint baseTableName="REPORTS" baseColumnNames="REPORT_OUTPUT_TYPE"
+      referencedTableName="REPORT_OUTPUT_TYPES" referencedColumnNames="ID"
+      baseTableSchemaName="GPFD" referencedTableSchemaName="GPFD"
+      constraintName="fk_report_output_types_report_id"/>
+  </changeSet>
+
+  <changeSet id="2005" author="liquibase">
+    <createTable tableName="REPORT_GROUPS" schemaName="GPFD">
+      <column name="REPORT_ID" type="UUID"/>
+      <column name="GROUP_ID" type="UUID"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="2006" author="liquibase">
+    <addForeignKeyConstraint baseTableName="REPORT_GROUPS" baseColumnNames="REPORT_ID"
+      referencedTableName="REPORTS" referencedColumnNames="ID"
+      baseTableSchemaName="GPFD" referencedTableSchemaName="GPFD"
+      constraintName="fk_report_groups_report_id"/>
+  </changeSet>
+
+  <changeSet id="2007" author="liquibase">
+    <createTable tableName="REPORT_QUERIES" schemaName="GPFD">
+      <column name="ID" type="UUID">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="pk_report_queries_id"/>
+      </column>
+      <column name="REPORT_ID" type="UUID"/>
+      <column name="QUERY" type="VARCHAR(4000)"/>
+      <column name="TAB_NAME" type="VARCHAR(100)"/>
+    </createTable>
+    <sql>ALTER TABLE GPFD.REPORT_QUERIES ALTER COLUMN ID SET DEFAULT sys_guid();</sql>
+  </changeSet>
+
+  <changeSet id="2008" author="liquibase">
+    <addForeignKeyConstraint baseTableName="REPORT_QUERIES" baseColumnNames="REPORT_ID"
+      referencedTableName="REPORTS" referencedColumnNames="ID"
+      baseTableSchemaName="GPFD" referencedTableSchemaName="GPFD"
+      constraintName="fk_report_queries_report_id"/>
+  </changeSet>
+
+  <changeSet id="2009" author="liquibase">
+    <createTable tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+      <column name="ID" type="UUID">
+        <constraints primaryKey="true" nullable="false" primaryKeyName="pk_field_attributes_id"/>
+      </column>
+      <column name="REPORT_QUERY_ID" type="UUID"/>
+      <column name="SOURCE_NAME" type="VARCHAR(100)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="MAPPED_NAME" type="VARCHAR(100)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="FORMAT" type="VARCHAR(100)">
+      </column>
+      <column name="FORMAT_TYPE" type="VARCHAR(100)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="COLUMN_WIDTH" type="NUMBER(6,2)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+    <sql>ALTER TABLE GPFD.FIELD_ATTRIBUTES ALTER COLUMN ID SET DEFAULT sys_guid();</sql>
+  </changeSet>
+
+  <changeSet id="2010" author="liquibase">
+    <addForeignKeyConstraint baseTableName="FIELD_ATTRIBUTES" baseColumnNames="REPORT_QUERY_ID"
+      referencedTableName="REPORT_QUERIES" referencedColumnNames="ID"
+      baseTableSchemaName="GPFD" referencedTableSchemaName="GPFD"
+      constraintName="fk_field_attributes_report_query_id"/>
+  </changeSet>
+
+  <changeSet id="2011" author="liquibase">
+      <createTable tableName="REPORTS_TRACKING" schemaName="GPFD">
+          <column name="ID" type="UUID">
+              <constraints primaryKey="true" nullable="false" primaryKeyName="pk_reports_tracking_id"/>
+          </column>
+          <column name="NAME" type="VARCHAR(150)">
+              <constraints nullable="false"/>
+          </column>
+          <column name="REPORT_ID" type="UUID">
+              <constraints nullable="false"/>
+          </column>
+          <column name="CREATION_DATE" type="DATE"/>
+          <column name="REPORT_DOWNLOADED_BY" type="VARCHAR(150)"/>
+          <column name="REPORT_CREATOR" type="VARCHAR(150)">
+              <constraints nullable="false"/>
+          </column>
+          <column name="REPORT_OWNER" type="VARCHAR(150)">
+              <constraints nullable="false"/>
+          </column>
+          <column name="REPORT_OUTPUT_TYPE" type="VARCHAR(150)">
+              <constraints nullable="false"/>
+          </column>
+          <column name="TEMPLATE_URL" type="VARCHAR(300)">
+              <constraints nullable="false"/>
+          </column>
+          <column name="REPORT_URL" type="VARCHAR(300)">
+              <constraints nullable="false"/>
+          </column>
+      </createTable>
+      <sql>ALTER TABLE GPFD.REPORTS_TRACKING ALTER COLUMN ID SET DEFAULT sys_guid();</sql>
+      <addForeignKeyConstraint baseTableName="REPORTS_TRACKING" baseColumnNames="REPORT_ID"
+                               referencedTableName="REPORTS" referencedColumnNames="ID"
+                               baseTableSchemaName="GPFD" referencedTableSchemaName="GPFD"
+                               constraintName="fk_reports_tracking_reports_id"/>
+  </changeSet>
+
+</databaseChangeLog>

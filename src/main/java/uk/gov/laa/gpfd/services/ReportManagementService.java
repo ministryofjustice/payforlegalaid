@@ -1,11 +1,13 @@
 package uk.gov.laa.gpfd.services;
 
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.laa.gpfd.dao.ReportDetailsDao;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.mapper.ReportsGet200ResponseReportListInnerMapper;
+import uk.gov.laa.gpfd.model.ReportDetails;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 
 import java.util.List;
@@ -44,5 +46,18 @@ public class ReportManagementService {
                 .toList();
     }
 
-
+    /**
+     * Retrieves the details of a specific report based on the provided report ID.
+     * <p>
+     * If the report is found, it returns the {@link ReportDetails}
+     * object.
+     * </p>
+     *
+     * @param requestedId the ID of the requested report
+     * @return a {@link ReportDetails} object containing the details of the
+     * requested report
+     */
+    public ReportDetails getDetailsForSpecificReport(UUID requestedId) {
+        return reportDetailsDao.fetchReport(requestedId);
+    }
 }
