@@ -4,6 +4,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.stereotype.Component;
 import uk.gov.laa.gpfd.dao.ReportDao;
+import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.services.excel.ExcelCreationService;
 
@@ -29,7 +30,7 @@ public record ExcelService(
      *
      * @param id the unique identifier (UUID) of the report
      * @return a {@link Pair} containing the {@link Report} and the generated {@link Workbook}
-     * @throws RuntimeException if the report is not found for the provided ID
+     * @throws ReportIdNotFoundException if the report is not found for the provided ID
      */
     public Pair<Report, Workbook> createExcel(UUID id) {
         return reportDao.fetchReportById(id)
@@ -37,6 +38,6 @@ public record ExcelService(
                     Workbook workbook = excelCreationService.buildExcel(report);
                     return Pair.of(report, workbook);
                 })
-                .orElseThrow(() -> new RuntimeException("Report not found for ID: " + id));
+                .orElseThrow(() -> new ReportIdNotFoundException("Report not found for ID: " + id));
     }
 }
