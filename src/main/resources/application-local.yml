@@ -16,6 +16,10 @@ gpfd:
   url: http://localhost:8080
   redirect-uri-template: ${gpfd.url}/login/oauth2/code/gpfd-azure-dev
 
+  # Base URI for the key information needed to validate a JWT
+  # The JWT Spring decoder automatically appends .well-known/openid-configuration
+  jwks-uri: https://localhost:8080
+
   datasource:
     read-only:
       url: jdbc:h2:file:~/localGpfdDb;MODE=Oracle
@@ -38,9 +42,9 @@ spring:
         enabled: false
         # Stubbed azure content is not used but needed for it to compile right now
         profile:
-          tenant-id: ${AZURE_TENANT_ID}
+          tenant-id: AZURE_TENANT_ID
         credential:
-          client-id: ${AZURE_CLIENT_ID}
+          client-id: AZURE_CLIENT_ID
           client-secret: ${AZURE_CLIENT_SECRET}
         redirect-uri-template: ${gpfd.redirect-uri-template}
         authorization-clients:

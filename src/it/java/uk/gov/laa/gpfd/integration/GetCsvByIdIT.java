@@ -17,6 +17,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import uk.gov.laa.gpfd.config.TestAuthConfig;
 import uk.gov.laa.gpfd.graph.AzureGraphClient;
 import uk.gov.laa.gpfd.utils.FileUtils;
 
@@ -28,10 +29,10 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("testauth")
-@Import(OAuth2TestConfig.class)
+@Import({OAuth2TestConfig.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestPropertySource(locations = "classpath:application-test.yml")
-class GetCsvByIdIT {
+class GetCsvByIdIT extends TestAuthConfig {
 
     @Autowired
     private MockMvc mockMvc;
