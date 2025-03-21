@@ -18,7 +18,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import uk.gov.laa.gpfd.dao.ReportsTrackingDao;
-import uk.gov.laa.gpfd.data.UserDetailsTestDataFactory;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.model.ReportDetails;
@@ -29,7 +28,9 @@ import uk.gov.laa.gpfd.services.UserService;
 
 @ExtendWith(MockitoExtension.class)
 class ReportsTrackingServiceTest {
+
     private static final UUID id = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
+    public static final String VALID_TEST_USER = "Valid Test User";
     private final ReportDetails testReportDetails = ReportDetails
         .builder()
         .id(id)
@@ -39,9 +40,6 @@ class ReportsTrackingServiceTest {
 
     @Mock
     ReportsTrackingDao reportsTrackingDao;
-
-    @Mock
-    OAuth2AuthorizedClient graphClient;
 
     @Mock
     UserService userService;
@@ -58,10 +56,10 @@ class ReportsTrackingServiceTest {
         var requestedId = id;
 
         when(reportManagementService.getDetailsForSpecificReport(requestedId)).thenReturn(testReportDetails);
-        when(userService.getUserDetails(graphClient)).thenReturn(UserDetailsTestDataFactory.aValidUserDetails());
+        when(userService.getCurrentUserName()).thenReturn(VALID_TEST_USER);
 
         // Then
-        reportsTrackingService.saveReportsTracking(requestedId, graphClient);
+        reportsTrackingService.saveReportsTracking(requestedId);
         ArgumentCaptor<ReportsTracking> captor = ArgumentCaptor.forClass(ReportsTracking.class);
 
         // Then
@@ -70,7 +68,7 @@ class ReportsTrackingServiceTest {
         assertEquals(testReportDetails.getName(), capturedTrackingTable.getName());
         assertEquals("www.sharepoint.com/place-where-we-will-create-report", capturedTrackingTable.getReportUrl());
         assertEquals(testReportDetails.getId(), capturedTrackingTable.getReportId());
-        assertEquals("Foo Bar", capturedTrackingTable.getReportCreator());
+        assertEquals(VALID_TEST_USER, capturedTrackingTable.getReportCreator());
         assertNotNull(capturedTrackingTable.getCreationDate());
     }
 
@@ -83,21 +81,9 @@ class ReportsTrackingServiceTest {
         // When
         // Then
         assertThrows(ReportIdNotFoundException.class,
-                () -> reportsTrackingService.saveReportsTracking(invalidId, graphClient));
+                () -> reportsTrackingService.saveReportsTracking(invalidId));
     }
 
-    @Test
-    void shouldThrowNullPointerExceptionWhenUserDetailsAreNull() {
-        // Given
-        var requestedId = id;
-        when(reportManagementService.getDetailsForSpecificReport(requestedId)).thenReturn(testReportDetails);
-        when(userService.getUserDetails(graphClient)).thenReturn(null);  // Simulate null user details
-
-        // When
-        // Then
-        assertThrows(NullPointerException.class,
-                () -> reportsTrackingService.saveReportsTracking(requestedId, graphClient));
-    }
 
     @Test
     void shouldThrowNullPointerExceptionWhenReportListIsEmpty() {
@@ -108,7 +94,7 @@ class ReportsTrackingServiceTest {
         // When
         // Then
         assertThrows(NullPointerException.class,
-                () -> reportsTrackingService.saveReportsTracking(requestedId, graphClient));
+                () -> reportsTrackingService.saveReportsTracking(requestedId));
     }
 
     @Test
@@ -116,14 +102,14 @@ class ReportsTrackingServiceTest {
         // Given
         var requestedId = id;
         when(reportManagementService.getDetailsForSpecificReport(requestedId)).thenReturn(testReportDetails);
-        when(userService.getUserDetails(graphClient)).thenReturn(UserDetailsTestDataFactory.aValidUserDetails());
+        when(userService.getCurrentUserName()).thenReturn(VALID_TEST_USER);
 
         // Simulate database error
         doThrow(new DatabaseReadException("Database error")).when(reportsTrackingDao).saveReportsTracking(any());
 
         // When
         assertThrows(DatabaseReadException.class,
-                () -> reportsTrackingService.saveReportsTracking(requestedId, graphClient));
+                () -> reportsTrackingService.saveReportsTracking(requestedId));
     }
 
     @Test
@@ -132,11 +118,11 @@ class ReportsTrackingServiceTest {
         var requestedId = id;
 
         when(reportManagementService.getDetailsForSpecificReport(requestedId)).thenReturn(testReportDetails);
-        when(userService.getUserDetails(graphClient)).thenReturn(UserDetailsTestDataFactory.aValidUserDetails());
+        when(userService.getCurrentUserName()).thenReturn(VALID_TEST_USER);
 
         // When & Assert
-        Thread thread1 = new Thread(() -> reportsTrackingService.saveReportsTracking(requestedId, graphClient));
-        Thread thread2 = new Thread(() -> reportsTrackingService.saveReportsTracking(requestedId, graphClient));
+        Thread thread1 = new Thread(() -> reportsTrackingService.saveReportsTracking(requestedId));
+        Thread thread2 = new Thread(() -> reportsTrackingService.saveReportsTracking(requestedId));
 
         thread1.start();
         thread2.start();
@@ -152,21 +138,8 @@ class ReportsTrackingServiceTest {
         assertEquals(testReportDetails.getName(), capturedTrackingTable.getName());
         assertEquals("www.sharepoint.com/place-where-we-will-create-report", capturedTrackingTable.getReportUrl());
         assertEquals(testReportDetails.getId(), capturedTrackingTable.getReportId());
-        assertEquals("Foo Bar", capturedTrackingTable.getReportCreator());
+        assertEquals(VALID_TEST_USER, capturedTrackingTable.getReportCreator());
         assertNotNull(capturedTrackingTable.getCreationDate());
-    }
-
-    @Test
-    void shouldThrowNullPointerExceptionWhenUserGeneratedByIsNull() {
-        // Given
-        var requestedId = id;
-        when(reportManagementService.getDetailsForSpecificReport(requestedId)).thenReturn(testReportDetails);
-        when(userService.getUserDetails(graphClient)).thenReturn(null);  // Simulate null user details
-
-        // When
-        // Then
-        assertThrows(NullPointerException.class,
-                () -> reportsTrackingService.saveReportsTracking(requestedId, graphClient));
     }
 
 }

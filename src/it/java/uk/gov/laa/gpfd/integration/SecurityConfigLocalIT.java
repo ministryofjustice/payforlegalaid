@@ -2,15 +2,12 @@ package uk.gov.laa.gpfd.integration;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
 import uk.gov.laa.gpfd.services.ReportService;
 
@@ -31,9 +28,6 @@ class SecurityConfigLocalIT extends BaseIT {
 
     @MockitoBean
     ReportService reportServiceMock;
-
-    @Autowired
-    MockMvc mockMvc;
 
     // Local profile just ignores Azure and requires no login session.
     @Test

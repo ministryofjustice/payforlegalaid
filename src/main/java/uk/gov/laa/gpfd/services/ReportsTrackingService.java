@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.stereotype.Service;
 import uk.gov.laa.gpfd.model.ReportsTracking;
 import uk.gov.laa.gpfd.dao.ReportsTrackingDao;
@@ -19,9 +18,8 @@ public class ReportsTrackingService {
     private final ReportManagementService reportManagementService;
     private final UserService userService;
 
-    public void saveReportsTracking(UUID requestedId, OAuth2AuthorizedClient graphClient) {
+    public void saveReportsTracking(UUID requestedId) {
         var reportDetails = reportManagementService.getDetailsForSpecificReport(requestedId);
-        var user = userService.getUserDetails(graphClient);
 
         var reportsTracking = ReportsTracking.builder()
             .id(UUID.randomUUID())
@@ -29,7 +27,7 @@ public class ReportsTrackingService {
             .reportUrl("www.sharepoint.com/place-where-we-will-create-report")
             .creationDate(Timestamp.valueOf(LocalDateTime.now()))
             .reportId(reportDetails.getId())
-            .reportCreator(user.givenName() + " " + user.surname())
+            .reportCreator(userService.getCurrentUserName())
             .reportOwner(reportDetails.getReportOwnerName())
             .reportOutputType(reportDetails.getReportOutputType().toString())
             .templateUrl(reportDetails.getTemplateSecureDocumentId())

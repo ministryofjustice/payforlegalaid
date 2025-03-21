@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -62,14 +60,12 @@ public class ReportsController implements ReportsApi, ExcelApi {
      * Sends a report to the user in the form of a CSV data stream. If the user requests via a web browser this response then triggers the browser to download the file.
      *
      * @param requestedId - id of the requested report
-     * @param graphClient - the OAuth2AuthorizedClient for the graph API
      * @return CSV data stream or reports data
      */
     @RequestMapping(value = "/csv/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<StreamingResponseBody> getCSV(@PathVariable(value = "id") UUID requestedId,
-                                                        @RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient) {
+    public ResponseEntity<StreamingResponseBody> getCSV(@PathVariable(value = "id") UUID requestedId) {
         log.debug("Returning a CSV response to user");
-        reportsTrackingService.saveReportsTracking(requestedId, graphClient);
+        reportsTrackingService.saveReportsTracking(requestedId);
         return reportService.createCSVResponse(requestedId);
     }
 
@@ -96,11 +92,10 @@ public class ReportsController implements ReportsApi, ExcelApi {
      *
      * @param id The unique identifier (UUID) of the report to be generated and streamed as an Excel file.
      * @return A {@link ResponseEntity} containing a {@link StreamingResponseBody} for the Excel file.
-     * @throws TransferException.StreamException.ExcelStreamWriteException If an error occurs while streaming the Excel data.
      */
     @Override
     public ResponseEntity<StreamingResponseBody> getExcelById(UUID id) {
-      reportsTrackingService.saveReportsTracking(requestedId, graphClient);
+      reportsTrackingService.saveReportsTracking(id);
       return streamingService.streamExcel(id);
     }
 }

@@ -1,6 +1,5 @@
 package uk.gov.laa.gpfd.integration;
 
-import com.microsoft.graph.models.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -11,16 +10,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.laa.gpfd.dao.ReportsTrackingDao;
-import uk.gov.laa.gpfd.graph.AzureGraphClient;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Client;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -31,25 +21,12 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 class GetCsvByIdIT extends BaseIT {
 
     @Autowired
-    private MockMvc mockMvc;
-
-    @MockitoBean
-    private AzureGraphClient mockAzureGraphClient;
-
-    @Autowired
     private ReportsTrackingDao reportsTrackingDao;
 
     @Test
     void shouldReturnCsvWithMatchingId() throws Exception {
-        User user = new User();
-        user.userPrincipalName = "Test User";
 
-        when(mockAzureGraphClient.getGraphUserDetails(any())).thenReturn(user);
-
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d3")
-                .with(oidcLogin()
-                        .idToken(token -> token.subject("mockUser")))
-                .with(oauth2Client("graph"))).andReturn().getResponse();
+        MockHttpServletResponse response = getResponseForAuthenticatedRequest("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d3");
 
         var reportTrackingData = reportsTrackingDao.list().stream()
             .filter(record -> "0d4da9ec-b0b3-4371-af10-f375330d85d3".equals(record.get("REPORT_ID").toString()))
@@ -62,10 +39,7 @@ class GetCsvByIdIT extends BaseIT {
 
     @Test
     void shouldReturn404WhenNoReportsFound() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.get("/csv/0d4da9ec-b0b3-4371-af10-321")
-                .with(oidcLogin()
-                        .idToken(token -> token.subject("mockUser")))
-                .with(oauth2Client("graph"))).andReturn().getResponse();
+        MockHttpServletResponse response = getResponseForAuthenticatedRequest("/csv/0d4da9ec-b0b3-4371-af10-321");
         var reportTrackingData = reportsTrackingDao.list().stream()
             .filter(record -> "0d4da9ec-b0b3-4371-af10-321".equals(record.get("REPORT_ID").toString()))
             .toList();
