@@ -15,7 +15,7 @@ jobs:
       environment_name: dev
       gpfd_url: https://dev.get-legal-aid-data.service.justice.gov.uk
       alert_severity: laa-get-legal-aid-data-dev
-      secret_name: gpfd_test_secret_01
+      secret_name: gpfd-test-secret-01
     secrets:
       openapi_package_user: ${{ secrets.OPENAPI_PACKAGE_USER }}
       openapi_package_password: ${{ secrets.OPENAPI_PACKAGE_PASSWORD }}
