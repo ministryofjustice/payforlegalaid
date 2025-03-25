@@ -88,14 +88,14 @@ jobs:
           ALERT_SEVERITY: ${{ inputs.alert_severity }}
           ENV_NAME: ${{ inputs.environment_name }}
           GPFD_URL: ${{ inputs.gpfd_url }}
-          TEST_SECRET_NAME: ${{ inputs.secret_name }}
+          SECRET_NAME: ${{ inputs.secret_name }}
         run: |
-          cat deployments/templates/deployment.yml | envsubst > deployments/deployment.yml
-          cat deployments/templates/ingress.yml | envsubst > deployments/ingress.yml
-          cat deployments/templates/service.yml | envsubst > deployments/service.yml
-          cat deployments/templates/service-monitor.yml | envsubst > deployments/service-monitor.yml
-          cat deployments/templates/network-policy.yml | envsubst > deployments/network-policy.yml
-          cat deployments/templates/prometheus-rules.yml | envsubst > deployments/prometheus-rules.yml
+          cat deployments/templates/deployment.yml | envsubst '${ENV_NAME},${SECRET_NAME}' > deployments/deployment.yml
+          cat deployments/templates/ingress.yml | envsubst '$ENV_NAME,$NAMESPACE' > deployments/ingress.yml
+          cat deployments/templates/service.yml | envsubst '${ENV_NAME}' > deployments/service.yml
+          cat deployments/templates/service-monitor.yml | envsubst '$ENV_NAME,$NAMESPACE' > deployments/service-monitor.yml
+          cat deployments/templates/network-policy.yml | envsubst '$NAMESPACE' > deployments/network-policy.yml
+          cat deployments/templates/prometheus-rules.yml | envsubst '$ENV_NAME,$NAMESPACE,$ALERT_SEVERITY'> deployments/prometheus-rules.yml
           cat deployments/templates/grafana-dashboard.yml | envsubst '$ENV_NAME,$NAMESPACE' > deployments/grafana-dashboard.yml
 
       - name: Authenticate with Cloud Platform and Deploy
