@@ -9,12 +9,6 @@ on:
       environment_name:
         type: string
         required: true
-      ecr_region:
-        type: string
-        required: true
-      ecr_repository:
-        type: string
-        required: true
       gpfd_url:
         type: string
         required: true
@@ -70,12 +64,12 @@ jobs:
         run: echo "SPRING_PROFILES_ACTIVE=${{ inputs.environment_name }}" >> $GITHUB_ENV
 
       - name: Debug AWS_REGION
-        run: echo "AWS_REGION=${{ inputs.ecr_region }}"
+        run: echo "AWS_REGION=${{ vars.ECR_REGION }}"
 
       - uses: './.github/login-to-aws'
         env:
           ROLE: ${{ secrets.ecr_role_to_assume }}
-          AWS_REGION: ${{ inputs.ecr_region }}
+          AWS_REGION: ${{ vars.ECR_REGION }}
 
       - name: Login to container repository
         uses: aws-actions/amazon-ecr-login@v2
@@ -84,7 +78,7 @@ jobs:
       - name: Build the docker image and push it to the repository
         uses: './.github/build-push-docker-image'
         env:
-          REPOSITORY: ${{ inputs.ecr_repository }}
+          REPOSITORY: ${{ vars.ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
 
@@ -92,7 +86,7 @@ jobs:
         env:
           IMAGE_TAG: ${{ github.sha }} # Tags ECR image with commit sha
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: ${{ inputs.ecr_repository }}
+          REPOSITORY: ${{ vars.ECR_REPOSITORY }}
           NAMESPACE: ${{ secrets.kube_namespace }}
           ALERT_SEVERITY: ${{ inputs.alert_severity }}
           ENV_NAME: ${{ inputs.environment_name }}
