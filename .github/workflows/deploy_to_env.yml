@@ -63,9 +63,6 @@ jobs:
       - name: Set Spring profile
         run: echo "SPRING_PROFILES_ACTIVE=${{ inputs.environment_name }}" >> $GITHUB_ENV
 
-      - name: Debug AWS_REGION
-        run: echo "AWS_REGION=${{ vars.ECR_REGION }}"
-
       - uses: './.github/login-to-aws'
         env:
           ROLE: ${{ secrets.ecr_role_to_assume }}
@@ -100,9 +97,6 @@ jobs:
           cat deployments/templates/network-policy.yml | envsubst > deployments/network-policy.yml
           cat deployments/templates/prometheus-rules.yml | envsubst > deployments/prometheus-rules.yml
           cat deployments/templates/grafana-dashboard.yml | envsubst '$ENV_NAME,$NAMESPACE' > deployments/grafana-dashboard.yml
-
-      - name: Debug generated Kubernetes files
-        run: cat deployments/*
 
       - name: Authenticate with Cloud Platform and Deploy
         env:
