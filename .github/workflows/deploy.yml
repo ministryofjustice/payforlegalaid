@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - deployment-template
 
 jobs:
   To_Dev:
@@ -45,3 +44,23 @@ jobs:
       kube_cluster: ${{ secrets.KUBE_CLUSTER_UAT }}
       kube_token: ${{ secrets.KUBE_TOKEN_UAT }}
       kube_cert: ${{ secrets.KUBE_CERT_UAT }}
+
+  To_Prod:
+    name: Deploy to prod
+    needs: To_Uat
+    uses: ./.github/workflows/deploy_to_env.yml
+    with:
+      github_environment: production
+      environment_name: prod
+      gpfd_url: https://prod.get-legal-aid-data.service.justice.gov.uk
+      alert_severity: laa-get-legal-aid-data-prod
+      secret_name: gpfd-prod-secret-01
+    secrets:
+      openapi_package_user: ${{ secrets.OPENAPI_PACKAGE_USER }}
+      openapi_package_password: ${{ secrets.OPENAPI_PACKAGE_PASSWORD }}
+      snyk_token: ${{ secrets.SNYK_TOKEN }}
+      ecr_role_to_assume: ${{ secrets.PROD_ECR_ROLE_TO_ASSUME }}
+      kube_namespace: ${{ secrets.KUBE_NAMESPACE_PROD }}
+      kube_cluster: ${{ secrets.KUBE_CLUSTER_PROD }}
+      kube_token: ${{ secrets.KUBE_TOKEN_PROD }}
+      kube_cert: ${{ secrets.KUBE_CERT_PROD }}
