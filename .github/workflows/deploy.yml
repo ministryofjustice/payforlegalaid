@@ -7,6 +7,14 @@ on:
       - deployment-template
 
 jobs:
+  debug-vars:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print DEV_ECR_REPOSITORY and DEV_ECR_REGION
+        run: |
+          echo "DEV_ECR_REPOSITORY=${{ vars.DEV_ECR_REPOSITORY }}"
+          echo "DEV_ECR_REGION=${{ vars.DEV_ECR_REGION }}"
+
   To_Dev:
     name: Deploy to dev
     uses: ./.github/workflows/deploy_to_env.yml
@@ -14,7 +22,7 @@ jobs:
       github_environment: development
       environment_name: dev
       ecr_repository: ${{ vars.DEV_ECR_REPOSITORY }}
-      ecr_region: ${{ vars.DEV_ECR_REGION }}
+      ecr_region: eu-west-2
       gpfd_url: https://dev.get-legal-aid-data.service.justice.gov.uk
       alert_severity: laa-get-legal-aid-data-dev
       secret_name: gpfd_test_secret_01
