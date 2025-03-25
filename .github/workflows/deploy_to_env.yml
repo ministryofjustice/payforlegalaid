@@ -90,7 +90,7 @@ jobs:
           GPFD_URL: ${{ inputs.gpfd_url }}
           SECRET_NAME: ${{ inputs.secret_name }}
         run: |
-          cat deployments/templates/deployment.yml | envsubst '${ENV_NAME},${SECRET_NAME}' > deployments/deployment.yml
+          cat deployments/templates/deployment.yml | envsubst '${ENV_NAME},${SECRET_NAME},${GPFD_URL}' > deployments/deployment.yml
           cat deployments/templates/ingress.yml | envsubst '$ENV_NAME,$NAMESPACE' > deployments/ingress.yml
           cat deployments/templates/service.yml | envsubst '${ENV_NAME}' > deployments/service.yml
           cat deployments/templates/service-monitor.yml | envsubst '$ENV_NAME,$NAMESPACE' > deployments/service-monitor.yml
