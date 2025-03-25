@@ -69,6 +69,9 @@ jobs:
       - name: Set Spring profile
         run: echo "SPRING_PROFILES_ACTIVE=${{ inputs.environment_name }}" >> $GITHUB_ENV
 
+      - name: Debug AWS_REGION
+        run: echo "AWS_REGION=${{ inputs.ecr_region }}"
+
       - uses: './.github/login-to-aws'
         env:
           ROLE: ${{ secrets.ecr_role_to_assume }}

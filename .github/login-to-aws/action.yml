@@ -7,6 +7,9 @@ runs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Debug AWS_REGION
+      run: echo "AWS_REGION=${{ env.AWS_REGION }}"
+
     - name: Assume role in Cloud Platform
       uses: aws-actions/configure-aws-credentials@v4
       with:
