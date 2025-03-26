@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - deployment-template
+  workflow_dispatch:
 
 jobs:
   To_Dev:
@@ -51,7 +52,7 @@ jobs:
     needs: To_Uat
     uses: ./.github/workflows/deploy_to_env.yml
     with:
-      github_environment: production
+      github_environment: prod
       environment_name: prod
       gpfd_url: https://prod.get-legal-aid-data.service.justice.gov.uk
       alert_severity: laa-get-legal-aid-data-prod
