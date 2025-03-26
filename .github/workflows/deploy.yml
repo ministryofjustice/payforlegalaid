@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - fix/bring-back-alerts
   workflow_dispatch:
 
 jobs:
