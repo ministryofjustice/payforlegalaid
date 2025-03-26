@@ -16,6 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Locale;
 
 @Slf4j
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -28,6 +29,17 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         this.appConfig = appConfig;
     }
 
+    /**
+     *
+     * @param servletRequest
+     * @param servletResponse
+     * @param filterChain
+     * @throws IOException
+     * @throws ServletException
+     * Custom implementation to validate JWT when user logs in to Entra ID.
+     * Creates authentication object and sets in the SecurityContext, in place of default session id behaviour.
+     * Will default to using session id, as part of standard spring security flow, if invalid JWT is provided; prompting user to login.
+     */
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
@@ -68,12 +80,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
                 log.info("JWT validated successfully");
 
-                // Create the authentication object and set it in the SecurityContext
-                // This tells it we are using this jwt and not the default session cookie stuff
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (JwtException e) {
-                // Token was invalid, it will fall back to session cookie and/or make you log in
                 log.warn("Invalid JWT token", e);
             }
         }
@@ -92,9 +101,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private String extractJwtToken(HttpServletRequest request) {
         String header = request.getHeader("Authorization");
 
-        if (header != null && header.startsWith("Bearer ")) {
+        if (header != null && header.substring(0,"bearer ".length()).toLowerCase(Locale.ROOT).equals("bearer ")) {
             log.debug("Have extracted JWT token from auth header");
-            return header.substring(7);
+            return header.substring("bearer ".length());
         } else {
             //No auth token, don't bother trying to JWT authenticate
             log.debug("No JWT token in auth header");

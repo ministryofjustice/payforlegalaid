@@ -102,6 +102,21 @@ class JwtAuthenticationFilterTest {
 
     @Test
     @SneakyThrows
+    void shouldSetAuthenticationIfBearerTokenHasCapitals() {
+        when(mockRequest.getHeader("Authorization")).thenReturn("BEARER tokenValue");
+        when(appConfig.getEntraIdClientId()).thenReturn(expectedClientId);
+        when(appConfig.getEntraIdTenantId()).thenReturn(expectedTenantId);
+        when(jwtDecoder.decode("tokenValue")).thenReturn(testJwt);
+
+        jwtAuthenticationFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
+
+        verify(securityContext).setAuthentication(any());
+        verify(mockFilterChain).doFilter(mockRequest, mockResponse);
+
+    }
+
+    @Test
+    @SneakyThrows
     void shouldNotAuthoriseIfJwtDecoderThrowsError() {
         //E.g. invalid signature
         when(mockRequest.getHeader("Authorization")).thenReturn("Bearer tokenValue");

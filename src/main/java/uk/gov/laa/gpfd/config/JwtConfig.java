@@ -20,8 +20,8 @@ public class JwtConfig {
 
     /**
      * The custom {@link JwtDecoder} responsible for validating
-     * tokens provided by the UI. This will validate the issuer and signature based
-     * on the EntraId setup, to ensure token validity
+     * tokens provided by Entra ID. This will validate the issuer and signature based
+     * on the Entra ID setup, to ensure token validity
      */
     @Bean
     public JwtDecoder jwtDecoder() {
