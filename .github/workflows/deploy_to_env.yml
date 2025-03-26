@@ -1,0 +1,111 @@
+name: Deploy to Environment
+
+on:
+  workflow_call:
+    inputs:
+      github_environment:
+        type: string
+        required: true
+      environment_name:
+        type: string
+        required: true
+      gpfd_url:
+        type: string
+        required: true
+      alert_severity:
+        type: string
+        required: true
+      secret_name:
+        type: string
+        required: true
+    secrets:
+      openapi_package_user:
+        required: true
+      openapi_package_password:
+        required: true
+      snyk_token:
+        required: true
+      ecr_role_to_assume:
+        required: true
+      kube_namespace:
+        required: true
+      kube_cluster:
+        required: true
+      kube_token:
+        required: true
+      kube_cert:
+        required: true
+
+jobs:
+  build-and-deploy:
+    environment: ${{ inputs.github_environment }}
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # This is required for requesting the JWT
+      contents: read  # This is required for actions/checkout
+
+    env:
+      USERNAME: ${{ secrets.openapi_package_user }}
+      PASSWORD: ${{ secrets.openapi_package_password }}
+
+    steps:
+      - name: Checkout Github Repository
+        uses: actions/checkout@v4
+
+      - name: Build and test the code
+        uses: './.github/build-and-test'
+
+      - name: Run Snyk security suite
+        uses: './.github/snyk-scan'
+        env:
+          SNYK_TOKEN: ${{ secrets.snyk_token }}
+
+      - name: Set Spring profile
+        run: echo "SPRING_PROFILES_ACTIVE=${{ inputs.environment_name }}" >> $GITHUB_ENV
+
+      - uses: './.github/login-to-aws'
+        env:
+          ROLE: ${{ secrets.ecr_role_to_assume }}
+          AWS_REGION: ${{ vars.ECR_REGION }}
+
+      - name: Login to container repository
+        uses: aws-actions/amazon-ecr-login@v2
+        id: login-ecr
+
+      - name: Build the docker image and push it to the repository
+        uses: './.github/build-push-docker-image'
+        env:
+          REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+          IMAGE_TAG: ${{ github.sha }}
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+
+      - name: Generate Kubernetes files from templates
+        env:
+          IMAGE_TAG: ${{ github.sha }} # Tags ECR image with commit sha
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+          NAMESPACE: ${{ secrets.kube_namespace }}
+          ALERT_SEVERITY: ${{ inputs.alert_severity }}
+          ENV_NAME: ${{ inputs.environment_name }}
+          GPFD_URL: ${{ inputs.gpfd_url }}
+          SECRET_NAME: ${{ inputs.secret_name }}
+        run: |
+          cat deployments/templates/deployment.yml | envsubst > deployments/deployment.yml
+          cat deployments/templates/ingress.yml | envsubst  > deployments/ingress.yml
+          cat deployments/templates/service.yml | envsubst > deployments/service.yml
+          cat deployments/templates/service-monitor.yml | envsubst > deployments/service-monitor.yml
+          cat deployments/templates/network-policy.yml | envsubst '' > deployments/network-policy.yml
+          cat deployments/templates/prometheus-rules.yml | envsubst > deployments/prometheus-rules.yml
+          cat deployments/templates/grafana-dashboard.yml | envsubst > deployments/grafana-dashboard.yml
+
+      - name: Authenticate with Cloud Platform and Deploy
+        env:
+          KUBE_NAMESPACE: ${{ secrets.kube_namespace }}
+          KUBE_CLUSTER: ${{ secrets.kube_cluster }}
+        run: |
+          echo "${{ secrets.kube_cert }}" > ca.crt
+          kubectl config set-cluster ${KUBE_CLUSTER} --certificate-authority=./ca.crt --server=https://${KUBE_CLUSTER}
+          kubectl config set-credentials deploy-user --token=${{ secrets.kube_token }}
+          kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
+          kubectl config use-context ${KUBE_CLUSTER}
+          kubectl -n ${KUBE_NAMESPACE} apply -f deployments/
