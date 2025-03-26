@@ -100,7 +100,11 @@ public class ReportsController implements ReportsApi, ExcelApi {
      */
     @Override
     public ResponseEntity<StreamingResponseBody> getExcelById(UUID id) {
-      reportsTrackingService.saveReportsTracking(id);
-      return streamingService.streamExcel(id);
+        CompletableFuture<Void> saveReportsTrackingFuture = CompletableFuture.runAsync(() -> reportsTrackingService.saveReportsTracking(id));
+        CompletableFuture<ResponseEntity<StreamingResponseBody>> streamExcelFuture = CompletableFuture.supplyAsync(() -> streamingService.streamExcel(id));
+
+        CompletableFuture.allOf(saveReportsTrackingFuture, streamExcelFuture).join();
+
+        return streamExcelFuture.join();
     }
 }
