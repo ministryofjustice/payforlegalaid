@@ -94,7 +94,7 @@ jobs:
           cat deployments/templates/ingress.yml | envsubst  > deployments/ingress.yml
           cat deployments/templates/service.yml | envsubst > deployments/service.yml
           cat deployments/templates/service-monitor.yml | envsubst > deployments/service-monitor.yml
-          cat deployments/templates/network-policy.yml | envsubst '' > deployments/network-policy.yml
+          cat deployments/templates/network-policy.yml | envsubst > deployments/network-policy.yml
           cat deployments/templates/prometheus-rules.yml | envsubst > deployments/prometheus-rules.yml
           cat deployments/templates/grafana-dashboard.yml | envsubst > deployments/grafana-dashboard.yml
 
