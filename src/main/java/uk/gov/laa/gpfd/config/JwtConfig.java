@@ -1,10 +1,12 @@
 package uk.gov.laa.gpfd.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtDecoders;
+import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
 
 @Configuration
 @ConditionalOnProperty(name = "spring.cloud.azure.active-directory.enabled", havingValue = "true")
@@ -16,9 +18,13 @@ public class JwtConfig {
         this.appConfig = appConfig;
     }
 
+    /**
+     * The custom {@link JwtDecoder} responsible for validating
+     * tokens provided by the UI. This will validate the issuer and signature based
+     * on the EntraId setup, to ensure token validity
+     */
     @Bean
     public JwtDecoder jwtDecoder() {
-        // This will validate the issuer and signature based on the Entra setup, to ensure token validity
         return JwtDecoders.fromIssuerLocation(appConfig.getJwksUri());
     }
 
