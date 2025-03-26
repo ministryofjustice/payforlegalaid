@@ -2,14 +2,12 @@ package uk.gov.laa.gpfd.controller;
 
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -18,13 +16,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
 import uk.gov.laa.gpfd.data.ReportListEntryTestDataFactory;
-import uk.gov.laa.gpfd.graph.AzureGraphClient;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 import uk.gov.laa.gpfd.services.ReportManagementService;
 import uk.gov.laa.gpfd.services.ReportService;
 import uk.gov.laa.gpfd.services.ReportsTrackingService;
-import uk.gov.laa.gpfd.services.UserService;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
@@ -49,9 +45,6 @@ class ReportsControllerTest {
     public static final UUID DEFAULT_ID = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
 
     @MockitoBean
-    UserService userService;
-
-    @MockitoBean
     ReportManagementService reportManagementServiceMock;
 
     @MockitoBean
@@ -59,9 +52,6 @@ class ReportsControllerTest {
 
     @MockitoBean
     ReportsTrackingService reportsTrackingService; // This is required, despite the sonarlint suggestions
-
-    @Mock
-    OAuth2AuthorizedClient graphClient;
 
     @Autowired
     MockMvc mockMvc;

@@ -24,6 +24,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @TestPropertySource(locations = "classpath:application-test.yml")
 class GetReportsIT extends BaseIT {
 
+    public static final int NUMBER_OF_REPORTS_IN_TEST_DATA = 4;
     @Autowired
     private MockMvc mockMvc;
 
@@ -39,7 +40,7 @@ class GetReportsIT extends BaseIT {
 
         var json = new JSONObject(response.getContentAsString());
         JSONArray reportList = (JSONArray) json.get("reportList");
-        Assertions.assertEquals(4, reportList.toList().size());
+        Assertions.assertEquals(NUMBER_OF_REPORTS_IN_TEST_DATA, reportList.toList().size());
     }
 
     @Test
