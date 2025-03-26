@@ -1,12 +1,12 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: gpfd-uat-service-monitor
+  name: gpfd-${ENV_NAME}-service-monitor
   namespace: ${NAMESPACE}
 spec:
   selector:
     matchLabels:
-      app: gpfd-uat-service # this needs to match the label in the service under metadata:labels:app
+      app: gpfd-${ENV_NAME}-service # this needs to match the label in the service under metadata:labels:app
   namespaceSelector:
     matchNames:
       - ${NAMESPACE}
