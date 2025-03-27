@@ -129,7 +129,6 @@ class ReportsTrackingDaoTest extends BaseDaoTest{
             testTrackingData.getReportName(),
             testTrackingData.getReportUuid(),
             testTrackingData.getCreationTimestamp(),
-            testTrackingData.getReportDownloadedBy(),
             testTrackingData.getReportCreator(),
             testTrackingData.getReportOwner(),
             testTrackingData.getReportOutputType(),

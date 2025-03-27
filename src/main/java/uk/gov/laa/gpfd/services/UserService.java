@@ -24,6 +24,7 @@ import uk.gov.laa.gpfd.graph.GraphClient;
 @RequiredArgsConstructor
 public class UserService {
 
+    public static final int USERNAME_MAX_LENGTH_IN_DB = 100;
     private final GraphClient graphClientHelper;
 
     /**
@@ -65,7 +66,7 @@ public class UserService {
                 username = ((DefaultOidcUser) principal).getAttribute("preferred_username");
             } else {
                 username = principal.toString()
-                    .substring(0, 100); // Fallback in case it's a simple string
+                    .substring(0, USERNAME_MAX_LENGTH_IN_DB); // Fallback in case it's a simple string
             }
         }
         return username;

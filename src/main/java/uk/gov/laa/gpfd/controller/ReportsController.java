@@ -1,6 +1,5 @@
 package uk.gov.laa.gpfd.controller;
 
-import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -66,12 +65,8 @@ public class ReportsController implements ReportsApi, ExcelApi {
     @RequestMapping(value = "/csv/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<StreamingResponseBody> getCSV(@PathVariable(value = "id") UUID requestedId) {
         log.debug("Returning a CSV response to user");
-        CompletableFuture<Void> saveReportsTrackingFuture = CompletableFuture.runAsync(() -> reportsTrackingService.saveReportsTracking(requestedId));
-        CompletableFuture<ResponseEntity<StreamingResponseBody>> createCSVResponseFuture = CompletableFuture.supplyAsync(() -> reportService.createCSVResponse(requestedId));
-
-        CompletableFuture.allOf(saveReportsTrackingFuture, createCSVResponseFuture).join();
-
-        return createCSVResponseFuture.join();
+        reportsTrackingService.saveReportsTracking(requestedId);
+        return reportService.createCSVResponse(requestedId);
     }
 
     /**
@@ -100,11 +95,7 @@ public class ReportsController implements ReportsApi, ExcelApi {
      */
     @Override
     public ResponseEntity<StreamingResponseBody> getExcelById(UUID id) {
-        CompletableFuture<Void> saveReportsTrackingFuture = CompletableFuture.runAsync(() -> reportsTrackingService.saveReportsTracking(id));
-        CompletableFuture<ResponseEntity<StreamingResponseBody>> streamExcelFuture = CompletableFuture.supplyAsync(() -> streamingService.streamExcel(id));
-
-        CompletableFuture.allOf(saveReportsTrackingFuture, streamExcelFuture).join();
-
-        return streamExcelFuture.join();
+        reportsTrackingService.saveReportsTracking(id);
+        return streamingService.streamExcel(id);
     }
 }

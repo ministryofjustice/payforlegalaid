@@ -22,8 +22,6 @@ public class ReportsTracking {
 
     private Timestamp creationDate;
 
-    private String reportDownloadedBy;
-
     private String reportCreator;
 
     private String reportOwner;

@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import uk.gov.laa.gpfd.model.ReportsTracking;
 import uk.gov.laa.gpfd.dao.ReportsTrackingDao;
@@ -18,6 +19,7 @@ public class ReportsTrackingService {
     private final ReportManagementService reportManagementService;
     private final UserService userService;
 
+    @Async
     public void saveReportsTracking(UUID requestedId) {
         var reportDetails = reportManagementService.getDetailsForSpecificReport(requestedId);
 
@@ -33,7 +35,6 @@ public class ReportsTrackingService {
             .templateUrl(reportDetails.getTemplateSecureDocumentId())
             .build();
 
-        log.info("Saving report tracking information");
         reportsTrackingDao.saveReportsTracking (reportsTracking);
     }
 }
