@@ -19,6 +19,8 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -56,24 +58,81 @@ class JwtAuthenticationFilterTest {
     @Test
     @SneakyThrows
     void shouldUseDefaultJourneyIfNullToken() {
-
         when(mockRequest.getHeader("Authorization")).thenReturn(null);
-
         jwtAuthenticationFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
-
         verify(mockFilterChain).doFilter(mockRequest, mockResponse);
-
     }
 
     @Test
     @SneakyThrows
     void shouldUseDefaultJourneyIfEmptyToken() {
-
         when(mockRequest.getHeader("Authorization")).thenReturn("");
-
         jwtAuthenticationFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
-
         verify(mockFilterChain).doFilter(mockRequest, mockResponse);
+    }
 
+    @Test
+    void shouldReturnJwtForValidBearerToken() {
+        assertEquals("aaaa.bbbb.cccc", jwtAuthenticationFilter.extractJwtToken("Bearer aaaa.bbbb.cccc"));
+    }
+
+    @Test
+    void shouldReturnJwtForValidBearerTokenIgnoreCase() {
+        assertEquals("aaaa.bbbb.cccc", jwtAuthenticationFilter.extractJwtToken("BEARER aaaa.bbbb.cccc"));
+
+    }
+
+    @Test
+    void shouldThrowIfTokenNotRightFormat() {
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.extractJwtToken("ThisIsNotValid"));
+        assertEquals("Token is not a valid JWT", ex.getMessage());
+    }
+
+    @Test
+    void shouldThrowIfTokenMissingBearer() {
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.extractJwtToken("aaaa.bbbb.cccc"));
+        assertEquals("Token is not a valid JWT", ex.getMessage());
+    }
+
+    @Test
+    void shouldThrowIfTokenNoComponents() {
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.extractJwtToken("Bearer ThisIsNotValidEither"));
+        assertEquals("Token is not a valid JWT", ex.getMessage());
+    }
+
+    @Test
+    void shouldThrowIfTokenMissingComponent() {
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.extractJwtToken("Bearer aaaa."));
+        assertEquals("Token is not a valid JWT", ex.getMessage());
+    }
+
+    @Test
+    void shouldThrowIfTokenEmptyMetaData() {
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.extractJwtToken("Bearer .bbbb.cccc"));
+        assertEquals("Token is not a valid JWT", ex.getMessage());
+    }
+
+    @Test
+    void shouldThrowIfTokenEmptyPayload() {
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.extractJwtToken("Bearer aaaaa..cccc"));
+        assertEquals("Token is not a valid JWT", ex.getMessage());
+    }
+
+    @Test
+    void shouldThrowIfTokenEmptySignature() {
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.extractJwtToken("Bearer aaaaa.bbbb."));
+        assertEquals("Token is not a valid JWT", ex.getMessage());
+    }
+
+    @Test
+    void shouldThrowIfTokenShort() {
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.extractJwtToken("Bea"));
+        assertEquals("Token is not a valid JWT", ex.getMessage());
+    }
+
+    @Test
+    void shouldThrowIfNoContent() {
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.extractJwtToken("Bearer "));
+        assertEquals("Token is not a valid JWT", ex.getMessage());
     }
 }
