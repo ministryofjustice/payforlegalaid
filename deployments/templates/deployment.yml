@@ -22,24 +22,24 @@ spec:
             - containerPort: 8080
           env:
             - name: GPFD_URL
-              value: ${GPFD_URL}
+              value: https://${GPFD_URL}
             - name: SPRING_PROFILES_ACTIVE
               value: ${ENV_NAME}
             - name: AZURE_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
                   name: ${SECRET_NAME}
-                  key: client-secret
+                  key: client-secret-${ENV_NAME}
             - name: AZURE_CLIENT_ID
               valueFrom:
                 secretKeyRef:
                   name: ${SECRET_NAME}
-                  key: client-id
+                  key: client-id-${ENV_NAME}
             - name: AZURE_TENANT_ID
               valueFrom:
                 secretKeyRef:
                   name: ${SECRET_NAME}
-                  key: tenant-id
+                  key: tenant-id-${ENV_NAME}
             - name: MOJFIN_DEV_READ_USERNAME
               valueFrom:
                 secretKeyRef:
