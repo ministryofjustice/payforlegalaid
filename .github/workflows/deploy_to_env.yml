@@ -90,13 +90,16 @@ jobs:
           GPFD_URL: ${{ inputs.gpfd_url }}
           SECRET_NAME: ${{ inputs.secret_name }}
         run: |
-          cat deployments/templates/deployment.yml | envsubst > deployments/deployment.yml
-          cat deployments/templates/ingress.yml | envsubst  > deployments/ingress.yml
-          cat deployments/templates/service.yml | envsubst > deployments/service.yml
-          cat deployments/templates/service-monitor.yml | envsubst > deployments/service-monitor.yml
-          cat deployments/templates/network-policy.yml | envsubst > deployments/network-policy.yml
-          cat deployments/templates/prometheus-rules.yml | envsubst > deployments/prometheus-rules.yml
-          cat deployments/templates/grafana-dashboard.yml | envsubst > deployments/grafana-dashboard.yml
+          for template in deployment \
+                          ingress \
+                          service \
+                          service-monitor \
+                          network-policy \
+                          prometheus-rules;
+          do
+            cat deployments/templates/${template}.yml | envsubst > deployments/${template}.yml
+          done
+          cat deployments/templates/grafana-dashboard.yml | envsubst '$ENV_NAME,$NAMESPACE' > deployments/grafana-dashboard.yml
 
       - name: Authenticate with Cloud Platform and Deploy
         env:
