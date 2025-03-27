@@ -23,8 +23,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+
 @SpringBootTest(classes = AppConfig.class)
-@TestPropertySource(properties = { "gpfd.url=http://localhost"})
+@TestPropertySource(properties = {"gpfd.url=http://localhost"})
 class AppConfigTest {
 
     @Autowired
@@ -266,4 +267,5 @@ class AppConfigTest {
 
         assertTrue(classUnderTest.getServiceUrl().contentEquals("http://localhost"));
     }
+
 }

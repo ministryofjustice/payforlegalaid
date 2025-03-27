@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
-* Configuration class for application-level beans and settings.
+ * Configuration class for application-level beans and settings.
  * <p>
  * This class defines various beans such as data sources, JDBC templates,
  * model mapper, and a RestTemplate with custom message converters. These configurations
@@ -68,6 +68,18 @@ public class AppConfig {
 
     @Value("${spring.liquibase.changelog}")
     private String liquibaseChangeLog;
+
+    @Getter
+    @Value("${spring.cloud.azure.active-directory.credential.client-id}")
+    private String entraIdClientId;
+
+    @Getter
+    @Value("${spring.cloud.azure.active-directory.profile.tenant-id}")
+    private String entraIdTenantId;
+
+    @Getter
+    @Value("${gpfd.jwks-uri}")
+    private String jwksUri;
 
     /**
      * Configures a read-only {@link DataSource} using properties prefixed with
@@ -156,14 +168,12 @@ public class AppConfig {
     /**
      * Creates and configures a {@link SpringLiquibase} bean to be used for database,
      * if the property `spring.liquibase.enabled` is set to `true` in the application properties.
-     *
      * This method will set the data source to the specified {@link DataSource} bean, configure the
      * change log file to be used by Liquibase, and ensure that the migrations are executed by
      * setting {@code setShouldRun(true)}.
      *
      * @param dataSource The {@link DataSource} bean to be used by Liquibase for database connectivity.
      * @return A configured {@link SpringLiquibase} instance ready for migration.
-     *
      * @see SpringLiquibase
      * @see DataSource
      */
