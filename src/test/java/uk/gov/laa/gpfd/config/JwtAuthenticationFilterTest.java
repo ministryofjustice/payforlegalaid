@@ -11,17 +11,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtException;
 
-import java.time.Instant;
-import java.util.List;
-import java.util.Map;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
+
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,7 +47,6 @@ class JwtAuthenticationFilterTest {
         reset(mockRequest, mockRequest, mockFilterChain, jwtDecoder, appConfig);
         SecurityContextHolder.setContext(securityContext);
         jwtAuthenticationFilter = new JwtAuthenticationFilter();
-
     }
 
     @Test
@@ -79,7 +73,6 @@ class JwtAuthenticationFilterTest {
     @Test
     void shouldReturnJwtForValidBearerTokenIgnoreCase() {
         assertEquals("aaaa.bbbb.cccc", jwtAuthenticationFilter.extractJwtToken("BEARER aaaa.bbbb.cccc"));
-
     }
 
     @Test

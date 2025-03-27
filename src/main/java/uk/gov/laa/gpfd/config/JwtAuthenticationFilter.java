@@ -2,9 +2,8 @@ package uk.gov.laa.gpfd.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.jwt.JwtException;
 
@@ -17,9 +16,8 @@ public class JwtAuthenticationFilter {
     private static final String TOKEN_PREFIX = "bearer ";
     private static final int TOKEN_PARTS = 3;
 
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
-        var token = httpServletRequest.getHeader("Authorization");
+    public void doFilter(HttpServletRequest servletRequest, HttpServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        var token = servletRequest.getHeader("Authorization");
 
         if (token == null || token.isEmpty()) {
             filterChain.doFilter(servletRequest, servletResponse);
