@@ -29,17 +29,17 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: ${SECRET_NAME}
-                  key: client-secret
+                  key: client-secret-${ENV_NAME}
             - name: AZURE_CLIENT_ID
               valueFrom:
                 secretKeyRef:
                   name: ${SECRET_NAME}
-                  key: client-id
+                  key: client-id-${ENV_NAME}
             - name: AZURE_TENANT_ID
               valueFrom:
                 secretKeyRef:
                   name: ${SECRET_NAME}
-                  key: tenant-id
+                  key: tenant-id-${ENV_NAME}
             - name: MOJFIN_DEV_READ_USERNAME
               valueFrom:
                 secretKeyRef:

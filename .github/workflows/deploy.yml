@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - fix/deployment-prod
   workflow_dispatch:
 
 jobs:
@@ -53,7 +54,7 @@ jobs:
     with:
       github_environment: prod
       environment_name: prod
-      gpfd_url: https://prod.get-legal-aid-data.service.justice.gov.uk
+      gpfd_url: https://get-legal-aid-data.service.justice.gov.uk
       alert_severity: laa-get-legal-aid-data-prod
       secret_name: gpfd-prod-secret-01
     secrets:
