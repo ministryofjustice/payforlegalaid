@@ -58,7 +58,7 @@ public class UserService {
 
     public String getCurrentUserName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = "Unknown";
+        String username = null;
         if (authentication  != null && authentication.getPrincipal() != null) {
             Object principal = authentication.getPrincipal();
 
