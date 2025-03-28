@@ -84,10 +84,6 @@
                         <disable>true</disable>
                     </consoleOutputReporter>
                     <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporterUnicode"/>
-                    <includes>
-                        <include>**/*Test.java</include>  <!-- Unit tests -->
-                        <include>**/*IT.java</include>  <!-- Integration tests -->
-                    </includes>
                 </configuration>
                 <version>3.2.3</version>
             </plugin>

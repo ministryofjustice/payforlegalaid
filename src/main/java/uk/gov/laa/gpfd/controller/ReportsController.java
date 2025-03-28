@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,9 +13,8 @@ import uk.gov.laa.gpfd.api.ExcelApi;
 import uk.gov.laa.gpfd.api.ReportsApi;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200Response;
-import uk.gov.laa.gpfd.services.MappingTableService;
 import uk.gov.laa.gpfd.services.ReportService;
-import uk.gov.laa.gpfd.services.ReportTrackingTableService;
+import uk.gov.laa.gpfd.services.ReportsTrackingService;
 import uk.gov.laa.gpfd.services.StreamingService;
 import uk.gov.laa.gpfd.services.ReportManagementService;
 
@@ -29,7 +26,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ReportsController implements ReportsApi, ExcelApi {
 
-    private final ReportTrackingTableService reportTrackingTableService;
+    private final ReportsTrackingService reportsTrackingService;
     private final ReportService reportService;
     private final ReportManagementService reportManagementService;
     private final StreamingService streamingService;
@@ -66,11 +63,9 @@ public class ReportsController implements ReportsApi, ExcelApi {
      * @return CSV data stream or reports data
      */
     @RequestMapping(value = "/csv/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<StreamingResponseBody> getCSV(@PathVariable(value = "id") UUID requestedId,
-                                                        @RegisteredOAuth2AuthorizedClient("graph") OAuth2AuthorizedClient graphClient) {
-        reportTrackingTableService.updateReportTrackingTable(requestedId, graphClient);
-
+    public ResponseEntity<StreamingResponseBody> getCSV(@PathVariable(value = "id") UUID requestedId) {
         log.debug("Returning a CSV response to user");
+        reportsTrackingService.saveReportsTracking(requestedId);
         return reportService.createCSVResponse(requestedId);
     }
 
@@ -97,10 +92,10 @@ public class ReportsController implements ReportsApi, ExcelApi {
      *
      * @param id The unique identifier (UUID) of the report to be generated and streamed as an Excel file.
      * @return A {@link ResponseEntity} containing a {@link StreamingResponseBody} for the Excel file.
-     * @throws TransferException.StreamException.ExcelStreamWriteException If an error occurs while streaming the Excel data.
      */
     @Override
     public ResponseEntity<StreamingResponseBody> getExcelById(UUID id) {
+        reportsTrackingService.saveReportsTracking(id);
         return streamingService.streamExcel(id);
     }
 }
