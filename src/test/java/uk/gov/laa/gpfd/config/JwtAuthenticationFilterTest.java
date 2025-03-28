@@ -60,4 +60,12 @@ class JwtAuthenticationFilterTest {
         jwtAuthenticationFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
         verify(mockFilterChain).doFilter(mockRequest, mockResponse);
     }
+
+    @Test
+    @SneakyThrows
+    void shouldUseDefaultJourneyIfTokenHasContent() {
+        when(mockRequest.getHeader("Authorization")).thenReturn("Bearer a.valid.token");
+        jwtAuthenticationFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
+        verify(mockFilterChain).doFilter(mockRequest, mockResponse);
+    }
 }
