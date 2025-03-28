@@ -31,25 +31,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     public String extractJwtToken(String token) {
-        String errorMessage = "Token is not a valid JWT";
+        final String INVALID_JWT_ERROR_MESSAGE = "Token is not a valid JWT";
 
         if (token.length() <= TOKEN_PREFIX.length())
-            throw new JwtException(errorMessage);
+            throw new JwtException(INVALID_JWT_ERROR_MESSAGE);
 
         if (!token.substring(0, TOKEN_PREFIX.length()).equalsIgnoreCase(TOKEN_PREFIX))
-            throw new JwtException(errorMessage);
+            throw new JwtException(INVALID_JWT_ERROR_MESSAGE);
 
         token = token.substring(TOKEN_PREFIX.length());
 
         var contents = token.split("\\.");
 
         if (contents.length != TOKEN_PARTS) {
-            throw new JwtException(errorMessage);
+            throw new JwtException(INVALID_JWT_ERROR_MESSAGE);
         }
 
         for (String s : contents) {
             if (s.isEmpty()) {
-                throw new JwtException(errorMessage);
+                throw new JwtException(INVALID_JWT_ERROR_MESSAGE);
             }
         }
 
