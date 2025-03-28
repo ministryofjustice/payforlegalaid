@@ -61,7 +61,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 throw new JwtException("Audience mismatch");
             }
 
-            if (!decodedToken.getClaimAsString(JWT_PAYLOAD_TENANT_ID_KEY).equals(appConfig.getEntraIdTenantId())) { //TODO remove magic values
+            if (!decodedToken.getClaimAsString(JWT_PAYLOAD_TENANT_ID_KEY).equals(appConfig.getEntraIdTenantId())) {
                 throw new JwtException("Incorrect Tenant ID");
             }
 
