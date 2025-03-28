@@ -16,8 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -49,7 +48,7 @@ class JwtAuthenticationFilterTest {
     void beforeEach() {
         reset(mockRequest, mockRequest, mockFilterChain, jwtDecoder, appConfig);
         SecurityContextHolder.setContext(securityContext);
-        jwtAuthenticationFilter = new JwtAuthenticationFilter();
+        jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtDecoder);
     }
 
     @Test
@@ -80,4 +79,32 @@ class JwtAuthenticationFilterTest {
         Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.extractJwtToken(token));
         assertEquals("Token is not a valid JWT", ex.getMessage());
     }
+
+    @Test
+    void shouldThrowIfTokenInvalid() {
+        when(mockRequest.getHeader("Authorization")).thenReturn("aaaa.bbbb.cccc");
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.doFilter(mockRequest, mockResponse, mockFilterChain));
+
+        assertEquals("Token is not a valid JWT", ex.getMessage());
+    }
+
+    @Test
+    void shouldThrowIfDecodeJwtThrows() {
+        when(mockRequest.getHeader("Authorization")).thenReturn("Bearer aaaa.bbbb.cccc");
+        when(jwtDecoder.decode("aaaa.bbbb.cccc")).thenThrow(new IllegalArgumentException());
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.doFilter(mockRequest, mockResponse, mockFilterChain));
+
+        assertTrue( ex.getMessage().contains("Unable to validate token"));
+    }
+
+    @Test
+    void shouldThrowIfDecodeJwtReturnsNull() {
+        when(mockRequest.getHeader("Authorization")).thenReturn("Bearer aaaa.bbbb.cccc");
+        when(jwtDecoder.decode("aaaa.bbbb.cccc")).thenReturn(null);
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.doFilter(mockRequest, mockResponse, mockFilterChain));
+
+        assertEquals("Unable to validate token: decode token returned null", ex.getMessage());
+    }
+
+
 }
