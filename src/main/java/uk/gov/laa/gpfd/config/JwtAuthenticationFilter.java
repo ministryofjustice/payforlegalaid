@@ -18,9 +18,12 @@ public class JwtAuthenticationFilter {
     public void doFilter(HttpServletRequest servletRequest, HttpServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         var token = servletRequest.getHeader("Authorization");
 
-        if (token == null || token.isEmpty()) {
-            filterChain.doFilter(servletRequest, servletResponse);
+        if (token != null && !token.isEmpty()) {
+            // JWT validation logic to come in later PR
         }
+
+        filterChain.doFilter(servletRequest, servletResponse);
+
     }
 
     public String extractJwtToken(String token) {
