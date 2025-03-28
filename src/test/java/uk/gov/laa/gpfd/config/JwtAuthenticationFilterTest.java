@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.context.SecurityContext;
@@ -51,18 +52,12 @@ class JwtAuthenticationFilterTest {
         jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtDecoder);
     }
 
-    @Test
+    @ParameterizedTest
     @SneakyThrows
-    void shouldUseDefaultJourneyIfNullToken() {
-        when(mockRequest.getHeader("Authorization")).thenReturn(null);
-        jwtAuthenticationFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
-        verify(mockFilterChain).doFilter(mockRequest, mockResponse);
-    }
-
-    @Test
-    @SneakyThrows
-    void shouldUseDefaultJourneyIfEmptyToken() {
-        when(mockRequest.getHeader("Authorization")).thenReturn("");
+    @NullAndEmptySource
+    @ValueSource(strings = "Bearer a.valid.token")
+    void shouldUseDefaultJourneyIfNullToken(String token) {
+        when(mockRequest.getHeader("Authorization")).thenReturn(token);
         jwtAuthenticationFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
         verify(mockFilterChain).doFilter(mockRequest, mockResponse);
     }

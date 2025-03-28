@@ -5,8 +5,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtException;
 
 import java.io.IOException;
@@ -26,9 +24,7 @@ public class JwtAuthenticationFilter {
         var jwtContent = "";
         var token = servletRequest.getHeader("Authorization");
 
-        if (token == null || token.isEmpty()) {
-            filterChain.doFilter(servletRequest, servletResponse);
-        } else {
+        if (token != null && !token.isEmpty()) {
             jwtContent = extractJwtToken(token);
         }
 
@@ -46,9 +42,12 @@ public class JwtAuthenticationFilter {
             throw new JwtException("Unable to validate token");
         }
 
+        filterChain.doFilter(servletRequest, servletResponse);
+
+
     }
 
-    public String extractJwtToken(String token) throws JwtException {
+    public String extractJwtToken(String token) {
         String errorMessage = "Token is not a valid JWT";
 
         if (token.length() <= TOKEN_PREFIX.length())
