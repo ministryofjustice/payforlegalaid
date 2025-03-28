@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+  <changeSet id="5001" author="user">
+    <sql>CREATE SCHEMA IF NOT EXISTS ANY_REPORT;</sql>
+  </changeSet>
+
+  <changeSet id="5002" author="user">
+    <createTable tableName="V_CIS_TO_CCMS_INVOICE_SUMMARY" schemaName="ANY_REPORT">
+      <column name="DATE_AUTHORISED_CIS" type="VARCHAR(10)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="THE_SYSTEM" type="VARCHAR(200)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="CIS_VALUE" type="VARCHAR(200)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="CCMS_VALUE" type="VARCHAR(200)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="5003" author="user">
+    <createTable tableName="V_CIS_TO_CCMS_INVOICE_DEFINED_PAYMENT_GROUPS" schemaName="ANY_REPORT">
+      <column name="DATE_AUTHORISED_CIS" type="VARCHAR(10)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="THE_SYSTEM" type="VARCHAR(200)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="CIS_VALUE" type="VARCHAR(200)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="CCMS_VALUE" type="VARCHAR(200)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+</databaseChangeLog>
