@@ -2,9 +2,7 @@ package uk.gov.laa.gpfd.integration;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +14,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.laa.gpfd.utils.FileUtils;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
@@ -25,38 +22,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestPropertySource(locations = "classpath:application-test.yml")
-class GetReportsIT {
+class GetReportsIT extends BaseIT {
 
+    public static final int NUMBER_OF_REPORTS_IN_TEST_DATA = 4;
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private JdbcTemplate writeJdbcTemplate;
-
-    @BeforeAll
-    void setupDatabase() {
-        String sqlSchema = FileUtils.readResourceToString("gpfd_schema.sql");
-        String sqlData = FileUtils.readResourceToString("gpfd_data.sql");
-        String sqlReportSchema = FileUtils.readResourceToString("gpfd_reports_schema.sql");
-        String sqlReportData = FileUtils.readResourceToString("gpfd_reports_data.sql");
-
-        writeJdbcTemplate.execute(sqlSchema);
-        writeJdbcTemplate.execute(sqlData);
-        writeJdbcTemplate.execute(sqlReportSchema);
-        writeJdbcTemplate.execute(sqlReportData);
-    }
-
-    @AfterAll
-    void resetDatabase() {
-        writeJdbcTemplate.execute("DROP TABLE IF EXISTS GPFD.REPORT_TRACKING");
-        writeJdbcTemplate.execute("DROP TABLE IF EXISTS GPFD.CSV_TO_SQL_MAPPING_TABLE");
-        writeJdbcTemplate.execute("DROP TABLE GPFD.REPORTS_TRACKING");
-        writeJdbcTemplate.execute("DROP TABLE GPFD.FIELD_ATTRIBUTES");
-        writeJdbcTemplate.execute("DROP TABLE GPFD.REPORT_QUERIES");
-        writeJdbcTemplate.execute("DROP TABLE GPFD.REPORT_GROUPS");
-        writeJdbcTemplate.execute("DROP TABLE GPFD.REPORTS");
-        writeJdbcTemplate.execute("DROP TABLE GPFD.REPORT_OUTPUT_TYPES");
-    }
 
     @Test
     void shouldReturnListOfReports() throws Exception {
@@ -67,7 +40,7 @@ class GetReportsIT {
 
         var json = new JSONObject(response.getContentAsString());
         JSONArray reportList = (JSONArray) json.get("reportList");
-        Assertions.assertEquals(3, reportList.toList().size());
+        Assertions.assertEquals(NUMBER_OF_REPORTS_IN_TEST_DATA, reportList.toList().size());
     }
 
     @Test
