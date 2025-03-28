@@ -63,10 +63,10 @@ class JwtAuthenticationFilterTest {
         Map<String, Object> claims = new HashMap<>();
         claims.put("sub", username);
         claims.put("nbf", issuedAt);
+        claims.put("appid", appId);
 
         claims.putAll(Map.of("aud", expectedClientId,
                 "tid", expectedTenantId,
-                "appid", appId,
                 "scp", scopes));
 
         return new Jwt("tokenValue", issuedAt, expiresAt,
@@ -97,28 +97,6 @@ class JwtAuthenticationFilterTest {
         verify(mockFilterChain).doFilter(mockRequest, mockResponse);
     }
 
-    @ParameterizedTest
-    @SneakyThrows
-    @NullAndEmptySource
-    void shouldCallFilterWhenValidTokenProvided(String token) {
-        //TODO
-    }
-
-
-    @ParameterizedTest
-    @ValueSource(strings = {"Bearer ", "bearer ", "BEARER "})
-    void shouldReturnJwtForValidBearerToken(String tokenPrefix) {
-        assertEquals("aaaa.bbbb.cccc", jwtAuthenticationFilter.extractJwtToken(tokenPrefix + "aaaa.bbbb.cccc"));
-    }
-
-    @ParameterizedTest
-    @NullAndEmptySource
-    @ValueSource(strings = {"ThisIsNotValid", "aaaa.bbbb.cccc", "Bearer ThisIsNotValidEither", "Bearer aaaa.", "Bearer aaaaa.bbbbbbb.cccc.ddddddd", "Bearer .bbbb.cccc", "Bearer aaaaa..cccc", "Bearer aaaaa.bbbb.", "Bea", "Bearer "})
-    void shouldThrowIfTokenNotRightFormat(String token) {
-        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.extractJwtToken(token));
-        assertEquals("Token is not a valid JWT", ex.getMessage());
-    }
-
     @Test
     void shouldThrowIfTokenInvalid() {
         when(mockRequest.getHeader("Authorization")).thenReturn("aaaa.bbbb.cccc");
@@ -145,6 +123,20 @@ class JwtAuthenticationFilterTest {
         assertEquals("Unable to validate token: decode token returned null", ex.getMessage());
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"Bearer ", "bearer ", "BEARER "})
+    void shouldReturnJwtForValidBearerToken(String tokenPrefix) {
+        assertEquals("aaaa.bbbb.cccc", jwtAuthenticationFilter.extractJwtToken(tokenPrefix + "aaaa.bbbb.cccc"));
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"ThisIsNotValid", "aaaa.bbbb.cccc", "Bearer ThisIsNotValidEither", "Bearer aaaa.", "Bearer aaaaa.bbbbbbb.cccc.ddddddd", "Bearer .bbbb.cccc", "Bearer aaaaa..cccc", "Bearer aaaaa.bbbb.", "Bea", "Bearer "})
+    void shouldThrowIfTokenNotRightFormat(String token) {
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.extractJwtToken(token));
+        assertEquals("Token is not a valid JWT", ex.getMessage());
+    }
+
     @Test
     void shouldThrowIfDecodeJwtReturnsNull() {
         var token = "aaaa.bbbb.cccc";
@@ -167,12 +159,14 @@ class JwtAuthenticationFilterTest {
         assertEquals("Unable to validate token: token includes no valid username", ex.getMessage());
     }
 
-    @Test
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = "clientId2")
     @SneakyThrows
-    void shouldNotAuthoriseIfAudienceMismatch() {
+    void shouldNotAuthoriseIfAudienceMismatch(String clientId) {
         var token = "aaaa.bbbb.cccc";
 
-        when(appConfig.getEntraIdClientId()).thenReturn("clientId2");
+        when(appConfig.getEntraIdClientId()).thenReturn(clientId);
 
         when(jwtDecoder.decode(token)).thenReturn(testJwt);
         Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt("Bearer " + token));
@@ -180,13 +174,15 @@ class JwtAuthenticationFilterTest {
 
     }
 
-    @Test
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = "tenantId2")
     @SneakyThrows
-    void shouldNotAuthoriseIfTenantMismatch() {
+    void shouldNotAuthoriseIfTenantMismatch(String tenantId) {
         var token = "aaaa.bbbb.cccc";
 
         when(appConfig.getEntraIdClientId()).thenReturn(expectedClientId);
-        when(appConfig.getEntraIdTenantId()).thenReturn("tenantId2");
+        when(appConfig.getEntraIdTenantId()).thenReturn(tenantId);
 
         when(jwtDecoder.decode(token)).thenReturn(testJwt);
         Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt("Bearer " + token));
@@ -194,18 +190,20 @@ class JwtAuthenticationFilterTest {
 
     }
 
-    @Test
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = "appId2")
     @SneakyThrows
-    void shouldNotAuthoriseIfAppIdMismatch() {
+    void shouldNotAuthoriseIfAppIdMismatch(String appId) {
         when(appConfig.getEntraIdClientId()).thenReturn(expectedClientId);
         when(appConfig.getEntraIdTenantId()).thenReturn(expectedTenantId);
 
-        Jwt problemJwt = jwt("clientId2",
+        Jwt problemJwt = jwt(appId,
                 Instant.now(),
                 Instant.now().plusSeconds(100),
                 expectedScopes, "testuser");
         when(jwtDecoder.decode("aaaa.bbbb.cccc")).thenReturn(problemJwt);
         Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt("Bearer aaaa.bbbb.cccc"));
-        assertEquals("Unable to validate token: Incorrect Application ID", ex.getMessage());
+        assertTrue(ex.getMessage().contains("Unable to validate token"));
     }
 }

@@ -46,8 +46,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         jwtContent = extractJwtToken(token);
 
-        //TODO - logs, hash token for logs, validation
-
         try {
             Jwt decodedToken = jwtDecoder.decode(jwtContent);
 
@@ -60,7 +58,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 throw new JwtException("token includes no valid username");
 
             if (!decodedToken.getAudience().contains(appConfig.getEntraIdClientId())) {
-                throw new JwtException("Audience mismatch"); //TODO may need to expand these for more traceability
+                throw new JwtException("Audience mismatch");
             }
 
             if (!decodedToken.getClaimAsString(JWT_PAYLOAD_TENANT_ID_KEY).equals(appConfig.getEntraIdTenantId())) { //TODO remove magic values
