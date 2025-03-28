@@ -9,21 +9,22 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.oauth2.jwt.JwtException;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
 @Slf4j
-@Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
     private static final String TOKEN_PREFIX = "bearer ";
     private static final int TOKEN_PARTS = 3;
     private final JwtDecoder jwtDecoder;
+    private final AppConfig appConfig;
+    private static final String JWT_PAYLOAD_TENANT_ID_KEY = "tid";
+    private static final String JWT_PAYLOAD_APPLICATION_ID_KEY = "appid";
 
-    public JwtAuthenticationFilter(JwtDecoder jwtDecoder) {
+    public JwtAuthenticationFilter(JwtDecoder jwtDecoder, AppConfig appConfig) {
         this.jwtDecoder = jwtDecoder;
+        this.appConfig = appConfig;
     }
 
     @Override
@@ -37,12 +38,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             validateJwt(token);
             filterChain.doFilter(servletRequest, servletResponse);
         }
-
-
-
-
-
-
     }
 
     public boolean validateJwt(String token) {
@@ -64,6 +59,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (username == null || username.isEmpty())
                 throw new JwtException("token includes no valid username");
 
+            if (!decodedToken.getAudience().contains(appConfig.getEntraIdClientId())) {
+                throw new JwtException("Audience mismatch"); //TODO may need to expand these for more traceability
+            }
+
+            if (!decodedToken.getClaimAsString(JWT_PAYLOAD_TENANT_ID_KEY).equals(appConfig.getEntraIdTenantId())) { //TODO remove magic values
+                throw new JwtException("Incorrect Tenant ID");
+            }
+
+            if (!decodedToken.getClaimAsString(JWT_PAYLOAD_APPLICATION_ID_KEY).equals(appConfig.getEntraIdClientId())) {
+                throw new JwtException("Incorrect Application ID");
+            }
+
         } catch (JwtException ex) {
             throw new JwtException("Unable to validate token: " + ex.getMessage());
         } catch (Exception ex) {
@@ -78,7 +85,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     public String extractJwtToken(String token) {
         String errorMessage = "Token is not a valid JWT";
 
-        if (token.length() <= TOKEN_PREFIX.length())
+        if (token == null || token.length() <= TOKEN_PREFIX.length())
             throw new JwtException(errorMessage);
 
         if (!token.substring(0, TOKEN_PREFIX.length()).equalsIgnoreCase(TOKEN_PREFIX))
