@@ -68,6 +68,14 @@ class JwtAuthenticationFilterTest {
         verify(mockFilterChain).doFilter(mockRequest, mockResponse);
     }
 
+    @Test
+    @SneakyThrows
+    void shouldUseDefaultJourneyIfTokenHasContent() {
+        when(mockRequest.getHeader("Authorization")).thenReturn("Bearer a.valid.token");
+        jwtAuthenticationFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
+        verify(mockFilterChain).doFilter(mockRequest, mockResponse);
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"Bearer ", "bearer ", "BEARER "})
     void shouldReturnJwtForValidBearerToken(String tokenPrefix) {
