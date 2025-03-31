@@ -38,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (token == null || token.isEmpty()) {
             filterChain.doFilter(servletRequest, servletResponse);
         } else {
-            validateJwt(token); //TODO add test to confirm throws when not valid
+            validateJwt(token);
             filterChain.doFilter(servletRequest, servletResponse);
         }
     }
