@@ -69,14 +69,6 @@ public class AppConfig {
     @Value("${spring.liquibase.changelog}")
     private String liquibaseChangeLog;
 
-    @Getter
-    @Value("${spring.cloud.azure.active-directory.credential.client-id}")
-    private String entraIdClientId;
-
-    @Getter
-    @Value("${spring.cloud.azure.active-directory.profile.tenant-id}")
-    private String entraIdTenantId;
-
     /**
      * Configures a read-only {@link DataSource} using properties prefixed with
      * "gpfd.datasource.read-only" in the application's configuration file.

@@ -18,17 +18,6 @@ import java.time.Instant;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String TOKEN_PREFIX = "bearer ";
     private static final int TOKEN_PARTS = 3;
-    private final JwtDecoder jwtDecoder;
-    private final AppConfig appConfig;
-    private static final String JWT_PAYLOAD_TENANT_ID_KEY = "tid";
-    private static final String JWT_PAYLOAD_APPLICATION_ID_KEY = "appid";
-    private static final String SCOPE_KEY = "scp";
-    private static final String SCOPE_VALUE = "User.Read";
-
-    public JwtAuthenticationFilter(JwtDecoder jwtDecoder, AppConfig appConfig) {
-        this.jwtDecoder = jwtDecoder;
-        this.appConfig = appConfig;
-    }
 
     @Override
     public void doFilterInternal(HttpServletRequest servletRequest, @NotNull HttpServletResponse servletResponse, @NotNull FilterChain filterChain) throws IOException, ServletException {
