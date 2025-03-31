@@ -32,7 +32,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     public void doFilterInternal(HttpServletRequest servletRequest, @NotNull HttpServletResponse servletResponse, @NotNull FilterChain filterChain) throws IOException, ServletException {
-
         var token = servletRequest.getHeader("Authorization");
 
         if (token == null || token.isEmpty()) {
@@ -44,10 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     public boolean validateJwt(String token) {
-        var jwtContent = "";
-        var valid = false;
-
-        jwtContent = extractJwtToken(token);
+        var jwtContent = extractJwtToken(token);
 
         try {
             Jwt decodedToken = jwtDecoder.decode(jwtContent);
@@ -90,31 +86,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throw new JwtException("Unable to validate token");
         }
 
-        valid = true;
-
-        return valid;
+        return true;
     }
 
     public String extractJwtToken(String token) {
-        String errorMessage = "Token is not a valid JWT";
+        final String INVALID_JWT_ERROR_MESSAGE = "Token is not a valid JWT";
 
         if (token == null || token.length() <= TOKEN_PREFIX.length())
-            throw new JwtException(errorMessage);
+            throw new JwtException(INVALID_JWT_ERROR_MESSAGE);
 
         if (!token.substring(0, TOKEN_PREFIX.length()).equalsIgnoreCase(TOKEN_PREFIX))
-            throw new JwtException(errorMessage);
+            throw new JwtException(INVALID_JWT_ERROR_MESSAGE);
 
         token = token.substring(TOKEN_PREFIX.length());
 
         var contents = token.split("\\.");
 
         if (contents.length != TOKEN_PARTS) {
-            throw new JwtException(errorMessage);
+            throw new JwtException(INVALID_JWT_ERROR_MESSAGE);
         }
 
         for (String s : contents) {
             if (s.isEmpty()) {
-                throw new JwtException(errorMessage);
+                throw new JwtException(INVALID_JWT_ERROR_MESSAGE);
             }
         }
 
@@ -133,7 +127,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     public boolean isTokenExpired(Jwt decodedToken) {
         try {
             return decodedToken.getExpiresAt().isBefore(Instant.now());
-        } catch (Exception ex){
+        } catch (Exception ex) {
             return true;
         }
     }
