@@ -94,7 +94,7 @@ class JwtAuthenticationFilterTest {
     void beforeEach() {
         reset(mockRequest, mockRequest, mockFilterChain, jwtDecoder, appConfig);
         SecurityContextHolder.setContext(securityContext);
-        jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtDecoder, appConfig);
+        jwtAuthenticationFilter = new JwtAuthenticationFilter();
     }
 
     @ParameterizedTest
