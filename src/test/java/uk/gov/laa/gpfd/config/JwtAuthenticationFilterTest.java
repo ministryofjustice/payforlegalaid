@@ -55,16 +55,15 @@ class JwtAuthenticationFilterTest {
     @Mock
     private SecurityContext securityContext;
 
-    private final String EXPECTED_CLIENT_ID = "clientId";
-    private final String EXPECTED_TENANT_ID = "tenantId";
-    private final List<String> EXPECTED_SCOPES = List.of("User.Read");
-    private final String VALID_USER = "TestUser";
-    private final String VALID_BEARER_TOKEN = "Bearer aaaa.bbbb.cccc";
-    private final String VALID_TOKEN = "aaaa.bbbb.cccc";
-    private final Instant PAST_TIMESTAMP = Instant.now().minusSeconds(500);
-    private final Instant PAST_EXPIRY_TIMESTAMP = PAST_TIMESTAMP.plusSeconds(10);
-    private final Instant FUTURE_TIMESTAMP = Instant.now().plusSeconds(500);
-    private final Instant FUTURE_EXPIRY_TIMESTAMP = FUTURE_TIMESTAMP.plusSeconds(10);
+    private static final String EXPECTED_CLIENT_ID = "clientId";
+    private static final String EXPECTED_TENANT_ID = "tenantId";
+    private static final List<String> EXPECTED_SCOPES = List.of("User.Read");
+    private static final String VALID_USER = "TestUser";
+    private static final String VALID_TOKEN = "aaaa.bbbb.cccc";
+    private static final Instant PAST_TIMESTAMP = Instant.now().minusSeconds(500);
+    private static final Instant PAST_EXPIRY_TIMESTAMP = PAST_TIMESTAMP.plusSeconds(10);
+    private static final Instant FUTURE_TIMESTAMP = Instant.now().plusSeconds(500);
+    private static final Instant FUTURE_EXPIRY_TIMESTAMP = FUTURE_TIMESTAMP.plusSeconds(10);
 
 
 
