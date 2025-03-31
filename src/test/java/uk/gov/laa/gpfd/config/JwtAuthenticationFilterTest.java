@@ -20,11 +20,13 @@ import org.springframework.security.oauth2.jwt.JwtException;
 
 import java.time.Instant;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.reset;
@@ -205,5 +207,116 @@ class JwtAuthenticationFilterTest {
         when(jwtDecoder.decode("aaaa.bbbb.cccc")).thenReturn(problemJwt);
         Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt("Bearer aaaa.bbbb.cccc"));
         assertTrue(ex.getMessage().contains("Unable to validate token"));
+    }
+
+    @Test
+    void shouldThrowIfTokenIsNotValidForCurrentTime() {
+        var token = "aaaa.bbbb.cccc";
+        when(appConfig.getEntraIdClientId()).thenReturn(expectedClientId);
+        when(appConfig.getEntraIdTenantId()).thenReturn(expectedTenantId);
+
+        when(jwtDecoder.decode(token)).thenReturn(jwt(expectedClientId,
+                Instant.now().plusSeconds(100),
+                Instant.now().plusSeconds(500),
+                expectedScopes, "TestUser"));
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt("Bearer " + token));
+
+        assertEquals("Unable to validate token: Token not valid for current time", ex.getMessage());
+    }
+
+    @Test
+    void shouldThrowIfTokenIsExpired() {
+        var token = "aaaa.bbbb.cccc";
+        when(appConfig.getEntraIdClientId()).thenReturn(expectedClientId);
+        when(appConfig.getEntraIdTenantId()).thenReturn(expectedTenantId);
+
+        when(jwtDecoder.decode(token)).thenReturn(jwt(expectedClientId,
+                Instant.now().minusSeconds(500),
+                Instant.now().minusSeconds(100),
+                expectedScopes, "TestUser"));
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt("Bearer " + token));
+
+        assertEquals("Unable to validate token: Token is expired", ex.getMessage());
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = "./default")
+    @SneakyThrows
+    void shouldNotAuthoriseIfScopeMismatch(String scope) {
+        when(appConfig.getEntraIdClientId()).thenReturn(expectedClientId);
+        when(appConfig.getEntraIdTenantId()).thenReturn(expectedTenantId);
+
+        List<String> scopes = new ArrayList<>();
+        scopes.add(scope);
+
+        Jwt problemJwt = jwt(expectedClientId,
+                Instant.now(),
+                Instant.now().plusSeconds(100),
+                scopes, "testuser");
+        when(jwtDecoder.decode("aaaa.bbbb.cccc")).thenReturn(problemJwt);
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt("Bearer aaaa.bbbb.cccc"));
+        assertTrue(ex.getMessage().contains("Expected scope values are missing"));
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldReturnFalseIfBeforeNotBeforeTime() {
+        Jwt decodedToken = jwt(expectedClientId,
+                Instant.now().plusSeconds(100),
+                Instant.now().plusSeconds(500),
+                expectedScopes, "TestUser");
+        assertFalse(jwtAuthenticationFilter.isTokenValidForCurrentTime(decodedToken));
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldReturnFalseIfNotBeforeTimeIsNull() {
+        Jwt decodedToken = jwt(expectedClientId,
+                null,
+                Instant.now().plusSeconds(500),
+                expectedScopes, "TestUser");
+        assertFalse(jwtAuthenticationFilter.isTokenValidForCurrentTime(decodedToken));
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldReturnTrueIfAfterNotBeforeTime() {
+        Jwt decodedToken = jwt(expectedClientId,
+                Instant.now(),
+                Instant.now().plusSeconds(500),
+                expectedScopes, "TestUser");
+        assertTrue(jwtAuthenticationFilter.isTokenValidForCurrentTime(decodedToken));
+    }
+
+
+    @Test
+    @SneakyThrows
+    void shouldReturnTrueIfAfterExpiresTime() {
+        Jwt decodedToken = jwt(expectedClientId,
+                Instant.now().minusSeconds(500),
+                Instant.now().minusSeconds(100),
+                expectedScopes, "TestUser");
+        assertTrue(jwtAuthenticationFilter.isTokenExpired(decodedToken));
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldReturnTrueIfExpiresTimeIsNull() {
+        Jwt decodedToken = jwt(expectedClientId,
+                Instant.now().minusSeconds(500),
+                null,
+                expectedScopes, "TestUser");
+        assertTrue(jwtAuthenticationFilter.isTokenExpired(decodedToken));
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldReturnFalseIfNotBeforeExpiresTime() {
+        Jwt decodedToken = jwt(expectedClientId,
+                Instant.now(),
+                Instant.now().plusSeconds(500),
+                expectedScopes, "TestUser");
+        assertFalse(jwtAuthenticationFilter.isTokenExpired(decodedToken));
     }
 }

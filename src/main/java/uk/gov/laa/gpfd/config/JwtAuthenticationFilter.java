@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.time.Instant;
 
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -21,6 +22,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final AppConfig appConfig;
     private static final String JWT_PAYLOAD_TENANT_ID_KEY = "tid";
     private static final String JWT_PAYLOAD_APPLICATION_ID_KEY = "appid";
+    private static final String SCOPE_KEY = "scp";
+    private static final String SCOPE_VALUE = "User.Read";
 
     public JwtAuthenticationFilter(JwtDecoder jwtDecoder, AppConfig appConfig) {
         this.jwtDecoder = jwtDecoder;
@@ -35,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (token == null || token.isEmpty()) {
             filterChain.doFilter(servletRequest, servletResponse);
         } else {
-            validateJwt(token);
+            validateJwt(token); //TODO add test to confirm throws when not valid
             filterChain.doFilter(servletRequest, servletResponse);
         }
     }
@@ -67,6 +70,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             if (!decodedToken.getClaimAsString(JWT_PAYLOAD_APPLICATION_ID_KEY).equals(appConfig.getEntraIdClientId())) {
                 throw new JwtException("Incorrect Application ID");
+            }
+
+            if (!isTokenValidForCurrentTime(decodedToken)) {
+                throw new JwtException("Token not valid for current time");
+            }
+
+            if (isTokenExpired(decodedToken)) {
+                throw new JwtException("Token is expired");
+            }
+
+            if (!decodedToken.getClaimAsStringList(SCOPE_KEY).contains(SCOPE_VALUE)) {
+                throw new JwtException("Expected scope values are missing");
             }
 
         } catch (JwtException ex) {
@@ -104,5 +119,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         return token;
+    }
+
+    public boolean isTokenValidForCurrentTime(Jwt decodedToken) {
+        try {
+            return !decodedToken.getNotBefore().isAfter(Instant.now());
+        } catch (Exception ex){
+            return false;
+        }
+
+    }
+
+    public boolean isTokenExpired(Jwt decodedToken) {
+        try {
+            return decodedToken.getExpiresAt().isBefore(Instant.now());
+        } catch (Exception ex){
+            return true;
+        }
     }
 }
