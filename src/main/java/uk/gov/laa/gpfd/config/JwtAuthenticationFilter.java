@@ -38,6 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (token == null || token.isEmpty()) {
             filterChain.doFilter(servletRequest, servletResponse);
         } else {
+            log.info("Token " + token.hashCode() + " - token received, attempting validation");
             validateJwt(token);
             filterChain.doFilter(servletRequest, servletResponse);
         }
@@ -80,6 +81,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (!decodedToken.getClaimAsStringList(SCOPE_KEY).contains(SCOPE_VALUE)) {
                 throw new JwtException("Expected scope values are missing");
             }
+
+            log.info("Token " + token.hashCode() + " - JWT validated successfully");
 
         } catch (JwtException ex) {
             throw new JwtException("Unable to validate token: " + ex.getMessage());

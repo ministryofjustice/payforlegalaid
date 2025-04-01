@@ -12,6 +12,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -35,7 +37,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith({MockitoExtension.class, OutputCaptureExtension.class})
 class JwtAuthenticationFilterTest {
 
     @Mock
@@ -79,16 +81,17 @@ class JwtAuthenticationFilterTest {
     @ParameterizedTest
     @SneakyThrows
     @NullAndEmptySource
-    void shouldCallFilterWhenNoTokenProvided(String token) {
+    void shouldCallFilterWhenNoTokenProvided(String token, CapturedOutput output) {
         when(mockRequest.getHeader("Authorization")).thenReturn(token);
         jwtAuthenticationFilter.doFilterInternal(mockRequest, mockResponse, mockFilterChain);
         verify(mockFilterChain).doFilter(mockRequest, mockResponse);
         verify(jwtDecoder, times(0)).decode(any());
+        assertFalse(output.getOut().contains("JWT token received"));
     }
 
     @SneakyThrows
     @Test
-    void shouldCallFilterWhenValidTokenProvided() {
+    void shouldCallFilterWhenValidTokenProvided(CapturedOutput output) {
         when(jwtDecoder.decode(VALID_TOKEN)).thenReturn(jwt(EXPECTED_CLIENT_ID,
                 Instant.now(),
                 Instant.now().plusSeconds(100),
@@ -101,21 +104,22 @@ class JwtAuthenticationFilterTest {
         jwtAuthenticationFilter.doFilterInternal(mockRequest, mockResponse, mockFilterChain);
         verify(mockFilterChain).doFilter(mockRequest, mockResponse);
         verify(jwtDecoder, times(1)).decode(any());
+        assertTrue(output.getOut().contains("Token " + VALID_BEARER_TOKEN.hashCode() + " - token received, attempting validation"));
     }
 
     @Test
-    void shouldThrowWhenTokenInvalid() {
+    void shouldThrowWhenTokenInvalid(CapturedOutput output) {
         when(mockRequest.getHeader("Authorization")).thenReturn("InvalidToken");
-        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.doFilter(mockRequest, mockResponse, mockFilterChain));
-
-        assertEquals("Token is not a valid JWT", ex.getMessage());
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.doFilterInternal(mockRequest, mockResponse, mockFilterChain));
+        assertTrue(ex.getMessage().contains("Token is not a valid JWT"));
+        assertFalse(output.getOut().contains("Token " + VALID_BEARER_TOKEN.hashCode() + " - JWT validated successfully"));
     }
 
     @Test
     void shouldThrowWhenDecodeJwtThrows() {
         when(mockRequest.getHeader("Authorization")).thenReturn(VALID_BEARER_TOKEN);
         when(jwtDecoder.decode("xxxx.yyyy.zzzz")).thenThrow(new IllegalArgumentException());
-        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.doFilter(mockRequest, mockResponse, mockFilterChain));
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.doFilterInternal(mockRequest, mockResponse, mockFilterChain));
 
         assertTrue(ex.getMessage().contains("Unable to validate token"));
     }
@@ -124,14 +128,14 @@ class JwtAuthenticationFilterTest {
     void shouldThrowWhenValidateJwtThrows() {
         when(mockRequest.getHeader("Authorization")).thenReturn(VALID_BEARER_TOKEN);
         when(jwtDecoder.decode("aaaa.bbbb.cccc")).thenReturn(null);
-        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.doFilter(mockRequest, mockResponse, mockFilterChain));
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.doFilterInternal(mockRequest, mockResponse, mockFilterChain));
 
         assertEquals("Unable to validate token: decode token returned null", ex.getMessage());
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"Bearer ", "bearer ", "BEARER "})
-    void shouldReturnJwtForValidBearerToken(String tokenPrefix) {
+    void shouldReturnJwtForValidBearerToken(String tokenPrefix, CapturedOutput output) {
         assertEquals(VALID_TOKEN, jwtAuthenticationFilter.extractJwtToken(tokenPrefix + VALID_TOKEN));
     }
 
