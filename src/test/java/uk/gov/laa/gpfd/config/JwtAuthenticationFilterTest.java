@@ -58,21 +58,18 @@ class JwtAuthenticationFilterTest {
     @Mock
     private SecurityContext securityContext;
 
-    private final String EXPECTED_CLIENT_ID = "clientId";
-    private final String EXPECTED_TENANT_ID = "tenantId";
-    private final List<String> EXPECTED_SCOPES = List.of("User.Read");
-    private final String VALID_USER = "TestUser";
-    private final String VALID_BEARER_TOKEN = "Bearer aaaa.bbbb.cccc";
-    private final String VALID_TOKEN = "aaaa.bbbb.cccc";
-    private final Instant PAST_TIMESTAMP = Instant.now().minusSeconds(500);
-    private final Instant PAST_EXPIRY_TIMESTAMP = PAST_TIMESTAMP.plusSeconds(10);
-    private final Instant FUTURE_TIMESTAMP = Instant.now().plusSeconds(500);
-    private final Instant FUTURE_EXPIRY_TIMESTAMP = FUTURE_TIMESTAMP.plusSeconds(10);
-
-
+    private static final String EXPECTED_CLIENT_ID = "clientId";
+    private static final String EXPECTED_TENANT_ID = "tenantId";
+    private static final List<String> EXPECTED_SCOPES = List.of("User.Read");
+    private static final String VALID_USER = "TestUser";
+    private static final String VALID_BEARER_TOKEN = "Bearer aaaa.bbbb.cccc";
+    private static final String VALID_TOKEN = "aaaa.bbbb.cccc";
+    private static final Instant PAST_TIMESTAMP = Instant.now().minusSeconds(500);
+    private static final Instant PAST_EXPIRY_TIMESTAMP = PAST_TIMESTAMP.plusSeconds(10);
+    private static final Instant FUTURE_TIMESTAMP = Instant.now().plusSeconds(500);
+    private static final Instant FUTURE_EXPIRY_TIMESTAMP = FUTURE_TIMESTAMP.plusSeconds(10);
 
     private Jwt jwt(String appId, Instant notBefore, Instant expiresAt, List<String> scopes, String username) {
-
         Map<String, Object> claims = new HashMap<>();
         claims.put("sub", username);
         claims.put("nbf", notBefore);
@@ -92,7 +89,6 @@ class JwtAuthenticationFilterTest {
             Instant.now(),
             Instant.now().plusSeconds(100),
             EXPECTED_SCOPES, VALID_USER);
-
 
     @BeforeEach
     void beforeEach() {
@@ -263,7 +259,7 @@ class JwtAuthenticationFilterTest {
         when(appConfig.getEntraIdTenantId()).thenReturn(EXPECTED_TENANT_ID);
 
         when(jwtDecoder.decode(VALID_TOKEN)).thenReturn(jwt(EXPECTED_CLIENT_ID,
-                FUTURE_TIMESTAMP, null,
+                PAST_TIMESTAMP, null,
                 EXPECTED_SCOPES, VALID_USER));
         Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt(VALID_BEARER_TOKEN));
 
