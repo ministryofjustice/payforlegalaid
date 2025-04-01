@@ -59,17 +59,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     public boolean isTokenValidForCurrentTime(Jwt decodedToken) {
         try {
             return !decodedToken.getNotBefore().isAfter(Instant.now());
-        } catch (Exception ex){
-            return false;
+        } catch (NullPointerException ex) {
+            throw new JwtException("Token not before time is null");
         }
-
     }
 
     public boolean isTokenExpired(Jwt decodedToken) {
         try {
             return decodedToken.getExpiresAt().isBefore(Instant.now());
-        } catch (Exception ex) {
-            return true;
+        } catch (NullPointerException ex) {
+            throw new JwtException("Token expiry is null");
         }
     }
 }
