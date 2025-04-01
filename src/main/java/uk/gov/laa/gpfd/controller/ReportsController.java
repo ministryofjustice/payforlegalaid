@@ -94,6 +94,6 @@ public class ReportsController implements ReportsApi, ExcelApi {
     @Override
     public ResponseEntity<StreamingResponseBody> getExcelById(UUID id) {
         reportsTrackingService.saveReportsTracking(id);
-      return streamingService.streamExcel(id);
+        return streamingService.streamExcel(id);
     }
 }
