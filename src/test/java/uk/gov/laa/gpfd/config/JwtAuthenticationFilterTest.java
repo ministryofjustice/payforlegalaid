@@ -245,6 +245,32 @@ class JwtAuthenticationFilterTest {
     }
 
     @Test
+    void shouldThrowIfValidBeforeThrows() {
+        when(appConfig.getEntraIdClientId()).thenReturn(EXPECTED_CLIENT_ID);
+        when(appConfig.getEntraIdTenantId()).thenReturn(EXPECTED_TENANT_ID);
+
+        when(jwtDecoder.decode(VALID_TOKEN)).thenReturn(jwt(EXPECTED_CLIENT_ID,
+                null, FUTURE_EXPIRY_TIMESTAMP,
+                EXPECTED_SCOPES, VALID_USER));
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt(VALID_BEARER_TOKEN));
+
+        assertEquals("Unable to validate token: Token not before time is null", ex.getMessage());
+    }
+
+    @Test
+    void shouldThrowIfExpiryThrows() {
+        when(appConfig.getEntraIdClientId()).thenReturn(EXPECTED_CLIENT_ID);
+        when(appConfig.getEntraIdTenantId()).thenReturn(EXPECTED_TENANT_ID);
+
+        when(jwtDecoder.decode(VALID_TOKEN)).thenReturn(jwt(EXPECTED_CLIENT_ID,
+                FUTURE_TIMESTAMP, null,
+                EXPECTED_SCOPES, VALID_USER));
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt(VALID_BEARER_TOKEN));
+
+        assertEquals("Unable to validate token: Token expiry is null", ex.getMessage());
+    }
+
+    @Test
     void shouldThrowIfTokenIsExpired() {
         when(appConfig.getEntraIdClientId()).thenReturn(EXPECTED_CLIENT_ID);
         when(appConfig.getEntraIdTenantId()).thenReturn(EXPECTED_TENANT_ID);
@@ -288,11 +314,12 @@ class JwtAuthenticationFilterTest {
 
     @Test
     @SneakyThrows
-    void shouldReturnFalseIfNotBeforeTimeIsNull() {
+    void shouldThrowIfNotBeforeTimeIsNull() {
         Jwt decodedToken = jwt(EXPECTED_CLIENT_ID,
                 null,
                 FUTURE_TIMESTAMP, EXPECTED_SCOPES, VALID_USER);
-        assertFalse(jwtAuthenticationFilter.isTokenValidForCurrentTime(decodedToken));
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.isTokenValidForCurrentTime(decodedToken));
+        assertEquals("Token not before time is null", ex.getMessage());
     }
 
     @Test
@@ -315,11 +342,12 @@ class JwtAuthenticationFilterTest {
 
     @Test
     @SneakyThrows
-    void shouldReturnTrueIfExpiresTimeIsNull() {
+    void shouldThrowIfExpiresTimeIsNull() {
         Jwt decodedToken = jwt(EXPECTED_CLIENT_ID,
                 PAST_TIMESTAMP, null,
                 EXPECTED_SCOPES, VALID_USER);
-        assertTrue(jwtAuthenticationFilter.isTokenExpired(decodedToken));
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.isTokenExpired(decodedToken));
+        assertEquals("Token expiry is null", ex.getMessage());
     }
 
     @Test
