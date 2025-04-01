@@ -32,6 +32,7 @@ public class ReportService {
     private final ReportViewsDao reportViewsDao;
     private final MappingTableService mappingTableService;
     private final AppConfig appConfig;
+    private final ReportManagementService reportManagementService;
 
     /**
      * Obtains a resultlist of data from the MOJFIN reports database, and converts it into a CSV data stream
@@ -106,7 +107,7 @@ public class ReportService {
     }
 
     /**
-     * Create a json response to be used by the /report API endpoint. Once a caching system is in place, this response will serve as confirmation that a csv file has been created, and when.
+     * Create a json response to be used by the /reports API endpoint. Once a caching system is in place, this response will serve as confirmation that a csv file has been created, and when.
      *
      * @param id - id of the requested report
      * @return reportResponse containing json data about the requested report
@@ -114,12 +115,17 @@ public class ReportService {
      * @throws DatabaseReadException     - From the createReportListResponseList() method call inside getDetailsForSpecificReport()
      */
     public GetReportById200Response createReportResponse(UUID id) {
-        var reportListResponse = mappingTableService.getDetailsForSpecificReport(id);
+        var reportDetails = reportManagementService.getDetailsForSpecificReport(id);
+        String subPath = switch (reportDetails.getExtension()) {
+            case "csv" -> "csv";
+            case "xlsx" -> "excel";
+          default -> "invalid";
+        };
 
         var reportResponse = new GetReportById200Response() {{
-            setId(reportListResponse.getId());
-            setReportName(reportListResponse.getReportName());
-            setReportDownloadUrl(URI.create(appConfig.getServiceUrl() + "/csv/" + id));
+            setId(reportDetails.getId());
+            setReportName(reportDetails.getName());
+            setReportDownloadUrl(URI.create(appConfig.getServiceUrl() + "/"+ subPath +"/" + id));
         }};
 
         log.info("Returning report response object");

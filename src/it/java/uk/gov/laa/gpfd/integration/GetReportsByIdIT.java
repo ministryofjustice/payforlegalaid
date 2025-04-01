@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 class GetReportsByIdIT extends BaseIT {
 
     @Test
-    void shouldReturnSingleReportWithMatchingId() throws Exception {
+    void givenCsvReportId_whenSingleReportRequested_thenCsvUrlReturned() throws Exception {
         MockHttpServletResponse response =  mockMvc.perform(get("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d3")
                 .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
@@ -31,6 +31,19 @@ class GetReportsByIdIT extends BaseIT {
 
         var json = new JSONObject(response.getContentAsString());
         Assertions.assertEquals("0d4da9ec-b0b3-4371-af10-f375330d85d3", json.get("id"));
+        Assertions.assertEquals("http://localhost/csv/0d4da9ec-b0b3-4371-af10-f375330d85d3", json.get("reportDownloadUrl"));
+    }
+
+    @Test
+    void givenExcelReportId_whenSingleReportRequested_thenExcelUrlReturned() throws Exception {
+        MockHttpServletResponse response =  mockMvc.perform(get("/reports/b36f9bbb-1178-432c-8f99-8090e285f2d3")
+            .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+
+        Assertions.assertEquals(200, response.getStatus());
+
+        var json = new JSONObject(response.getContentAsString());
+        Assertions.assertEquals("b36f9bbb-1178-432c-8f99-8090e285f2d3", json.get("id"));
+        Assertions.assertEquals("http://localhost/excel/b36f9bbb-1178-432c-8f99-8090e285f2d3", json.get("reportDownloadUrl"));
     }
 
     @Test
@@ -39,6 +52,19 @@ class GetReportsByIdIT extends BaseIT {
                 .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 
         Assertions.assertEquals(400, response.getStatus());
+    }
+
+    @Test
+    void givenABrandNewReportId_whenSingleReportRequested_thenInvalidUrlReturned() throws Exception {
+        MockHttpServletResponse response =  mockMvc.perform(get("/reports/b36f9bbb-1178-432c-8f99-8090e285f2d4")
+            .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+
+        Assertions.assertEquals(200, response.getStatus());
+
+        var json = new JSONObject(response.getContentAsString());
+        Assertions.assertEquals("b36f9bbb-1178-432c-8f99-8090e285f2d4", json.get("id"));
+        Assertions.assertEquals("New report with a new output type", json.get("reportName"));
+        Assertions.assertEquals("http://localhost/invalid/b36f9bbb-1178-432c-8f99-8090e285f2d4", json.get("reportDownloadUrl"));
     }
 }
 
