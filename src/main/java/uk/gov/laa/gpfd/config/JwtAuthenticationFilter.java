@@ -5,15 +5,16 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.time.Instant;
 
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
     private static final String TOKEN_PREFIX = "bearer ";
     private static final int TOKEN_PARTS = 3;
 
@@ -55,4 +56,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return token;
     }
 
+    public boolean isTokenValidForCurrentTime(Jwt decodedToken) {
+        try {
+            return !decodedToken.getNotBefore().isAfter(Instant.now());
+        } catch (NullPointerException ex) {
+            throw new JwtException("Token not before time is null");
+        }
+    }
+
+    public boolean isTokenExpired(Jwt decodedToken) {
+        try {
+            return decodedToken.getExpiresAt().isBefore(Instant.now());
+        } catch (NullPointerException ex) {
+            throw new JwtException("Token expiry is null");
+        }
+    }
 }
