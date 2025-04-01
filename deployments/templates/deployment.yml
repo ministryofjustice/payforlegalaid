@@ -1,67 +1,69 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: gpfd-prod-deployment
+  name: gpfd-${ENV_NAME}-deployment
   labels:
-    app: gpfd-prod
+    app: gpfd-${ENV_NAME}
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: gpfd-prod
+      app: gpfd-${ENV_NAME}
   template:
     metadata:
       labels:
-        app: gpfd-prod
+        app: gpfd-${ENV_NAME}
     spec:
-      serviceAccountName: laa-get-payments-finance-data-prod-service
+      serviceAccountName: laa-get-payments-finance-data-${ENV_NAME}-service
       containers:
-        - name: gpfd-api-container-prod
+        - name: gpfd-api-container-${ENV_NAME}
           image: ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
           ports:
             - containerPort: 8080
           env:
+            - name: GPFD_URL
+              value: https://${GPFD_URL}
             - name: SPRING_PROFILES_ACTIVE
-              value: "prod"
+              value: ${ENV_NAME}
             - name: AZURE_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: gpfd-prod-secret-01
-                  key: client-secret-prod
+                  name: ${SECRET_NAME}
+                  key: client-secret-${ENV_NAME}
             - name: AZURE_CLIENT_ID
               valueFrom:
                 secretKeyRef:
-                  name: gpfd-prod-secret-01
-                  key: client-id-prod
+                  name: ${SECRET_NAME}
+                  key: client-id-${ENV_NAME}
             - name: AZURE_TENANT_ID
               valueFrom:
                 secretKeyRef:
-                  name: gpfd-prod-secret-01
-                  key: tenant-id-prod
+                  name: ${SECRET_NAME}
+                  key: tenant-id-${ENV_NAME}
             - name: MOJFIN_DEV_READ_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: gpfd-prod-secret-01
+                  name: ${SECRET_NAME}
                   key: mojfin-dev-read-username
             - name: MOJFIN_DEV_READ_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: gpfd-prod-secret-01
+                  name: ${SECRET_NAME}
                   key: mojfin-dev-read-password
             - name: MOJFIN_DEV_WRITE_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: gpfd-prod-secret-01
+                  name: ${SECRET_NAME}
                   key: mojfin-dev-write-username
             - name: MOJFIN_DEV_WRITE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: gpfd-prod-secret-01
+                  name: ${SECRET_NAME}
                   key: mojfin-dev-write-password
             - name: MOJFIN_DB_URL
               valueFrom:
                 secretKeyRef:
-                  name: gpfd-prod-secret-01
+                  name: ${SECRET_NAME}
                   key: mojfin-db-url
           securityContext:
             capabilities:

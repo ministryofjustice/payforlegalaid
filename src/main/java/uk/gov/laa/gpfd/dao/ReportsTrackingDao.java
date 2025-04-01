@@ -14,21 +14,24 @@ import uk.gov.laa.gpfd.model.ReportsTracking;
 @RequiredArgsConstructor
 public class ReportsTrackingDao {
   private static final String INSERT_SQL = "INSERT INTO GPFD.REPORTS_TRACKING"
-      + " (ID, NAME, REPORT_ID, CREATION_DATE, REPORT_DOWNLOADED_BY, REPORT_CREATOR, REPORT_OWNER, REPORT_OUTPUT_TYPE, TEMPLATE_URL, REPORT_URL)"
-      + " VALUES (?,?,?,?,?,?,?,?,?,?)";
-  private static final String SELECT_SQL = "SELECT * from GPFD.REPORTS_TRACKING";
+      + " (ID, NAME, REPORT_ID, CREATION_DATE, REPORT_CREATOR, REPORT_OWNER, REPORT_OUTPUT_TYPE, TEMPLATE_URL, REPORT_URL)"
+      + " VALUES (?,?,?,?,?,?,?,?,?)";
 
   private final JdbcTemplate writeJdbcTemplate;
 
   public void saveReportsTracking(ReportsTracking reportsTracking) {
-    log.info("Saving tracking information");
-    int numberOfRowsAffected = this.writeJdbcTemplate.update(INSERT_SQL, UUID.randomUUID().toString(), reportsTracking.getName(), reportsTracking.getReportId(),
-            reportsTracking.getCreationDate(), reportsTracking.getReportDownloadedBy(), reportsTracking.getReportCreator(), reportsTracking.getReportOwner(), reportsTracking.getReportOutputType(), reportsTracking.getTemplateUrl(), reportsTracking.getReportUrl());
-    log.debug("Number of database rows affected by insert to report tracking table: " + numberOfRowsAffected);
-  }
-
-  public List<Map<String, Object>> list() {
-    return writeJdbcTemplate.queryForList(SELECT_SQL);
+    try {
+      log.debug("Saving tracking information for report ID:{}", reportsTracking.getReportId());
+      int numberOfRowsAffected = this.writeJdbcTemplate.update(INSERT_SQL, UUID.randomUUID().toString(), reportsTracking.getName(),
+          reportsTracking.getReportId(), reportsTracking.getCreationDate(), reportsTracking.getReportCreator(),
+          reportsTracking.getReportOwner(), reportsTracking.getReportOutputType(), reportsTracking.getTemplateUrl(), reportsTracking.getReportUrl());
+      log.debug("Number of database rows affected by insert to report tracking table: " + numberOfRowsAffected);
+    } catch (Exception e) {
+      log.error("Error saving tracking information for report ID:{}, creator: {}"
+          , reportsTracking.getReportId()
+          , reportsTracking.getReportCreator()
+          , e);
+    }
   }
 
 }
