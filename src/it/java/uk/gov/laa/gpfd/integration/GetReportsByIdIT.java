@@ -55,7 +55,7 @@ class GetReportsByIdIT extends BaseIT {
     }
 
     @Test
-    void givenABrandNewReportId_whenSingleReportRequested_thenInvalidUrlReturned() throws Exception {
+    void givenABrandNewReportOutputType_whenSingleReportRequested_thenInvalidUrlReturned() throws Exception {
         MockHttpServletResponse response =  mockMvc.perform(get("/reports/b36f9bbb-1178-432c-8f99-8090e285f2d4")
             .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
 

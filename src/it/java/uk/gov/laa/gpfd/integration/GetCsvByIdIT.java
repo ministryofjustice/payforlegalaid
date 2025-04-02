@@ -3,6 +3,7 @@ package uk.gov.laa.gpfd.integration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -27,6 +28,9 @@ class GetCsvByIdIT extends BaseIT {
     private ReportsTrackingDao reportsTrackingDao;
 
     @Test
+    @RetryingTest(maxAttempts = 2)
+    // We retry this test once because it fails about 1% of the time due to a Spring Framework issue reported here:
+        // https://github.com/spring-projects/spring-framework/issues/31543
     void shouldReturnCsvWithMatchingId() throws Exception {
 
         MockHttpServletResponse response = getResponseForAuthenticatedRequest("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d3");

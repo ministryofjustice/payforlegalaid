@@ -34,7 +34,7 @@ public abstract class BaseIT {
   }
 
   @NotNull
-  protected synchronized MockHttpServletResponse getResponseForAuthenticatedRequest(String uriTemplate) throws Exception {
+  protected MockHttpServletResponse getResponseForAuthenticatedRequest(String uriTemplate) throws Exception {
       return mockMvc.perform(
           MockMvcRequestBuilders.get(uriTemplate)
               .with(SecurityMockMvcRequestPostProcessors.oauth2Login())
