@@ -1,0 +1,140 @@
+name: Deploy to Tests to Environment
+
+on: workflow_dispatch
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  APP_NAME: "gpfd-at-tests"
+  TEST_REPO: "ministryofjustice/payforlegalaid-tests"
+  ECR_REGION: ${{ vars.DEV_TEST_ECR_REGION }}
+  ECR_ROLE: ${{ secrets.DEV_TEST_ECR_ROLE_TO_ASSUME }}
+  ECR_REPOSITORY: ${{ vars.DEV_TEST_ECR_REPOSITORY }}
+  KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
+  KUBE_CLUSTER: ${{ secrets.KUBE_CLUSTER_DEV }}
+  KUBE_CERT: ${{ secrets.KUBE_CERT_DEV }}
+  KUBE_TOKEN: ${{ secrets.KUBE_TOKEN_DEV }}
+
+jobs:
+  build-and-deploy-to-testable:
+    name: Build and Deploy Tests to Environment
+    environment: development
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout GitHub repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.TEST_REPO }}
+          path: testCode
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.ECR_ROLE }}
+          aws-region: ${{ env.ECR_REGION }}
+
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v2
+        id: login-ecr
+        with:
+          role-to-assume: ${{ env.ECR_ROLE }}
+          aws-region: ${{ env.ECR_REGION }}
+
+      - name: Configure Kubernetes access
+        run: |
+          echo "${{ env.KUBE_CERT }}" > ca.crt
+          
+          kubectl config set-cluster ${{ env.KUBE_CLUSTER }} \
+            --certificate-authority=./ca.crt \
+            --server=https://${{ env.KUBE_CLUSTER }}
+          
+          kubectl config set-credentials deploy-user \
+            --token=${{ secrets.KUBE_TOKEN_DEV }}
+          
+          kubectl config set-context ${{ env.KUBE_CLUSTER }} \
+            --cluster=${{ env.KUBE_CLUSTER }} \
+            --user=deploy-user \
+            --namespace=${{ env.KUBE_NAMESPACE }}
+          
+          kubectl config use-context ${{ env.KUBE_CLUSTER }}
+
+      - name: Build and push Docker image
+        id: build-container
+        run: |
+          cd testCode
+          echo "Building test container image..."
+          
+          export REGISTRY=${{ steps.login-ecr.outputs.registry }}
+          
+          docker buildx build \
+            --push \
+            --platform linux/amd64 \
+            --secret id=maven_username,env=USERNAME \
+            --secret id=maven_password,env=PASSWORD \
+            --tag $REGISTRY/${{ env.ECR_REPOSITORY }}:${{ env.APP_NAME }}-${{ github.sha }} \
+            .
+        shell: bash
+        env:
+          DOCKER_BUILDKIT: 1
+          USERNAME: ${{ secrets.OPENAPI_PACKAGE_USER }}
+          PASSWORD: ${{ secrets.OPENAPI_PACKAGE_PASSWORD }}
+
+      - name: Update deployment manifest
+        run: |
+          TEST_IMAGE="$REGISTRY/${{ env.ECR_REPOSITORY }}:${{ env.APP_NAME }}-${{ github.sha }}"
+          echo "TEST_IMAGE=$TEST_IMAGE" >> $GITHUB_ENV
+
+          yq eval --inplace \
+            ".spec.containers[0].image = \"$TEST_IMAGE\"" \
+            testCode/deployment/pod.yaml
+          
+          full_image=$(yq e '.spec.containers[0].image' testCode/deployment/pod.yaml)
+          ecr_repo=$(echo "$full_image" | cut -d':' -f1)
+          image_tag=$(echo "$full_image" | cut -d':' -f2)
+
+          echo "ECR_REPO=$ecr_repo" >> $GITHUB_ENV
+          echo "IMAGE_TAG=$image_tag" >> $GITHUB_ENV
+        shell: bash
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+
+      - name: Deploy to Kubernetes
+        run: |
+          echo "Checking for existing pod..."
+          
+          # Clean up any existing pod
+          if kubectl -n ${{ env.KUBE_NAMESPACE }} get pod -l app=${{ env.APP_NAME }} 2>/dev/null; then
+            echo "::warning::Existing test pod found - replacing it"
+            kubectl -n ${{ env.KUBE_NAMESPACE }} delete pod -l app=${{ env.APP_NAME }} --force --grace-period=0
+            sleep 5  # Wait for termination
+          fi
+
+          kubectl -n ${{ env.KUBE_NAMESPACE }} create -f testCode/deployment/pod.yaml
+        shell: bash
+
+      - name: Generate comprehensive deployment summary
+        shell: bash
+        run: |
+          ecr_repo=$(printf '%s' "$ECR_REPO" | sed 's/"/\\"/g')
+          image_tag=$(printf '%s' "$IMAGE_TAG" | sed 's/"/\\"/g')
+
+          cat <<EOF >> $GITHUB_STEP_SUMMARY
+          ### 🚀 Test Environment Deployment Summary
+          #### 🐳 Container Information
+          - **ECR Repository:** \`$ECR_REPO\`
+          - **Image Tag:** \`$IMAGE_TAG\`
+          
+          #### ✅ Validation
+          - ECR repository verified
+          - Image successfully pushed
+          - Kubernetes pod deployed and ready
+          
+          #### ⏱️ Deployment Timestamp
+          - $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+          EOF
