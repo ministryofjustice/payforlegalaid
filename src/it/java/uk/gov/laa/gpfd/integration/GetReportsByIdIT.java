@@ -42,7 +42,7 @@ class GetReportsByIdIT extends BaseIT {
     }
 
     @Test
-    void givenABrandNewReportOutputType_whenSingleReportRequested_thenInvalidUrlReturned() throws Exception {
+    void givenABrandNewReportOutputType_whenSingleReportRequested_thenInternalServerError() throws Exception {
         performGetRequest("/reports/b36f9bbb-1178-432c-8f99-8090e285f2d4")
             .andExpect(status().isInternalServerError());
     }
