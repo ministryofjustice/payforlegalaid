@@ -44,9 +44,7 @@ class GetReportsByIdIT extends BaseIT {
     @Test
     void givenABrandNewReportOutputType_whenSingleReportRequested_thenInvalidUrlReturned() throws Exception {
         performGetRequest("/reports/b36f9bbb-1178-432c-8f99-8090e285f2d4")
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id").value("b36f9bbb-1178-432c-8f99-8090e285f2d4"))
-            .andExpect(jsonPath("$.reportDownloadUrl").value("http://localhost/invalid/b36f9bbb-1178-432c-8f99-8090e285f2d4"));
+            .andExpect(status().isInternalServerError());
     }
 }
 

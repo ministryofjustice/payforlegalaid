@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.laa.gpfd.config.AppConfig;
 import uk.gov.laa.gpfd.dao.ReportViewsDao;
 import uk.gov.laa.gpfd.data.ReportDetailsTestDataFactory;
+import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportDetails;
 import uk.gov.laa.gpfd.services.ReportManagementService;
@@ -24,8 +25,8 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ReportServiceTest {
-    private static final UUID validReportId = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
-    private static final UUID reportIdForUnknownType = UUID.fromString("00000000-0000-0000-0000-000000000000");
+    private static final UUID VALID_REPORT_ID = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
+    private static final UUID REPORT_ID_FOR_UNKNOWN_TYPE = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
     @Mock
     AppConfig appConfig;
@@ -64,14 +65,15 @@ class ReportServiceTest {
     void givenValidId_whenCreateReportResponse_thenValidResponseIsReturned() {
         //Given
         when(appConfig.getServiceUrl()).thenReturn("http://localhost");
-        ReportDetails mockReportDetails = ReportDetailsTestDataFactory.aValidReportResponse(UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1"), "Test Report", "csv");
-        when(reportManagementService.getDetailsForSpecificReport(validReportId)).thenReturn(mockReportDetails);
+        ReportDetails mockReportDetails = ReportDetailsTestDataFactory.aValidReportResponse(
+            VALID_REPORT_ID, "Test Report", "csv");
+        when(reportManagementService.getDetailsForSpecificReport(VALID_REPORT_ID)).thenReturn(mockReportDetails);
         //When
         GetReportById200Response actualReportResponse = reportService.createReportResponse(
-            validReportId);
+            VALID_REPORT_ID);
         //then
         assertEquals("Test Report", actualReportResponse.getReportName());
-        assertEquals(validReportId, actualReportResponse.getId());
+        assertEquals(VALID_REPORT_ID, actualReportResponse.getId());
         assertEquals("http://localhost/csv/0d4da9ec-b0b3-4371-af10-f375330d85d1", actualReportResponse.getReportDownloadUrl().toString());
     }
 
@@ -79,19 +81,12 @@ class ReportServiceTest {
     void givenIdForUnknownExtension_whenCreateReportResponse_thenInvalidUrlIsReturned() {
 
         //Given
-        when(appConfig.getServiceUrl()).thenReturn("http://localhost");
         ReportDetails mockReportDetails = ReportDetailsTestDataFactory.aValidReportResponse(
-            reportIdForUnknownType, "Report With Unknown Type", "mp4");
-        when(reportManagementService.getDetailsForSpecificReport(reportIdForUnknownType)).thenReturn(mockReportDetails);
+            REPORT_ID_FOR_UNKNOWN_TYPE, "Report With Unknown Type", "mp4");
+        when(reportManagementService.getDetailsForSpecificReport(REPORT_ID_FOR_UNKNOWN_TYPE)).thenReturn(mockReportDetails);
 
-        //When
-        GetReportById200Response actualReportResponse = reportService.createReportResponse(
-            reportIdForUnknownType);
-
-        //then
-        assertEquals(mockReportDetails.getName(), actualReportResponse.getReportName());
-        assertEquals(mockReportDetails.getId(), actualReportResponse.getId());
-        assertEquals("http://localhost/invalid/00000000-0000-0000-0000-000000000000", actualReportResponse.getReportDownloadUrl().toString());
+        //When & then
+        assertThrows(ReportOutputTypeNotFoundException.class, () -> reportService.createReportResponse(REPORT_ID_FOR_UNKNOWN_TYPE));
 
     }
 
@@ -135,12 +130,13 @@ class ReportServiceTest {
 
         when(appConfig.getServiceUrl()).thenReturn("http://localhost");
 
-        ReportDetails mockReportDetails = ReportDetailsTestDataFactory.aValidReportResponse(UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1"), "Test Report", "csv");
+        ReportDetails mockReportDetails = ReportDetailsTestDataFactory.aValidReportResponse(
+            VALID_REPORT_ID, "Test Report", "csv");
 
-        when(reportManagementService.getDetailsForSpecificReport(validReportId)).thenReturn(mockReportDetails);
+        when(reportManagementService.getDetailsForSpecificReport(VALID_REPORT_ID)).thenReturn(mockReportDetails);
 
         GetReportById200Response actualReportResponseDev = reportService.createReportResponse(
-            validReportId);
+            VALID_REPORT_ID);
 
         assertTrue(actualReportResponseDev.getReportDownloadUrl().toString().contentEquals("http://localhost/csv/0d4da9ec-b0b3-4371-af10-f375330d85d1"));
 
