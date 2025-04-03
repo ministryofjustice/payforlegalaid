@@ -28,8 +28,8 @@ jobs:
       - name: Checkout Github Repository
         uses: actions/checkout@v4
 
-      - name: Build and test the code
-        uses: './.github/build-and-test'
+#      - name: Build and test the code
+#        uses: './.github/build-and-test'
 
       - name: Set Spring profile
         run: echo "SPRING_PROFILES_ACTIVE=dev" >> $GITHUB_ENV
@@ -75,3 +75,10 @@ jobs:
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments/test/deployment-${BRANCH_NAME}.yml
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments/test/ingress-${BRANCH_NAME}.yml
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments/test/service-${BRANCH_NAME}.yml
+
+      - name: Run acceptance tests
+        uses: './.github/run_acceptance_tests'
+        env:
+          REPOSITORY: ${{ vars.DEV_ECR_REPOSITORY }}
+          IMAGE_TAG: ${{ github.sha }}
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
