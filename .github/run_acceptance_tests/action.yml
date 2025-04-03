@@ -8,7 +8,14 @@ runs:
       uses: actions/checkout@v4
       with:
         repository: ministryofjustice/payforlegalaid-tests
+        ref: faeture/test-foo
         path: testCode
+
+    - name: Build source code
+      run: |
+        echo "GOT THE TESTS CODE"
+      shell:
+        bash
 
     - name: Setup Java
       uses: actions/setup-java@v4
@@ -31,7 +38,41 @@ runs:
     - name: Run tests
       run: |
         cd testCode
-        mvn -B clean test -s .github/settings.xml
-
+        mvn -B clean package -s .github/settings.xml
       shell:
         bash
+
+    - name: Build source code
+      run: |
+        echo "BUILDING DOCKER AT'S IMAGE"
+        echo "Current directory contents:"
+        ls -la
+      shell: bash
+
+    - name: Build docker-test
+      run: |
+        cd testCode
+        echo "Files before build (in testCode directory):"
+        ls -la
+        mvn -B clean package -s .github/settings.xml
+        echo "Files after Maven build:"
+        ls -la
+        docker build -t $REGISTRY/$REPOSITORY:gpfd-tests8-new-$IMAGE_TAG .
+        docker push $REGISTRY/$REPOSITORY:gpfd-tests8-new-$IMAGE_TAG
+      shell: bash
+      env:
+
+        REGISTRY: ${{ env.REGISTRY }}
+        REPOSITORY: ${{ env.REPOSITORY }}
+        IMAGE_TAG: ${{ env.IMAGE_TAG }}
+
+    - name: Build source code
+      run: |
+        echo "CREATED DOCKER IMAGE"
+        echo "Final directory contents:"
+        cd testCode
+        ls -la
+        cd helm
+        ls -la
+        helm upgrade --install gpfd-test tests  --namespace "laa-get-payments-finance-data-dev" --debug
+      shell: bash
