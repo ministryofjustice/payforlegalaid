@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
@@ -31,9 +32,10 @@ class GetCsvByIdIT extends BaseIT {
     @RetryingTest(maxAttempts = 2)
     // We retry this test once because it fails about 1% of the time due to a Spring Framework issue reported here:
         // https://github.com/spring-projects/spring-framework/issues/31543
+    @WithMockUser(username = "Mock User")
     void shouldReturnCsvWithMatchingId() throws Exception {
 
-        MockHttpServletResponse response = getResponseForAuthenticatedRequest("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d3");
+        MockHttpServletResponse response = performGetRequest("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d3");
 
         ArgumentCaptor<ReportsTracking> captor = ArgumentCaptor.forClass(ReportsTracking.class);
         Mockito.verify(reportsTrackingDao).saveReportsTracking(captor.capture());
@@ -45,8 +47,9 @@ class GetCsvByIdIT extends BaseIT {
     }
 
     @Test
+    @WithMockUser(username = "Mock User")
     void shouldReturn404WhenNoReportsFound() throws Exception {
-        MockHttpServletResponse response = getResponseForAuthenticatedRequest("/csv/0d4da9ec-b0b3-4371-af10-321");
+        MockHttpServletResponse response = performGetRequest("/csv/0d4da9ec-b0b3-4371-af10-321");
         Mockito.verify(reportsTrackingDao, Mockito.never()).saveReportsTracking(Mockito.any());
         Assertions.assertEquals(404, response.getStatus());
     }
