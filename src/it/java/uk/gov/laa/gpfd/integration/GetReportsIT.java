@@ -8,14 +8,10 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.web.servlet.MockMvc;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -25,16 +21,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 class GetReportsIT extends BaseIT {
 
     public static final int NUMBER_OF_REPORTS_IN_TEST_DATA = 4;
-    @Autowired
-    private MockMvc mockMvc;
 
     @Autowired
     private JdbcTemplate writeJdbcTemplate;
 
     @Test
     void shouldReturnListOfReports() throws Exception {
-        MockHttpServletResponse response =  mockMvc.perform(get("/reports")
-                .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+        MockHttpServletResponse response =  performGetRequest("/reports");
 
         Assertions.assertEquals(200, response.getStatus());
 
@@ -52,8 +45,7 @@ class GetReportsIT extends BaseIT {
         writeJdbcTemplate.update("ALTER TABLE GPFD.REPORTS_TRACKING DROP CONSTRAINT fk_reports_tracking_reports_id");
         writeJdbcTemplate.update("TRUNCATE TABLE GPFD.REPORTS");
 
-        MockHttpServletResponse response = mockMvc.perform(get("/reports")
-                .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+        MockHttpServletResponse response = performGetRequest("/reports");
 
         Assertions.assertEquals(404, response.getStatus());
     }

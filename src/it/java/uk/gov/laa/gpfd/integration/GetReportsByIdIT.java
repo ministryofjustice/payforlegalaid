@@ -7,12 +7,9 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -24,8 +21,7 @@ class GetReportsByIdIT extends BaseIT {
 
     @Test
     void shouldReturnSingleReportWithMatchingId() throws Exception {
-        MockHttpServletResponse response =  mockMvc.perform(get("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d3")
-                .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+        MockHttpServletResponse response =  performGetRequest("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d3");
 
         Assertions.assertEquals(200, response.getStatus());
 
@@ -35,8 +31,7 @@ class GetReportsByIdIT extends BaseIT {
 
     @Test
     void shouldReturn400WhenGivenInvalidId() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d3321")
-                .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+        MockHttpServletResponse response = performGetRequest("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d3321");
 
         Assertions.assertEquals(400, response.getStatus());
     }

@@ -21,7 +21,7 @@ public class ReportsTrackingService {
 
     @Async
     public void saveReportsTracking(UUID requestedId) {
-        log.debug("Tracking report {} being accessed by {}", requestedId, userService.getCurrentUserName());
+        log.info("Tracking report {} being accessed by {}", requestedId, userService.getCurrentUserName());
         var reportDetails = reportManagementService.getDetailsForSpecificReport(requestedId);
 
         var reportsTracking = ReportsTracking.builder()
@@ -37,6 +37,6 @@ public class ReportsTrackingService {
             .build();
 
         reportsTrackingDao.saveReportsTracking (reportsTracking);
-        log.debug("After tracking report {} being accessed by {}", requestedId, userService.getCurrentUserName());
+        log.info("After tracking report {} being accessed by {}", requestedId, userService.getCurrentUserName());
     }
 }

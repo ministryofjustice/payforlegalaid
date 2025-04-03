@@ -8,14 +8,10 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.web.servlet.MockMvc;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -23,9 +19,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestPropertySource(locations = "classpath:application-test.yml")
 class ServerSideErrorIT extends BaseIT {
-
-    @Autowired
-    private MockMvc mockMvc;
 
     @Autowired
     private JdbcTemplate writeJdbcTemplate;
@@ -45,30 +38,28 @@ class ServerSideErrorIT extends BaseIT {
 
     @Test
     void getReportsShouldReturn500WhenCannotConnectToDb() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get("/reports")
-                .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+        MockHttpServletResponse response = performGetRequest("/reports");
 
         Assertions.assertEquals(500, response.getStatus());
     }
 
     @Test
     void getReportWithIdShouldReturn500WhenCannotConnectToDb() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d9")
-                .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
+        MockHttpServletResponse response = performGetRequest("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d9");
 
         Assertions.assertEquals(500, response.getStatus());
     }
 
     @Test
     void getCsvWithIdShouldReturn500WhenCannotConnectToDbForMappingTable() throws Exception {
-        MockHttpServletResponse response = getResponseForAuthenticatedRequest("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d9");
+        MockHttpServletResponse response = performGetRequest("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d9");
 
         Assertions.assertEquals(500, response.getStatus());
     }
 
     @Test
     void getCsvWithIdShouldReturn500WhenCannotConnectToDbForReportTable() throws Exception {
-        MockHttpServletResponse response = getResponseForAuthenticatedRequest("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d9");
+        MockHttpServletResponse response = performGetRequest("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d9");
 
         Assertions.assertEquals(500, response.getStatus());
     }
