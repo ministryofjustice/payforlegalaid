@@ -3,13 +3,13 @@ logging:
     root: INFO
     org:
       springframework:
-        security: INFO
+        security: DEBUG
         jdbc:
           core:
             JdbcTemplate: INFO
             StatementCreatorUtils: INFO
         transaction: INFO
-        web.client.RestTemplate: INFO
+        web: DEBUG
 
 spring:
   liquibase:

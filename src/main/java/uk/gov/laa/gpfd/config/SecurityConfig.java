@@ -1,11 +1,17 @@
 package uk.gov.laa.gpfd.config;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
@@ -21,6 +27,7 @@ import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
  * to manage specific security aspects.
  * </p>
  */
+@Slf4j
 @Configuration
 @RequiredArgsConstructor
 @ConditionalOnProperty(name = "spring.cloud.azure.active-directory.enabled", havingValue = "true")
@@ -63,6 +70,34 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeHttpRequestsBuilder)    // Apply authorization rules
                 .sessionManagement(sessionManagementConfigurerBuilder)  // Apply session management configuration
                 .build();
+    }
+
+    @Bean
+    public OAuth2AuthorizationRequestResolver customAuthorizationRequestResolver(
+        ClientRegistrationRepository clientRegistrationRepository) {
+
+        DefaultOAuth2AuthorizationRequestResolver resolver =
+            new DefaultOAuth2AuthorizationRequestResolver(clientRegistrationRepository, "/oauth2/authorization");
+
+        return new OAuth2AuthorizationRequestResolver() {
+            @Override
+            public OAuth2AuthorizationRequest resolve(HttpServletRequest request) {
+                OAuth2AuthorizationRequest authRequest = resolver.resolve(request);
+                if (authRequest != null) {
+                    log.info("Redirect URI Sent to Azure: {}", authRequest.getRedirectUri());
+                }
+                return authRequest;
+            }
+
+            @Override
+            public OAuth2AuthorizationRequest resolve(HttpServletRequest request, String clientRegistrationId) {
+                OAuth2AuthorizationRequest authRequest = resolver.resolve(request, clientRegistrationId);
+                if (authRequest != null) {
+                    log.info("Redirect URI Sent to Azure for {}: {}", clientRegistrationId, authRequest.getRedirectUri());
+                }
+                return authRequest;
+            }
+        };
     }
 
 }
