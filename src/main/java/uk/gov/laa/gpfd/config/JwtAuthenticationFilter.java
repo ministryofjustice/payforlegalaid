@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.jetbrains.annotations.NotNull;
@@ -13,9 +14,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -28,6 +26,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtDecoder jwtDecoder;
     private final AppConfig appConfig;
+
+    private String getClientId;
 
     public JwtAuthenticationFilter(JwtDecoder jwtDecoder, AppConfig appConfig) {
         this.jwtDecoder = jwtDecoder;
@@ -80,10 +80,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 throw new JwtException("Token not valid for current time");
             }
 
-            if (!hasValidScope(decodedToken, appConfig.getScope())) {
+            if (!decodedToken.getClaimAsStringList(SCOPE_KEY).contains(SCOPE_VALUE)) {
                 throw new JwtException("Expected scope values are missing");
             }
-
 
         } catch (JwtException ex) {
             throw new JwtException("Unable to validate token: " + ex.getMessage());
@@ -134,16 +133,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (NullPointerException ex) {
             throw new JwtException("Token expiry is null");
         }
-    }
-
-    public boolean hasValidScope(Jwt decodedToken, List<String> scopes) {
-        Set<String> validScopes = new HashSet<>(scopes);
-
-        for (String tokenScope : decodedToken.getClaimAsStringList(SCOPE_KEY)) {
-            if (validScopes.contains(tokenScope)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

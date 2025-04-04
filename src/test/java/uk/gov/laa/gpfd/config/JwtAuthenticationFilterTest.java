@@ -96,7 +96,6 @@ class JwtAuthenticationFilterTest {
 
         when(appConfig.getEntraIdClientId()).thenReturn(EXPECTED_CLIENT_ID);
         when(appConfig.getEntraIdTenantId()).thenReturn(EXPECTED_TENANT_ID);
-        when(appConfig.getScope()).thenReturn(EXPECTED_SCOPES);
 
         when(mockRequest.getHeader("Authorization")).thenReturn(VALID_BEARER_TOKEN);
         jwtAuthenticationFilter.doFilterInternal(mockRequest, mockResponse, mockFilterChain);
@@ -333,24 +332,6 @@ class JwtAuthenticationFilterTest {
                 Instant.now(),
                 FUTURE_TIMESTAMP, EXPECTED_SCOPES, VALID_USER);
         assertFalse(jwtAuthenticationFilter.isTokenExpired(decodedToken));
-    }
-
-    @Test
-    @SneakyThrows
-    void shouldReturnTrueWhenScopeExists() {
-        Jwt decodedToken = jwt(EXPECTED_CLIENT_ID,
-                Instant.now(),
-                FUTURE_TIMESTAMP, EXPECTED_SCOPES, VALID_USER);
-        assertTrue(jwtAuthenticationFilter.hasValidScope(decodedToken, EXPECTED_SCOPES));
-    }
-
-    @Test
-    @SneakyThrows
-    void shouldReturnTrueWhenScopeDoesNotExists() {
-        Jwt decodedToken = jwt(EXPECTED_CLIENT_ID,
-                Instant.now(),
-                FUTURE_TIMESTAMP, List.of("random scope"), VALID_USER);
-        assertFalse(jwtAuthenticationFilter.hasValidScope(decodedToken, EXPECTED_SCOPES));
     }
 
     private Jwt jwt(String appId, Instant notBefore, Instant expiresAt, List<String> scopes, String username) {

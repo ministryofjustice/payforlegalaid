@@ -30,9 +30,8 @@ spring:
         redirect-uri-template: ${gpfd.redirect-uri-template}
         authorization-clients:
           graph:
-            url: https://graph.microsoft.com/
             scopes:
-              - User.Read
+              - https://graph.microsoft.com/User.Read
   sql:
     init:
       platform: h2
