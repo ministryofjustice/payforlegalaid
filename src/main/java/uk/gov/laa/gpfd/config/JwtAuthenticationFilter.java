@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -17,17 +18,79 @@ import java.time.Instant;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String TOKEN_PREFIX = "bearer ";
     private static final int TOKEN_PARTS = 3;
+    private static final String JWT_PAYLOAD_TENANT_ID_KEY = "tid";
+    private static final String JWT_PAYLOAD_APPLICATION_ID_KEY = "appid";
+    private static final String SCOPE_KEY = "scp";
+    private static final String SCOPE_VALUE = "User.Read";
+
+    private final JwtDecoder jwtDecoder;
+    private final AppConfig appConfig;
+
+    public JwtAuthenticationFilter(JwtDecoder jwtDecoder, AppConfig appConfig) {
+        this.jwtDecoder = jwtDecoder;
+        this.appConfig = appConfig;
+    }
 
     @Override
     public void doFilterInternal(HttpServletRequest servletRequest, @NotNull HttpServletResponse servletResponse, @NotNull FilterChain filterChain) throws IOException, ServletException {
         var token = servletRequest.getHeader("Authorization");
 
-        if (token != null && !token.isEmpty()) {
-            // JWT validation logic to come in later PR
+        if (token == null || token.isEmpty()) {
+            filterChain.doFilter(servletRequest, servletResponse);
+        } else {
+            log.info("Token " + token.hashCode() + " - token received, attempting validation");
+            validateJwt(token);
+            filterChain.doFilter(servletRequest, servletResponse);
+        }
+    }
+
+    public boolean validateJwt(String token) {
+        var jwtContent = extractJwtToken(token);
+
+        try {
+            Jwt decodedToken = jwtDecoder.decode(jwtContent);
+
+            if (decodedToken == null)
+                throw new JwtException("decode token returned null");
+
+            String username = decodedToken.getSubject();
+
+            if (username == null || username.isEmpty())
+                throw new JwtException("token includes no valid username");
+
+            if (!decodedToken.getAudience().contains(appConfig.getEntraIdClientId())) {
+                throw new JwtException("Audience mismatch");
+            }
+
+            if (!decodedToken.getClaimAsString(JWT_PAYLOAD_TENANT_ID_KEY).equals(appConfig.getEntraIdTenantId())) {
+                throw new JwtException("Incorrect Tenant ID");
+            }
+
+            if (!decodedToken.getClaimAsString(JWT_PAYLOAD_APPLICATION_ID_KEY).equals(appConfig.getEntraIdClientId())) {
+                throw new JwtException("Incorrect Application ID");
+            }
+
+            if (!isTokenValidForCurrentTime(decodedToken)) {
+                throw new JwtException("Token not valid for current time");
+            }
+
+            if (isTokenExpired(decodedToken)) {
+                throw new JwtException("Token is expired");
+            }
+
+            if (!decodedToken.getClaimAsStringList(SCOPE_KEY).contains(SCOPE_VALUE)) {
+                throw new JwtException("Expected scope values are missing");
+            }
+
+            log.info("Token " + token.hashCode() + " - JWT validated successfully");
+
+        } catch (JwtException ex) {
+            throw new JwtException("Unable to validate token: " + ex.getMessage());
+        } catch (Exception ex) {
+            throw new JwtException("Unable to validate token");
         }
 
-        filterChain.doFilter(servletRequest, servletResponse);
-
+        return true;
     }
 
     public String extractJwtToken(String token) {
