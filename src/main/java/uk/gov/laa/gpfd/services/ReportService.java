@@ -10,9 +10,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.config.AppConfig;
 import uk.gov.laa.gpfd.dao.ReportViewsDao;
+import uk.gov.laa.gpfd.enums.FileExtension;
 import uk.gov.laa.gpfd.exception.CsvStreamException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
+import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 
 import java.io.ByteArrayOutputStream;
@@ -32,6 +34,7 @@ public class ReportService {
     private final ReportViewsDao reportViewsDao;
     private final MappingTableService mappingTableService;
     private final AppConfig appConfig;
+    private final ReportManagementService reportManagementService;
 
     /**
      * Obtains a resultlist of data from the MOJFIN reports database, and converts it into a CSV data stream
@@ -106,23 +109,26 @@ public class ReportService {
     }
 
     /**
-     * Create a json response to be used by the /report API endpoint. Once a caching system is in place, this response will serve as confirmation that a csv file has been created, and when.
+     * Create a json response to be used by the /reports API endpoint. Once a caching system is in place, this response will serve as confirmation that a csv file has been created, and when.
      *
      * @param id - id of the requested report
      * @return reportResponse containing json data about the requested report
      * @throws ReportIdNotFoundException - From the getDetailsForSpecificReport() method call, if the requested index is not found
      * @throws DatabaseReadException     - From the createReportListResponseList() method call inside getDetailsForSpecificReport()
+     * @throws ReportOutputTypeNotFoundException  - From the FileExtension.getSubPathForExtension(reportDetails.getExtension()) call
      */
     public GetReportById200Response createReportResponse(UUID id) {
-        var reportListResponse = mappingTableService.getDetailsForSpecificReport(id);
+        log.info("Getting details for report ID {}", id);
+        var reportDetails = reportManagementService.getDetailsForSpecificReport(id);
+        String subPath = FileExtension.getSubPathForExtension(reportDetails.getExtension().toLowerCase());
 
         var reportResponse = new GetReportById200Response() {{
-            setId(reportListResponse.getId());
-            setReportName(reportListResponse.getReportName());
-            setReportDownloadUrl(URI.create(appConfig.getServiceUrl() + "/csv/" + id));
+            setId(reportDetails.getId());
+            setReportName(reportDetails.getName());
+            setReportDownloadUrl(URI.create(String.format("%s/%s/%s", appConfig.getServiceUrl(), subPath, id)));
         }};
 
-        log.info("Returning report response object");
+        log.info("Returning report response object for report ID {}", id);
 
         return reportResponse;
     }

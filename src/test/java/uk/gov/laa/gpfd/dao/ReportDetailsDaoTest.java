@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ActiveProfiles("test")
 public class ReportDetailsDaoTest extends BaseDaoTest{
 
+    public static final int NUMBER_OF_REPORTS_IN_TEST_DATA = 5;
     @Autowired
     private ReportDetailsDao reportDetailsDao;
 
@@ -28,7 +29,7 @@ public class ReportDetailsDaoTest extends BaseDaoTest{
     void shouldReturnAllReportsInOrder() {
         List<ReportDetails> results = reportDetailsDao.fetchReportList();
 
-        assertEquals(4, results.size());
+        assertEquals(NUMBER_OF_REPORTS_IN_TEST_DATA, results.size());
         assertEquals("b36f9bbb-1178-432c-8f99-8090e285f2d3", results.get(0).getId().toString());
         assertEquals(30, results.get(0).getNumDaysToKeep());
         assertEquals("xlsx", results.get(0).getExtension());

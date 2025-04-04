@@ -36,6 +36,7 @@ public class ReportsTrackingService {
             .templateUrl(reportDetails.getTemplateSecureDocumentId())
             .build();
 
+        log.debug("Before tracking report {} being accessed by {}", requestedId, userService.getCurrentUserName());
         reportsTrackingDao.saveReportsTracking (reportsTracking);
         log.info("After tracking report {} being accessed by {}", requestedId, userService.getCurrentUserName());
     }
