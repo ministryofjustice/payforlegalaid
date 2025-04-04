@@ -13,6 +13,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -69,22 +72,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 throw new JwtException("Incorrect Application ID");
             }
 
-            if (!isTokenValidForCurrentTime(decodedToken)) {
-                throw new JwtException("Token not valid for current time");
-            }
-
             if (isTokenExpired(decodedToken)) {
                 throw new JwtException("Token is expired");
             }
 
-            if (!decodedToken.getClaimAsStringList(SCOPE_KEY).contains(SCOPE_VALUE)) {
+            if (!isTokenValidForCurrentTime(decodedToken)) {
+                throw new JwtException("Token not valid for current time");
+            }
+
+            if (!hasValidScope(decodedToken, appConfig.getScope())) {
                 throw new JwtException("Expected scope values are missing");
             }
+
 
         } catch (JwtException ex) {
             throw new JwtException("Unable to validate token: " + ex.getMessage());
         } catch (Exception ex) {
-            throw new JwtException("Unable to validate token");
+            throw new JwtException("Unable to validate token.\n" + ex.getClass() + ": " + ex.getMessage());
         }
 
         return true;
@@ -130,5 +134,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (NullPointerException ex) {
             throw new JwtException("Token expiry is null");
         }
+    }
+
+    public boolean hasValidScope(Jwt decodedToken, List<String> scopes) {
+        Set<String> validScopes = new HashSet<>(scopes);
+
+        for (String tokenScope : decodedToken.getClaimAsStringList(SCOPE_KEY)) {
+            if (validScopes.contains(tokenScope)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

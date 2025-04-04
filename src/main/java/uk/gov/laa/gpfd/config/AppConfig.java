@@ -77,6 +77,10 @@ public class AppConfig {
     @Value("${spring.cloud.azure.active-directory.profile.tenant-id}")
     private String entraIdTenantId;
 
+    @Getter
+    @Value("${spring.cloud.azure.active-directory.authorization-clients.graph.scopes}")
+    private List<String> scope;
+
     /**
      * Configures a read-only {@link DataSource} using properties prefixed with
      * "gpfd.datasource.read-only" in the application's configuration file.

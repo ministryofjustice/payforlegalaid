@@ -33,8 +33,9 @@ spring:
         redirect-uri-template: ${gpfd.redirect-uri-template}
         authorization-clients:
           graph:
+            url: https://graph.microsoft.com/
             scopes:
-              - https://graph.microsoft.com/User.Read
+              - User.Read
 
 server:
   port: 8080
