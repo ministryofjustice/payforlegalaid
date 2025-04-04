@@ -31,17 +31,17 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: gpfd-test-secret-01
-                  key: client-secret
+                  key: client-secret-dev
             - name: AZURE_CLIENT_ID
               valueFrom:
                 secretKeyRef:
                   name: gpfd-test-secret-01
-                  key: client-id
+                  key: client-id-dev
             - name: AZURE_TENANT_ID
               valueFrom:
                 secretKeyRef:
                   name: gpfd-test-secret-01
-                  key: tenant-id
+                  key: tenant-id-dev
             - name: MOJFIN_DEV_READ_USERNAME
               valueFrom:
                 secretKeyRef:
