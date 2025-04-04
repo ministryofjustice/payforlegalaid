@@ -1,7 +1,8 @@
 package uk.gov.laa.gpfd.integration;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -9,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
@@ -38,30 +38,20 @@ class ServerSideErrorIT extends BaseIT {
 
     @Test
     void getReportsShouldReturn500WhenCannotConnectToDb() throws Exception {
-        MockHttpServletResponse response = performGetRequest("/reports");
-
-        Assertions.assertEquals(500, response.getStatus());
+        performGetRequest("/reports")
+            .andExpect(status().isInternalServerError());
     }
 
     @Test
     void getReportWithIdShouldReturn500WhenCannotConnectToDb() throws Exception {
-        MockHttpServletResponse response = performGetRequest("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d9");
-
-        Assertions.assertEquals(500, response.getStatus());
+        performGetRequest("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d9")
+            .andExpect(status().isInternalServerError());
     }
 
     @Test
     void getCsvWithIdShouldReturn500WhenCannotConnectToDbForMappingTable() throws Exception {
-        MockHttpServletResponse response = performGetRequest("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d9");
-
-        Assertions.assertEquals(500, response.getStatus());
-    }
-
-    @Test
-    void getCsvWithIdShouldReturn500WhenCannotConnectToDbForReportTable() throws Exception {
-        MockHttpServletResponse response = performGetRequest("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d9");
-
-        Assertions.assertEquals(500, response.getStatus());
+        performGetRequest("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d9")
+            .andExpect(status().isInternalServerError());
     }
 
 }
