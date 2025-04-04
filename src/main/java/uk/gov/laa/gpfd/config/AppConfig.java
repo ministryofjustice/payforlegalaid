@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
@@ -68,6 +69,14 @@ public class AppConfig {
 
     @Value("${spring.liquibase.changelog}")
     private String liquibaseChangeLog;
+
+    @Getter
+    @Value("${spring.cloud.azure.active-directory.credential.client-id}")
+    private String entraIdClientId;
+
+    @Getter
+    @Value("${spring.cloud.azure.active-directory.profile.tenant-id}")
+    private String entraIdTenantId;
 
     /**
      * Configures a read-only {@link DataSource} using properties prefixed with

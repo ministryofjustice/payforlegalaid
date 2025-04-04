@@ -263,7 +263,6 @@ class AppConfigTest {
 
     @Test
     void shouldReturnServiceUrl() {
-
         assertTrue(classUnderTest.getServiceUrl().contentEquals("http://localhost"));
     }
 }
