@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtClaimNames;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.oauth2.jwt.JwtException;
@@ -19,12 +20,12 @@ import java.util.Map;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final int TOKEN_PARTS = 3;
     private static final Map<String, String> errorMessages = Map.of(
-    JwtTokenComponents.AUDIENCE_KEY.value, "Audience mismatch",
-    JwtTokenComponents.TENANT_ID_KEY.value, "Incorrect Tenant ID",
-    JwtTokenComponents.APPLICATION_ID_KEY.value,"Incorrect Application ID",
-    JwtTokenComponents.EXPIRES_AT_KEY.value, "Token is expired",
-    JwtTokenComponents.NOT_BEFORE_KEY.value, "Token not valid for current time",
-    JwtTokenComponents.SCOPE_KEY.value, "Expected scope values are missing");
+            JwtClaimNames.AUD, "Audience mismatch",
+            JwtTokenComponents.TENANT_ID_KEY.value, "Incorrect Tenant ID",
+            JwtTokenComponents.APPLICATION_ID_KEY.value,"Incorrect Application ID",
+            JwtClaimNames.EXP, "Token is expired",
+            JwtClaimNames.NBF, "Token not valid for current time",
+            JwtTokenComponents.SCOPE_KEY.value, "Expected scope values are missing");
 
     private final JwtDecoder jwtDecoder;
     private final AppConfig appConfig;
@@ -60,7 +61,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 throw new JwtException("token includes no valid username");
 
             if (!decodedToken.getAudience().contains(appConfig.getEntraIdClientId())) {
-                throw new JwtException(errorMessages.get(JwtTokenComponents.AUDIENCE_KEY.value));
+                throw new JwtException(errorMessages.get(JwtClaimNames.AUD));
             }
 
             if (!decodedToken.getClaimAsString(JwtTokenComponents.TENANT_ID_KEY.value).equals(appConfig.getEntraIdTenantId())) {
@@ -72,11 +73,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
             if (isTokenExpired(decodedToken)) {
-                throw new JwtException(errorMessages.get(JwtTokenComponents.EXPIRES_AT_KEY.value));
+                throw new JwtException(errorMessages.get(JwtClaimNames.EXP));
             }
 
             if (!isTokenValidForCurrentTime(decodedToken)) {
-                throw new JwtException(errorMessages.get(JwtTokenComponents.NOT_BEFORE_KEY.value));
+                throw new JwtException(errorMessages.get(JwtClaimNames.NBF));
             }
 
             if (!decodedToken.getClaimAsStringList(JwtTokenComponents.SCOPE_KEY.value).contains(JwtTokenComponents.SCOPE_VALUE.value)) {

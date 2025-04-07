@@ -6,10 +6,8 @@ enum JwtTokenComponents {
     TENANT_ID_KEY("tid"),
     APPLICATION_ID_KEY("appid"),
     SCOPE_KEY("scp"),
-    SCOPE_VALUE("User.Read"),
-    AUDIENCE_KEY("aud"),
-    NOT_BEFORE_KEY("nbf"),
-    EXPIRES_AT_KEY("exp");
+    SCOPE_VALUE("User.Read");
+
 
     public final String value;
 
