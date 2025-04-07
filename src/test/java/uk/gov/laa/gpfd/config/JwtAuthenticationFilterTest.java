@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
@@ -70,6 +71,7 @@ class JwtAuthenticationFilterTest {
     private static final Instant PAST_EXPIRY_TIMESTAMP = PAST_TIMESTAMP.plusSeconds(10);
     private static final Instant FUTURE_TIMESTAMP = Instant.now().plusSeconds(500);
     private static final Instant FUTURE_EXPIRY_TIMESTAMP = FUTURE_TIMESTAMP.plusSeconds(10);
+    private static final int TOKEN_ID_LENGTH = 8;
 
     @BeforeEach
     void beforeEach() {
@@ -86,12 +88,14 @@ class JwtAuthenticationFilterTest {
         jwtAuthenticationFilter.doFilterInternal(mockRequest, mockResponse, mockFilterChain);
         verify(mockFilterChain).doFilter(mockRequest, mockResponse);
         verify(jwtDecoder, times(0)).decode(any());
-        assertFalse(output.getOut().contains("JWT token received"));
+
+        assertFalse(output.getOut().contains("token received, attempting validation"));
     }
 
     @SneakyThrows
     @Test
     void shouldCallFilterWhenValidTokenProvided(CapturedOutput output) {
+
         when(jwtDecoder.decode(VALID_TOKEN)).thenReturn(jwt(EXPECTED_CLIENT_ID,
                 Instant.now(),
                 Instant.now().plusSeconds(100),
@@ -104,7 +108,8 @@ class JwtAuthenticationFilterTest {
         jwtAuthenticationFilter.doFilterInternal(mockRequest, mockResponse, mockFilterChain);
         verify(mockFilterChain).doFilter(mockRequest, mockResponse);
         verify(jwtDecoder, times(1)).decode(any());
-        assertTrue(output.getOut().contains("Token " + VALID_BEARER_TOKEN.hashCode() + " - token received, attempting validation"));
+
+        assertTrue(output.getOut().contains("Token " + sha256Hex(VALID_BEARER_TOKEN).substring(0,TOKEN_ID_LENGTH) + " - token received, attempting validation"));
     }
 
     @Test
@@ -150,7 +155,7 @@ class JwtAuthenticationFilterTest {
     @Test
     void shouldThrowWhenDecodeJwtReturnsNull() {
         when(jwtDecoder.decode(VALID_TOKEN)).thenReturn(null);
-        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt(VALID_BEARER_TOKEN));
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt(VALID_BEARER_TOKEN, "TokenId"));
 
         assertEquals("Unable to validate token: decode token returned null", ex.getMessage());
     }
@@ -162,7 +167,7 @@ class JwtAuthenticationFilterTest {
                 Instant.now(),
                 Instant.now().plusSeconds(100),
                 EXPECTED_SCOPES, username));
-        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt(VALID_BEARER_TOKEN));
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt(VALID_BEARER_TOKEN, "TokenId"));
 
         assertEquals("Unable to validate token: token includes no valid username", ex.getMessage());
     }
@@ -175,7 +180,7 @@ class JwtAuthenticationFilterTest {
         when(appConfig.getEntraIdClientId()).thenReturn(clientId);
         when(jwtDecoder.decode(VALID_TOKEN)).thenReturn(testJwt);
 
-        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt(VALID_BEARER_TOKEN));
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt(VALID_BEARER_TOKEN,"TokenId"));
         assertEquals("Unable to validate token: Audience mismatch", ex.getMessage());
 
     }
@@ -189,7 +194,7 @@ class JwtAuthenticationFilterTest {
         when(appConfig.getEntraIdTenantId()).thenReturn(tenantId);
 
         when(jwtDecoder.decode(VALID_TOKEN)).thenReturn(testJwt);
-        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt(VALID_BEARER_TOKEN));
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt(VALID_BEARER_TOKEN,"TokenId"));
         assertEquals("Unable to validate token: Incorrect Tenant ID", ex.getMessage());
 
     }
@@ -206,7 +211,7 @@ class JwtAuthenticationFilterTest {
                 Instant.now(),
                 FUTURE_TIMESTAMP, EXPECTED_SCOPES, VALID_USER);
         when(jwtDecoder.decode("aaaa.bbbb.cccc")).thenReturn(problemJwt);
-        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt(VALID_BEARER_TOKEN));
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt(VALID_BEARER_TOKEN,"TokenId"));
         assertTrue(ex.getMessage().contains("Unable to validate token"));
     }
 
@@ -218,7 +223,7 @@ class JwtAuthenticationFilterTest {
         when(jwtDecoder.decode(VALID_TOKEN)).thenReturn(jwt(EXPECTED_CLIENT_ID,
                 FUTURE_TIMESTAMP, FUTURE_EXPIRY_TIMESTAMP,
                 EXPECTED_SCOPES, VALID_USER));
-        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt(VALID_BEARER_TOKEN));
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt(VALID_BEARER_TOKEN,"TokenId"));
 
         assertEquals("Unable to validate token: Token not valid for current time", ex.getMessage());
     }
@@ -231,7 +236,7 @@ class JwtAuthenticationFilterTest {
         when(jwtDecoder.decode(VALID_TOKEN)).thenReturn(jwt(EXPECTED_CLIENT_ID,
                 null, FUTURE_EXPIRY_TIMESTAMP,
                 EXPECTED_SCOPES, VALID_USER));
-        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt(VALID_BEARER_TOKEN));
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt(VALID_BEARER_TOKEN,"TokenId"));
 
         assertEquals("Unable to validate token: Token not before time is null", ex.getMessage());
     }
@@ -244,7 +249,7 @@ class JwtAuthenticationFilterTest {
         when(jwtDecoder.decode(VALID_TOKEN)).thenReturn(jwt(EXPECTED_CLIENT_ID,
                 PAST_TIMESTAMP, null,
                 EXPECTED_SCOPES, VALID_USER));
-        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt(VALID_BEARER_TOKEN));
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt(VALID_BEARER_TOKEN,"TokenId"));
 
         assertEquals("Unable to validate token: Token expiry is null", ex.getMessage());
     }
@@ -257,7 +262,7 @@ class JwtAuthenticationFilterTest {
         when(jwtDecoder.decode(VALID_TOKEN)).thenReturn(jwt(EXPECTED_CLIENT_ID,
                 PAST_TIMESTAMP,
                 PAST_EXPIRY_TIMESTAMP, EXPECTED_SCOPES, VALID_USER));
-        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt(VALID_BEARER_TOKEN));
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt(VALID_BEARER_TOKEN,"TokenId"));
 
         assertEquals("Unable to validate token: Token is expired", ex.getMessage());
     }
@@ -278,7 +283,7 @@ class JwtAuthenticationFilterTest {
                 FUTURE_TIMESTAMP,
                 scopes, VALID_USER);
         when(jwtDecoder.decode(VALID_TOKEN)).thenReturn(problemJwt);
-        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt(VALID_BEARER_TOKEN));
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.validateJwt(VALID_BEARER_TOKEN,"TokenId"));
         assertTrue(ex.getMessage().contains("Expected scope values are missing"));
     }
 

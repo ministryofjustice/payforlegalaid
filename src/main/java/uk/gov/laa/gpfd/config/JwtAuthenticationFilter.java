@@ -14,9 +14,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.time.Instant;
 
+import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
+
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final int TOKEN_PARTS = 3;
+    private static final int TOKEN_ID_LENGTH = 8;
 
     private final JwtDecoder jwtDecoder;
     private final AppConfig appConfig;
@@ -31,14 +34,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         var token = servletRequest.getHeader(TokenComponents.HEADER_TYPE.value);
 
         if (token != null && !token.isEmpty()) {
-            log.info("Token " + token.hashCode() + " - token received, attempting validation");
-            validateJwt(token);
+            String logIdentifier = sha256Hex(token).substring(0,TOKEN_ID_LENGTH);
+            log.info("Token " + logIdentifier + " - token received, attempting validation");
+            validateJwt(token, logIdentifier);
         }
 
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
-    public boolean validateJwt(String token) {
+    public boolean validateJwt(String token, String logIdentifier) {
         var jwtContent = extractJwtToken(token);
 
         try {
@@ -76,7 +80,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 throw new JwtException("Expected scope values are missing");
             }
 
-            log.info("Token " + token.hashCode() + " - JWT validated successfully");
+            log.info("Token " + logIdentifier + " - JWT validated successfully");
 
         } catch (JwtException ex) {
             throw new JwtException("Unable to validate token: " + ex.getMessage());
