@@ -18,7 +18,13 @@ import java.util.Map;
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final int TOKEN_PARTS = 3;
-    private static Map<String, String> errorMessages;
+    private static final Map<String, String> errorMessages = Map.of(
+    JwtTokenComponents.AUDIENCE_KEY.value, "Audience mismatch",
+    JwtTokenComponents.TENANT_ID_KEY.value, "Incorrect Tenant ID",
+    JwtTokenComponents.APPLICATION_ID_KEY.value,"Incorrect Application ID",
+    JwtTokenComponents.EXPIRES_AT_KEY.value, "Token is expired",
+    JwtTokenComponents.NOT_BEFORE_KEY.value, "Token not valid for current time",
+    JwtTokenComponents.SCOPE_KEY.value, "Expected scope values are missing");
 
     private final JwtDecoder jwtDecoder;
     private final AppConfig appConfig;
@@ -26,16 +32,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     public JwtAuthenticationFilter(JwtDecoder jwtDecoder, AppConfig appConfig) {
         this.jwtDecoder = jwtDecoder;
         this.appConfig = appConfig;
-
-        errorMessages = Map.of(
-                JwtTokenComponents.AUDIENCE_KEY.value, "Audience mismatch",
-                JwtTokenComponents.TENANT_ID_KEY.value, "Incorrect Tenant ID",
-                JwtTokenComponents.APPLICATION_ID_KEY.value,"Incorrect Application ID",
-                JwtTokenComponents.EXPIRES_AT_KEY.value, "Token is expired",
-                JwtTokenComponents.NOT_BEFORE_KEY.value, "Token not valid for current time",
-                JwtTokenComponents.SCOPE_KEY.value, "Expected scope values are missing"
-        );
-              
     }
 
     @Override

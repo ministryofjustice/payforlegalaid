@@ -310,7 +310,7 @@ class JwtAuthenticationFilterTest {
 
     @Test
     @SneakyThrows
-    void shouldCallDoFilterWhenAfterNotBeforeTime() {
+    void shouldCallDoFilterWhenValidForCurrentTime() {
         Jwt decodedToken = jwt(EXPECTED_CLIENT_ID,
                 Instant.now(),
                 FUTURE_TIMESTAMP, EXPECTED_SCOPES, VALID_USER);
@@ -351,22 +351,6 @@ class JwtAuthenticationFilterTest {
 
         Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.doFilterInternal(mockRequest, mockResponse, mockFilterChain));
         assertEquals("Unable to validate token: Token expiry is null", ex.getMessage());
-    }
-
-    @Test
-    @SneakyThrows
-    void shouldCallDoFilterWhenBeforeExpiresTime() {
-        Jwt decodedToken = jwt(EXPECTED_CLIENT_ID,
-                Instant.now(),
-                FUTURE_TIMESTAMP, EXPECTED_SCOPES, VALID_USER);
-
-        mockTokenExtractAndGetSysVars();
-        when(jwtDecoder.decode(any())).thenReturn(decodedToken);
-
-        jwtAuthenticationFilter.doFilterInternal(mockRequest, mockResponse, mockFilterChain);
-
-        verify(mockFilterChain).doFilter(mockRequest, mockResponse);
-        verify(jwtDecoder, times(1)).decode(any());
     }
 
     private void mockTokenExtractAndGetSysVars() {
