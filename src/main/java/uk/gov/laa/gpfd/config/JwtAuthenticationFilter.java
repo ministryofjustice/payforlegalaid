@@ -21,8 +21,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtDecoder jwtDecoder;
     private final AppConfig appConfig;
 
-    private String getClientId;
-
     public JwtAuthenticationFilter(JwtDecoder jwtDecoder, AppConfig appConfig) {
         this.jwtDecoder = jwtDecoder;
         this.appConfig = appConfig;
