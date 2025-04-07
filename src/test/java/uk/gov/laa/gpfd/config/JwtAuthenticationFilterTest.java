@@ -118,10 +118,11 @@ class JwtAuthenticationFilterTest {
     @Test
     void shouldThrowWhenDecodeJwtThrows() {
         when(mockRequest.getHeader("Authorization")).thenReturn(VALID_BEARER_TOKEN);
-        when(jwtDecoder.decode("xxxx.yyyy.zzzz")).thenThrow(new IllegalArgumentException());
+        when(jwtDecoder.decode(any())).thenThrow(new IllegalArgumentException("decode has failed"));
         Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.doFilterInternal(mockRequest, mockResponse, mockFilterChain));
-
         assertTrue(ex.getMessage().contains("Unable to validate token"));
+        assertTrue(ex.getMessage().contains("IllegalArgumentException"));
+        assertTrue(ex.getMessage().contains("decode has failed"));
     }
 
     @Test
@@ -129,7 +130,6 @@ class JwtAuthenticationFilterTest {
         when(mockRequest.getHeader("Authorization")).thenReturn(VALID_BEARER_TOKEN);
         when(jwtDecoder.decode("aaaa.bbbb.cccc")).thenReturn(null);
         Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.doFilterInternal(mockRequest, mockResponse, mockFilterChain));
-
         assertEquals("Unable to validate token: decode token returned null", ex.getMessage());
     }
 

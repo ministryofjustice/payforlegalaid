@@ -16,12 +16,7 @@ import java.time.Instant;
 
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private static final String TOKEN_PREFIX = "bearer ";
     private static final int TOKEN_PARTS = 3;
-    private static final String JWT_PAYLOAD_TENANT_ID_KEY = "tid";
-    private static final String JWT_PAYLOAD_APPLICATION_ID_KEY = "appid";
-    private static final String SCOPE_KEY = "scp";
-    private static final String SCOPE_VALUE = "User.Read";
 
     private final JwtDecoder jwtDecoder;
     private final AppConfig appConfig;
@@ -33,15 +28,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     public void doFilterInternal(HttpServletRequest servletRequest, @NotNull HttpServletResponse servletResponse, @NotNull FilterChain filterChain) throws IOException, ServletException {
-        var token = servletRequest.getHeader("Authorization");
+        var token = servletRequest.getHeader(TokenComponents.HEADER_TYPE.value);
 
-        if (token == null || token.isEmpty()) {
-            filterChain.doFilter(servletRequest, servletResponse);
-        } else {
+        if (token != null && !token.isEmpty()) {
             log.info("Token " + token.hashCode() + " - token received, attempting validation");
             validateJwt(token);
-            filterChain.doFilter(servletRequest, servletResponse);
         }
+
+        filterChain.doFilter(servletRequest, servletResponse);
     }
 
     public boolean validateJwt(String token) {
@@ -62,23 +56,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 throw new JwtException("Audience mismatch");
             }
 
-            if (!decodedToken.getClaimAsString(JWT_PAYLOAD_TENANT_ID_KEY).equals(appConfig.getEntraIdTenantId())) {
+            if (!decodedToken.getClaimAsString(TokenComponents.JWT_PAYLOAD_TENANT_ID_KEY.value).equals(appConfig.getEntraIdTenantId())) {
                 throw new JwtException("Incorrect Tenant ID");
             }
 
-            if (!decodedToken.getClaimAsString(JWT_PAYLOAD_APPLICATION_ID_KEY).equals(appConfig.getEntraIdClientId())) {
+            if (!decodedToken.getClaimAsString(TokenComponents.JWT_PAYLOAD_APPLICATION_ID_KEY.value).equals(appConfig.getEntraIdClientId())) {
                 throw new JwtException("Incorrect Application ID");
-            }
-
-            if (!isTokenValidForCurrentTime(decodedToken)) {
-                throw new JwtException("Token not valid for current time");
             }
 
             if (isTokenExpired(decodedToken)) {
                 throw new JwtException("Token is expired");
             }
 
-            if (!decodedToken.getClaimAsStringList(SCOPE_KEY).contains(SCOPE_VALUE)) {
+            if (!isTokenValidForCurrentTime(decodedToken)) {
+                throw new JwtException("Token not valid for current time");
+            }
+
+            if (!decodedToken.getClaimAsStringList(TokenComponents.SCOPE_KEY.value).contains(TokenComponents.SCOPE_VALUE.value)) {
                 throw new JwtException("Expected scope values are missing");
             }
 
@@ -87,7 +81,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (JwtException ex) {
             throw new JwtException("Unable to validate token: " + ex.getMessage());
         } catch (Exception ex) {
-            throw new JwtException("Unable to validate token");
+            throw new JwtException("Unable to validate token.\n" + ex.getClass() + ": " + ex.getMessage());
         }
 
         return true;
@@ -96,13 +90,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     public String extractJwtToken(String token) {
         final String INVALID_JWT_ERROR_MESSAGE = "Token is not a valid JWT";
 
-        if (token == null || token.length() <= TOKEN_PREFIX.length())
+        if (token == null || token.length() <= TokenComponents.TOKEN_PREFIX.value.length())
             throw new JwtException(INVALID_JWT_ERROR_MESSAGE);
 
-        if (!token.substring(0, TOKEN_PREFIX.length()).equalsIgnoreCase(TOKEN_PREFIX))
+        if (!token.substring(0, TokenComponents.TOKEN_PREFIX.value.length()).equalsIgnoreCase(TokenComponents.TOKEN_PREFIX.value))
             throw new JwtException(INVALID_JWT_ERROR_MESSAGE);
 
-        token = token.substring(TOKEN_PREFIX.length());
+        token = token.substring(TokenComponents.TOKEN_PREFIX.value.length());
 
         var contents = token.split("\\.");
 
@@ -133,5 +127,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (NullPointerException ex) {
             throw new JwtException("Token expiry is null");
         }
+    }
+
+    enum TokenComponents {
+        HEADER_TYPE("Authorization"),
+        TOKEN_PREFIX("bearer "),
+        JWT_PAYLOAD_TENANT_ID_KEY("tid"),
+        JWT_PAYLOAD_APPLICATION_ID_KEY("appid"),
+        SCOPE_KEY("scp"),
+        SCOPE_VALUE("User.Read");
+
+        public final String value;
+
+        TokenComponents(String value) {
+            this.value = value;
+        }
+
     }
 }
