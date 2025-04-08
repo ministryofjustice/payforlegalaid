@@ -66,6 +66,10 @@ public class AppConfig {
     @Value("${gpfd.url}")
     private String serviceUrl;
 
+    @Getter
+    @Value("${gpfd.redirect-uri-template}")
+    private String redirectUrl;
+
     @Value("${spring.liquibase.changelog}")
     private String liquibaseChangeLog;
 

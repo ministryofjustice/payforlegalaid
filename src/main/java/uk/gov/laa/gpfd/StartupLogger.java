@@ -14,10 +14,13 @@ public class StartupLogger implements ApplicationRunner {
   private static final Logger logger = LoggerFactory.getLogger(StartupLogger.class);
 
   @Value("${gpfd.url}")
-  private String appName;
+  private String gpfdUrl;
+  @Value("${gpfd.redirect-uri-template}")
+  private String redirectUri;
+
 
   @Override
   public void run(ApplicationArguments args) {
-    logger.info("vvvv GPFD URL: {}", appName);
+    logger.info("vvvv GPFD URL: {}, redirect URI: {}", gpfdUrl, redirectUri);
   }
 }
