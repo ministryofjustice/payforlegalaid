@@ -67,7 +67,7 @@ public class AppConfig {
     private String serviceUrl;
 
     @Getter
-    @Value("${gpfd.redirect-uri-template}")
+    @Value("${spring.cloud.azure.active-directory.redirect-uri-template}")
     private String redirectUrl;
 
     @Value("${spring.liquibase.changelog}")
