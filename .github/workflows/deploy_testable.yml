@@ -48,6 +48,7 @@ jobs:
           REPOSITORY: ${{ vars.DEV_ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          GPFD_URL: https://test-gpfd.apps.live.cloud-platform.service.justice.gov.uk
 
       - name: Generate Kubernetes files from templates
         env:
