@@ -2,8 +2,6 @@ package uk.gov.laa.gpfd.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,6 +20,7 @@ import java.io.Writer;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
@@ -47,21 +46,34 @@ public class ReportService {
         // Generate CSV content in-memory
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
-        try (Writer writer = new OutputStreamWriter(byteArrayOutputStream);
-             CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
+        try (Writer writer = new OutputStreamWriter(byteArrayOutputStream)) {
             // Extract headers from the first map and write them to the CSV
-            Map<String, Object> firstRow = resultList.get(0);
-            for (String header : firstRow.keySet()) {
-                csvPrinter.print(header);
-            }
-            csvPrinter.println();
+            if (!resultList.isEmpty()) {
+                Map<String, Object> firstRow = resultList.get(0);
 
-            // Iterate through the list of maps and write data to the CSV
-            for (Map<String, Object> row : resultList) {
+                var firstHeader = true;
                 for (String header : firstRow.keySet()) {
-                    csvPrinter.print(row.get(header));
+                    if (!firstHeader) {
+                        writer.write(",");
+                    }
+                    writer.write(escapeCsv(header));
+                    firstHeader = false;
                 }
-                csvPrinter.println();
+                writer.write("\n");
+
+                // Iterate through the list of maps and write data to the CSV
+                for (Map<String, Object> row : resultList) {
+                    var firstColumn = true;
+                    for (String header : firstRow.keySet()) {
+                        if (!firstColumn) {
+                            writer.write(",");
+                        }
+                        var value = row.get(header);
+                        writer.write(escapeCsv(value != null ? value.toString() : ""));
+                        firstColumn = false;
+                    }
+                    writer.write("\n");
+                }
             }
         }
         log.info("Returning byteArrayOutputStream of CSV data, from createCsvStream method");
@@ -69,6 +81,16 @@ public class ReportService {
         return byteArrayOutputStream;
     }
 
+    private String escapeCsv(String input) {
+        if (input == null) {
+            return "";
+        }
+        var escaped = input.replace("\"", "\"\"");
+        if (Set.of(",", "\n", "\"").stream().anyMatch(escaped::contains)) {
+            return "\"" + escaped + "\"";
+        }
+        return escaped;
+    }
 
     /**
      * Create a Response entity with a CSV data stream inside the body, for use by the controller's '/csv' endpoint
