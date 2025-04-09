@@ -21,7 +21,7 @@ public class ReportsTrackingDao {
     try {
       log.debug("Saving tracking information for report ID:{}", reportsTracking.getReportId());
       int numberOfRowsAffected = this.writeJdbcTemplate.update(INSERT_SQL, UUID.randomUUID().toString(), reportsTracking.getName(),
-          reportsTracking.getReportId(), reportsTracking.getCreationDate(), reportsTracking.getReportCreator(),
+          reportsTracking.getReportId().toString(), reportsTracking.getCreationDate(), reportsTracking.getReportCreator(),
           reportsTracking.getReportOwner(), reportsTracking.getReportOutputType(), reportsTracking.getTemplateUrl(), reportsTracking.getReportUrl());
       log.debug("Number of database rows affected by insert to report tracking table: " + numberOfRowsAffected);
     } catch (Exception e) {
