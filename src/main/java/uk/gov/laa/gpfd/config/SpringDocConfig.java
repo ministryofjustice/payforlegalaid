@@ -1,14 +1,11 @@
 package uk.gov.laa.gpfd.config;
 
 import org.springdoc.core.configuration.SpringDocConfiguration;
-import org.springdoc.core.configuration.SpringDocUIConfiguration;
 import org.springdoc.core.properties.SpringDocConfigProperties;
-import org.springdoc.core.properties.SwaggerUiConfigProperties;
 import org.springdoc.core.providers.ObjectMapperProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Optional;
 
 /**
  * Configuration class to set up the Springdoc OpenAPI integration for the Spring Boot application.
@@ -62,22 +59,6 @@ public class SpringDocConfig {
     @Bean
     ObjectMapperProvider objectMapperProvider(SpringDocConfigProperties springDocConfigProperties) {
         return new ObjectMapperProvider(springDocConfigProperties);
-    }
-
-    /**
-     * Bean configuration for SpringDoc's UI configuration, which integrates with Swagger UI.
-     * <p>
-     * This bean is responsible for configuring Swagger UI's settings, such as customizing the UI
-     * and integrating with any optional {@link SwaggerUiConfigProperties} passed into the bean.
-     * </p>
-     *
-     * @param optionalSwaggerUiConfigProperties an optional {@link SwaggerUiConfigProperties} object
-     *                                          for further customizing Swagger UI.
-     * @return a new instance of {@link SpringDocUIConfiguration} with the provided configuration.
-     */
-    @Bean
-    SpringDocUIConfiguration SpringDocUIConfiguration(Optional<SwaggerUiConfigProperties> optionalSwaggerUiConfigProperties) {
-        return new SpringDocUIConfiguration(optionalSwaggerUiConfigProperties);
     }
 
 }
