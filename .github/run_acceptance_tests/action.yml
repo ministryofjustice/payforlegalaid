@@ -57,8 +57,8 @@ runs:
         docker build \
             --build-arg USERNAME=$USERNAME \
             --build-arg PASSWORD=$PASSWORD \
-            -t $REGISTRY/$REPOSITORY:gpfd-tests21-new-$IMAGE_TAG .
-        docker push $REGISTRY/$REPOSITORY:gpfd-tests21-new-$IMAGE_TAG
+            -t $REGISTRY/$REPOSITORY:gpfd-tests26-new-$IMAGE_TAG .
+        docker push $REGISTRY/$REPOSITORY:gpfd-tests26-new-$IMAGE_TAG
       shell: bash
       env:
         USERNAME: ${{ env.USERNAME }}
