@@ -52,13 +52,17 @@ runs:
     - name: Build docker-test
       run: |
         cd testCode
-        echo "Files before build (in testCode directory):"
-        ls -la
+        export DOCKER_BUILDKIT=1
+        
+        echo "Verifying secrets:"
+        echo "USERNAME: ${USERNAME:0:1}...[redacted]...${USERNAME: -1}"
+        echo "PASSWORD: ${PASSWORD:0:1}...[redacted]...${PASSWORD: -1}"
+    
         docker build \
-            --build-arg USERNAME=$USERNAME \
-            --build-arg PASSWORD=$PASSWORD \
-            -t $REGISTRY/$REPOSITORY:gpfd-tests26-new-$IMAGE_TAG .
-        docker push $REGISTRY/$REPOSITORY:gpfd-tests26-new-$IMAGE_TAG
+        --secret id=maven_username,env=USERNAME \
+        --secret id=maven_password,env=PASSWORD \
+        -t $REGISTRY/$REPOSITORY:gpfd-tests36-new-$IMAGE_TAG .
+        docker push $REGISTRY/$REPOSITORY:gpfd-tests36-new-$IMAGE_TAG
       shell: bash
       env:
         USERNAME: ${{ env.USERNAME }}
