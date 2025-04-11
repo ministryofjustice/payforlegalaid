@@ -61,8 +61,8 @@ runs:
         docker build \
         --secret id=maven_username,env=USERNAME \
         --secret id=maven_password,env=PASSWORD \
-        -t $REGISTRY/$REPOSITORY:gpfd-tests36-new-$IMAGE_TAG .
-        docker push $REGISTRY/$REPOSITORY:gpfd-tests36-new-$IMAGE_TAG
+        -t $REGISTRY/$REPOSITORY:gpfd-tests37-new-$IMAGE_TAG .
+        docker push $REGISTRY/$REPOSITORY:gpfd-tests37-new-$IMAGE_TAG
       shell: bash
       env:
         USERNAME: ${{ env.USERNAME }}
