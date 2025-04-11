@@ -4,6 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,8 +15,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtException;
@@ -26,10 +29,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -58,9 +64,6 @@ class JwtAuthenticationFilterTest {
     @Mock
     private FilterChain mockFilterChain;
 
-    @Mock
-    private SecurityContext securityContext;
-
     private static final String EXPECTED_CLIENT_ID = "clientId";
     private static final String EXPECTED_TENANT_ID = "tenantId";
     private static final List<String> EXPECTED_SCOPES = List.of("User.Read");
@@ -76,7 +79,6 @@ class JwtAuthenticationFilterTest {
     @BeforeEach
     void beforeEach() {
         reset(mockRequest, mockRequest, mockFilterChain, jwtDecoder, appConfig);
-        SecurityContextHolder.setContext(securityContext);
         jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtDecoder, appConfig);
     }
 
@@ -84,6 +86,8 @@ class JwtAuthenticationFilterTest {
     @SneakyThrows
     @NullAndEmptySource
     void shouldCallFilterWhenNoTokenProvided(String token, CapturedOutput output) {
+        SecurityContext securityContext = getSecurityContext();
+
         when(mockRequest.getHeader(JwtTokenComponents.HEADER_TYPE.value)).thenReturn(token);
 
         jwtAuthenticationFilter.doFilterInternal(mockRequest, mockResponse, mockFilterChain);
@@ -91,6 +95,7 @@ class JwtAuthenticationFilterTest {
         verify(mockFilterChain).doFilter(mockRequest, mockResponse);
         verify(jwtDecoder, times(0)).decode(any());
         assertFalse(output.getOut().contains("token received, attempting validation"));
+        assertEquals(null, securityContext.getAuthentication());
     }
 
     @SneakyThrows
@@ -107,6 +112,37 @@ class JwtAuthenticationFilterTest {
         verify(mockFilterChain).doFilter(mockRequest, mockResponse);
         verify(jwtDecoder, times(1)).decode(any());
         assertTrue(output.getOut().contains("Token " + sha256Hex(VALID_BEARER_TOKEN).substring(0,TOKEN_ID_LENGTH) + " - token received, attempting validation"));
+        assertTrue(output.getOut().contains("Token " + sha256Hex(VALID_BEARER_TOKEN).substring(0,TOKEN_ID_LENGTH) + " - JWT validated successfully"));
+    }
+
+    @SneakyThrows
+    @Test
+    void shouldPopulateSecurityContextWhenValidTokenProvided(CapturedOutput output) {
+        SecurityContext securityContext = getSecurityContext();
+        mockTokenExtractAndGetSysVars();
+        when(jwtDecoder.decode(any())).thenReturn(jwt(EXPECTED_CLIENT_ID,
+                Instant.now(),
+                Instant.now().plusSeconds(100),
+                EXPECTED_SCOPES, VALID_USER));
+
+        jwtAuthenticationFilter.doFilterInternal(mockRequest, mockResponse, mockFilterChain);
+
+        assertNotNull(securityContext);
+        assertEquals(VALID_USER, securityContext.getAuthentication().getName());
+        assertEquals(Optional.empty(), securityContext.getAuthentication().getCredentials());
+        assertEquals(List.of(), securityContext.getAuthentication().getAuthorities());
+    }
+
+    @Test
+    void shouldClearSecurityContextThrowWhenValidationThrows() {
+        SecurityContextImpl contextWithUser = new SecurityContextImpl(new UsernamePasswordAuthenticationToken(VALID_USER, null, List.of()));
+        SecurityContextHolder.setContext(contextWithUser);
+        when(mockRequest.getHeader(JwtTokenComponents.HEADER_TYPE.value)).thenReturn(VALID_BEARER_TOKEN);
+        when(jwtDecoder.decode(any())).thenThrow(new IllegalArgumentException("decode has failed"));
+
+        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.doFilter(mockRequest, mockResponse, mockFilterChain));
+
+        assertNull(SecurityContextHolder.getContext().getAuthentication());
     }
 
     @Test
@@ -157,7 +193,7 @@ class JwtAuthenticationFilterTest {
         Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.doFilter(mockRequest, mockResponse, mockFilterChain));
 
         assertEquals("Unable to validate token: decode token returned null", ex.getMessage());
-        assertFalse(output.getOut().contains("Token " + VALID_BEARER_TOKEN.hashCode() + " - JWT validated successfully"));
+        assertFalse(output.getOut().contains("Token " + sha256Hex(VALID_BEARER_TOKEN).substring(0, TOKEN_ID_LENGTH) + " - JWT validated successfully"));
     }
 
     @ParameterizedTest
@@ -365,6 +401,13 @@ class JwtAuthenticationFilterTest {
         when(mockRequest.getHeader(JwtTokenComponents.HEADER_TYPE.value)).thenReturn(VALID_BEARER_TOKEN);
         when(appConfig.getEntraIdClientId()).thenReturn(EXPECTED_CLIENT_ID);
         when(appConfig.getEntraIdTenantId()).thenReturn(EXPECTED_TENANT_ID);
+    }
+
+    @NotNull
+    private static SecurityContext getSecurityContext() {
+        SecurityContext securityContext = new SecurityContextImpl(null);
+        SecurityContextHolder.setContext(securityContext);
+        return securityContext;
     }
 
     private Jwt jwt(String appId, Instant notBefore, Instant expiresAt, List<String> scopes, String username) {

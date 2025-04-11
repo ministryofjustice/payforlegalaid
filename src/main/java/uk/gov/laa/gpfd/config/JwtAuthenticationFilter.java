@@ -5,6 +5,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimNames;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -14,13 +16,17 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
 
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final int TOKEN_PARTS = 3;
+    private static final int TOKEN_ID_LENGTH = 8;
     private static final Map<String, String> errorMessages = Map.of(
             JwtClaimNames.AUD, "Audience mismatch",
             JwtTokenComponents.TENANT_ID_KEY.value, "Incorrect Tenant ID",
@@ -37,6 +43,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.appConfig = appConfig;
     }
 
+    /**
+     *
+     * @param servletRequest
+     * @param servletResponse
+     * @param filterChain
+     * @throws IOException
+     * @throws ServletException
+     * Custom implementation to validate JWT when user logs in to Entra ID.
+     * Creates authentication object and sets in the SecurityContext, in place of default session id behaviour.
+     * Will default to using session id, as part of standard spring security flow, if invalid JWT is provided; prompting user to login.
+     */
     @Override
     public void doFilterInternal(HttpServletRequest servletRequest, @NotNull HttpServletResponse servletResponse, @NotNull FilterChain filterChain) throws IOException, ServletException {
         var token = servletRequest.getHeader(JwtTokenComponents.HEADER_TYPE.value);
@@ -90,10 +107,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             log.info("Token " + logIdentifier + " - JWT validated successfully");
 
+            SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(username, Optional.empty(), List.of()));
+
         } catch (JwtException ex) {
             throw new JwtException("Unable to validate token: " + ex.getMessage());
         } catch (Exception ex) {
             throw new JwtException("Unable to validate token.\n" + ex.getClass() + ": " + ex.getMessage());
+        } finally {
+            SecurityContextHolder.clearContext();
         }
 
     }
