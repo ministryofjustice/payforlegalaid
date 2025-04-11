@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.Map;
 
+import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
+
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final int TOKEN_PARTS = 3;
@@ -40,13 +42,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         var token = servletRequest.getHeader(JwtTokenComponents.HEADER_TYPE.value);
 
         if (token != null && !token.isEmpty()) {
-            validateJwt(token);
+            String logIdentifier = sha256Hex(token).substring(0,TOKEN_ID_LENGTH);
+            log.info("Token " + logIdentifier + " - token received, attempting validation");
+            validateJwt(token, logIdentifier);
         }
 
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
-    private void validateJwt(String token) {
+    private void validateJwt(String token, String logIdentifier) {
         var jwtContent = extractJwtToken(token);
 
         try {
@@ -83,6 +87,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (!decodedToken.getClaimAsStringList(JwtTokenComponents.SCOPE_KEY.value).contains(JwtTokenComponents.SCOPE_VALUE.value)) {
                 throw new JwtException(errorMessages.get(JwtTokenComponents.SCOPE_KEY.value));
             }
+
+            log.info("Token " + logIdentifier + " - JWT validated successfully");
 
         } catch (JwtException ex) {
             throw new JwtException("Unable to validate token: " + ex.getMessage());
