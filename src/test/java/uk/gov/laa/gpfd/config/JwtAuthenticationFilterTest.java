@@ -128,19 +128,19 @@ class JwtAuthenticationFilterTest {
         jwtAuthenticationFilter.doFilterInternal(mockRequest, mockResponse, mockFilterChain);
 
         assertNotNull(securityContext);
-        assertEquals(VALID_USER, securityContext.getAuthentication().getName());
-        assertEquals(Optional.empty(), securityContext.getAuthentication().getCredentials());
-        assertEquals(List.of(), securityContext.getAuthentication().getAuthorities());
+        assertEquals(VALID_USER, SecurityContextHolder.getContext().getAuthentication().getName());
+        assertEquals(Optional.empty(), SecurityContextHolder.getContext().getAuthentication().getCredentials());
+        assertEquals(List.of(), SecurityContextHolder.getContext().getAuthentication().getAuthorities());
     }
 
     @Test
-    void shouldClearSecurityContextThrowWhenValidationThrows() {
+    void shouldClearSecurityContextThrowWhenValidationThrowsException() {
         SecurityContextImpl contextWithUser = new SecurityContextImpl(new UsernamePasswordAuthenticationToken(VALID_USER, null, List.of()));
         SecurityContextHolder.setContext(contextWithUser);
         when(mockRequest.getHeader(JwtTokenComponents.HEADER_TYPE.value)).thenReturn(VALID_BEARER_TOKEN);
         when(jwtDecoder.decode(any())).thenThrow(new IllegalArgumentException("decode has failed"));
 
-        Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.doFilter(mockRequest, mockResponse, mockFilterChain));
+        assertThrows(JwtException.class, () -> jwtAuthenticationFilter.doFilter(mockRequest, mockResponse, mockFilterChain));
 
         assertNull(SecurityContextHolder.getContext().getAuthentication());
     }
@@ -208,6 +208,21 @@ class JwtAuthenticationFilterTest {
         Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.doFilterInternal(mockRequest, mockResponse, mockFilterChain));
 
         assertEquals("Unable to validate token: token includes no valid username", ex.getMessage());
+    }
+
+    @Test
+    void shouldClearSecurityContextThrowWhenValidationThrowsJwtException() {
+        SecurityContextImpl contextWithUser = new SecurityContextImpl(new UsernamePasswordAuthenticationToken(VALID_USER, null, List.of()));
+        SecurityContextHolder.setContext(contextWithUser);
+        when(mockRequest.getHeader(JwtTokenComponents.HEADER_TYPE.value)).thenReturn(VALID_BEARER_TOKEN);
+        when(jwtDecoder.decode(any())).thenReturn(jwt(EXPECTED_CLIENT_ID,
+                Instant.now(),
+                Instant.now().plusSeconds(100),
+                EXPECTED_SCOPES, "invalid user"));
+
+        assertThrows(JwtException.class, () -> jwtAuthenticationFilter.doFilterInternal(mockRequest, mockResponse, mockFilterChain));
+
+        assertNull(SecurityContextHolder.getContext().getAuthentication());
     }
 
     @ParameterizedTest

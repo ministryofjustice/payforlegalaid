@@ -30,7 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final Map<String, String> errorMessages = Map.of(
             JwtClaimNames.AUD, "Audience mismatch",
             JwtTokenComponents.TENANT_ID_KEY.value, "Incorrect Tenant ID",
-            JwtTokenComponents.APPLICATION_ID_KEY.value,"Incorrect Application ID",
+            JwtTokenComponents.APPLICATION_ID_KEY.value, "Incorrect Application ID",
             JwtClaimNames.EXP, "Token is expired",
             JwtClaimNames.NBF, "Token not valid for current time",
             JwtTokenComponents.SCOPE_KEY.value, "Expected scope values are missing");
@@ -44,22 +44,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     /**
-     *
      * @param servletRequest
      * @param servletResponse
      * @param filterChain
      * @throws IOException
-     * @throws ServletException
-     * Custom implementation to validate JWT when user logs in to Entra ID.
-     * Creates authentication object and sets in the SecurityContext, in place of default session id behaviour.
-     * Will default to using session id, as part of standard spring security flow, if invalid JWT is provided; prompting user to login.
+     * @throws ServletException Custom implementation to validate JWT when user logs in to Entra ID.
+     *                          Creates authentication object and sets in the SecurityContext, in place of default session id behaviour.
+     *                          Will default to using session id, as part of standard spring security flow, if invalid JWT is provided; prompting user to login.
      */
     @Override
     public void doFilterInternal(HttpServletRequest servletRequest, @NotNull HttpServletResponse servletResponse, @NotNull FilterChain filterChain) throws IOException, ServletException {
         var token = servletRequest.getHeader(JwtTokenComponents.HEADER_TYPE.value);
 
         if (token != null && !token.isEmpty()) {
-            String logIdentifier = sha256Hex(token).substring(0,TOKEN_ID_LENGTH);
+            String logIdentifier = sha256Hex(token).substring(0, TOKEN_ID_LENGTH);
             log.info("Token " + logIdentifier + " - token received, attempting validation");
             validateJwt(token, logIdentifier);
         }
@@ -110,13 +108,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(username, Optional.empty(), List.of()));
 
         } catch (JwtException ex) {
+            SecurityContextHolder.clearContext();
             throw new JwtException("Unable to validate token: " + ex.getMessage());
         } catch (Exception ex) {
-            throw new JwtException("Unable to validate token.\n" + ex.getClass() + ": " + ex.getMessage());
-        } finally {
             SecurityContextHolder.clearContext();
+            throw new JwtException("Unable to validate token.\n" + ex.getClass() + ": " + ex.getMessage());
         }
-
     }
 
     private String extractJwtToken(String token) {
