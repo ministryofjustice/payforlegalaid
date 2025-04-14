@@ -7,6 +7,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimNames;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -18,15 +20,19 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Optional;
+
+import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
 
 import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
 
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private static final int TOKEN_PARTS = 3;
     private static final int TOKEN_ID_LENGTH = 8;
+    private static final int TOKEN_PARTS = 3;
     private static final Map<String, String> errorMessages = Map.of(
             JwtClaimNames.AUD, "Audience mismatch",
             JwtTokenComponents.TENANT_ID_KEY.value, "Incorrect Tenant ID",

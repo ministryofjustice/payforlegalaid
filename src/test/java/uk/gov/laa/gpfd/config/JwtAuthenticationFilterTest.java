@@ -64,6 +64,9 @@ class JwtAuthenticationFilterTest {
     @Mock
     private FilterChain mockFilterChain;
 
+    @Mock
+    private SecurityContext securityContext;
+
     private static final String EXPECTED_CLIENT_ID = "clientId";
     private static final String EXPECTED_TENANT_ID = "tenantId";
     private static final List<String> EXPECTED_SCOPES = List.of("User.Read");
@@ -79,6 +82,7 @@ class JwtAuthenticationFilterTest {
     @BeforeEach
     void beforeEach() {
         reset(mockRequest, mockRequest, mockFilterChain, jwtDecoder, appConfig);
+        SecurityContextHolder.setContext(securityContext);
         jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtDecoder, appConfig);
     }
 
