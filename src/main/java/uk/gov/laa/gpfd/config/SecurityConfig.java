@@ -50,18 +50,6 @@ public class SecurityConfig {
     private final AuthorizationManager<RequestAuthorizationContext> authManager;
 
     /**
-     * The custom {@link JwtDecoder} used to decode and validate JSON Web Tokens (JWTs) in a Spring Security
-     *  context.
-     */
-    private final JwtDecoder jwtDecoder;
-
-    /**
-     * {@link AppConfig} is a configuration class that encapsulates application-level
-     *  * settings and properties. Configuration loaded from application yml file.
-     */
-    private final AppConfig appConfig;
-
-    /**
      * Configures the {@link SecurityFilterChain} for the HTTP security settings.
      * <p>
      * This method customizes the security filter chain by applying the authorization
@@ -76,16 +64,9 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                //Validate JWT first - if it's not valid, it will fall back to normal session cookie or log in flows
-                .addFilterBefore(new JwtAuthenticationFilter(jwtDecoder, appConfig), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorizeHttpRequestsBuilder)    // Apply authorization rules
                 .sessionManagement(sessionManagementConfigurerBuilder)  // Apply session management configuration
                 .build();
-    }
-
-    @Bean
-    public DelegatingSecurityContextAsyncTaskExecutor taskExecutor(ThreadPoolTaskExecutor delegate) {
-        return new DelegatingSecurityContextAsyncTaskExecutor(delegate);
     }
 
 }

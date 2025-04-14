@@ -9,7 +9,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
-import uk.gov.laa.gpfd.config.TestAuthConfig;
 import uk.gov.laa.gpfd.services.ReportService;
 
 import java.util.UUID;
@@ -23,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("testauth")
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class HttpSecuritySessionManagementConfigurerBuilderTest extends TestAuthConfig {
+class HttpSecuritySessionManagementConfigurerBuilderTest {
 
     @MockitoBean
     ReportService reportServiceMock;

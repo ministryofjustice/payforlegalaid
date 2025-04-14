@@ -78,14 +78,6 @@ public class AppConfig {
     private String entraIdTenantId;
 
     /**
-     *  Base URI for the key information needed to validate a JWT
-     *  The JWT Spring decoder automatically appends .well-known/openid-configuration
-     */
-    @Getter
-    @Value("${gpfd.jwks-uri}")
-    private String jwksUri;
-
-    /**
      * Configures a read-only {@link DataSource} using properties prefixed with
      * "gpfd.datasource.read-only" in the application's configuration file.
      * <p>
