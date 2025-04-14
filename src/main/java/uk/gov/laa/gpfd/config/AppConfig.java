@@ -77,7 +77,10 @@ public class AppConfig {
     @Value("${spring.cloud.azure.active-directory.profile.tenant-id}")
     private String entraIdTenantId;
 
-    //TODO docs
+    /**
+     *  Base URI for the key information needed to validate a JWT
+     *  The JWT Spring decoder automatically appends .well-known/openid-configuration
+     */
     @Getter
     @Value("${gpfd.jwks-uri}")
     private String jwksUri;

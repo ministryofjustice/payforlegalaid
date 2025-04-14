@@ -17,11 +17,13 @@ public class JwtConfig {
     }
 
     /**
-     * The custom {@link JwtDecoder} responsible for validating
-     * tokens provided by Entra ID. This will validate the issuer and signature based
-     * on the Entra ID setup, to ensure token validity
+     * The custom {@link JwtDecoder} This {@link JwtDecoder} bean is configured to use the JWKS endpoint provided by
+     *  * Microsoft Identity Platform, typically located at:
+     *  * <pre>
+     *  * https://login.microsoftonline.com/{tenantId}/discovery/v2.0/keys
+     *  * </pre>
+     * @return a {@link JwtDecoder} that validates JWTs signed by Entra Id
      */
-    //TODO expand docs
     @Bean
     public JwtDecoder jwtDecoder() {
         return JwtDecoders.fromIssuerLocation(appConfig.getJwksUri());

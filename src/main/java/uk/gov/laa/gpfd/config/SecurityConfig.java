@@ -49,10 +49,16 @@ public class SecurityConfig {
 
     private final AuthorizationManager<RequestAuthorizationContext> authManager;
 
-    //TODO docs
+    /**
+     * The custom {@link JwtDecoder} used to decode and validate JSON Web Tokens (JWTs) in a Spring Security
+     *  context.
+     */
     private final JwtDecoder jwtDecoder;
 
-    //TODO docs
+    /**
+     * {@link AppConfig} is a configuration class that encapsulates application-level
+     *  * settings and properties. Configuration loaded from application yml file.
+     */
     private final AppConfig appConfig;
 
     /**
