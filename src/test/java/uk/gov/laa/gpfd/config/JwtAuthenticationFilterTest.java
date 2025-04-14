@@ -4,7 +4,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -90,8 +89,6 @@ class JwtAuthenticationFilterTest {
     @SneakyThrows
     @NullAndEmptySource
     void shouldCallFilterWhenNoTokenProvided(String token, CapturedOutput output) {
-        SecurityContext securityContext = getSecurityContext();
-
         when(mockRequest.getHeader(JwtTokenComponents.HEADER_TYPE.value)).thenReturn(token);
 
         jwtAuthenticationFilter.doFilterInternal(mockRequest, mockResponse, mockFilterChain);
@@ -122,7 +119,7 @@ class JwtAuthenticationFilterTest {
     @SneakyThrows
     @Test
     void shouldPopulateSecurityContextWhenValidTokenProvided(CapturedOutput output) {
-        SecurityContext securityContext = getSecurityContext();
+        buildSecurityContext();
         mockTokenExtractAndGetSysVars();
         when(jwtDecoder.decode(any())).thenReturn(jwt(EXPECTED_CLIENT_ID,
                 Instant.now(),
@@ -131,7 +128,7 @@ class JwtAuthenticationFilterTest {
 
         jwtAuthenticationFilter.doFilterInternal(mockRequest, mockResponse, mockFilterChain);
 
-        assertNotNull(securityContext);
+        assertNotNull(SecurityContextHolder.getContext());
         assertEquals(VALID_USER, SecurityContextHolder.getContext().getAuthentication().getName());
         assertEquals(Optional.empty(), SecurityContextHolder.getContext().getAuthentication().getCredentials());
         assertEquals(List.of(), SecurityContextHolder.getContext().getAuthentication().getAuthorities());
@@ -422,11 +419,9 @@ class JwtAuthenticationFilterTest {
         when(appConfig.getEntraIdTenantId()).thenReturn(EXPECTED_TENANT_ID);
     }
 
-    @NotNull
-    private static SecurityContext getSecurityContext() {
+    private static void buildSecurityContext() {
         SecurityContext securityContext = new SecurityContextImpl(null);
         SecurityContextHolder.setContext(securityContext);
-        return securityContext;
     }
 
     private Jwt jwt(String appId, Instant notBefore, Instant expiresAt, List<String> scopes, String username) {
