@@ -77,6 +77,11 @@ public class AppConfig {
     @Value("${spring.cloud.azure.active-directory.profile.tenant-id}")
     private String entraIdTenantId;
 
+    //TODO docs
+    @Getter
+    @Value("${gpfd.jwks-uri}")
+    private String jwksUri;
+
     /**
      * Configures a read-only {@link DataSource} using properties prefixed with
      * "gpfd.datasource.read-only" in the application's configuration file.
