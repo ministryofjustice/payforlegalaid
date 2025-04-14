@@ -25,6 +25,7 @@ import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
 
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    private static final int TOKEN_ID_LENGTH = 8;
     private static final int TOKEN_PARTS = 3;
     private static final int TOKEN_ID_LENGTH = 8;
     private static final Map<String, String> errorMessages = Map.of(
