@@ -31,7 +31,7 @@ runs:
     - name: Run tests
       run: |
         cd testCode
-        mvn -B clean test -s .github/settings.xml \
+        mvn -B clean test -s .github/settings.xml
 
       shell:
         bash
