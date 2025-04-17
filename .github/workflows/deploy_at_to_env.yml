@@ -77,7 +77,7 @@ jobs:
         shell: bash
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: ${{ vars.TEST_ECR_REPOSITORY }}
+          REPOSITORY: ${{ vars.DEV_TEST_ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
 
       - name: Update pod.yaml with test image
