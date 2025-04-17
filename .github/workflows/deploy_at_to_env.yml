@@ -22,14 +22,18 @@ jobs:
       - name: Checkout Github Repository
         uses: actions/checkout@v4
 
-      - uses: './.github/login-to-aws'
-        env:
-          ROLE: ${{ secrets.DEV_ECR_ROLE_TO_ASSUME }}
-          AWS_REGION: ${{ vars.DEV_ECR_REGION }}
+      - name: Assume role in Cloud Platform
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.DEV_TEST_ECR_ROLE_TO_ASSUME }}
+          aws-region: ${{ vars.DEV_TEST_ECR_REGION }}
 
       - name: Login to container repository
         uses: aws-actions/amazon-ecr-login@v2
         id: login-ecr
+        with:
+          role-to-assume: ${{ secrets.DEV_TEST_ECR_ROLE_TO_ASSUME }}
+          aws-region: ${{ vars.DEV_TEST_ECR_REGION }}
 
       - name: Authenticate with Cloud Platform and Deploy
         env:
