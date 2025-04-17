@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,6 +52,12 @@ public class ReportsController implements ReportsApi, ExcelApi {
         var response = new ReportsGet200Response() {{
             reportListEntries.forEach(this::addReportListItem);
         }};
+
+        //TODO TAKE OUT
+        System.out.println("PRINCIPLE: " + SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        System.out.println("CREDENTIALS: " + SecurityContextHolder.getContext().getAuthentication().getCredentials());
+        System.out.println("AUTHORITIES: " + SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+
 
         log.debug("Returning a reportListResponse to user");
         return ResponseEntity.ok(response);

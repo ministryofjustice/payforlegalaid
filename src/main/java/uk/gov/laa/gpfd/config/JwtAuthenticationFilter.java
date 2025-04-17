@@ -1,5 +1,6 @@
 package uk.gov.laa.gpfd.config;
 
+import com.azure.spring.cloud.autoconfigure.implementation.aad.security.AadJwtGrantedAuthoritiesConverter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -104,7 +105,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             log.info("Token " + logIdentifier + " - JWT validated successfully");
 
-            SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(username, Optional.empty(), List.of()));
+            var converter = new AadJwtGrantedAuthoritiesConverter();
+
+            SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(username, Optional.empty(), converter.convert(decodedToken)));
 
         } catch (JwtException ex) {
             SecurityContextHolder.clearContext();

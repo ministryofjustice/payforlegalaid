@@ -34,7 +34,7 @@
         <poi.version>5.4.0</poi.version>
         <immutables.version>2.10.1</immutables.version>
         <spring-cloud-azure-dependencies.version>5.19.0</spring-cloud-azure-dependencies.version>
-        <spring-security-crypto.version>6.4.4</spring-security-crypto.version>
+        <spring-security.version>6.4.4</spring-security.version>
 
         <payforlegalaid-openapi.version>0.0.3</payforlegalaid-openapi.version>
     </properties>
@@ -280,7 +280,7 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-crypto</artifactId>
-            <version>${spring-security-crypto.version}</version>
+            <version>${spring-security.version}</version>
         </dependency>
 
         <dependency>
@@ -311,6 +311,11 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-resource-server</artifactId>
+            <version>${spring-security.version}</version>
         </dependency>
         <!-- Test Dependencies-->
         <dependency>
