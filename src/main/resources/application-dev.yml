@@ -4,6 +4,10 @@ gpfd:
   redirect-uri-template: ${gpfd.url}/login/oauth2/code/gpfd-azure-dev
   # Note,"gpfd-azure-dev" is also known as the Oauth2 'registrationId'
 
+  # Base URI for the key information needed to validate a JWT
+  # The JWT Spring decoder automatically appends .well-known/openid-configuration
+  jwks-uri: https://sts.windows.net/${spring.cloud.azure.active-directory.profile.tenant-id}/
+
   # DEV MOJFIN database config
   datasource:
     read-only:

@@ -16,6 +16,10 @@ gpfd:
   url: http://localhost:8080
   redirect-uri-template: ${gpfd.url}/login/oauth2/code/gpfd-azure-dev
 
+  # Base URI for the key information needed to validate a JWT
+  # The JWT Spring decoder automatically appends .well-known/openid-configuration
+  jwks-uri: https://localhost:8080
+
   datasource:
     read-only:
       url: jdbc:h2:file:~/localGpfdDb;MODE=Oracle

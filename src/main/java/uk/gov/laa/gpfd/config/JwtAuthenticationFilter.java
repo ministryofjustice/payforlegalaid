@@ -1,10 +1,13 @@
 package uk.gov.laa.gpfd.config;
 
+import com.azure.spring.cloud.autoconfigure.implementation.aad.security.AadJwtGrantedAuthoritiesConverter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimNames;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -14,7 +17,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
 
@@ -25,7 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final Map<String, String> errorMessages = Map.of(
             JwtClaimNames.AUD, "Audience mismatch",
             JwtTokenComponents.TENANT_ID_KEY.value, "Incorrect Tenant ID",
-            JwtTokenComponents.APPLICATION_ID_KEY.value,"Incorrect Application ID",
+            JwtTokenComponents.APPLICATION_ID_KEY.value, "Incorrect Application ID",
             JwtClaimNames.EXP, "Token is expired",
             JwtClaimNames.NBF, "Token not valid for current time",
             JwtTokenComponents.SCOPE_KEY.value, "Expected scope values are missing");
@@ -38,12 +43,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.appConfig = appConfig;
     }
 
+    /**
+     * @param servletRequest
+     * @param servletResponse
+     * @param filterChain
+     * @throws IOException
+     * @throws ServletException Custom implementation to validate JWT when user logs in to Entra ID.
+     *                          Creates authentication object and sets in the SecurityContext, in place of default session id behaviour.
+     *                          Will default to using session id, as part of standard spring security flow, if invalid JWT is provided; prompting user to login.
+     */
     @Override
     public void doFilterInternal(HttpServletRequest servletRequest, @NotNull HttpServletResponse servletResponse, @NotNull FilterChain filterChain) throws IOException, ServletException {
         var token = servletRequest.getHeader(JwtTokenComponents.HEADER_TYPE.value);
 
         if (token != null && !token.isEmpty()) {
-            String logIdentifier = sha256Hex(token).substring(0,TOKEN_ID_LENGTH);
+            String logIdentifier = sha256Hex(token).substring(0, TOKEN_ID_LENGTH);
             log.info("Token " + logIdentifier + " - token received, attempting validation");
             validateJwt(token, logIdentifier);
         }
@@ -91,12 +105,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             log.info("Token " + logIdentifier + " - JWT validated successfully");
 
+            var converter = new AadJwtGrantedAuthoritiesConverter();
+
+            SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(username, Optional.empty(), converter.convert(decodedToken)));
+
         } catch (JwtException ex) {
+            SecurityContextHolder.clearContext();
             throw new JwtException("Unable to validate token: " + ex.getMessage());
         } catch (Exception ex) {
+            SecurityContextHolder.clearContext();
             throw new JwtException("Unable to validate token.\n" + ex.getClass() + ": " + ex.getMessage());
         }
-
     }
 
     private String extractJwtToken(String token) {
