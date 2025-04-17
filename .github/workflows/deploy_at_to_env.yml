@@ -50,7 +50,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ministryofjustice/payforlegalaid-tests
-          ref: faeture/test-foo
           path: testCode
 
       - name: Setup Java
@@ -72,7 +71,7 @@ jobs:
           USERNAME: ${{ secrets.OPENAPI_PACKAGE_USER }}
           PASSWORD: ${{ secrets.OPENAPI_PACKAGE_PASSWORD }}
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: ${{ vars.TEST_ECR_REPOSITORY }}
+          REPOSITORY: ${{ vars.DEV_TEST_ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
 
       - name: Set TEST_IMAGE environment variable
