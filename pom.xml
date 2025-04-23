@@ -33,7 +33,7 @@
         <poi.version>5.4.0</poi.version>
         <immutables.version>2.10.1</immutables.version>
         <spring-cloud-azure-dependencies.version>5.19.0</spring-cloud-azure-dependencies.version>
-        <spring-security-crypto.version>6.4.4</spring-security-crypto.version>
+        <spring-security-crypto.version>6.4.5</spring-security-crypto.version>
 
         <payforlegalaid-openapi.version>0.0.3</payforlegalaid-openapi.version>
     </properties>
