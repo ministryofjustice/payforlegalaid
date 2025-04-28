@@ -31,7 +31,10 @@ runs:
     - name: Run tests
       run: |
         cd testCode
-        mvn -B clean test -s .github/settings.xml
+        mvn -B clean test -s .github/settings.xml \
+        -Dspring.cloud.azure.active-directory.profile.tenant-id=TESTTENANT \
+        -Dspring.cloud.azure.active-directory.credential.client-id=TESTCLIENTID \
+        -Dspring.cloud.azure.active-directory.credential.client-secret=TESTCLIENTSECRET 
 
       shell:
         bash

@@ -12,10 +12,11 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import uk.gov.laa.gpfd.config.TestAuthConfig;
 import uk.gov.laa.gpfd.utils.DatabaseUtils;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public abstract class BaseIT {
+public abstract class BaseIT extends TestAuthConfig {
 
   @Autowired
   private DatabaseUtils databaseUtils;
