@@ -1,5 +1,6 @@
 package uk.gov.laa.gpfd;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
@@ -24,6 +25,13 @@ public class StartupLogger implements ApplicationRunner {
   @Value("${gpfd.redirect-uri-template}")
   private String redirectUri;
 
+  @Value("${spring.cloud.azure.active-directory.redirect-uri-template}")
+  private String redirectUriTemplate;
+
+  @PostConstruct
+  public void logRedirectUri() {
+    logger.info("vvvv Effective Azure Redirect URI Template: {}", redirectUriTemplate);
+  }
 
   @Bean
   public OAuth2AuthorizationRequestResolver customAuthorizationRequestResolver(
