@@ -6,40 +6,109 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtClaimNames;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.Map;
+
+import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
 
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private static final String TOKEN_PREFIX = "bearer ";
+    private static final int TOKEN_ID_LENGTH = 8;
     private static final int TOKEN_PARTS = 3;
+    private static final Map<String, String> errorMessages = Map.of(
+            JwtClaimNames.AUD, "Audience mismatch",
+            JwtTokenComponents.TENANT_ID_KEY.value, "Incorrect Tenant ID",
+            JwtTokenComponents.APPLICATION_ID_KEY.value,"Incorrect Application ID",
+            JwtClaimNames.EXP, "Token is expired",
+            JwtClaimNames.NBF, "Token not valid for current time",
+            JwtTokenComponents.SCOPE_KEY.value, "Expected scope values are missing");
+
+    private final JwtDecoder jwtDecoder;
+    private final AppConfig appConfig;
+
+    public JwtAuthenticationFilter(JwtDecoder jwtDecoder, AppConfig appConfig) {
+        this.jwtDecoder = jwtDecoder;
+        this.appConfig = appConfig;
+    }
 
     @Override
     public void doFilterInternal(HttpServletRequest servletRequest, @NotNull HttpServletResponse servletResponse, @NotNull FilterChain filterChain) throws IOException, ServletException {
-        var token = servletRequest.getHeader("Authorization");
+        var token = servletRequest.getHeader(JwtTokenComponents.HEADER_TYPE.value);
 
         if (token != null && !token.isEmpty()) {
-            // JWT validation logic to come in later PR
+            String logIdentifier = sha256Hex(token).substring(0,TOKEN_ID_LENGTH);
+            log.info("Token " + logIdentifier + " - token received, attempting validation");
+            validateJwt(token, logIdentifier);
         }
 
         filterChain.doFilter(servletRequest, servletResponse);
+    }
+
+    private void validateJwt(String token, String logIdentifier) {
+        var jwtContent = extractJwtToken(token);
+
+        try {
+            Jwt decodedToken = jwtDecoder.decode(jwtContent);
+
+            if (decodedToken == null)
+                throw new JwtException("decode token returned null");
+
+            String username = decodedToken.getSubject();
+
+            if (username == null || username.isEmpty())
+                throw new JwtException("token includes no valid username");
+
+            if (!decodedToken.getAudience().contains(appConfig.getEntraIdClientId())) {
+                throw new JwtException(errorMessages.get(JwtClaimNames.AUD));
+            }
+
+            if (!decodedToken.getClaimAsString(JwtTokenComponents.TENANT_ID_KEY.value).equals(appConfig.getEntraIdTenantId())) {
+                throw new JwtException(errorMessages.get(JwtTokenComponents.TENANT_ID_KEY.value));
+            }
+
+            if (!decodedToken.getClaimAsString(JwtTokenComponents.APPLICATION_ID_KEY.value).equals(appConfig.getEntraIdClientId())) {
+                throw new JwtException(errorMessages.get(JwtTokenComponents.APPLICATION_ID_KEY.value));
+            }
+
+            if (isTokenExpired(decodedToken)) {
+                throw new JwtException(errorMessages.get(JwtClaimNames.EXP));
+            }
+
+            if (!isTokenValidForCurrentTime(decodedToken)) {
+                throw new JwtException(errorMessages.get(JwtClaimNames.NBF));
+            }
+
+            if (!decodedToken.getClaimAsStringList(JwtTokenComponents.SCOPE_KEY.value).contains(JwtTokenComponents.SCOPE_VALUE.value)) {
+                throw new JwtException(errorMessages.get(JwtTokenComponents.SCOPE_KEY.value));
+            }
+
+            log.info("Token " + logIdentifier + " - JWT validated successfully");
+
+        } catch (JwtException ex) {
+            throw new JwtException("Unable to validate token: " + ex.getMessage());
+        } catch (Exception ex) {
+            throw new JwtException("Unable to validate token.\n" + ex.getClass() + ": " + ex.getMessage());
+        }
 
     }
 
-    public String extractJwtToken(String token) {
+    private String extractJwtToken(String token) {
         final String INVALID_JWT_ERROR_MESSAGE = "Token is not a valid JWT";
 
-        if (token == null || token.length() <= TOKEN_PREFIX.length())
+        if (token == null || token.length() <= JwtTokenComponents.TOKEN_PREFIX.value.length())
             throw new JwtException(INVALID_JWT_ERROR_MESSAGE);
 
-        if (!token.substring(0, TOKEN_PREFIX.length()).equalsIgnoreCase(TOKEN_PREFIX))
+        if (!token.substring(0, JwtTokenComponents.TOKEN_PREFIX.value.length()).equalsIgnoreCase(JwtTokenComponents.TOKEN_PREFIX.value))
             throw new JwtException(INVALID_JWT_ERROR_MESSAGE);
 
-        token = token.substring(TOKEN_PREFIX.length());
+        token = token.substring(JwtTokenComponents.TOKEN_PREFIX.value.length());
 
         var contents = token.split("\\.");
 
@@ -56,7 +125,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return token;
     }
 
-    public boolean isTokenValidForCurrentTime(Jwt decodedToken) {
+    private boolean isTokenValidForCurrentTime(Jwt decodedToken) {
         try {
             return !decodedToken.getNotBefore().isAfter(Instant.now());
         } catch (NullPointerException ex) {
@@ -64,7 +133,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-    public boolean isTokenExpired(Jwt decodedToken) {
+    private boolean isTokenExpired(Jwt decodedToken) {
         try {
             return decodedToken.getExpiresAt().isBefore(Instant.now());
         } catch (NullPointerException ex) {
