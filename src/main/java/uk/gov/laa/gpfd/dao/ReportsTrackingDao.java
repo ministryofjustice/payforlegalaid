@@ -28,6 +28,12 @@ public class ReportsTrackingDao {
           , reportsTracking.getReportId()
           , reportsTracking.getReportCreator()
           , e);
+/*      log.error("vvvv Error saving tracking information for tracking ID:{}, name: {}, rep id: {}, cre dt: {}, creator:{}, owner: {}, output: {}, tepl: {}, repUrl: {}"
+          ,reportsTracking.getId().toString(), reportsTracking.getName(),
+          reportsTracking.getReportId(), reportsTracking.getCreationDate(), reportsTracking.getReportCreator(),
+          reportsTracking.getReportOwner(), reportsTracking.getReportOutputType(), reportsTracking.getTemplateUrl(), reportsTracking.getReportUrl()
+          , e);
+*/
     }
   }
 
