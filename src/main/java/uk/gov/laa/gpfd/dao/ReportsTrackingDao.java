@@ -1,6 +1,5 @@
 package uk.gov.laa.gpfd.dao;
 
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -19,13 +18,13 @@ public class ReportsTrackingDao {
 
   public void saveReportsTracking(ReportsTracking reportsTracking) {
     try {
-      log.debug("Saving tracking information for report ID:{}", reportsTracking.getReportId());
-      int numberOfRowsAffected = this.writeJdbcTemplate.update(INSERT_SQL, UUID.randomUUID().toString(), reportsTracking.getName(),
+      log.debug("vvvv Saving tracking information for report ID:{}, creator: {}", reportsTracking.getReportId(), reportsTracking.getReportCreator());
+      int numberOfRowsAffected = this.writeJdbcTemplate.update(INSERT_SQL, reportsTracking.getId(), reportsTracking.getName(),
           reportsTracking.getReportId(), reportsTracking.getCreationDate(), reportsTracking.getReportCreator(),
           reportsTracking.getReportOwner(), reportsTracking.getReportOutputType(), reportsTracking.getTemplateUrl(), reportsTracking.getReportUrl());
-      log.debug("Number of database rows affected by insert to report tracking table: " + numberOfRowsAffected);
+      log.debug("vvvv Number of database rows affected by insert to report tracking table: " + numberOfRowsAffected);
     } catch (Exception e) {
-      log.error("Error saving tracking information for report ID:{}, creator: {}"
+      log.error("vvvv Error saving tracking information for report ID:{}, creator: {}"
           , reportsTracking.getReportId()
           , reportsTracking.getReportCreator()
           , e);
