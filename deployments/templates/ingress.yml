@@ -11,21 +11,8 @@ spec:
   ingressClassName: default
   tls:
     - hosts:
-        - ${NAMESPACE}.apps.live.cloud-platform.service.justice.gov.uk
-    - hosts:
       - '${GPFD_URL}'
-      secretName: tls-certificate
   rules:
-    - host: ${NAMESPACE}.apps.live.cloud-platform.service.justice.gov.uk
-      http:
-        paths:
-          - path: /
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: gpfd-${ENV_NAME}-service
-                port:
-                  number: 8080
     - host: '${GPFD_URL}'
       http:
         paths:
