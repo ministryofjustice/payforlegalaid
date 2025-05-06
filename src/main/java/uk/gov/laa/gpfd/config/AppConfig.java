@@ -18,6 +18,7 @@ import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.laa.gpfd.model.FieldAttributes;
+import uk.gov.laa.gpfd.services.DataStreamer;
 import uk.gov.laa.gpfd.services.TemplateService;
 import uk.gov.laa.gpfd.services.excel.editor.CellValueSetter;
 import uk.gov.laa.gpfd.services.excel.editor.FormulaCalculator;
@@ -34,6 +35,8 @@ import javax.sql.DataSource;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
+import static uk.gov.laa.gpfd.services.DataStreamer.createJdbcStreamer;
 
 /**
 * Configuration class for application-level beans and settings.
@@ -281,4 +284,14 @@ public class AppConfig {
         return new FormulaCalculator() {};
     }
 
+    /**
+     * Creates and returns a {@link DataStreamer} bean. This bean is responsible for
+     * streaming csv files.
+     *
+     * @return a {@link DataStreamer} instance
+     */
+    @Bean
+    DataStreamer dataStreamer(JdbcTemplate readOnlyJdbcTemplate) {
+        return createJdbcStreamer(readOnlyJdbcTemplate);
+    }
 }
