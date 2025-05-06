@@ -30,4 +30,5 @@ public class ReportDetails {
     private String fileName;
     private Boolean active;
     private String extension;
+    private String reportDownloadUrl;
 }

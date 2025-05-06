@@ -6,9 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import uk.gov.laa.gpfd.config.AppConfig;
 import uk.gov.laa.gpfd.dao.ReportViewsDao;
-import uk.gov.laa.gpfd.enums.FileExtension;
 import uk.gov.laa.gpfd.exception.CsvStreamException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
@@ -32,7 +30,6 @@ public class ReportService {
 
     private final ReportViewsDao reportViewsDao;
     private final MappingTableService mappingTableService;
-    private final AppConfig appConfig;
     private final ReportManagementService reportManagementService;
 
     /**
@@ -142,12 +139,11 @@ public class ReportService {
     public GetReportById200Response createReportResponse(UUID id) {
         log.info("Getting details for report ID {}", id);
         var reportDetails = reportManagementService.getDetailsForSpecificReport(id);
-        String subPath = FileExtension.getSubPathForExtension(reportDetails.getExtension().toLowerCase());
 
         var reportResponse = new GetReportById200Response() {{
             setId(reportDetails.getId());
             setReportName(reportDetails.getName());
-            setReportDownloadUrl(URI.create(String.format("%s/%s/%s", appConfig.getServiceUrl(), subPath, id)));
+            setReportDownloadUrl(URI.create(reportDetails.getReportDownloadUrl()));
         }};
 
         log.info("Returning report response object for report ID {}", id);

@@ -19,6 +19,7 @@ public class ReportDetailsTestDataFactory {
         .id(id)
         .name(reportName)
         .extension(extension)
+        .reportDownloadUrl("test.download.url")
         .build();
   }
 

@@ -24,10 +24,6 @@ public class ReportsTrackingDao {
           reportsTracking.getReportOwner(), reportsTracking.getReportOutputType(), reportsTracking.getTemplateUrl(), reportsTracking.getReportUrl());
       log.debug("vvvv Number of database rows affected by insert to report tracking table: " + numberOfRowsAffected);
     } catch (Exception e) {
-//      log.error("vvvv Error saving tracking information for report ID:{}, creator: {}"
-//          , reportsTracking.getReportId()
-//          , reportsTracking.getReportCreator()
-//          , e);
 
       log.error("vvvv Error saving tracking information for tracking ID:{}, name: {}, rep id: {}, cre dt: {}, creator:{}, owner: {}, output: {}, tepl: {}, repUrl: {}"
           ,reportsTracking.getId().toString(), reportsTracking.getName(),

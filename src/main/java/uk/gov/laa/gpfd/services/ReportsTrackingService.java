@@ -27,7 +27,7 @@ public class ReportsTrackingService {
         var reportsTracking = ReportsTracking.builder()
             .id(UUID.randomUUID())
             .name(reportDetails.getName())
-            .reportUrl("www.sharepoint.com/place-where-we-will-create-report")
+            .reportUrl(reportDetails.getReportDownloadUrl())
             .creationDate(Timestamp.valueOf(LocalDateTime.now()))
             .reportId(reportDetails.getId())
             .reportCreator(userService.getCurrentUserName())
