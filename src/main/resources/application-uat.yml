@@ -16,8 +16,6 @@ gpfd:
       driver-class-name: oracle.jdbc.OracleDriver
 
 spring:
-  liquibase:
-    enabled: true
   cloud:
     azure:
       active-directory:
