@@ -31,7 +31,7 @@ public class ReportsTrackingDao {
 
       log.error("vvvv Error saving tracking information for tracking ID:{}, name: {}, rep id: {}, cre dt: {}, creator:{}, owner: {}, output: {}, tepl: {}, repUrl: {}"
           ,reportsTracking.getId().toString(), reportsTracking.getName(),
-          reportsTracking.getReportId().toString(), reportsTracking.getCreationDate(), reportsTracking.getReportCreator(),
+          (reportsTracking.getReportId() == null? "null":reportsTracking.getReportId().toString()), reportsTracking.getCreationDate(), reportsTracking.getReportCreator(),
           reportsTracking.getReportOwner(), reportsTracking.getReportOutputType(), reportsTracking.getTemplateUrl(), reportsTracking.getReportUrl()
           , e);
 
