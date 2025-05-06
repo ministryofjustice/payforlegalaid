@@ -20,21 +20,21 @@ public class ReportsTrackingDao {
     try {
       log.debug("vvvv Saving tracking information for report ID:{}, creator: {}", reportsTracking.getReportId(), reportsTracking.getReportCreator());
       int numberOfRowsAffected = this.writeJdbcTemplate.update(INSERT_SQL, reportsTracking.getId().toString(), reportsTracking.getName(),
-          reportsTracking.getReportId(), reportsTracking.getCreationDate(), reportsTracking.getReportCreator(),
+          reportsTracking.getReportId().toString(), reportsTracking.getCreationDate(), reportsTracking.getReportCreator(),
           reportsTracking.getReportOwner(), reportsTracking.getReportOutputType(), reportsTracking.getTemplateUrl(), reportsTracking.getReportUrl());
       log.debug("vvvv Number of database rows affected by insert to report tracking table: " + numberOfRowsAffected);
     } catch (Exception e) {
-      log.error("vvvv Error saving tracking information for report ID:{}, creator: {}"
-          , reportsTracking.getReportId()
-          , reportsTracking.getReportCreator()
-          , e);
+//      log.error("vvvv Error saving tracking information for report ID:{}, creator: {}"
+//          , reportsTracking.getReportId()
+//          , reportsTracking.getReportCreator()
+//          , e);
 
-/*      log.error("vvvv Error saving tracking information for tracking ID:{}, name: {}, rep id: {}, cre dt: {}, creator:{}, owner: {}, output: {}, tepl: {}, repUrl: {}"
+      log.error("vvvv Error saving tracking information for tracking ID:{}, name: {}, rep id: {}, cre dt: {}, creator:{}, owner: {}, output: {}, tepl: {}, repUrl: {}"
           ,reportsTracking.getId().toString(), reportsTracking.getName(),
-          reportsTracking.getReportId(), reportsTracking.getCreationDate(), reportsTracking.getReportCreator(),
+          reportsTracking.getReportId().toString(), reportsTracking.getCreationDate(), reportsTracking.getReportCreator(),
           reportsTracking.getReportOwner(), reportsTracking.getReportOutputType(), reportsTracking.getTemplateUrl(), reportsTracking.getReportUrl()
           , e);
-*/
+
     }
   }
 
