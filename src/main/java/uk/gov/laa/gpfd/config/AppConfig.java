@@ -1,6 +1,5 @@
 package uk.gov.laa.gpfd.config;
 
-import liquibase.integration.spring.SpringLiquibase;
 import lombok.Getter;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -159,30 +158,6 @@ public class AppConfig {
                     new ByteArrayHttpMessageConverter()
             ));
         }};
-    }
-
-    /**
-     * Creates and configures a {@link SpringLiquibase} bean to be used for database,
-     * if the property `spring.liquibase.enabled` is set to `true` in the application properties.
-     *
-     * This method will set the data source to the specified {@link DataSource} bean, configure the
-     * change log file to be used by Liquibase, and ensure that the migrations are executed by
-     * setting {@code setShouldRun(true)}.
-     *
-     * @param dataSource The {@link DataSource} bean to be used by Liquibase for database connectivity.
-     * @return A configured {@link SpringLiquibase} instance ready for migration.
-     *
-     * @see SpringLiquibase
-     * @see DataSource
-     */
-    @Bean
-    @ConditionalOnProperty(name = "spring.liquibase.enabled", havingValue = "true")
-    public SpringLiquibase liquibase(@Qualifier("writeDataSource") DataSource dataSource) {
-        SpringLiquibase liquibase = new SpringLiquibase();
-        liquibase.setDataSource(dataSource);
-        liquibase.setChangeLog(liquibaseChangeLog);
-        liquibase.setShouldRun(true);
-        return liquibase;
     }
 
     /**
