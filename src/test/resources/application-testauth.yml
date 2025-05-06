@@ -18,6 +18,9 @@ gpfd:
 
 # Azure AD and Graph config
 spring:
+  liquibase:
+    enabled: false
+    change-log: classpath:liquibase/db.changelog-master.xml
   cloud:
     azure:
       active-directory:

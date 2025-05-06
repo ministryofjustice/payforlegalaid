@@ -29,9 +29,6 @@ gpfd:
       driver-class-name: org.h2.Driver
 
 spring:
-  liquibase:
-    enabled: true
-    change-log: classpath:liquibase/db.changelog-master-local.xml
   cloud:
     azure:
       active-directory:
