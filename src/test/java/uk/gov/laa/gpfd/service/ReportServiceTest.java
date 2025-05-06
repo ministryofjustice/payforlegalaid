@@ -1,5 +1,6 @@
 package uk.gov.laa.gpfd.service;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -7,39 +8,42 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.laa.gpfd.config.AppConfig;
-import uk.gov.laa.gpfd.dao.ReportViewsDao;
 import uk.gov.laa.gpfd.data.ReportDetailsTestDataFactory;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportDetails;
+import uk.gov.laa.gpfd.services.DataStreamer;
 import uk.gov.laa.gpfd.services.ReportManagementService;
 import uk.gov.laa.gpfd.services.ReportService;
 
-import java.io.*;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.when;
+import static uk.gov.laa.gpfd.data.MappingTableTestDataFactory.aValidInvoiceAnalysisReport;
 
 @ExtendWith(MockitoExtension.class)
 class ReportServiceTest {
     private static final UUID VALID_REPORT_ID = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
-
     @Mock
-    ReportViewsDao reportViewsDAO;
-
+    DataStreamer dataStreamer;
     @Mock
     ReportManagementService reportManagementService;
-
     @InjectMocks
     ReportService reportService;
     List<Map<String, Object>> reportMapMockList = new ArrayList<>();
 
-
     @BeforeEach
     void init() {
-
         Map<String, Object> rowOne = new LinkedHashMap<>();
         rowOne.put("name", "CCMS Report");
         rowOne.put("balance", 12300);
@@ -51,10 +55,35 @@ class ReportServiceTest {
         rowTwo.put("balance", 16300);
         rowTwo.put("system", "ccms");
         reportMapMockList.add(rowTwo);
-
-
     }
 
+    @Test
+    void createCSVResponse_ShouldGenerateCorrectCSVContent() throws Exception {
+        var expectedCsvHeader = "id,date,report";
+        var expectedRow1 = "1,2023-08-07 00:00:00.0,Example Report 1";
+        var expectedRow2 = "2,2023-12-31 01:50:00.0,Example Report 2";
+        var testId = UUID.randomUUID();
+
+        when(mappingTableService.getDetailsForSpecificMapping(testId)).thenReturn(aValidInvoiceAnalysisReport());
+
+        doAnswer(invocation -> {
+            String csvContent = expectedCsvHeader + "\n" + expectedRow1 + "\n" + expectedRow2;
+            OutputStream stream = invocation.getArgument(1);
+            stream.write(csvContent.getBytes());
+            return null;
+        }).when(dataStreamer).stream(any(String.class), any(OutputStream.class));
+
+        var response = reportService.createCSVResponse(testId);
+
+        var outputStream = new ByteArrayOutputStream();
+        response.getBody().writeTo(outputStream);
+
+        var csvContent = outputStream.toString();
+        Assertions.assertNotNull(csvContent);
+        assertTrue(csvContent.contains(expectedCsvHeader));
+        assertTrue(csvContent.contains(expectedRow1));
+        assertTrue(csvContent.contains(expectedRow2));
+    }
 
     @Test
     void givenValidId_whenCreateReportResponse_thenValidResponseIsReturned() {
@@ -72,37 +101,18 @@ class ReportServiceTest {
     }
 
     @Test
-    void createCSVStreamReturnsCorrectContent() throws Exception {
-        // Arrange
-        String sqlQuery = "SELECT * FROM exampleTable";
-        List<Map<String, Object>> mockResultList = Arrays.asList(
-            new LinkedHashMap<>() {{
-              put("id", 1);
-              put("DATE_AUTHORISED_CIS", Timestamp.valueOf(LocalDateTime.of(2023, 8, 7, 0, 0)));
-              put("name", "Example Report 1");
-            }},
-            new LinkedHashMap<>() {{
-              put("id", 2);
-              put("DATE_AUTHORISED_CIS", Timestamp.valueOf(LocalDateTime.of(2023, 12, 31, 1, 50)));
-              put("name", "Example Report 2");
-            }}
-        );
+    void createReportResponse_ReturnsCorrectUrl() throws IOException {
 
-        when(reportViewsDAO.callDataBase(sqlQuery)).thenReturn(mockResultList);
+        when(appConfig.getServiceUrl()).thenReturn("http://localhost");
 
-        // Act
-        ByteArrayOutputStream outputStream = reportService.createCsvStream(sqlQuery);
+        ReportsGet200ResponseReportListInner mockReportListResponseDev = ReportListEntryTestDataFactory.aValidReportsGet200ResponseReportListInner();
 
-        // Assert
-        assertNotNull(outputStream);
-        String resultContent = outputStream.toString();
-        assertTrue(resultContent.contains("id,DATE_AUTHORISED_CIS,name"));
-        assertTrue(resultContent.contains("1,2023-08-07 00:00:00.0,Example Report 1"));
-        assertTrue(resultContent.contains("2,2023-12-31 01:50:00.0,Example Report 2"));
+        when(mappingTableService.getDetailsForSpecificReport(id)).thenReturn(mockReportListResponseDev);
 
+        GetReportById200Response actualReportResponseDev = reportService.createReportResponse(id);
 
-        // Verify the interaction with the mock
-        verify(reportViewsDAO).callDataBase(sqlQuery);
+        assertTrue(actualReportResponseDev.getReportDownloadUrl().toString().contentEquals("http://localhost/csv/0d4da9ec-b0b3-4371-af10-f375330d85d1"));
+
     }
 
 }
