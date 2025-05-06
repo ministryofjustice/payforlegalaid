@@ -20,6 +20,7 @@ jobs:
       openapi_package_user: ${{ secrets.OPENAPI_PACKAGE_USER }}
       openapi_package_password: ${{ secrets.OPENAPI_PACKAGE_PASSWORD }}
       snyk_token: ${{ secrets.SNYK_TOKEN }}
+      socket_key: ${{ secrets.DEV_SOCKET_KEY }}
       ecr_role_to_assume: ${{ secrets.DEV_ECR_ROLE_TO_ASSUME }}
       kube_namespace: ${{ secrets.KUBE_NAMESPACE_DEV }}
       kube_cluster: ${{ secrets.KUBE_CLUSTER_DEV }}
@@ -40,6 +41,7 @@ jobs:
       openapi_package_user: ${{ secrets.OPENAPI_PACKAGE_USER }}
       openapi_package_password: ${{ secrets.OPENAPI_PACKAGE_PASSWORD }}
       snyk_token: ${{ secrets.SNYK_TOKEN }}
+      socket_key: ${{ secrets.UAT_SOCKET_KEY }}
       ecr_role_to_assume: ${{ secrets.UAT_ECR_ROLE_TO_ASSUME }}
       kube_namespace: ${{ secrets.KUBE_NAMESPACE_UAT }}
       kube_cluster: ${{ secrets.KUBE_CLUSTER_UAT }}
@@ -60,6 +62,7 @@ jobs:
       openapi_package_user: ${{ secrets.OPENAPI_PACKAGE_USER }}
       openapi_package_password: ${{ secrets.OPENAPI_PACKAGE_PASSWORD }}
       snyk_token: ${{ secrets.SNYK_TOKEN }}
+      socket_key: ${{ secrets.PROD_SOCKET_KEY }}
       ecr_role_to_assume: ${{ secrets.PROD_ECR_ROLE_TO_ASSUME }}
       kube_namespace: ${{ secrets.KUBE_NAMESPACE_PROD }}
       kube_cluster: ${{ secrets.KUBE_CLUSTER_PROD }}

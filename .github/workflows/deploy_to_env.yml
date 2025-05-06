@@ -25,6 +25,8 @@ on:
         required: true
       snyk_token:
         required: true
+      socket_key:
+        required: true
       ecr_role_to_assume:
         required: true
       kube_namespace:
@@ -47,10 +49,23 @@ jobs:
     env:
       USERNAME: ${{ secrets.openapi_package_user }}
       PASSWORD: ${{ secrets.openapi_package_password }}
+      DATA_REPO: "ministryofjustice/payforlegalaid-data"
 
     steps:
       - name: Checkout Github Repository
         uses: actions/checkout@v4
+
+      - name: Checkout GitHub repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.DATA_REPO }}
+          ssh-key: ${{ inputs.socket_key }}
+          sparse-checkout: data
+          sparse-checkout-cone-mode: true
+
+      - name: Setup XML tools
+        run: |
+          sudo apt-get update && sudo apt-get install -y libxml2-utils
 
       - name: Build and test the code
         uses: './.github/build-and-test'
@@ -111,4 +126,17 @@ jobs:
           kubectl config set-credentials deploy-user --token=${{ secrets.kube_token }}
           kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
           kubectl config use-context ${KUBE_CLUSTER}
+          
+          xmllint --format --encode UTF-8 data/migrations/db.changelog-master.xml > normalized-changelog.xml
+          CHECKSUM=$(sha256sum normalized-changelog.xml | cut -d' ' -f1)
+
+          kubectl create configmap liquibase-changelog \
+          --namespace ${{ KUBE_NAMESPACE }} \
+          --from-file=changelog.xml=normalized-changelog.xml \
+          --dry-run=client -o yaml | \
+          yq eval '
+          .metadata.annotations."checksum/xml" = "'"$CHECKSUM"'" |
+          .metadata.labels."app.kubernetes.io/component" = "database-migrations"
+          ' - | kubectl apply -f -
+
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments/

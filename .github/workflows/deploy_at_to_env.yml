@@ -8,6 +8,7 @@ concurrency:
 
 env:
   APP_NAME: "gpfd-at-tests"
+  DATA_REPO: "ministryofjustice/payforlegalaid-data"
   TEST_REPO: "ministryofjustice/payforlegalaid-tests"
   ECR_REGION: ${{ vars.DEV_TEST_ECR_REGION }}
   ECR_ROLE: ${{ secrets.DEV_TEST_ECR_ROLE_TO_ASSUME }}
@@ -32,6 +33,18 @@ jobs:
         with:
           repository: ${{ env.TEST_REPO }}
           path: testCode
+
+      - name: Checkout GitHub repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.DATA_REPO }}
+          ssh-key: ${{ secrets.DEV_SOCKET_KEY }}
+          sparse-checkout: data
+          sparse-checkout-cone-mode: true
+
+      - name: Setup XML tools
+        run: |
+          sudo apt-get update && sudo apt-get install -y libxml2-utils
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -106,6 +119,21 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
+          xmllint --format --encode UTF-8 data/migrations/db.changelog-master.xml > normalized-changelog.xml
+          
+          CHECKSUM=$(sha256sum normalized-changelog.xml | cut -d' ' -f1)
+
+          kubectl create configmap liquibase-changelog \
+          --namespace ${{ env.KUBE_NAMESPACE }} \
+          --from-file=changelog.xml=normalized-changelog.xml \
+          --dry-run=client -o yaml | \
+          yq eval '
+          .metadata.annotations."checksum/xml" = "'"$CHECKSUM"'" |
+          .metadata.labels."app.kubernetes.io/component" = "database-migrations"
+          ' - | kubectl apply -f -
+
+          echo "✓ ConfigMap deployed with checksum: $CHECKSUM"
+          
           echo "Checking for existing pod..."
           
           # Clean up any existing pod
