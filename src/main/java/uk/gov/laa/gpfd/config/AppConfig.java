@@ -64,9 +64,6 @@ public class AppConfig {
     @Value("${gpfd.url}")
     private String serviceUrl;
 
-    @Value("${spring.liquibase.changelog}")
-    private String liquibaseChangeLog;
-
     @Getter
     @Value("${spring.cloud.azure.active-directory.credential.client-id}")
     private String entraIdClientId;
