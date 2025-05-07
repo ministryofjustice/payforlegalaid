@@ -17,6 +17,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 import uk.gov.laa.gpfd.model.FieldAttributes;
 import uk.gov.laa.gpfd.services.DataStreamer;
 import uk.gov.laa.gpfd.services.TemplateService;
@@ -178,6 +179,13 @@ public class AppConfig {
     @Bean
     public TemplateClient localTemplateClient() {
         return new LocalTemplateClient();
+    }
+
+    @Bean
+    public WebClient webClient(WebClient.Builder builder) {
+        //TODO add var instead of hardcoding
+        // TODO add docs
+        return builder.baseUrl("https//localhost:8080").build();
     }
 
     /**
