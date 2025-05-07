@@ -68,9 +68,6 @@ public class AppConfig {
     private String serviceUrl;
 
     @Getter
-    @Value("${spring.cloud.azure.active-directory.redirect-uri-template}")
-    private String redirectUrl;
-    @Getter
     @Value("${spring.cloud.azure.active-directory.credential.client-id}")
     private String entraIdClientId;
 
