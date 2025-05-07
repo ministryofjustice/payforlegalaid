@@ -3,13 +3,13 @@ logging:
     root: INFO
     org:
       springframework:
-        security: DEBUG
+        security: INFO
         jdbc:
           core:
             JdbcTemplate: INFO
             StatementCreatorUtils: INFO
         transaction: INFO
-        web: DEBUG
+        web: INFO
 
 
 management:

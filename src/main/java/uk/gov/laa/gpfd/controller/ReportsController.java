@@ -11,7 +11,6 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.api.ExcelApi;
 import uk.gov.laa.gpfd.api.ReportsApi;
-import uk.gov.laa.gpfd.config.AppConfig;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200Response;
 import uk.gov.laa.gpfd.services.ReportService;
@@ -31,7 +30,6 @@ public class ReportsController implements ReportsApi, ExcelApi {
     private final ReportService reportService;
     private final ReportManagementService reportManagementService;
     private final StreamingService streamingService;
-    private final AppConfig appConfig;
 
     @Override
     public Optional<NativeWebRequest> getRequest() {
@@ -47,7 +45,6 @@ public class ReportsController implements ReportsApi, ExcelApi {
     @Override
     public ResponseEntity<ReportsGet200Response> reportsGet() {
 
-        log.info("vvvv gpfd URL: {}, redirect URL: {}", appConfig.getServiceUrl(), appConfig.getRedirectUrl());
         var reportListEntries = reportManagementService.fetchReportListEntries();
 
         var response = new ReportsGet200Response() {{

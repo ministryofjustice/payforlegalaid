@@ -1,7 +1,6 @@
 package uk.gov.laa.gpfd.config;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +19,6 @@ import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
  * to manage specific security aspects.
  * </p>
  */
-@Slf4j
 @Configuration
 @RequiredArgsConstructor
 @ConditionalOnProperty(name = "spring.cloud.azure.active-directory.enabled", havingValue = "true")
