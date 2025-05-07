@@ -182,11 +182,14 @@ public class AppConfig {
     }
 
     @Bean
-    public WebClient webClient(WebClient.Builder builder) {
-        //TODO add var instead of hardcoding
+    public WebClient.Builder webClient() {
         // TODO add docs
-        return builder.baseUrl("https//localhost:8080").build();
+        return WebClient.builder();
     }
+
+    @Getter
+    @Value("${gpfd.sds-url}")
+    private String sdsUrl;
 
     /**
      * Creates a {@link TemplateService} bean that delegates to the provided {@link TemplateClient}
