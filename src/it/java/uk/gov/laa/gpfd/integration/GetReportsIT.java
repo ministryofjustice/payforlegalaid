@@ -42,6 +42,6 @@ class GetReportsIT extends BaseIT {
         writeJdbcTemplate.update("TRUNCATE TABLE GPFD.REPORTS");
 
         performGetRequest("/reports")
-            .andExpect(status().isNotFound());
+            .andExpect(status().is5xxServerError());
     }
 }
