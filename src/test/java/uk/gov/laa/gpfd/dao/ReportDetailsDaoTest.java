@@ -60,11 +60,11 @@ public class ReportDetailsDaoTest extends BaseDaoTest{
     }
 
     @Test
-    void shouldThrowReportIdNotFoundExceptionWhenQueryForListReturnsEmptyListForAllReports() {
+    void shouldThrowDatabaseReadExceptionWhenQueryForListReturnsEmptyListForAllReports() {
 
         clearReportsTable();
 
-        assertThrows(ReportIdNotFoundException.class,
+        assertThrows(DatabaseReadException.class,
                 () -> reportDetailsDao.fetchReportList());
     }
 

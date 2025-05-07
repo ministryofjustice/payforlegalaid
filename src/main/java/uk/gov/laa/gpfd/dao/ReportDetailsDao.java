@@ -54,7 +54,11 @@ public class ReportDetailsDao {
         }
 
         if (resultList.isEmpty()) {
-            throw new ReportIdNotFoundException("Report with unrecognised ID");
+            if (args != null && args.length > 0) {
+                throw new ReportIdNotFoundException("Report with unrecognised ID " + args[0]);
+            } else {
+                throw new DatabaseReadException("Error reading from DB, no reports found");
+            }
         }
 
         try {
