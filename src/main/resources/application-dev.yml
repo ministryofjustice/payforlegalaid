@@ -1,7 +1,5 @@
 gpfd:
   url: ${GPFD_URL}
-#  TODO will need more work
-  sds-url: ${GPFD_SDS_URL}
   #This is the url which the Active directory dev app registration will redirect to after SSO is complete
   redirect-uri-template: ${gpfd.url}/login/oauth2/code/gpfd-azure-dev
   # Note,"gpfd-azure-dev" is also known as the Oauth2 'registrationId'
@@ -45,3 +43,7 @@ server:
     session:
       cookie:
         secure: true
+
+sds-client:
+  #  TODO will need more work
+  sds-url: ${SDS_CLIENT_SDS_URL}

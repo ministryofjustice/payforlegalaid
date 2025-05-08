@@ -8,7 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestClient;
-import uk.gov.laa.gpfd.config.AppConfig;
+import uk.gov.laa.gpfd.config.SdsClientConfig;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
 
 import java.io.ByteArrayInputStream;
@@ -46,8 +46,9 @@ public class SdsTemplateClientTest {
 
     @Mock
     private RestClient.ResponseSpec awsResponseSpec;
+
     @Mock
-    AppConfig appConfig;
+    SdsClientConfig sdsConfig;
 
     @InjectMocks
     private SdsTemplateClient sdsTemplateClient;
@@ -58,7 +59,7 @@ public class SdsTemplateClientTest {
         var urlFromSds = "This is file URL";
         var sdsUrl = "http//localhost:8080";
 
-        when(appConfig.getSdsUrl()).thenReturn(sdsUrl);
+        when(sdsConfig.getSdsUrl()).thenReturn(sdsUrl);
         when(restClientBuilder.baseUrl((String) any())).thenReturn(restClientBuilder);
 
         when(restClientBuilder.baseUrl(sdsUrl)).thenReturn(restClientBuilder);

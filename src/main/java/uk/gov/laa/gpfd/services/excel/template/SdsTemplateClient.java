@@ -5,7 +5,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-import uk.gov.laa.gpfd.config.AppConfig;
+import uk.gov.laa.gpfd.config.SdsClientConfig;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
 
 import java.io.InputStream;
@@ -15,9 +15,8 @@ import java.io.InputStream;
 @AllArgsConstructor
 public class SdsTemplateClient implements TemplateClient {
 
-    private final AppConfig appConfig;
+    private final SdsClientConfig sdsConfig;
     private final RestClient.Builder restClientBuilder;
-
 
     @Override
     @SneakyThrows
@@ -40,7 +39,7 @@ public class SdsTemplateClient implements TemplateClient {
     private String getUrlFromSecureDocumentStorage(String fileKey) {
         String url;
         try {
-            var restClient = restClientBuilder.baseUrl(appConfig.getSdsUrl()).build();
+            var restClient = restClientBuilder.baseUrl(sdsConfig.getSdsUrl()).build();
             url = restClient.get().uri("/get_file?file_key=" + fileKey).retrieve().body(String.class);
         } catch (Exception ex) {
             throw new TemplateResourceException.TemplateDownloadException("Unable to get url for download of template with id " + fileKey);

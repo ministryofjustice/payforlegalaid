@@ -17,7 +17,6 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.WebClient;
 import uk.gov.laa.gpfd.model.FieldAttributes;
 import uk.gov.laa.gpfd.services.DataStreamer;
 import uk.gov.laa.gpfd.services.TemplateService;
@@ -180,16 +179,6 @@ public class AppConfig {
     public TemplateClient localTemplateClient() {
         return new LocalTemplateClient();
     }
-
-    @Bean
-    public WebClient.Builder webClient() {
-        // TODO add docs
-        return WebClient.builder();
-    }
-
-    @Getter
-    @Value("${gpfd.sds-url}")
-    private String sdsUrl;
 
     /**
      * Creates a {@link TemplateService} bean that delegates to the provided {@link TemplateClient}
