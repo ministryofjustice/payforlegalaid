@@ -131,7 +131,7 @@ jobs:
           CHECKSUM=$(sha256sum normalized-changelog.xml | cut -d' ' -f1)
 
           kubectl create configmap liquibase-changelog \
-          --namespace ${{ KUBE_NAMESPACE }} \
+          --namespace ${KUBE_NAMESPACE} \
           --from-file=changelog.xml=normalized-changelog.xml \
           --dry-run=client -o yaml | \
           yq eval '
