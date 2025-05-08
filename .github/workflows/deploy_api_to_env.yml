@@ -49,19 +49,10 @@ jobs:
     env:
       USERNAME: ${{ secrets.openapi_package_user }}
       PASSWORD: ${{ secrets.openapi_package_password }}
-      DATA_REPO: "ministryofjustice/payforlegalaid-data"
 
     steps:
       - name: Checkout Github Repository
         uses: actions/checkout@v4
-
-      - name: Checkout GitHub repository
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ env.DATA_REPO }}
-          ssh-key: ${{ inputs.socket_key }}
-          sparse-checkout: data
-          sparse-checkout-cone-mode: true
 
       - name: Setup XML tools
         run: |
@@ -116,6 +107,15 @@ jobs:
           done
           cat deployments/templates/grafana-dashboard.yml | envsubst '$ENV_NAME,$NAMESPACE' > deployments/grafana-dashboard.yml
 
+      - name: Checkout GitHub Data repository
+        uses: actions/checkout@v4
+        with:
+          repository: "ministryofjustice/payforlegalaid-data"
+          path: payforlegalaid-data
+          ssh-key: ${{ secrets.socket_key }}
+          sparse-checkout: data
+          sparse-checkout-cone-mode: true
+
       - name: Authenticate with Cloud Platform and Deploy
         env:
           KUBE_NAMESPACE: ${{ secrets.kube_namespace }}
@@ -127,7 +127,7 @@ jobs:
           kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
           kubectl config use-context ${KUBE_CLUSTER}
           
-          xmllint --format --encode UTF-8 data/migrations/db.changelog-master.xml > normalized-changelog.xml
+          xmllint --format --encode UTF-8 payforlegalaid-data/data/migrations/db.changelog-master.xml > normalized-changelog.xml
           CHECKSUM=$(sha256sum normalized-changelog.xml | cut -d' ' -f1)
 
           kubectl create configmap liquibase-changelog \
