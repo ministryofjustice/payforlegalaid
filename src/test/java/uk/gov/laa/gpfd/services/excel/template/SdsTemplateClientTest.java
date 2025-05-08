@@ -7,8 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
+import org.springframework.web.client.RestClient;
 import uk.gov.laa.gpfd.config.AppConfig;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
 
@@ -16,38 +15,37 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class SdsTemplateClientTest {
 
     @Mock
-    WebClient.Builder webClientBuilder;
+    RestClient.Builder restClientBuilder;
 
     @Mock
-    WebClient sdsWebClient;
+    RestClient sdsRestClient;
 
     @Mock
-    private WebClient.RequestHeadersUriSpec sdsRequestHeadersUriSpec;
+    private RestClient.RequestHeadersUriSpec sdsRequestHeadersUriSpec;
 
     @Mock
-    private WebClient.RequestHeadersSpec sdsRequestHeadersSpec;
+    private RestClient.RequestHeadersSpec sdsRequestHeadersSpec;
 
     @Mock
-    private WebClient.ResponseSpec sdsResponseSpec;
+    private RestClient.ResponseSpec sdsResponseSpec;
 
     @Mock
-    WebClient awsWebClient;
+    RestClient awsRestClient;
 
     @Mock
-    private WebClient.RequestHeadersUriSpec awsRequestHeadersUriSpec;
+    private RestClient.RequestHeadersUriSpec awsRequestHeadersUriSpec;
 
     @Mock
-    private WebClient.RequestHeadersSpec awsRequestHeadersSpec;
+    private RestClient.RequestHeadersSpec awsRequestHeadersSpec;
 
     @Mock
-    private WebClient.ResponseSpec awsResponseSpec;
+    private RestClient.ResponseSpec awsResponseSpec;
     @Mock
     AppConfig appConfig;
 
@@ -61,14 +59,14 @@ public class SdsTemplateClientTest {
         var sdsUrl = "http//localhost:8080";
 
         when(appConfig.getSdsUrl()).thenReturn(sdsUrl);
-        when(webClientBuilder.baseUrl(any())).thenReturn(webClientBuilder);
+        when(restClientBuilder.baseUrl((String) any())).thenReturn(restClientBuilder);
 
-        when(webClientBuilder.baseUrl(sdsUrl)).thenReturn(webClientBuilder);
-        when(webClientBuilder.baseUrl(urlFromSds)).thenReturn(webClientBuilder);
+        when(restClientBuilder.baseUrl(sdsUrl)).thenReturn(restClientBuilder);
+        when(restClientBuilder.baseUrl(urlFromSds)).thenReturn(restClientBuilder);
 
-        when(webClientBuilder.build()).thenReturn(sdsWebClient).thenReturn(awsWebClient);
+        when(restClientBuilder.build()).thenReturn(sdsRestClient).thenReturn(awsRestClient);
 
-        when(sdsWebClient.get()).thenReturn(sdsRequestHeadersUriSpec);
+        when(sdsRestClient.get()).thenReturn(sdsRequestHeadersUriSpec);
         when(sdsRequestHeadersUriSpec.uri("/get_file?file_key=" + fileName)).thenReturn(sdsRequestHeadersSpec);
         when(sdsRequestHeadersSpec.retrieve()).thenReturn(sdsResponseSpec);
 
@@ -80,12 +78,12 @@ public class SdsTemplateClientTest {
         var urlFromSds = "This is file URL";
         InputStream mockInputStream = new ByteArrayInputStream(mockFileContent.getBytes());
 
-        when(sdsResponseSpec.bodyToMono(String.class)).thenReturn(Mono.just(urlFromSds));
+        when(sdsResponseSpec.body(String.class)).thenReturn(urlFromSds);
 
-        when(awsWebClient.get()).thenReturn(awsRequestHeadersUriSpec);
+        when(awsRestClient.get()).thenReturn(awsRequestHeadersUriSpec);
         when(awsRequestHeadersUriSpec.uri("")).thenReturn(awsRequestHeadersSpec);
         when(awsRequestHeadersSpec.retrieve()).thenReturn(awsResponseSpec);
-        when(awsResponseSpec.bodyToMono(InputStream.class)).thenReturn(Mono.just(mockInputStream));
+        when(awsResponseSpec.body(InputStream.class)).thenReturn(mockInputStream);
 
         Assertions.assertEquals(mockInputStream, sdsTemplateClient.findTemplateById(fileName));
     }
@@ -95,7 +93,7 @@ public class SdsTemplateClientTest {
         var fileName = "excelTemplate.xlsx";
         var urlFromSds = "This is file URL";
 
-        when(sdsResponseSpec.bodyToMono(String.class)).thenReturn(Mono.just(urlFromSds));
+        when(sdsResponseSpec.body(String.class)).thenReturn(urlFromSds);
 
         var ex = Assertions.assertThrows(TemplateResourceException.TemplateDownloadException.class, () -> sdsTemplateClient.findTemplateById(fileName));
         Assertions.assertEquals("Unable to download template with id excelTemplate.xlsx", ex.getMessage());
@@ -106,7 +104,7 @@ public class SdsTemplateClientTest {
         var fileName = "excelTemplate.xlsx";
         var sdsUrl = "http//localhost:8080";
 
-        when(sdsResponseSpec.bodyToMono(InputStream.class)).thenThrow(IllegalArgumentException.class);
+        when(sdsResponseSpec.body(InputStream.class)).thenThrow(IllegalArgumentException.class);
 
         var ex = Assertions.assertThrows(TemplateResourceException.TemplateDownloadException.class, () -> sdsTemplateClient.findTemplateById(fileName));
         Assertions.assertEquals("Unable to get url for download of template with id excelTemplate.xlsx", ex.getMessage());

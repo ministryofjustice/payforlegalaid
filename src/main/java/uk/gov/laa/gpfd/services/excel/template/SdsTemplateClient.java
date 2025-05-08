@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.RestClient;
 import uk.gov.laa.gpfd.config.AppConfig;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
 
@@ -16,15 +16,16 @@ import java.io.InputStream;
 public class SdsTemplateClient implements TemplateClient {
 
     private final AppConfig appConfig;
-    private final WebClient.Builder webClientBuilder;
+    private final RestClient.Builder restClientBuilder;
+
 
     @Override
     @SneakyThrows
     public InputStream findTemplateById(String id) {
         InputStream response;
-        try {
-            var webClient = webClientBuilder.baseUrl(getUrlFromSecureDocumentStorage(id)).build();
-            response = webClient.get().uri("").retrieve().bodyToMono(InputStream.class).block();
+        try{
+            var restClient = restClientBuilder.baseUrl(getUrlFromSecureDocumentStorage(id)).build();
+            response = restClient.get().uri("").retrieve().body(InputStream.class);
         } catch (TemplateResourceException ex) {
             log.error("Error occurred getting url from Secure Document Storage: %s", ex);
             throw ex;
@@ -39,8 +40,8 @@ public class SdsTemplateClient implements TemplateClient {
     private String getUrlFromSecureDocumentStorage(String fileKey) {
         String url;
         try {
-            var webClient = webClientBuilder.baseUrl(appConfig.getSdsUrl()).build();
-            url = webClient.get().uri("/get_file?file_key=" + fileKey).retrieve().bodyToMono(String.class).block();
+            var restClient = restClientBuilder.baseUrl(appConfig.getSdsUrl()).build();
+            url = restClient.get().uri("/get_file?file_key=" + fileKey).retrieve().body(String.class);
         } catch (Exception ex) {
             throw new TemplateResourceException.TemplateDownloadException("Unable to get url for download of template with id " + fileKey);
         }
