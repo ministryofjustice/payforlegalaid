@@ -9,7 +9,7 @@ on:
 jobs:
   To_Dev:
     name: Deploy to dev
-    uses: ./.github/workflows/deploy_to_env.yml
+    uses: ./.github/workflows/deploy_api_to_env.yml
     with:
       github_environment: development
       environment_name: dev
@@ -30,7 +30,7 @@ jobs:
   To_Uat:
     name: Deploy to UAT
     needs: To_Dev
-    uses: ./.github/workflows/deploy_to_env.yml
+    uses: ./.github/workflows/deploy_api_to_env.yml
     with:
       github_environment: uat
       environment_name: uat
@@ -51,7 +51,7 @@ jobs:
   To_Prod:
     name: Deploy to prod
     needs: To_Uat
-    uses: ./.github/workflows/deploy_to_env.yml
+    uses: ./.github/workflows/deploy_api_to_env.yml
     with:
       github_environment: prod
       environment_name: prod

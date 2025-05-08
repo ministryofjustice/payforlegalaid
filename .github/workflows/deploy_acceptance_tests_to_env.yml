@@ -1,4 +1,4 @@
-name: Deploy to Tests to Environment
+name: Deploy Acceptance Tests to Environment
 
 on: workflow_dispatch
 
