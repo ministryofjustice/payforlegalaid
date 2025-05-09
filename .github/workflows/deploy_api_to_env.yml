@@ -1,4 +1,4 @@
-name: Deploy to Environment
+name: Deploy API to Environment
 
 on:
   workflow_call:
@@ -24,6 +24,8 @@ on:
       openapi_package_password:
         required: true
       snyk_token:
+        required: true
+      socket_key:
         required: true
       ecr_role_to_assume:
         required: true
@@ -51,6 +53,10 @@ jobs:
     steps:
       - name: Checkout Github Repository
         uses: actions/checkout@v4
+
+      - name: Setup XML tools
+        run: |
+          sudo apt-get update && sudo apt-get install -y libxml2-utils
 
       - name: Build and test the code
         uses: './.github/build-and-test'
@@ -90,16 +96,36 @@ jobs:
           GPFD_URL: ${{ inputs.gpfd_url }}
           SECRET_NAME: ${{ inputs.secret_name }}
         run: |
-          for template in deployment \
-                          ingress \
-                          service \
-                          service-monitor \
-                          network-policy \
-                          prometheus-rules;
-          do
-            cat deployments/templates/${template}.yml | envsubst > deployments/${template}.yml
+          template_processing=(
+            "ingress:ingress"
+            "service:service"
+            "service-monitor:service-monitor"
+            "network-policy:network-policy"
+            "prometheus-rules:prometheus-rules"
+            "grafana-dashboard:grafana-dashboard:\$ENV_NAME,\$NAMESPACE"
+            "deployment:deployment:\$ENV_NAME,\$SECRET_NAME,\$GPFD_URL,\$REGISTRY,\$REPOSITORY,\$IMAGE_TAG"
+          )
+          
+          for item in "${template_processing[@]}"; do
+            IFS=':' read -r template output vars <<< "$item"
+            input="deployments/templates/${template}.yml"
+            output="deployments/${output}.yml"
+          
+            if [[ -n "$vars" ]]; then
+              envsubst "$vars" < "$input" > "$output"
+            else
+              DOLLAR='$' envsubst < "$input" > "$output"
+            fi
           done
-          cat deployments/templates/grafana-dashboard.yml | envsubst '$ENV_NAME,$NAMESPACE' > deployments/grafana-dashboard.yml
+
+      - name: Checkout GitHub Data repository
+        uses: actions/checkout@v4
+        with:
+          repository: "ministryofjustice/payforlegalaid-data"
+          path: payforlegalaid-data
+          ssh-key: ${{ secrets.socket_key }}
+          sparse-checkout: data
+          sparse-checkout-cone-mode: true
 
       - name: Authenticate with Cloud Platform and Deploy
         env:
@@ -111,4 +137,17 @@ jobs:
           kubectl config set-credentials deploy-user --token=${{ secrets.kube_token }}
           kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
           kubectl config use-context ${KUBE_CLUSTER}
+          
+          xmllint --format --encode UTF-8 payforlegalaid-data/data/migrations/db.changelog-master.xml > normalized-changelog.xml
+          CHECKSUM=$(sha256sum normalized-changelog.xml | cut -d' ' -f1)
+
+          kubectl create configmap liquibase-changelog \
+          --namespace ${KUBE_NAMESPACE} \
+          --from-file=changelog.xml=normalized-changelog.xml \
+          --dry-run=client -o yaml | \
+          yq eval '
+          .metadata.annotations."checksum/xml" = "'"$CHECKSUM"'" |
+          .metadata.labels."app.kubernetes.io/component" = "database-migrations"
+          ' - | kubectl apply -f -
+
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments/
