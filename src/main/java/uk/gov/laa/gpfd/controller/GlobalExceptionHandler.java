@@ -117,7 +117,26 @@ public class GlobalExceptionHandler {
         }};
 
         log.error("DatabaseReadException Thrown: %s".formatted(response));
-        log.error("DatabaseReadException stacktrace: %s".formatted(e.getStackTrace()));
+        log.error("DatabaseReadException stacktrace: %s".formatted((Object) e.getStackTrace()));
+
+        return internalServerError().body(response);
+    }
+
+    /**
+     * Handles ReportOutputTypeNotFoundException and responds with an HTTP 500 Internal Server Error.
+     *
+     * @param e the ReportOutputTypeNotFoundException thrown when an unknown report output type is encountered.
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
+     */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(ReportOutputTypeNotFoundException.class)
+    public ResponseEntity<ReportsGet500Response> handleReportOutputTypeNotFoundException(ReportOutputTypeNotFoundException e) {
+        var response = new ReportsGet500Response() {{
+            setError(e.getMessage());
+        }};
+
+        log.error("ReportOutputTypeNotFoundException Thrown: %s".formatted(response));
+        log.error("ReportOutputTypeNotFoundException stacktrace: %s".formatted((Object) e.getStackTrace()));
 
         return internalServerError().body(response);
     }

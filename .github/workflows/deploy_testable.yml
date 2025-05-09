@@ -48,6 +48,7 @@ jobs:
           REPOSITORY: ${{ vars.DEV_ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          GPFD_URL: https://test-gpfd.apps.live.cloud-platform.service.justice.gov.uk
 
       - name: Generate Kubernetes files from templates
         env:
@@ -55,7 +56,7 @@ jobs:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: ${{ vars.DEV_ECR_REPOSITORY }}
           NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
-          GPFD_URL: https://laa-get-payments-finance-data-api-dev.apps.live.cloud-platform.service.justice.gov.uk
+          GPFD_URL: https://test-gpfd.apps.live.cloud-platform.service.justice.gov.uk
         run: |
           cat deployments/test/deployment.tpl | envsubst > deployments/test/deployment-${BRANCH_NAME}.yml
           cat deployments/test/ingress.tpl | envsubst > deployments/test/ingress-${BRANCH_NAME}.yml

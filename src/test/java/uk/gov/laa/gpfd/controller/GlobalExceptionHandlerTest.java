@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import uk.gov.laa.gpfd.exception.CsvStreamException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
+import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.exception.TransferException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -494,6 +495,19 @@ class GlobalExceptionHandlerTest {
         // Then
         assertEquals(BAD_REQUEST, response.getStatusCode());
         assertEquals("Error: \n---\n|   |\n---", response.getBody().getError());
+    }
+
+    @Test
+    void shouldHandleReportOutputTypeNotFoundExceptionWithExpectedErrorMessage() {
+        // Given
+        var exception = new ReportOutputTypeNotFoundException("Invalid file extension: xyz");
+
+        // When
+        var response = globalExceptionHandler.handleReportOutputTypeNotFoundException(exception);
+
+        // Then
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Invalid file extension: xyz", response.getBody().getError());
     }
 
 }

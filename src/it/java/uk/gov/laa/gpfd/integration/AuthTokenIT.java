@@ -1,21 +1,17 @@
 package uk.gov.laa.gpfd.integration;
 
-import java.util.Objects;
-import org.junit.jupiter.api.Assertions;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import uk.gov.laa.gpfd.graph.AzureGraphClient;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -25,24 +21,25 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 class AuthTokenIT extends BaseIT {
 
     @ParameterizedTest
-    @ValueSource(strings = {"/reports", "/reports/0d4da9ec-b0b3-4371-af10-f375330d85d3", "/csv/0d4da9ec-b0b3-4371-af10-f375330d85d3"})
+    @ValueSource(strings = {"/reports", "/reports/" + BaseIT.REPORT_UUID_1, "/csv/"+BaseIT.REPORT_UUID_1})
     void shouldRedirectToLoginWithoutAuthToken(String endpoint) throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(get(endpoint)
-                .contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse();
-        Assertions.assertEquals(302, response.getStatus());
-        Assertions.assertTrue(Objects.requireNonNull(response.getRedirectedUrl()).contains("/oauth2/authorization/azure"));
+        performGetRequest(endpoint)
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrlPattern("http://localhost/oauth2/authorization/azure*"));
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"/reports", "/reports/0d4da9ec-b0b3-4371-af10-f375330d85d3"})
+    @ValueSource(strings = {"/reports", "/reports/"+BaseIT.REPORT_UUID_1})
+    @WithMockUser(username = "Mock User")
     void shouldReturn200WhenLoginAuthTokenProvided(String endpoint) throws Exception {
-        MockHttpServletResponse response = getResponseForAuthenticatedRequest(endpoint);
-        Assertions.assertEquals(200, response.getStatus());
+        performGetRequest(endpoint)
+            .andExpect(status().isOk());
     }
 
     @Test
+    @WithMockUser(username = "Mock User")
     void getCsvWithIdShouldReturn200WhenLoginAuthTokenProvided() throws Exception {
-        MockHttpServletResponse response = getResponseForAuthenticatedRequest("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d3");
-        Assertions.assertEquals(200, response.getStatus());
+        performGetRequest("/csv/" + BaseIT.REPORT_UUID_1)
+            .andExpect(status().isOk());
     }
 }

@@ -32,7 +32,7 @@ class SecurityConfigLocalIT extends BaseIT {
     // Local profile just ignores Azure and requires no login session.
     @Test
     void shouldNotRedirectToAzureLoginEvenIfNoActiveSession() throws Exception {
-        var reportId = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
+        var reportId = UUID.fromString(BaseIT.REPORT_UUID_1);
         var reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();
 
         when(reportServiceMock.createReportResponse(reportId)).thenReturn(reportResponseMock);
@@ -45,7 +45,7 @@ class SecurityConfigLocalIT extends BaseIT {
     @Test
     @WithMockUser(roles = "ADMIN")
     void shouldLoadPageIfValidSession() throws Exception {
-        var reportId = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
+        var reportId = UUID.fromString(BaseIT.REPORT_UUID_1);
         var reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();
 
         when(reportServiceMock.createReportResponse(reportId)).thenReturn(reportResponseMock);
@@ -56,7 +56,7 @@ class SecurityConfigLocalIT extends BaseIT {
 
     @Test
     public void shouldOnlyAllowSameOriginExternalFrames() throws Exception {
-        var reportId = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
+        var reportId = UUID.fromString(BaseIT.REPORT_UUID_1);
         var reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();
 
         when(reportServiceMock.createReportResponse(reportId)).thenReturn(reportResponseMock);

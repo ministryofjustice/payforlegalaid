@@ -1,5 +1,6 @@
 package uk.gov.laa.gpfd.service;
 
+import java.util.Objects;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,12 +9,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
-import uk.gov.laa.gpfd.config.AppConfig;
-import uk.gov.laa.gpfd.data.ReportListEntryTestDataFactory;
+import uk.gov.laa.gpfd.data.ReportDetailsTestDataFactory;
+import uk.gov.laa.gpfd.data.ReportsTestDataFactory;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
-import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
+import uk.gov.laa.gpfd.model.ReportDetails;
 import uk.gov.laa.gpfd.services.DataStreamer;
 import uk.gov.laa.gpfd.services.MappingTableService;
+import uk.gov.laa.gpfd.services.ReportManagementService;
 import uk.gov.laa.gpfd.services.ReportService;
 
 import java.io.ByteArrayOutputStream;
@@ -34,14 +36,15 @@ import static uk.gov.laa.gpfd.data.MappingTableTestDataFactory.aValidInvoiceAnal
 
 @ExtendWith(MockitoExtension.class)
 class ReportServiceTest {
-    private static final UUID id = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
-
-    @Mock
-    AppConfig appConfig;
+    private static final UUID VALID_REPORT_ID = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
     @Mock
     DataStreamer dataStreamer;
+
     @Mock
     MappingTableService mappingTableService;
+
+    @Mock
+    ReportManagementService reportManagementService;
     @InjectMocks
     ReportService reportService;
     List<Map<String, Object>> reportMapMockList = new ArrayList<>();
@@ -80,8 +83,7 @@ class ReportServiceTest {
         var response = reportService.createCSVResponse(testId);
 
         var outputStream = new ByteArrayOutputStream();
-        response.getBody().writeTo(outputStream);
-
+        Objects.requireNonNull(response.getBody()).writeTo(outputStream);
         var csvContent = outputStream.toString();
         Assertions.assertNotNull(csvContent);
         assertTrue(csvContent.contains(expectedCsvHeader));
@@ -90,18 +92,17 @@ class ReportServiceTest {
     }
 
     @Test
-    void createReportResponse_reportResponseMatchesValuesFromMappingTable() throws IOException {
-
-        when(appConfig.getServiceUrl()).thenReturn("http://localhost");
+    void createReportResponse_reportResponseMatchesValuesFromMappingTable() {
 
         // Mocking the data from mapping table
-        ReportsGet200ResponseReportListInner mockReportListResponse = ReportListEntryTestDataFactory.aValidReportsGet200ResponseReportListInner();
 
         GetReportById200Response expectedReportResponse = new ReportResponseTestBuilder().createReportResponse();
-        when(mappingTableService.getDetailsForSpecificReport(id)).thenReturn(mockReportListResponse);
+        ReportDetails mockReportDetails = ReportDetailsTestDataFactory.aValidReportResponse(
+            VALID_REPORT_ID, "Excel_Report_Name-CSV-NAME-sheetnumber", "csv");
+        when(reportManagementService.getDetailsForSpecificReport(VALID_REPORT_ID)).thenReturn(mockReportDetails);
 
         //Act
-        GetReportById200Response actualReportResponse = reportService.createReportResponse(id);
+        GetReportById200Response actualReportResponse = reportService.createReportResponse(VALID_REPORT_ID);
 
         //check something
         assertEquals(expectedReportResponse.getReportName(), actualReportResponse.getReportName());
@@ -109,18 +110,33 @@ class ReportServiceTest {
 
     }
 
+
     @Test
-    void createReportResponse_ReturnsCorrectUrl() throws IOException {
+    void givenValidId_whenCreateReportResponse_thenValidResponseIsReturned() {
+        //Given
+        ReportDetails mockReportDetails = ReportDetailsTestDataFactory.aValidReportResponse(
+            VALID_REPORT_ID, "Test Report", "csv");
+        when(reportManagementService.getDetailsForSpecificReport(VALID_REPORT_ID)).thenReturn(mockReportDetails);
+        //When
+        GetReportById200Response actualReportResponse = reportService.createReportResponse(
+            VALID_REPORT_ID);
+        //then
+        assertEquals("Test Report", actualReportResponse.getReportName());
+        assertEquals(VALID_REPORT_ID, actualReportResponse.getId());
+        assertEquals(ReportsTestDataFactory.TEST_DOWNLOAD_URL, actualReportResponse.getReportDownloadUrl().toString());
+    }
 
-        when(appConfig.getServiceUrl()).thenReturn("http://localhost");
+    @Test
+    void createReportResponse_ReturnsCorrectUrl() {
 
-        ReportsGet200ResponseReportListInner mockReportListResponseDev = ReportListEntryTestDataFactory.aValidReportsGet200ResponseReportListInner();
+        ReportDetails mockReportDetails = ReportDetailsTestDataFactory.aValidReportResponse(
+            VALID_REPORT_ID, "Test Report", "csv");
 
-        when(mappingTableService.getDetailsForSpecificReport(id)).thenReturn(mockReportListResponseDev);
+        when(reportManagementService.getDetailsForSpecificReport(VALID_REPORT_ID)).thenReturn(mockReportDetails);
 
-        GetReportById200Response actualReportResponseDev = reportService.createReportResponse(id);
+        GetReportById200Response actualReportResponseDev = reportService.createReportResponse(VALID_REPORT_ID);
 
-        assertTrue(actualReportResponseDev.getReportDownloadUrl().toString().contentEquals("http://localhost/csv/0d4da9ec-b0b3-4371-af10-f375330d85d1"));
+        assertTrue(actualReportResponseDev.getReportDownloadUrl().toString().contentEquals(ReportsTestDataFactory.TEST_DOWNLOAD_URL));
 
     }
 

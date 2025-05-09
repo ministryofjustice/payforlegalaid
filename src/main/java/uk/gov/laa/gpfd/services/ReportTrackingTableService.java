@@ -22,7 +22,7 @@ import java.util.UUID;
  * </p>
  *
  * <p>
- * The {@link #updateReportTrackingTable(int, OAuth2AuthorizedClient)} method is synchronized
+ * The {@link #updateReportTrackingTable(UUID, OAuth2AuthorizedClient)} (int, OAuth2AuthorizedClient)} method is synchronized
  * to ensure thread-safety when multiple requests are attempting to update the report tracking data
  * concurrently.
  * </p>
@@ -52,8 +52,6 @@ public class ReportTrackingTableService {
      * @param requestedId the ID of the report for which tracking information is being updated.
      *                    The ID must be between 1 and 1000.
      * @param graphClient the authorized client used to retrieve the user details.
-     * @throws ReportIdNotFoundException if the requested report ID is not found in the mapping table.
-     * @throws DatabaseReadException if there is an error interacting with the database.
      */
     public synchronized void updateReportTrackingTable(UUID requestedId, OAuth2AuthorizedClient graphClient) {
         var reportListResponse = mappingTableService.getDetailsForSpecificReport(requestedId);

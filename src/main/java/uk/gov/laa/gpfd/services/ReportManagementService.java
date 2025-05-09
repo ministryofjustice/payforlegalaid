@@ -4,7 +4,9 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import uk.gov.laa.gpfd.config.AppConfig;
 import uk.gov.laa.gpfd.dao.ReportDetailsDao;
+import uk.gov.laa.gpfd.enums.FileExtension;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.mapper.ReportsGet200ResponseReportListInnerMapper;
 import uk.gov.laa.gpfd.model.ReportDetails;
@@ -27,6 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReportManagementService {
     private final ReportDetailsDao reportDetailsDao;
+    private final AppConfig appConfig;
 
     /**
      * Fetches a list of report entries from the database, maps them into {@link ReportsGet200ResponseReportListInner}
@@ -58,6 +61,8 @@ public class ReportManagementService {
      * requested report
      */
     public ReportDetails getDetailsForSpecificReport(UUID requestedId) {
-        return reportDetailsDao.fetchReport(requestedId);
+        ReportDetails reportDetails = reportDetailsDao.fetchReport(requestedId);
+        reportDetails.setReportDownloadUrl(String.format("%s/%s/%s", appConfig.getServiceUrl(), FileExtension.getSubPathForExtension(reportDetails.getExtension().toLowerCase()), reportDetails.getId()));
+        return reportDetails;
     }
 }
