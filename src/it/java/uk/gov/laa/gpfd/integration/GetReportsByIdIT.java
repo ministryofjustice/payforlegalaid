@@ -19,25 +19,28 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(locations = "classpath:application-test.yml")
 class GetReportsByIdIT extends BaseIT {
 
+    public static final String REPORT_UUID_1 = "b36f9bbb-1178-432c-8f99-8090e285f2d3";
+
     @Test
     void givenCsvReportId_whenSingleReportRequested_thenCsvUrlReturned() throws Exception {
-        performGetRequest("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d3")
+        performGetRequest("/reports/" + BaseIT.REPORT_UUID_1)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id").value("0d4da9ec-b0b3-4371-af10-f375330d85d3"))
-            .andExpect(jsonPath("$.reportDownloadUrl").value("http://localhost/csv/0d4da9ec-b0b3-4371-af10-f375330d85d3"));
+            .andExpect(jsonPath("$.id").value(BaseIT.REPORT_UUID_1))
+            .andExpect(jsonPath("$.reportDownloadUrl").value("http://localhost/csv/" + BaseIT.REPORT_UUID_1));
     }
 
     @Test
     void givenExcelReportId_whenSingleReportRequested_thenExcelUrlReturned() throws Exception {
-        performGetRequest("/reports/b36f9bbb-1178-432c-8f99-8090e285f2d3")
+        performGetRequest("/reports/" + REPORT_UUID_1)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id").value("b36f9bbb-1178-432c-8f99-8090e285f2d3"))
-            .andExpect(jsonPath("$.reportDownloadUrl").value("http://localhost/excel/b36f9bbb-1178-432c-8f99-8090e285f2d3"));
+            .andExpect(jsonPath("$.id").value(REPORT_UUID_1))
+            .andExpect(jsonPath("$.reportDownloadUrl").value(
+                "http://localhost/excel/" + REPORT_UUID_1));
     }
 
     @Test
     void shouldReturn400WhenGivenInvalidId() throws Exception {
-        performGetRequest("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d3321")
+        performGetRequest("/reports/" + BaseIT.REPORT_UUID_1 + "321")
             .andExpect(status().isBadRequest());
     }
 

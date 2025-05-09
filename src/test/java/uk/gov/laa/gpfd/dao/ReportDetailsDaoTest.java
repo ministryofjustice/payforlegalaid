@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import uk.gov.laa.gpfd.data.ReportsTestDataFactory;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.model.ReportDetails;
@@ -22,7 +23,7 @@ public class ReportDetailsDaoTest extends BaseDaoTest{
     @Autowired
     private ReportDetailsDao reportDetailsDao;
 
-    UUID DEFAULT_REPORT_ID = UUID.fromString("b36f9bbb-1178-432c-8f99-8090e285f2d3");
+    UUID DEFAULT_REPORT_ID = UUID.fromString(ReportsTestDataFactory.REPORT_UUID_1);
     UUID NOTFOUND_REPORT_ID = UUID.fromString("b36f9bbb-0178-430c-8f09-8090e205f2d3");
 
     @Test
@@ -30,7 +31,7 @@ public class ReportDetailsDaoTest extends BaseDaoTest{
         List<ReportDetails> results = reportDetailsDao.fetchReportList();
 
         assertEquals(NUMBER_OF_REPORTS_IN_TEST_DATA, results.size());
-        assertEquals("b36f9bbb-1178-432c-8f99-8090e285f2d3", results.get(0).getId().toString());
+        assertEquals(ReportsTestDataFactory.REPORT_UUID_1, results.get(0).getId().toString());
         assertEquals(30, results.get(0).getNumDaysToKeep());
         assertEquals("xlsx", results.get(0).getExtension());
         assertEquals("csv", results.get(2).getExtension());
@@ -39,7 +40,7 @@ public class ReportDetailsDaoTest extends BaseDaoTest{
     @Test
     void shouldReturnSingleReportById() {
         ReportDetails report = reportDetailsDao.fetchReport(DEFAULT_REPORT_ID);
-        assertEquals("b36f9bbb-1178-432c-8f99-8090e285f2d3", report.getId().toString());
+        assertEquals(ReportsTestDataFactory.REPORT_UUID_1, report.getId().toString());
 
     }
 

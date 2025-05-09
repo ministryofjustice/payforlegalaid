@@ -20,6 +20,8 @@ public abstract class BaseIT {
   @Autowired
   MockMvc mockMvc;
 
+  public static final String REPORT_UUID_1 = "0d4da9ec-b0b3-4371-af10-f375330d85d3";
+
   @BeforeAll
   void setUpDatabase() {
     databaseUtils.setUpDatabase();

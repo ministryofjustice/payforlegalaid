@@ -36,7 +36,7 @@ public class ReportManagementServiceTest {
     @InjectMocks
     private ReportManagementService reportManagementService;
 
-    UUID DEFAULT_REPORT_ID = UUID.fromString("b36f9bbb-1178-432c-8f99-8090e285f2d3");
+    UUID DEFAULT_REPORT_ID = UUID.fromString(ReportsTestDataFactory.REPORT_UUID_1);
     UUID INVALID_EXTENSION_REPORT_ID = UUID.fromString("f46b4d3d-c100-429a-bf9a-6c3305dbdbf6");
 
     @Test

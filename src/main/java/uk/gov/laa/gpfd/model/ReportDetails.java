@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 /**
- * A class representing the data in the GPFD REPORTS Table.
+ * A class containing the data in the GPFD REPORTS Table plus derived attributes.
  */
 public class ReportDetails {
     private UUID id;

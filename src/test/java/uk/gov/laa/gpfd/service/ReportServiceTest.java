@@ -1,5 +1,6 @@
 package uk.gov.laa.gpfd.service;
 
+import java.util.Objects;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,8 +9,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
-import uk.gov.laa.gpfd.config.AppConfig;
 import uk.gov.laa.gpfd.data.ReportDetailsTestDataFactory;
+import uk.gov.laa.gpfd.data.ReportsTestDataFactory;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportDetails;
 import uk.gov.laa.gpfd.services.DataStreamer;
@@ -82,8 +83,7 @@ class ReportServiceTest {
         var response = reportService.createCSVResponse(testId);
 
         var outputStream = new ByteArrayOutputStream();
-        response.getBody().writeTo(outputStream);
-
+        Objects.requireNonNull(response.getBody()).writeTo(outputStream);
         var csvContent = outputStream.toString();
         Assertions.assertNotNull(csvContent);
         assertTrue(csvContent.contains(expectedCsvHeader));
@@ -92,7 +92,7 @@ class ReportServiceTest {
     }
 
     @Test
-    void createReportResponse_reportResponseMatchesValuesFromMappingTable() throws IOException {
+    void createReportResponse_reportResponseMatchesValuesFromMappingTable() {
 
         // Mocking the data from mapping table
 
@@ -123,11 +123,11 @@ class ReportServiceTest {
         //then
         assertEquals("Test Report", actualReportResponse.getReportName());
         assertEquals(VALID_REPORT_ID, actualReportResponse.getId());
-        assertEquals("test.download.url", actualReportResponse.getReportDownloadUrl().toString());
+        assertEquals(ReportsTestDataFactory.TEST_DOWNLOAD_URL, actualReportResponse.getReportDownloadUrl().toString());
     }
 
     @Test
-    void createReportResponse_ReturnsCorrectUrl() throws IOException {
+    void createReportResponse_ReturnsCorrectUrl() {
 
         ReportDetails mockReportDetails = ReportDetailsTestDataFactory.aValidReportResponse(
             VALID_REPORT_ID, "Test Report", "csv");
@@ -136,7 +136,7 @@ class ReportServiceTest {
 
         GetReportById200Response actualReportResponseDev = reportService.createReportResponse(VALID_REPORT_ID);
 
-        assertTrue(actualReportResponseDev.getReportDownloadUrl().toString().contentEquals("test.download.url"));
+        assertTrue(actualReportResponseDev.getReportDownloadUrl().toString().contentEquals(ReportsTestDataFactory.TEST_DOWNLOAD_URL));
 
     }
 

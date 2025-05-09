@@ -21,7 +21,7 @@ import org.springframework.test.context.TestPropertySource;
 class AuthTokenIT extends BaseIT {
 
     @ParameterizedTest
-    @ValueSource(strings = {"/reports", "/reports/0d4da9ec-b0b3-4371-af10-f375330d85d3", "/csv/0d4da9ec-b0b3-4371-af10-f375330d85d3"})
+    @ValueSource(strings = {"/reports", "/reports/" + BaseIT.REPORT_UUID_1, "/csv/"+BaseIT.REPORT_UUID_1})
     void shouldRedirectToLoginWithoutAuthToken(String endpoint) throws Exception {
         performGetRequest(endpoint)
             .andExpect(status().is3xxRedirection())
@@ -29,7 +29,7 @@ class AuthTokenIT extends BaseIT {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"/reports", "/reports/0d4da9ec-b0b3-4371-af10-f375330d85d3"})
+    @ValueSource(strings = {"/reports", "/reports/"+BaseIT.REPORT_UUID_1})
     @WithMockUser(username = "Mock User")
     void shouldReturn200WhenLoginAuthTokenProvided(String endpoint) throws Exception {
         performGetRequest(endpoint)
@@ -39,7 +39,7 @@ class AuthTokenIT extends BaseIT {
     @Test
     @WithMockUser(username = "Mock User")
     void getCsvWithIdShouldReturn200WhenLoginAuthTokenProvided() throws Exception {
-        performGetRequest("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d3")
+        performGetRequest("/csv/" + BaseIT.REPORT_UUID_1)
             .andExpect(status().isOk());
     }
 }

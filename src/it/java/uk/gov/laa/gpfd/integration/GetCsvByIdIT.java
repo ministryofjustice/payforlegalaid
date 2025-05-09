@@ -37,14 +37,14 @@ class GetCsvByIdIT extends BaseIT {
     @WithMockUser(username = "Mock User")
     void shouldReturnCsvWithMatchingId() throws Exception {
 
-        performGetRequest("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d3")
+        performGetRequest("/csv/" + BaseIT.REPORT_UUID_1)
             .andExpect(status().isOk())
             .andExpect(header().string("Content-Disposition", "attachment; filename=CIS to CCMS payment value Defined.csv"));
 
         ArgumentCaptor<ReportsTracking> captor = ArgumentCaptor.forClass(ReportsTracking.class);
         Mockito.verify(reportsTrackingDao).saveReportsTracking(captor.capture());
         ReportsTracking capturedArgument = captor.getValue();
-        Assertions.assertEquals("0d4da9ec-b0b3-4371-af10-f375330d85d3", capturedArgument.getReportId().toString());
+        Assertions.assertEquals(BaseIT.REPORT_UUID_1, capturedArgument.getReportId().toString());
 
     }
 
