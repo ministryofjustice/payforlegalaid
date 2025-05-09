@@ -43,3 +43,7 @@ server:
     session:
       cookie:
         secure: true
+
+sds-client:
+  #  TODO will need more work
+  sds-url: ${SDS_CLIENT_SDS_URL}
