@@ -1,4 +1,4 @@
-name: Deploy to Environment
+name: Deploy API to Environment
 
 on:
   workflow_call:
@@ -96,16 +96,27 @@ jobs:
           GPFD_URL: ${{ inputs.gpfd_url }}
           SECRET_NAME: ${{ inputs.secret_name }}
         run: |
-          for template in deployment \
-                          ingress \
-                          service \
-                          service-monitor \
-                          network-policy \
-                          prometheus-rules;
-          do
-            cat deployments/templates/${template}.yml | envsubst > deployments/${template}.yml
+          template_processing=(
+            "ingress:ingress"
+            "service:service"
+            "service-monitor:service-monitor"
+            "network-policy:network-policy"
+            "prometheus-rules:prometheus-rules"
+            "grafana-dashboard:grafana-dashboard:\$ENV_NAME,\$NAMESPACE"
+            "deployment:deployment:\$ENV_NAME,\$SECRET_NAME,\$GPFD_URL,\$REGISTRY,\$REPOSITORY,\$IMAGE_TAG"
+          )
+          
+          for item in "${template_processing[@]}"; do
+            IFS=':' read -r template output vars <<< "$item"
+            input="deployments/templates/${template}.yml"
+            output="deployments/${output}.yml"
+          
+            if [[ -n "$vars" ]]; then
+              envsubst "$vars" < "$input" > "$output"
+            else
+              DOLLAR='$' envsubst < "$input" > "$output"
+            fi
           done
-          cat deployments/templates/grafana-dashboard.yml | envsubst '$ENV_NAME,$NAMESPACE' > deployments/grafana-dashboard.yml
 
       - name: Checkout GitHub Data repository
         uses: actions/checkout@v4
