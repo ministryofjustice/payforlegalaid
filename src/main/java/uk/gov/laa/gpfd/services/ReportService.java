@@ -10,7 +10,9 @@ import uk.gov.laa.gpfd.config.AppConfig;
 import uk.gov.laa.gpfd.exception.CsvStreamException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
+import uk.gov.laa.gpfd.exception.SqlFormatException;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
+import uk.gov.laa.gpfd.utils.SqlFormatValidator;
 
 import java.net.URI;
 import java.util.UUID;
@@ -23,6 +25,7 @@ public class ReportService {
     private final MappingTableService mappingTableService;
     private final AppConfig appConfig;
     private final DataStreamer dataStreamer;
+    private final SqlFormatValidator sqlFormatValidator;
 
     /**
      * Create a Response entity with a CSV data stream inside the body, for use by the controller's '/csv' endpoint
@@ -32,11 +35,16 @@ public class ReportService {
      */
     public ResponseEntity<StreamingResponseBody> createCSVResponse(UUID requestedId) throws ReportIdNotFoundException, DatabaseReadException, IndexOutOfBoundsException, CsvStreamException {
         var reportListResponse = mappingTableService.getDetailsForSpecificMapping(requestedId);
+        //TODO test
+        var sqlQuery = reportListResponse.getSqlQuery();
+        if (!sqlFormatValidator.isSqlFormatValid(sqlQuery)){
+            throw new SqlFormatException("SQL format invalid for report " + requestedId);
+        }
 
         return ResponseEntity.ok()
                 .header("Content-Disposition", "attachment; filename=%s.csv".formatted(reportListResponse.getReportName()))
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(stream -> dataStreamer.stream(reportListResponse.getSqlQuery(), stream));
+                .body(stream -> dataStreamer.stream(sqlQuery, stream));
     }
 
     /**
