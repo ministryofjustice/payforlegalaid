@@ -3,7 +3,6 @@ package uk.gov.laa.gpfd.dao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.MappingException;
-import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -30,10 +29,9 @@ public class ReportDetailsDao {
             "WHERE r.REPORT_OUTPUT_TYPE = o.ID AND r.ID = ?";
 
     private final JdbcTemplate readOnlyJdbcTemplate;
-    private final ModelMapper modelMapper;
 
     /**
-     * Fetches a list of report entries from the database, returns as {@link Report} objects, either list or single.
+     * Fetches a list of report entries from the database, returns as {@link ReportDetails} objects, either list or single.
      * @throws DatabaseReadException if there is an error fetching data from the database
      * @throws ReportIdNotFoundException if there is no report with that Id found in the database
      */
@@ -41,7 +39,7 @@ public class ReportDetailsDao {
                                     String sqlCommand,
                                     Object ... args)
             throws DatabaseReadException, ReportIdNotFoundException {
-        List<Map<String, Object>> resultList = new ArrayList<>();
+        List<Map<String, Object>> resultList;
         List<ReportDetails> reportsList = new ArrayList<>();
         try {
             log.info("Reading reports");
@@ -56,7 +54,11 @@ public class ReportDetailsDao {
         }
 
         if (resultList.isEmpty()) {
-            throw new ReportIdNotFoundException("Report with unrecognised ID");
+            if (args != null && args.length > 0) {
+                throw new ReportIdNotFoundException("Report with unrecognised ID " + args[0]);
+            } else {
+                throw new DatabaseReadException("Error reading from DB, no reports found");
+            }
         }
 
         try {

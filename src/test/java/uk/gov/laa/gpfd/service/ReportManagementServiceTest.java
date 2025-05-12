@@ -1,14 +1,18 @@
 package uk.gov.laa.gpfd.service;
 
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.laa.gpfd.config.AppConfig;
 import uk.gov.laa.gpfd.dao.ReportDetailsDao;
 import uk.gov.laa.gpfd.data.ReportsTestDataFactory;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
+import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.mapper.ReportsGet200ResponseReportListInnerMapper;
 import uk.gov.laa.gpfd.services.ReportManagementService;
 
@@ -22,17 +26,24 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ReportManagementServiceTest {
+
+    @Mock
+    AppConfig appConfig;
+
     @Mock
     private ReportDetailsDao reportDetailsDao;
 
     @InjectMocks
-    private ReportManagementService reportsService;
+    private ReportManagementService reportManagementService;
+
+    UUID DEFAULT_REPORT_ID = UUID.fromString(ReportsTestDataFactory.REPORT_UUID_1);
+    UUID INVALID_EXTENSION_REPORT_ID = UUID.fromString("f46b4d3d-c100-429a-bf9a-6c3305dbdbf6");
 
     @Test
     void should_return_exception_in_fetch_report_list_entries() throws DatabaseReadException {
         when(reportDetailsDao.fetchReportList()).thenThrow(DatabaseReadException.class);
 
-        assertThrows(DatabaseReadException.class, () -> reportsService.fetchReportListEntries());
+        assertThrows(DatabaseReadException.class, () -> reportManagementService.fetchReportListEntries());
     }
 
     @Test
@@ -46,7 +57,7 @@ public class ReportManagementServiceTest {
         when(reportDetailsDao.fetchReportList()).thenReturn(list);
 
         // When
-        var result = reportsService.fetchReportListEntries();
+        var result = reportManagementService.fetchReportListEntries();
 
         // Then
         assertNotNull(result);
@@ -61,7 +72,7 @@ public class ReportManagementServiceTest {
         when(reportDetailsDao.fetchReportList()).thenReturn(Collections.emptyList());
 
         // When
-        var result = reportsService.fetchReportListEntries();
+        var result = reportManagementService.fetchReportListEntries();
 
         // Then
         assertNotNull(result);
@@ -77,7 +88,7 @@ public class ReportManagementServiceTest {
         var expected = List.of(ReportsGet200ResponseReportListInnerMapper.map(excelReport));
 
         // When
-        var result = reportsService.fetchReportListEntries();
+        var result = reportManagementService.fetchReportListEntries();
 
         // Then
         assertNotNull(result);
@@ -95,7 +106,7 @@ public class ReportManagementServiceTest {
         when(reportDetailsDao.fetchReportList()).thenReturn(list);
 
         // When
-        var result = reportsService.fetchReportListEntries();
+        var result = reportManagementService.fetchReportListEntries();
 
         // Then
         assertNotNull(result);
@@ -108,7 +119,7 @@ public class ReportManagementServiceTest {
         when(reportDetailsDao.fetchReportList()).thenThrow(DatabaseReadException.class);
 
         assertThrows(DatabaseReadException.class,
-                () -> reportsService.fetchReportListEntries());
+                () -> reportManagementService.fetchReportListEntries());
     }
 
     @Test
@@ -116,6 +127,32 @@ public class ReportManagementServiceTest {
         when(reportDetailsDao.fetchReportList()).thenThrow(ReportIdNotFoundException.class);
 
         assertThrows(ReportIdNotFoundException.class,
-                () -> reportsService.fetchReportListEntries());
+                () -> reportManagementService.fetchReportListEntries());
     }
+
+    @Test
+    void shouldRaiseReportIdNotFoundExceptionWhenSpecificReportIdNotFound() throws ReportIdNotFoundException {
+        when(reportDetailsDao.fetchReport(Mockito.any())).thenThrow(ReportIdNotFoundException.class);
+
+        assertThrows(ReportIdNotFoundException.class,
+            () -> reportManagementService.getDetailsForSpecificReport(DEFAULT_REPORT_ID));
+    }
+
+    @Test
+    void shouldRaiseReportOutputTypeNotFoundExceptionWhenUnknownExtension() throws ReportIdNotFoundException {
+        when(reportDetailsDao.fetchReport(Mockito.any())).thenReturn(ReportsTestDataFactory.aReportWithInvalidExtension());
+        when(appConfig.getServiceUrl()).thenReturn("http://localhost");
+
+        assertThrows(ReportOutputTypeNotFoundException.class,
+            () -> reportManagementService.getDetailsForSpecificReport(INVALID_EXTENSION_REPORT_ID));
+    }
+
+    @Test
+    void shouldReturnCorrectReportDownloadUrlWhenValidReport() {
+        when(reportDetailsDao.fetchReport(Mockito.any())).thenReturn(ReportsTestDataFactory.aCCMSInvoiceAnalysisCSVReport());
+        when(appConfig.getServiceUrl()).thenReturn("http://localhost");
+
+        assertEquals("http://localhost/csv/f46b4d3d-c100-429a-bf9a-6c3305dbdbf5", reportManagementService.getDetailsForSpecificReport(DEFAULT_REPORT_ID).getReportDownloadUrl());
+    }
+
 }
