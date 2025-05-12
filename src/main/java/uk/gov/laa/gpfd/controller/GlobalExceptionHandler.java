@@ -177,7 +177,6 @@ public class GlobalExceptionHandler {
         return badRequest().body(response);
     }
 
-    //TODO test
     /**
      * Handles SqlFormatException and responds with an HTTP 500 Internal Server Error.
      *
@@ -188,11 +187,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SqlFormatException.class)
     public ResponseEntity<ReportsGet500Response> handleSqlFormatException(SqlFormatException e) {
         var response = new ReportsGet500Response() {{
-            setError("TODO better message here");
+            setError(e.getMessage());
         }};
 
-        log.error("SqlFormatException Thrown: %s".formatted(response));
-        log.error("SqlFormatException stacktrace: %s".formatted(e.getStackTrace()));
+        log.error("SqlFormatException Thrown: {}", response);
 
         return internalServerError().body(response);
     }

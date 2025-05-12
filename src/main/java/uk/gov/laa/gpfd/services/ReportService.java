@@ -34,15 +34,15 @@ public class ReportService {
      * @return a ResponseEntity of type 'StreamingResponseBody', containing a stream of CSV data
      */
     public ResponseEntity<StreamingResponseBody> createCSVResponse(UUID requestedId) throws ReportIdNotFoundException, DatabaseReadException, IndexOutOfBoundsException, CsvStreamException {
-        var reportListResponse = mappingTableService.getDetailsForSpecificMapping(requestedId);
+        var reportDetails = mappingTableService.getDetailsForSpecificMapping(requestedId);
         //TODO test
-        var sqlQuery = reportListResponse.getSqlQuery();
+        var sqlQuery = reportDetails.getSqlQuery();
         if (!sqlFormatValidator.isSqlFormatValid(sqlQuery)){
-            throw new SqlFormatException("SQL format invalid for report " + requestedId);
+            throw new SqlFormatException("SQL format invalid for report %s (id %s)".formatted(reportDetails.getReportName(), reportDetails.getId()));
         }
 
         return ResponseEntity.ok()
-                .header("Content-Disposition", "attachment; filename=%s.csv".formatted(reportListResponse.getReportName()))
+                .header("Content-Disposition", "attachment; filename=%s.csv".formatted(reportDetails.getReportName()))
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(stream -> dataStreamer.stream(sqlQuery, stream));
     }
