@@ -5,6 +5,7 @@ import uk.gov.laa.gpfd.exception.CsvStreamException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
+import uk.gov.laa.gpfd.exception.SqlFormatException;
 import uk.gov.laa.gpfd.exception.TransferException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -508,6 +509,19 @@ class GlobalExceptionHandlerTest {
         // Then
         assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertEquals("Invalid file extension: xyz", response.getBody().getError());
+    }
+
+    @Test
+    void shouldHandlSqlFormatExceptionWithExpectedErrorMessage() {
+        // Given
+        var exception = new SqlFormatException("SQL format invalid for report FinanceStuff (id 123ab-432fa-32423-das24)");
+
+        // When
+        var response = globalExceptionHandler.handleSqlFormatException(exception);
+
+        // Then
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("SQL format invalid for report FinanceStuff (id 123ab-432fa-32423-das24)", response.getBody().getError());
     }
 
 }
