@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import uk.gov.laa.gpfd.bean.UserDetails;
@@ -61,12 +62,17 @@ public class UserService {
         String username = null;
         if (authentication  != null && authentication.getPrincipal() != null) {
             Object principal = authentication.getPrincipal();
-
-            if (principal instanceof DefaultOidcUser) {
-                username = ((DefaultOidcUser) principal).getAttribute("preferred_username");
+            if (principal instanceof DefaultOidcUser defaultOidcUser) {
+                username = defaultOidcUser.getAttribute("preferred_username");
+            } else if (principal instanceof org.springframework.security.core.userdetails.User user) {
+                username = user.getUsername();
+            } else if (principal instanceof OAuth2User oauth2User) {
+                username = oauth2User.getName();
+            } else if (principal instanceof org.springframework.security.oauth2.jwt.Jwt jwt){
+                username = jwt.getClaimAsString("preferred_username");
             } else {
                 username = principal.toString()
-                    .substring(0, USERNAME_MAX_LENGTH_IN_DB); // Fallback in case it's a simple string
+                    .substring(0, USERNAME_MAX_LENGTH_IN_DB); // Fallback in case it's none of the above
             }
         }
         return username;

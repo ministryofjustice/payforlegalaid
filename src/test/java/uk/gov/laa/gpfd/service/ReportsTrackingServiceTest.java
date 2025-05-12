@@ -35,6 +35,7 @@ class ReportsTrackingServiceTest {
         .id(id)
         .name("Report 1")
         .reportOutputType(UUID.fromString("00000000-0000-0000-0006-000000000001"))
+        .reportDownloadUrl("testUrl/"+id.toString())
         .build();
 
     @Mock
@@ -65,7 +66,7 @@ class ReportsTrackingServiceTest {
         verify(reportsTrackingDao, times(1)).saveReportsTracking(captor.capture());
         ReportsTracking capturedTrackingTable = captor.getValue();
         assertEquals(testReportDetails.getName(), capturedTrackingTable.getName());
-        assertEquals("www.sharepoint.com/place-where-we-will-create-report", capturedTrackingTable.getReportUrl());
+        assertEquals(testReportDetails.getReportDownloadUrl(), capturedTrackingTable.getReportUrl());
         assertEquals(testReportDetails.getId(), capturedTrackingTable.getReportId());
         assertEquals(VALID_TEST_USER, capturedTrackingTable.getReportCreator());
         assertNotNull(capturedTrackingTable.getCreationDate());
@@ -135,7 +136,7 @@ class ReportsTrackingServiceTest {
         verify(reportsTrackingDao, times(2)).saveReportsTracking(captor.capture());
         ReportsTracking capturedTrackingTable = captor.getValue();
         assertEquals(testReportDetails.getName(), capturedTrackingTable.getName());
-        assertEquals("www.sharepoint.com/place-where-we-will-create-report", capturedTrackingTable.getReportUrl());
+        assertEquals(testReportDetails.getReportDownloadUrl(), capturedTrackingTable.getReportUrl());
         assertEquals(testReportDetails.getId(), capturedTrackingTable.getReportId());
         assertEquals(VALID_TEST_USER, capturedTrackingTable.getReportCreator());
         assertNotNull(capturedTrackingTable.getCreationDate());
