@@ -35,7 +35,6 @@ public class ReportService {
      */
     public ResponseEntity<StreamingResponseBody> createCSVResponse(UUID requestedId) throws ReportIdNotFoundException, DatabaseReadException, IndexOutOfBoundsException, CsvStreamException {
         var reportDetails = mappingTableService.getDetailsForSpecificMapping(requestedId);
-        //TODO test
         var sqlQuery = reportDetails.getSqlQuery();
         if (!sqlFormatValidator.isSqlFormatValid(sqlQuery)){
             throw new SqlFormatException("SQL format invalid for report %s (id %s)".formatted(reportDetails.getReportName(), reportDetails.getId()));
