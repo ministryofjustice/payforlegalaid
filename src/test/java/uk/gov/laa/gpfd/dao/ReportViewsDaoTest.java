@@ -10,10 +10,10 @@ import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest // This uses the whole spring context, switch to @JdbcTest if you switch to a H2 DB
+@SpringBootTest
 @ActiveProfiles("test")
 class ReportViewsDaoTest extends BaseDaoTest{
 
@@ -24,7 +24,7 @@ class ReportViewsDaoTest extends BaseDaoTest{
     void shouldReturnDataFromDatabase() {
         List<Map<String, Object>> resultList =
             reportViewsDao.callDataBase("SELECT ID FROM GPFD.CSV_TO_SQL_MAPPING_TABLE");
-        assertEquals(3, resultList.size() );
+        assertEquals(3, resultList.size());
     }
 
     @Test

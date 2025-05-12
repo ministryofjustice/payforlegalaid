@@ -1,8 +1,5 @@
 package uk.gov.laa.gpfd.service;
 
-import java.util.Objects;
-
-import com.microsoft.graph.models.SearchQuery;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,12 +20,12 @@ import uk.gov.laa.gpfd.services.ReportService;
 import uk.gov.laa.gpfd.utils.SqlFormatValidator;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -122,7 +119,7 @@ class ReportServiceTest {
 
         GetReportById200Response expectedReportResponse = new ReportResponseTestBuilder().createReportResponse();
         ReportDetails mockReportDetails = ReportDetailsTestDataFactory.aValidReportResponse(
-            VALID_REPORT_ID, "Excel_Report_Name-CSV-NAME-sheetnumber", "csv");
+                VALID_REPORT_ID, "Excel_Report_Name-CSV-NAME-sheetnumber", "csv");
         when(reportManagementService.getDetailsForSpecificReport(VALID_REPORT_ID)).thenReturn(mockReportDetails);
 
         //Act
@@ -139,11 +136,11 @@ class ReportServiceTest {
     void givenValidId_whenCreateReportResponse_thenValidResponseIsReturned() {
         //Given
         ReportDetails mockReportDetails = ReportDetailsTestDataFactory.aValidReportResponse(
-            VALID_REPORT_ID, "Test Report", "csv");
+                VALID_REPORT_ID, "Test Report", "csv");
         when(reportManagementService.getDetailsForSpecificReport(VALID_REPORT_ID)).thenReturn(mockReportDetails);
         //When
         GetReportById200Response actualReportResponse = reportService.createReportResponse(
-            VALID_REPORT_ID);
+                VALID_REPORT_ID);
         //then
         assertEquals("Test Report", actualReportResponse.getReportName());
         assertEquals(VALID_REPORT_ID, actualReportResponse.getId());
@@ -154,7 +151,7 @@ class ReportServiceTest {
     void createReportResponse_ReturnsCorrectUrl() {
 
         ReportDetails mockReportDetails = ReportDetailsTestDataFactory.aValidReportResponse(
-            VALID_REPORT_ID, "Test Report", "csv");
+                VALID_REPORT_ID, "Test Report", "csv");
 
         when(reportManagementService.getDetailsForSpecificReport(VALID_REPORT_ID)).thenReturn(mockReportDetails);
 
