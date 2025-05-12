@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ActiveProfiles("test")
 public class ReportDetailsDaoTest extends BaseDaoTest{
 
-    public static final int NUMBER_OF_REPORTS_IN_TEST_DATA = 5;
+    public static final int NUMBER_OF_REPORTS_IN_TEST_DATA = 6;
     @Autowired
     private ReportDetailsDao reportDetailsDao;
 
