@@ -23,6 +23,7 @@ class GetReportsByIdIT extends BaseIT {
 
     private static final String CCMS_REPORT = "b36f9bbb-1178-432c-8f99-8090e285f2d3";
     private static final String GENERAL_LEDGER_REPORT = "f46b4d3d-c100-429a-bf9a-223305dbdbfb";
+    private static final String CCMS_AND_CIS_BANK_ACCOUNT_REPORT_W_CATEGORY_CODE_YTD_REPORT = "eee30b23-2c8d-4b4b-bb11-8cd67d07915c";
 
     @Test
     void givenCsvReportId_whenSingleReportRequested_thenCsvUrlReturned() throws Exception {
@@ -36,7 +37,8 @@ class GetReportsByIdIT extends BaseIT {
     @ParameterizedTest
     @ValueSource(strings = {
             CCMS_REPORT,
-            GENERAL_LEDGER_REPORT
+            GENERAL_LEDGER_REPORT,
+            CCMS_AND_CIS_BANK_ACCOUNT_REPORT_W_CATEGORY_CODE_YTD_REPORT
     })
     void givenExcelReportId_whenSingleReportRequested_thenExcelUrlReturned(String id) throws Exception {
         performGetRequest("/reports/" + id)

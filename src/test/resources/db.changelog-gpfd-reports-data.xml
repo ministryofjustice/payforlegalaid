@@ -54,6 +54,21 @@
     </insert>
 
     <insert tableName="REPORTS" schemaName="GPFD">
+      <column name="ID" value="eee30b23-2c8d-4b4b-bb11-8cd67d07915c"/>
+      <column name="NAME" value="CCMS and CIS Bank Account Report w Category Code (YTD)"/>
+      <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="eee30b23-2c8d-4b4b-bb11-8cd67d07915c"/>
+      <column name="REPORT_CREATION_DATE" valueDate="SYSDATE"/>
+      <column name="DESCRIPTION" value="CCMS and CIS Bank Account Report w Category Code (YTD)"/>
+      <column name="NUM_DAYS_TO_KEEP" value="30"/>
+      <column name="FILE_NAME" value="CCMS_AND_CIS_BANK_ACCOUNT_REPORT_W_CATEGORY_CODE_YTD" />
+      <column name="ACTIVE" value="Y" />
+      <column name="REPORT_OUTPUT_TYPE" value="bd098666-94e4-4b0e-822c-8e5dfb04c908"/>
+      <column name="REPORT_OWNER_ID" value="00000000-0000-0000-0000-000000000003"/>
+      <column name="REPORT_OWNER_NAME" value="William Moran"/>
+      <column name="REPORT_OWNER_EMAIL" value="William.Moran@Justice.gov.uk"/>
+    </insert>
+
+    <insert tableName="REPORTS" schemaName="GPFD">
       <column name="ID" value="f46b4d3d-c100-429a-bf9a-6c3305dbdbf1"/>
       <column name="NAME" value="CCMS Invoice Analysis (CIS to CCMS)"/>
       <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="00000000-0000-0000-0000-000000000000"/>
