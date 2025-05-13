@@ -18,7 +18,7 @@ class FormulaCalculatorTest implements FormulaCalculator {
         formulaCell.setCellFormula("1+1");
 
         // When
-        evaluateAllFormulaCells(workbook, "Sheet1");
+        evaluateAllFormulaCells(workbook);
 
         // Then
         assertEquals(2.0, formulaCell.getNumericCellValue());
@@ -29,34 +29,10 @@ class FormulaCalculatorTest implements FormulaCalculator {
         // Given
 
         // When
-        var exception = assertThrows(IllegalArgumentException.class, () -> evaluateAllFormulaCells(null, "Sheet1"));
+        var exception = assertThrows(IllegalArgumentException.class, () -> evaluateAllFormulaCells(null));
 
         // Then
         assertEquals("Workbook cannot be null", exception.getMessage());
-    }
-
-    @Test
-    void shouldEvaluateAllFormulaCellsWhenNoSheetNamesProvided() {
-        // Given
-        var workbook = new XSSFWorkbook();
-
-        // When
-        var exception = assertThrows(IllegalArgumentException.class, () -> evaluateAllFormulaCells(workbook));
-
-        // Then
-        assertEquals("At least one sheet name must be provided", exception.getMessage());
-    }
-
-    @Test
-    void shouldEvaluateAllFormulaCellsWhenSheetNotFound() {
-        // Given
-        var workbook = new XSSFWorkbook();
-
-        // When
-        var exception = assertThrows(IllegalArgumentException.class, () -> evaluateAllFormulaCells(workbook, "NonExistentSheet"));
-
-        // Then
-        assertEquals("Sheet 'NonExistentSheet' not found", exception.getMessage());
     }
 
     @Test
@@ -69,7 +45,7 @@ class FormulaCalculatorTest implements FormulaCalculator {
         nonFormulaCell.setCellValue("Hello");
 
         // When
-        evaluateAllFormulaCells(workbook, "Sheet1");
+        evaluateAllFormulaCells(workbook);
 
         // Then
         assertEquals("Hello", nonFormulaCell.getStringCellValue());
@@ -91,7 +67,7 @@ class FormulaCalculatorTest implements FormulaCalculator {
         formulaCell2.setCellFormula("2+2");
 
         // When
-        evaluateAllFormulaCells(workbook, "Sheet1", "Sheet2");
+        evaluateAllFormulaCells(workbook);
 
         // Then
         assertEquals(2.0, formulaCell1.getNumericCellValue());

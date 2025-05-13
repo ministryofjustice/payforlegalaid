@@ -9,11 +9,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static java.text.MessageFormat.format;
-import static java.util.Arrays.stream;
+import static java.util.stream.IntStream.range;
 import static java.util.stream.Stream.of;
 import static org.apache.poi.ss.usermodel.CellType.FORMULA;
-import static uk.gov.laa.gpfd.services.excel.util.SheetUtils.findSheetByName;
 
 /**
  * The {@code FormulaCalculator} interface provides functionality to evaluate formula cells
@@ -26,30 +24,22 @@ import static uk.gov.laa.gpfd.services.excel.util.SheetUtils.findSheetByName;
 public interface FormulaCalculator {
 
     /**
-     * Evaluates all formula cells in the specified sheets of the workbook.
+     * Evaluates all formula cells in the workbook.
      *
-     * <p>This method iterates through the provided sheet names, finds the corresponding sheets,
-     * and evaluates all formula cells in those sheets. If a sheet is not found, an
-     * {@link IllegalArgumentException} is thrown.
+     * <p>This method iterates through the workbook and evaluates all formula cells in those sheets.
      *
      * @param workbook the workbook containing the sheets. Must not be {@code null}.
-     * @param sheets   the names of the sheets to evaluate formulas in. At least one sheet name must be provided.
-     * @throws IllegalArgumentException if the workbook is {@code null}, no sheet names are provided,
-     *                                  or a specified sheet is not found in the workbook.
+     * @throws IllegalArgumentException if the workbook is {@code null}
      */
-    default void evaluateAllFormulaCells(Workbook workbook, String... sheets) {
+    default void evaluateAllFormulaCells(Workbook workbook) {
         if (workbook == null) {
             throw new IllegalArgumentException("Workbook cannot be null");
-        }
-        if (sheets == null || sheets.length == 0) {
-            throw new IllegalArgumentException("At least one sheet name must be provided");
         }
 
         var evaluator = workbook.getCreationHelper().createFormulaEvaluator();
 
-        stream(sheets)
-                .map(sheetName -> findSheetByName(workbook, sheetName)
-                        .orElseThrow(() -> new IllegalArgumentException(format("Sheet ''{0}'' not found", sheetName))))
+        range(0, workbook.getNumberOfSheets())
+                .mapToObj(workbook::getSheetAt)
                 .flatMap(this::streamRows)
                 .flatMap(this::streamCells)
                 .filter(cell -> FORMULA == cell.getCellType())
