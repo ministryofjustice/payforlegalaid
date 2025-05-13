@@ -6,7 +6,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import uk.gov.laa.gpfd.exception.CsvStreamException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
@@ -30,7 +29,7 @@ public class ReportService {
      * @param requestedId - the ID of the requested report
      * @return a ResponseEntity of type 'StreamingResponseBody', containing a stream of CSV data
      */
-    public ResponseEntity<StreamingResponseBody> createCSVResponse(UUID requestedId) throws ReportIdNotFoundException, DatabaseReadException, IndexOutOfBoundsException, CsvStreamException {
+    public ResponseEntity<StreamingResponseBody> createCSVResponse(UUID requestedId) {
         var reportListResponse = mappingTableService.getDetailsForSpecificMapping(requestedId);
 
         return ResponseEntity.ok()

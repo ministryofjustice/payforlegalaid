@@ -48,6 +48,52 @@ public sealed abstract class TemplateResourceException extends RuntimeException 
     }
 
     /**
+     * Exception thrown when a requested template cannot be found by its identifier.
+     * <p>
+     * This typically occurs when:
+     * <ul>
+     *   <li>The provided template ID doesn't match any known template</li>
+     *   <li>The template ID exists but has been deprecated or removed</li>
+     *   <li>The template ID format is invalid</li>
+     * </ul>
+     */
+    public static final class TemplateNotFoundException extends TemplateResourceException {
+        /**
+         * Constructs a new {@code TemplateNotFoundException} with the specified error message.
+         *
+         * @param message the detail message including the template ID that wasn't found
+         */
+        public TemplateNotFoundException(String message) {
+            super(message);
+        }
+    }
+
+    /**
+     * Exception thrown when a template file cannot be located in the application resources.
+     * <p>
+     * This typically indicates either:
+     * <ul>
+     *   <li>The template file is missing from the deployed resources</li>
+     *   <li>The template file exists but cannot be accessed due to permissions</li>
+     *   <li>The path to the template resource is incorrect</li>
+     * </ul>
+     * <p>
+     * Contrast with {@link TemplateNotFoundException} which indicates the template ID wasn't recognized,
+     * while this exception indicates the ID was valid but the corresponding resource file was missing.
+     */
+    public static final class TemplateResourceNotFoundException extends TemplateResourceException {
+
+        /**
+         * Constructs a new {@code TemplateResourceNotFoundException} with the specified error message.
+         *
+         * @param message the detail message including the filename that couldn't be found
+         */
+        public TemplateResourceNotFoundException(String message) {
+            super(message);
+        }
+    }
+
+    /**
      * Represents an exception that occurs during the creation of an Excel template.
      * This is a specific type of {@link TemplateResourceException}.
      */

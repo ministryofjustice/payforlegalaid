@@ -1,16 +1,11 @@
 package uk.gov.laa.gpfd.services.excel.template;
 
-import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 
 import java.io.InputStream;
-import java.util.Map;
-import java.util.Optional;
 
-import static java.lang.Thread.currentThread;
-import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.toMap;
-import static uk.gov.laa.gpfd.exception.TemplateResourceException.LocalTemplateReadException;
+import static uk.gov.laa.gpfd.exception.TemplateResourceException.TemplateNotFoundException;
+import static uk.gov.laa.gpfd.exception.TemplateResourceException.TemplateResourceNotFoundException;
 
 /**
  * A local implementation of {@link TemplateClient} that provides template resources
@@ -22,31 +17,27 @@ import static uk.gov.laa.gpfd.exception.TemplateResourceException.LocalTemplateR
  */
 public record LocalTemplateClient() implements TemplateClient {
 
-    private static final Map<String, InputStream> TEMPLATES = stream(Template.values())
-            .collect(toMap(t -> t.id, t -> currentThread().getContextClassLoader().getResourceAsStream(t.resourcePath)));
-
     @Override
     @SneakyThrows
     public InputStream findTemplateById(String id) {
-        return Optional.ofNullable(TEMPLATES.get(id))
-                .orElseThrow(() -> new LocalTemplateReadException("Template not found for ID: " + id));
-    }
+        if (id == null || id.isBlank()) {
+            throw new IllegalArgumentException("Template ID cannot be null or blank");
+        }
 
-    /**
-     * Enumeration of available templates with their metadata.
-     * Each template defines:
-     * <ul>
-     *   <li>A unique identifier (UUID string)</li>
-     *   <li>A classpath resource path to the Excel template file</li>
-     * </ul>
-     */
-    @AllArgsConstructor
-    private enum Template {
-        INVOICE_ANALYSIS("00000000-0000-0000-0000-000000000000", "CCMS_invoice analysis_template_v1_1.xlsx"),
-        GENERAL_LEDGER("f46b4d3d-c100-429a-bf9a-223305dbdbfb", "CCMS_GENERAL_LEDGER_EXTRACTOR_SMALL_MANUAL_BATCHES.xlsx");
+        var filename = switch(id) {
+            case "eee30b23-2c8d-4b4b-bb11-8cd67d07915c" -> "CCMS_AND_CIS_BANK_ACCOUNT_REPORT_W_CATEGORY_CODE_YTD.xlsx";
+            case "f46b4d3d-c100-429a-bf9a-223305dbdbfb" -> "CCMS_GENERAL_LEDGER_EXTRACTOR_SMALL_MANUAL_BATCHES.xlsx";
+            case "00000000-0000-0000-0000-000000000000" -> "CCMS_invoice analysis_template_v1_1.xlsx";
+            default -> throw new TemplateNotFoundException("Template not found in resources for ID: " + id);
+        };
 
-        private final String id;
-        private final String resourcePath;
+        var resourceAsStream = getClass().getClassLoader().getResourceAsStream(filename);
+
+        if (resourceAsStream == null) {
+            throw new TemplateResourceNotFoundException("Template file '%s' not found in resources for ID: %s".formatted(filename, id));
+        }
+
+        return resourceAsStream;
     }
 
 }
