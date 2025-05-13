@@ -5,6 +5,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -19,35 +21,41 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(locations = "classpath:application-test.yml")
 class GetReportsByIdIT extends BaseIT {
 
-    public static final String REPORT_UUID_1 = "b36f9bbb-1178-432c-8f99-8090e285f2d3";
+    private static final String CCMS_REPORT = "b36f9bbb-1178-432c-8f99-8090e285f2d3";
+    private static final String GENERAL_LEDGER_REPORT = "f46b4d3d-c100-429a-bf9a-223305dbdbfb";
 
     @Test
     void givenCsvReportId_whenSingleReportRequested_thenCsvUrlReturned() throws Exception {
         performGetRequest("/reports/" + BaseIT.REPORT_UUID_1)
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id").value(BaseIT.REPORT_UUID_1))
-            .andExpect(jsonPath("$.reportDownloadUrl").value("http://localhost/csv/" + BaseIT.REPORT_UUID_1));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(BaseIT.REPORT_UUID_1))
+                .andExpect(jsonPath("$.reportDownloadUrl")
+                        .value("http://localhost/csv/" + BaseIT.REPORT_UUID_1));
     }
 
-    @Test
-    void givenExcelReportId_whenSingleReportRequested_thenExcelUrlReturned() throws Exception {
-        performGetRequest("/reports/" + REPORT_UUID_1)
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id").value(REPORT_UUID_1))
-            .andExpect(jsonPath("$.reportDownloadUrl").value(
-                "http://localhost/excel/" + REPORT_UUID_1));
+    @ParameterizedTest
+    @ValueSource(strings = {
+            CCMS_REPORT,
+            GENERAL_LEDGER_REPORT
+    })
+    void givenExcelReportId_whenSingleReportRequested_thenExcelUrlReturned(String id) throws Exception {
+        performGetRequest("/reports/" + id)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.reportDownloadUrl")
+                        .value("http://localhost/excel/" + id));
     }
 
     @Test
     void shouldReturn400WhenGivenInvalidId() throws Exception {
         performGetRequest("/reports/" + BaseIT.REPORT_UUID_1 + "321")
-            .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     void givenABrandNewReportOutputType_whenSingleReportRequested_thenInternalServerError() throws Exception {
         performGetRequest("/reports/b36f9bbb-1178-432c-8f99-8090e285f2d4")
-            .andExpect(status().isInternalServerError());
+                .andExpect(status().isInternalServerError());
     }
 }
 

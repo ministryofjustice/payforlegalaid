@@ -19,7 +19,7 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(locations = "classpath:application-test.yml")
 class GetReportsIT extends BaseIT {
 
-    public static final int NUMBER_OF_REPORTS_IN_TEST_DATA = 5;
+    public static final int NUMBER_OF_REPORTS_IN_TEST_DATA = 6;
 
     @Autowired
     private JdbcTemplate writeJdbcTemplate;
