@@ -203,7 +203,7 @@ class ExcelCreationServiceTest {
 
         verify(templateLoader).findTemplateById("TEMPLATE_123");
         verify(pivotTableRefresher, times(0)).refreshPivotTables(workbook);
-        verify(formulaCalculator, times(0)).evaluateAllFormulaCells(workbook, "MAIN");
+        verify(formulaCalculator, times(0)).evaluateAllFormulaCells(workbook);
     }
 
 }
