@@ -91,7 +91,9 @@ public record ExcelCreationService(
      */
     private CompletableFuture<List<Map<String, Object>>> fetchData(SheetToQuery sheetToQuery) {
         if (!sqlFormatValidator.isSqlFormatValid(sheetToQuery.reportQuery().getQuery())) {
-            return CompletableFuture.failedFuture(new SqlFormatException("SQL format invalid for sheet %s (report id %s)".formatted(sheetToQuery.reportQuery().getTabName(), sheetToQuery.reportQuery().getReportId())));
+            String error = "SQL format invalid for sheet %s (report id %s)"
+                    .formatted(sheetToQuery.reportQuery().getTabName(), sheetToQuery.reportQuery().getReportId());
+            return CompletableFuture.failedFuture(new SqlFormatException(error));
         }
         return supplyAsync(() -> dataFetcher.callDataBase(sheetToQuery.reportQuery().getQuery()));
     }

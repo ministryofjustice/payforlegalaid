@@ -6,12 +6,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import uk.gov.laa.gpfd.exception.CsvStreamException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.exception.SqlFormatException;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
+import uk.gov.laa.gpfd.model.MappingTable;
 import uk.gov.laa.gpfd.utils.SqlFormatValidator;
 
 import java.net.URI;
@@ -32,11 +32,14 @@ public class ReportService {
      *
      * @param requestedId - the ID of the requested report
      * @return a ResponseEntity of type 'StreamingResponseBody', containing a stream of CSV data
+     * @throws ReportIdNotFoundException if report ID is not in database
+     * @throws DatabaseReadException     if error reading data
+     * @throws SqlFormatException        if sql format is unexpected
      */
-    public ResponseEntity<StreamingResponseBody> createCSVResponse(UUID requestedId) throws ReportIdNotFoundException, DatabaseReadException, IndexOutOfBoundsException, CsvStreamException {
-        var reportDetails = mappingTableService.getDetailsForSpecificMapping(requestedId);
-        var sqlQuery = reportDetails.getSqlQuery();
-        if (!sqlFormatValidator.isSqlFormatValid(sqlQuery)){
+    public ResponseEntity<StreamingResponseBody> createCSVResponse(UUID requestedId) throws ReportIdNotFoundException, DatabaseReadException, SqlFormatException {
+        MappingTable reportDetails = mappingTableService.getDetailsForSpecificMapping(requestedId);
+        String sqlQuery = reportDetails.getSqlQuery();
+        if (!sqlFormatValidator.isSqlFormatValid(sqlQuery)) {
             throw new SqlFormatException("SQL format invalid for report %s (id %s)".formatted(reportDetails.getReportName(), reportDetails.getId()));
         }
 

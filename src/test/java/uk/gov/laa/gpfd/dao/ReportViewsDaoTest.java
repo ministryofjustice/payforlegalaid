@@ -3,7 +3,6 @@ package uk.gov.laa.gpfd.dao;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 
@@ -15,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class ReportViewsDaoTest extends BaseDaoTest{
+class ReportViewsDaoTest extends BaseDaoTest {
 
     @Autowired
     private ReportViewsDao reportViewsDao;
