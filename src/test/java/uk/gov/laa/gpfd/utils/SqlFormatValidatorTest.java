@@ -8,7 +8,7 @@ import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SqlFormatValidatorTest {
+class SqlFormatValidatorTest {
 
     private final SqlFormatValidator sqlFormatValidator = new SqlFormatValidator();
 

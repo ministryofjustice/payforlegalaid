@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class SqlFormatValidator {
 
-    private final static String validRegex = "^SELECT \\* FROM ANY_REPORT\\.[A-Z0-9_]+$";
+    private static final String VALID_REGEX = "^SELECT \\* FROM ANY_REPORT\\.[A-Z0-9_]+$";
 
     /**
      * Checks whether the sql we have pulled from the database matches the format we expect
@@ -14,6 +14,6 @@ public class SqlFormatValidator {
      * @return true if matches expected format, false otherwise
      */
     public boolean isSqlFormatValid(String rawSql) {
-        return rawSql != null && rawSql.strip().matches(validRegex);
+        return rawSql != null && rawSql.strip().matches(VALID_REGEX);
     }
 }

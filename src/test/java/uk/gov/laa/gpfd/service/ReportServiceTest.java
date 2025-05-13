@@ -100,7 +100,7 @@ class ReportServiceTest {
     }
 
     @Test
-    void createCSVResponse_GivenInvalidSql_ShouldThrowException() throws Exception {
+    void createCSVResponse_GivenInvalidSql_ShouldThrowException() {
         var testId = UUID.randomUUID();
 
         when(mappingTableService.getDetailsForSpecificMapping(testId)).thenReturn(aValidInvoiceAnalysisReport());
