@@ -77,7 +77,7 @@ class ExcelCreationServiceTest {
         // Verify interactions
         verify(templateLoader).findTemplateById("TEMPLATE_123");
         verify(pivotTableRefresher).refreshPivotTables(workbook);
-        verify(formulaCalculator).evaluateAllFormulaCells(workbook, "MAIN");
+        verify(formulaCalculator).evaluateAllFormulaCells(workbook);
     }
 
     @Test
@@ -128,7 +128,7 @@ class ExcelCreationServiceTest {
         // Verify interactions
         verify(templateLoader).findTemplateById("TEMPLATE_123");
         verify(pivotTableRefresher).refreshPivotTables(workbook);
-        verify(formulaCalculator).evaluateAllFormulaCells(workbook, "MAIN");
+        verify(formulaCalculator).evaluateAllFormulaCells(workbook);
         verify(sheetDataWriter, never()).writeDataToSheet(any(), any(), any());
     }
 
@@ -164,6 +164,6 @@ class ExcelCreationServiceTest {
         // Verify interactions
         verify(templateLoader).findTemplateById("TEMPLATE_123");
         verify(pivotTableRefresher).refreshPivotTables(workbook);
-        verify(formulaCalculator).evaluateAllFormulaCells(workbook, "MAIN");
+        verify(formulaCalculator).evaluateAllFormulaCells(workbook);
     }
 }

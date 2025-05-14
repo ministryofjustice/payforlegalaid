@@ -1,13 +1,15 @@
 package uk.gov.laa.gpfd.integration;
 
-import org.json.JSONObject;
-import org.junit.jupiter.api.Assertions;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
@@ -19,21 +21,41 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(locations = "classpath:application-test.yml")
 class GetReportsByIdIT extends BaseIT {
 
+    private static final String CCMS_REPORT = "b36f9bbb-1178-432c-8f99-8090e285f2d3";
+    private static final String GENERAL_LEDGER_REPORT = "f46b4d3d-c100-429a-bf9a-223305dbdbfb";
+
     @Test
-    void shouldReturnSingleReportWithMatchingId() throws Exception {
-        MockHttpServletResponse response =  performGetRequest("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d3");
+    void givenCsvReportId_whenSingleReportRequested_thenCsvUrlReturned() throws Exception {
+        performGetRequest("/reports/" + BaseIT.REPORT_UUID_1)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(BaseIT.REPORT_UUID_1))
+                .andExpect(jsonPath("$.reportDownloadUrl")
+                        .value("http://localhost/csv/" + BaseIT.REPORT_UUID_1));
+    }
 
-        Assertions.assertEquals(200, response.getStatus());
-
-        var json = new JSONObject(response.getContentAsString());
-        Assertions.assertEquals("0d4da9ec-b0b3-4371-af10-f375330d85d3", json.get("id"));
+    @ParameterizedTest
+    @ValueSource(strings = {
+            CCMS_REPORT,
+            GENERAL_LEDGER_REPORT
+    })
+    void givenExcelReportId_whenSingleReportRequested_thenExcelUrlReturned(String id) throws Exception {
+        performGetRequest("/reports/" + id)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.reportDownloadUrl")
+                        .value("http://localhost/excel/" + id));
     }
 
     @Test
     void shouldReturn400WhenGivenInvalidId() throws Exception {
-        MockHttpServletResponse response = performGetRequest("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d3321");
+        performGetRequest("/reports/" + BaseIT.REPORT_UUID_1 + "321")
+                .andExpect(status().isBadRequest());
+    }
 
-        Assertions.assertEquals(400, response.getStatus());
+    @Test
+    void givenABrandNewReportOutputType_whenSingleReportRequested_thenInternalServerError() throws Exception {
+        performGetRequest("/reports/b36f9bbb-1178-432c-8f99-8090e285f2d4")
+                .andExpect(status().isInternalServerError());
     }
 }
 

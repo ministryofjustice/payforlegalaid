@@ -9,7 +9,7 @@ logging:
             JdbcTemplate: INFO
             StatementCreatorUtils: INFO
         transaction: INFO
-        web.client.RestTemplate: INFO
+        web: INFO
 
 
 management:

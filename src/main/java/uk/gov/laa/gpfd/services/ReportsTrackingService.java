@@ -27,7 +27,7 @@ public class ReportsTrackingService {
         var reportsTracking = ReportsTracking.builder()
             .id(UUID.randomUUID())
             .name(reportDetails.getName())
-            .reportUrl("www.sharepoint.com/place-where-we-will-create-report")
+            .reportUrl(reportDetails.getReportDownloadUrl())
             .creationDate(Timestamp.valueOf(LocalDateTime.now()))
             .reportId(reportDetails.getId())
             .reportCreator(userService.getCurrentUserName())
@@ -36,6 +36,7 @@ public class ReportsTrackingService {
             .templateUrl(reportDetails.getTemplateSecureDocumentId())
             .build();
 
+        log.debug("Before tracking report {} being accessed by {}", requestedId, userService.getCurrentUserName());
         reportsTrackingDao.saveReportsTracking (reportsTracking);
         log.info("After tracking report {} being accessed by {}", requestedId, userService.getCurrentUserName());
     }
