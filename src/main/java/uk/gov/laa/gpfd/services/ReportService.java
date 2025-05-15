@@ -6,11 +6,13 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import uk.gov.laa.gpfd.exception.CsvStreamException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
+import uk.gov.laa.gpfd.exception.SqlFormatException;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
+import uk.gov.laa.gpfd.model.MappingTable;
+import uk.gov.laa.gpfd.utils.SqlFormatValidator;
 
 import java.net.URI;
 import java.util.UUID;
@@ -23,20 +25,28 @@ public class ReportService {
     private final MappingTableService mappingTableService;
     private final ReportManagementService reportManagementService;
     private final DataStreamer dataStreamer;
+    private final SqlFormatValidator sqlFormatValidator;
 
     /**
      * Create a Response entity with a CSV data stream inside the body, for use by the controller's '/csv' endpoint
      *
      * @param requestedId - the ID of the requested report
      * @return a ResponseEntity of type 'StreamingResponseBody', containing a stream of CSV data
+     * @throws ReportIdNotFoundException if report ID is not in database
+     * @throws DatabaseReadException     if error reading data
+     * @throws SqlFormatException        if sql format is unexpected
      */
-    public ResponseEntity<StreamingResponseBody> createCSVResponse(UUID requestedId) throws ReportIdNotFoundException, DatabaseReadException, IndexOutOfBoundsException, CsvStreamException {
-        var reportListResponse = mappingTableService.getDetailsForSpecificMapping(requestedId);
+    public ResponseEntity<StreamingResponseBody> createCSVResponse(UUID requestedId) throws ReportIdNotFoundException, DatabaseReadException, SqlFormatException {
+        MappingTable reportDetails = mappingTableService.getDetailsForSpecificMapping(requestedId);
+        String sqlQuery = reportDetails.getSqlQuery();
+        if (!sqlFormatValidator.isSqlFormatValid(sqlQuery)) {
+            throw new SqlFormatException("SQL format invalid for report %s (id %s)".formatted(reportDetails.getReportName(), reportDetails.getId()));
+        }
 
         return ResponseEntity.ok()
-                .header("Content-Disposition", "attachment; filename=%s.csv".formatted(reportListResponse.getReportName()))
+                .header("Content-Disposition", "attachment; filename=%s.csv".formatted(reportDetails.getReportName()))
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(stream -> dataStreamer.stream(reportListResponse.getSqlQuery(), stream));
+                .body(stream -> dataStreamer.stream(sqlQuery, stream));
     }
 
     /**
