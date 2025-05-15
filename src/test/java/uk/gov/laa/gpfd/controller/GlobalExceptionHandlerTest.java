@@ -1,11 +1,14 @@
 package uk.gov.laa.gpfd.controller;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.jdbc.BadSqlGrammarException;
 import uk.gov.laa.gpfd.exception.CsvStreamException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.exception.TransferException;
+
+import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -31,6 +34,22 @@ class GlobalExceptionHandlerTest {
         // Then
         assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertNull(response.getBody().getError());
+    }
+
+    @Test
+    void shouldHandleBadSqlGrammarException() {
+        // Given
+        var task = "Test query execution";
+        var sql = "SELECT * FROM NON_EXISTENT_TABLE";
+        var rootCause = new SQLException("Table or view does not exist", "42S02", 942);
+        var exception = new BadSqlGrammarException(task, sql, rootCause);
+
+        // When
+        var response = globalExceptionHandler.handleBadSqlGrammarException(exception);
+
+        // Then
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("The requested database view does not exist or is not accessible", response.getBody().getError());
     }
 
     @Test
