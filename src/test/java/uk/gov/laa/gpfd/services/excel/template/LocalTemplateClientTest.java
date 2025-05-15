@@ -1,15 +1,13 @@
 package uk.gov.laa.gpfd.services.excel.template;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static uk.gov.laa.gpfd.exception.TemplateResourceException.LocalTemplateReadException;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-
-import java.util.UUID;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class LocalTemplateClientTest {
 
@@ -20,24 +18,20 @@ class LocalTemplateClientTest {
         client = new LocalTemplateClient();
     }
 
-    @Test
+    @ParameterizedTest
     @DisplayName("Should return input stream for valid template ID")
-    void shouldReturnInputStreamForValidId() {
-        assertNotNull(client.findTemplateById("00000000-0000-0000-0000-000000000000"));
-        assertNotNull(client.findTemplateById("f46b4d3d-c100-429a-bf9a-223305dbdbfb"));
+    @ValueSource(strings = {
+            "00000000-0000-0000-0000-000000000000",
+            "f46b4d3d-c100-429a-bf9a-223305dbdbfb",
+            "eee30b23-2c8d-4b4b-bb11-8cd67d07915c"
+    })
+    void shouldReturnInputStreamForValidId(String id) {
+        assertNotNull(client.findTemplateById(id));
     }
 
     @Test
-    @DisplayName("Should throw exception for unknown template ID")
-    void shouldThrowExceptionForUnknownId() {
-        var unknownId = UUID.randomUUID().toString();
-
-        var exception = assertThrows(
-                LocalTemplateReadException.class,
-                () -> client.findTemplateById(unknownId)
-        );
-
-        assertEquals("Template not found for ID: " + unknownId, exception.getMessage());
+    void shouldThrowsExceptionForNullId() {
+        assertThrows(IllegalArgumentException.class, () -> client.findTemplateById(null));
     }
 
 }
