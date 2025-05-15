@@ -3,6 +3,7 @@ package uk.gov.laa.gpfd.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -42,6 +43,18 @@ public class GlobalExceptionHandler {
         }};
 
         log.error("LocalTemplateReadException Thrown: {}", response.getError());
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(BadSqlGrammarException.class)
+    public ResponseEntity<ReportsGet500Response> handleBadSqlGrammarException(BadSqlGrammarException e) {
+        var response = new ReportsGet500Response() {{
+            setError("The requested database view does not exist or is not accessible");
+        }};
+
+        log.error("Database query failed - SQL: {}, Error: {}", e.getSql(), e.getSQLException().getMessage(), e);
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
