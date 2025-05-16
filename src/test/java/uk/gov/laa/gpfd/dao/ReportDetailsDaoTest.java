@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ActiveProfiles("test")
 public class ReportDetailsDaoTest extends BaseDaoTest{
 
-    public static final int NUMBER_OF_REPORTS_IN_TEST_DATA = 7;
+    public static final int NUMBER_OF_REPORTS_IN_TEST_DATA = 8;
     @Autowired
     private ReportDetailsDao reportDetailsDao;
 
@@ -34,7 +34,7 @@ public class ReportDetailsDaoTest extends BaseDaoTest{
         assertEquals(ReportsTestDataFactory.REPORT_UUID_1, results.get(0).getId().toString());
         assertEquals(30, results.get(0).getNumDaysToKeep());
         assertEquals("xlsx", results.get(0).getExtension());
-        assertEquals("csv", results.get(3).getExtension());
+        assertEquals("csv", results.get(4).getExtension());
     }
 
     @Test
