@@ -28,6 +28,7 @@ public record LocalTemplateClient() implements TemplateClient {
             case "eee30b23-2c8d-4b4b-bb11-8cd67d07915c" -> "CCMS_AND_CIS_BANK_ACCOUNT_REPORT_W_CATEGORY_CODE_YTD.xlsx";
             case "f46b4d3d-c100-429a-bf9a-223305dbdbfb" -> "CCMS_GENERAL_LEDGER_EXTRACTOR_SMALL_MANUAL_BATCHES.xlsx";
             case "00000000-0000-0000-0000-000000000000" -> "CCMS_invoice analysis_template_v1_1.xlsx";
+            case "7073dd13-e325-4863-a05c-a049a815d1f7" -> "LEGAL_HELP_CONTRACT_BALANCES.xlsx";
             default -> throw new TemplateNotFoundException("Template not found in resources for ID: " + id);
         };
 
