@@ -1,38 +1,29 @@
 package uk.gov.laa.gpfd.controller;
 
 import org.junit.jupiter.api.Test;
-import uk.gov.laa.gpfd.exception.CsvStreamException;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
+import uk.gov.laa.gpfd.exception.TemplateResourceException;
 import uk.gov.laa.gpfd.exception.SqlFormatException;
 import uk.gov.laa.gpfd.exception.TransferException;
 
+import java.util.stream.Stream;
+
+import static java.util.stream.Stream.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static uk.gov.laa.gpfd.exception.TemplateResourceException.ExcelTemplateCreationException;
-import static uk.gov.laa.gpfd.exception.TemplateResourceException.LocalTemplateReadException;
 
 @SuppressWarnings("DataFlowIssue")
 class GlobalExceptionHandlerTest {
 
     private static final GlobalExceptionHandler globalExceptionHandler = new GlobalExceptionHandler();
-
-    @Test
-    void shouldHandleCsvStreamExceptionWithNullMessage() {
-        // Given
-        var exception = new CsvStreamException(null);
-
-        // When
-        var response = globalExceptionHandler.handleCsvStreamException(exception);
-
-        // Then
-        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertNull(response.getBody().getError());
-    }
 
     @Test
     void shouldHandleDatabaseReadExceptionWithLongMessage() {
@@ -75,19 +66,6 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void shouldHandleCsvStreamExceptionWithWhitespaceMessage() {
-        // Given
-        var exception = new CsvStreamException("   ");
-
-        // When
-        var response = globalExceptionHandler.handleCsvStreamException(exception);
-
-        // Then
-        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals("   ", response.getBody().getError());
-    }
-
-    @Test
     void shouldHandleDatabaseReadExceptionWithWhitespaceMessage() {
         // Given
         var exception = new DatabaseReadException("   ");
@@ -100,43 +78,32 @@ class GlobalExceptionHandlerTest {
         assertEquals("   ", response.getBody().getError());
     }
 
-    @Test
-    void shouldHandleCsvStreamException() {
-        // Given
-        var exception = new CsvStreamException("CSV Stream Error");
 
+    @ParameterizedTest
+    @MethodSource("templateExceptionProvider")
+    void shouldHandleTemplateResourceExceptions(TemplateResourceException exception, String expectedErrorMessage) {
         // When
-        var response = globalExceptionHandler.handleCsvStreamException(exception);
+        var response = globalExceptionHandler.handleTemplateResourceException(exception);
 
         // Then
         assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals("CSV Stream Error", response.getBody().getError());
+        assertEquals(expectedErrorMessage, response.getBody().getError());
     }
 
-    @Test
-    void shouldHandleLocalTemplateReadException() {
-        // Given
-        var exception = new LocalTemplateReadException("Could not find template");
-
-        // When
-        var response = globalExceptionHandler.handleLocalTemplateReadException(exception);
-
-        // Then
-        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals("Could not find template", response.getBody().getError());
-    }
-
-    @Test
-    void shouldHandleExcelTemplateCreationException() {
-        // Given
-        var exception = new ExcelTemplateCreationException("Meh, doesnt work on my machine!", new RuntimeException());
-
-        // When
-        var response = globalExceptionHandler.handleExcelTemplateCreationException(exception);
-
-        // Then
-        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals("Meh, doesnt work on my machine!", response.getBody().getError());
+    private static Stream<Arguments> templateExceptionProvider() {
+        return of(Arguments.of(
+                new TemplateResourceException.TemplateNotFoundException("Template not found in resources for ID: 1"),
+                "Template not found in resources for ID: 1"
+        ), Arguments.of(
+                new TemplateResourceException.LocalTemplateReadException("Could not find template"),
+                "Could not find template"
+        ), Arguments.of(
+                new TemplateResourceException.ExcelTemplateCreationException("Meh, doesnt work on my machine!", new RuntimeException()),
+                "Meh, doesnt work on my machine!"
+        ), Arguments.of(
+                new TemplateResourceException.TemplateResourceNotFoundException("Template file '%s' not found in resources for ID: %s"),
+                "Template file '%s' not found in resources for ID: %s"
+        ));
     }
 
     @Test
@@ -205,20 +172,6 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void shouldHandleCsvStreamExceptionWithMultilineMessage() {
-        // Given
-        var multilineMessage = "CSV Stream Error\nLine 1\nLine 2";
-        var exception = new CsvStreamException(multilineMessage);
-
-        // When
-        var response = globalExceptionHandler.handleCsvStreamException(exception);
-
-        // Then
-        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals(multilineMessage, response.getBody().getError());
-    }
-
-    @Test
     void shouldHandleDatabaseReadExceptionWithSpecialCharacters() {
         // Given
         var exception = new DatabaseReadException("Error! @#$%^&*()");
@@ -259,32 +212,6 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void shouldHandleCsvStreamExceptionWithSpecialCharacters() {
-        // Given
-        var exception = new CsvStreamException("Special chars: \t\n!@#$%^&*()");
-
-        // When
-        var response = globalExceptionHandler.handleCsvStreamException(exception);
-
-        // Then
-        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals("Special chars: \t\n!@#$%^&*()", response.getBody().getError());
-    }
-
-    @Test
-    void shouldHandleCsvStreamExceptionWithEmojiMessage() {
-        // Given
-        var exception = new CsvStreamException("Error 🚀🔥");
-
-        // When
-        var response = globalExceptionHandler.handleCsvStreamException(exception);
-
-        // Then
-        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals("Error 🚀🔥", response.getBody().getError());
-    }
-
-    @Test
     void shouldHandleIndexOutOfBoundsExceptionWithZeroIndex() {
         // Given
         var exception = new IndexOutOfBoundsException("Index 0 is out of bounds");
@@ -295,20 +222,6 @@ class GlobalExceptionHandlerTest {
         // Then
         assertEquals(BAD_REQUEST, response.getStatusCode());
         assertEquals("Index 0 is out of bounds", response.getBody().getError());
-    }
-
-    @Test
-    void shouldHandleCsvStreamExceptionWithVeryLongMessage() {
-        // Given
-        var longMessage = "A".repeat(10000);
-        var exception = new CsvStreamException(longMessage);
-
-        // When
-        var response = globalExceptionHandler.handleCsvStreamException(exception);
-
-        // Then
-        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals(longMessage, response.getBody().getError());
     }
 
     @Test
@@ -349,19 +262,6 @@ class GlobalExceptionHandlerTest {
         // Then
         assertEquals(BAD_REQUEST, response.getStatusCode());
         assertEquals("Index 1000000 is out of bounds", response.getBody().getError());
-    }
-
-    @Test
-    void shouldHandleCsvStreamExceptionWithMessageAsPeriod() {
-        // Given
-        var exception = new CsvStreamException(".");
-
-        // When
-        var response = globalExceptionHandler.handleCsvStreamException(exception);
-
-        // Then
-        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals(".", response.getBody().getError());
     }
 
     @Test
@@ -446,18 +346,6 @@ class GlobalExceptionHandlerTest {
     }
 
 
-    @Test
-    void shouldHandleCsvStreamExceptionWithAllWhitespaceMessage() {
-        // Given
-        var exception = new CsvStreamException("   ");
-
-        // When
-        var response = globalExceptionHandler.handleCsvStreamException(exception);
-
-        // Then
-        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals("   ", response.getBody().getError());
-    }
 
     @Test
     void shouldHandleDatabaseReadExceptionWithSingleNewlineMessage() {

@@ -36,7 +36,7 @@ public class ReportService {
      * @throws DatabaseReadException     if error reading data
      * @throws SqlFormatException        if sql format is unexpected
      */
-    public ResponseEntity<StreamingResponseBody> createCSVResponse(UUID requestedId) throws ReportIdNotFoundException, DatabaseReadException, SqlFormatException {
+    public ResponseEntity<StreamingResponseBody> createCSVResponse(UUID requestedId) {
         MappingTable reportDetails = mappingTableService.getDetailsForSpecificMapping(requestedId);
         String sqlQuery = reportDetails.getSqlQuery();
         if (!sqlFormatValidator.isSqlFormatValid(sqlQuery)) {
