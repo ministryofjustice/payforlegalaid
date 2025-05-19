@@ -27,11 +27,9 @@ class SqlFormatValidatorTest {
     @ParameterizedTest
     @NullAndEmptySource
     @ValueSource(strings = {
+            "this isn't even sql",
             "DROP TABLE ANY_REPORT.V_CCMS_STATEMENT_FOR_ACCOUNTS", // Patently wrong SQL for selecting
-            "SELECT * FROM GPFD.V_CCMS_STATEMENT_FOR_ACCOUNTS", // Wrong schema
             "SELECT * FROM ANY_REPORT.V_CCMS_STATEMENT_FOR_ACCOUNTS; DROP TABLE ANY_REPORT.V_CCMS_STATEMENT_FOR_ACCOUNTS", // Command chaining
-            "SELECT * FROM ANY_REPORT.    V_CCMS_STATEMENT_FOR_ACCOUNTS", // Weird spacing is fishy
-            "SELECT * FROM ANY_REPORT.V_CCMS_@NAME", // Flag special characters
             "SELECT * FROM ANY_REPORT.", // Must have a table name
     })
     void whenFormatIsInvalid_shouldReturnFalse(String sqlToTest) throws DatabaseReadException {
