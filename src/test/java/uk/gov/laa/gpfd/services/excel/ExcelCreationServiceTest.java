@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import uk.gov.laa.gpfd.model.ImmutableReportQuery;
 import uk.gov.laa.gpfd.model.Report;
 
@@ -28,8 +29,8 @@ import static org.mockito.Mockito.when;
 
 class ExcelCreationServiceTest {
 
-    @Mock
-    private TemplateService templateLoader;
+    @Spy
+    private TemplateService templateLoader ;
 
     @Mock
     private ReportViewsDao dataFetcher;
@@ -48,6 +49,7 @@ class ExcelCreationServiceTest {
 
     @BeforeEach
     void setUp() {
+        templateLoader = new TemplateService.ExcelTemplateService(mock(), mock());
         MockitoAnnotations.openMocks(this);
     }
 
