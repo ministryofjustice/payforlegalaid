@@ -26,13 +26,18 @@ class GetReportsByIdIT extends BaseIT {
     private static final String CCMS_AND_CIS_BANK_ACCOUNT_REPORT_W_CATEGORY_CODE_YTD_REPORT = "eee30b23-2c8d-4b4b-bb11-8cd67d07915c";
     private static final String LEGAL_HELP_CONTRACT_BALANCES_REPORT = "7073dd13-e325-4863-a05c-a049a815d1f7";
 
-    @Test
-    void givenCsvReportId_whenSingleReportRequested_thenCsvUrlReturned() throws Exception {
-        performGetRequest("/reports/" + BaseIT.REPORT_UUID_1)
+    private static final String INITIAL_TEST_REPORT = "0d4da9ec-b0b3-4371-af10-f375330d85d3";
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            INITIAL_TEST_REPORT,
+    })
+    void givenCsvReportId_whenSingleReportRequested_thenCsvUrlReturned(String id) throws Exception {
+        performGetRequest("/reports/" + id)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(BaseIT.REPORT_UUID_1))
+                .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.reportDownloadUrl")
-                        .value("http://localhost/csv/" + BaseIT.REPORT_UUID_1));
+                        .value("http://localhost/csv/" + id));
     }
 
     @ParameterizedTest
@@ -54,6 +59,16 @@ class GetReportsByIdIT extends BaseIT {
     void shouldReturn400WhenGivenInvalidId() throws Exception {
         performGetRequest("/reports/" + BaseIT.REPORT_UUID_1 + "321")
                 .andExpect(status().isBadRequest());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "excel",
+            "csv"
+    })
+    void shouldReturn404WhenNoReportsFound(String type) throws Exception {
+        performGetRequest("/%s/0d4da9ec-b0b3-4371-af10-321".formatted(type))
+                .andExpect(status().isNotFound());
     }
 
     @Test

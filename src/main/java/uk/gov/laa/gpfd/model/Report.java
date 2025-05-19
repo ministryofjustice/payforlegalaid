@@ -1,36 +1,46 @@
 package uk.gov.laa.gpfd.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
+import org.immutables.value.Value;
 
+import jakarta.annotation.Nullable;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.UUID;
 
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-/**
- * A class representing the data in the GPFD REPORTS Table.
- */
-public class Report {
-    private UUID reportId;
-    private String name;
-    private String templateSecureDocumentId;
-    Timestamp reportCreationTime;
-    Timestamp lastDatabaseRefreshDate;
-    private String description;
-    private int numDaysToKeep;
-    private ReportOutputType reportOutputType;
-    private String reportCreatorName;
-    private String reportCreatorEmail;
-    private UUID reportOwnerId;
-    private String reportOwnerName;
-    private String reportOwnerEmail;
-    private String fileName;
-    private Boolean active;
-    private Collection<ReportQuery> queries;
+@Value.Immutable
+public abstract class Report {
+    @Nullable
+    public abstract UUID getReportId();
+    @NotBlank
+    public abstract String getName();
+    @NotBlank
+    public abstract String getTemplateSecureDocumentId();
+    @Nullable
+    public abstract Timestamp getReportCreationTime();
+    @Nullable
+    public abstract Timestamp getLastDatabaseRefreshDate();
+    @Nullable
+    public abstract String getDescription();
+
+    public abstract int getNumDaysToKeep();
+    @Nullable
+    public abstract ReportOutputType getReportOutputType();
+    @Nullable
+    public abstract String getReportCreatorName();
+    @Nullable
+    public abstract String getReportCreatorEmail();
+    @Nullable
+    public abstract UUID getReportOwnerId();
+    @Nullable
+    public abstract String getReportOwnerName();
+    @Nullable
+    public abstract String getReportOwnerEmail();
+    @Nullable
+    public abstract String getFileName();
+    @Nullable
+    public abstract Boolean getActive();
+    @Nullable
+    public abstract Collection<ReportQuery> getQueries();
 }
+

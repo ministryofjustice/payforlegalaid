@@ -40,45 +40,6 @@
         </createTable>
     </changeSet>
 
-
-    <changeSet id="1-create-csv-to-sql-mapping-table" author="robert_buczek">
-        <createTable tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
-            <column name="ID" type="CHAR (36)">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="REPORT_NAME" type="VARCHAR(200)">
-                <constraints nullable="true"/>
-            </column>
-            <column name="SQL_QUERY" type="VARCHAR(4000)">
-                <constraints nullable="true"/>
-            </column>
-            <column name="BASE_URL" type="VARCHAR(450)">
-                <constraints nullable="true"/>
-            </column>
-            <column name="REPORT_OWNER" type="VARCHAR(100)">
-                <constraints nullable="true"/>
-            </column>
-            <column name="REPORT_CREATOR" type="VARCHAR(100)">
-                <constraints nullable="true"/>
-            </column>
-            <column name="REPORT_DESCRIPTION" type="VARCHAR(400)">
-                <constraints nullable="true"/>
-            </column>
-            <column name="EXCEL_REPORT" type="VARCHAR(200)">
-                <constraints nullable="true"/>
-            </column>
-            <column name="EXCEL_SHEET_NUM" type="NUMBER">
-                <constraints nullable="true"/>
-            </column>
-            <column name="CSV_NAME" type="VARCHAR(200)">
-                <constraints nullable="true"/>
-            </column>
-            <column name="OWNER_EMAIL" type="VARCHAR(300)">
-                <constraints nullable="true"/>
-            </column>
-        </createTable>
-    </changeSet>
-
     <changeSet id="7-insert-data-csv-to-sql-mapping-table" author="robert_buczek">
 
         <comment>Insert initial data into CSV_TO_SQL_MAPPING_TABLE</comment>

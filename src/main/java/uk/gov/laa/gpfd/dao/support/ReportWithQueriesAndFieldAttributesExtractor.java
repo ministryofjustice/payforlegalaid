@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.model.FieldAttributes;
 import uk.gov.laa.gpfd.model.ImmutableFieldAttributes;
+import uk.gov.laa.gpfd.model.ImmutableReport;
 import uk.gov.laa.gpfd.model.ImmutableReportOutputType;
 import uk.gov.laa.gpfd.model.ImmutableReportQuery;
 import uk.gov.laa.gpfd.model.Report;
@@ -52,7 +53,7 @@ public class ReportWithQueriesAndFieldAttributesExtractor implements ResultSetEx
                 try {
                     log.debug("Mapping data for report with ID: {}", id);
                     var description = rs.getString("DESCRIPTION");
-                    return Report.builder()
+                    return ImmutableReport.builder()
                             .reportId(id)
                             .name(rs.getString("NAME"))
                             .templateSecureDocumentId(rs.getString("TEMPLATE_SECURE_DOCUMENT_ID"))
