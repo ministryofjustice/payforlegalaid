@@ -84,7 +84,7 @@ public class SdsTemplateClient implements TemplateClient {
                 handleErrors(response);
             }).body(String.class);
         } catch (TemplateResourceException.ExcelTemplateRetryException | TemplateResourceException.ExcelTemplateDownloadRetryException ex) {
-            // Add logic here to retry downloading template using url from doc store
+            // Add logic here to retry getting download url from doc store
             log.info("Attempting retry of get url for template download");
             throw new TemplateResourceException.TemplateDownloadException("Retry failed; unable to get url for download of template with id " + fileKey);
         } catch (Exception ex) {
