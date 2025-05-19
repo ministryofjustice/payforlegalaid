@@ -31,7 +31,7 @@ public class SdsClientConfig {
     }
 
     @Getter
-    @Value("${sds-client.sds-url}")
-    private String sdsUrl;
+    @Value("${sds-client.sds-base-url}")
+    private String sdsBaseUrl;
 
 }

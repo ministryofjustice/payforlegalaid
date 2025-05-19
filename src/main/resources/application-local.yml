@@ -59,4 +59,4 @@ spring:
 
 sds-client:
   #  TODO will need more work
-  sds-url: http://localhost:8080
+  sds-base-url: http://localhost:8080

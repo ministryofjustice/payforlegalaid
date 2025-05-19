@@ -58,4 +58,26 @@ public sealed abstract class TemplateResourceException extends RuntimeException 
         }
     }
 
+    /**
+     * Represents an exception that occurs during the download of an Excel template, when a full transaction retry is required.
+     * This is a specific type of {@link TemplateResourceException}.
+     */
+    public static final class ExcelTemplateDownloadRetryException extends TemplateResourceException {
+
+        public ExcelTemplateDownloadRetryException(String s) {
+            super(s);
+        }
+    }
+
+    /**
+     * Represents an exception that occurs when connecting to the template storage service, when a partial transaction retry is required.
+     * This is a specific type of {@link TemplateResourceException}.
+     */
+    public static final class ExcelTemplateRetryException extends TemplateResourceException {
+
+        public ExcelTemplateRetryException(String s) {
+            super(s);
+        }
+    }
+
 }

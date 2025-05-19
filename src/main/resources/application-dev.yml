@@ -46,4 +46,4 @@ server:
 
 sds-client:
   #  TODO will need more work
-  sds-url: ${SDS_CLIENT_SDS_URL}
+  sds-base-url: ${SDS_CLIENT_SDS_URL}

@@ -53,62 +53,55 @@ public class SdsTemplateClientTest {
     @InjectMocks
     private SdsTemplateClient sdsTemplateClient;
 
+    private static final String FILENAME = "excelTemplate.xlsx";
+    private static final String S3_BUCKET_URL = "https://aws-s3bucket.aws";
+    private static final String SDS_BASE_URL = "http//localhost:8080";
+
+
     @BeforeEach
     void setup() {
-        var fileName = "excelTemplate.xlsx";
-        var urlFromSds = "This is file URL";
-        var sdsUrl = "http//localhost:8080";
-
-        when(sdsConfig.getSdsUrl()).thenReturn(sdsUrl);
+        when(sdsConfig.getSdsBaseUrl()).thenReturn(SDS_BASE_URL);
         when(restClientBuilder.baseUrl((String) any())).thenReturn(restClientBuilder);
 
-        when(restClientBuilder.baseUrl(sdsUrl)).thenReturn(restClientBuilder);
-        when(restClientBuilder.baseUrl(urlFromSds)).thenReturn(restClientBuilder);
+        when(restClientBuilder.baseUrl(SDS_BASE_URL)).thenReturn(restClientBuilder);
+        when(restClientBuilder.baseUrl(S3_BUCKET_URL)).thenReturn(restClientBuilder);
 
         when(restClientBuilder.build()).thenReturn(sdsRestClient).thenReturn(awsRestClient);
 
         when(sdsRestClient.get()).thenReturn(sdsRequestHeadersUriSpec);
-        when(sdsRequestHeadersUriSpec.uri("/get_file?file_key=" + fileName)).thenReturn(sdsRequestHeadersSpec);
+        when(sdsRequestHeadersUriSpec.uri("/get_file?file_key=" + FILENAME)).thenReturn(sdsRequestHeadersSpec);
         when(sdsRequestHeadersSpec.retrieve()).thenReturn(sdsResponseSpec);
 
     }
     @Test
-    void findTemplateByIdReturnsTemplateAsInputStream() {
-        var fileName = "excelTemplate.xlsx";
+    void shouldFindTemplateByIdReturnsTemplateAsInputStream() {
         var mockFileContent = "This is a mock file content.";
-        var urlFromSds = "This is file URL";
         InputStream mockInputStream = new ByteArrayInputStream(mockFileContent.getBytes());
 
-        when(sdsResponseSpec.body(String.class)).thenReturn(urlFromSds);
+        when(sdsResponseSpec.body(String.class)).thenReturn(S3_BUCKET_URL);
 
         when(awsRestClient.get()).thenReturn(awsRequestHeadersUriSpec);
         when(awsRequestHeadersUriSpec.uri("")).thenReturn(awsRequestHeadersSpec);
         when(awsRequestHeadersSpec.retrieve()).thenReturn(awsResponseSpec);
         when(awsResponseSpec.body(InputStream.class)).thenReturn(mockInputStream);
+        when(awsResponseSpec.onStatus(any(), any())).thenReturn(awsResponseSpec);
 
-        Assertions.assertEquals(mockInputStream, sdsTemplateClient.findTemplateById(fileName));
+        Assertions.assertEquals(mockInputStream, sdsTemplateClient.findTemplateById(FILENAME));
     }
 
     @Test
     void shouldThrowWhenGetTemplateFromUrl() {
-        var fileName = "excelTemplate.xlsx";
-        var urlFromSds = "This is file URL";
+        when(sdsResponseSpec.body(String.class)).thenReturn(S3_BUCKET_URL);
 
-        when(sdsResponseSpec.body(String.class)).thenReturn(urlFromSds);
-
-        var ex = Assertions.assertThrows(TemplateResourceException.TemplateDownloadException.class, () -> sdsTemplateClient.findTemplateById(fileName));
+        var ex = Assertions.assertThrows(TemplateResourceException.TemplateDownloadException.class, () -> sdsTemplateClient.findTemplateById(FILENAME));
         Assertions.assertEquals("Unable to download template with id excelTemplate.xlsx", ex.getMessage());
     }
 
     @Test
     void shouldThrowWhenGetUrlFromSDSThrows() {
-        var fileName = "excelTemplate.xlsx";
-        var sdsUrl = "http//localhost:8080";
-
         when(sdsResponseSpec.body(InputStream.class)).thenThrow(IllegalArgumentException.class);
 
-        var ex = Assertions.assertThrows(TemplateResourceException.TemplateDownloadException.class, () -> sdsTemplateClient.findTemplateById(fileName));
+        var ex = Assertions.assertThrows(TemplateResourceException.TemplateDownloadException.class, () -> sdsTemplateClient.findTemplateById(FILENAME));
         Assertions.assertEquals("Unable to get url for download of template with id excelTemplate.xlsx", ex.getMessage());
     }
-
 }
