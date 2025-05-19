@@ -1,16 +1,13 @@
 package uk.gov.laa.gpfd.integration;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Client;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
-
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.laa.gpfd.utils.DatabaseUtils;
 
@@ -23,6 +20,8 @@ public abstract class BaseIT {
   @Autowired
   MockMvc mockMvc;
 
+  public static final String REPORT_UUID_1 = "0d4da9ec-b0b3-4371-af10-f375330d85d3";
+
   @BeforeAll
   void setUpDatabase() {
     databaseUtils.setUpDatabase();
@@ -34,13 +33,10 @@ public abstract class BaseIT {
   }
 
   @NotNull
-  protected MockHttpServletResponse getResponseForAuthenticatedRequest(String uriTemplate) throws Exception {
-      return mockMvc.perform(
-          MockMvcRequestBuilders.get(uriTemplate)
-              .with(SecurityMockMvcRequestPostProcessors.oauth2Login())
-              .with(oidcLogin()
-                  .idToken(token -> token.subject("mockUser")
-                      .claim("preferred_username", "mockUsername")))
-              .with(oauth2Client("graph"))).andReturn().getResponse();
+  protected ResultActions performGetRequest(String uriTemplate) throws Exception {
+    return mockMvc.perform(
+      MockMvcRequestBuilders.get(uriTemplate)
+      .contentType(MediaType.APPLICATION_JSON)
+    );
   }
 }

@@ -9,7 +9,7 @@ on:
 jobs:
   To_Dev:
     name: Deploy to dev
-    uses: ./.github/workflows/deploy_to_env.yml
+    uses: ./.github/workflows/deploy_api_to_env.yml
     with:
       github_environment: development
       environment_name: dev
@@ -20,6 +20,7 @@ jobs:
       openapi_package_user: ${{ secrets.OPENAPI_PACKAGE_USER }}
       openapi_package_password: ${{ secrets.OPENAPI_PACKAGE_PASSWORD }}
       snyk_token: ${{ secrets.SNYK_TOKEN }}
+      socket_key: ${{ secrets.DEV_SOCKET_KEY }}
       ecr_role_to_assume: ${{ secrets.DEV_ECR_ROLE_TO_ASSUME }}
       kube_namespace: ${{ secrets.KUBE_NAMESPACE_DEV }}
       kube_cluster: ${{ secrets.KUBE_CLUSTER_DEV }}
@@ -29,7 +30,7 @@ jobs:
   To_Uat:
     name: Deploy to UAT
     needs: To_Dev
-    uses: ./.github/workflows/deploy_to_env.yml
+    uses: ./.github/workflows/deploy_api_to_env.yml
     with:
       github_environment: uat
       environment_name: uat
@@ -40,6 +41,7 @@ jobs:
       openapi_package_user: ${{ secrets.OPENAPI_PACKAGE_USER }}
       openapi_package_password: ${{ secrets.OPENAPI_PACKAGE_PASSWORD }}
       snyk_token: ${{ secrets.SNYK_TOKEN }}
+      socket_key: ${{ secrets.UAT_SOCKET_KEY }}
       ecr_role_to_assume: ${{ secrets.UAT_ECR_ROLE_TO_ASSUME }}
       kube_namespace: ${{ secrets.KUBE_NAMESPACE_UAT }}
       kube_cluster: ${{ secrets.KUBE_CLUSTER_UAT }}
@@ -49,7 +51,7 @@ jobs:
   To_Prod:
     name: Deploy to prod
     needs: To_Uat
-    uses: ./.github/workflows/deploy_to_env.yml
+    uses: ./.github/workflows/deploy_api_to_env.yml
     with:
       github_environment: prod
       environment_name: prod
@@ -60,6 +62,7 @@ jobs:
       openapi_package_user: ${{ secrets.OPENAPI_PACKAGE_USER }}
       openapi_package_password: ${{ secrets.OPENAPI_PACKAGE_PASSWORD }}
       snyk_token: ${{ secrets.SNYK_TOKEN }}
+      socket_key: ${{ secrets.PROD_SOCKET_KEY }}
       ecr_role_to_assume: ${{ secrets.PROD_ECR_ROLE_TO_ASSUME }}
       kube_namespace: ${{ secrets.KUBE_NAMESPACE_PROD }}
       kube_cluster: ${{ secrets.KUBE_CLUSTER_PROD }}

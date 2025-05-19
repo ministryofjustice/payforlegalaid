@@ -7,15 +7,16 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import uk.gov.laa.gpfd.exception.*;
+import uk.gov.laa.gpfd.exception.DatabaseReadException;
+import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
+import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
+import uk.gov.laa.gpfd.exception.TemplateResourceException;
 import uk.gov.laa.gpfd.model.ReportsGet400Response;
 import uk.gov.laa.gpfd.model.ReportsGet404Response;
 import uk.gov.laa.gpfd.model.ReportsGet500Response;
 
 import static org.springframework.http.ResponseEntity.badRequest;
 import static org.springframework.http.ResponseEntity.internalServerError;
-import static uk.gov.laa.gpfd.exception.TemplateResourceException.ExcelTemplateCreationException;
-import static uk.gov.laa.gpfd.exception.TemplateResourceException.LocalTemplateReadException;
 import static uk.gov.laa.gpfd.exception.TransferException.StreamException.ExcelStreamWriteException;
 
 /**
@@ -35,26 +36,14 @@ public class GlobalExceptionHandler {
      * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(LocalTemplateReadException.class)
-    public ResponseEntity<ReportsGet500Response> handleLocalTemplateReadException(LocalTemplateReadException e) {
-        var response = new ReportsGet500Response() {{
-            setError(e.getMessage());
-        }};
-
-        log.error("LocalTemplateReadException Thrown: {}", response.getError());
-
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-    }
-
-    /**
-     * Handles ExcelTemplateCreationException and responds with an HTTP 500 Internal Server Error.
-     *
-     * @param e the ExcelTemplateCreationException thrown when there is an issue creating an Excel template.
-     * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
-     */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(ExcelTemplateCreationException.class)
-    public ResponseEntity<ReportsGet500Response> handleExcelTemplateCreationException(ExcelTemplateCreationException e) {
+    @ExceptionHandler({
+            TemplateResourceException.TemplateNotFoundException.class,
+            TemplateResourceException.LocalTemplateReadException.class,
+            TemplateResourceException.ExcelTemplateCreationException.class,
+            TemplateResourceException.TemplateDownloadException.class,
+            TemplateResourceException.TemplateResourceNotFoundException.class
+    })
+    public ResponseEntity<ReportsGet500Response> handleTemplateResourceException(TemplateResourceException e) {
         var response = new ReportsGet500Response() {{
             setError(e.getMessage());
         }};
@@ -86,24 +75,6 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles CsvStreamException and responds with an HTTP 500 Internal Server Error.
-     *
-     * @param e the CsvStreamException thrown when there is an issue in CSV streaming.
-     * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
-     */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(CsvStreamException.class)
-    public ResponseEntity<ReportsGet500Response> handleCsvStreamException(CsvStreamException e) {
-        var response = new ReportsGet500Response() {{
-            setError(e.getMessage());
-        }};
-
-        log.error("CsvStreamException Thrown: %s".formatted(response));
-
-        return internalServerError().body(response);
-    }
-
-    /**
      * Handles DatabaseReadException and responds with an HTTP 500 Internal Server Error.
      *
      * @param e the DatabaseReadException thrown when there is a database read failure.
@@ -117,7 +88,26 @@ public class GlobalExceptionHandler {
         }};
 
         log.error("DatabaseReadException Thrown: %s".formatted(response));
-        log.error("DatabaseReadException stacktrace: %s".formatted(e.getStackTrace()));
+        log.error("DatabaseReadException stacktrace: %s".formatted((Object) e.getStackTrace()));
+
+        return internalServerError().body(response);
+    }
+
+    /**
+     * Handles ReportOutputTypeNotFoundException and responds with an HTTP 500 Internal Server Error.
+     *
+     * @param e the ReportOutputTypeNotFoundException thrown when an unknown report output type is encountered.
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
+     */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(ReportOutputTypeNotFoundException.class)
+    public ResponseEntity<ReportsGet500Response> handleReportOutputTypeNotFoundException(ReportOutputTypeNotFoundException e) {
+        var response = new ReportsGet500Response() {{
+            setError(e.getMessage());
+        }};
+
+        log.error("ReportOutputTypeNotFoundException Thrown: %s".formatted(response));
+        log.error("ReportOutputTypeNotFoundException stacktrace: %s".formatted((Object) e.getStackTrace()));
 
         return internalServerError().body(response);
     }

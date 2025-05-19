@@ -13,9 +13,9 @@ spec:
   ingressClassName: default
   tls:
     - hosts:
-        - ${BRANCH_NAME}-gpfd.apps.live.cloud-platform.service.justice.gov.uk
+        - test-gpfd.apps.live.cloud-platform.service.justice.gov.uk
   rules:
-    - host: ${BRANCH_NAME}-gpfd.apps.live.cloud-platform.service.justice.gov.uk
+    - host: test-gpfd.apps.live.cloud-platform.service.justice.gov.uk
       http:
         paths:
           - path: /

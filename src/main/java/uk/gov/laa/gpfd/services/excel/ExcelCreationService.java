@@ -80,7 +80,7 @@ public record ExcelCreationService(
                 .join();
 
         pivotTableRefresher.refreshPivotTables(workbook);
-        formulaCalculator.evaluateAllFormulaCells(workbook, "MAIN");
+        formulaCalculator.evaluateAllFormulaCells(workbook);
     }
 
     /**

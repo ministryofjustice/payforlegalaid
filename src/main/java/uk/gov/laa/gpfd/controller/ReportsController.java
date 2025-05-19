@@ -38,14 +38,13 @@ public class ReportsController implements ReportsApi, ExcelApi {
 
     @Override
     public ResponseEntity<GetReportById200Response> getReportById(UUID id) {
-        var response = reportService.createReportResponse(id);
-
         log.debug("Returning a report response to user");
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(reportService.createReportResponse(id));
     }
 
     @Override
     public ResponseEntity<ReportsGet200Response> reportsGet() {
+
         var reportListEntries = reportManagementService.fetchReportListEntries();
 
         var response = new ReportsGet200Response() {{

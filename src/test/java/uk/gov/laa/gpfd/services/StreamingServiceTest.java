@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatusCode;
+import uk.gov.laa.gpfd.data.ReportsTestDataFactory;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.model.Report;
 
@@ -39,7 +40,7 @@ class StreamingServiceTest {
     @Test
     void shouldSuccessfullyCreateExcel() {
         // Given
-        var uuid = UUID.fromString("b36f9bbb-1178-432c-8f99-8090e285f2d3");
+        var uuid = UUID.fromString(ReportsTestDataFactory.REPORT_UUID_1);
         when(excelService.createExcel(uuid)).thenReturn(Pair.of(report, workbook));
 
         // When
@@ -56,7 +57,7 @@ class StreamingServiceTest {
     @SneakyThrows
     void shouldFailWhenCouldNotFindReport() {
         // Given
-        var uuid = UUID.fromString("b36f9bbb-1178-432c-8f99-8090e285f2d3");
+        var uuid = UUID.fromString(ReportsTestDataFactory.REPORT_UUID_1);
         when(excelService.createExcel(uuid)).thenThrow(new ReportIdNotFoundException("Report not found for ID: %s".formatted(uuid.toString())));
 
         // When & Then

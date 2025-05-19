@@ -1,6 +1,7 @@
 package uk.gov.laa.gpfd.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import uk.gov.laa.gpfd.model.ReportsTracking;
@@ -57,10 +59,8 @@ class ReportsTrackingDaoTest extends BaseDaoTest{
         ReportTrackingData testTrackingData = getTestTrackingData();
         testTrackingData.setReportUrl(null);
 
-        // When
-        saveReportTracking(testTrackingData);
-
-        // Then
+        // When and then
+        assertThrows(DataIntegrityViolationException.class, () -> saveReportTracking(testTrackingData));
         List<Map<String, Object>> results = getAllReportsTrackingsFromDb();
         assertEquals(EXPECTED_ROWCOUNT_AFTER_NO_REPORT_TRACKING, results.size());
     }
@@ -71,10 +71,8 @@ class ReportsTrackingDaoTest extends BaseDaoTest{
         ReportTrackingData testTrackingData = getTestTrackingData();
         testTrackingData.setReportUuid(UUID.fromString("00000000-0000-0000-0001-000000000002"));
 
-        // When
-        saveReportTracking(testTrackingData);
-
-        // Then
+        // When and then
+        assertThrows(DataIntegrityViolationException.class, () -> saveReportTracking(testTrackingData));
         List<Map<String, Object>> results = getAllReportsTrackingsFromDb();
         assertEquals(EXPECTED_ROWCOUNT_AFTER_NO_REPORT_TRACKING, results.size());
     }
@@ -85,10 +83,8 @@ class ReportsTrackingDaoTest extends BaseDaoTest{
         ReportTrackingData testTrackingData = getTestTrackingData();
         testTrackingData.setReportUuid(null);
 
-        // When
-        saveReportTracking(testTrackingData);
-
-        // Then
+        // When and then
+        assertThrows(NullPointerException.class, () -> saveReportTracking(testTrackingData));
         List<Map<String, Object>> results = getAllReportsTrackingsFromDb();
         assertEquals(EXPECTED_ROWCOUNT_AFTER_NO_REPORT_TRACKING, results.size());
     }

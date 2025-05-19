@@ -66,10 +66,10 @@ public interface SheetDataWriter {
 
         for (var fieldAttribute : fieldAttributes) {
             var value = rowData.get(fieldAttribute.getSourceName());
+            var cell = row.createCell(cellIndex++);
             if (value == null) {
                 continue;
             }
-            var cell = row.createCell(cellIndex++);
             setCellValueAndFormat(cell, value, fieldAttribute, cellValueSetter, cellFormatter);
         }
     }

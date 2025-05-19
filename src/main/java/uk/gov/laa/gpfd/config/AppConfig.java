@@ -3,7 +3,7 @@ package uk.gov.laa.gpfd.config;
 import lombok.Getter;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -66,6 +66,9 @@ public class AppConfig {
     @Getter
     @Value("${gpfd.url}")
     private String serviceUrl;
+
+    @Value("${excel.security.compression-ratio:0.001}")
+    private double allowedCompressionRatio;
 
     @Getter
     @Value("${spring.cloud.azure.active-directory.credential.client-id}")
@@ -181,7 +184,7 @@ public class AppConfig {
     }
 
     /**
-     * Creates a {@link TemplateService} bean that delegates to the provided {@link TemplateClient}
+     * Creates a {@link TemplateService} bean with security policies that delegates to the provided {@link TemplateClient}
      * for loading Excel templates.
      *
      * @param templateClient the {@link TemplateClient} used to retrieve templates
@@ -189,12 +192,15 @@ public class AppConfig {
      */
     @Bean
     public TemplateService templateService(TemplateClient templateClient) {
-        return new TemplateService() {
-            @Override
-            public Workbook findTemplateById(String id) {
-                return findTemplateById(templateClient, id);
-            }
-        };
+        if (allowedCompressionRatio <= 0) {
+            throw new IllegalStateException("Compression ratio must be positive");
+        }
+
+        return new TemplateService.ExcelTemplateService.Builder()
+                .repository(templateClient)
+                .factory(XSSFWorkbook::new)
+                .withSecurity(allowedCompressionRatio)
+                .build();
     }
 
     /**
