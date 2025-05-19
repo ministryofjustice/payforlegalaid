@@ -18,7 +18,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class SdsTemplateClientTest {
+class SdsTemplateClientTest {
 
     @Mock
     RestClient.Builder restClientBuilder;

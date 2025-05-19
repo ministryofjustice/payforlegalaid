@@ -36,7 +36,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @RestClientTest(SdsTemplateClient.class)
 @ExtendWith(MockitoExtension.class)
 @Import(SdsClientConfig.class)
-public class SdsTemplateClientTest_withAnnotation {
+class SdsTemplateClientTest_withAnnotation {
 
     private MockRestServiceServer server;
 
