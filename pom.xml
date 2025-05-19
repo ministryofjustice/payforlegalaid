@@ -222,7 +222,6 @@
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jdbc</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
