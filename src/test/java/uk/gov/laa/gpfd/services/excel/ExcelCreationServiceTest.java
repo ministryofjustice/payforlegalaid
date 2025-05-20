@@ -72,7 +72,7 @@ class ExcelCreationServiceTest {
 
         when(templateLoader.findTemplateById("TEMPLATE_123")).thenReturn(workbook);
         when(dataFetcher.callDataBase("SELECT * FROM table")).thenReturn(Collections.emptyList());
-//        when(sqlFormatValidator.isSqlFormatValid("SELECT * FROM table")).thenReturn(true);
+
         // When
         var result = excelCreationService.buildExcel(report);
 

@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ReportQueryTest {
+class ReportQueryTest {
 
     private static final UUID reportId = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
     private static final UUID queryId = UUID.fromString("0d4da9ec-b0b3-4371-af10-2d74360dccd1");
@@ -49,15 +49,13 @@ public class ReportQueryTest {
             "SELECT * FROM ANY_REPORT.V_CCMS_STATEMENT_FOR_ACCOUNTS; DROP TABLE ANY_REPORT.V_CCMS_STATEMENT_FOR_ACCOUNTS", // Command chaining
             "SELECT * FROM ANY_REPORT.", // Must have a table name
     })
-    void givenInvalidSql_shouldThrowException(String sqlToTest) throws DatabaseReadException {
+    void givenInvalidSql_shouldThrowExceptionWhenBuildingObject(String sqlToTest) throws DatabaseReadException {
+        var builder = ImmutableReportQuery.builder()
+                .reportId(reportId)
+                .id(queryId)
+                .tabName("Marshmallow_Types")
+                .query(sqlToTest);
 
-        assertThrows(SqlFormatException.class, () ->
-                ImmutableReportQuery.builder()
-                        .reportId(reportId)
-                        .id(queryId)
-                        .tabName("Marshmallow_Types")
-                        .query(sqlToTest)
-                        .build()
-        );
+        assertThrows(SqlFormatException.class, builder::build);
     }
 }
