@@ -9,7 +9,6 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
-import uk.gov.laa.gpfd.exception.SqlFormatException;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 
 import java.net.URI;
@@ -29,18 +28,14 @@ public class ReportService {
      *
      * @param requestedId - the ID of the requested report
      * @return a ResponseEntity of type 'StreamingResponseBody', containing a stream of CSV data
-     * @throws ReportIdNotFoundException if report ID is not in database
-     * @throws DatabaseReadException     if error reading data
-     * @throws SqlFormatException        if sql format is unexpected
      */
     public ResponseEntity<StreamingResponseBody> createCSVResponse(UUID requestedId) {
-        var reportDetails = mappingTableService.getDetailsForSpecificMapping(requestedId);
-        String sqlQuery = reportDetails.getSqlQuery();
+        var reportListResponse = mappingTableService.getDetailsForSpecificMapping(requestedId);
 
         return ResponseEntity.ok()
-                .header("Content-Disposition", "attachment; filename=%s.csv".formatted(reportDetails.getReportName()))
+                .header("Content-Disposition", "attachment; filename=%s.csv".formatted(reportListResponse.getReportName()))
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(stream -> dataStreamer.stream(sqlQuery, stream));
+                .body(stream -> dataStreamer.stream(reportListResponse.getSqlQuery(), stream));
     }
 
     /**
