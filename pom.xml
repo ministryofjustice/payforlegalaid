@@ -15,7 +15,7 @@
 
     <properties>
         <java.version>17</java.version>
-        <microsoft-graph.version>5.80.0</microsoft-graph.version>
+        <microsoft-graph.version>6.39.0</microsoft-graph.version>
         <model-mapper.version>3.2.2</model-mapper.version>
         <snakeyaml.version>2.4</snakeyaml.version>
         <org-json.version>20231013</org-json.version>
