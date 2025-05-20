@@ -3,7 +3,7 @@ name: One to deploy them all
 on:
   push:
     branches:
-      - main
+      - lpf-861-modular-liquibase
   workflow_dispatch:
 
 jobs:
