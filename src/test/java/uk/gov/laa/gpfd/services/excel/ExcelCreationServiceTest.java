@@ -8,27 +8,22 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
+import uk.gov.laa.gpfd.dao.ReportViewsDao;
 import uk.gov.laa.gpfd.model.ImmutableReportQuery;
 import uk.gov.laa.gpfd.model.Report;
-
-import uk.gov.laa.gpfd.dao.ReportViewsDao;
 import uk.gov.laa.gpfd.services.TemplateService;
 import uk.gov.laa.gpfd.services.excel.editor.FormulaCalculator;
 import uk.gov.laa.gpfd.services.excel.editor.PivotTableRefresher;
 import uk.gov.laa.gpfd.services.excel.editor.SheetDataWriter;
-import uk.gov.laa.gpfd.utils.SqlFormatValidator;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletionException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -48,9 +43,6 @@ class ExcelCreationServiceTest {
 
     @Mock
     private FormulaCalculator formulaCalculator;
-
-    @Mock
-    private SqlFormatValidator sqlFormatValidator;
 
     @InjectMocks
     private ExcelCreationService excelCreationService;
@@ -80,7 +72,7 @@ class ExcelCreationServiceTest {
 
         when(templateLoader.findTemplateById("TEMPLATE_123")).thenReturn(workbook);
         when(dataFetcher.callDataBase("SELECT * FROM table")).thenReturn(Collections.emptyList());
-        when(sqlFormatValidator.isSqlFormatValid("SELECT * FROM table")).thenReturn(true);
+//        when(sqlFormatValidator.isSqlFormatValid("SELECT * FROM table")).thenReturn(true);
         // When
         var result = excelCreationService.buildExcel(report);
 
@@ -179,33 +171,6 @@ class ExcelCreationServiceTest {
         verify(templateLoader).findTemplateById("TEMPLATE_123");
         verify(pivotTableRefresher).refreshPivotTables(workbook);
         verify(formulaCalculator).evaluateAllFormulaCells(workbook);
-    }
-
-    @Test
-    void shouldFailFutureWhenSqlInvalid() {
-
-        var workbook = mock(Workbook.class);
-        var sheet = mock(Sheet.class);
-        when(workbook.getNumberOfSheets()).thenReturn(1);
-        when(workbook.getSheetAt(0)).thenReturn(sheet);
-        when(sheet.getSheetName()).thenReturn("Sheet1");
-        var query = ImmutableReportQuery.builder()
-                .tabName("Sheet1")
-                .query("SELECT * FROM table")
-                .build();
-        var report = new Report() {{
-            setTemplateSecureDocumentId("TEMPLATE_123");
-            setQueries(Collections.singletonList(query));
-        }};
-
-        when(templateLoader.findTemplateById("TEMPLATE_123")).thenReturn(workbook);
-        when(sqlFormatValidator.isSqlFormatValid("SELECT * FROM table")).thenReturn(false);
-
-        assertThrows(CompletionException.class, () -> excelCreationService.buildExcel(report));
-
-        verify(templateLoader).findTemplateById("TEMPLATE_123");
-        verify(pivotTableRefresher, times(0)).refreshPivotTables(workbook);
-        verify(formulaCalculator, times(0)).evaluateAllFormulaCells(workbook);
     }
 
 }

@@ -10,14 +10,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
 import uk.gov.laa.gpfd.data.ReportDetailsTestDataFactory;
 import uk.gov.laa.gpfd.data.ReportsTestDataFactory;
-import uk.gov.laa.gpfd.exception.SqlFormatException;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportDetails;
 import uk.gov.laa.gpfd.services.DataStreamer;
 import uk.gov.laa.gpfd.services.MappingTableService;
 import uk.gov.laa.gpfd.services.ReportManagementService;
 import uk.gov.laa.gpfd.services.ReportService;
-import uk.gov.laa.gpfd.utils.SqlFormatValidator;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
@@ -29,12 +27,9 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.laa.gpfd.data.MappingTableTestDataFactory.aValidInvoiceAnalysisReport;
 
@@ -46,9 +41,6 @@ class ReportServiceTest {
 
     @Mock
     MappingTableService mappingTableService;
-
-    @Mock
-    SqlFormatValidator sqlFormatValidator;
 
     @Mock
     ReportManagementService reportManagementService;
@@ -79,7 +71,6 @@ class ReportServiceTest {
         var testId = UUID.randomUUID();
 
         when(mappingTableService.getDetailsForSpecificMapping(testId)).thenReturn(aValidInvoiceAnalysisReport());
-        when(sqlFormatValidator.isSqlFormatValid(any())).thenReturn(true);
 
         doAnswer(invocation -> {
             String csvContent = expectedCsvHeader + "\n" + expectedRow1 + "\n" + expectedRow2;
@@ -97,19 +88,6 @@ class ReportServiceTest {
         assertTrue(csvContent.contains(expectedCsvHeader));
         assertTrue(csvContent.contains(expectedRow1));
         assertTrue(csvContent.contains(expectedRow2));
-    }
-
-    @Test
-    void createCSVResponse_GivenInvalidSql_ShouldThrowException() {
-        var testId = UUID.randomUUID();
-
-        when(mappingTableService.getDetailsForSpecificMapping(testId)).thenReturn(aValidInvoiceAnalysisReport());
-        when(sqlFormatValidator.isSqlFormatValid(any())).thenReturn(false);
-
-        assertThrows(SqlFormatException.class, () -> reportService.createCSVResponse(testId));
-
-        verify(dataStreamer, times(0)).stream(any(), any());
-
     }
 
     @Test

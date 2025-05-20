@@ -11,8 +11,6 @@ import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.exception.SqlFormatException;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
-import uk.gov.laa.gpfd.model.MappingTable;
-import uk.gov.laa.gpfd.utils.SqlFormatValidator;
 
 import java.net.URI;
 import java.util.UUID;
@@ -25,7 +23,6 @@ public class ReportService {
     private final MappingTableService mappingTableService;
     private final ReportManagementService reportManagementService;
     private final DataStreamer dataStreamer;
-    private final SqlFormatValidator sqlFormatValidator;
 
     /**
      * Create a Response entity with a CSV data stream inside the body, for use by the controller's '/csv' endpoint
@@ -37,11 +34,8 @@ public class ReportService {
      * @throws SqlFormatException        if sql format is unexpected
      */
     public ResponseEntity<StreamingResponseBody> createCSVResponse(UUID requestedId) {
-        MappingTable reportDetails = mappingTableService.getDetailsForSpecificMapping(requestedId);
+        var reportDetails = mappingTableService.getDetailsForSpecificMapping(requestedId);
         String sqlQuery = reportDetails.getSqlQuery();
-        if (!sqlFormatValidator.isSqlFormatValid(sqlQuery)) {
-            throw new SqlFormatException("SQL format invalid for report %s (id %s)".formatted(reportDetails.getReportName(), reportDetails.getId()));
-        }
 
         return ResponseEntity.ok()
                 .header("Content-Disposition", "attachment; filename=%s.csv".formatted(reportDetails.getReportName()))

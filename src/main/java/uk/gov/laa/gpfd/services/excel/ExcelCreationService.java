@@ -5,14 +5,12 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.stereotype.Component;
 import uk.gov.laa.gpfd.dao.ReportViewsDao;
-import uk.gov.laa.gpfd.exception.SqlFormatException;
 import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.model.ReportQuery;
 import uk.gov.laa.gpfd.services.TemplateService;
 import uk.gov.laa.gpfd.services.excel.editor.FormulaCalculator;
 import uk.gov.laa.gpfd.services.excel.editor.PivotTableRefresher;
 import uk.gov.laa.gpfd.services.excel.editor.SheetDataWriter;
-import uk.gov.laa.gpfd.utils.SqlFormatValidator;
 
 import java.util.List;
 import java.util.Map;
@@ -42,8 +40,7 @@ public record ExcelCreationService(
         ReportViewsDao dataFetcher,
         SheetDataWriter sheetDataWriter,
         PivotTableRefresher pivotTableRefresher,
-        FormulaCalculator formulaCalculator,
-        SqlFormatValidator sqlFormatValidator
+        FormulaCalculator formulaCalculator
 ) {
 
     /**
@@ -90,11 +87,6 @@ public record ExcelCreationService(
      * Fetches data from the database asynchronously for a given SheetToQuery pair.
      */
     private CompletableFuture<List<Map<String, Object>>> fetchData(SheetToQuery sheetToQuery) {
-        if (!sqlFormatValidator.isSqlFormatValid(sheetToQuery.reportQuery().getQuery())) {
-            String error = "SQL format invalid for sheet %s (report id %s)"
-                    .formatted(sheetToQuery.reportQuery().getTabName(), sheetToQuery.reportQuery().getReportId());
-            return CompletableFuture.failedFuture(new SqlFormatException(error));
-        }
         return supplyAsync(() -> dataFetcher.callDataBase(sheetToQuery.reportQuery().getQuery()));
     }
 
