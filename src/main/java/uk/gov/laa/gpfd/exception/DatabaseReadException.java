@@ -5,7 +5,7 @@ package uk.gov.laa.gpfd.exception;
  * This class serves as the base for specific exceptions that can occur during database reads.
  * It extends {@link RuntimeException}, making it an unchecked exception.
  */
-public sealed abstract class DatabaseReadException extends RuntimeException {
+public abstract sealed class DatabaseReadException extends RuntimeException {
 
     /**
      * Constructs a new {@code DatabaseReadException} with the specified error message.
