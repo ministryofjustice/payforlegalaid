@@ -121,7 +121,6 @@ jobs:
       - name: Checkout GitHub Data repository
         uses: actions/checkout@v4
         with:
-          ref: LPF-861-modularise-liquibase-changelogs
           repository: "ministryofjustice/payforlegalaid-data"
           path: payforlegalaid-data
           ssh-key: ${{ secrets.socket_key }}
