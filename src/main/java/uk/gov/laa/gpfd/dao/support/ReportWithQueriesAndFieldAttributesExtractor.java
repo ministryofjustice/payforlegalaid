@@ -74,7 +74,7 @@ public class ReportWithQueriesAndFieldAttributesExtractor implements ResultSetEx
                             .build();
                 } catch (SQLException e) {
                     log.error("Error mapping Report data for ID: {}", id, e);
-                    throw new DatabaseReadException("Error mapping Report data");
+                    throw new DatabaseReadException.MappingException("Error mapping Report data");
                 }
             });
 
@@ -98,7 +98,7 @@ public class ReportWithQueriesAndFieldAttributesExtractor implements ResultSetEx
                             .build();
                 } catch (SQLException e) {
                     log.error("Error mapping ReportQuery data for ID: {}", id, e);
-                    throw new DatabaseReadException("Error mapping ReportQuery data");
+                    throw new DatabaseReadException.MappingException("Error mapping ReportQuery data");
                 }
             });
 

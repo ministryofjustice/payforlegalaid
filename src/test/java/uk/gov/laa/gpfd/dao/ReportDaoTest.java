@@ -11,7 +11,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import uk.gov.laa.gpfd.dao.support.ReportWithQueriesAndFieldAttributesExtractor;
 import uk.gov.laa.gpfd.data.ReportsTestDataFactory;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
-import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.model.Report;
 
 import java.util.Arrays;
@@ -77,13 +76,11 @@ class ReportDaoTest {
         when(readOnlyJdbcTemplate.query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class), any()))
                 .thenThrow(new DataAccessException("Database error") {});
 
-        assertThrows(DatabaseReadException.class, () -> {
-            reportDao.fetchReportById(testReportId);
-        });
+        assertThrows(DatabaseReadException.DatabaseFetchException.class, () -> reportDao.fetchReportById(testReportId));
     }
 
     @Test
-    void fetchReports_shouldReturnCollectionOfReports() throws DatabaseReadException, ReportIdNotFoundException {
+    void fetchReports_shouldReturnCollectionOfReports() {
         var expectedReports = Arrays.asList(testReport,  ReportsTestDataFactory.createTestReport());
         when(readOnlyJdbcTemplate.query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class)))
                 .thenReturn(expectedReports);
@@ -96,7 +93,7 @@ class ReportDaoTest {
     }
 
     @Test
-    void fetchReports_shouldReturnEmptyCollectionWhenNoReportsFound() throws DatabaseReadException, ReportIdNotFoundException {
+    void fetchReports_shouldReturnEmptyCollectionWhenNoReportsFound() {
         when(readOnlyJdbcTemplate.query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class)))
                 .thenReturn(Collections.emptyList());
 
@@ -110,13 +107,11 @@ class ReportDaoTest {
         when(readOnlyJdbcTemplate.query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class)))
                 .thenThrow(new DataAccessException("Database error") {});
 
-        assertThrows(DatabaseReadException.class, () -> {
-            reportDao.fetchReports();
-        });
+        assertThrows(DatabaseReadException.DatabaseFetchException.class, () -> reportDao.fetchReports());
     }
 
     @Test
-    void fetchReports_shouldNotThrowReportIdNotFoundException() throws DatabaseReadException, ReportIdNotFoundException {
+    void fetchReports_shouldNotThrowReportIdNotFoundException() {
         when(readOnlyJdbcTemplate.query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class)))
                 .thenReturn(Collections.emptyList());
 

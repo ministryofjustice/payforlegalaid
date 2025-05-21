@@ -3,7 +3,6 @@ package uk.gov.laa.gpfd.model;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
-import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException.SqlFormatException;
 
 import java.util.UUID;
@@ -52,7 +51,7 @@ class ReportQueryTest {
             "SELECT * FROM ANY_REPORT.V_CAT_@COLOURS", // Flag special characters
             "SELECT * FROM ANY_REPORT.", // Must have a table name
             })
-    void givenInvalidSql_shouldThrowExceptionWhenBuildingObject(String sqlToTest) throws DatabaseReadException {
+    void givenInvalidSql_shouldThrowExceptionWhenBuildingObject(String sqlToTest) {
         var builder = ImmutableReportQuery.builder()
                 .reportId(reportId)
                 .id(queryId)

@@ -19,7 +19,7 @@ public record ReportViewsDao(JdbcOperations writeJdbcTemplate) {
             log.debug("Retrieving data");
             return writeJdbcTemplate.queryForList(sqlQuery);
         } catch (DataAccessException e) {
-            throw new DatabaseReadException("Error reading from DB: " + e);
+            throw new DatabaseReadException.DatabaseFetchException("Error reading from DB: " + e);
         }
     }
 

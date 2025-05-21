@@ -24,7 +24,7 @@ class ReportViewsDaoTest extends BaseDaoTest {
 
     @Test
     void shouldThrowExceptionWhereNoData() {
-        assertThrows(DatabaseReadException.class,
+        assertThrows(DatabaseReadException.DatabaseFetchException.class,
                 () -> reportViewsDao.callDataBase("SELECT ID FROM GPFD.CSV_TO_SQL_MAPPING_TABLE WHERE ID = 0"));
     }
 }

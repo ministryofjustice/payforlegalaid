@@ -1,12 +1,11 @@
 package uk.gov.laa.gpfd.dao;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Service;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
-import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.model.Report;
 
 import java.util.Collection;
@@ -103,7 +102,7 @@ public record ReportDao(
                     .findFirst();
         } catch (DataAccessException e) {
             log.error("Error fetching report by ID: {}", reportId, e);
-            throw new DatabaseReadException("Error fetching report by ID: " + reportId);
+            throw new DatabaseReadException.DatabaseFetchException("Error fetching report by ID: " + reportId);
         }
     }
 
@@ -120,7 +119,7 @@ public record ReportDao(
         } catch (DataAccessException e) {
             String errorMessage = "Failed to fetch reports from database";
             log.error("{}: {}", errorMessage, e.getMessage(), e);
-            throw new DatabaseReadException("Failed to fetch reports from database");
+            throw new DatabaseReadException.DatabaseFetchException("Failed to fetch reports from database");
         }
     }
 
