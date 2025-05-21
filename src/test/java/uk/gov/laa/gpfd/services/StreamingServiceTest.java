@@ -1,67 +1,101 @@
 package uk.gov.laa.gpfd.services;
 
-
-import lombok.SneakyThrows;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatusCode;
-import uk.gov.laa.gpfd.data.ReportsTestDataFactory;
-import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
-import uk.gov.laa.gpfd.model.Report;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import uk.gov.laa.gpfd.services.stream.DataStream;
 
-import java.util.UUID;
-
+import static java.util.Map.of;
+import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.laa.gpfd.enums.FileExtension.CSV;
+import static uk.gov.laa.gpfd.enums.FileExtension.XLSX;
+import static uk.gov.laa.gpfd.services.StreamingService.DefaultStreamingService;
 
 @ExtendWith(MockitoExtension.class)
 class StreamingServiceTest {
-    private static final String APPLICATION_EXCEL = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
     @Mock
-    private Workbook workbook;
+    private DataStream csvStrategy;
 
     @Mock
-    private Report report;
+    private DataStream excelStrategy;
 
     @Mock
-    private ExcelService excelService;
+    private ResponseEntity<StreamingResponseBody> mockResponse;
 
     @InjectMocks
-    private StreamingService streamingService;
+    private DefaultStreamingService streamingService;
 
     @Test
-    void shouldSuccessfullyCreateExcel() {
-        // Given
-        var uuid = UUID.fromString(ReportsTestDataFactory.REPORT_UUID_1);
-        when(excelService.createExcel(uuid)).thenReturn(Pair.of(report, workbook));
+    void shouldUseCorrectSteamStrategyForFormat() {
+        var reportId = randomUUID();
+        var strategies = of(
+                CSV, csvStrategy,
+                XLSX, excelStrategy
+        );
 
-        // When
-        var response = streamingService.streamExcel(uuid);
+        var service = new DefaultStreamingService(strategies);
+        when(csvStrategy.stream(reportId)).thenReturn(mockResponse);
 
-        // Then
-        assertNotNull(response);
-        assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
-        assertEquals(APPLICATION_EXCEL, response.getHeaders().getFirst("Content-Type"));
-        assertEquals("attachment; filename=null.xlsx", response.getHeaders().getFirst("Content-Disposition"));
+        var result = service.stream(reportId, CSV);
+
+        assertEquals(mockResponse, result);
+        verify(csvStrategy).stream(reportId);
+        verifyNoInteractions(excelStrategy);
     }
 
     @Test
-    @SneakyThrows
-    void shouldFailWhenCouldNotFindReport() {
-        // Given
-        var uuid = UUID.fromString(ReportsTestDataFactory.REPORT_UUID_1);
-        when(excelService.createExcel(uuid)).thenThrow(new ReportIdNotFoundException("Report not found for ID: %s".formatted(uuid.toString())));
+    void shouldThrowExceptionForUnsupportedSteamFormat() {
+        var reportId = randomUUID();
+        var strategies = of(
+                CSV, csvStrategy
+        );
 
-        // When & Then
-        assertThrows(ReportIdNotFoundException.class, () -> streamingService.streamExcel(uuid));
+        var service = new DefaultStreamingService(strategies);
+
+        assertThrows(NullPointerException.class, () -> {
+            service.stream(reportId, XLSX);
+        });
     }
 
+    @Test
+    void shouldPropagateSteamStrategyExceptions() {
+        var reportId = randomUUID();
+        var strategies = of(
+                CSV, csvStrategy
+        );
+        var service = new DefaultStreamingService(strategies);
+
+        when(csvStrategy.stream(reportId)).thenThrow(new IllegalStateException("Streaming error"));
+
+        assertThrows(IllegalStateException.class, () -> {
+            service.stream(reportId, CSV);
+        });
+    }
+
+    @Test
+    void shouldHandleStreamForAllRegisteredFormats() {
+        var reportId = randomUUID();
+        var strategies = of(
+                CSV, csvStrategy,
+                XLSX, excelStrategy
+        );
+        var service = new DefaultStreamingService(strategies);
+
+        when(excelStrategy.stream(reportId)).thenReturn(mockResponse);
+
+        var result = service.stream(reportId, XLSX);
+
+        assertEquals(mockResponse, result);
+        verify(excelStrategy).stream(reportId);
+    }
 }

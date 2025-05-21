@@ -9,7 +9,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
-import uk.gov.laa.gpfd.services.ReportService;
+import uk.gov.laa.gpfd.services.ReportManagementService;
 
 import java.util.UUID;
 
@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class HttpSecuritySessionManagementConfigurerBuilderTest {
 
     @MockitoBean
-    ReportService reportServiceMock;
+    ReportManagementService reportServiceMock;
 
     @Autowired
     MockMvc mockMvc;

@@ -5,44 +5,6 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
 
-    <changeSet id="1-create-csv-to-sql-mapping-table" author="robert_buczek">
-        <createTable tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
-            <column name="ID" type="CHAR (36)">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="REPORT_NAME" type="VARCHAR(200)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="SQL_QUERY" type="VARCHAR(4000)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="BASE_URL" type="VARCHAR(450)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="REPORT_OWNER" type="VARCHAR(100)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="REPORT_CREATOR" type="VARCHAR(100)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="REPORT_DESCRIPTION" type="VARCHAR(400)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="EXCEL_REPORT" type="VARCHAR(200)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="EXCEL_SHEET_NUM" type="NUMBER">
-                <constraints nullable="false"/>
-            </column>
-            <column name="CSV_NAME" type="VARCHAR(200)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="OWNER_EMAIL" type="VARCHAR(300)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
-
     <changeSet id="2-grant-select-csv-to-sql-to-any-report" author="robert_buczek">
         <sql>
             GRANT SELECT ON "GPFD"."CSV_TO_SQL_MAPPING_TABLE" TO "ANY_REPORT"

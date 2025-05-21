@@ -2,26 +2,34 @@ package uk.gov.laa.gpfd.dao;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import uk.gov.laa.gpfd.dao.support.ReportWithQueriesAndFieldAttributesExtractor;
+import uk.gov.laa.gpfd.data.ReportsTestDataFactory;
+import uk.gov.laa.gpfd.exception.DatabaseReadException;
+import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.model.Report;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class ReportDaoTest {
 
     @Mock
@@ -33,56 +41,85 @@ class ReportDaoTest {
     @InjectMocks
     private ReportDao reportDao;
 
+    private UUID testReportId;
+    private Report testReport;
+
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        testReportId = UUID.randomUUID();
+        testReport =  ReportsTestDataFactory.createTestReport(testReportId);
     }
 
     @Test
-    void shouldFetchReportById() {
-        // Given
-        var reportId = UUID.randomUUID();
-        var expectedReport = new Report();
-        when(readOnlyJdbcTemplate.query(anyString(), eq(extractor), eq(reportId.toString())))
-                .thenReturn(Collections.singletonList(expectedReport));
+    void fetchReportById_shouldReturnReportWhenFound() {
+        when(readOnlyJdbcTemplate.query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class), any()))
+                .thenReturn(Collections.singletonList(testReport));
 
-        // When
-        var result = reportDao.fetchReportById(reportId);
+        var result = reportDao.fetchReportById(testReportId);
 
-        // Then
         assertTrue(result.isPresent());
-        assertEquals(expectedReport, result.get());
-        verify(readOnlyJdbcTemplate).query(anyString(), eq(extractor), eq(reportId.toString()));
+        assertEquals(testReportId, result.get().getReportId());
+        verify(readOnlyJdbcTemplate).query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class), eq(testReportId.toString()));
     }
 
     @Test
-    void shouldReturnEmptyOptionalWhenReportNotFound() {
-        // Given
-        var reportId = UUID.randomUUID();
-        when(readOnlyJdbcTemplate.query(anyString(), eq(extractor), eq(reportId.toString())))
+    void fetchReportById_shouldReturnEmptyOptionalWhenReportNotFound() {
+        when(readOnlyJdbcTemplate.query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class), any()))
                 .thenReturn(Collections.emptyList());
 
-        // When
-        var result = reportDao.fetchReportById(reportId);
+        var result = reportDao.fetchReportById(testReportId);
 
-        // Then
         assertFalse(result.isPresent());
-        verify(readOnlyJdbcTemplate).query(anyString(), eq(extractor), eq(reportId.toString()));
     }
 
     @Test
-    void shouldThrowRuntimeExceptionWhenDataAccessExceptionOccurs() {
-        // Given
-        var reportId = UUID.randomUUID();
-        when(readOnlyJdbcTemplate.query(anyString(), eq(extractor), eq(reportId.toString())))
+    void fetchReportById_shouldThrowDatabaseReadExceptionOnDataAccessError() {
+        when(readOnlyJdbcTemplate.query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class), any()))
                 .thenThrow(new DataAccessException("Database error") {});
 
-        // When & Then
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            reportDao.fetchReportById(reportId);
+        assertThrows(DatabaseReadException.class, () -> {
+            reportDao.fetchReportById(testReportId);
         });
+    }
 
-        assertEquals("Error fetching report by ID: " + reportId, exception.getMessage());
-        verify(readOnlyJdbcTemplate).query(anyString(), eq(extractor), eq(reportId.toString()));
+    @Test
+    void fetchReports_shouldReturnCollectionOfReports() throws DatabaseReadException, ReportIdNotFoundException {
+        var expectedReports = Arrays.asList(testReport,  ReportsTestDataFactory.createTestReport());
+        when(readOnlyJdbcTemplate.query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class)))
+                .thenReturn(expectedReports);
+
+        var result = reportDao.fetchReports();
+
+        assertEquals(2, result.size());
+        assertTrue(result.contains(testReport));
+        verify(readOnlyJdbcTemplate).query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class));
+    }
+
+    @Test
+    void fetchReports_shouldReturnEmptyCollectionWhenNoReportsFound() throws DatabaseReadException, ReportIdNotFoundException {
+        when(readOnlyJdbcTemplate.query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class)))
+                .thenReturn(Collections.emptyList());
+
+        var result = reportDao.fetchReports();
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void fetchReports_shouldThrowDatabaseReadExceptionOnDataAccessError() {
+        when(readOnlyJdbcTemplate.query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class)))
+                .thenThrow(new DataAccessException("Database error") {});
+
+        assertThrows(DatabaseReadException.class, () -> {
+            reportDao.fetchReports();
+        });
+    }
+
+    @Test
+    void fetchReports_shouldNotThrowReportIdNotFoundException() throws DatabaseReadException, ReportIdNotFoundException {
+        when(readOnlyJdbcTemplate.query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class)))
+                .thenReturn(Collections.emptyList());
+
+        assertDoesNotThrow(() -> reportDao.fetchReports());
     }
 }
