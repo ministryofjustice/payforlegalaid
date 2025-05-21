@@ -36,7 +36,6 @@
         <spring-security-crypto.version>6.4.5</spring-security-crypto.version>
 
         <payforlegalaid-openapi.version>0.0.3</payforlegalaid-openapi.version>
-        <jsqlparser.version>5.3</jsqlparser.version>
     </properties>
 
     <build>
@@ -307,11 +306,6 @@
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.jsqlparser</groupId>
-            <artifactId>jsqlparser</artifactId>
-            <version>${jsqlparser.version}</version>
         </dependency>
 
         <!-- Test Dependencies-->

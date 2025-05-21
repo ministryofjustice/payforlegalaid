@@ -8,6 +8,7 @@ import org.immutables.value.Value.Immutable;
 import uk.gov.laa.gpfd.exception.SqlFormatException;
 
 import javax.annotation.Nullable;
+import java.sql.PreparedStatement;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -18,7 +19,7 @@ public abstract class ReportQuery {
     @Nullable
     public abstract UUID getReportId();
     @Nullable
-    public abstract String getQuery();
+    public abstract String getQuery(); //TODO prep statement
     @Nullable
     public abstract String getTabName();
     @Nullable
@@ -26,7 +27,7 @@ public abstract class ReportQuery {
 
     @Value.Check
     protected void check() {
-        String query = getQuery();
+        var query = getQuery();
 
         if (!isSqlFormatValid(query)) {
             throw new SqlFormatException("SQL format invalid for sheet %s (report id %s)".formatted(getTabName(), getReportId()));
@@ -34,22 +35,7 @@ public abstract class ReportQuery {
     }
 
     private boolean isSqlFormatValid(String rawSql) {
-        if (rawSql == null || rawSql.isEmpty()) {
-            return false;
-        }
-
-        try {
-            var parsedSqlStatements = CCJSqlParserUtil.parseStatements(rawSql);
-
-            if (parsedSqlStatements.size() != 1) {
-                // Disallow "chaining", e.g. attaching a DROP statement after the SELECT
-                return false;
-            }
-
-            return parsedSqlStatements.get(0) instanceof Select;
-
-        } catch (JSQLParserException e) {
-            return false;
-        }
+        final String validRegex = "^SELECT \\* FROM ANY_REPORT\\.[A-Z0-9_]+$";
+        return rawSql != null && rawSql.strip().matches(validRegex);
     }
 }
