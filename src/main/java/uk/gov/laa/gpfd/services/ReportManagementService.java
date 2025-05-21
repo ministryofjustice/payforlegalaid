@@ -1,15 +1,15 @@
 package uk.gov.laa.gpfd.services;
 
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import uk.gov.laa.gpfd.config.AppConfig;
-import uk.gov.laa.gpfd.dao.ReportDetailsDao;
-import uk.gov.laa.gpfd.enums.FileExtension;
+import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
-import uk.gov.laa.gpfd.mapper.ReportsGet200ResponseReportListInnerMapper;
-import uk.gov.laa.gpfd.model.ReportDetails;
+import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
+import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
+import uk.gov.laa.gpfd.mapper.ResourceResponseMapper;
+import uk.gov.laa.gpfd.model.GetReportById200Response;
+import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 
 import java.util.List;
@@ -26,10 +26,11 @@ import java.util.List;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
-public class ReportManagementService {
-    private final ReportDetailsDao reportDetailsDao;
-    private final AppConfig appConfig;
+public record ReportManagementService(
+        ReportDao reportDetailsDao,
+        ResourceResponseMapper<Report, GetReportById200Response> reportByIdMapper,
+        ResourceResponseMapper<Report, ReportsGet200ResponseReportListInner> innerResponseMapper
+) {
 
     /**
      * Fetches a list of report entries from the database, maps them into {@link ReportsGet200ResponseReportListInner}
@@ -44,25 +45,28 @@ public class ReportManagementService {
      * @throws DatabaseReadException if there is an error fetching data from the database
      */
     public List<ReportsGet200ResponseReportListInner> fetchReportListEntries() {
-        return reportDetailsDao.fetchReportList().stream()
-                .map(ReportsGet200ResponseReportListInnerMapper::map)
+        return reportDetailsDao.fetchReports().stream()
+                .map(innerResponseMapper::map)
                 .toList();
     }
 
     /**
-     * Retrieves the details of a specific report based on the provided report ID.
-     * <p>
-     * If the report is found, it returns the {@link ReportDetails}
-     * object.
-     * </p>
+     * Create a json response to be used by the /reports API endpoint. Once a caching system is in place, this response will serve as confirmation that a csv file has been created, and when.
      *
-     * @param requestedId the ID of the requested report
-     * @return a {@link ReportDetails} object containing the details of the
-     * requested report
+     * @param id - id of the requested report
+     * @return reportResponse containing json data about the requested report
+     * @throws ReportIdNotFoundException - From the getDetailsForSpecificReport() method call, if the requested index is not found
+     * @throws DatabaseReadException     - From the createReportListResponseList() method call inside getDetailsForSpecificReport()
+     * @throws ReportOutputTypeNotFoundException  - From the FileExtension.getSubPathForExtension(reportDetails.getExtension()) call
      */
-    public ReportDetails getDetailsForSpecificReport(UUID requestedId) {
-        ReportDetails reportDetails = reportDetailsDao.fetchReport(requestedId);
-        reportDetails.setReportDownloadUrl(String.format("%s/%s/%s", appConfig.getServiceUrl(), FileExtension.getSubPathForExtension(reportDetails.getExtension().toLowerCase()), reportDetails.getId()));
-        return reportDetails;
+    public GetReportById200Response createReportResponse(UUID id) {
+        log.info("Getting details for report ID {}", id);
+        var reportDetails = reportDetailsDao.fetchReportById(id);
+        if (reportDetails.isEmpty()) {
+            throw new ReportIdNotFoundException("Report with unrecognised ID");
+        }
+
+        log.info("Returning report response object for report ID {}", id);
+        return reportByIdMapper.map(reportDetails.get());
     }
 }

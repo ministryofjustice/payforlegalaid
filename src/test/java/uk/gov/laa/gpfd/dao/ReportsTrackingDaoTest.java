@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,7 +35,7 @@ class ReportsTrackingDaoTest extends BaseDaoTest{
     @Test
     void givenValidReportTrackingData_whenSaveReportsTracking_thenDataIsInsertedIntoDB() {
         // Given
-        ReportTrackingData testTrackingData = getTestTrackingData();
+        var testTrackingData = getTestTrackingData();
 
         // When
         saveReportTracking(testTrackingData);
@@ -56,7 +55,7 @@ class ReportsTrackingDaoTest extends BaseDaoTest{
     @Test
     void givenNullReportUrl_whenSaveReportsTracking_thenNoDataIsInserted() {
         // Given
-        ReportTrackingData testTrackingData = getTestTrackingData();
+        var testTrackingData = getTestTrackingData();
         testTrackingData.setReportUrl(null);
 
         // When and then
@@ -68,7 +67,7 @@ class ReportsTrackingDaoTest extends BaseDaoTest{
     @Test
     void givenInvalidReportId_whenSaveReportsTracking_thenNoDataIsInserted() {
         // Given
-        ReportTrackingData testTrackingData = getTestTrackingData();
+        var testTrackingData = getTestTrackingData();
         testTrackingData.setReportUuid(UUID.fromString("00000000-0000-0000-0001-000000000002"));
 
         // When and then
@@ -80,7 +79,7 @@ class ReportsTrackingDaoTest extends BaseDaoTest{
     @Test
     void givenNullReportId_whenSaveReportsTracking_thenNoDataIsInserted() {
         // Given
-        ReportTrackingData testTrackingData = getTestTrackingData();
+        var testTrackingData = getTestTrackingData();
         testTrackingData.setReportUuid(null);
 
         // When and then
@@ -120,7 +119,7 @@ class ReportsTrackingDaoTest extends BaseDaoTest{
     }
 
     private void saveReportTracking(ReportTrackingData testTrackingData) {
-        ReportsTracking reportsTracking = new ReportsTracking(
+        var reportsTracking = new ReportsTracking(
             DEFAULT_ID,
             testTrackingData.getReportName(),
             testTrackingData.getReportUuid(),
@@ -135,9 +134,8 @@ class ReportsTrackingDaoTest extends BaseDaoTest{
         reportsTrackingDao.saveReportsTracking(reportsTracking);
     }
 
-    @NotNull
     private List<Map<String, Object>> getAllReportsTrackingsFromDb() {
-      String sql = "SELECT * FROM GPFD.REPORTS_TRACKING";
+      var sql = "SELECT * FROM GPFD.REPORTS_TRACKING";
       return writeJdbcTemplate.queryForList(sql);
     }
 

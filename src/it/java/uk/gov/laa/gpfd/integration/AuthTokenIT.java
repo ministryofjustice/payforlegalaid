@@ -39,7 +39,7 @@ class AuthTokenIT extends BaseIT {
     @Test
     @WithMockUser(username = "Mock User")
     void getCsvWithIdShouldReturn200WhenLoginAuthTokenProvided() throws Exception {
-        performGetRequest("/csv/" + BaseIT.REPORT_UUID_1)
+        performGetRequest("/csv/" + "0fbec75b-2d72-44f5-a0e3-2dcb29d92f79")
             .andExpect(status().isOk());
     }
 }

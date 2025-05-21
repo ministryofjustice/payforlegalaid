@@ -1,9 +1,9 @@
 package uk.gov.laa.gpfd.config;
 
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -11,7 +11,7 @@ import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
@@ -23,8 +23,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = AppConfig.class)
-@TestPropertySource(properties = { "gpfd.url=http://localhost"})
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("testauth")
 class AppConfigTest {
 
     @Autowired
@@ -32,26 +33,6 @@ class AppConfigTest {
 
     @Autowired
     AppConfig classUnderTest;
-
-    @Test
-    void shouldModelMapperIsNotNull() {
-        // Given
-        // When
-        var modelMapper = applicationContext.getBean(ModelMapper.class);
-
-        // Then
-        assertNotNull(modelMapper, "ModelMapper bean should not be null.");
-    }
-
-    @Test
-    void shouldFetchModelMapperConfiguration() {
-        // Given
-        // When
-        var modelMapper = applicationContext.getBean(ModelMapper.class);
-
-        // Then
-        assertDoesNotThrow(() -> modelMapper.map(new Object(), Object.class), "ModelMapper should not throw an exception.");
-    }
 
     @Test
     void shouldReadOnlyDataSourceBeanWithQualifier() {
@@ -133,16 +114,6 @@ class AppConfigTest {
     }
 
     @Test
-    void shouldModelMapperBean() {
-        // Given
-        // When
-        var modelMapper = applicationContext.getBean(ModelMapper.class);
-
-        // Then
-        assertNotNull(modelMapper, "ModelMapper bean should be created.");
-    }
-
-    @Test
     void shouldReadOnlyDataSourceBean() {
         // Given
         // When
@@ -162,24 +133,6 @@ class AppConfigTest {
         // Then
         assertNotNull(dataSource, "WriteDataSource bean should be created.");
         assertInstanceOf(DriverManagerDataSource.class, dataSource, "DataSource should be of type DriverManagerDataSource.");
-    }
-
-
-    @Test
-    void shouldApplicationContextContainsAllBeans() {
-        assertNotNull(applicationContext.getBean(ModelMapper.class), "ModelMapper should be available in the application context.");
-        assertNotNull(applicationContext.getBean("readOnlyDataSource", DataSource.class), "Read-only DataSource should be available.");
-        assertNotNull(applicationContext.getBean("writeDataSource", DataSource.class), "Write-enabled DataSource should be available.");
-    }
-
-    @Test
-    void shouldBeanRetrievalByType() {
-        // Given
-        // When
-        var modelMapper = applicationContext.getBean(ModelMapper.class);
-
-        // Then
-        assertNotNull(modelMapper, "ModelMapper bean should be available by type.");
     }
 
     @Test

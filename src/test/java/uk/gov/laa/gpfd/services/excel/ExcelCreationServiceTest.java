@@ -7,8 +7,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
+import uk.gov.laa.gpfd.data.ReportsTestDataFactory;
 import uk.gov.laa.gpfd.model.ImmutableReportQuery;
-import uk.gov.laa.gpfd.model.Report;
 
 import uk.gov.laa.gpfd.dao.ReportViewsDao;
 import uk.gov.laa.gpfd.services.TemplateService;
@@ -61,10 +61,8 @@ class ExcelCreationServiceTest {
                 .tabName("Sheet1")
                 .query("SELECT * FROM table")
                 .build();
-        var report = new Report() {{
-            setTemplateSecureDocumentId("TEMPLATE_123");
-            setQueries(Collections.singletonList(query));
-        }};
+        var report = ReportsTestDataFactory.createTestReport("TEMPLATE_123",Collections.singletonList(query));
+
 
         when(templateLoader.findTemplateById("TEMPLATE_123")).thenReturn(workbook);
         when(dataFetcher.callDataBase("SELECT * FROM table")).thenReturn(Collections.emptyList());
@@ -90,10 +88,7 @@ class ExcelCreationServiceTest {
                 .tabName("NonExistentSheet")
                 .query("SELECT * FROM table")
                 .build();
-        var report = new Report(){{
-            setTemplateSecureDocumentId("TEMPLATE_123");
-            setQueries(Collections.singletonList(query));
-        }};
+        var report = ReportsTestDataFactory.createTestReport("TEMPLATE_123",Collections.singletonList(query));
 
         when(templateLoader.findTemplateById("TEMPLATE_123")).thenReturn(workbook);
 
@@ -113,10 +108,8 @@ class ExcelCreationServiceTest {
     void shouldHandleEmptyQueries() {
         // Given
         var workbook = mock(Workbook.class);
-        var report = new Report() {{
-            setTemplateSecureDocumentId("TEMPLATE_123");
-            setQueries(Collections.emptyList());
-        }};
+        var report = ReportsTestDataFactory.createTestReport("TEMPLATE_123",Collections.emptyList());
+
 
         when(templateLoader.findTemplateById("TEMPLATE_123")).thenReturn(workbook);
 
@@ -147,10 +140,8 @@ class ExcelCreationServiceTest {
                 .query("SELECT * FROM table2")
                 .build();
 
-        var report = new Report() {{
-            setTemplateSecureDocumentId("TEMPLATE_123");
-            setQueries(List.of(query1, query2));
-        }};
+        var report = ReportsTestDataFactory.createTestReport("TEMPLATE_123",List.of(query1, query2));
+
 
         when(templateLoader.findTemplateById("TEMPLATE_123")).thenReturn(workbook);
         when(dataFetcher.callDataBase("SELECT * FROM table1")).thenReturn(Collections.emptyList());

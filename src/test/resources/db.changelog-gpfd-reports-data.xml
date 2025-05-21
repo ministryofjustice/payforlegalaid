@@ -84,6 +84,21 @@
     </insert>
 
     <insert tableName="REPORTS" schemaName="GPFD">
+      <column name="ID" value="7bda9aa4-6129-4c71-bd12-7d4e46fdd882"/>
+      <column name="NAME" value="AGFS late processed bills"/>
+      <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="4f90d7dd-3f83-42c4-b6c5-c0fd1cdf9489"/>
+      <column name="REPORT_CREATION_DATE" valueDate="SYSDATE"/>
+      <column name="DESCRIPTION" value="AGFS late processed bills"/>
+      <column name="NUM_DAYS_TO_KEEP" value="30"/>
+      <column name="FILE_NAME" value="AGFS_LATE_PROCESSED_BILLS" />
+      <column name="ACTIVE" value="Y" />
+      <column name="REPORT_OUTPUT_TYPE" value="bd098666-94e4-4b0e-822c-8e5dfb04c908"/>
+      <column name="REPORT_OWNER_ID" value="00000000-0000-0000-0000-000000000003"/>
+      <column name="REPORT_OWNER_NAME" value="Teresa Green"/>
+      <column name="REPORT_OWNER_EMAIL" value="TeresaGreen@Justice.gov.uk"/>
+    </insert>
+
+    <insert tableName="REPORTS" schemaName="GPFD">
       <column name="ID" value="f46b4d3d-c100-429a-bf9a-6c3305dbdbf1"/>
       <column name="NAME" value="CCMS Invoice Analysis (CIS to CCMS)"/>
       <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="00000000-0000-0000-0000-000000000000"/>
@@ -96,6 +111,27 @@
       <column name="REPORT_OWNER_ID" value="00000000-0000-0000-0000-000000000001"/>
       <column name="REPORT_OWNER_NAME" value="Chancey Mctavish"/>
       <column name="REPORT_OWNER_EMAIL" value="owneremail@email.com"/>
+    </insert>
+
+    <insert tableName="REPORTS" schemaName="GPFD">
+      <column name="ID" value="0fbec75b-2d72-44f5-a0e3-2dcb29d92f79"/>
+      <column name="NAME" value="acceptance_test_table"/>
+      <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="00000000-0000-0000-0000-000000000000"/>
+      <column name="REPORT_CREATION_DATE" value="2025-02-15 00:00:00"/>
+      <column name="DESCRIPTION" value="acceptance_test_table"/>
+      <column name="NUM_DAYS_TO_KEEP" value="30"/>
+      <column name="FILE_NAME" value="acceptance_test_table"/>
+      <column name="ACTIVE" value="Y"/>
+      <column name="REPORT_OUTPUT_TYPE" value="6ebd27ac-4d83-485d-a4fd-3e45f9a53484"/>
+      <column name="REPORT_OWNER_ID" value="00000000-0000-0000-0000-000000000003"/>
+      <column name="REPORT_OWNER_NAME" value="Teresa Green"/>
+      <column name="REPORT_OWNER_EMAIL" value="teresagreen@Justice.gov.uk"/>
+    </insert>
+    <insert tableName="REPORT_QUERIES" schemaName="GPFD">
+      <column name="ID" value="069bd36f-b3e5-474d-9408-75b8de56de03"/>
+      <column name="REPORT_ID" value="0fbec75b-2d72-44f5-a0e3-2dcb29d92f79"/>
+      <column name="QUERY" value="SELECT * FROM ANY_REPORT.V_CIS_TO_CCMS_INVOICE_EXCEPTIONS"/>
+      <column name="TAB_NAME" value="MAIN"/>
     </insert>
 
     <insert tableName="REPORTS" schemaName="GPFD">
