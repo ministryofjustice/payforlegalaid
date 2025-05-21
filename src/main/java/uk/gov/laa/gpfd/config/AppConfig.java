@@ -4,7 +4,6 @@ import lombok.Getter;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -17,8 +16,12 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.web.client.RestTemplate;
+import uk.gov.laa.gpfd.dao.ReportDao;
+import uk.gov.laa.gpfd.enums.FileExtension;
 import uk.gov.laa.gpfd.model.FieldAttributes;
 import uk.gov.laa.gpfd.services.DataStreamer;
+import uk.gov.laa.gpfd.services.ExcelService;
+import uk.gov.laa.gpfd.services.StreamingService;
 import uk.gov.laa.gpfd.services.TemplateService;
 import uk.gov.laa.gpfd.services.excel.editor.CellValueSetter;
 import uk.gov.laa.gpfd.services.excel.editor.FormulaCalculator;
@@ -30,6 +33,9 @@ import uk.gov.laa.gpfd.services.excel.formatting.ColumnFormatting;
 import uk.gov.laa.gpfd.services.excel.formatting.Formatting;
 import uk.gov.laa.gpfd.services.excel.template.LocalTemplateClient;
 import uk.gov.laa.gpfd.services.excel.template.TemplateClient;
+import uk.gov.laa.gpfd.services.stream.AbstractDataStream;
+import uk.gov.laa.gpfd.services.stream.DataStream;
+import uk.gov.laa.gpfd.utils.StrategyFactory;
 
 import javax.sql.DataSource;
 import java.util.Collection;
@@ -48,20 +54,6 @@ import static uk.gov.laa.gpfd.services.DataStreamer.createJdbcStreamer;
  */
 @Configuration
 public class AppConfig {
-
-    /**
-     * Creates and configures a {@link ModelMapper} bean for object-to-object mapping.
-     * <p>
-     * The {@code ModelMapper} facilitates mapping between objects such as model entities
-     * and DTOs, making it easier to transform data across layers of the application.
-     * </p>
-     *
-     * @return a configured {@link ModelMapper} instance.
-     */
-    @Bean
-    ModelMapper modelMapper() {
-        return new ModelMapper();
-    }
 
     @Getter
     @Value("${gpfd.url}")
@@ -300,4 +292,25 @@ public class AppConfig {
     DataStreamer dataStreamer(JdbcTemplate readOnlyJdbcTemplate) {
         return createJdbcStreamer(readOnlyJdbcTemplate);
     }
+
+    @Bean
+    DataStream createCsvStreamStrategy(ReportDao reportDao, DataStreamer dataStreamer) {
+        return AbstractDataStream.createCsvStreamStrategy(reportDao, dataStreamer);
+    }
+
+    @Bean
+    DataStream createExcelStreamStrategy(ExcelService excelService) {
+        return AbstractDataStream.createExcelStreamStrategy(excelService);
+    }
+
+    @Bean
+    StreamingService streamingService(StrategyFactory<FileExtension, DataStream> streamStrategyFactory) {
+        return new StreamingService.DefaultStreamingService(streamStrategyFactory.getStrategies());
+    }
+
+    @Bean
+    public StrategyFactory<FileExtension, DataStream> streamStrategyFactory(Collection<DataStream> strategies) {
+        return StrategyFactory.createGenericStrategyFactory(strategies, DataStream::getFormat);
+    }
+
 }

@@ -4,7 +4,7 @@ import org.immutables.value.Value;
 import org.immutables.value.Value.Immutable;
 import uk.gov.laa.gpfd.exception.DatabaseReadException.SqlFormatException;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.UUID;
 
