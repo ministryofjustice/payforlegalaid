@@ -17,7 +17,7 @@ public abstract class ReportQuery {
     public abstract UUID getReportId();
 
     @Nullable
-    public abstract String getQuery(); //TODO prep statement
+    public abstract String getQuery();
 
     @Nullable
     public abstract String getTabName();
