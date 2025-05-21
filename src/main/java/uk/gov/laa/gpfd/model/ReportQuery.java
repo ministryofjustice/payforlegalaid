@@ -25,6 +25,8 @@ public abstract class ReportQuery {
     @Nullable
     public abstract Collection<FieldAttributes> getFieldAttributes();
 
+    private final static String validRegex = "^SELECT \\* FROM ANY_REPORT\\.[A-Z0-9_]+$";
+
     @Value.Check
     protected void check() {
         var query = getQuery();
@@ -35,7 +37,6 @@ public abstract class ReportQuery {
     }
 
     private boolean isSqlFormatValid(String rawSql) {
-        final String validRegex = "^SELECT \\* FROM ANY_REPORT\\.[A-Z0-9_]+$";
         return rawSql != null && rawSql.strip().matches(validRegex);
     }
 }
