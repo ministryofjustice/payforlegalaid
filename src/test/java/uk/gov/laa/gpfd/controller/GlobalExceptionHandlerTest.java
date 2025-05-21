@@ -8,7 +8,7 @@ import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
-import uk.gov.laa.gpfd.exception.SqlFormatException;
+import uk.gov.laa.gpfd.exception.DatabaseReadException.SqlFormatException;
 import uk.gov.laa.gpfd.exception.TransferException;
 
 import java.util.stream.Stream;

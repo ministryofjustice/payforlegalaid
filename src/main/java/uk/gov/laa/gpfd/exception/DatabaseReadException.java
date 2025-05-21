@@ -7,4 +7,10 @@ public class DatabaseReadException extends RuntimeException {
     public DatabaseReadException(String message) {
         super(message);
     }
+
+    public static class SqlFormatException extends DatabaseReadException {
+        public SqlFormatException(String message) {
+            super(message);
+        }
+    }
 }
