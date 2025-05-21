@@ -1,42 +1,35 @@
 package uk.gov.laa.gpfd.mapper;
 
-import uk.gov.laa.gpfd.model.MappingTable;
-import uk.gov.laa.gpfd.model.ReportDetails;
+import org.springframework.stereotype.Component;
+import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 
 /**
- * Utility class responsible for mapping a {@link MappingTable} object to a {@link ReportsGet200ResponseReportListInner} object.
+ * Utility class responsible for mapping a {@link Report} object to a {@link ReportsGet200ResponseReportListInner} object.
  * <p>
- * This class provides a method to transform a {@link MappingTable} entity (which holds CSV to SQL mapping details)
+ * This class provides a method to transform a {@link Report} entity (which holds CSV to SQL mapping details)
  * into a response object that can be returned in an API response.
  * </p>
  */
-public class ReportsGet200ResponseReportListInnerMapper {
+@Component
+public final class ReportsGet200ResponseReportListInnerMapper implements ResourceResponseMapper<Report, ReportsGet200ResponseReportListInner> {
 
     /**
-     * Maps a {@link MappingTable} object to a {@link ReportsGet200ResponseReportListInner} object.
+     * Maps a {@link Report} object to a {@link ReportsGet200ResponseReportListInner} object.
      * <p>
-     * This method transforms a given {@link MappingTable} entity into a response object used by the service layer
+     * This method transforms a given {@link Report} entity into a response object used by the service layer
      * to expose report details such as report name, SQL query, and other metadata to the client.
      * </p>
      *
-     * @param mappingTable the {@link MappingTable} object containing the data to be mapped
-     * @return a {@link ReportsGet200ResponseReportListInner} object populated with data from the provided {@link MappingTable}
+     * @param reportData the {@link Report} object containing the data to be mapped
+     * @return a {@link ReportsGet200ResponseReportListInner} object populated with data from the provided {@link Report}
      */
-    public static ReportsGet200ResponseReportListInner map(MappingTable mappingTable) {
-        return new ReportsGet200ResponseReportListInner() {{
-            setId(mappingTable.getId());
-            setReportName(mappingTable.getReportName());
-            description(mappingTable.getDescription());
-        }};
-    }
+    public ReportsGet200ResponseReportListInner map(Report reportData) {
+        var result = new ReportsGet200ResponseReportListInner();
+        result.setId(reportData.getReportId());
+        result.setReportName(reportData.getName());
+        result.description(reportData.getDescription());
 
-    @SuppressWarnings("java:S3599")
-    public static ReportsGet200ResponseReportListInner map(ReportDetails reportData) {
-        return new ReportsGet200ResponseReportListInner() {{
-            setId(reportData.getId());
-            setReportName(reportData.getName());
-            description(reportData.getDescription());
-        }};
+        return result;
     }
 }

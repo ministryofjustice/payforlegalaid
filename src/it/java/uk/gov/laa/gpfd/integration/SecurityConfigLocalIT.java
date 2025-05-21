@@ -9,7 +9,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
-import uk.gov.laa.gpfd.services.ReportService;
+import uk.gov.laa.gpfd.services.ReportManagementService;
 
 import java.util.UUID;
 
@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class SecurityConfigLocalIT extends BaseIT {
 
     @MockitoBean
-    ReportService reportServiceMock;
+    ReportManagementService reportManagementService;
 
     // Local profile just ignores Azure and requires no login session.
     @Test
@@ -35,7 +35,7 @@ class SecurityConfigLocalIT extends BaseIT {
         var reportId = UUID.fromString(BaseIT.REPORT_UUID_1);
         var reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();
 
-        when(reportServiceMock.createReportResponse(reportId)).thenReturn(reportResponseMock);
+        when(reportManagementService.createReportResponse(reportId)).thenReturn(reportResponseMock);
 
         mockMvc.perform(get("/reports/{id}", reportId)
                         .sessionAttr("SPRING_SECURITY_CONTEXT", "null"))
@@ -48,7 +48,7 @@ class SecurityConfigLocalIT extends BaseIT {
         var reportId = UUID.fromString(BaseIT.REPORT_UUID_1);
         var reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();
 
-        when(reportServiceMock.createReportResponse(reportId)).thenReturn(reportResponseMock);
+        when(reportManagementService.createReportResponse(reportId)).thenReturn(reportResponseMock);
 
         mockMvc.perform(get("/reports/{id}", reportId))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(reportId.toString()));
@@ -59,7 +59,7 @@ class SecurityConfigLocalIT extends BaseIT {
         var reportId = UUID.fromString(BaseIT.REPORT_UUID_1);
         var reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();
 
-        when(reportServiceMock.createReportResponse(reportId)).thenReturn(reportResponseMock);
+        when(reportManagementService.createReportResponse(reportId)).thenReturn(reportResponseMock);
 
         mockMvc.perform(get("/reports/{id}", reportId))
                 .andExpect(status().isOk())

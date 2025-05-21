@@ -2,7 +2,7 @@ package uk.gov.laa.gpfd.model;
 
 import org.immutables.value.Value.Immutable;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.UUID;
 
