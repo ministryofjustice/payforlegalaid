@@ -6,12 +6,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest // This uses the whole spring context, switch to @JdbcTest if you switch to a H2 DB
+@SpringBootTest
 @ActiveProfiles("test")
-class ReportViewsDaoTest extends BaseDaoTest{
+class ReportViewsDaoTest extends BaseDaoTest {
 
     @Autowired
     private ReportViewsDao reportViewsDao;

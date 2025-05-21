@@ -118,18 +118,29 @@ class GlobalExceptionHandlerTest {
         assertEquals("CSV Stream Error", response.getBody().getError());
     }
 
-    @Test
-    void shouldHandleDatabaseReadException() {
-        // Given
-        var exception = new DatabaseReadException("Database Read Error");
-
+    @ParameterizedTest
+    @MethodSource("databaseExceptionProvider")
+    void shouldHandleDatabaseReadExceptions(DatabaseReadException exception, String expectedErrorMessage) {
         // When
         var response = globalExceptionHandler.handleDatabaseReadException(exception);
 
         // Then
         assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals("Database Read Error", response.getBody().getError());
+        assertEquals(expectedErrorMessage, response.getBody().getError());
     }
+
+    private static Stream<Arguments> databaseExceptionProvider() {
+        return of(Arguments.of(
+                        new DatabaseReadException("Error reading from DB: permissions problem"),
+                        "Error reading from DB: permissions problem"
+                ),
+                Arguments.of(
+                        new DatabaseReadException.SqlFormatException("SQL format invalid for report FinanceStuff (id 123ab-432fa-32423-das24)"),
+                        "SQL format invalid for report FinanceStuff (id 123ab-432fa-32423-das24)"
+                )
+        );
+    }
+
 
     @Test
     void shouldHandleReportIdNotFoundException() {
