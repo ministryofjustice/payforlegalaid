@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
-import uk.gov.laa.gpfd.exception.DatabaseReadException.SqlFormatException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
@@ -167,24 +166,5 @@ public class GlobalExceptionHandler {
 
         return badRequest().body(response);
     }
-
-    /**
-     * Handles SqlFormatException and responds with an HTTP 500 Internal Server Error.
-     *
-     * @param e the SqlFormatException thrown when there is an issue with the supplied SQL format.
-     * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
-     */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(SqlFormatException.class)
-    public ResponseEntity<ReportsGet500Response> handleSqlFormatException(SqlFormatException e) {
-        var response = new ReportsGet500Response() {{
-            setError(e.getMessage());
-        }};
-
-        log.error("SqlFormatException Thrown: {}", response);
-
-        return internalServerError().body(response);
-    }
-
 
 }

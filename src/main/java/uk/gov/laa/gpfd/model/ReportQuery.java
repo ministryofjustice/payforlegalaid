@@ -30,7 +30,7 @@ public abstract class ReportQuery {
         var query = getQuery();
 
         if (!isSqlFormatValid(query)) {
-            throw new SqlFormatException("SQL format invalid for sheet %s (report id %s)".formatted(getTabName(), getReportId()));
+            throw new SqlFormatException("SQL query invalid for sheet %s (report id %s)".formatted(getTabName(), getReportId()));
         }
     }
 

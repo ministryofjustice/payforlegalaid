@@ -8,7 +8,6 @@ import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
-import uk.gov.laa.gpfd.exception.DatabaseReadException.SqlFormatException;
 import uk.gov.laa.gpfd.exception.TransferException;
 
 import java.util.stream.Stream;
@@ -119,18 +118,29 @@ class GlobalExceptionHandlerTest {
         assertEquals("CSV Stream Error", response.getBody().getError());
     }
 
-    @Test
-    void shouldHandleDatabaseReadException() {
-        // Given
-        var exception = new DatabaseReadException("Database Read Error");
-
+    @ParameterizedTest
+    @MethodSource("databaseExceptionProvider")
+    void shouldHandleDatabaseReadExceptions(DatabaseReadException exception, String expectedErrorMessage) {
         // When
         var response = globalExceptionHandler.handleDatabaseReadException(exception);
 
         // Then
         assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals("Database Read Error", response.getBody().getError());
+        assertEquals(expectedErrorMessage, response.getBody().getError());
     }
+
+    private static Stream<Arguments> databaseExceptionProvider() {
+        return of(Arguments.of(
+                        new DatabaseReadException("Error reading from DB: permissions problem"),
+                        "Error reading from DB: permissions problem"
+                ),
+                Arguments.of(
+                        new DatabaseReadException.SqlFormatException("SQL format invalid for report FinanceStuff (id 123ab-432fa-32423-das24)"),
+                        "SQL format invalid for report FinanceStuff (id 123ab-432fa-32423-das24)"
+                )
+        );
+    }
+
 
     @Test
     void shouldHandleReportIdNotFoundException() {
@@ -397,19 +407,6 @@ class GlobalExceptionHandlerTest {
         // Then
         assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertEquals("Invalid file extension: xyz", response.getBody().getError());
-    }
-
-    @Test
-    void shouldHandlSqlFormatExceptionWithExpectedErrorMessage() {
-        // Given
-        var exception = new SqlFormatException("SQL format invalid for report FinanceStuff (id 123ab-432fa-32423-das24)");
-
-        // When
-        var response = globalExceptionHandler.handleSqlFormatException(exception);
-
-        // Then
-        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals("SQL format invalid for report FinanceStuff (id 123ab-432fa-32423-das24)", response.getBody().getError());
     }
 
 }
