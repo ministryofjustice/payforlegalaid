@@ -18,6 +18,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static uk.gov.laa.gpfd.exception.DatabaseReadException.DatabaseFetchException;
+import static uk.gov.laa.gpfd.exception.DatabaseReadException.MappingException;
+import static uk.gov.laa.gpfd.exception.DatabaseReadException.SqlFormatException;
 
 @SuppressWarnings("DataFlowIssue")
 class GlobalExceptionHandlerTest {
@@ -25,10 +28,10 @@ class GlobalExceptionHandlerTest {
     private static final GlobalExceptionHandler globalExceptionHandler = new GlobalExceptionHandler();
 
     @Test
-    void shouldHandleDatabaseReadExceptionWithLongMessage() {
+    void shouldHandleDatabaseFetchExceptionWithLongMessage() {
         // Given
         var longMessage = "Database error occurred while processing request: " + "A".repeat(1000);
-        var exception = new DatabaseReadException.DatabaseFetchException(longMessage);
+        var exception = new DatabaseFetchException(longMessage);
 
         // When
         var response = globalExceptionHandler.handleDatabaseReadException(exception);
@@ -65,9 +68,9 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void shouldHandleDatabaseReadExceptionWithWhitespaceMessage() {
+    void shouldHandleDatabaseFetchExceptionWithWhitespaceMessage() {
         // Given
-        var exception = new DatabaseReadException.DatabaseFetchException("   ");
+        var exception = new DatabaseFetchException("   ");
 
         // When
         var response = globalExceptionHandler.handleDatabaseReadException(exception);
@@ -131,15 +134,15 @@ class GlobalExceptionHandlerTest {
 
     private static Stream<Arguments> databaseExceptionProvider() {
         return of(Arguments.of(
-                        new DatabaseReadException.DatabaseFetchException("Error reading from DB: permissions problem"),
+                        new DatabaseFetchException("Error reading from DB: permissions problem"),
                         "Error reading from DB: permissions problem"
                 ),
                 Arguments.of(
-                        new DatabaseReadException.MappingException("Error mapping Report data"),
+                        new MappingException("Error mapping Report data"),
                         "Error mapping Report data"
                 ),
                 Arguments.of(
-                        new DatabaseReadException.SqlFormatException("SQL format invalid for report FinanceStuff (id 123ab-432fa-32423-das24)"),
+                        new SqlFormatException("SQL format invalid for report FinanceStuff (id 123ab-432fa-32423-das24)"),
                         "SQL format invalid for report FinanceStuff (id 123ab-432fa-32423-das24)"
                 )
         );
@@ -186,9 +189,9 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void shouldHandleDatabaseReadExceptionWithSpecialCharacters() {
+    void shouldHandleDatabaseFetchExceptionWithSpecialCharacters() {
         // Given
-        var exception = new DatabaseReadException.DatabaseFetchException("Error! @#$%^&*()");
+        var exception = new DatabaseFetchException("Error! @#$%^&*()");
 
         // When
         var response = globalExceptionHandler.handleDatabaseReadException(exception);
@@ -239,10 +242,10 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void shouldHandleDatabaseReadExceptionWithNewlineCharacters() {
+    void shouldHandleDatabaseFetchExceptionWithNewlineCharacters() {
         // Given
         var message = "Database error\nDetails: connection failed.";
-        var exception = new DatabaseReadException.DatabaseFetchException(message);
+        var exception = new DatabaseFetchException(message);
 
         // When
         var response = globalExceptionHandler.handleDatabaseReadException(exception);
@@ -279,10 +282,10 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void shouldHandleDatabaseReadExceptionWithJsonMessage() {
+    void shouldHandleDatabaseFetchExceptionWithJsonMessage() {
         // Given
         var jsonMessage = "{\"error\":\"database failure\"}";
-        var exception = new DatabaseReadException.DatabaseFetchException(jsonMessage);
+        var exception = new DatabaseFetchException(jsonMessage);
 
         // When
         var response = globalExceptionHandler.handleDatabaseReadException(exception);
@@ -320,10 +323,10 @@ class GlobalExceptionHandlerTest {
 
 
     @Test
-    void shouldHandleDatabaseReadExceptionWithUtf16Message() {
+    void shouldHandleDatabaseFetchExceptionWithUtf16Message() {
         // Given
         var utf16Message = "数据库错误";
-        var exception = new DatabaseReadException.DatabaseFetchException(utf16Message);
+        var exception = new DatabaseFetchException(utf16Message);
 
         // When
         var response = globalExceptionHandler.handleDatabaseReadException(exception);
@@ -362,9 +365,9 @@ class GlobalExceptionHandlerTest {
 
 
     @Test
-    void shouldHandleDatabaseReadExceptionWithSingleNewlineMessage() {
+    void shouldHandleDatabaseFetchExceptionWithSingleNewlineMessage() {
         // Given
-        var exception = new DatabaseReadException.DatabaseFetchException("\n");
+        var exception = new DatabaseFetchException("\n");
 
         // When
         var response = globalExceptionHandler.handleDatabaseReadException(exception);
