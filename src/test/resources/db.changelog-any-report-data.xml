@@ -5,7 +5,7 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
   <changeSet id="6001" author="user">
-    <insert tableName="V_CIS_TO_CCMS_INVOICE_SUMMARY" schemaName="ANY_REPORT">
+    <insert tableName="INVOICE_VIEW" schemaName="ANY_REPORT">
       <column name="DATE_AUTHORISED_CIS" value="Auth Date"/>
       <column name="THE_SYSTEM" value="Test System"/>
       <column name="CIS_VALUE" value="Test Value"/>
@@ -14,7 +14,7 @@
   </changeSet>
 
   <changeSet id="6002" author="user">
-    <insert tableName="V_CIS_TO_CCMS_INVOICE_DEFINED_PAYMENT_GROUPS" schemaName="ANY_REPORT">
+    <insert tableName="PAYMENT_VIEW" schemaName="ANY_REPORT">
       <column name="DATE_AUTHORISED_CIS" value="Auth Date"/>
       <column name="THE_SYSTEM" value="Test System"/>
       <column name="CIS_VALUE" value="Test Value"/>
