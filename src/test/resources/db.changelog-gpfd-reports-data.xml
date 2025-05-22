@@ -90,8 +90,23 @@
       <column name="REPORT_CREATION_DATE" valueDate="SYSDATE"/>
       <column name="DESCRIPTION" value="AGFS late processed bills"/>
       <column name="NUM_DAYS_TO_KEEP" value="30"/>
-      <column name="FILE_NAME" value="AGFS_LATE_PROCESSED_BILLS" />
+      <column name="FILE_NAME" value="LATE_PROCESSED_BILLS" />
       <column name="ACTIVE" value="Y" />
+      <column name="REPORT_OUTPUT_TYPE" value="bd098666-94e4-4b0e-822c-8e5dfb04c908"/>
+      <column name="REPORT_OWNER_ID" value="00000000-0000-0000-0000-000000000003"/>
+      <column name="REPORT_OWNER_NAME" value="Teresa Green"/>
+      <column name="REPORT_OWNER_EMAIL" value="TeresaGreen@Justice.gov.uk"/>
+    </insert>
+
+    <insert tableName="REPORTS" schemaName="GPFD">
+      <column name="ID" value="516cdbff-5fa8-4050-b5e6-7edf71daf679"/>
+      <column name="NAME" value="CCLF late processed bills"/>
+      <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="4f90d7dd-3f83-42c4-b6c5-c0fd1cdf9489"/>
+      <column name="REPORT_CREATION_DATE" valueDate="SYSDATE"/>
+      <column name="DESCRIPTION" value="CCLF late processed bills"/>
+      <column name="NUM_DAYS_TO_KEEP" value="30"/>
+      <column name="FILE_NAME" value="LATE_PROCESSED_BILLS"/>
+      <column name="ACTIVE" value="Y"/>
       <column name="REPORT_OUTPUT_TYPE" value="bd098666-94e4-4b0e-822c-8e5dfb04c908"/>
       <column name="REPORT_OWNER_ID" value="00000000-0000-0000-0000-000000000003"/>
       <column name="REPORT_OWNER_NAME" value="Teresa Green"/>
