@@ -10,7 +10,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import uk.gov.laa.gpfd.dao.support.ReportWithQueriesAndFieldAttributesExtractor;
 import uk.gov.laa.gpfd.data.ReportsTestDataFactory;
-import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.model.Report;
 
 import java.util.Arrays;
@@ -27,6 +26,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.laa.gpfd.exception.DatabaseReadException.DatabaseFetchException;
 
 @ExtendWith(MockitoExtension.class)
 class ReportDaoTest {
@@ -76,7 +76,7 @@ class ReportDaoTest {
         when(readOnlyJdbcTemplate.query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class), any()))
                 .thenThrow(new DataAccessException("Database error") {});
 
-        assertThrows(DatabaseReadException.DatabaseFetchException.class, () -> reportDao.fetchReportById(testReportId));
+        assertThrows(DatabaseFetchException.class, () -> reportDao.fetchReportById(testReportId));
     }
 
     @Test
@@ -107,7 +107,7 @@ class ReportDaoTest {
         when(readOnlyJdbcTemplate.query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class)))
                 .thenThrow(new DataAccessException("Database error") {});
 
-        assertThrows(DatabaseReadException.DatabaseFetchException.class, () -> reportDao.fetchReports());
+        assertThrows(DatabaseFetchException.class, () -> reportDao.fetchReports());
     }
 
     @Test

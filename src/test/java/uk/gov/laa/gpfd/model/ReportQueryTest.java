@@ -3,13 +3,13 @@ package uk.gov.laa.gpfd.model;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
-import uk.gov.laa.gpfd.exception.DatabaseReadException.SqlFormatException;
 
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static uk.gov.laa.gpfd.exception.DatabaseReadException.SqlFormatException;
 
 class ReportQueryTest {
 

@@ -11,7 +11,6 @@ import uk.gov.laa.gpfd.config.AppConfig;
 import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.dao.ReportsTrackingDao;
 import uk.gov.laa.gpfd.data.ReportsTestDataFactory;
-import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.mapper.ReportsTrackingMapper;
 import uk.gov.laa.gpfd.model.Report;
@@ -28,6 +27,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.laa.gpfd.exception.DatabaseReadException.DatabaseFetchException;
 
 @ExtendWith(MockitoExtension.class)
 class ReportsTrackingServiceTest {
@@ -105,10 +105,10 @@ class ReportsTrackingServiceTest {
         when(userService.getCurrentUserName()).thenReturn(VALID_TEST_USER);
 
         // Simulate database error
-        doThrow(new DatabaseReadException.DatabaseFetchException("Database error")).when(reportsTrackingDao).saveReportsTracking(any());
+        doThrow(new DatabaseFetchException("Database error")).when(reportsTrackingDao).saveReportsTracking(any());
 
         // When
-        assertThrows(DatabaseReadException.DatabaseFetchException.class,
+        assertThrows(DatabaseFetchException.class,
                 () -> reportsTrackingService.saveReportsTracking(requestedId));
     }
 

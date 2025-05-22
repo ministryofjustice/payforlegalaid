@@ -1,12 +1,13 @@
 package uk.gov.laa.gpfd.model;
 
+import jakarta.annotation.Nullable;
 import org.immutables.value.Value;
 import org.immutables.value.Value.Immutable;
-import uk.gov.laa.gpfd.exception.DatabaseReadException.SqlFormatException;
 
-import jakarta.annotation.Nullable;
 import java.util.Collection;
 import java.util.UUID;
+
+import static uk.gov.laa.gpfd.exception.DatabaseReadException.SqlFormatException;
 
 @Immutable
 public abstract class ReportQuery {

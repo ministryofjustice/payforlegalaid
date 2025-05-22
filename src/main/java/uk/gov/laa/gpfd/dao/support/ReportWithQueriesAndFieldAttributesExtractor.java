@@ -3,7 +3,6 @@ package uk.gov.laa.gpfd.dao.support;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
-import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.model.FieldAttributes;
 import uk.gov.laa.gpfd.model.ImmutableFieldAttributes;
 import uk.gov.laa.gpfd.model.ImmutableReport;
@@ -18,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
+
+import static uk.gov.laa.gpfd.exception.DatabaseReadException.MappingException;
 
 /**
  * A {@link ResultSetExtractor} implementation that extracts a collection of {@link Report} objects
@@ -74,7 +75,7 @@ public class ReportWithQueriesAndFieldAttributesExtractor implements ResultSetEx
                             .build();
                 } catch (SQLException e) {
                     log.error("Error mapping Report data for ID: {}", id, e);
-                    throw new DatabaseReadException.MappingException("Error mapping Report data");
+                    throw new MappingException("Error mapping Report data");
                 }
             });
 
@@ -98,7 +99,7 @@ public class ReportWithQueriesAndFieldAttributesExtractor implements ResultSetEx
                             .build();
                 } catch (SQLException e) {
                     log.error("Error mapping ReportQuery data for ID: {}", id, e);
-                    throw new DatabaseReadException.MappingException("Error mapping ReportQuery data");
+                    throw new MappingException("Error mapping ReportQuery data");
                 }
             });
 
