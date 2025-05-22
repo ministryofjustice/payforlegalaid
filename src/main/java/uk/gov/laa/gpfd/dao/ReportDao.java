@@ -1,17 +1,17 @@
 package uk.gov.laa.gpfd.dao;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Service;
-import uk.gov.laa.gpfd.exception.DatabaseReadException;
-import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.model.Report;
 
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
+
+import static uk.gov.laa.gpfd.exception.DatabaseReadException.DatabaseFetchException;
 
 @Slf4j
 @Service
@@ -103,7 +103,7 @@ public record ReportDao(
                     .findFirst();
         } catch (DataAccessException e) {
             log.error("Error fetching report by ID: {}", reportId, e);
-            throw new DatabaseReadException("Error fetching report by ID: " + reportId);
+            throw new DatabaseFetchException("Error fetching report by ID: " + reportId);
         }
     }
 
@@ -111,16 +111,16 @@ public record ReportDao(
      * Fetches all reports from the database.
      *
      * @return a collection of all reports in the system
-     * @throws DatabaseReadException if there's an error accessing the database
+     * @throws DatabaseFetchException if there's an error accessing the database
      */
-    public Collection<Report> fetchReports() throws DatabaseReadException {
+    public Collection<Report> fetchReports() throws DatabaseFetchException {
         log.debug("Fetching all reports from database");
         try {
             return readOnlyJdbcTemplate.query(SELECT_ALL_REPORTS_SQL, extractor);
         } catch (DataAccessException e) {
             String errorMessage = "Failed to fetch reports from database";
             log.error("{}: {}", errorMessage, e.getMessage(), e);
-            throw new DatabaseReadException("Failed to fetch reports from database");
+            throw new DatabaseFetchException("Failed to fetch reports from database");
         }
     }
 
