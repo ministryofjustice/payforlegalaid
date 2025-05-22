@@ -4,10 +4,6 @@ on:
   pull_request:
     types: [opened, reopened, synchronize]
 
-env:
-  USERNAME: ${{ secrets.OPENAPI_PACKAGE_USER }}
-  PASSWORD: ${{ secrets.OPENAPI_PACKAGE_PASSWORD }}
-
 jobs:
   feature_branch:
 
@@ -18,6 +14,8 @@ jobs:
 
       - name: Build and test
         uses: './.github/build-and-test'
+        env:
+          SOCKET_KEY: ${{ secrets.DEV_API_SOCKET_KEY }}
 
       - name: Snyk Scan
         uses: './.github/snyk-scan'

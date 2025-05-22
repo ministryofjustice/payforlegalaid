@@ -287,7 +287,8 @@
     <repositories>
         <repository>
             <id>payforlegalaid-openapi</id>
-            <url>https://github.com/ministryofjustice/payforlegalaid-openapi/</url>
+            <name>GitHub Packages</name>
+            <url>https://github.com/ministryofjustice/payforlegalaid-openapi</url>
         </repository>
     </repositories>
 </project>
