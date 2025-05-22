@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
@@ -67,17 +68,25 @@ class GlobalExceptionHandlerTest {
         assertEquals("", response.getBody().getError());
     }
 
-    @Test
-    void shouldHandleDatabaseFetchExceptionWithWhitespaceMessage() {
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "   ", //Only whitespace
+            "Error! @#$%^&*()", //Special chars
+            "Database error\nDetails: connection failed.", //Has new lines
+            "数据库错误", //Foreign characters
+            "{\"error\":\"database failure\"}", //JSON message
+            "\n"
+    })
+    void shouldHandleDatabaseFetchExceptionWithDifferentEdgeCases(String messageToTest) {
         // Given
-        var exception = new DatabaseFetchException("   ");
+        var exception = new DatabaseFetchException(messageToTest);
 
         // When
         var response = globalExceptionHandler.handleDatabaseReadException(exception);
 
         // Then
         assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals("   ", response.getBody().getError());
+        assertEquals(messageToTest, response.getBody().getError());
     }
 
 
@@ -189,19 +198,6 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void shouldHandleDatabaseFetchExceptionWithSpecialCharacters() {
-        // Given
-        var exception = new DatabaseFetchException("Error! @#$%^&*()");
-
-        // When
-        var response = globalExceptionHandler.handleDatabaseReadException(exception);
-
-        // Then
-        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals("Error! @#$%^&*()", response.getBody().getError());
-    }
-
-    @Test
     void shouldHandleReportIdNotFoundExceptionWithLongMessage() {
         // Given
         var longMessage = "Report ID not found: " + "X".repeat(1000);
@@ -242,20 +238,6 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void shouldHandleDatabaseFetchExceptionWithNewlineCharacters() {
-        // Given
-        var message = "Database error\nDetails: connection failed.";
-        var exception = new DatabaseFetchException(message);
-
-        // When
-        var response = globalExceptionHandler.handleDatabaseReadException(exception);
-
-        // Then
-        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals(message, response.getBody().getError());
-    }
-
-    @Test
     void shouldHandleReportIdNotFoundExceptionWithExtraSpacesInMessage() {
         // Given
         var exception = new ReportIdNotFoundException("Report   ID   not   found");
@@ -279,20 +261,6 @@ class GlobalExceptionHandlerTest {
         // Then
         assertEquals(BAD_REQUEST, response.getStatusCode());
         assertEquals("Index 1000000 is out of bounds", response.getBody().getError());
-    }
-
-    @Test
-    void shouldHandleDatabaseFetchExceptionWithJsonMessage() {
-        // Given
-        var jsonMessage = "{\"error\":\"database failure\"}";
-        var exception = new DatabaseFetchException(jsonMessage);
-
-        // When
-        var response = globalExceptionHandler.handleDatabaseReadException(exception);
-
-        // Then
-        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals(jsonMessage, response.getBody().getError());
     }
 
     @Test
@@ -321,21 +289,6 @@ class GlobalExceptionHandlerTest {
         assertEquals("Index -5 is out of bounds", response.getBody().getError());
     }
 
-
-    @Test
-    void shouldHandleDatabaseFetchExceptionWithUtf16Message() {
-        // Given
-        var utf16Message = "数据库错误";
-        var exception = new DatabaseFetchException(utf16Message);
-
-        // When
-        var response = globalExceptionHandler.handleDatabaseReadException(exception);
-
-        // Then
-        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals(utf16Message, response.getBody().getError());
-    }
-
     @Test
     void shouldHandleReportIdNotFoundExceptionWithWelshMessage() {
         // Given
@@ -360,21 +313,6 @@ class GlobalExceptionHandlerTest {
         // Then
         assertEquals(BAD_REQUEST, response.getStatusCode());
         assertEquals("Index out of bounds on 2024-11-24", response.getBody().getError());
-    }
-
-
-
-    @Test
-    void shouldHandleDatabaseFetchExceptionWithSingleNewlineMessage() {
-        // Given
-        var exception = new DatabaseFetchException("\n");
-
-        // When
-        var response = globalExceptionHandler.handleDatabaseReadException(exception);
-
-        // Then
-        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals("\n", response.getBody().getError());
     }
 
     @Test
