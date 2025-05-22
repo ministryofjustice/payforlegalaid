@@ -27,7 +27,6 @@ class GetReportsByIdIT extends BaseIT {
     private static final String LEGAL_HELP_CONTRACT_BALANCES_REPORT = "7073dd13-e325-4863-a05c-a049a815d1f7";
     private static final String AGFS_LATE_PROCESSED_BILLS_REPORT = "7bda9aa4-6129-4c71-bd12-7d4e46fdd882";
 
-
     private static final String INITIAL_TEST_REPORT = "0d4da9ec-b0b3-4371-af10-f375330d85d3";
 
     @ParameterizedTest
