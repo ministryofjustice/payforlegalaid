@@ -26,7 +26,6 @@ class GetReportsByIdIT extends BaseIT {
     private static final String CCMS_AND_CIS_BANK_ACCOUNT_REPORT_W_CATEGORY_CODE_YTD_REPORT = "eee30b23-2c8d-4b4b-bb11-8cd67d07915c";
     private static final String LEGAL_HELP_CONTRACT_BALANCES_REPORT = "7073dd13-e325-4863-a05c-a049a815d1f7";
     private static final String AGFS_LATE_PROCESSED_BILLS_REPORT = "7bda9aa4-6129-4c71-bd12-7d4e46fdd882";
-    private static final String CCLF_LATE_PROCESSED_BILLS_REPORT = "516cdbff-5fa8-4050-b5e6-7edf71daf679";
 
     private static final String INITIAL_TEST_REPORT = "0d4da9ec-b0b3-4371-af10-f375330d85d3";
 
@@ -47,7 +46,7 @@ class GetReportsByIdIT extends BaseIT {
             CCMS_REPORT,
             GENERAL_LEDGER_REPORT,
             CCMS_AND_CIS_BANK_ACCOUNT_REPORT_W_CATEGORY_CODE_YTD_REPORT,
-            LEGAL_HELP_CONTRACT_BALANCES_REPORT, AGFS_LATE_PROCESSED_BILLS_REPORT, CCLF_LATE_PROCESSED_BILLS_REPORT
+            LEGAL_HELP_CONTRACT_BALANCES_REPORT, AGFS_LATE_PROCESSED_BILLS_REPORT
     })
     void givenExcelReportId_whenSingleReportRequested_thenExcelUrlReturned(String id) throws Exception {
         performGetRequest("/reports/" + id)
