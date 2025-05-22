@@ -1,7 +1,5 @@
 package uk.gov.laa.gpfd.dao.support;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -10,6 +8,10 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -45,7 +47,7 @@ class ReportWithQueriesAndFieldAttributesExtractorTest {
         when(resultSet.getString("REPORT_OWNER_EMAIL")).thenReturn("owner@example.com");
         when(resultSet.getString("FILE_NAME")).thenReturn("report.pdf");
         when(resultSet.getString("QUERY_ID")).thenReturn(queryId.toString());
-        when(resultSet.getString("QUERY")).thenReturn("SELECT * FROM table");
+        when(resultSet.getString("QUERY")).thenReturn("SELECT * FROM ANY_REPORT.V_TABLE");
         when(resultSet.getString("TAB_NAME")).thenReturn("Sheet1");
         when(resultSet.getString("FIELD_ATTRIBUTE_ID")).thenReturn(fieldAttributeId.toString());
         when(resultSet.getString("SOURCE_NAME")).thenReturn("source_column");
@@ -78,7 +80,7 @@ class ReportWithQueriesAndFieldAttributesExtractorTest {
         var query = report.getQueries().iterator().next();
         assertEquals(queryId, query.getId());
         assertEquals(reportId, query.getReportId());
-        assertEquals("SELECT * FROM table", query.getQuery());
+        assertEquals("SELECT * FROM ANY_REPORT.V_TABLE", query.getQuery());
         assertEquals("Sheet1", query.getTabName());
 
         // Verify field attributes
@@ -151,7 +153,7 @@ class ReportWithQueriesAndFieldAttributesExtractorTest {
         when(resultSet.getString("REPORT_OWNER_EMAIL")).thenReturn("owner@example.com");
         when(resultSet.getString("FILE_NAME")).thenReturn("report.pdf");
         when(resultSet.getString("QUERY_ID")).thenReturn(queryId.toString());
-        when(resultSet.getString("QUERY")).thenReturn("SELECT * FROM table");
+        when(resultSet.getString("QUERY")).thenReturn("SELECT * FROM ANY_REPORT.V_TABLE");
         when(resultSet.getString("TAB_NAME")).thenReturn("Sheet1");
         when(resultSet.getString("FIELD_ATTRIBUTE_ID")).thenReturn(null); // Null field attribute ID
 
