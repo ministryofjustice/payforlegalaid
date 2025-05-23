@@ -9,7 +9,7 @@
   </changeSet>
 
   <changeSet id="5002" author="user">
-    <createTable tableName="INVOICE_VIEW" schemaName="ANY_REPORT">
+    <createTable tableName="FISH_AND_CHIP_SALE_LEDGER" schemaName="ANY_REPORT">
       <column name="DATE_AUTHORISED_CIS" type="VARCHAR(10)">
         <constraints nullable="false"/>
       </column>
@@ -26,7 +26,7 @@
   </changeSet>
 
   <changeSet id="5003" author="user">
-    <createTable tableName="PAYMENT_VIEW" schemaName="ANY_REPORT">
+    <createTable tableName="MARSHMALLOW_DENSITY_SUMMARY_VIEW" schemaName="ANY_REPORT">
       <column name="DATE_AUTHORISED_CIS" type="VARCHAR(10)">
         <constraints nullable="false"/>
       </column>

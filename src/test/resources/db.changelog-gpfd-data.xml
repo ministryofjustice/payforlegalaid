@@ -8,7 +8,7 @@
     <insert tableName="REPORT_TRACKING" schemaName="GPFD">
       <column name="ID" value="0d4da9ec-b0b3-4371-af10-f375330d85d3"/>
       <column name="REPORT_NAME" value="Initial Test Report Name"/>
-      <column name="REPORT_URL" value="https://www.some-url.com"/>
+      <column name="REPORT_URL" value="https://www.example.com"/>
       <column name="CREATION_TIME" value="2024-03-18T12:10:11.814596"/>
       <column name="MAPPING_ID" value="0d4da9ec-b0b3-4371-af10-f375330d85d3"/>
       <column name="REPORT_GENERATED_BY" value="Bill Evans"/>
@@ -17,7 +17,7 @@
     <insert tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
       <column name="ID" value="0d4da9ec-b0b3-4371-af10-f375330d85d3"/>
       <column name="REPORT_NAME" value="CIS to CCMS payment value Defined"/>
-      <column name="SQL_QUERY" value="SELECT * FROM ANY_REPORT.PAYMENT_VIEW"/>
+      <column name="SQL_QUERY" value="SELECT * FROM ANY_REPORT.MARSHMALLOW_DENSITY_SUMMARY_VIEW"/>
       <column name="BASE_URL" value="https://example.org/reports"/>
       <column name="REPORT_OWNER" value="Fionn mac Cumhaill"/>
       <column name="REPORT_CREATOR" value="Juliet Capulet"/>
@@ -28,7 +28,7 @@
     <insert tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
       <column name="ID" value="0d4da9ec-b0b3-4371-af10-f375330d85d1"/>
       <column name="REPORT_NAME" value="CIS-to-CCMS-import-analysis-2"/>
-      <column name="SQL_QUERY" value="SELECT * FROM ANY_REPORT.INVOICE_VIEW"/>
+      <column name="SQL_QUERY" value="SELECT * FROM ANY_REPORT.FISH_AND_CHIP_SALE_LEDGER"/>
       <column name="BASE_URL" value="https://example.org/reports/summaries"/>
       <column name="REPORT_OWNER" value="Chancey McTavish"/>
       <column name="REPORT_CREATOR" value="Sophia Patel"/>
@@ -39,7 +39,7 @@
     <insert tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
       <column name="ID" value="0d4da9ec-b0b3-4371-af10-f375330d85d2"/>
       <column name="REPORT_NAME" value="CCMS_and_CIS_Bank_Account_Report_w_Category_Code_(MNTH)-MAIN-12"/>
-      <column name="SQL_QUERY" value="SELECT * FROM ANY_REPORT.BANK_STUFF_VIEW"/>
+      <column name="SQL_QUERY" value="SELECT * FROM ANY_REPORT.WIZARD_POTION_SUPPLY_LEVELS"/>
       <column name="BASE_URL" value="https://example.org/reports"/>
       <column name="REPORT_OWNER" value="Daniel McTavish"/>
       <column name="REPORT_CREATOR" value="Romeo Montague"/>
