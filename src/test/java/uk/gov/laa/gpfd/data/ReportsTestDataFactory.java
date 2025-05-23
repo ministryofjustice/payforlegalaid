@@ -47,7 +47,7 @@ public class ReportsTestDataFactory {
     public static Report createTestReportWithQuery() {
         var query1 = ImmutableReportQuery.builder()
                 .tabName("Sheet1")
-                .query("SELECT * FROM data")
+                .query("SELECT * FROM ANY_REPORT.DATA")
                 .build();
         return createTestReport(UUID.randomUUID().toString(), List.of(query1) );
     }

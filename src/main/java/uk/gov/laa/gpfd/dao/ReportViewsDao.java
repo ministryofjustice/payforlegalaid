@@ -4,11 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.stereotype.Service;
-import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 
 import java.util.List;
 import java.util.Map;
+
+import static uk.gov.laa.gpfd.exception.DatabaseReadException.DatabaseFetchException;
 
 @Slf4j
 @Service
@@ -19,7 +20,7 @@ public record ReportViewsDao(JdbcOperations writeJdbcTemplate) {
             log.debug("Retrieving data");
             return writeJdbcTemplate.queryForList(sqlQuery);
         } catch (DataAccessException e) {
-            throw new DatabaseReadException("Error reading from DB: " + e);
+            throw new DatabaseFetchException("Error reading from DB: " + e);
         }
     }
 
