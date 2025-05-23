@@ -1,15 +1,5 @@
 package uk.gov.laa.gpfd.service;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.Optional;
-import java.util.UUID;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,13 +11,23 @@ import uk.gov.laa.gpfd.config.AppConfig;
 import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.dao.ReportsTrackingDao;
 import uk.gov.laa.gpfd.data.ReportsTestDataFactory;
-import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.mapper.ReportsTrackingMapper;
 import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.model.ReportsTracking;
 import uk.gov.laa.gpfd.services.ReportsTrackingService;
 import uk.gov.laa.gpfd.services.UserService;
+
+import java.util.Optional;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static uk.gov.laa.gpfd.exception.DatabaseReadException.DatabaseFetchException;
 
 @ExtendWith(MockitoExtension.class)
 class ReportsTrackingServiceTest {
@@ -105,10 +105,10 @@ class ReportsTrackingServiceTest {
         when(userService.getCurrentUserName()).thenReturn(VALID_TEST_USER);
 
         // Simulate database error
-        doThrow(new DatabaseReadException("Database error")).when(reportsTrackingDao).saveReportsTracking(any());
+        doThrow(new DatabaseFetchException("Database error")).when(reportsTrackingDao).saveReportsTracking(any());
 
         // When
-        assertThrows(DatabaseReadException.class,
+        assertThrows(DatabaseFetchException.class,
                 () -> reportsTrackingService.saveReportsTracking(requestedId));
     }
 
