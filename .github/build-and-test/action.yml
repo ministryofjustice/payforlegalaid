@@ -13,8 +13,23 @@ runs:
         distribution: 'corretto'
         java-version: '17'
 
+    - name: Checkout GitHub repository
+      uses: actions/checkout@v4
+      with:
+        repository: ministryofjustice/payforlegalaid-swagger
+        path: spec
+        ssh-key: ${{ env.SOCKET_KEY }}
+
+    - name: Build dependency
+      run: |
+        cd spec
+        mvn clean install
+      shell:
+        bash
+
     - name: Run tests
-      run: mvn -B clean test -s .github/settings.xml
+      run: |
+        mvn -B clean test
       env:
         SPRING_PROFILES_ACTIVE: test
       shell:

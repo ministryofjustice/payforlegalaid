@@ -25,8 +25,7 @@
     <servers>
         <server>
             <id>github</id>
-            <username>${USERNAME}</username>
-            <password>${PASSWORD}</password>
+            <privateKey>${env.HOME}/.ssh/github_key</privateKey>
         </server>
     </servers>
 </settings>
