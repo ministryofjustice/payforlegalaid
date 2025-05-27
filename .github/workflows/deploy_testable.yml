@@ -24,6 +24,8 @@ jobs:
 
       - name: Build and test the code
         uses: './.github/build-and-test'
+        env:
+          SOCKET_KEY: ${{ secrets.DEV_API_SOCKET_KEY }}
 
       - name: Run Snyk security suite
         uses: './.github/snyk-scan'
@@ -48,6 +50,7 @@ jobs:
           REPOSITORY: ${{ vars.DEV_ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          SOCKET_KEY: ${{ secrets.DEV_API_SOCKET_KEY }}
           GPFD_URL: https://test-gpfd.apps.live.cloud-platform.service.justice.gov.uk
 
       - name: Generate Kubernetes files from templates

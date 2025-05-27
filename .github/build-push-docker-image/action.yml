@@ -7,8 +7,22 @@ runs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Checkout GitHub repository
+      uses: actions/checkout@v4
+      with:
+        repository: ministryofjustice/payforlegalaid-swagger
+        path: spec
+        ssh-key: ${{ env.SOCKET_KEY }}
+
+    - name: Build dependency
+      run: |
+        cd spec
+        mvn clean install
+      shell:
+        bash
+
     - name: Build with Maven
-      run: mvn -B -DskipTests clean package -s .github/settings.xml
+      run: mvn -B -DskipTests clean package
       shell:
         bash
 
