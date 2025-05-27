@@ -59,13 +59,13 @@ class ExcelCreationServiceTest {
         var workbook = mock(Workbook.class);
         var query = ImmutableReportQuery.builder()
                 .tabName("Sheet1")
-                .query("SELECT * FROM table")
+                .query("SELECT * FROM ANY_REPORT.TABLE")
                 .build();
         var report = ReportsTestDataFactory.createTestReport("TEMPLATE_123",Collections.singletonList(query));
 
 
         when(templateLoader.findTemplateById("TEMPLATE_123")).thenReturn(workbook);
-        when(dataFetcher.callDataBase("SELECT * FROM table")).thenReturn(Collections.emptyList());
+        when(dataFetcher.callDataBase("SELECT * FROM ANY_REPORT.TABLE")).thenReturn(Collections.emptyList());
 
         // When
         var result = excelCreationService.buildExcel(report);
@@ -86,7 +86,7 @@ class ExcelCreationServiceTest {
         var workbook = mock(Workbook.class);
         var query = ImmutableReportQuery.builder()
                 .tabName("NonExistentSheet")
-                .query("SELECT * FROM table")
+                .query("SELECT * FROM ANY_REPORT.TABLE")
                 .build();
         var report = ReportsTestDataFactory.createTestReport("TEMPLATE_123",Collections.singletonList(query));
 
@@ -133,19 +133,19 @@ class ExcelCreationServiceTest {
         var workbook = mock(Workbook.class);
         var query1 = ImmutableReportQuery.builder()
                 .tabName("Sheet1")
-                .query("SELECT * FROM table")
+                .query("SELECT * FROM ANY_REPORT.TABLE")
                 .build();
         var query2 = ImmutableReportQuery.builder()
                 .tabName("Sheet2")
-                .query("SELECT * FROM table2")
+                .query("SELECT * FROM ANY_REPORT.TABLE2")
                 .build();
 
         var report = ReportsTestDataFactory.createTestReport("TEMPLATE_123",List.of(query1, query2));
 
 
         when(templateLoader.findTemplateById("TEMPLATE_123")).thenReturn(workbook);
-        when(dataFetcher.callDataBase("SELECT * FROM table1")).thenReturn(Collections.emptyList());
-        when(dataFetcher.callDataBase("SELECT * FROM table2")).thenReturn(Collections.emptyList());
+        when(dataFetcher.callDataBase("SELECT * FROM ANY_REPORT.TABLE")).thenReturn(Collections.emptyList());
+        when(dataFetcher.callDataBase("SELECT * FROM ANY_REPORT.TABLE2")).thenReturn(Collections.emptyList());
 
         // When
         var result = excelCreationService.buildExcel(report);

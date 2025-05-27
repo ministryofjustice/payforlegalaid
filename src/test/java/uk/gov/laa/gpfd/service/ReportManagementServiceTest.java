@@ -7,11 +7,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.data.ReportsTestDataFactory;
-import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.mapper.GetReportById200ResponseMapper;
 import uk.gov.laa.gpfd.mapper.ReportsGet200ResponseReportListInnerMapper;
-import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 import uk.gov.laa.gpfd.services.ReportManagementService;
 
@@ -24,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static uk.gov.laa.gpfd.exception.DatabaseReadException.DatabaseFetchException;
 
 @ExtendWith(MockitoExtension.class)
 class ReportManagementServiceTest {
@@ -55,9 +54,9 @@ class ReportManagementServiceTest {
 
     @Test
     void shouldThrowDatabaseReadExceptionWhenDaoThrowsException() {
-        when(reportDetailsDao.fetchReports()).thenThrow(new DatabaseReadException("DB error"));
+        when(reportDetailsDao.fetchReports()).thenThrow(new DatabaseFetchException("DB error"));
 
-        assertThrows(DatabaseReadException.class, () -> reportManagementService.fetchReportListEntries());
+        assertThrows(DatabaseFetchException.class, () -> reportManagementService.fetchReportListEntries());
     }
 
     @Test
@@ -73,8 +72,8 @@ class ReportManagementServiceTest {
     @Test
     void sShouldThrowDatabaseReadExceptionWhenDaoThrowsException() {
         var reportId = UUID.randomUUID();
-        when(reportDetailsDao.fetchReportById(reportId)).thenThrow(new DatabaseReadException("DB error"));
+        when(reportDetailsDao.fetchReportById(reportId)).thenThrow(new DatabaseFetchException("DB error"));
 
-        assertThrows(DatabaseReadException.class, () -> reportManagementService.createReportResponse(reportId));
+        assertThrows(DatabaseFetchException.class, () -> reportManagementService.createReportResponse(reportId));
     }
 }

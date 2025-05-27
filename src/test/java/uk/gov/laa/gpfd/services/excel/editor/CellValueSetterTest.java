@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.stream.Stream;
 
+import static java.lang.Double.parseDouble;
+import static java.lang.Long.parseLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -37,6 +39,8 @@ class CellValueSetterTest implements CellValueSetter {
 
     private static Stream<Arguments> provideTestCases() {
         return Stream.of(
+                Arguments.of("1232", (Verifier) (cell, value) -> verify(cell).setCellValue(parseLong((String) value))),
+                Arguments.of("1232.12", (Verifier) (cell, value) -> verify(cell).setCellValue(parseDouble((String) value))),
                 Arguments.of("Test Value", (Verifier) (cell, value) -> verify(cell).setCellValue((String) value)),
                 Arguments.of(Double.valueOf("123.12"), (Verifier) (cell, value) -> verify(cell).setCellValue(((Number) value).doubleValue())),
                 Arguments.of(Integer.valueOf("3"), (Verifier) (cell, value) -> verify(cell).setCellValue(((Number) value).doubleValue())),

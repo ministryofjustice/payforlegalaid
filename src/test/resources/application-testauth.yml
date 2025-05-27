@@ -20,7 +20,6 @@ gpfd:
 spring:
   liquibase:
     enabled: false
-    change-log: classpath:liquibase/db.changelog-master.xml
   cloud:
     azure:
       active-directory:
