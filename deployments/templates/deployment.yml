@@ -28,8 +28,7 @@ spec:
           image: liquibase/liquibase:4.29.2
           volumeMounts:
             - name: liquibase-changelog
-              mountPath: /liquibase/changelog/changelog.xml
-              subPath: changelog.xml
+              mountPath: /liquibase/changelog
               readOnly: true
           env:
             - name: MOJFIN_DEV_WRITE_USERNAME
