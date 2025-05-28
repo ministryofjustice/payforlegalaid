@@ -20,9 +20,6 @@ spec:
           configMap:
             name: liquibase-changelog
             optional: false
-            items:
-              - key: changelog.xml
-                path: changelog.xml
       initContainers:
         - name: liquibase
           image: liquibase/liquibase:4.29.2
