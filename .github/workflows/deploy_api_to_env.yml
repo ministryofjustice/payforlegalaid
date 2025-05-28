@@ -121,7 +121,7 @@ jobs:
           repository: "ministryofjustice/payforlegalaid-data"
           path: payforlegalaid-data
           ssh-key: ${{ secrets.socket_key }}
-          sparse-checkout: liquibase
+          sparse-checkout: data
           sparse-checkout-cone-mode: true
 
       - name: Authenticate with Cloud Platform and Deploy
