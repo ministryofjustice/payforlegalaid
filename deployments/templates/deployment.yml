@@ -103,7 +103,7 @@ spec:
                 --url="$MOJFIN_DB_URL" \
                 --username="$MOJFIN_DEV_WRITE_USERNAME" \
                 --password="$MOJFIN_DEV_WRITE_PASSWORD" \
-                --log-level=INFO \
+                --log-level=DEBUG \
                 --changelog-file=changelog.xml \
                 drop-all --force
               
