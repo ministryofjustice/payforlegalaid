@@ -157,7 +157,10 @@ jobs:
   
           kubectl create configmap liquibase-changelog \
           --namespace ${KUBE_NAMESPACE} \
-          --searchPath=/liquibase/changelog=/tmp/liquibase-config \
+          --from-file=/tmp/liquibase-config \
+          --from-file=/tmp/liquibase-config/v1.0_initial_setup \
+          --from-file=/tmp/liquibase-config/v1.1_contract_balance_reports \
+          --from-file=/tmp/liquibase-config/v1.2_late_processed_bills_reports \
           --from-file=changelog.xml=payforlegalaid-data/data/master-changelog.xml \
           --dry-run=client -o yaml | \
           yq eval '
