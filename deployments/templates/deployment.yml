@@ -58,7 +58,7 @@ spec:
               fi
 
               cp /liquibase/changelog/changelog.xml /liquibase/changelog.xml
-              cat /liquibase/changelog/v1.0_initial_setup/v1.0_initial_setup.xml
+              ls -lr /liquibase/changelog
               db_healthcheck() {
               
                 local max_retries=5
@@ -70,6 +70,7 @@ spec:
                           --username="$MOJFIN_DEV_WRITE_USERNAME" \
                           --password="$MOJFIN_DEV_WRITE_PASSWORD" \
                           --changelog-file=changelog.xml \
+                          --searchPath=/liquibase/changelog \
                           status; then
               
                           echo "Database connection established"
