@@ -3,17 +3,20 @@ package uk.gov.laa.gpfd.dao.support;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
-import uk.gov.laa.gpfd.model.FieldAttributes;
 import uk.gov.laa.gpfd.model.FileExtension;
-import uk.gov.laa.gpfd.model.ImmutableFieldAttributes;
+import uk.gov.laa.gpfd.model.excel.ImmutableExcelMappingProjection;
 import uk.gov.laa.gpfd.model.ImmutableReport;
 import uk.gov.laa.gpfd.model.ImmutableReportOutputType;
 import uk.gov.laa.gpfd.model.ImmutableReportOwner;
 import uk.gov.laa.gpfd.model.ImmutableReportQuery;
+import uk.gov.laa.gpfd.model.excel.ExcelMappingProjection;
 import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.model.ReportQuery;
 import uk.gov.laa.gpfd.model.ReportQuerySql;
-import uk.gov.laa.gpfd.model.TemplateDocument;
+import uk.gov.laa.gpfd.model.excel.ExcelTemplate;
+import uk.gov.laa.gpfd.model.excel.ImmutableExcelSheet;
+import uk.gov.laa.gpfd.model.excel.ImmutableColumnFormat;
+import uk.gov.laa.gpfd.model.excel.ImmutableExcelColumn;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,7 +30,7 @@ import static uk.gov.laa.gpfd.exception.DatabaseReadException.MappingException;
 /**
  * A {@link ResultSetExtractor} implementation that extracts a collection of {@link Report} objects
  * from a {@link ResultSet}. Each {@link Report} contains a list of {@link ReportQuery} objects,
- * and each {@link ReportQuery} contains a list of {@link FieldAttributes}.
+ * and each {@link ReportQuery} contains a list of {@link ExcelMappingProjection}.
  *
  * <p>This class is responsible for mapping database rows to the corresponding Java objects,
  * handling relationships between reports, queries, and field attributes.
@@ -38,7 +41,7 @@ public class ReportWithQueriesAndFieldAttributesExtractor implements ResultSetEx
 
     /**
      * Extracts data from the provided {@link ResultSet} and maps it to a collection of {@link Report} objects.
-     * Each report contains a list of {@link ReportQuery} objects, and each query contains a list of {@link FieldAttributes}.
+     * Each report contains a list of {@link ReportQuery} objects, and each query contains a list of {@link ExcelMappingProjection}.
      *
      * @param rs the {@link ResultSet} containing the data to be extracted
      * @return a collection of {@link Report} objects
@@ -61,7 +64,7 @@ public class ReportWithQueriesAndFieldAttributesExtractor implements ResultSetEx
                     return ImmutableReport.builder()
                             .id(id)
                             .name(rs.getString("NAME"))
-                            .templateDocument(TemplateDocument.fromString(rs.getString("TEMPLATE_SECURE_DOCUMENT_ID")))
+                            .templateDocument(ExcelTemplate.fromString(rs.getString("TEMPLATE_SECURE_DOCUMENT_ID")))
                             .creationTime(rs.getTimestamp("REPORT_CREATION_DATE"))
                             .lastDatabaseRefreshDate(rs.getTimestamp("LAST_DATABASE_REFRESH_DATETIME"))
                             .description(description)
@@ -98,10 +101,11 @@ public class ReportWithQueriesAndFieldAttributesExtractor implements ResultSetEx
                     log.debug("Mapping data for query with ID: {}", id);
                     return ImmutableReportQuery.builder()
                             .id(queryUUID)
-                            .reportId(reportId)
                             .query(ReportQuerySql.of(rs.getString("QUERY")))
-                            .sheetName(rs.getString("TAB_NAME"))
-                            .fieldAttributes(new ArrayList<>())
+                            .excelSheet(ImmutableExcelSheet.builder()
+                                    .name(rs.getString("TAB_NAME"))
+                                    .fieldAttributes(new ArrayList<>())
+                                    .build())
                             .build();
                 } catch (SQLException e) {
                     log.error("Error mapping ReportQuery data for ID: {}", id, e);
@@ -112,16 +116,19 @@ public class ReportWithQueriesAndFieldAttributesExtractor implements ResultSetEx
             var fieldAttributeId = rs.getString("FIELD_ATTRIBUTE_ID");
             if (fieldAttributeId != null) {
                 log.debug("Processing field attribute with ID: {} for query with ID: {}", fieldAttributeId, queryUUID);
-                var fieldAttribute = ImmutableFieldAttributes.builder()
+                var fieldAttribute = ImmutableExcelMappingProjection.builder()
                         .id(UUID.fromString(fieldAttributeId))
-                        .reportQueryId(queryUUID)
                         .sourceName(rs.getString("SOURCE_NAME"))
-                        .mappedName(rs.getString("MAPPED_NAME"))
-                        .format(rs.getString("FORMAT"))
-                        .formatType(rs.getString("FORMAT_TYPE"))
-                        .columnWidth(rs.getDouble("COLUMN_WIDTH"))
+                        .excelColumn(ImmutableExcelColumn.builder()
+                                .name(rs.getString("MAPPED_NAME"))
+                                .format(ImmutableColumnFormat.builder()
+                                        .format(rs.getString("FORMAT"))
+                                        .formatType(rs.getString("FORMAT_TYPE"))
+                                        .columnWidth(rs.getDouble("COLUMN_WIDTH"))
+                                        .build())
+                                .build())
                         .build();
-                query.getFieldAttributes().add(fieldAttribute);
+                query.getExcelSheet().getFieldAttributes().add(fieldAttribute);
             }
 
             if (!report.getQueries().contains(query)) {

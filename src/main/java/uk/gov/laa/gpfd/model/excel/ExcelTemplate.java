@@ -1,4 +1,6 @@
-package uk.gov.laa.gpfd.model;
+package uk.gov.laa.gpfd.model.excel;
+
+import uk.gov.laa.gpfd.model.Identifiable;
 
 import java.util.UUID;
 
@@ -10,10 +12,10 @@ import static org.immutables.value.Value.Style;
  */
 @Immutable
 @Style(strictBuilder = true)
-public abstract class TemplateDocument implements Identifiable {
+public abstract class ExcelTemplate implements Identifiable {
 
-    public static TemplateDocument fromString(String id) {
-        return ImmutableTemplateDocument.builder()
+    public static ExcelTemplate fromString(String id) {
+        return ImmutableExcelTemplate.builder()
                 .id(UUID.fromString(id))
                 .build();
     }

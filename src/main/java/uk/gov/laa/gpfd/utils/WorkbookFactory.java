@@ -20,6 +20,33 @@ import java.io.InputStream;
 public interface WorkbookFactory {
 
     /**
+     * Creates a new XSSF Workbook instance from an input stream, with robust fallback handling.
+     *
+     * <p>This method guarantees to always return a valid Workbook instance, handling all error cases
+     * by returning a fresh empty workbook.</p>
+     */
+    static Workbook newWorkbook(InputStream input) {
+        if (null == input) {
+            return new XSSFWorkbook();
+        }
+
+        try {
+            if (input.available() <= 0) {
+                return new XSSFWorkbook();
+            }
+        } catch (Exception e) {
+            return new XSSFWorkbook();
+        }
+
+        try {
+            return new XSSFWorkbook(input);
+        } catch (IOException e) {
+            try { input.close(); } catch (IOException ignored) {}
+            return new XSSFWorkbook();
+        }
+    }
+
+    /**
      * A factory that implement the "BiGGrid" strategy. This specialized workbook factory produces workbooks optimized
      * for handling very large datasets while maintaining controlled memory usage.
      *

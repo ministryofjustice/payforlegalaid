@@ -1,36 +1,40 @@
 package uk.gov.laa.gpfd.model;
 
-import java.util.Collection;
+import uk.gov.laa.gpfd.exception.DatabaseReadException;
+import uk.gov.laa.gpfd.model.excel.ExcelSheet;
+import uk.gov.laa.gpfd.model.excel.ExcelMappingProjection;
 
 /**
- * Defines a mapping between a data query, its presentation tab, and associated field attributes.
+ * Defines a complete mapping between a data query, its Excel presentation structure,
+ * and associated field attributes for report generation.
+ * <p>
+ * Implementations must ensure consistent mapping between SQL result sets and Excel output,
+ * following the formatting rules defined by {@link ReportQuerySql} and {@link ExcelSheet}.
  *
- * @see ReportQuerySql
- * @see FieldAttributes
+ * @see ReportQuerySql For SQL query formatting requirements
+ * @see ExcelMappingProjection For field-level mapping implementations
+ * @see ExcelSheet For Excel presentation specifications
  */
 public interface Mapping {
     /**
      * Gets the parameterized SQL query for data retrieval.
-     * <p>
-     * The query must follow strict formatting rules as defined by {@link ReportQuerySql},
-     * including the use of parameter placeholders ({@code ?}) instead of literal values.
      *
-     * @return the validated SQL query, never null
+     * @return the validated SQL query, never {@code null}
+     * @throws DatabaseReadException.SqlFormatException if query validation fails
      */
     ReportQuerySql getQuery();
 
     /**
-     * Gets the name of the tab sheet where the query results should be presented.
+     * Gets the Excel worksheet configuration for report output.
+     * <p>
+     * The sheet definition must:
+     * <ul>
+     *   <li>Contain field mappings corresponding to the SQL query columns</li>
+     *   <li>Define all required formatting rules and headers</li>
+     *   <li>Specify the target worksheet name and position</li>
+     * </ul>
      *
-     * @return the display name for the results, never {@code null} or blank
+     * @return the Excel sheet configuration, never {@code null}
      */
-    String getSheetName();
-
-    /**
-     * Gets the collection of field/column attributes that define how to process the results.
-     *
-     * @return an immutable collection of field attributes, never null.
-     *         May be empty if no special processing is required.
-     */
-    Collection<FieldAttributes> getFieldAttributes();
+    ExcelSheet getExcelSheet();
 }
