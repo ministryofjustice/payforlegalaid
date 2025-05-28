@@ -62,6 +62,7 @@ spec:
               fi
 
               cp /liquibase/changelog/changelog.xml /liquibase/changelog.xml
+              less /liquibase/changelog.xml
               db_healthcheck() {
               
                 local max_retries=5
@@ -98,7 +99,7 @@ spec:
               }
               
               cleanup() {
-                echo "Executing clean database strategy"
+                echo "Executing clean database strategy"              
                 liquibase \
                 --url="$MOJFIN_DB_URL" \
                 --username="$MOJFIN_DEV_WRITE_USERNAME" \
