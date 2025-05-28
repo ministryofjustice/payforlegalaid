@@ -142,7 +142,7 @@ jobs:
             xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
             http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">'
           
-            find payforlegalaid-data/liquibase -name '*.xml' -print0 | sort -z | xargs -0 cat | sed '/<?xml .*?>/d'
+            find payforlegalaid-data/data -name '*.xml' -print0 | sort -z | xargs -0 cat | sed '/<?xml .*?>/d'
             
             echo '</databaseChangeLog>'
           } | xmllint --format --encode UTF-8 - > normalized-changelog.xml
