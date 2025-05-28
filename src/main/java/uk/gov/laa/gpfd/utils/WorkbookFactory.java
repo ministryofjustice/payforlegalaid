@@ -1,6 +1,8 @@
 package uk.gov.laa.gpfd.utils;
 
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,6 +20,28 @@ import java.io.InputStream;
 public interface WorkbookFactory {
 
     /**
+     * A factory that implement the "BiGGrid" strategy. This specialized workbook factory produces workbooks optimized
+     * for handling very large datasets while maintaining controlled memory usage.
+     *
+     * <p>The created SXSSFWorkbooks only keep a configurable window of rows in memory at any time,
+     * significantly reducing memory consumption compared to standard XSSF workbooks. This makes
+     * it suitable for processing large Excel files without risking out-of-memory errors.
+     */
+    interface SXSSFWorkbookFactory extends WorkbookFactory {
+
+        /**
+         * Creates a new streaming workbook from the input stream.
+         *
+         * @param input the input stream containing XSSF workbook data
+         * @return a workbook implementation
+         * @throws IOException if an I/O error occurs or the input data is malformed
+         * @throws IllegalStateException if the input does not contain an XSSF workbook
+         * @throws IllegalArgumentException if the input stream is null
+         */
+        SXSSFWorkbook create(InputStream input) throws IOException;
+    }
+
+    /**
      * Creates a new Workbook instance from the provided input stream.
      *
      * @param input the input stream containing workbook data. The stream will be consumed
@@ -28,6 +52,26 @@ public interface WorkbookFactory {
      * @throws IllegalArgumentException if the input stream is null
      */
     Workbook create(InputStream input) throws IOException;
+
+    /**
+     * Converts this workbook factory into a streaming factory that produces {@link SXSSFWorkbook} instances
+     * with a specified row access window size. This enables memory-efficient processing of large Excel files
+     * by keeping only a subset of rows in memory at any given time.
+     *
+     * @param rowAccessWindowSize the number of rows to keep in memory
+     * @return a new {@link SXSSFWorkbookFactory} instance
+     */
+    default SXSSFWorkbookFactory asStreamed(int rowAccessWindowSize) {
+        var self = this;
+
+        return (InputStream input) -> {
+            var workbook = self.create(input);
+            if (workbook instanceof XSSFWorkbook xssf) {
+                return new SXSSFWorkbook(xssf, rowAccessWindowSize);
+            }
+            throw new IllegalStateException("Expected XSSF workbook but got: " + workbook.getClass().getSimpleName());
+        };
+    }
 
     /**
      * Returns a new WorkbookFactory that applies the specified transformation to the input
