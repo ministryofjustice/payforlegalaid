@@ -58,7 +58,7 @@ spec:
               fi
 
               cp /liquibase/changelog/changelog.xml /liquibase/changelog.xml
-              cat /liquibase/changelog.xml
+              cat /liquibase/changelog/v1.0_initial_setup/v1.0_initial_setup.xml
               db_healthcheck() {
               
                 local max_retries=5
