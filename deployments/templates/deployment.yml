@@ -73,7 +73,7 @@ spec:
                           --username="$MOJFIN_DEV_WRITE_USERNAME" \
                           --password="$MOJFIN_DEV_WRITE_PASSWORD" \
                           --changelog-file=changelog.xml \
-                          status >/dev/null 2>&1; then
+                          status; then
               
                           echo "Database connection established"
                           return 0
