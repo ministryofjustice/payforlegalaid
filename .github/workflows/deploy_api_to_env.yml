@@ -152,7 +152,8 @@ jobs:
           mkdir -p /tmp/liquibase-config
           cp -r payforlegalaid-data/data/* /tmp/liquibase-config/
           ln -s master_changelog.xml /tmp/liquibase-config/changelog.xml  # symbolic link or hard copy
-  
+
+          ls -l /tmp/liquibase-config/v1.0_initial_setup/v1.0_initial_setup.xml  
   
           kubectl create configmap liquibase-changelog \
           --namespace ${KUBE_NAMESPACE} \
