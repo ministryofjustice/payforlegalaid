@@ -11,20 +11,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.laa.gpfd.dao.ReportDao;
-import uk.gov.laa.gpfd.dao.stream.AbstractStreamingDao;
-import uk.gov.laa.gpfd.dao.stream.StreamingDao;
-import uk.gov.laa.gpfd.dao.support.ResultSetToMapMapper;
-import uk.gov.laa.gpfd.model.FileExtension;
+import uk.gov.laa.gpfd.enums.FileExtension;
 import uk.gov.laa.gpfd.model.FieldAttributes;
 import uk.gov.laa.gpfd.services.DataStreamer;
+import uk.gov.laa.gpfd.services.ExcelService;
 import uk.gov.laa.gpfd.services.StreamingService;
 import uk.gov.laa.gpfd.services.TemplateService;
 import uk.gov.laa.gpfd.services.excel.editor.CellValueSetter;
@@ -45,7 +41,6 @@ import javax.sql.DataSource;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import static uk.gov.laa.gpfd.services.DataStreamer.createJdbcStreamer;
 
@@ -200,7 +195,7 @@ public class AppConfig {
                 .repository(templateClient)
                 .factory(XSSFWorkbook::new)
                 .withSecurity(allowedCompressionRatio)
-                .withStream(rowAccessWindowSize)
+//                .withStream(rowAccessWindowSize)
                 .build();
     }
 
@@ -242,7 +237,7 @@ public class AppConfig {
     public SheetDataWriter sheetDataWriter(CellValueSetter cellValueSetterSupplier, CellFormatter cellFormatter) {
         return new SheetDataWriter() {
             @Override
-            public void writeDataToSheet(Sheet sheet, Stream<Map<String, Object>> data, Collection<FieldAttributes> fieldAttributes) {
+            public void writeDataToSheet(Sheet sheet, List<Map<String, Object>> data, Collection<FieldAttributes> fieldAttributes) {
                 writeDataToSheet(cellValueSetterSupplier, cellFormatter, sheet, data, fieldAttributes);
             }
         };
@@ -303,22 +298,13 @@ public class AppConfig {
     }
 
     @Bean
-    DataStreamer createExcelStreamer(TemplateService templateLoader,
-                                     StreamingDao<Map<String, Object>> dataFetcher,
-                                     SheetDataWriter sheetDataWriter,
-                                     PivotTableRefresher pivotTableRefresher,
-                                     FormulaCalculator formulaCalculator) {
-        return DataStreamer.createExcelStreamer(templateLoader, dataFetcher, sheetDataWriter, pivotTableRefresher, formulaCalculator);
-    }
-
-    @Bean
     DataStream createCsvStreamStrategy(ReportDao reportDao, DataStreamer dataStreamer) {
         return AbstractDataStream.createCsvStreamStrategy(reportDao, dataStreamer);
     }
 
     @Bean
-    DataStream createExcelStreamStrategy(ReportDao reportDao, DataStreamer createExcelStreamer) {
-        return AbstractDataStream.createExcelStreamStrategy(reportDao, createExcelStreamer);
+    DataStream createExcelStreamStrategy(ExcelService excelService) {
+        return AbstractDataStream.createExcelStreamStrategy(excelService);
     }
 
     @Bean
@@ -329,18 +315,6 @@ public class AppConfig {
     @Bean
     public StrategyFactory<FileExtension, DataStream> streamStrategyFactory(Collection<DataStream> strategies) {
         return StrategyFactory.createGenericStrategyFactory(strategies, DataStream::getFormat);
-    }
-
-    @Bean
-    public RowMapper<Map<String, Object>> resultSetToMapMapper() {
-        return new ResultSetToMapMapper();
-    }
-
-    @Bean
-    public StreamingDao<Map<String, Object>> mapStreamingDao(
-            JdbcOperations readOnlyJdbcTemplate,
-            RowMapper<Map<String, Object>> resultSetToMapMapper) {
-        return new AbstractStreamingDao<>(readOnlyJdbcTemplate, resultSetToMapMapper) {};
     }
 
 }
