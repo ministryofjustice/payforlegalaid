@@ -104,6 +104,7 @@ spec:
                 --username="$MOJFIN_DEV_WRITE_USERNAME" \
                 --password="$MOJFIN_DEV_WRITE_PASSWORD" \
                 --log-level=DEBUG \
+                --search-path="data,/data"
                 --changelog-file=changelog.xml \
                 drop-all --force
               
