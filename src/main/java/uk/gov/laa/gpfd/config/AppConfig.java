@@ -62,6 +62,9 @@ public class AppConfig {
     @Value("${excel.security.compression-ratio:0.001}")
     private double allowedCompressionRatio;
 
+    @Value("${excel.steam.window.size:100}")
+    private int rowAccessWindowSize;
+
     @Getter
     @Value("${spring.cloud.azure.active-directory.credential.client-id}")
     private String entraIdClientId;
@@ -192,6 +195,7 @@ public class AppConfig {
                 .repository(templateClient)
                 .factory(XSSFWorkbook::new)
                 .withSecurity(allowedCompressionRatio)
+//                .withStream(rowAccessWindowSize)
                 .build();
     }
 
