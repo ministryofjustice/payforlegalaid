@@ -137,14 +137,9 @@ jobs:
 
           {
             echo '<?xml version="1.0" encoding="UTF-8"?>'
-            echo '<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">'
           
             find payforlegalaid-data/data -name '*.xml' -print0 | sort -z | xargs -0 cat | sed '/<?xml .*?>/d'
             
-            echo '</databaseChangeLog>'
           } | xmllint --format --encode UTF-8 - > normalised-changelog.xml
 
           CHECKSUM=$(sha256sum normalised-changelog.xml | cut -d' ' -f1)
