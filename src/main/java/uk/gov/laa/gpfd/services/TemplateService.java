@@ -50,10 +50,17 @@ public sealed interface TemplateService permits TemplateService.ExcelTemplateSer
             }
         }
 
-        public static final class Builder {
+        public static final class Builder  {
+            private interface Defaults {
+                SecurityPolicy<InputStream> SECURITY = SecurityPolicy.zipBombProtection(1.0E-04);
+                boolean STREAMING_ENABLED = false;
+                int STREAMING_WINDOW_SIZE = 100;
+            }
             private TemplateClient repository;
             private WorkbookFactory factory;
-            private SecurityPolicy<InputStream> security = SecurityPolicy.zipBombProtection(1.0E-04);
+            private SecurityPolicy<InputStream> security = Defaults.SECURITY;
+            private boolean streamingEnabled = Defaults.STREAMING_ENABLED;
+            private int streamingWindowSize = Defaults.STREAMING_WINDOW_SIZE;
 
             public Builder repository(TemplateClient repository) {
                 this.repository = repository;
@@ -75,12 +82,20 @@ public sealed interface TemplateService permits TemplateService.ExcelTemplateSer
                 return this;
             }
 
+            public Builder withStream(int windowSize) {
+                this.streamingEnabled = true;
+                this.streamingWindowSize = windowSize;
+                return this;
+            }
+
             public ExcelTemplateService build() {
                 Objects.requireNonNull(repository, "Repository must be provided");
                 Objects.requireNonNull(factory, "Factory must be provided");
 
-                var securedFactory = factory.withTransformation(security);
-                return new ExcelTemplateService(repository, securedFactory);
+                var configuredFactory = streamingEnabled ?
+                    factory.asStreamed(streamingWindowSize).withTransformation(security) : factory.withTransformation(security);
+
+                return new ExcelTemplateService(repository, configuredFactory);
             }
         }
     }
