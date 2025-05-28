@@ -70,7 +70,6 @@ spec:
                           --username="$MOJFIN_DEV_WRITE_USERNAME" \
                           --password="$MOJFIN_DEV_WRITE_PASSWORD" \
                           --changelog-file=changelog.xml \
-                          --searchPath=/liquibase/changelog \
                           status; then
               
                           echo "Database connection established"
