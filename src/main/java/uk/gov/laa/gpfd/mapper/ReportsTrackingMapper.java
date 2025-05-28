@@ -3,6 +3,7 @@ package uk.gov.laa.gpfd.mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.laa.gpfd.config.AppConfig;
+import uk.gov.laa.gpfd.model.ImmutableReportsTracking;
 import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.model.ReportsTracking;
 
@@ -34,12 +35,12 @@ public class ReportsTrackingMapper extends AbstractReportMapper  {
      * @throws IllegalStateException if URL construction fails
      */
     public ReportsTracking map(Report report, String currentUserName) {
-        return ReportsTracking.builder()
-                .id(report.getReportId())
+        return ImmutableReportsTracking.builder()
+                .id(report.getId())
                 .name(report.getName())
                 .reportUrl(constructReportUrl(report))
                 .creationDate(currentTimestamp())
-                .reportId(report.getReportId())
+                .reportId(report.getId())
                 .reportCreator(currentUserName)
                 .reportOwner(report.getReportOwnerName())
                 .reportOutputType(report.getReportOutputType().toString())

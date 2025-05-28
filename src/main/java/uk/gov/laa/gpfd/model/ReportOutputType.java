@@ -4,13 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.immutables.value.Value.Immutable;
 
-import jakarta.annotation.Nullable;
-import java.util.UUID;
-
 @Immutable
-public abstract class ReportOutputType {
-    @Nullable
-    public abstract UUID getId();
+public abstract class ReportOutputType implements Identifiable {
 
     @NotBlank
     @Size(max = 10)

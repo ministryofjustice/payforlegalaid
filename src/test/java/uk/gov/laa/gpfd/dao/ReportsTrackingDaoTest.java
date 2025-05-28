@@ -16,7 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
-import uk.gov.laa.gpfd.model.ReportsTracking;
+import uk.gov.laa.gpfd.model.ImmutableReportsTracking;
 
 @SpringBootTest // This uses the whole spring context, switch to @JdbcTest if you switch to a H2 DB
 @ActiveProfiles("test")
@@ -119,17 +119,17 @@ class ReportsTrackingDaoTest extends BaseDaoTest{
     }
 
     private void saveReportTracking(ReportTrackingData testTrackingData) {
-        var reportsTracking = new ReportsTracking(
-            DEFAULT_ID,
-            testTrackingData.getReportName(),
-            testTrackingData.getReportUuid(),
-            testTrackingData.getCreationTimestamp(),
-            testTrackingData.getReportCreator(),
-            testTrackingData.getReportOwner(),
-            testTrackingData.getReportOutputType(),
-            testTrackingData.getTemplateUrl(),
-            testTrackingData.getReportUrl()
-        );
+        var reportsTracking = ImmutableReportsTracking.builder()
+                .id(DEFAULT_ID)
+                .name(testTrackingData.getReportName())
+                .reportId(testTrackingData.getReportUuid())
+                .creationDate(testTrackingData.getCreationTimestamp())
+                .reportCreator( testTrackingData.getReportCreator())
+                .reportOwner(testTrackingData.getReportOwner())
+                .reportOutputType(testTrackingData.getReportOutputType())
+                .templateUrl(testTrackingData.getTemplateUrl())
+                .reportUrl( testTrackingData.getReportUrl())
+                .build();
 
         reportsTrackingDao.saveReportsTracking(reportsTracking);
     }

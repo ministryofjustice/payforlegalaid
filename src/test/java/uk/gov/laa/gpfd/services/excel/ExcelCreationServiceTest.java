@@ -9,19 +9,23 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import uk.gov.laa.gpfd.data.ReportsTestDataFactory;
 import uk.gov.laa.gpfd.model.ImmutableReportQuery;
-
-import uk.gov.laa.gpfd.dao.ReportViewsDao;
+import uk.gov.laa.gpfd.model.ReportQuerySql;
 import uk.gov.laa.gpfd.services.TemplateService;
 import uk.gov.laa.gpfd.services.excel.editor.FormulaCalculator;
 import uk.gov.laa.gpfd.services.excel.editor.PivotTableRefresher;
 import uk.gov.laa.gpfd.services.excel.editor.SheetDataWriter;
+import uk.gov.laa.gpfd.dao.stream.StreamingDao;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -30,10 +34,10 @@ import static org.mockito.Mockito.when;
 class ExcelCreationServiceTest {
 
     @Spy
-    private TemplateService templateLoader ;
+    private TemplateService templateLoader;
 
     @Mock
-    private ReportViewsDao dataFetcher;
+    private StreamingDao<Map<String, Object>> dataFetcher;
 
     @Mock
     private SheetDataWriter sheetDataWriter;
@@ -54,109 +58,112 @@ class ExcelCreationServiceTest {
     }
 
     @Test
-    void shouldBuildExcelWithData() {
+    void shouldStreamExcelWithData() throws IOException {
         // Given
         var workbook = mock(Workbook.class);
+        var outputStream = new ByteArrayOutputStream();
         var query = ImmutableReportQuery.builder()
-                .tabName("Sheet1")
-                .query("SELECT * FROM ANY_REPORT.TABLE")
+                .sheetName("Sheet1")
+                .query(ReportQuerySql.of("SELECT * FROM ANY_REPORT.TABLE"))
                 .build();
-        var report = ReportsTestDataFactory.createTestReport("TEMPLATE_123",Collections.singletonList(query));
-
+        var report = ReportsTestDataFactory.createTestReport("TEMPLATE_123", Collections.singletonList(query));
 
         when(templateLoader.findTemplateById("TEMPLATE_123")).thenReturn(workbook);
-        when(dataFetcher.callDataBase("SELECT * FROM ANY_REPORT.TABLE")).thenReturn(Collections.emptyList());
+        when(dataFetcher.queryForStream(ReportQuerySql.of("SELECT * FROM ANY_REPORT.TABLE"))).thenReturn(Stream.empty());
 
         // When
-        var result = excelCreationService.buildExcel(report);
+        excelCreationService.stream(report, outputStream);
 
         // Then
-        assertNotNull(result);
-        assertEquals(workbook, result);
-
-        // Verify interactions
         verify(templateLoader).findTemplateById("TEMPLATE_123");
         verify(pivotTableRefresher).refreshPivotTables(workbook);
         verify(formulaCalculator).evaluateAllFormulaCells(workbook);
+        verify(workbook).write(outputStream);
     }
 
     @Test
-    void shouldNotWriteDataWhenSheetNotFound() {
+    void shouldNotWriteDataWhenSheetNotFound() throws IOException {
         // Given
         var workbook = mock(Workbook.class);
+        var outputStream = new ByteArrayOutputStream();
         var query = ImmutableReportQuery.builder()
-                .tabName("NonExistentSheet")
-                .query("SELECT * FROM ANY_REPORT.TABLE")
+                .sheetName("NonExistentSheet")
+                .query(ReportQuerySql.of("SELECT * FROM ANY_REPORT.TABLE"))
                 .build();
-        var report = ReportsTestDataFactory.createTestReport("TEMPLATE_123",Collections.singletonList(query));
+        var report = ReportsTestDataFactory.createTestReport("TEMPLATE_123", Collections.singletonList(query));
 
         when(templateLoader.findTemplateById("TEMPLATE_123")).thenReturn(workbook);
 
         // When
-        var result = excelCreationService.buildExcel(report);
+        excelCreationService.stream(report, outputStream);
 
         // Then
-        assertNotNull(result);
-        assertEquals(workbook, result);
-
-        // Verify interactions
         verify(templateLoader).findTemplateById("TEMPLATE_123");
         verify(sheetDataWriter, never()).writeDataToSheet(any(), any(), any());
+        verify(workbook).write(outputStream);
     }
 
     @Test
-    void shouldHandleEmptyQueries() {
+    void shouldHandleEmptyQueries() throws IOException {
         // Given
         var workbook = mock(Workbook.class);
-        var report = ReportsTestDataFactory.createTestReport("TEMPLATE_123",Collections.emptyList());
-
+        var outputStream = new ByteArrayOutputStream();
+        var report = ReportsTestDataFactory.createTestReport("TEMPLATE_123", Collections.emptyList());
 
         when(templateLoader.findTemplateById("TEMPLATE_123")).thenReturn(workbook);
 
         // When
-        var result = excelCreationService.buildExcel(report);
+        excelCreationService.stream(report, outputStream);
 
         // Then
-        assertNotNull(result);
-        assertEquals(workbook, result);
-
-        // Verify interactions
         verify(templateLoader).findTemplateById("TEMPLATE_123");
         verify(pivotTableRefresher).refreshPivotTables(workbook);
         verify(formulaCalculator).evaluateAllFormulaCells(workbook);
         verify(sheetDataWriter, never()).writeDataToSheet(any(), any(), any());
+        verify(workbook).write(outputStream);
     }
 
     @Test
-    void shouldHandleMultipleQueries() {
+    void shouldHandleMultipleQueries() throws IOException {
         // Given
         var workbook = mock(Workbook.class);
+        var outputStream = new ByteArrayOutputStream();
         var query1 = ImmutableReportQuery.builder()
-                .tabName("Sheet1")
-                .query("SELECT * FROM ANY_REPORT.TABLE")
+                .sheetName("Sheet1")
+                .query(ReportQuerySql.of("SELECT * FROM ANY_REPORT.TABLE"))
                 .build();
         var query2 = ImmutableReportQuery.builder()
-                .tabName("Sheet2")
-                .query("SELECT * FROM ANY_REPORT.TABLE2")
+                .sheetName("Sheet2")
+                .query(ReportQuerySql.of("SELECT * FROM ANY_REPORT.TABLE2"))
                 .build();
 
-        var report = ReportsTestDataFactory.createTestReport("TEMPLATE_123",List.of(query1, query2));
-
+        var report = ReportsTestDataFactory.createTestReport("TEMPLATE_123", List.of(query1, query2));
 
         when(templateLoader.findTemplateById("TEMPLATE_123")).thenReturn(workbook);
-        when(dataFetcher.callDataBase("SELECT * FROM ANY_REPORT.TABLE")).thenReturn(Collections.emptyList());
-        when(dataFetcher.callDataBase("SELECT * FROM ANY_REPORT.TABLE2")).thenReturn(Collections.emptyList());
+        when(dataFetcher.queryForStream(ReportQuerySql.of("SELECT * FROM ANY_REPORT.TABLE"))).thenReturn(Stream.empty());
+        when(dataFetcher.queryForStream(ReportQuerySql.of("SELECT * FROM ANY_REPORT.TABLE2"))).thenReturn(Stream.empty());
 
         // When
-        var result = excelCreationService.buildExcel(report);
+        excelCreationService.stream(report, outputStream);
 
         // Then
-        assertNotNull(result);
-        assertEquals(workbook, result);
-
-        // Verify interactions
         verify(templateLoader).findTemplateById("TEMPLATE_123");
         verify(pivotTableRefresher).refreshPivotTables(workbook);
         verify(formulaCalculator).evaluateAllFormulaCells(workbook);
+        verify(workbook).write(outputStream);
+    }
+
+    @Test
+    void shouldThrowRuntimeExceptionWhenIOExceptionOccurs() throws IOException {
+        // Given
+        var workbook = mock(Workbook.class);
+        var outputStream = new ByteArrayOutputStream();
+        var report = ReportsTestDataFactory.createTestReport("TEMPLATE_123", Collections.emptyList());
+
+        when(templateLoader.findTemplateById("TEMPLATE_123")).thenReturn(workbook);
+        doThrow(new IOException("Test exception")).when(workbook).write(outputStream);
+
+        // When/Then
+        assertThrows(RuntimeException.class, () -> excelCreationService.stream(report, outputStream));
     }
 }

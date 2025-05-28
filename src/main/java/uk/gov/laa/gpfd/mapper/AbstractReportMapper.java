@@ -37,7 +37,7 @@ public abstract class AbstractReportMapper {
             var baseUrl = appConfig.getServiceUrl().replaceAll("/+$", "");
             var extensionPath = FileExtension.getSubPathForExtension(
                     report.getReportOutputType().getExtension().toLowerCase(Locale.ENGLISH));
-            var reportId = report.getReportId().toString();
+            var reportId = report.getIdAsString();
 
             return URI.create("%s/%s/%s".formatted(baseUrl, extensionPath, reportId));
         } catch (Exception e) {

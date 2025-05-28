@@ -8,7 +8,12 @@ import org.junit.jupiter.api.Test;
 import uk.gov.laa.gpfd.model.FieldAttributes;
 import uk.gov.laa.gpfd.services.excel.formatting.CellFormatter;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyInt;
@@ -27,7 +32,7 @@ class SheetDataWriterTest {
     private Cell cell;
     private CellValueSetter cellValueSetter;
     private CellFormatter cellFormatter;
-    private List<Map<String, Object>> data;
+    private Stream<Map<String, Object>> data;
     private Collection<FieldAttributes> fieldAttributes;
 
     @BeforeEach
@@ -39,13 +44,13 @@ class SheetDataWriterTest {
         cellFormatter = mock(CellFormatter.class);
         sheetDataWriter = new SheetDataWriter() {
             @Override
-            public void writeDataToSheet(Sheet sheet, List<Map<String, Object>> data, Collection<FieldAttributes> fieldAttributes) {
+            public void writeDataToSheet(Sheet sheet, Stream<Map<String, Object>> data, Collection<FieldAttributes> fieldAttributes) {
                 writeDataToSheet(cellValueSetter, cellFormatter, sheet, data, fieldAttributes);
             }
         };
         when(sheet.createRow(anyInt())).thenReturn(row);
         when(row.createCell(anyInt())).thenReturn(cell);
-        data = List.of(
+        data = Stream.of(
                 Map.of("source1", "value1", "source2", 123),
                 Map.of("source1", "value2", "source2", 456)
         );
@@ -73,7 +78,7 @@ class SheetDataWriterTest {
     @Test
     void shouldHandleEmptyData() {
         // Given
-        data = Collections.emptyList();
+        data = Stream.empty();
 
         // When
         sheetDataWriter.writeDataToSheet(cellValueSetter, cellFormatter, sheet, data, fieldAttributes);

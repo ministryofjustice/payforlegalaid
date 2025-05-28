@@ -1,10 +1,6 @@
 package uk.gov.laa.gpfd.data;
 
-import uk.gov.laa.gpfd.model.ImmutableReport;
-import uk.gov.laa.gpfd.model.ImmutableReportOutputType;
-import uk.gov.laa.gpfd.model.ImmutableReportQuery;
-import uk.gov.laa.gpfd.model.Report;
-import uk.gov.laa.gpfd.model.ReportQuery;
+import uk.gov.laa.gpfd.model.*;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -21,7 +17,7 @@ public class ReportsTestDataFactory {
 
     public static Report createTestReport(UUID reportId) {
         return ImmutableReport.builder()
-                .reportId(reportId)
+                .id(reportId)
                 .name("Test Report")
                 .templateSecureDocumentId("doc-123")
                 .reportCreationTime(Timestamp.from(Instant.now()))
@@ -46,15 +42,15 @@ public class ReportsTestDataFactory {
 
     public static Report createTestReportWithQuery() {
         var query1 = ImmutableReportQuery.builder()
-                .tabName("Sheet1")
-                .query("SELECT * FROM ANY_REPORT.DATA")
+                .sheetName("Sheet1")
+                .query(ReportQuerySql.of("SELECT * FROM ANY_REPORT.DATA"))
                 .build();
         return createTestReport(UUID.randomUUID().toString(), List.of(query1) );
     }
 
     public static Report createTestReport(String secureDocumentId, Collection<ReportQuery> queries) {
         return ImmutableReport.builder()
-                .reportId(UUID.randomUUID())
+                .id(UUID.randomUUID())
                 .name("Test Report")
                 .templateSecureDocumentId(secureDocumentId)
                 .reportCreationTime(Timestamp.from(Instant.now()))
