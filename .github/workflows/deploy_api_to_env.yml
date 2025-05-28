@@ -165,7 +165,6 @@ jobs:
           --from-file=/tmp/liquibase-config/v1.0_initial_setup/dml \
           --from-file=/tmp/liquibase-config/v1.1_contract_balance_reports/dml \
           --from-file=/tmp/liquibase-config/v1.2_late_processed_bills_reports/dml \
-
           --from-file=changelog.xml=payforlegalaid-data/data/master-changelog.xml \
           --dry-run=client -o yaml | \
           yq eval '
