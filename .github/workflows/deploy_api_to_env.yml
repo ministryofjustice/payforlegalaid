@@ -149,11 +149,11 @@ jobs:
 
           CHECKSUM=$(sha256sum normalized-changelog.xml | cut -d' ' -f1)
           
-          rm normalized-changelog.xml
+#          rm normalized-changelog.xml
 
           kubectl create configmap liquibase-changelog \
           --namespace ${KUBE_NAMESPACE} \
-          --from-file=changelog.xml=payforlegalaid-data/liquibase/master-changelog.xml \
+          --from-file=changelog.xml=normalized-changelog.xml \
           --dry-run=client -o yaml | \
           yq eval '
           .metadata.annotations."checksum/xml" = "'"$CHECKSUM"'" |
