@@ -151,7 +151,8 @@ jobs:
           
           kubectl create configmap liquibase-changelog \
           --namespace ${KUBE_NAMESPACE} \
-          --from-file=changelog.xml=payforlegalaid-data/data \
+          --from-file=changelog.xml=payforlegalaid-data/data/master-changelog.xml \
+          --from-file=payforlegalaid-data/data/ \
           --dry-run=client -o yaml | \
           yq eval '
           .metadata.annotations."checksum/xml" = "'"$CHECKSUM"'" |
