@@ -149,9 +149,14 @@ jobs:
 
           CHECKSUM=$(sha256sum normalised-changelog.xml | cut -d' ' -f1)
           
+          mkdir -p /tmp/liquibase-config
+          cp -r payforlegalaid-data/data/* /tmp/liquibase-config/
+          ln -s master_changelog.xml /tmp/liquibase-config/changelog.xml  # symbolic link or hard copy
+  
+  
           kubectl create configmap liquibase-changelog \
           --namespace ${KUBE_NAMESPACE} \
-          --from-file=changelog.xml=normalised-changelog.xml \
+          --from-file=tmp/liquibase-config \
           --dry-run=client -o yaml | \
           yq eval '
           .metadata.annotations."checksum/xml" = "'"$CHECKSUM"'" |
