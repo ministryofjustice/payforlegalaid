@@ -77,7 +77,7 @@ spec:
                           return 0
                     fi
               
-                    echo "Attempt $i/$max_retries failed. Retrying in $retry_delay seconds..."
+                    echo "Attempt $i/$max_retries failed. Retrying in $retry_delay seconds...."
                     sleep $retry_delay
                 done
               
