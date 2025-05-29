@@ -136,16 +136,25 @@ jobs:
           kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
           kubectl config use-context ${KUBE_CLUSTER}
 
-          mkdir -p /tmp/liquibase-config
-          cp -r payforlegalaid-data/data/* /tmp/liquibase-config/
-          ln -s master_changelog.xml /tmp/liquibase-config/changelog.xml  # symbolic link or hard copy
+          CONFIGMAP_NAME="liquibase-changelog"
+          SOURCE_DIR="/tmp/liquibase-config"
+          EXTRA_FILE_PATH="payforlegalaid-data/data/master-changelog.xml"
+          EXTRA_FILE_KEY="changelog.xml"
+          
+          TMPDIR=$(mktemp -d)
+          trap "rm -rf $TMPDIR" EXIT
 
-          ls -l /tmp/liquibase-config/v1.0_initial_setup/v1.0_initial_setup.xml  
+          while IFS= read -r -d '' file; do
+          relative_path="${file#$SOURCE_DIR/}"
+          mkdir -p "$TMPDIR/$(dirname "$relative_path")"
+          cp "$file" "$TMPDIR/$relative_path"
+          done < <(find "$SOURCE_DIR" -type f -print0)
+
+          cp "$EXTRA_FILE_PATH" "$TMPDIR/$EXTRA_FILE_KEY"
   
           kubectl create configmap liquibase-changelog \
           --namespace ${KUBE_NAMESPACE} \
-          --from-file=/tmp/liquibase-config \
-          --from-file=changelog.xml=payforlegalaid-data/data/master-changelog.xml \
+          --from-file="$TMPDIR" \
           --dry-run=client -o yaml | \
           yq eval '
           .metadata.labels."app.kubernetes.io/component" = "database-migrations"
