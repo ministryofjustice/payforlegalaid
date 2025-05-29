@@ -58,6 +58,9 @@ spec:
               fi
 
               cp /liquibase/changelog/changelog.xml /liquibase/changelog.xml
+              
+              tar xzf /liquibase/changelog/liquibase-changelogs.tar.gz
+              
               ls -lr /liquibase/changelog
               db_healthcheck() {
               

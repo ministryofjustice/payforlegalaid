@@ -136,37 +136,21 @@ jobs:
           kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
           kubectl config use-context ${KUBE_CLUSTER}
 
-          CONFIGMAP_NAME="liquibase-changelog"
-          SOURCE_DIR="payforlegalaid-data/data"
-          EXTRA_FILE_PATH="payforlegalaid-data/data/master-changelog.xml"
-          EXTRA_FILE_KEY="changelog.xml"
-          
-          TMPDIR=$(mktemp -d)
-          trap "rm -rf $TMPDIR" EXIT
+          mkdir -p /tmp/liquibase-config
+          cp -r payforlegalaid-data/data/* /tmp/liquibase-config/
+          ln -s master_changelog.xml /tmp/liquibase-config/changelog.xml  # symbolic link or hard copy
 
-          echo "Copying Liquibase files from: $SOURCE_DIR"
-          echo "Temporary working dir: $TMPDIR"
+          tar czf liquibase-changelogs.tar.gz /tmp/liquibase-config
 
-          FROM_FILE_ARGS=()
-            while IFS= read -r -d '' file; do
-            rel_path="${file#$SOURCE_DIR/}"  # e.g. v1.0_initial_setup/ddl/1_create_table.xml
-            FROM_FILE_ARGS+=(--from-file="$rel_path=$file")
-            echo "📦 Will include: $rel_path"
-          done < <(find "$SOURCE_DIR" -type f -print0)
-          
-          FROM_FILE_ARGS+=(--from-file="$EXTRA_FILE_KEY=$EXTRA_FILE_PATH")
-          echo "📦 Will include: $EXTRA_FILE_KEY"
-          
-          echo "Creating ConfigMap: $CONFIGMAP_NAME in namespace: $KUBE_NAMESPACE"
-
+          ls -l /tmp/liquibase-config/v1.0_initial_setup/v1.0_initial_setup.xml  
+  
           kubectl create configmap liquibase-changelog \
           --namespace ${KUBE_NAMESPACE} \
-          "${FROM_FILE_ARGS[@]}" \
+          --from-file=liquibase-changelogs.tar.gz=liquibase-changelogs.tar.gz \
+          --from-file=changelog.xml=payforlegalaid-data/data/master-changelog.xml \
           --dry-run=client -o yaml | \
           yq eval '
           .metadata.labels."app.kubernetes.io/component" = "database-migrations"
           ' - | kubectl apply -f -
-          
-          echo "✅ ConfigMap applied successfully."
 
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments/
