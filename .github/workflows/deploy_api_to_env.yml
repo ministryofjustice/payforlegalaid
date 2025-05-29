@@ -146,25 +146,22 @@ jobs:
 
           echo "Copying Liquibase files from: $SOURCE_DIR"
           echo "Temporary working dir: $TMPDIR"
-  
-          while IFS= read -r -d '' file; do
-            relative_path="${file#$SOURCE_DIR/}"
-            dest_path="$TMPDIR/$relative_path"
 
-            mkdir -p "$(dirname "$dest_path")"
-            cp "$file" "$dest_path"
-            echo "✅ Copied: $file -> $relative_path"
-    
+          FROM_FILE_ARGS=()
+            while IFS= read -r -d '' file; do
+            rel_path="${file#$SOURCE_DIR/}"  # e.g. v1.0_initial_setup/ddl/1_create_table.xml
+            FROM_FILE_ARGS+=(--from-file="$rel_path=$file")
+            echo "📦 Will include: $rel_path"
           done < <(find "$SOURCE_DIR" -type f -print0)
-
-          cp "$EXTRA_FILE_PATH" "$TMPDIR/$EXTRA_FILE_KEY"
-          echo "✅ Copied: $EXTRA_FILE_PATH -> $EXTRA_FILE_KEY"
+          
+          FROM_FILE_ARGS+=(--from-file="$EXTRA_FILE_KEY=$EXTRA_FILE_PATH")
+          echo "📦 Will include: $EXTRA_FILE_KEY"
           
           echo "Creating ConfigMap: $CONFIGMAP_NAME in namespace: $KUBE_NAMESPACE"
 
           kubectl create configmap liquibase-changelog \
           --namespace ${KUBE_NAMESPACE} \
-          --from-file="$TMPDIR" \
+          "${FROM_FILE_ARGS[@]}" \
           --dry-run=client -o yaml | \
           yq eval '
           .metadata.labels."app.kubernetes.io/component" = "database-migrations"
