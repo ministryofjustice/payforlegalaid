@@ -74,7 +74,7 @@ spec:
                           --username="$MOJFIN_DEV_WRITE_USERNAME" \
                           --password="$MOJFIN_DEV_WRITE_PASSWORD" \
                           --changelog-file=changelog.xml \
-                          --searchPath=/liquibase/changelog \
+                          --searchPath=/liquibase/chris/tmp/liquibase-config \
                           status; then
               
                           echo "Database connection established"
@@ -107,8 +107,8 @@ spec:
                 --username="$MOJFIN_DEV_WRITE_USERNAME" \
                 --password="$MOJFIN_DEV_WRITE_PASSWORD" \
                 --log-level=DEBUG \
-                --search-path="data,/data"
                 --changelog-file=changelog.xml \
+                --searchPath=/liquibase/chris/tmp/liquibase-config \
                 drop-all --force
               
                 echo "Database cleaned, reapplying migrations"
