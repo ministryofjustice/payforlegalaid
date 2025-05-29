@@ -119,6 +119,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: "ministryofjustice/payforlegalaid-data"
+          ref: "fix_liquibase_build"
           path: payforlegalaid-data
           ssh-key: ${{ secrets.socket_key }}
           sparse-checkout: data
