@@ -62,7 +62,7 @@ spec:
               mkdir /liquibase/chris
               tar xzf /liquibase/changelog/liquibase-changelogs.tar.gz -C /liquibase/chris
               
-              ls -lr /liquibase/chris/tmp/changelog
+              ls -lr /liquibase/chris/tmp/liquibase-config
               db_healthcheck() {
               
                 local max_retries=5
