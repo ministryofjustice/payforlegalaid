@@ -136,20 +136,6 @@ jobs:
           kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
           kubectl config use-context ${KUBE_CLUSTER}
 
-          {
-            echo '<?xml version="1.0" encoding="UTF-8"?>'
-            echo '<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">'
-          
-            find payforlegalaid-data/data -name '*.xml' -print0 | sort -z | xargs -0 cat | sed '/<?xml .*?>/d'
-            
-            echo '</databaseChangeLog>'
-          } | xmllint --format --encode UTF-8 - > normalised-changelog.xml
-
-          CHECKSUM=$(sha256sum normalised-changelog.xml | cut -d' ' -f1)
-          
           mkdir -p /tmp/liquibase-config
           cp -r payforlegalaid-data/data/* /tmp/liquibase-config/
           ln -s master_changelog.xml /tmp/liquibase-config/changelog.xml  # symbolic link or hard copy
@@ -169,7 +155,6 @@ jobs:
           --from-file=changelog.xml=payforlegalaid-data/data/master-changelog.xml \
           --dry-run=client -o yaml | \
           yq eval '
-          .metadata.annotations."checksum/xml" = "'"$CHECKSUM"'" |
           .metadata.labels."app.kubernetes.io/component" = "database-migrations"
           ' - | kubectl apply -f -
 
