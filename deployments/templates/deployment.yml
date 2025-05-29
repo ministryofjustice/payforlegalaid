@@ -48,7 +48,7 @@ spec:
             - -c
             - |
               if [ -z "$MOJFIN_DB_URL" ] || [ -z "$MOJFIN_DEV_WRITE_USERNAME" ] || [ -z "$MOJFIN_DEV_WRITE_PASSWORD" ]; then
-                  echo "ERROR: Required database credentials not set"
+                  echo "ERROR: Required database credentials not set :("
                   exit 1
               fi
 
