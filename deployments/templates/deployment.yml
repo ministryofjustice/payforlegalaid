@@ -26,6 +26,7 @@ spec:
           volumeMounts:
             - name: liquibase-changelog
               mountPath: /liquibase/changelog
+              readOnly: true
           env:
             - name: MOJFIN_DEV_WRITE_USERNAME
               valueFrom:
@@ -58,9 +59,9 @@ spec:
 
               cp /liquibase/changelog/changelog.xml /liquibase/changelog.xml
               
-              tar xzf /liquibase/changelog/liquibase-changelogs.tar.gz -C /liquibase/changelog
+              tar xzf /liquibase/changelog/liquibase-changelogs.tar.gz -C /liquibase
               
-              ls -lr /liquibase/changelog
+              ls -lr /liquibase
               db_healthcheck() {
               
                 local max_retries=5
