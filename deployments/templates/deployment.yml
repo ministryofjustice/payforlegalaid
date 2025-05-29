@@ -26,7 +26,6 @@ spec:
           volumeMounts:
             - name: liquibase-changelog
               mountPath: /liquibase/changelog
-              readOnly: true
           env:
             - name: MOJFIN_DEV_WRITE_USERNAME
               valueFrom:
