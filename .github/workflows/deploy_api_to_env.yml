@@ -140,24 +140,12 @@ jobs:
           cp -r payforlegalaid-data/data/* /tmp/liquibase-config/
           ln -s master_changelog.xml /tmp/liquibase-config/changelog.xml  # symbolic link or hard copy
 
-          CONFIG_DIR="/tmp/liquibase-config"
-          CHANGELOG_PATH="payforlegalaid-data/data/master-changelog.xml"
-          CHANGELOG_KEY="changelog.xml"
-  
-          # Collect all files under /tmp/liquibase-config with relative paths
-          FROM_FILE_ARGS=()
-          while IFS= read -r -d '' file; do
-          relative_path="${file#$CONFIG_DIR/}"  # Remove leading dir
-          FROM_FILE_ARGS+=(--from-file="$relative_path=$file")
-          done < <(find "$CONFIG_DIR" -type f -print0)
-          
-          FROM_FILE_ARGS+=(--from-file="$CHANGELOG_KEY=$CHANGELOG_PATH")
-  
           ls -l /tmp/liquibase-config/v1.0_initial_setup/v1.0_initial_setup.xml  
   
           kubectl create configmap liquibase-changelog \
           --namespace ${KUBE_NAMESPACE} \
-          "${FROM_FILE_ARGS[@]}" \
+          --from-file=/tmp/liquibase-config \
+          --from-file=changelog.xml=payforlegalaid-data/data/master-changelog.xml \
           --dry-run=client -o yaml | \
           yq eval '
           .metadata.labels."app.kubernetes.io/component" = "database-migrations"
