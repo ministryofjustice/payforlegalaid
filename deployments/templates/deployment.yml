@@ -59,9 +59,10 @@ spec:
 
               cp /liquibase/changelog/changelog.xml /liquibase/changelog.xml
               
-              tar xzf /liquibase/changelog/liquibase-changelogs.tar.gz -C /liquibase
+              mkdir /liquibase/chris
+              tar xzf /liquibase/changelog/liquibase-changelogs.tar.gz -C /liquibase/chris
               
-              ls -lr /liquibase
+              ls -lr /liquibase/chris
               db_healthcheck() {
               
                 local max_retries=5
