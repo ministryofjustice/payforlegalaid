@@ -40,7 +40,7 @@ public final class GetReportById200ResponseMapper extends AbstractReportMapper i
      */
     public GetReportById200Response map(Report report) {
         var response = new GetReportById200Response();
-        response.setId(report.getReportId());
+        response.setId(report.getId());
         response.setReportName(report.getName());
         response.setReportDownloadUrl(constructDownloadUrl(report));
 

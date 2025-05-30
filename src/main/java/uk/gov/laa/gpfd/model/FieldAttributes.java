@@ -6,9 +6,7 @@ import java.util.UUID;
 import static org.immutables.value.Value.Immutable;
 
 @Immutable
-public abstract class FieldAttributes {
-    @Nullable
-    public abstract UUID getId();
+public abstract class FieldAttributes implements Identifiable {
 
     public abstract UUID getReportQueryId();
 

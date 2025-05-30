@@ -26,7 +26,7 @@ public final class ReportsGet200ResponseReportListInnerMapper implements Resourc
      */
     public ReportsGet200ResponseReportListInner map(Report reportData) {
         var result = new ReportsGet200ResponseReportListInner();
-        result.setId(reportData.getReportId());
+        result.setId(reportData.getId());
         result.setReportName(reportData.getName());
         result.description(reportData.getDescription());
 

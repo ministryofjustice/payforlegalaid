@@ -7,8 +7,9 @@ import uk.gov.laa.gpfd.model.FieldAttributes;
 import uk.gov.laa.gpfd.services.excel.formatting.CellFormatter;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 /**
  * The {@code SheetDataWriter} interface is a functional interface designed to write data to a {@link Sheet}
@@ -26,7 +27,7 @@ public interface SheetDataWriter {
      * @param data          the data to be written, represented as a list of maps where each map corresponds to a row
      * @param fieldAttributes the collection of {@link FieldAttributes} that define how each field is mapped and formatted
      */
-    void writeDataToSheet(Sheet sheet, List<Map<String, Object>> data, Collection<FieldAttributes> fieldAttributes);
+    void writeDataToSheet(Sheet sheet, Stream<Map<String, Object>> data, Collection<FieldAttributes> fieldAttributes);
 
     /**
      * Writes the provided data to the specified {@link Sheet} using the given {@link CellValueSetter} and
@@ -36,17 +37,19 @@ public interface SheetDataWriter {
      * @param cellValueSetter the {@link CellValueSetter} used to set values in the cells
      * @param cellFormatter   the {@link CellFormatter} used to apply formatting to the cells
      * @param sheet           the sheet to which the data will be written
-     * @param data            the data to be written, represented as a list of maps where each map corresponds to a row
+     * @param stream            the data to be written, represented as a list of maps where each map corresponds to a row
      * @param fieldAttributes the collection of {@link FieldAttributes} that define how each field is mapped and formatted
      */
     default void writeDataToSheet(CellValueSetter cellValueSetter, CellFormatter cellFormatter,
-                                  Sheet sheet, List<Map<String, Object>> data, Collection<FieldAttributes> fieldAttributes) {
-        var rowIndex = 1; // Start from the second row
-
-        for (Map<String, Object> rowData : data) {
-            var row = sheet.createRow(rowIndex++);
-            writeRowData(row, rowData, fieldAttributes, cellValueSetter, cellFormatter);
-        }
+                                  Sheet sheet, Stream<Map<String, Object>> stream, Collection<FieldAttributes> fieldAttributes) {
+        final AtomicInteger rowNum = new AtomicInteger(1);
+        stream.forEach(data -> writeRowData(
+                sheet.createRow(rowNum.getAndIncrement()),
+                data,
+                fieldAttributes,
+                cellValueSetter,
+                cellFormatter
+        ));
     }
 
     /**

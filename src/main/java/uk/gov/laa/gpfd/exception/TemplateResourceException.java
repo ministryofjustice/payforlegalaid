@@ -102,6 +102,23 @@ public sealed abstract class TemplateResourceException extends RuntimeException 
         public ExcelTemplateCreationException(String s, Exception e) {
             super(s, e);
         }
+
+        /**
+         * Constructs a new {@code ExcelTemplateCreationException} with the specified error message.
+         *
+         * @param e the cause of the exception.
+         * @param  format
+         *         A <a href="../util/Formatter.html#syntax">format string</a>
+         *
+         * @param  args
+         *         Arguments referenced by the format specifiers in the format
+         *         string.  If there are more arguments than format specifiers, the
+         *         extra arguments are ignored.  The number of arguments is
+         *         variable and may be zero.
+         */
+        public ExcelTemplateCreationException(Exception e, String format, Object... args) {
+            super(String.format(format, args), e);
+        }
     }
 
 }
