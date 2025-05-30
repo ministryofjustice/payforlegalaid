@@ -16,6 +16,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
+import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.createTestReport;
+import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.createTestReportWithQuery;
 
 @ExtendWith(MockitoExtension.class)
 class JdbcDataStreamerTest {
@@ -33,36 +35,31 @@ class JdbcDataStreamerTest {
         assertThrows(IllegalArgumentException.class, () -> jdbcDataStreamer.stream(null, outputStream));
     }
 
-    @Test
-    void shouldThrowIllegalArgumentExceptionWhenSqlIsBlank() {
-        var outputStream = new ByteArrayOutputStream();
-
-        assertThrows(IllegalArgumentException.class, () -> jdbcDataStreamer.stream("   ", outputStream));
-    }
 
     @Test
     void shouldThrowIllegalArgumentExceptionWhenOutputStreamIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> jdbcDataStreamer.stream("SELECT * FROM table", null));
+        var testReport = createTestReport();
+        assertThrows(IllegalArgumentException.class, () -> jdbcDataStreamer.stream(testReport, null));
     }
 
     @Test
     void shouldExecuteQueryWhenValidParametersProvided() {
-        var testSql = "SELECT * FROM test";
+        var testReport = createTestReportWithQuery();
         var outputStream = new ByteArrayOutputStream();
 
-        jdbcDataStreamer.stream(testSql, outputStream);
+        jdbcDataStreamer.stream(testReport, outputStream);
 
-        verify(jdbcOperations).query(eq(testSql), any(RowCallbackHandler.class));
+        verify(jdbcOperations).query(eq("SELECT * FROM ANY_REPORT.DATA"), any(RowCallbackHandler.class));
     }
 
     @Test
     void shouldThrowRuntimeExceptionWhenDatabaseAccessFails() {
-        var testSql = "SELECT * FROM table";
+        var testReport = createTestReportWithQuery();
         var outputStream = new ByteArrayOutputStream();
 
         doThrow(new RuntimeException("DB error")).when(jdbcOperations).query(anyString(), any(RowCallbackHandler.class));
 
-        assertThrows(RuntimeException.class, () -> jdbcDataStreamer.stream(testSql, outputStream));
+        assertThrows(RuntimeException.class, () -> jdbcDataStreamer.stream(testReport, outputStream));
     }
 
 }

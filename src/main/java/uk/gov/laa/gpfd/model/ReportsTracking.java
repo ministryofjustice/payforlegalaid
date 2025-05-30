@@ -1,35 +1,36 @@
 package uk.gov.laa.gpfd.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.annotation.Nullable;
+import org.immutables.value.Value;
 
 import java.sql.Timestamp;
 import java.util.UUID;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class ReportsTracking {
+@Value.Immutable
+public abstract class ReportsTracking implements Identifiable {
 
-    private UUID id;
+    @Nullable
+    public abstract String getName();
 
-    private String name;
+    @Nullable
+    public abstract UUID getReportId();
 
-    private UUID reportId;
+    @Nullable
+    public abstract Timestamp getCreationDate();
 
-    private Timestamp creationDate;
+    @Nullable
+    public abstract String getReportCreator();
 
-    private String reportCreator;
+    @Nullable
+    public abstract String getReportOwner();
 
-    private String reportOwner;
+    @Nullable
+    public abstract String getReportOutputType();
 
-    private String reportOutputType;
+    @Nullable
+    public abstract String getTemplateUrl();
 
-    private String templateUrl;
-
-    private String reportUrl;
+    @Nullable
+    public abstract String getReportUrl();
 
 }

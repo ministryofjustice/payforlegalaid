@@ -10,6 +10,7 @@ import uk.gov.laa.gpfd.model.ImmutableReportOutputType;
 import uk.gov.laa.gpfd.model.ImmutableReportQuery;
 import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.model.ReportQuery;
+import uk.gov.laa.gpfd.model.ReportQuerySql;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -55,7 +56,7 @@ public class ReportWithQueriesAndFieldAttributesExtractor implements ResultSetEx
                     log.debug("Mapping data for report with ID: {}", id);
                     var description = rs.getString("DESCRIPTION");
                     return ImmutableReport.builder()
-                            .reportId(id)
+                            .id(id)
                             .name(rs.getString("NAME"))
                             .templateSecureDocumentId(rs.getString("TEMPLATE_SECURE_DOCUMENT_ID"))
                             .reportCreationTime(rs.getTimestamp("REPORT_CREATION_DATE"))
@@ -93,8 +94,8 @@ public class ReportWithQueriesAndFieldAttributesExtractor implements ResultSetEx
                     return ImmutableReportQuery.builder()
                             .id(queryUUID)
                             .reportId(reportId)
-                            .query(rs.getString("QUERY"))
-                            .tabName(rs.getString("TAB_NAME"))
+                            .query(ReportQuerySql.of(rs.getString("QUERY")))
+                            .sheetName(rs.getString("TAB_NAME"))
                             .fieldAttributes(new ArrayList<>())
                             .build();
                 } catch (SQLException e) {

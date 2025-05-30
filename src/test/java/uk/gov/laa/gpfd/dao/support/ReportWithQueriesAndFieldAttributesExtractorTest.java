@@ -2,6 +2,7 @@ package uk.gov.laa.gpfd.dao.support;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import uk.gov.laa.gpfd.model.ReportQuerySql;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -65,7 +66,7 @@ class ReportWithQueriesAndFieldAttributesExtractorTest {
         assertEquals(1, reports.size());
 
         var report = reports.iterator().next();
-        assertEquals(reportId, report.getReportId());
+        assertEquals(reportId, report.getId());
         assertEquals("Test Report", report.getName());
         assertEquals("TEMPLATE_123", report.getTemplateSecureDocumentId());
         assertEquals("Test Description", report.getDescription());
@@ -80,8 +81,8 @@ class ReportWithQueriesAndFieldAttributesExtractorTest {
         var query = report.getQueries().iterator().next();
         assertEquals(queryId, query.getId());
         assertEquals(reportId, query.getReportId());
-        assertEquals("SELECT * FROM ANY_REPORT.V_TABLE", query.getQuery());
-        assertEquals("Sheet1", query.getTabName());
+        assertEquals(ReportQuerySql.of("SELECT * FROM ANY_REPORT.V_TABLE"), query.getQuery());
+        assertEquals("Sheet1", query.getSheetName());
 
         // Verify field attributes
         assertEquals(2, query.getFieldAttributes().size());
@@ -126,7 +127,7 @@ class ReportWithQueriesAndFieldAttributesExtractorTest {
         assertEquals(1, reports.size());
 
         var report = reports.iterator().next();
-        assertEquals(reportId, report.getReportId());
+        assertEquals(reportId, report.getId());
         assertTrue(report.getQueries().isEmpty()); // No queries should be added
     }
 
@@ -165,7 +166,7 @@ class ReportWithQueriesAndFieldAttributesExtractorTest {
         assertEquals(1, reports.size());
 
         var report = reports.iterator().next();
-        assertEquals(reportId, report.getReportId());
+        assertEquals(reportId, report.getId());
         assertEquals(1, report.getQueries().size());
 
         var query = report.getQueries().iterator().next();

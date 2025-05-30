@@ -57,7 +57,7 @@ class ReportDaoTest {
         var result = reportDao.fetchReportById(testReportId);
 
         assertTrue(result.isPresent());
-        assertEquals(testReportId, result.get().getReportId());
+        assertEquals(testReportId, result.get().getId());
         verify(readOnlyJdbcTemplate).query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class), eq(testReportId.toString()));
     }
 

@@ -7,9 +7,7 @@ import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.enums.FileExtension;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.services.DataStreamer;
-import uk.gov.laa.gpfd.services.ExcelService;
 
-import java.io.IOException;
 import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
@@ -81,12 +79,13 @@ public abstract class AbstractDataStream implements DataStream {
     /**
      * Creates a new Excel streaming strategy instance.
      *
-     * @param excelService the Excel generation service
+     * @param reportDao the report data access object
+     * @param dataStreamer the XLS data streaming component
      * @return a configured Excel streaming strategy
      * @throws IllegalArgumentException if any parameter is null
      */
-    public static DataStream createExcelStreamStrategy(ExcelService excelService) {
-        return new ExcelDataStream(requireNonNull(excelService));
+    public static DataStream createExcelStreamStrategy(ReportDao reportDao, DataStreamer dataStreamer) {
+        return new ExcelDataStream(requireNonNull(reportDao), requireNonNull(dataStreamer));
     }
 
     /**
@@ -110,12 +109,7 @@ public abstract class AbstractDataStream implements DataStream {
             var report = reportDao.fetchReportById(uuid)
                     .orElseThrow(() -> new ReportIdNotFoundException("Report with unrecognised ID "+ uuid.toString()));
 
-            var query = report.getQueries().stream()
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalStateException("No queries in report"))
-                    .getQuery();
-
-            return buildResponse(report.getName(), output -> dataStreamer.stream(query, output));
+            return buildResponse(report.getName(), output -> dataStreamer.stream(report, output));
         }
 
         /**
@@ -135,7 +129,8 @@ public abstract class AbstractDataStream implements DataStream {
      */
     @RequiredArgsConstructor
     static class ExcelDataStream extends AbstractDataStream {
-        private final ExcelService excelService;
+        private final ReportDao reportDao;
+        private final DataStreamer dataStreamer;
 
         /**
          * {@inheritDoc}
@@ -143,17 +138,10 @@ public abstract class AbstractDataStream implements DataStream {
          */
         @Override
         public ResponseEntity<StreamingResponseBody> stream(UUID uuid) {
-            var excel = excelService.createExcel(uuid);
+            var report = reportDao.fetchReportById(uuid)
+                    .orElseThrow(() -> new ReportIdNotFoundException("Report not found for ID "+ uuid.toString()));
 
-            StreamingResponseBody responseBody = outputStream -> {
-                try(var workbook = excel.getRight()) {
-                    workbook.write(outputStream);
-                } catch (IOException e) {
-                    throw new ExcelStreamWriteException("Excel streaming failed", e);
-                }
-            };
-
-            return buildResponse(excel.getLeft().getName(), responseBody);
+            return buildResponse(report.getName(), output -> dataStreamer.stream(report, output));
         }
 
         /**

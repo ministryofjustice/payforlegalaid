@@ -5,13 +5,10 @@ import org.immutables.value.Value;
 
 import jakarta.annotation.Nullable;
 import java.sql.Timestamp;
-import java.util.Collection;
 import java.util.UUID;
 
 @Value.Immutable
-public abstract class Report {
-    @Nullable
-    public abstract UUID getReportId();
+public abstract class Report implements Queryable<ReportQuery, Report>, Identifiable {
     @NotBlank
     public abstract String getName();
     @NotBlank
@@ -40,7 +37,5 @@ public abstract class Report {
     public abstract String getFileName();
     @Nullable
     public abstract Boolean getActive();
-    @Nullable
-    public abstract Collection<ReportQuery> getQueries();
 }
 
