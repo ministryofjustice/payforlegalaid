@@ -120,7 +120,7 @@ jobs:
         with:
           repository: "ministryofjustice/payforlegalaid-data"
 #          pre liquibase restructure commit id
-          ref: "198162b6291f92ad17468adfee85a806041a196e"
+          ref: "fix_liquibase_build"
           path: payforlegalaid-data
           ssh-key: ${{ secrets.socket_key }}
           sparse-checkout: data
