@@ -12,6 +12,7 @@ runs:
       with:
         distribution: 'corretto'
         java-version: '17'
+        cache: 'maven'
 
     - name: Checkout GitHub repository
       uses: actions/checkout@v4
@@ -23,13 +24,13 @@ runs:
     - name: Build dependency
       run: |
         cd spec
-        mvn clean install
+        mvn clean install -Dmaven.repo.local=${{ github.workspace }}/.m2/repository
       shell:
         bash
 
     - name: Run tests
       run: |
-        mvn -B clean test
+        mvn -B clean test -Dmaven.repo.local=${{ github.workspace }}/.m2/repository
       env:
         SPRING_PROFILES_ACTIVE: test
       shell:

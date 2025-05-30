@@ -2,6 +2,7 @@ package uk.gov.laa.gpfd.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -81,7 +82,7 @@ public class GlobalExceptionHandler {
      * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(DatabaseReadException.class)
+    @ExceptionHandler(value = DatabaseReadException.class, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ReportsGet500Response> handleDatabaseReadException(DatabaseReadException e) {
         var response = new ReportsGet500Response() {{
             setError(e.getMessage());
@@ -90,7 +91,9 @@ public class GlobalExceptionHandler {
         log.error("DatabaseReadException Thrown: %s".formatted(response));
         log.error("DatabaseReadException stacktrace: %s".formatted((Object) e.getStackTrace()));
 
-        return internalServerError().body(response);
+        return internalServerError()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(response);
     }
 
     /**
