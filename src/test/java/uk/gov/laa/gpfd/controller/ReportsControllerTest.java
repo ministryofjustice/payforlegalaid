@@ -57,31 +57,30 @@ class ReportsControllerTest {
     @Autowired
     MockMvc mockMvc;
 
-    // TODO being temperemental on pipeline and cba
-//    @Test
-//    @WithMockUser(roles = "ADMIN")
-//    void downloadCsvReturnsCorrectResponse() throws Exception {
-//        // Mock CSV data
-//        ByteArrayOutputStream csvDataOutputStream = new ByteArrayOutputStream();
-//        csvDataOutputStream.write("1,John,Doe\n".getBytes());
-//        csvDataOutputStream.write("2,Jane,Smith\n".getBytes());
-//
-//        // Mock response body
-//        StreamingResponseBody responseBody = outputStream -> {
-//            csvDataOutputStream.writeTo(outputStream);
-//            outputStream.flush();
-//        };
-//
-//        // Mock ResponseEntity
-//        ResponseEntity<StreamingResponseBody> mockResponseEntity = ResponseEntity.ok().header("Content-Disposition", "attachment; filename=data.csv").contentType(MediaType.APPLICATION_OCTET_STREAM).body(responseBody);
-//
-//        // Mock method call
-//        when(streamingService.stream(DEFAULT_ID, FileExtension.CSV)).thenReturn(mockResponseEntity);
-//
-//        // Perform the GET request
-//        mockMvc.perform(MockMvcRequestBuilders.get("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d1").with(oidcLogin()).with(oauth2Client("graph"))).andExpect(status().isOk()).andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=data.csv"));
-//        verify(streamingService).stream(DEFAULT_ID, FileExtension.CSV);
-//    }
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void downloadCsvReturnsCorrectResponse() throws Exception {
+        // Mock CSV data
+        ByteArrayOutputStream csvDataOutputStream = new ByteArrayOutputStream();
+        csvDataOutputStream.write("1,John,Doe\n".getBytes());
+        csvDataOutputStream.write("2,Jane,Smith\n".getBytes());
+
+        // Mock response body
+        StreamingResponseBody responseBody = outputStream -> {
+            csvDataOutputStream.writeTo(outputStream);
+            outputStream.flush();
+        };
+
+        // Mock ResponseEntity
+        ResponseEntity<StreamingResponseBody> mockResponseEntity = ResponseEntity.ok().header("Content-Disposition", "attachment; filename=data.csv").contentType(MediaType.APPLICATION_OCTET_STREAM).body(responseBody);
+
+        // Mock method call
+        when(streamingService.stream(DEFAULT_ID, FileExtension.CSV)).thenReturn(mockResponseEntity);
+
+        // Perform the GET request
+        mockMvc.perform(MockMvcRequestBuilders.get("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d1").with(oidcLogin()).with(oauth2Client("graph"))).andExpect(status().isOk()).andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=data.csv"));
+        verify(streamingService).stream(DEFAULT_ID, FileExtension.CSV);
+    }
 
 
     @Test

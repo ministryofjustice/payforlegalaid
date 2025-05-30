@@ -141,8 +141,6 @@ jobs:
           cp -r payforlegalaid-data/data/* /tmp/liquibase-config/
 
           tar czf liquibase-changelogs.tar.gz -C /tmp liquibase-config
-
-          ls -l /tmp/liquibase-config/v1.0_initial_setup/v1.0_initial_setup.xml  
   
           kubectl create configmap liquibase-changelog \
           --namespace ${KUBE_NAMESPACE} \
