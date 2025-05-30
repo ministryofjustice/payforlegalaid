@@ -141,7 +141,7 @@ jobs:
           cp -r payforlegalaid-data/data/* /tmp/liquibase-config/
           ln -s master_changelog.xml /tmp/liquibase-config/changelog.xml  # Needed???
 
-          tar czf liquibase-changelogs.tar.gz /tmp/liquibase-config
+          tar czf liquibase-changelogs.tar.gz -C /tmp liquibase-config
 
           ls -l /tmp/liquibase-config/v1.0_initial_setup/v1.0_initial_setup.xml  
   
