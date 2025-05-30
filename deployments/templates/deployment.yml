@@ -51,14 +51,14 @@ spec:
                   echo "ERROR: Required database credentials not set"
                   exit 1
               fi
-
-              if [ ! -f /liquibase/changelog/changelog.xml ]; then
-                echo "ERROR: Changelog file not found at /liquibase/changelog/changelog.xml"
-                exit 1
-              fi
               
               mkdir /liquibase/files
               tar xzf /liquibase/changelog/liquibase-changelogs.tar.gz -C /liquibase/files
+              
+              if [ ! -f /liquibase/files/liquibase-config/changelog.xml ]; then
+                echo "ERROR: Changelog file not found at /liquibase/files/liquibase-config/changelog.xml"
+                exit 1
+              fi
               
               ls -lr /liquibase/files/liquibase-config
               db_healthcheck() {
