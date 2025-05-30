@@ -71,7 +71,7 @@ spec:
                           --url="$MOJFIN_DB_URL" \
                           --username="$MOJFIN_DEV_WRITE_USERNAME" \
                           --password="$MOJFIN_DEV_WRITE_PASSWORD" \
-                          --changelog-file=/liquibase/files/liquibase-config/changelog.xml \
+                          --changelog-file=/liquibase/files/liquibase-config/master-changelog.xml \
                           --searchPath=/liquibase/files/liquibase-config \
                           status; then
               
@@ -93,7 +93,7 @@ spec:
                       --username="$MOJFIN_DEV_WRITE_USERNAME" \
                       --password="$MOJFIN_DEV_WRITE_PASSWORD" \
                       --log-level=INFO \
-                      --changelog-file=/liquibase/files/liquibase-config/changelog.xml \
+                      --changelog-file=/liquibase/files/liquibase-config/master-changelog.xml \
                       --searchPath=/liquibase/files/liquibase-config \
                       update
               }
