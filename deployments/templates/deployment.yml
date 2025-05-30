@@ -52,15 +52,19 @@ spec:
                   exit 1
               fi
               
-              mkdir /liquibase/files
-              tar xzf /liquibase/changelog/liquibase-changelogs.tar.gz -C /liquibase/files
+              BASE_FOLDER="/liquibase/files"
+              EXPANDED_FOLDER="${BASE_FOLDER}/liquibase-config"
+              CHANGELOG_FILENAME="master-changelog.xml"
+              CHANGELOG="${EXPANDED_FOLDER}/${CHANGELOG_FILENAME}"
               
-              if [ ! -f /liquibase/files/liquibase-config/master-changelog.xml ]; then
-                echo "ERROR: Changelog file not found at /liquibase/files/liquibase-config/master-changelog.xml"
+              mkdir ${BASE_FOLDER}
+              tar xzf /liquibase/changelog/liquibase-changelogs.tar.gz -C ${BASE_FOLDER}
+              
+              if [ ! -f ${CHANGELOG} ]; then
+                echo "ERROR: Changelog file not found at ${CHANGELOG}"
                 exit 1
               fi
               
-              ls -lr /liquibase/files/liquibase-config
               db_healthcheck() {
               
                 local max_retries=5
@@ -71,8 +75,8 @@ spec:
                           --url="$MOJFIN_DB_URL" \
                           --username="$MOJFIN_DEV_WRITE_USERNAME" \
                           --password="$MOJFIN_DEV_WRITE_PASSWORD" \
-                          --changelog-file=master-changelog.xml \
-                          --searchPath=/liquibase/files/liquibase-config \
+                          --changelog-file=${CHANGELOG_FILENAME} \
+                          --searchPath=${EXPANDED_FOLDER} \
                           status; then
               
                           echo "Database connection established"
@@ -93,8 +97,8 @@ spec:
                       --username="$MOJFIN_DEV_WRITE_USERNAME" \
                       --password="$MOJFIN_DEV_WRITE_PASSWORD" \
                       --log-level=INFO \
-                      --changelog-file=master-changelog.xml \
-                      --searchPath=/liquibase/files/liquibase-config \
+                      --changelog-file=${CHANGELOG_FILENAME} \
+                      --searchPath=${EXPANDED_FOLDER} \
                       update
               }
               
@@ -104,9 +108,8 @@ spec:
                 --url="$MOJFIN_DB_URL" \
                 --username="$MOJFIN_DEV_WRITE_USERNAME" \
                 --password="$MOJFIN_DEV_WRITE_PASSWORD" \
-                --log-level=DEBUG \
-                --changelog-file=master-changelog.xml \
-                --searchPath=/liquibase/files/liquibase-config \
+                --changelog-file=${CHANGELOG_FILENAME} \
+                --searchPath=${EXPANDED_FOLDER} \
                 drop-all --force
               
                 echo "Database cleaned, reapplying migrations"
