@@ -20,12 +20,16 @@ spec:
           configMap:
             name: liquibase-changelog
             optional: false
+            items:
+              - key: liquibase-changelogs.tar.gz
+                path: liquibase-changelogs.tar.gz
       initContainers:
         - name: liquibase
           image: liquibase/liquibase:4.29.2
           volumeMounts:
             - name: liquibase-changelog
-              mountPath: /liquibase/changelog
+              mountPath: /liquibase/changelog/liquibase-changelogs.tar.gz
+              subPath: liquibase-changelogs.tar.gz
               readOnly: true
           env:
             - name: MOJFIN_DEV_WRITE_USERNAME
