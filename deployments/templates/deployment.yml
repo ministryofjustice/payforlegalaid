@@ -21,15 +21,15 @@ spec:
             name: liquibase-changelog
             optional: false
             items:
-              - key: changelog.xml
-                path: changelog.xml
+              - key: liquibase-changelogs.tar.gz
+                path: liquibase-changelogs.tar.gz
       initContainers:
         - name: liquibase
           image: liquibase/liquibase:4.29.2
           volumeMounts:
             - name: liquibase-changelog
-              mountPath: /liquibase/changelog/changelog.xml
-              subPath: changelog.xml
+              mountPath: /liquibase/changelog/liquibase-changelogs.tar.gz
+              subPath: liquibase-changelogs.tar.gz
               readOnly: true
           env:
             - name: MOJFIN_DEV_WRITE_USERNAME
@@ -55,13 +55,20 @@ spec:
                   echo "ERROR: Required database credentials not set"
                   exit 1
               fi
-
-              if [ ! -f /liquibase/changelog/changelog.xml ]; then
-                echo "ERROR: Changelog file not found at /liquibase/changelog/changelog.xml"
+              
+              BASE_FOLDER="/liquibase/files"
+              EXPANDED_FOLDER="${BASE_FOLDER}/liquibase-config"
+              CHANGELOG_FILENAME="master-changelog.xml"
+              CHANGELOG="${EXPANDED_FOLDER}/${CHANGELOG_FILENAME}"
+              
+              mkdir ${BASE_FOLDER}
+              tar xzf /liquibase/changelog/liquibase-changelogs.tar.gz -C ${BASE_FOLDER}
+              
+              if [ ! -f ${CHANGELOG} ]; then
+                echo "ERROR: Changelog file not found at ${CHANGELOG}"
                 exit 1
               fi
-
-              cp /liquibase/changelog/changelog.xml /liquibase/changelog.xml
+              
               db_healthcheck() {
               
                 local max_retries=5
@@ -72,8 +79,9 @@ spec:
                           --url="$MOJFIN_DB_URL" \
                           --username="$MOJFIN_DEV_WRITE_USERNAME" \
                           --password="$MOJFIN_DEV_WRITE_PASSWORD" \
-                          --changelog-file=changelog.xml \
-                          status >/dev/null 2>&1; then
+                          --changelog-file=${CHANGELOG_FILENAME} \
+                          --searchPath=${EXPANDED_FOLDER} \
+                          status; then
               
                           echo "Database connection established"
                           return 0
@@ -93,18 +101,19 @@ spec:
                       --username="$MOJFIN_DEV_WRITE_USERNAME" \
                       --password="$MOJFIN_DEV_WRITE_PASSWORD" \
                       --log-level=INFO \
-                      --changelog-file=changelog.xml \
+                      --changelog-file=${CHANGELOG_FILENAME} \
+                      --searchPath=${EXPANDED_FOLDER} \
                       update
               }
               
               cleanup() {
-                echo "Executing clean database strategy"
+                echo "Executing clean database strategy"              
                 liquibase \
                 --url="$MOJFIN_DB_URL" \
                 --username="$MOJFIN_DEV_WRITE_USERNAME" \
                 --password="$MOJFIN_DEV_WRITE_PASSWORD" \
-                --log-level=INFO \
-                --changelog-file=changelog.xml \
+                --changelog-file=${CHANGELOG_FILENAME} \
+                --searchPath=${EXPANDED_FOLDER} \
                 drop-all --force
               
                 echo "Database cleaned, reapplying migrations"
