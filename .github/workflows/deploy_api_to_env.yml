@@ -148,7 +148,6 @@ jobs:
           kubectl create configmap liquibase-changelog \
           --namespace ${KUBE_NAMESPACE} \
           --from-file=liquibase-changelogs.tar.gz=liquibase-changelogs.tar.gz \
-          --from-file=changelog.xml=payforlegalaid-data/data/master-changelog.xml \
           --dry-run=client -o yaml | \
           yq eval '
           .metadata.labels."app.kubernetes.io/component" = "database-migrations"
