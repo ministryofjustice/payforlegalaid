@@ -4,15 +4,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.dao.ReportDao;
-import uk.gov.laa.gpfd.enums.FileExtension;
+import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
+import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.services.DataStreamer;
 
 import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
-import static uk.gov.laa.gpfd.enums.FileExtension.CSV;
-import static uk.gov.laa.gpfd.enums.FileExtension.XLSX;
+import static uk.gov.laa.gpfd.model.FileExtension.CSV;
+import static uk.gov.laa.gpfd.model.FileExtension.XLSX;
 import static uk.gov.laa.gpfd.exception.TransferException.StreamException.ExcelStreamWriteException;
 
 /**
@@ -41,14 +42,15 @@ public abstract class AbstractDataStream implements DataStream {
      * format-specific extension from {@link #getFormat()}.
      * </p>
      *
-     * @param filenameBase the base name for the output file (without extension)
+     * @param report       the report details
      * @param responseBody the streaming content to include in the response
      * @return fully constructed ResponseEntity with proper headers
      * @throws IllegalArgumentException if filenameBase is null or empty
      */
-    ResponseEntity<StreamingResponseBody> buildResponse(String filenameBase, StreamingResponseBody responseBody) {
-        requireNonNull(filenameBase, "Filename base cannot be null");
-        var filename = String.format("%s.%s", filenameBase, getFormat().getExtension());
+    ResponseEntity<StreamingResponseBody> buildResponse(Report report, StreamingResponseBody responseBody) {
+        requireNonNull(report, "Report cannot be null");
+        //todo Use getOutputFileName()
+        var filename = String.format("%s.%s", report.getName(), getFormat().getExtension());
 
         return ResponseEntity.ok()
                 .header("Content-Disposition", createContentDisposition(filename))
@@ -109,7 +111,7 @@ public abstract class AbstractDataStream implements DataStream {
             var report = reportDao.fetchReportById(uuid)
                     .orElseThrow(() -> new ReportIdNotFoundException("Report with unrecognised ID "+ uuid.toString()));
 
-            return buildResponse(report.getName(), output -> dataStreamer.stream(report, output));
+            return buildResponse(report, output -> dataStreamer.stream(report, output));
         }
 
         /**
@@ -141,7 +143,7 @@ public abstract class AbstractDataStream implements DataStream {
             var report = reportDao.fetchReportById(uuid)
                     .orElseThrow(() -> new ReportIdNotFoundException("Report not found for ID "+ uuid.toString()));
 
-            return buildResponse(report.getName(), output -> dataStreamer.stream(report, output));
+            return buildResponse(report, output -> dataStreamer.stream(report, output));
         }
 
         /**

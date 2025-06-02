@@ -3,9 +3,7 @@ package uk.gov.laa.gpfd.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.laa.gpfd.config.AppConfig;
 import uk.gov.laa.gpfd.dao.ReportDao;
@@ -18,6 +16,7 @@ import uk.gov.laa.gpfd.model.ReportsTracking;
 import uk.gov.laa.gpfd.services.ReportsTrackingService;
 import uk.gov.laa.gpfd.services.UserService;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -43,7 +42,7 @@ class ReportsTrackingServiceTest {
     UserService userService;
     @Mock
     ReportsTrackingMapper reportsTrackingMapper;
-    @Mock
+    @Spy
     AppConfig config;
     @Mock
     ReportDao reportDetailsDao;
@@ -52,8 +51,11 @@ class ReportsTrackingServiceTest {
     ReportsTrackingService reportsTrackingService;
 
     @BeforeEach
-    void init() {
-        reportsTrackingMapper = new ReportsTrackingMapper(config);
+    void init() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        when(config.getServiceUrl()).thenReturn("localhost:9090");
+        var constructor = ReportsTrackingMapper.class.getDeclaredConstructor(AppConfig.class);
+        constructor.setAccessible(true);
+        reportsTrackingMapper = constructor.newInstance(config);
     }
 
     @Test

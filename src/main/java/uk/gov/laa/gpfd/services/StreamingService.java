@@ -2,7 +2,7 @@ package uk.gov.laa.gpfd.services;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import uk.gov.laa.gpfd.enums.FileExtension;
+import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.services.stream.DataStream;
 

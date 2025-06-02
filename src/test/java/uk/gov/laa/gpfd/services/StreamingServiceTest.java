@@ -16,8 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.laa.gpfd.enums.FileExtension.CSV;
-import static uk.gov.laa.gpfd.enums.FileExtension.XLSX;
+import static uk.gov.laa.gpfd.model.FileExtension.CSV;
+import static uk.gov.laa.gpfd.model.FileExtension.XLSX;
 import static uk.gov.laa.gpfd.services.StreamingService.DefaultStreamingService;
 
 @ExtendWith(MockitoExtension.class)

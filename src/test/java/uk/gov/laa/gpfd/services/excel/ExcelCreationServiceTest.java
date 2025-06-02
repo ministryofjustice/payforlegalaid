@@ -10,6 +10,7 @@ import org.mockito.Spy;
 import uk.gov.laa.gpfd.data.ReportsTestDataFactory;
 import uk.gov.laa.gpfd.model.ImmutableReportQuery;
 import uk.gov.laa.gpfd.model.ReportQuerySql;
+import uk.gov.laa.gpfd.model.TemplateDocument;
 import uk.gov.laa.gpfd.services.TemplateService;
 import uk.gov.laa.gpfd.services.excel.editor.FormulaCalculator;
 import uk.gov.laa.gpfd.services.excel.editor.PivotTableRefresher;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -32,6 +34,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class ExcelCreationServiceTest {
+    private static final String UUID = "123da9ec-b0b3-4371-af10-f375330d85d3";
+    private static final TemplateDocument TEMPLATE_DOCUMENT = TemplateDocument.fromString(UUID);
 
     @Spy
     private TemplateService templateLoader;
@@ -66,16 +70,16 @@ class ExcelCreationServiceTest {
                 .sheetName("Sheet1")
                 .query(ReportQuerySql.of("SELECT * FROM ANY_REPORT.TABLE"))
                 .build();
-        var report = ReportsTestDataFactory.createTestReport("TEMPLATE_123", Collections.singletonList(query));
+        var report = ReportsTestDataFactory.createTestReport(UUID, Collections.singletonList(query));
 
-        when(templateLoader.findTemplateById("TEMPLATE_123")).thenReturn(workbook);
+        when(templateLoader.findTemplateById(TEMPLATE_DOCUMENT)).thenReturn(workbook);
         when(dataFetcher.queryForStream(ReportQuerySql.of("SELECT * FROM ANY_REPORT.TABLE"))).thenReturn(Stream.empty());
 
         // When
         excelCreationService.stream(report, outputStream);
 
         // Then
-        verify(templateLoader).findTemplateById("TEMPLATE_123");
+        verify(templateLoader).findTemplateById(TEMPLATE_DOCUMENT);
         verify(pivotTableRefresher).refreshPivotTables(workbook);
         verify(formulaCalculator).evaluateAllFormulaCells(workbook);
         verify(workbook).write(outputStream);
@@ -90,15 +94,15 @@ class ExcelCreationServiceTest {
                 .sheetName("NonExistentSheet")
                 .query(ReportQuerySql.of("SELECT * FROM ANY_REPORT.TABLE"))
                 .build();
-        var report = ReportsTestDataFactory.createTestReport("TEMPLATE_123", Collections.singletonList(query));
+        var report = ReportsTestDataFactory.createTestReport(UUID, Collections.singletonList(query));
 
-        when(templateLoader.findTemplateById("TEMPLATE_123")).thenReturn(workbook);
+        when(templateLoader.findTemplateById(TEMPLATE_DOCUMENT)).thenReturn(workbook);
 
         // When
         excelCreationService.stream(report, outputStream);
 
         // Then
-        verify(templateLoader).findTemplateById("TEMPLATE_123");
+        verify(templateLoader).findTemplateById(TEMPLATE_DOCUMENT);
         verify(sheetDataWriter, never()).writeDataToSheet(any(), any(), any());
         verify(workbook).write(outputStream);
     }
@@ -108,15 +112,15 @@ class ExcelCreationServiceTest {
         // Given
         var workbook = mock(Workbook.class);
         var outputStream = new ByteArrayOutputStream();
-        var report = ReportsTestDataFactory.createTestReport("TEMPLATE_123", Collections.emptyList());
+        var report = ReportsTestDataFactory.createTestReport(UUID, Collections.emptyList());
 
-        when(templateLoader.findTemplateById("TEMPLATE_123")).thenReturn(workbook);
+        when(templateLoader.findTemplateById(TEMPLATE_DOCUMENT)).thenReturn(workbook);
 
         // When
         excelCreationService.stream(report, outputStream);
 
         // Then
-        verify(templateLoader).findTemplateById("TEMPLATE_123");
+        verify(templateLoader).findTemplateById(TEMPLATE_DOCUMENT);
         verify(pivotTableRefresher).refreshPivotTables(workbook);
         verify(formulaCalculator).evaluateAllFormulaCells(workbook);
         verify(sheetDataWriter, never()).writeDataToSheet(any(), any(), any());
@@ -137,9 +141,9 @@ class ExcelCreationServiceTest {
                 .query(ReportQuerySql.of("SELECT * FROM ANY_REPORT.TABLE2"))
                 .build();
 
-        var report = ReportsTestDataFactory.createTestReport("TEMPLATE_123", List.of(query1, query2));
+        var report = ReportsTestDataFactory.createTestReport(UUID, List.of(query1, query2));
 
-        when(templateLoader.findTemplateById("TEMPLATE_123")).thenReturn(workbook);
+        when(templateLoader.findTemplateById(TEMPLATE_DOCUMENT)).thenReturn(workbook);
         when(dataFetcher.queryForStream(ReportQuerySql.of("SELECT * FROM ANY_REPORT.TABLE"))).thenReturn(Stream.empty());
         when(dataFetcher.queryForStream(ReportQuerySql.of("SELECT * FROM ANY_REPORT.TABLE2"))).thenReturn(Stream.empty());
 
@@ -147,7 +151,7 @@ class ExcelCreationServiceTest {
         excelCreationService.stream(report, outputStream);
 
         // Then
-        verify(templateLoader).findTemplateById("TEMPLATE_123");
+        verify(templateLoader).findTemplateById(TemplateDocument.fromString(UUID));
         verify(pivotTableRefresher).refreshPivotTables(workbook);
         verify(formulaCalculator).evaluateAllFormulaCells(workbook);
         verify(workbook).write(outputStream);
@@ -158,9 +162,9 @@ class ExcelCreationServiceTest {
         // Given
         var workbook = mock(Workbook.class);
         var outputStream = new ByteArrayOutputStream();
-        var report = ReportsTestDataFactory.createTestReport("TEMPLATE_123", Collections.emptyList());
+        var report = ReportsTestDataFactory.createTestReport(UUID, Collections.emptyList());
 
-        when(templateLoader.findTemplateById("TEMPLATE_123")).thenReturn(workbook);
+        when(templateLoader.findTemplateById(TEMPLATE_DOCUMENT)).thenReturn(workbook);
         doThrow(new IOException("Test exception")).when(workbook).write(outputStream);
 
         // When/Then

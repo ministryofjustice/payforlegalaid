@@ -18,8 +18,8 @@ import uk.gov.laa.gpfd.services.StreamingService;
 import java.util.Optional;
 import java.util.UUID;
 
-import static uk.gov.laa.gpfd.enums.FileExtension.CSV;
-import static uk.gov.laa.gpfd.enums.FileExtension.XLSX;
+import static uk.gov.laa.gpfd.model.FileExtension.CSV;
+import static uk.gov.laa.gpfd.model.FileExtension.XLSX;
 
 @Slf4j
 @RestController

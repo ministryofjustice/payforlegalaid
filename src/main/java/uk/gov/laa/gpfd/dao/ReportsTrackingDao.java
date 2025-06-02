@@ -18,7 +18,7 @@ public record ReportsTrackingDao(JdbcOperations writeJdbcTemplate) {
 
   public void saveReportsTracking(ReportsTracking reportsTracking) {
       log.debug("Saving tracking information for report ID:{}, creator: {}", reportsTracking.getReportId(), reportsTracking.getReportCreator());
-      int numberOfRowsAffected = this.writeJdbcTemplate.update(INSERT_SQL, reportsTracking.getId().toString(), reportsTracking.getName(),
+      int numberOfRowsAffected = this.writeJdbcTemplate.update(INSERT_SQL, reportsTracking.getIdAsString(), reportsTracking.getReportName(),
           reportsTracking.getReportId().toString(), reportsTracking.getCreationDate(), reportsTracking.getReportCreator(),
           reportsTracking.getReportOwner(), reportsTracking.getReportOutputType(), reportsTracking.getTemplateUrl(), reportsTracking.getReportUrl());
       log.debug("Number of database rows affected by insert to report tracking table: " + numberOfRowsAffected);
