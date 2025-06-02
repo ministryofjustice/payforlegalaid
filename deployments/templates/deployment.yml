@@ -63,6 +63,9 @@ spec:
               
               mkdir ${BASE_FOLDER}
               tar xzf /liquibase/changelog/liquibase-changelogs.tar.gz -C ${BASE_FOLDER}
+              ls -R ${BASE_FOLDER}
+              echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++"
+              cat ${CHANGELOG}
               
               if [ ! -f ${CHANGELOG} ]; then
                 echo "ERROR: Changelog file not found at ${CHANGELOG}"
