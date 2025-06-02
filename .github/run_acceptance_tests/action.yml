@@ -15,6 +15,7 @@ runs:
       with:
         distribution: 'corretto'
         java-version: '17'
+        cache: 'maven'
 
     - name: Checkout source code repo
       uses: actions/checkout@v4
@@ -24,14 +25,14 @@ runs:
     - name: Build source code
       run: |
         cd sourceCode
-        mvn -B -DskipTests clean install -s .github/settings.xml
+        mvn -B -DskipTests clean install -s .github/settings.xml -Dmaven.repo.local=${{ github.workspace }}/.m2/repository
       shell:
         bash
 
     - name: Run tests
       run: |
         cd testCode
-        mvn -B clean test -s .github/settings.xml
+        mvn -B clean test -s .github/settings.xml -Dmaven.repo.local=${{ github.workspace }}/.m2/repository
 
       shell:
         bash
