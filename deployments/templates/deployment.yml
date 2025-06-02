@@ -95,7 +95,7 @@ spec:
                 done
               
                 echo "Could not establish database connection"
-                exit 0
+                exit 1
               }
               
               run_update() {
