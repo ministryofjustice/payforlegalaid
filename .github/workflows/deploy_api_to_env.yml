@@ -137,7 +137,7 @@ jobs:
           
           CHANGELOG_FOLDER="payforlegalaid-data/data"
           ARCHIVE_NAME="liquibase-changelogs.tar.gz"
-          MAX_SIZE_MB=0
+          MAX_SIZE_MB=100
           CURRENT_SIZE_MB=$(du -sm ${CHANGELOG_FOLDER} | cut -f1)          
           
           if [ "$CURRENT_SIZE_MB" -gt "$MAX_SIZE_MB" ]; then
