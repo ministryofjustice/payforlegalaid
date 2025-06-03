@@ -138,7 +138,7 @@ jobs:
           mkdir -p /tmp/liquibase-config
           cp -r payforlegalaid-data/data/* /tmp/liquibase-config/
 
-          tar czf liquibase-changelogs.tar.gz -C /tmp liquibase-config
+          tar czf liquibase-changelog.tar.gz -C /tmp liquibase-config
           
           FOLDER_DIFF_SHA=$(sha256sum liquibase-changelogs.tar.gz | cut -d' ' -f1)
   
