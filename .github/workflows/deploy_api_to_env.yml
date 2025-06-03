@@ -134,17 +134,19 @@ jobs:
           kubectl config set-credentials deploy-user --token=${{ secrets.kube_token }}
           kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
           kubectl config use-context ${KUBE_CLUSTER}
+          
+          ARCHIVE_NAME="liquibase-changelog.tar.gz"
 
           mkdir -p /tmp/liquibase-config
           cp -r payforlegalaid-data/data/* /tmp/liquibase-config/
 
-          tar czf liquibase-changelog.tar.gz -C /tmp liquibase-config
+          tar czf ${ARCHIVE_NAME} -C /tmp liquibase-config
           
-          FOLDER_DIFF_SHA=$(sha256sum liquibase-changelogs.tar.gz | cut -d' ' -f1)
+          FOLDER_DIFF_SHA=$(sha256sum ${ARCHIVE_NAME} | cut -d' ' -f1)
   
           kubectl create configmap liquibase-changelog \
           --namespace ${KUBE_NAMESPACE} \
-          --from-file=liquibase-changelogs.tar.gz=liquibase-changelogs.tar.gz \
+          --from-file=${ARCHIVE_NAME}=${ARCHIVE_NAME} \
           --dry-run=client -o yaml | \
           yq eval '
           .metadata.annotations."diff-sha/xml" = "'"$FOLDER_DIFF_SHA"'" |
