@@ -138,7 +138,7 @@ jobs:
           ARCHIVE_NAME="liquibase-changelogs.tar.gz"
 
           mkdir -p /tmp/liquibase-config
-          cp -r payforlegalaid-data/data/* /tmp/liquibase-config/
+          rsync -av --include="*.xml" payforlegalaid-data/data/* /tmp/liquibase-config/
 
           tar czf ${ARCHIVE_NAME} -C /tmp liquibase-config
           cp payforlegalaid-data/data/master-changelog.xml changelog.tar.gz
