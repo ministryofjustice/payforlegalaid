@@ -139,7 +139,7 @@ jobs:
           ARCHIVE_NAME="liquibase-changelogs.tar.gz"
           MAX_SIZE_MB=10
           CURRENT_SIZE_MB=$(du -sm ${CHANGELOG_FOLDER} | cut -f1)          
-          
+          echo "current size: $CURRENT_SIZE_MB"
           if [ "$CURRENT_SIZE_MB" -gt "$MAX_SIZE_MB" ]; then
             echo "❌ Error: Changelogs are ${CURRENT_SIZE_MB}MB which exceeds the ${MAX_SIZE_MB}MB limit "
             exit 1
