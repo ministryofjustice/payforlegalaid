@@ -135,7 +135,7 @@ jobs:
           kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
           kubectl config use-context ${KUBE_CLUSTER}
           
-          ARCHIVE_NAME="liquibase-changelog.tar.gz"
+          ARCHIVE_NAME="liquibase-changelogs.tar.gz"
 
           mkdir -p /tmp/liquibase-config
           cp -r payforlegalaid-data/data/* /tmp/liquibase-config/
