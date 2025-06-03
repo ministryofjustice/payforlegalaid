@@ -52,7 +52,7 @@ spec:
             - -c
             - |
               if [ -z "$MOJFIN_DB_URL" ] || [ -z "$MOJFIN_DEV_WRITE_USERNAME" ] || [ -z "$MOJFIN_DEV_WRITE_PASSWORD" ]; then
-                  echo "ERROR: Required database credentials not set"
+                  echo "❌ ERROR: Required database credentials not set"
                   exit 1
               fi
               
@@ -60,12 +60,21 @@ spec:
               EXPANDED_FOLDER="${BASE_FOLDER}/liquibase-config"
               CHANGELOG_FILENAME="master-changelog.xml"
               CHANGELOG="${EXPANDED_FOLDER}/${CHANGELOG_FILENAME}"
+              ARCHIVE="/liquibase/changelog/liquibase-changelogs.tar.gz"
+              
+              if [ ! -f ${ARCHIVE} ]; then
+                echo "❌ ERROR: Changelog archive file not found at ${ARCHIVE}"
+                exit 1
+              fi
               
               mkdir ${BASE_FOLDER}
-              tar xzf /liquibase/changelog/liquibase-changelogs.tar.gz -C ${BASE_FOLDER}
+              if ! tar xzf ${ARCHIVE} -C ${BASE_FOLDER}; then
+                echo "❌ ERROR: Failed to extract $ARCHIVE"
+                exit 1
+              fi
               
               if [ ! -f ${CHANGELOG} ]; then
-                echo "ERROR: Changelog file not found at ${CHANGELOG}"
+                echo "❌ ERROR: Changelog file not found at ${CHANGELOG}"
                 exit 1
               fi
               
@@ -87,11 +96,11 @@ spec:
                           return 0
                     fi
               
-                    echo "Attempt $i/$max_retries failed. Retrying in $retry_delay seconds..."
+                    echo "⚠️ Attempt $i/$max_retries failed. Retrying in $retry_delay seconds..."
                     sleep $retry_delay
                 done
               
-                echo "Could not establish database connection"
+                echo "❌ Error: Could not establish database connection"
                 exit 1
               }
               
@@ -124,19 +133,19 @@ spec:
 
               echo "Running initial Liquibase update..."
               if run_update; then
-                  echo "Liquibase update completed successfully"
+                  echo "✅ Liquibase update completed successfully"
                   exit 0
               fi
 
-              echo "Initial update failed, performing clean and retrying..."
+              echo "⚠️ Initial update failed, performing clean and retrying..."
               cleanup
 
               echo "Running Liquibase update after clean..."
               if run_update; then
-                  echo "Liquibase update completed successfully after clean"
+                  echo "✅ Liquibase update completed successfully after clean"
                   exit 0
               else
-                  echo "Liquibase update failed even after clean"
+                  echo "❌ Liquibase update failed even after clean"
                   exit 1
               fi
           securityContext:
