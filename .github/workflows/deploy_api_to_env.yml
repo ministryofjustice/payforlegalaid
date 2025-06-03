@@ -141,12 +141,13 @@ jobs:
           cp -r payforlegalaid-data/data/* /tmp/liquibase-config/
 
           tar czf ${ARCHIVE_NAME} -C /tmp liquibase-config
+          cp payforlegalaid-data/data/master-changelog.xml changelog.tar.gz
           
           FOLDER_DIFF_SHA=$(sha256sum ${ARCHIVE_NAME} | cut -d' ' -f1)
   
           kubectl create configmap liquibase-changelog \
           --namespace ${KUBE_NAMESPACE} \
-          --from-file=${ARCHIVE_NAME}=${ARCHIVE_NAME} \
+          --from-file=${ARCHIVE_NAME}=changelog.tar.gz \
           --dry-run=client -o yaml | \
           yq eval '
           .metadata.annotations."diff-sha/xml" = "'"$FOLDER_DIFF_SHA"'" |

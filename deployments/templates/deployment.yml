@@ -60,7 +60,7 @@ spec:
               EXPANDED_FOLDER="${BASE_FOLDER}/liquibase-config"
               CHANGELOG_FILENAME="master-changelog.xml"
               CHANGELOG="${EXPANDED_FOLDER}/${CHANGELOG_FILENAME}"
-              ARCHIVE="/liquibase/changelog/liquibase-changelog.tar.gz"
+              ARCHIVE="/liquibase/changelog/liquibase-changelogs.tar.gz"
               
               if [ ! -f ${ARCHIVE} ]; then
                 echo "❌ ERROR: Changelog archive file not found at ${ARCHIVE}"
