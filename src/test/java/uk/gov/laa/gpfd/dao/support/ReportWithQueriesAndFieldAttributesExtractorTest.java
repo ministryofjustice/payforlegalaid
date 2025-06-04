@@ -2,7 +2,9 @@ package uk.gov.laa.gpfd.dao.support;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import uk.gov.laa.gpfd.model.ImmutableReportOwner;
 import uk.gov.laa.gpfd.model.ReportQuerySql;
+import uk.gov.laa.gpfd.model.TemplateDocument;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -36,7 +38,7 @@ class ReportWithQueriesAndFieldAttributesExtractorTest {
         when(resultSet.next()).thenReturn(true, true, false); // Two rows, then end
         when(resultSet.getString("ID")).thenReturn(reportId.toString());
         when(resultSet.getString("NAME")).thenReturn("Test Report");
-        when(resultSet.getString("TEMPLATE_SECURE_DOCUMENT_ID")).thenReturn("TEMPLATE_123");
+        when(resultSet.getString("TEMPLATE_SECURE_DOCUMENT_ID")).thenReturn("0d4da9ec-b0b3-4371-af10-f375330d85d3");
         when(resultSet.getTimestamp("REPORT_CREATION_DATE")).thenReturn(new Timestamp(System.currentTimeMillis()));
         when(resultSet.getTimestamp("LAST_DATABASE_REFRESH_DATETIME")).thenReturn(new Timestamp(System.currentTimeMillis()));
         when(resultSet.getString("DESCRIPTION")).thenReturn("Test Description");
@@ -55,7 +57,7 @@ class ReportWithQueriesAndFieldAttributesExtractorTest {
         when(resultSet.getString("MAPPED_NAME")).thenReturn("mapped_column");
         when(resultSet.getString("FORMAT")).thenReturn("dd/MM/yyyy");
         when(resultSet.getString("FORMAT_TYPE")).thenReturn("DATE");
-        when(resultSet.getString("EXTENSION")).thenReturn("xls");
+        when(resultSet.getString("EXTENSION")).thenReturn("xlsx");
         when(resultSet.getDouble("COLUMN_WIDTH")).thenReturn(10.5);
 
         // When
@@ -68,12 +70,16 @@ class ReportWithQueriesAndFieldAttributesExtractorTest {
         var report = reports.iterator().next();
         assertEquals(reportId, report.getId());
         assertEquals("Test Report", report.getName());
-        assertEquals("TEMPLATE_123", report.getTemplateSecureDocumentId());
+        assertEquals(TemplateDocument.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d3"), report.getTemplateDocument());
         assertEquals("Test Description", report.getDescription());
         assertEquals(30, report.getNumDaysToKeep());
-        assertEquals("Owner Name", report.getReportOwnerName());
-        assertEquals("owner@example.com", report.getReportOwnerEmail());
-        assertEquals("report.pdf", report.getFileName());
+        ImmutableReportOwner ownerName = ImmutableReportOwner.newBuilder()
+                .withName("Owner Name")
+                .withEmail("owner@example.com")
+                .create();
+        assertEquals("Owner Name", ownerName.getName());
+        assertEquals("owner@example.com", ownerName.getEmail());
+        assertEquals("report.pdf", report.getOutputFileName());
         assertTrue(report.getActive());
 
         // Verify queries
@@ -104,7 +110,7 @@ class ReportWithQueriesAndFieldAttributesExtractorTest {
         when(resultSet.next()).thenReturn(true, false); // One row, then end
         when(resultSet.getString("ID")).thenReturn(reportId.toString());
         when(resultSet.getString("NAME")).thenReturn("Test Report");
-        when(resultSet.getString("TEMPLATE_SECURE_DOCUMENT_ID")).thenReturn("TEMPLATE_123");
+        when(resultSet.getString("TEMPLATE_SECURE_DOCUMENT_ID")).thenReturn("0d4da9ec-b0b3-4371-af10-f375330d85d3");
         when(resultSet.getTimestamp("REPORT_CREATION_DATE")).thenReturn(new Timestamp(System.currentTimeMillis()));
         when(resultSet.getTimestamp("LAST_DATABASE_REFRESH_DATETIME")).thenReturn(new Timestamp(System.currentTimeMillis()));
         when(resultSet.getString("DESCRIPTION")).thenReturn("Test Description");
@@ -116,7 +122,7 @@ class ReportWithQueriesAndFieldAttributesExtractorTest {
         when(resultSet.getString("ACTIVE")).thenReturn("Y");
         when(resultSet.getString("REPORT_OWNER_EMAIL")).thenReturn("owner@example.com");
         when(resultSet.getString("FILE_NAME")).thenReturn("report.pdf");
-        when(resultSet.getString("EXTENSION")).thenReturn("xls");
+        when(resultSet.getString("EXTENSION")).thenReturn("xlsx");
         when(resultSet.getString("QUERY_ID")).thenReturn(null); // Null query ID
 
         // When
@@ -140,11 +146,11 @@ class ReportWithQueriesAndFieldAttributesExtractorTest {
         when(resultSet.next()).thenReturn(true, false); // One row, then end
         when(resultSet.getString("ID")).thenReturn(reportId.toString());
         when(resultSet.getString("NAME")).thenReturn("Test Report");
-        when(resultSet.getString("TEMPLATE_SECURE_DOCUMENT_ID")).thenReturn("TEMPLATE_123");
+        when(resultSet.getString("TEMPLATE_SECURE_DOCUMENT_ID")).thenReturn("0d4da9ec-b0b3-4371-af10-f375330d85d3");
         when(resultSet.getTimestamp("REPORT_CREATION_DATE")).thenReturn(new Timestamp(System.currentTimeMillis()));
         when(resultSet.getTimestamp("LAST_DATABASE_REFRESH_DATETIME")).thenReturn(new Timestamp(System.currentTimeMillis()));
         when(resultSet.getString("DESCRIPTION")).thenReturn("Test Description");
-        when(resultSet.getString("EXTENSION")).thenReturn("xls");
+        when(resultSet.getString("EXTENSION")).thenReturn("xlsx");
         when(resultSet.getInt("NUM_DAYS_TO_KEEP")).thenReturn(30);
         when(resultSet.getString("REPORT_CREATOR_NAME")).thenReturn("Creator Name");
         when(resultSet.getString("REPORT_CREATOR_EMAIL")).thenReturn("creator@example.com");

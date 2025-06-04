@@ -3,7 +3,7 @@ package uk.gov.laa.gpfd.services.stream;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import uk.gov.laa.gpfd.enums.FileExtension;
+import uk.gov.laa.gpfd.model.FileExtension;
 
 import java.util.UUID;
 

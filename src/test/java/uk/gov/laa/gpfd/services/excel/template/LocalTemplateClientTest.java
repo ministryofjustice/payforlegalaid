@@ -9,6 +9,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.UUID;
+
 class LocalTemplateClientTest {
 
     private TemplateClient client;
@@ -26,7 +28,7 @@ class LocalTemplateClientTest {
             "eee30b23-2c8d-4b4b-bb11-8cd67d07915c"
     })
     void shouldReturnInputStreamForValidId(String id) {
-        assertNotNull(client.findTemplateById(id));
+        assertNotNull(client.findTemplateById(UUID.fromString(id)));
     }
 
     @Test

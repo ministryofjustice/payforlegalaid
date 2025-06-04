@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
 import uk.gov.laa.gpfd.data.ReportListEntryTestDataFactory;
-import uk.gov.laa.gpfd.enums.FileExtension;
+import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 import uk.gov.laa.gpfd.services.ReportManagementService;

@@ -21,7 +21,7 @@ import uk.gov.laa.gpfd.model.ReportsTracking;
 public class ReportsTrackingMapper extends AbstractReportMapper  {
 
     @Autowired
-    public ReportsTrackingMapper(AppConfig appConfig) {
+    private ReportsTrackingMapper(AppConfig appConfig) {
         super(appConfig);
     }
 
@@ -35,16 +35,10 @@ public class ReportsTrackingMapper extends AbstractReportMapper  {
      * @throws IllegalStateException if URL construction fails
      */
     public ReportsTracking map(Report report, String currentUserName) {
-        return ImmutableReportsTracking.builder()
-                .id(report.getId())
-                .name(report.getName())
+        return ImmutableReportsTracking.builderFor(report)
                 .reportUrl(constructReportUrl(report))
                 .creationDate(currentTimestamp())
-                .reportId(report.getId())
                 .reportCreator(currentUserName)
-                .reportOwner(report.getReportOwnerName())
-                .reportOutputType(report.getReportOutputType().toString())
-                .templateUrl(report.getTemplateSecureDocumentId())
                 .build();
     }
 

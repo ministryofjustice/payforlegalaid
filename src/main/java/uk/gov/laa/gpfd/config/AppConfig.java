@@ -22,7 +22,7 @@ import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.dao.stream.AbstractStreamingDao;
 import uk.gov.laa.gpfd.dao.stream.StreamingDao;
 import uk.gov.laa.gpfd.dao.support.ResultSetToMapMapper;
-import uk.gov.laa.gpfd.enums.FileExtension;
+import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.model.FieldAttributes;
 import uk.gov.laa.gpfd.services.DataStreamer;
 import uk.gov.laa.gpfd.services.StreamingService;

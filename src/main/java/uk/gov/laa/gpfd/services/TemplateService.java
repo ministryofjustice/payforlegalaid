@@ -2,6 +2,7 @@ package uk.gov.laa.gpfd.services;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
+import uk.gov.laa.gpfd.model.TemplateDocument;
 import uk.gov.laa.gpfd.services.excel.template.TemplateClient;
 import uk.gov.laa.gpfd.utils.SecurityPolicy;
 import uk.gov.laa.gpfd.utils.WorkbookFactory;
@@ -24,10 +25,10 @@ public sealed interface TemplateService permits TemplateService.ExcelTemplateSer
      * This method is responsible for locating and loading the template into a format suitable for
      * further processing.
      *
-     * @param id the unique identifier of the template to retrieve
+     * @param template the template to retrieve
      * @return the {@link Workbook} representing the template
      */
-    Workbook findTemplateById(String id);
+    Workbook findTemplateById(TemplateDocument template);
 
     record ExcelTemplateService(TemplateClient repository, WorkbookFactory factory) implements TemplateService {
 
@@ -37,16 +38,16 @@ public sealed interface TemplateService permits TemplateService.ExcelTemplateSer
          * into a {@link Workbook} using custom factory {@link WorkbookFactory}. If an error occurs during loading, a
          * {@link ExcelTemplateCreationException} is thrown with a descriptive message.
          *
-         * @param id the unique identifier of the template to retrieve
+         * @param template the template to retrieve
          * @return the {@link Workbook} representing the template
          * @throws ExcelTemplateCreationException if the template cannot be loaded
          */
         @Override
-        public Workbook findTemplateById(String id) {
-            try (var input = repository.findTemplateById(id)) {
+        public Workbook findTemplateById(TemplateDocument template) {
+            try (var input = repository.findTemplateById(template.getId())) {
                 return factory.create(input);
             } catch (IOException e) {
-                throw new TemplateResourceException.ExcelTemplateCreationException("Failed to load template for ID: " + id, e);
+                throw new TemplateResourceException.ExcelTemplateCreationException("Failed to load template for ID: " + template, e);
             }
         }
 

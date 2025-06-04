@@ -56,8 +56,8 @@ class SheetDataWriterTest {
         );
 
         fieldAttributes = List.of(
-                builder().sourceName("source1").format("xls").mappedName("foo").columnWidth(0).reportQueryId(UUID.randomUUID()).build(),
-                builder().sourceName("source2").format("xls").mappedName("foo").columnWidth(0).reportQueryId(UUID.randomUUID()).build()
+                builder().sourceName("source1").format("xlsx").mappedName("foo").columnWidth(0).reportQueryId(UUID.randomUUID()).build(),
+                builder().sourceName("source2").format("xlsx").mappedName("foo").columnWidth(0).reportQueryId(UUID.randomUUID()).build()
         );
     }
 

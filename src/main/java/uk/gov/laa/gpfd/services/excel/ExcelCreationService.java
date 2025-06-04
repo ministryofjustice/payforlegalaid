@@ -49,7 +49,7 @@ public record ExcelCreationService(
     @Override
     public void stream(Report report, OutputStream output) {
         log.debug("Retrieving template for report: {}", report.getName());
-        try(var workbook = templateLoader.findTemplateById(report.getTemplateSecureDocumentId())) {
+        try(var workbook = templateLoader.findTemplateById(report.getTemplateDocument())) {
             log.debug("Updating template with data for report: {}", report.getName());
             updateTemplateWithData(workbook, report);
             workbook.write(output);

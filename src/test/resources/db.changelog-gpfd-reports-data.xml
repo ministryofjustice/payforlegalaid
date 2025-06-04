@@ -19,7 +19,7 @@
 
     <insert tableName="REPORT_OUTPUT_TYPES" schemaName="GPFD">
       <column name="ID" value="bd098666-94e4-4b0e-822c-8e5dfb04c909"/>
-      <column name="EXTENSION" value="new"/>
+      <column name="EXTENSION" value="csv"/>
       <column name="DESCRIPTION" value="Brand new Output Type"/>
     </insert>
 

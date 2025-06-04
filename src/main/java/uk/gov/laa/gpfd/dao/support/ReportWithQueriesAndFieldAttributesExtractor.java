@@ -4,13 +4,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 import uk.gov.laa.gpfd.model.FieldAttributes;
+import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.model.ImmutableFieldAttributes;
 import uk.gov.laa.gpfd.model.ImmutableReport;
 import uk.gov.laa.gpfd.model.ImmutableReportOutputType;
+import uk.gov.laa.gpfd.model.ImmutableReportOwner;
 import uk.gov.laa.gpfd.model.ImmutableReportQuery;
 import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.model.ReportQuery;
 import uk.gov.laa.gpfd.model.ReportQuerySql;
+import uk.gov.laa.gpfd.model.TemplateDocument;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -58,18 +61,20 @@ public class ReportWithQueriesAndFieldAttributesExtractor implements ResultSetEx
                     return ImmutableReport.builder()
                             .id(id)
                             .name(rs.getString("NAME"))
-                            .templateSecureDocumentId(rs.getString("TEMPLATE_SECURE_DOCUMENT_ID"))
-                            .reportCreationTime(rs.getTimestamp("REPORT_CREATION_DATE"))
+                            .templateDocument(TemplateDocument.fromString(rs.getString("TEMPLATE_SECURE_DOCUMENT_ID")))
+                            .creationTime(rs.getTimestamp("REPORT_CREATION_DATE"))
                             .lastDatabaseRefreshDate(rs.getTimestamp("LAST_DATABASE_REFRESH_DATETIME"))
                             .description(description)
                             .numDaysToKeep(rs.getInt("NUM_DAYS_TO_KEEP"))
-                            .reportOwnerId(UUID.fromString(rs.getString("REPORT_OWNER_ID")))
-                            .reportOwnerName(rs.getString("REPORT_OWNER_NAME"))
+                            .owner(ImmutableReportOwner.newBuilder()
+                                    .withId(UUID.fromString(rs.getString("REPORT_OWNER_ID")))
+                                    .withName(rs.getString("REPORT_OWNER_NAME"))
+                                    .withEmail(rs.getString("REPORT_OWNER_EMAIL"))
+                                    .create())
                             .active(rs.getString("ACTIVE").equals("Y"))
-                            .reportOwnerEmail(rs.getString("REPORT_OWNER_EMAIL"))
-                            .fileName(rs.getString("FILE_NAME"))
-                            .reportOutputType(ImmutableReportOutputType.builder()
-                                    .extension(rs.getString("EXTENSION"))
+                            .outputFileName(rs.getString("FILE_NAME"))
+                            .outputType(ImmutableReportOutputType.builder()
+                                    .fileExtension(FileExtension.fromString(rs.getString("EXTENSION")))
                                     .description(description)
                                     .build())
                             .queries(new ArrayList<>())
