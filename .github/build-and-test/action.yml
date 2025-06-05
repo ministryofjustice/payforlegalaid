@@ -14,19 +14,10 @@ runs:
         java-version: '17'
         cache: 'maven'
 
-    - name: Checkout GitHub repository
-      uses: actions/checkout@v4
-      with:
-        repository: ministryofjustice/payforlegalaid-swagger
-        path: spec
-        ssh-key: ${{ env.SOCKET_KEY }}
-
-    - name: Build dependency
-      run: |
-        cd spec
-        mvn clean install -Dmaven.repo.local=${{ github.workspace }}/.m2/repository
-      shell:
-        bash
+    - name: Build OpenAPI dependency
+      uses: './.github/checkout-build-openapi'
+      env:
+        SOCKET_KEY: ${{ env.SOCKET_KEY }}
 
     - name: Run tests
       run: |
