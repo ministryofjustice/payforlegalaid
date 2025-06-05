@@ -16,8 +16,8 @@ jobs:
       steps:
         - uses: actions/checkout@v4
 
-        - name: Build and test
-          uses: './.github/build-and-test'
+        - name: Build OpenAPI dependency
+          uses: './.github/checkout-build-openapi'
           env:
             SOCKET_KEY: ${{ secrets.DEV_API_SOCKET_KEY }}
 
