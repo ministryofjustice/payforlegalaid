@@ -1,15 +1,23 @@
 package uk.gov.laa.gpfd.dao.sql;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.jdbc.core.RowCallbackHandler;
+import uk.gov.laa.gpfd.model.FieldProjection;
+import uk.gov.laa.gpfd.services.excel.editor.CellValueSetter;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static uk.gov.laa.gpfd.dao.sql.ChannelRowHandler.SheetChannelRowHandler;
 import static uk.gov.laa.gpfd.dao.sql.ChannelRowHandler.StreamChannelRowHandler;
 import static uk.gov.laa.gpfd.dao.sql.ValueExtractor.ofHeader;
 import static uk.gov.laa.gpfd.dao.sql.ValueExtractor.ofRow;
@@ -24,7 +32,7 @@ import static uk.gov.laa.gpfd.dao.sql.ValueExtractor.ofRow;
 public sealed interface ChannelRowHandler extends
         RowCallbackHandler,
         AutoCloseable
-        permits StreamChannelRowHandler {
+        permits SheetChannelRowHandler, StreamChannelRowHandler {
 
     /**
      * Creates a {@code ChannelRowHandler} that writes to the specified output stream.
@@ -37,6 +45,61 @@ public sealed interface ChannelRowHandler extends
         Objects.requireNonNull(stream, "OutputStream cannot be null");
         return new StreamChannelRowHandler(stream);
     }
+
+    static ChannelRowHandler forStream(Sheet sheet, List<FieldProjection> fieldAttributes, CellValueSetter cellValueSetter) {
+        return new SheetChannelRowHandler(sheet, fieldAttributes, cellValueSetter);
+    }
+
+    final class SheetChannelRowHandler implements ChannelRowHandler {
+        private final Sheet sheet;
+        private final Map<String, Integer> columnMapping;
+        private final CellValueSetter cellValueSetter;
+        private int rowNum = 1;
+
+        public SheetChannelRowHandler(Sheet sheet,
+                                      List<FieldProjection> fieldAttributes,
+                                      CellValueSetter cellValueSetter) {
+            this.sheet = sheet;
+            this.cellValueSetter = cellValueSetter;
+            this.columnMapping = createColumnMapping(sheet, fieldAttributes);
+        }
+
+        @Override
+        public void processRow(ResultSet rs) throws SQLException {
+            var row = sheet.createRow(rowNum++);
+            var metaData = rs.getMetaData();
+
+            for (int i = 1; i <= metaData.getColumnCount(); i++) {
+                var columnName = metaData.getColumnLabel(i);
+
+                if (columnMapping.containsKey(columnName)) {
+                    Cell cell = row.createCell(columnMapping.get(columnName));
+                    var value = rs.getObject(i);
+                    cellValueSetter.setCellValue(cell, value != null ? value : "");
+                }
+            }
+        }
+
+        private Map<String, Integer> createColumnMapping(Sheet sheet, List<FieldProjection> fieldAttributes) {
+            var mapping = new HashMap<String, Integer>();
+            var headerRow = sheet.getRow(0);
+
+            for (var pair : fieldAttributes) {
+                for (var headerCell : headerRow) {
+                    if (pair.getMappedName().equals(headerCell.getStringCellValue())) {
+                        mapping.put(pair.getSourceName(), headerCell.getColumnIndex());
+                        break;
+                    }
+                }
+            }
+            return mapping;
+        }
+
+        @Override
+        public void close() {
+        }
+    }
+
 
     /**
      * Stream-based implementation of {@link ChannelRowHandler} that writes to an {@link OutputStream}.
