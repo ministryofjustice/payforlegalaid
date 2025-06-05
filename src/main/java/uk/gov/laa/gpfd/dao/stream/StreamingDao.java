@@ -1,8 +1,12 @@
 package uk.gov.laa.gpfd.dao.stream;
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.dao.DataAccessException;
 import uk.gov.laa.gpfd.model.ReportQuerySql;
+import uk.gov.laa.gpfd.services.excel.editor.CellValueSetter;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 /**
@@ -34,4 +38,10 @@ public interface StreamingDao<T> {
      * @throws DataAccessException      if there is any problem executing the query
      */
     Stream<T> queryForStream(ReportQuerySql sql, Object... params) throws DataAccessException;
+
+
+    public void queryForExcelStream(ReportQuerySql sql,
+                                            Sheet sheet,
+                                            List<Pair<String, String>> fieldAttributes,
+                                            CellValueSetter cellValueSetter);
 }

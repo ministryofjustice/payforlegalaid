@@ -1,12 +1,14 @@
 package uk.gov.laa.gpfd.services.excel.editor;
 
+import org.apache.commons.math3.util.Pair;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import uk.gov.laa.gpfd.model.FieldAttributes;
+import uk.gov.laa.gpfd.model.*;
 import uk.gov.laa.gpfd.services.excel.formatting.CellFormatter;
 
-import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
@@ -25,9 +27,8 @@ public interface SheetDataWriter {
      *
      * @param sheet          the sheet to which the data will be written
      * @param data          the data to be written, represented as a list of maps where each map corresponds to a row
-     * @param fieldAttributes the collection of {@link FieldAttributes} that define how each field is mapped and formatted
      */
-    void writeDataToSheet(Sheet sheet, Stream<Map<String, Object>> data, Collection<FieldAttributes> fieldAttributes);
+    void writeDataToSheet(Mapping report, Sheet sheet, Stream<Map<String, Object>> data);
 
     /**
      * Writes the provided data to the specified {@link Sheet} using the given {@link CellValueSetter} and
@@ -40,16 +41,40 @@ public interface SheetDataWriter {
      * @param stream            the data to be written, represented as a list of maps where each map corresponds to a row
      * @param fieldAttributes the collection of {@link FieldAttributes} that define how each field is mapped and formatted
      */
-    default void writeDataToSheet(CellValueSetter cellValueSetter, CellFormatter cellFormatter,
-                                  Sheet sheet, Stream<Map<String, Object>> stream, Collection<FieldAttributes> fieldAttributes) {
+    default void writeDataToSheet(Mapping report, CellValueSetter cellValueSetter, Sheet sheet, Stream<Map<String, Object>> stream) {
         final AtomicInteger rowNum = new AtomicInteger(1);
-        stream.forEach(data -> writeRowData(
-                sheet.createRow(rowNum.getAndIncrement()),
-                data,
-                fieldAttributes,
-                cellValueSetter,
-                cellFormatter
-        ));
+
+        var columnMapping = new HashMap<String, Integer>();
+        List<Pair<String, String>> list = report.getFieldAttributes().stream()
+                .map(e -> new Pair<>(e.getSourceName(), e.getMappedName()))
+                .toList();
+
+        for (Cell headerCell : sheet.getRow(0)) {
+            Pair<String, String> stringStringPair = list.stream()
+                    .filter(e -> e.getValue().equals(headerCell.getStringCellValue()))
+                    .findFirst().get();
+            columnMapping.put(stringStringPair.getFirst(), headerCell.getColumnIndex());
+        }
+
+        stream.forEach(data -> {
+            if (rowNum.get() % 500 == 0) {
+                System.out.println(rowNum.get() + ": " + data);
+            }
+            var row = sheet.createRow(rowNum.getAndIncrement());
+            for (Map.Entry<String, Object> stringObjectEntry : data.entrySet()) {
+                String key = stringObjectEntry.getKey();
+                Object value = stringObjectEntry.getValue();
+                if (columnMapping.containsKey(key)) {
+                    Integer column = columnMapping.get(key);
+                    Cell cell = row.createCell(column);
+                    if (value == null) {
+                        cellValueSetter.setCellValue(cell, "");
+                    }else {
+                        cellValueSetter.setCellValue(cell, value);
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -63,34 +88,21 @@ public interface SheetDataWriter {
      * @param cellValueSetter the {@link CellValueSetter} used to set values in the cells
      * @param cellFormatter   the {@link CellFormatter} used to apply formatting to the cells
      */
-    private void writeRowData(Row row, Map<String, Object> rowData, Collection<FieldAttributes> fieldAttributes,
-                              CellValueSetter cellValueSetter, CellFormatter cellFormatter) {
-        var cellIndex = 0;
+//    private void writeRowData(Row row, Map<String, Object> rowData,                              CellValueSetter cellValueSetter) {
+//        final AtomicInteger cellIndex = new AtomicInteger(0);
+//
+//        rowData.forEach((s, o) -> {
+//            Cell cell = row.createCell(cellIndex.getAndIncrement());
+//            row.
+//        });
+//        for (var fieldAttribute : fieldAttributes) {
+//            var value = rowData.get(fieldAttribute.getSourceName());
+//            var cell = row.createCell(cellIndex++);
+//            if (value == null) {
+//                continue;
+//            }
+//            cellValueSetter.setCellValue(cell, value);
+//        }
+//    }
 
-        for (var fieldAttribute : fieldAttributes) {
-            var value = rowData.get(fieldAttribute.getSourceName());
-            var cell = row.createCell(cellIndex++);
-            if (value == null) {
-                continue;
-            }
-            setCellValueAndFormat(cell, value, fieldAttribute, cellValueSetter, cellFormatter);
-        }
-    }
-
-    /**
-     * Sets the value of a cell and applies formatting based on the provided {@link FieldAttributes}.
-     * This method uses the {@link CellValueSetter} to set the cell value and the {@link CellFormatter}
-     * to apply formatting to the cell.
-     *
-     * @param cell            the cell to which the value and formatting will be applied
-     * @param value           the value to be set in the cell
-     * @param fieldAttribute  the {@link FieldAttributes} that define how the field is formatted
-     * @param cellValueSetter the {@link CellValueSetter} used to set the cell value
-     * @param cellFormatter   the {@link CellFormatter} used to apply formatting to the cell
-     */
-    private void setCellValueAndFormat(Cell cell, Object value, FieldAttributes fieldAttribute,
-                                       CellValueSetter cellValueSetter, CellFormatter cellFormatter) {
-        cellValueSetter.setCellValue(cell, value);
-        cellFormatter.applyFormatting(cell.getSheet(), cell, fieldAttribute);
-    }
 }

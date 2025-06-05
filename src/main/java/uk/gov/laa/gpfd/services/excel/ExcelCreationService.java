@@ -1,21 +1,31 @@
 package uk.gov.laa.gpfd.services.excel;
 
+import jakarta.servlet.ServletOutputStream;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.catalina.connector.ClientAbortException;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.poi.ss.usermodel.*;
 import uk.gov.laa.gpfd.dao.stream.StreamingDao;
+import uk.gov.laa.gpfd.model.FieldAttributes;
+import uk.gov.laa.gpfd.model.Mapping;
 import uk.gov.laa.gpfd.model.Report;
+import uk.gov.laa.gpfd.model.ReportQuery;
 import uk.gov.laa.gpfd.services.DataStreamer;
 import uk.gov.laa.gpfd.services.TemplateService;
+import uk.gov.laa.gpfd.services.excel.editor.CellValueSetter;
 import uk.gov.laa.gpfd.services.excel.editor.FormulaCalculator;
 import uk.gov.laa.gpfd.services.excel.editor.PivotTableRefresher;
 import uk.gov.laa.gpfd.services.excel.editor.SheetDataWriter;
+import uk.gov.laa.gpfd.services.excel.formatting.CellFormatter;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static uk.gov.laa.gpfd.exception.TemplateResourceException.ExcelTemplateCreationException;
 import static uk.gov.laa.gpfd.services.excel.util.SheetUtils.findSheetByName;
+import static uk.gov.laa.gpfd.utils.ConsumerUtil.applyIfPresent;
 
 /**
  * The class is a Spring component responsible for generating Excel workbooks
@@ -35,7 +45,9 @@ public record ExcelCreationService(
         StreamingDao<Map<String, Object>> dataFetcher,
         SheetDataWriter sheetDataWriter,
         PivotTableRefresher pivotTableRefresher,
-        FormulaCalculator formulaCalculator
+        FormulaCalculator formulaCalculator,
+        CellFormatter cellFormatter,
+        CellValueSetter cellValueSetter
 ) implements DataStreamer {
 
     /**
@@ -49,12 +61,21 @@ public record ExcelCreationService(
     @Override
     public void stream(Report report, OutputStream output) {
         log.debug("Retrieving template for report: {}", report.getName());
-        try(var workbook = templateLoader.findTemplateById(report.getTemplateDocument())) {
-            log.debug("Updating template with data for report: {}", report.getName());
-            updateTemplateWithData(workbook, report);
-            workbook.write(output);
-            log.debug("Successfully built Excel workbook for report: {}", report.getName());
+        try {
+            var workbook = templateLoader.findTemplateById(report.getTemplateDocument());
+            try {
+                log.debug("Updating template with data for report: {}", report.getName());
+                updateTemplateWithData(workbook, report);
+
+                workbook.write(output);
+                log.debug("Successfully built Excel workbook for report: {}", report.getName());
+            } finally {
+                workbook.close();
+            }
         } catch (IOException e) {
+            log.info("Error");
+            log.info(e.getMessage());
+            e.printStackTrace();
             throw new ExcelTemplateCreationException(e, "Failed to generate Excel report '%s' due to I/O error", report.getName());
         }
     }
@@ -68,13 +89,47 @@ public record ExcelCreationService(
      * @param report   the report containing the queries and field attributes
      */
     private void updateTemplateWithData(Workbook workbook, Report report) {
-        for (var query : report.extractAllMappings()) {
-            findSheetByName(workbook, query.getSheetName())
-                    .ifPresent(sheet -> sheetDataWriter.writeDataToSheet(
-                            sheet,
-                            dataFetcher.queryForStream(query.getQuery()),
-                            query.getFieldAttributes()
-                    ));
+        var boldStyle = workbook.createCellStyle();
+        var boldFont = workbook.createFont();
+        boldFont.setBold(true);
+        boldStyle.setFont(boldFont);
+
+        for (Mapping query : report.extractAllMappings()) {
+            Sheet sheet = workbook.createSheet(query.getSheetName());
+            Row row = sheet.createRow(0);
+            AtomicInteger counter = new AtomicInteger(0);
+
+            for (FieldAttributes fieldAttribute : query.getFieldAttributes()) {
+                String mappedName = fieldAttribute.getMappedName();
+                Cell cell = row.createCell(counter.get());
+                cell.setCellValue(mappedName);
+                cell.setCellStyle(boldStyle);
+
+                if (fieldAttribute.getFormat() != null) {
+                    var cellStyle = workbook.createCellStyle();
+                    cellStyle.setDataFormat(workbook.createDataFormat().getFormat(fieldAttribute.getFormat() ));
+                    sheet.setDefaultColumnStyle(counter.getAndIncrement(), cellStyle);
+                } else {
+                    var cellStyle = workbook.createCellStyle();
+                    sheet.setDefaultColumnStyle(counter.getAndIncrement(), cellStyle);
+                }
+
+                Optional.of(fieldAttribute.getColumnWidth())
+                        .filter(width -> width > 0)
+                        .map(width -> (int) (width * 256))
+                        .ifPresent(width -> sheet.setColumnWidth(cell.getColumnIndex(), width));
+
+            }
+            List<Pair<String, String>> list = query.getFieldAttributes().stream()
+                    .map(e -> Pair.of(e.getSourceName(), e.getMappedName()))
+                    .toList();
+
+            dataFetcher.queryForExcelStream(query.getQuery(), sheet, list, cellValueSetter);
+//            sheetDataWriter.writeDataToSheet(
+//                    query,
+//                    sheet,
+//                    dataFetcher.queryForStream(query.getQuery())
+//            );
         }
 
         pivotTableRefresher.refreshPivotTables(workbook);

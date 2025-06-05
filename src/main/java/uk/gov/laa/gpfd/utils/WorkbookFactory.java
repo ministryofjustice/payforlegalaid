@@ -67,7 +67,9 @@ public interface WorkbookFactory {
         return (InputStream input) -> {
             var workbook = self.create(input);
             if (workbook instanceof XSSFWorkbook xssf) {
-                return new SXSSFWorkbook(xssf, rowAccessWindowSize);
+                SXSSFWorkbook sheets = new SXSSFWorkbook(xssf, rowAccessWindowSize);
+                sheets .setCompressTempFiles(true);
+                return sheets;
             }
             throw new IllegalStateException("Expected XSSF workbook but got: " + workbook.getClass().getSimpleName());
         };

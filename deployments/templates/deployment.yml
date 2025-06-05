@@ -163,6 +163,13 @@ spec:
           image: ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
           ports:
             - containerPort: 8080
+          resources:
+            requests:
+              cpu: "4"
+              memory: 12Gi
+            limits:
+              cpu: "8"
+              memory: 24Gi
           env:
             - name: GPFD_URL
               value: https://${GPFD_URL}
@@ -211,7 +218,7 @@ spec:
           securityContext:
             capabilities:
               drop:
-              - ALL
+                - ALL
             runAsNonRoot: true
             allowPrivilegeEscalation: false
             seccompProfile:

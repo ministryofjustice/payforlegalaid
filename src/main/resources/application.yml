@@ -1,6 +1,10 @@
 logging:
   level:
-    root: INFO
+    root: DEBUG
+    org.apache.coyote.http11.Http11Processor: WARN
+    org.apache.tomcat.util.net.NioEndpoint: WARN
+    org.apache.tomcat: WARN
+    org.apache.coyote: WARN
     org:
       springframework:
         security: INFO
@@ -11,7 +15,10 @@ logging:
         transaction: INFO
         web: INFO
 
-
+server:
+  servlet:
+    session:
+      timeout: 0
 management:
   endpoints:
     web:
@@ -23,3 +30,9 @@ springdoc:
     enabled: false
   swagger-ui:
     url: /swagger.yml
+
+
+spring:
+  mvc:
+    async:
+      request-timeout: 3600000

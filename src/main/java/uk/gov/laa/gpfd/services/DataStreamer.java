@@ -5,9 +5,11 @@ import uk.gov.laa.gpfd.dao.JdbcDataStreamer;
 import uk.gov.laa.gpfd.dao.stream.StreamingDao;
 import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.services.excel.ExcelCreationService;
+import uk.gov.laa.gpfd.services.excel.editor.CellValueSetter;
 import uk.gov.laa.gpfd.services.excel.editor.FormulaCalculator;
 import uk.gov.laa.gpfd.services.excel.editor.PivotTableRefresher;
 import uk.gov.laa.gpfd.services.excel.editor.SheetDataWriter;
+import uk.gov.laa.gpfd.services.excel.formatting.CellFormatter;
 
 import java.io.OutputStream;
 import java.util.Map;
@@ -54,8 +56,11 @@ public interface DataStreamer {
                                             StreamingDao<Map<String, Object>> dataFetcher,
                                             SheetDataWriter sheetDataWriter,
                                             PivotTableRefresher pivotTableRefresher,
-                                            FormulaCalculator formulaCalculator) {
-        return new ExcelCreationService(templateLoader, dataFetcher, sheetDataWriter, pivotTableRefresher, formulaCalculator);
+                                            FormulaCalculator formulaCalculator,
+                                            CellFormatter cellFormatter,
+
+                                            CellValueSetter cellValueSetter) {
+        return new ExcelCreationService(templateLoader, dataFetcher, sheetDataWriter, pivotTableRefresher, formulaCalculator, cellFormatter, cellValueSetter);
     }
 
     /**

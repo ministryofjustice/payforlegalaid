@@ -1,12 +1,22 @@
 package uk.gov.laa.gpfd.dao.stream;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
+import uk.gov.laa.gpfd.dao.support.DirectToExcelRowMapper;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.model.ReportQuerySql;
+import uk.gov.laa.gpfd.services.excel.editor.CellValueSetter;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -51,6 +61,22 @@ public abstract class AbstractStreamingDao<T> implements StreamingDao<T> {
         } catch (DataAccessException e) {
             throw new DatabaseReadException.DatabaseFetchException("bad SQL grammar: %s".formatted(sql), e);
         }
+    }
+
+    public void queryForExcelStream(ReportQuerySql sql,
+                                            Sheet sheet,
+                                            List<Pair<String, String>> fieldAttributes,
+                                            CellValueSetter cellValueSetter) {
+        var mapper = new DirectToExcelRowMapper(sheet, fieldAttributes, cellValueSetter);
+        jdbcOperations.query(con -> {
+            var ps = con.prepareStatement(
+                    sql.value(),
+                    ResultSet.TYPE_FORWARD_ONLY,
+                    ResultSet.CONCUR_READ_ONLY
+            );
+            ps.setFetchSize(1_000);
+            return ps;
+        }, mapper);
     }
 
 }

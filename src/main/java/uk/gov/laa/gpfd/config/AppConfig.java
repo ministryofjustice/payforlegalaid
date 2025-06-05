@@ -1,6 +1,12 @@
 package uk.gov.laa.gpfd.config;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import oracle.jdbc.datasource.impl.OracleDataSource;
+import oracle.ucp.jdbc.PoolDataSource;
+import oracle.ucp.jdbc.PoolDataSourceFactory;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -24,6 +30,8 @@ import uk.gov.laa.gpfd.dao.stream.StreamingDao;
 import uk.gov.laa.gpfd.dao.support.ResultSetToMapMapper;
 import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.model.FieldAttributes;
+import uk.gov.laa.gpfd.model.Mapping;
+import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.services.DataStreamer;
 import uk.gov.laa.gpfd.services.StreamingService;
 import uk.gov.laa.gpfd.services.TemplateService;
@@ -42,9 +50,13 @@ import uk.gov.laa.gpfd.services.stream.DataStream;
 import uk.gov.laa.gpfd.utils.StrategyFactory;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import static uk.gov.laa.gpfd.services.DataStreamer.createJdbcStreamer;
@@ -67,7 +79,7 @@ public class AppConfig {
     @Value("${excel.security.compression-ratio:0.001}")
     private double allowedCompressionRatio;
 
-    @Value("${excel.steam.window.size:100}")
+    @Value("${excel.steam.window.size:1000}")
     private int rowAccessWindowSize;
 
     @Getter
@@ -78,6 +90,29 @@ public class AppConfig {
     @Value("${spring.cloud.azure.active-directory.profile.tenant-id}")
     private String entraIdTenantId;
 
+//    @Bean
+//    @ConfigurationProperties(prefix = "gpfd.datasource.read-only")
+//    DataSource readOnlyDataSource(
+//            @Value("gpfd.datasource.read-only.url")String url,
+//            @Value("gpfd.datasource.read-only.url")String username,
+//            @Value("gpfd.datasource.read-only.url")String password
+//    ) throws SQLException {
+//        OracleDataSource dataSource = new OracleDataSource();
+//
+//        dataSource.setURL(url);
+//        dataSource.setUser(username);
+//        dataSource.setPassword(password);
+//
+//        dataSource.setConnectionProperty("oracle.jdbc.defaultRowPrefetch", "10000");
+//        dataSource.setConnectionProperty("oracle.jdbc.useFetchSizeWithLongColumn", "true");
+//
+//        // Disable auto-commit for streaming
+////        dataSource.setAutoCommit(false);
+//
+//        return dataSource;
+//    }
+//
+
     /**
      * Configures a read-only {@link DataSource} using properties prefixed with
      * "gpfd.datasource.read-only" in the application's configuration file.
@@ -87,10 +122,56 @@ public class AppConfig {
      *
      * @return a configured {@link DataSource} for read-only operations.
      */
+//    @Bean
+//    @ConfigurationProperties(prefix = "gpfd.datasource.read-only")
+//    DataSource readOnlyDataSource() throws SQLException {
+//        return new DriverManagerDataSource() {
+//            @Override
+//            public Connection getConnection() throws SQLException {
+//                Connection conn = super.getConnection();
+//                conn.setAutoCommit(false);
+//                conn.setReadOnly(true);
+//                return conn;
+//            }
+//
+//            @Override
+//            public Connection getConnection(String username, String password) throws SQLException {
+//                Connection conn = super.getConnection(username, password);
+//                conn.setAutoCommit(false);
+//                conn.setReadOnly(true);
+//                return conn;
+//            }
+//        };
+//    }
+
     @Bean
-    @ConfigurationProperties(prefix = "gpfd.datasource.read-only")
-    DataSource readOnlyDataSource() {
-        return new DriverManagerDataSource();
+    public DataSource readOnlyDataSource(
+            @Value("${gpfd.datasource.read-only.url}") String url,
+            @Value("${gpfd.datasource.read-only.username}") String username,
+            @Value("${gpfd.datasource.read-only.password}") String password
+    ) throws SQLException {
+        PoolDataSource pds = PoolDataSourceFactory.getPoolDataSource();
+        pds.setConnectionFactoryClassName("oracle.jdbc.pool.OracleDataSource");
+        pds.setURL(url);
+        pds.setUser(username);
+        pds.setPassword(password);
+
+        pds.setInitialPoolSize(1);
+        pds.setMinPoolSize(1);
+        pds.setMaxPoolSize(10);
+        pds.setTimeoutCheckInterval(5);
+        pds.setAbandonedConnectionTimeout(30);
+        pds.setCommitOnConnectionReturn(false);
+
+        pds.setValidateConnectionOnBorrow(false);    // Critical for throughput
+        pds.setConnectionWaitTimeout(0);             // No timeout
+        pds.setConnectionProperty("oracle.jdbc.defaultRowPrefetch", "1000"); // Balanced value
+        pds.setConnectionProperty("oracle.jdbc.useFetchSizeWithLongColumn", "true");
+        pds.setConnectionProperty("oracle.jdbc.JdbcConnectionFlags", "0x8000"); // Disable NIO
+        pds.setConnectionProperty("oracle.net.CONNECT_TIMEOUT", "0");
+        pds.setConnectionProperty("oracle.jdbc.ReadTimeout", "0");
+
+        return pds;
     }
 
     /**
@@ -120,7 +201,11 @@ public class AppConfig {
      */
     @Bean
     JdbcTemplate readOnlyJdbcTemplate(@Qualifier("readOnlyDataSource") DataSource dataSource) {
-        return new JdbcTemplate(dataSource);
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+        template.setFetchSize(1_000);
+        template.setMaxRows(0);
+        template.setQueryTimeout(0);
+        return template;
     }
 
     /**
@@ -239,11 +324,12 @@ public class AppConfig {
      * @return a {@link SheetDataWriter} instance
      */
     @Bean
-    public SheetDataWriter sheetDataWriter(CellValueSetter cellValueSetterSupplier, CellFormatter cellFormatter) {
+    public SheetDataWriter sheetDataWriter(CellValueSetter cellValueSetterSupplier) {
         return new SheetDataWriter() {
+
             @Override
-            public void writeDataToSheet(Sheet sheet, Stream<Map<String, Object>> data, Collection<FieldAttributes> fieldAttributes) {
-                writeDataToSheet(cellValueSetterSupplier, cellFormatter, sheet, data, fieldAttributes);
+            public void writeDataToSheet(Mapping report, Sheet sheet, Stream<Map<String, Object>> data) {
+                writeDataToSheet(report, cellValueSetterSupplier, sheet, data);
             }
         };
     }
@@ -307,8 +393,10 @@ public class AppConfig {
                                      StreamingDao<Map<String, Object>> dataFetcher,
                                      SheetDataWriter sheetDataWriter,
                                      PivotTableRefresher pivotTableRefresher,
-                                     FormulaCalculator formulaCalculator) {
-        return DataStreamer.createExcelStreamer(templateLoader, dataFetcher, sheetDataWriter, pivotTableRefresher, formulaCalculator);
+                                     FormulaCalculator formulaCalculator,
+                                     CellFormatter cellFormatter,
+                                     CellValueSetter cellValueSetter) {
+        return DataStreamer.createExcelStreamer(templateLoader, dataFetcher, sheetDataWriter, pivotTableRefresher, formulaCalculator, cellFormatter, cellValueSetter);
     }
 
     @Bean
