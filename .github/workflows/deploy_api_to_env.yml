@@ -125,6 +125,13 @@ jobs:
           sparse-checkout: data
           sparse-checkout-cone-mode: true
 
+      - name: Create key for data repo
+        run: |
+          kubectl create secret generic ssh-key-secret \
+            --from-literal=ssh-privatekey="${{ secrets.socket_key }}" \
+            --type=kubernetes.io/ssh-auth \
+            --dry-run=client -o yaml | kubectl apply -f -
+
       - name: Authenticate with Cloud Platform and Deploy
         env:
           KUBE_NAMESPACE: ${{ secrets.kube_namespace }}
