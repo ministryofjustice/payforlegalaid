@@ -130,57 +130,34 @@ jobs:
           KUBE_NAMESPACE: ${{ secrets.kube_namespace }}
           KUBE_CLUSTER: ${{ secrets.kube_cluster }}
         run: |
-          echo "${{ secrets.kube_cert }}" > ca.crt
-          kubectl config set-cluster ${KUBE_CLUSTER} --certificate-authority=./ca.crt --server=https://${KUBE_CLUSTER}
-          kubectl config set-credentials deploy-user --token=${{ secrets.kube_token }}
-          kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
-          kubectl config use-context ${KUBE_CLUSTER}
-          
-                    {
-            echo '<?xml version="1.0" encoding="UTF-8"?>'
-            echo '<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">'
-          
-            find payforlegalaid-data/data -name '*.xml' -print0 | sort -z | xargs -0 cat | sed '/<?xml .*?>/d'
-#               will need to add more to sed to remove <changelog> tags
-          
-            echo '</databaseChangeLog>'
-          } | xmllint --format --encode UTF-8 - > combined-changelog.xml
-          
-                    CHECKSUM=$(sha256sum combined-changelog.xml | cut -d' ' -f1)
-#
-#
-#
-#          CHANGELOG_FOLDER="payforlegalaid-data/data"
-#          ARCHIVE_NAME="liquibase-changelogs.tar.gz"
-#          MAX_SIZE_MB=10
-#          CURRENT_SIZE_MB=$(du -sm ${CHANGELOG_FOLDER} | cut -f1)
-#          echo "current size: $CURRENT_SIZE_MB"
-#          if [ "$CURRENT_SIZE_MB" -gt "$MAX_SIZE_MB" ]; then
-#            echo "❌ Error: Changelogs are ${CURRENT_SIZE_MB}MB which exceeds the ${MAX_SIZE_MB}MB limit "
-#            exit 1
-#          fi
-#               
-#               mkdir -p /tmp/liquibase-config
-#          rsync -av --include="*.xml" ${CHANGELOG_FOLDER}/* /tmp/liquibase-config/
-#
-#          tar czf ${ARCHIVE_NAME} -C /tmp liquibase-config
-#          
-#          FOLDER_DIFF_SHA=$(sha256sum ${ARCHIVE_NAME} | cut -d' ' -f1)
-#  
-          kubectl create configmap liquibase-changelog \
-          --namespace ${KUBE_NAMESPACE} \
-          --from-file=changelog.xml=combined-changelog.xml \
+               echo "${{ secrets.kube_cert }}" > ca.crt
+               kubectl config set-cluster ${KUBE_CLUSTER} --certificate-authority=./ca.crt --server=https://${KUBE_CLUSTER}
+               kubectl config set-credentials deploy-user --token=${{ secrets.kube_token }}
+               kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
+               kubectl config use-context ${KUBE_CLUSTER}
                
-#               --from-file=${ARCHIVE_NAME}=${ARCHIVE_NAME} \
-          --dry-run=client -o yaml | \
-          yq eval '
+                      {
+               echo '<?xml version="1.0" encoding="UTF-8"?>'
+               echo '<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+               http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">'
+               
+               find payforlegalaid-data/data -name '*.xml' -print0 | sort -z | xargs -0 cat | sed '/<?xml .*?>/d'
+               
+               echo '</databaseChangeLog>'
+               } | xmllint --format --encode UTF-8 - > combined-changelog.xml
+               
+               CHECKSUM=$(sha256sum combined-changelog.xml | cut -d' ' -f1)
+         
+               kubectl create configmap liquibase-changelog \
+               --namespace ${KUBE_NAMESPACE} \
+               --from-file=changelog.xml=combined-changelog.xml \
+          
+               --dry-run=client -o yaml | \
+               yq eval '
                .metadata.annotations."checksum/xml" = "'"$CHECKSUM"'" |
-          #               
-          #               .metadata.annotations."diff-sha/xml" = "'"$FOLDER_DIFF_SHA"'" |
                .metadata.labels."app.kubernetes.io/component" = "database-migrations"
-          ' - | kubectl apply -f -
-
-          kubectl -n ${KUBE_NAMESPACE} apply -f deployments/
+               ' - | kubectl apply -f -
+               
+               kubectl -n ${KUBE_NAMESPACE} apply -f deployments/
