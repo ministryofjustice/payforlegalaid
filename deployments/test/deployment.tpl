@@ -16,142 +16,150 @@ spec:
         app: gpfd-dev
         branch: ${BRANCH_NAME}
     spec:
-        serviceAccountName: laa-get-payments-finance-data-dev-service
-        initContainers:
-          - name: liquibase
-            image: liquibase/liquibase:4.29.2
-            volumeMounts:
-              - name: liquibase-changelog
-                mountPath: /liquibase/changelog/changelog.xml
-                subPath: changelog.xml
-                readOnly: true
-            env:
-              - name: MOJFIN_DEV_WRITE_USERNAME
-                valueFrom:
-                  secretKeyRef:
-                    name: ${SECRET_NAME}
-                    key: mojfin-dev-write-username
-              - name: MOJFIN_DEV_WRITE_PASSWORD
-                valueFrom:
-                  secretKeyRef:
-                    name: ${SECRET_NAME}
-                    key: mojfin-dev-write-password
-              - name: MOJFIN_DB_URL
-                valueFrom:
-                  secretKeyRef:
-                    name: ${SECRET_NAME}
-                    key: mojfin-db-url
-            command:
-              - /bin/sh
-              - -c
-              - |
-                if [ -z "$MOJFIN_DB_URL" ] || [ -z "$MOJFIN_DEV_WRITE_USERNAME" ] || [ -z "$MOJFIN_DEV_WRITE_PASSWORD" ]; then
-                    echo "❌ ERROR: Required database credentials not set"
-                    exit 1
-                fi
-
-                BASE_FOLDER="/liquibase/files"
-                EXPANDED_FOLDER="${BASE_FOLDER}/liquibase-config"
-                CHANGELOG_FILENAME="master-changelog.xml"
-                CHANGELOG="${EXPANDED_FOLDER}/${CHANGELOG_FILENAME}"
-                ARCHIVE="/liquibase/changelog/changelog.xml"
-
-                if [ ! -f ${ARCHIVE} ]; then
-                  echo "❌ ERROR: Changelog archive file not found at ${ARCHIVE}"
+      serviceAccountName: laa-get-payments-finance-data-dev-service
+      volumes:
+        - name: liquibase-changelog
+          configMap:
+            name: liquibase-changelog
+            optional: false
+            items:
+              - key: changelog.xml
+                path: changelog.xml
+      initContainers:
+        - name: liquibase
+          image: liquibase/liquibase:4.29.2
+          volumeMounts:
+            - name: liquibase-changelog
+              mountPath: /liquibase/changelog/changelog.xml
+              subPath: changelog.xml
+              readOnly: true
+          env:
+            - name: MOJFIN_DEV_WRITE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: ${SECRET_NAME}
+                  key: mojfin-dev-write-username
+            - name: MOJFIN_DEV_WRITE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ${SECRET_NAME}
+                  key: mojfin-dev-write-password
+            - name: MOJFIN_DB_URL
+              valueFrom:
+                secretKeyRef:
+                  name: ${SECRET_NAME}
+                  key: mojfin-db-url
+          command:
+            - /bin/sh
+            - -c
+            - |
+              if [ -z "$MOJFIN_DB_URL" ] || [ -z "$MOJFIN_DEV_WRITE_USERNAME" ] || [ -z "$MOJFIN_DEV_WRITE_PASSWORD" ]; then
+                  echo "❌ ERROR: Required database credentials not set"
                   exit 1
-                fi
+              fi
 
-                mkdir ${BASE_FOLDER}
-                if ! tar xzf ${ARCHIVE} -C ${BASE_FOLDER}; then
-                  echo "❌ ERROR: Failed to extract $ARCHIVE"
-                  exit 1
-                fi
+              BASE_FOLDER="/liquibase/files"
+              EXPANDED_FOLDER="${BASE_FOLDER}/liquibase-config"
+              CHANGELOG_FILENAME="master-changelog.xml"
+              CHANGELOG="${EXPANDED_FOLDER}/${CHANGELOG_FILENAME}"
+              ARCHIVE="/liquibase/changelog/changelog.xml"
 
-                if [ ! -f ${CHANGELOG} ]; then
-                  echo "❌ ERROR: Changelog file not found at ${CHANGELOG}"
-                  exit 1
-                fi
+              if [ ! -f ${ARCHIVE} ]; then
+                echo "❌ ERROR: Changelog archive file not found at ${ARCHIVE}"
+                exit 1
+              fi
 
-                db_healthcheck() {
+              mkdir ${BASE_FOLDER}
+              if ! tar xzf ${ARCHIVE} -C ${BASE_FOLDER}; then
+                echo "❌ ERROR: Failed to extract $ARCHIVE"
+                exit 1
+              fi
 
-                  local max_retries=5
-                  local retry_delay=5
+              if [ ! -f ${CHANGELOG} ]; then
+                echo "❌ ERROR: Changelog file not found at ${CHANGELOG}"
+                exit 1
+              fi
 
-                  for i in $(seq 1 $max_retries); do
-                      if liquibase \
-                            --url="$MOJFIN_DB_URL" \
-                            --username="$MOJFIN_DEV_WRITE_USERNAME" \
-                            --password="$MOJFIN_DEV_WRITE_PASSWORD" \
-                            --changelog-file=${CHANGELOG_FILENAME} \
-                            --searchPath=${EXPANDED_FOLDER} \
-                            status; then
+              db_healthcheck() {
 
-                            echo "Database connection established"
-                            return 0
-                      fi
+                local max_retries=5
+                local retry_delay=5
 
-                      echo "⚠️ Attempt $i/$max_retries failed. Retrying in $retry_delay seconds..."
-                      sleep $retry_delay
-                  done
+                for i in $(seq 1 $max_retries); do
+                    if liquibase \
+                          --url="$MOJFIN_DB_URL" \
+                          --username="$MOJFIN_DEV_WRITE_USERNAME" \
+                          --password="$MOJFIN_DEV_WRITE_PASSWORD" \
+                          --changelog-file=${CHANGELOG_FILENAME} \
+                          --searchPath=${EXPANDED_FOLDER} \
+                          status; then
 
-                  echo "❌ Error: Could not establish database connection"
-                  exit 1
-                }
+                          echo "Database connection established"
+                          return 0
+                    fi
 
-                run_update() {
-                    liquibase \
-                        --url="$MOJFIN_DB_URL" \
-                        --username="$MOJFIN_DEV_WRITE_USERNAME" \
-                        --password="$MOJFIN_DEV_WRITE_PASSWORD" \
-                        --log-level=INFO \
-                        --changelog-file=${CHANGELOG_FILENAME} \
-                        --searchPath=${EXPANDED_FOLDER} \
-                        update
-                }
+                    echo "⚠️ Attempt $i/$max_retries failed. Retrying in $retry_delay seconds..."
+                    sleep $retry_delay
+                done
 
-                cleanup() {
-                  echo "Executing clean database strategy"
+                echo "❌ Error: Could not establish database connection"
+                exit 1
+              }
+
+              run_update() {
                   liquibase \
-                  --url="$MOJFIN_DB_URL" \
-                  --username="$MOJFIN_DEV_WRITE_USERNAME" \
-                  --password="$MOJFIN_DEV_WRITE_PASSWORD" \
-                  --changelog-file=${CHANGELOG_FILENAME} \
-                  --searchPath=${EXPANDED_FOLDER} \
-                  drop-all --force
+                      --url="$MOJFIN_DB_URL" \
+                      --username="$MOJFIN_DEV_WRITE_USERNAME" \
+                      --password="$MOJFIN_DEV_WRITE_PASSWORD" \
+                      --log-level=INFO \
+                      --changelog-file=${CHANGELOG_FILENAME} \
+                      --searchPath=${EXPANDED_FOLDER} \
+                      update
+              }
 
-                  echo "Database cleaned, reapplying migrations"
-                }
+              cleanup() {
+                echo "Executing clean database strategy"
+                liquibase \
+                --url="$MOJFIN_DB_URL" \
+                --username="$MOJFIN_DEV_WRITE_USERNAME" \
+                --password="$MOJFIN_DEV_WRITE_PASSWORD" \
+                --changelog-file=${CHANGELOG_FILENAME} \
+                --searchPath=${EXPANDED_FOLDER} \
+                drop-all --force
 
-                echo "Checking database connectivity..."
-                db_healthcheck
+                echo "Database cleaned, reapplying migrations"
+              }
 
-                echo "Running initial Liquibase update..."
-                if run_update; then
-                    echo "✅ Liquibase update completed successfully"
-                    exit 0
-                fi
+              echo "Checking database connectivity..."
+              db_healthcheck
 
-                echo "⚠️ Initial update failed, performing clean and retrying..."
-                cleanup
+              echo "Running initial Liquibase update..."
+              if run_update; then
+                  echo "✅ Liquibase update completed successfully"
+                  exit 0
+              fi
 
-                echo "Running Liquibase update after clean..."
-                if run_update; then
-                    echo "✅ Liquibase update completed successfully after clean"
-                    exit 0
-                else
-                    echo "❌ Liquibase update failed even after clean"
-                    exit 1
-                fi
-            securityContext:
-              runAsUser: 1001
-              runAsGroup: 1001
-              capabilities:
-                drop:
-                  - ALL
-              runAsNonRoot: true
-              allowPrivilegeEscalation: false
-              seccompProfile:
-                type: RuntimeDefault
+              echo "⚠️ Initial update failed, performing clean and retrying..."
+              cleanup
+
+              echo "Running Liquibase update after clean..."
+              if run_update; then
+                  echo "✅ Liquibase update completed successfully after clean"
+                  exit 0
+              else
+                  echo "❌ Liquibase update failed even after clean"
+                  exit 1
+              fi
+          securityContext:
+            runAsUser: 1001
+            runAsGroup: 1001
+            capabilities:
+              drop:
+                - ALL
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault
       containers:
         - name: gpfd-api-container-dev
           image: ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
