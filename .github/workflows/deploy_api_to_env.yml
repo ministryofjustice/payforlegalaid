@@ -149,6 +149,8 @@ jobs:
                } | xmllint --format --encode UTF-8 - > combined-changelog.xml
                
                CHECKSUM=$(sha256sum combined-changelog.xml | cut -d' ' -f1)
+          
+              echo $CHECKSUM
          
                kubectl create configmap liquibase-changes \
                --namespace ${KUBE_NAMESPACE} \
