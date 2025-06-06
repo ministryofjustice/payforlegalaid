@@ -19,7 +19,7 @@ spec:
         - name: ssh-key-volume
           secret:
             secretName: ssh-key-secret
-            defaultMode: 0400 # 0600
+            defaultMode: 0400 # 0600??
       initContainers:
         - name: gitclone
           image: alpine/git
@@ -35,11 +35,6 @@ spec:
                 mountPath: /secrets
         - name: liquibase
           image: liquibase/liquibase:4.29.2
-          volumeMounts:
-            - name: liquibase-changelog
-              mountPath: /liquibase/changelog/changelog.xml
-              subPath: changelog.xml
-              readOnly: true
           env:
             - name: MOJFIN_DEV_WRITE_USERNAME
               valueFrom:
