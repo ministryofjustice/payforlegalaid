@@ -153,7 +153,6 @@ jobs:
                kubectl create configmap liquibase-changes \
                --namespace ${KUBE_NAMESPACE} \
                --from-file=changelog.xml=combined-changelog.xml \
-          
                --dry-run=client -o yaml | \
                yq eval '
                .metadata.annotations."checksum/xml" = "'"$CHECKSUM"'" |
