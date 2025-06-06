@@ -150,7 +150,7 @@ jobs:
                
                CHECKSUM=$(sha256sum combined-changelog.xml | cut -d' ' -f1)
           
-              echo $CHECKSUM
+               echo $CHECKSUM
          
                kubectl create configmap liquibase-changes \
                --namespace ${KUBE_NAMESPACE} \
