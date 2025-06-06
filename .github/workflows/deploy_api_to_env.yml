@@ -151,7 +151,9 @@ jobs:
                CHECKSUM=$(sha256sum combined-changelog.xml | cut -d' ' -f1)
           
                echo $(stat -c%s "combined-changelog.xml")
-         
+               echo "Checksum: $CHECKSUM"
+               echo "Length: ${#CHECKSUM} bytes"
+                
                kubectl create configmap liquibase-changes \
                --namespace ${KUBE_NAMESPACE} \
                --from-file=changelog.xml=combined-changelog.xml \
