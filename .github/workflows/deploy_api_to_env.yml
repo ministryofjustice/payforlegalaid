@@ -125,13 +125,6 @@ jobs:
           sparse-checkout: data
           sparse-checkout-cone-mode: true
 
-      - name: Create key for data repo
-        run: |
-          kubectl create secret generic ssh-key-secret \
-            --from-literal=ssh-privatekey="${{ secrets.socket_key }}" \
-            --type=kubernetes.io/ssh-auth \
-            --dry-run=client -o yaml | kubectl apply -f -
-
       - name: Authenticate with Cloud Platform and Deploy
         env:
           KUBE_NAMESPACE: ${{ secrets.kube_namespace }}
@@ -142,8 +135,13 @@ jobs:
                kubectl config set-credentials deploy-user --token=${{ secrets.kube_token }}
                kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
                kubectl config use-context ${KUBE_CLUSTER}
-               
-                      {
+          
+               kubectl create secret generic ssh-key-secret \
+                    --from-literal=ssh-privatekey="${{ secrets.socket_key }}" \
+                    --type=kubernetes.io/ssh-auth \
+                    --dry-run=client -o yaml | kubectl apply -f -
+          
+                 {
                echo '<?xml version="1.0" encoding="UTF-8"?>'
                echo '<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
