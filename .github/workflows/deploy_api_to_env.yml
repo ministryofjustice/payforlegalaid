@@ -159,8 +159,6 @@ jobs:
                --from-file=changelog.xml=combined-changelog.xml \
                --dry-run=client -o yaml | \
                yq eval '
-               .metadata.annotations."checksum/xml" = "'"$CHECKSUM"'" |
-               .metadata.labels."app.kubernetes.io/component" = "database-migrations"
                ' - | kubectl apply -f -
                
                kubectl -n ${KUBE_NAMESPACE} apply -f deployments/
