@@ -16,21 +16,25 @@ spec:
     spec:
       serviceAccountName: laa-get-payments-finance-data-${ENV_NAME}-service
       volumes:
-        - name: liquibase-changelog
-          configMap:
-            name: liquibase-changelog
-            optional: false
-            items:
-              - key: liquibase-changelogs.tar.gz
-                path: liquibase-changelogs.tar.gz
+        - name: ssh-key-volume
+          secret:
+            secretName: ssh-key-secret
+            defaultMode: 0400 # 0600??
       initContainers:
+        - name: gitclone
+          image: alpine/git
+          command: [ "/bin/sh", "-c" ]
+          args:
+            - |
+              mkdir -p ~/.ssh && \
+              ssh-keyscan github.com > ~/.ssh/known_hosts \
+              cp /secrets/ssh-key-secret ~/.ssh/id_rsa && \
+              git clone git@github.com:ministryofjustice/payforlegalaid-data.git /changelogs
+          volumeMounts:
+              - name: ssh-key-volume
+                mountPath: /secrets
         - name: liquibase
           image: liquibase/liquibase:4.29.2
-          volumeMounts:
-            - name: liquibase-changelog
-              mountPath: /liquibase/changelog/liquibase-changelogs.tar.gz
-              subPath: liquibase-changelogs.tar.gz
-              readOnly: true
           env:
             - name: MOJFIN_DEV_WRITE_USERNAME
               valueFrom:
@@ -60,7 +64,7 @@ spec:
               EXPANDED_FOLDER="${BASE_FOLDER}/liquibase-config"
               CHANGELOG_FILENAME="master-changelog.xml"
               CHANGELOG="${EXPANDED_FOLDER}/${CHANGELOG_FILENAME}"
-              ARCHIVE="/liquibase/changelog/liquibase-changelogs.tar.gz"
+              ARCHIVE="/liquibase/changelog/changelog.xml"
               
               if [ ! -f ${ARCHIVE} ]; then
                 echo "❌ ERROR: Changelog archive file not found at ${ARCHIVE}"
