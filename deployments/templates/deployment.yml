@@ -16,13 +16,6 @@ spec:
     spec:
       serviceAccountName: laa-get-payments-finance-data-${ENV_NAME}-service
       volumes:
-        - name: liquibase-changelog
-          configMap:
-            name: liquibase-changelog
-            optional: false
-            items:
-              - key: changelog.xml
-                path: changelog.xml
         - name: ssh-key-volume
           secret:
             secretName: ssh-key-secret
@@ -40,8 +33,6 @@ spec:
           volumeMounts:
               - name: ssh-key-volume
                 mountPath: /secrets
-              - name: changelog-volume
-                mountPath: /changelogs
         - name: liquibase
           image: liquibase/liquibase:4.29.2
           volumeMounts:
