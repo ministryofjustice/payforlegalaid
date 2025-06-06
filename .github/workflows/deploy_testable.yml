@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'test-*'
+      - 'feature/lpf-915'
 
 jobs:
   build-and-deploy-to-testable:
