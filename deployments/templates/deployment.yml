@@ -20,13 +20,13 @@ spec:
           secret:
             secretName: ssh-key-secret
             defaultMode: 0400 # 0600??
+      volumeMounts:
+        - name: ssh-key-volume
+          mountPath: /secrets
       initContainers:
         - name: gitclone
           image: alpine/git
           command: [ "/bin/sh", "-c" ]
-          volumeMounts:
-            - name: ssh-key-volume
-              mountPath: /secrets
           args:
             - |
               export HOME=/tmp 
