@@ -20,6 +20,7 @@ spec:
           secret:
             secretName: ssh-privatekey
             defaultMode: 0400 # 0600??
+
         - name: changelogs
           emptyDir: {}
       initContainers:
