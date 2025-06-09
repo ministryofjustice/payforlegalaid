@@ -18,7 +18,7 @@ spec:
       volumes:
         - name: ssh-key-volume
           secret:
-            secretName: ssh-key-secret
+            secretName: ssh-privatekey
             defaultMode: 0400 # 0600??
       initContainers:
         - name: gitclone
@@ -37,6 +37,8 @@ spec:
           volumeMounts:
             - name: ssh-key-volume
               mountPath: /secrets
+            - name: changelogs
+              mountPath: /changelogs
           securityContext:
             runAsUser: 1001
         - name: liquibase
