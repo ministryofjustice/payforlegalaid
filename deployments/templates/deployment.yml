@@ -24,6 +24,9 @@ spec:
         - name: gitclone
           image: alpine/git
           command: [ "/bin/sh", "-c" ]
+          volumeMounts:
+            - name: ssh-key-volume
+              mountPath: /secrets
           args:
             - |
               export HOME=/tmp 
@@ -32,9 +35,6 @@ spec:
               ssh-keyscan github.com > $HOME/.ssh/known_hosts && \
               cp /secrets/ssh-key-secret $HOME/.ssh/id_rsa && \
               git clone git@github.com:ministryofjustice/payforlegalaid-data.git /changelogs
-          volumeMounts:
-              - name: ssh-key-volume
-                mountPath: /secrets
           securityContext:
             runAsUser: 1001
         - name: liquibase
