@@ -27,6 +27,7 @@ spec:
           args:
             - |
               echo "HOME is: $HOME"
+              export HOME=/tmp
               mkdir -p "$HOME/.ssh" && \
               ssh-keyscan github.com > "$HOME/.ssh/known_hosts" \
               cp /secrets/ssh-key-secret "$HOME/.ssh/id_rsa" && \
