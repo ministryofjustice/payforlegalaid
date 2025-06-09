@@ -20,21 +20,23 @@ spec:
           secret:
             secretName: ssh-key-secret
             defaultMode: 0400 # 0600??
-      volumeMounts:
-        - name: ssh-key-volume
-          mountPath: /secrets
       initContainers:
         - name: gitclone
           image: alpine/git
           command: [ "/bin/sh", "-c" ]
           args:
             - |
+              echo "SECREEEEEETS" 
+              ls -l /secrets
               export HOME=/tmp 
               echo "HOME is: $HOME" 
               mkdir -p $HOME/.ssh && \
               ssh-keyscan github.com > $HOME/.ssh/known_hosts && \
               cp /secrets/ssh-key-secret $HOME/.ssh/id_rsa && \
               git clone git@github.com:ministryofjustice/payforlegalaid-data.git /changelogs
+          volumeMounts:
+            - name: ssh-key-volume
+              mountPath: /secrets
           securityContext:
             runAsUser: 1001
         - name: liquibase
