@@ -33,6 +33,8 @@ spec:
           volumeMounts:
               - name: ssh-key-volume
                 mountPath: /secrets
+          securityContext:
+            runAsUser: 1001
         - name: liquibase
           image: liquibase/liquibase:4.29.2
           env:
