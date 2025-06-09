@@ -137,7 +137,7 @@ jobs:
                kubectl config use-context ${KUBE_CLUSTER}
           
                kubectl create secret generic ssh-key-secret \
-                    --from-literal=ssh-key-secret="${{ secrets.socket_key }}" \
+                    --from-literal=ssh-privatekey="${{ secrets.socket_key }}" \
                     --type=kubernetes.io/ssh-auth \
                     --dry-run=client -o yaml | kubectl apply -f -
                 
