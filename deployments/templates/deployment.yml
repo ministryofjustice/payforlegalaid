@@ -16,11 +16,10 @@ spec:
     spec:
       serviceAccountName: laa-get-payments-finance-data-${ENV_NAME}-service
       volumes:
-        - name: ssh-key-volume
+        - name: ssh-privatekey
           secret:
-            secretName: ssh-key-volume
+            secretName: ssh-privatekey
             defaultMode: 0400 # 0600??
-
         - name: changelogs
           emptyDir: {}
       initContainers:
@@ -38,7 +37,7 @@ spec:
               cp /secrets/ssh-privatekey $HOME/.ssh/id_rsa && \
               git clone git@github.com:ministryofjustice/payforlegalaid-data.git /changelogs
           volumeMounts:
-            - name: ssh-key-volume
+            - name: ssh-privatekey
               mountPath: /secrets
 
             - name: changelogs
