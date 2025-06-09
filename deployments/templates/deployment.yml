@@ -24,7 +24,7 @@ spec:
           emptyDir: {}
       initContainers:
         - name: gitclone
-          image: alpine/git
+          image: bitnami/git:latest
           command: [ "/bin/sh", "-c" ]
           args:
             - |
