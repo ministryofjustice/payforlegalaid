@@ -32,7 +32,7 @@ spec:
               echo "HOME is: $HOME" 
               mkdir -p $HOME/.ssh && \
               ssh-keyscan github.com > $HOME/.ssh/known_hosts && \
-              cp /secrets/ssh-privateKey $HOME/.ssh/id_rsa && \
+              cp /secrets/ssh-privatekey $HOME/.ssh/id_rsa && \
               git clone git@github.com:ministryofjustice/payforlegalaid-data.git /changelogs
           volumeMounts:
             - name: ssh-key-volume
