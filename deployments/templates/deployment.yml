@@ -18,7 +18,7 @@ spec:
       volumes:
         - name: ssh-key-volume
           secret:
-            secretName: ssh-privatekey
+            secretName: ssh-key-volume
             defaultMode: 0400 # 0600??
 
         - name: changelogs
