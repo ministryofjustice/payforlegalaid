@@ -26,9 +26,9 @@ spec:
           command: [ "/bin/sh", "-c" ]
           args:
             - |
-              mkdir -p ~/.ssh && \
-              ssh-keyscan github.com > ~/.ssh/known_hosts \
-              cp /secrets/ssh-key-secret ~/.ssh/id_rsa && \
+              mkdir -p "$HOME/.ssh" && \
+              ssh-keyscan github.com > "$HOME/.ssh/known_hosts" \
+              cp /secrets/ssh-key-secret "$HOME/.ssh/id_rsa" && \
               git clone git@github.com:ministryofjustice/payforlegalaid-data.git /changelogs
           volumeMounts:
               - name: ssh-key-volume
