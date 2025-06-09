@@ -39,15 +39,7 @@ spec:
             - name: changelogs
               mountPath: /changelogs
           securityContext:
-            runAsUser: 1001
-            runAsGroup: 1001
-            capabilities:
-              drop:
-                - ALL
-            runAsNonRoot: true
-            allowPrivilegeEscalation: false
-            seccompProfile:
-              type: RuntimeDefault
+            runAsUser: 3005
         - name: liquibase
           image: liquibase/liquibase:4.29.2
           env:
