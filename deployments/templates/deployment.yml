@@ -24,7 +24,7 @@ spec:
           emptyDir: {}
       initContainers:
         - name: gitclone
-          image: bitnami/git:latest
+          image: alpine/git
           command: [ "/bin/sh", "-c" ]
           args:
             - |
@@ -38,6 +38,8 @@ spec:
               mountPath: /secrets
             - name: changelogs
               mountPath: /changelogs
+          securityContext:
+            runAsUser: 3005
         - name: liquibase
           image: liquibase/liquibase:4.29.2
           env:
