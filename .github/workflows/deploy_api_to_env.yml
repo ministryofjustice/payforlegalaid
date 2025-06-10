@@ -120,6 +120,7 @@ jobs:
         with:
           repository: "ministryofjustice/payforlegalaid-data"
           path: payforlegalaid-data
+          ref: feature/LPF_874
           ssh-key: ${{ secrets.socket_key }}
           sparse-checkout: data
           sparse-checkout-cone-mode: true
