@@ -132,7 +132,6 @@ jobs:
 
       - name: Build and push Liquibase Docker image to container repository
         run: |
-          cd payforlegalaid-data
           ls -la
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f Liquibase.Dockerfile --build-arg liquibase_folder=${PWD}/data  .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
