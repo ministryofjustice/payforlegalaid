@@ -27,6 +27,8 @@ on:
         required: true
       ecr_role_to_assume:
         required: true
+      data_ecr_role_to_assume:
+        required: false #todo make true
       kube_namespace:
         required: true
       kube_cluster:
@@ -82,6 +84,39 @@ jobs:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           SOCKET_KEY: ${{ secrets.api_socket_key }}
 
+      - uses: './.github/login-to-aws'
+        env:
+          ROLE: ${{ secrets.data_ecr_role_to_assume }}
+          AWS_REGION: ${{ vars.DEV_DATA_ECR_REGION }}
+
+      - name: Login to container repository
+        uses: aws-actions/amazon-ecr-login@v2
+        id: login-ecr-data
+
+      - name: Checkout GitHub Data repository
+        uses: actions/checkout@v4
+        with:
+          repository: "ministryofjustice/payforlegalaid-data"
+          ref: "feature/lpf-915"
+          path: payforlegalaid-data
+          ssh-key: ${{ secrets.socket_key }}
+          sparse-checkout: data
+          sparse-checkout-cone-mode: true
+
+      - name: Build and push Liquibase Docker image to container repository
+        run: |
+          echo "Current working directory:"
+          pwd
+          echo "Listing contents:"
+          ls -la
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f Liquibase.Dockerfile  .
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+        env:
+          REPOSITORY: ${{ vars.DEV_DATA_ECR_REPOSITORY }}
+          IMAGE_TAG: ${{ github.sha }}
+          REGISTRY: ${{ steps.login-ecr-data.outputs.registry }}
+        shell: bash
+
       - name: Generate Kubernetes files from templates
         env:
           IMAGE_TAG: ${{ github.sha }} # Tags ECR image with commit sha
@@ -114,48 +149,6 @@ jobs:
               DOLLAR='$' envsubst < "$input" > "$output"
             fi
           done
-      - name: Show current directory and contents
-        run: |
-          echo "Current working directory:"
-          pwd
-          echo "Listing contents:"
-          ls -la
-
-      - name: Show current directory and contents
-        run: |
-          echo "Current working directory:"
-          pwd
-          echo "Listing contents:"
-          ls -la
-
-      - uses: './.github/login-to-aws'
-        env:
-          ROLE: ${{ secrets.DEV_DATA_ECR_ROLE_TO_ASSUME }}
-          AWS_REGION: ${{ vars.ECR_REGION }}
-
-      - name: Checkout GitHub Data repository
-        uses: actions/checkout@v4
-        with:
-          repository: "ministryofjustice/payforlegalaid-data"
-          ref: "feature/lpf-915"
-          path: payforlegalaid-data
-          ssh-key: ${{ secrets.socket_key }}
-          sparse-checkout: data
-          sparse-checkout-cone-mode: true
-
-      - name: Build and push Liquibase Docker image to container repository
-        run: |
-          echo "Current working directory:"
-          pwd
-          echo "Listing contents:"
-          ls -la
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f Liquibase.Dockerfile  .
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-        env:
-          REPOSITORY: ${{ vars.DEV_DATA_ECR_REPOSITORY }}
-          IMAGE_TAG: ${{ github.sha }}
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        shell: bash
 
       - name: Authenticate with Cloud Platform and Deploy
         env:
@@ -167,31 +160,5 @@ jobs:
           kubectl config set-credentials deploy-user --token=${{ secrets.kube_token }}
           kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
           kubectl config use-context ${KUBE_CLUSTER}
-          
-          CHANGELOG_FOLDER="payforlegalaid-data/data"
-          ARCHIVE_NAME="liquibase-changelogs.tar.gz"
-          MAX_SIZE_MB=10
-          CURRENT_SIZE_MB=$(du -sm ${CHANGELOG_FOLDER} | cut -f1)          
-          echo "current size: $CURRENT_SIZE_MB"
-          if [ "$CURRENT_SIZE_MB" -gt "$MAX_SIZE_MB" ]; then
-            echo "❌ Error: Changelogs are ${CURRENT_SIZE_MB}MB which exceeds the ${MAX_SIZE_MB}MB limit "
-            exit 1
-          fi
-          
-          mkdir -p /tmp/liquibase-config
-          rsync -av --include="*.xml" ${CHANGELOG_FOLDER}/* /tmp/liquibase-config/
 
-          tar czf ${ARCHIVE_NAME} -C /tmp liquibase-config
-          
-          FOLDER_DIFF_SHA=$(sha256sum ${ARCHIVE_NAME} | cut -d' ' -f1)
-  
-          kubectl create configmap liquibase-changelog \
-          --namespace ${KUBE_NAMESPACE} \
-          --from-file=${ARCHIVE_NAME}=${ARCHIVE_NAME} \
-          --dry-run=client -o yaml | \
-          yq eval '
-          .metadata.annotations."diff-sha/xml" = "'"$FOLDER_DIFF_SHA"'" |
-          .metadata.labels."app.kubernetes.io/component" = "database-migrations"
-          ' - | kubectl apply -f -
-
-          kubectl -n ${KUBE_NAMESPACE} apply -f deployments/
+          kubectl -n ${KUBE_NAMESPACE} apply -f deployments
