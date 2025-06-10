@@ -16,6 +16,8 @@ runs:
 
     - name: Build dependency
       run: |
+        echo "path is ${PWD}"
+        ls -la
         cd spec
         mvn clean install
       shell:
