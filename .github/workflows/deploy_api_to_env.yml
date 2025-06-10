@@ -131,9 +131,9 @@ jobs:
           AWS_REGION: ${{ vars.ECR_REGION }}
 
       - name: Build and push Liquibase Docker image to container repository
-        run: |    
+        run: |
           cd payforlegalaid-data
-          echo "moved to: ${PWD}"
+          ls -la
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f Liquibase.Dockerfile --build-arg liquibase_folder=${PWD}/data  .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
         env:
