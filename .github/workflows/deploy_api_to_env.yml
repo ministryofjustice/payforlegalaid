@@ -133,6 +133,7 @@ jobs:
       - name: Build and push Liquibase Docker image to container repository
         run: |
           echo "Script executed from: ${PWD}"
+          ls -la
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f Liquibase.Dockerfile .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
         env:
