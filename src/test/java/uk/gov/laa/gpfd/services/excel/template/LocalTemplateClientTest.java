@@ -25,7 +25,8 @@ class LocalTemplateClientTest {
     @ValueSource(strings = {
             "00000000-0000-0000-0000-000000000000",
             "f46b4d3d-c100-429a-bf9a-223305dbdbfb",
-            "eee30b23-2c8d-4b4b-bb11-8cd67d07915c"
+            "eee30b23-2c8d-4b4b-bb11-8cd67d07915c",
+            "22fe2b17-eea8-4c74-929d-9c69503f25d3"
     })
     void shouldReturnInputStreamForValidId(String id) {
         assertNotNull(client.findTemplateById(UUID.fromString(id)));
