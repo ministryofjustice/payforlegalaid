@@ -125,13 +125,21 @@ jobs:
           sparse-checkout: data
           sparse-checkout-cone-mode: true
 
+      - uses: './.github/login-to-aws'
+        env:
+          ROLE: ${{ secrets.DEV_DATA_ECR_ROLE_TO_ASSUME }}
+          AWS_REGION: ${{ vars.ECR_REGION }}
+
+      - name: Login to container repository
+        uses: aws-actions/amazon-ecr-login@v2
+        id: login-ecr
+
       - name: Build and push Liquibase Docker image to container repository
         run: |
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f Liquibase.Dockerfile .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-
         env:
-          REPOSITORY: "payforlegalaid/liquibase-dev"
+          REPOSITORY: ${{ vars.DEV_DATA_ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         shell: bash
