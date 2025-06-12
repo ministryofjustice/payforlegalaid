@@ -97,7 +97,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: "ministryofjustice/payforlegalaid-data"
-          ref: "feature/lpf-915"
           path: payforlegalaid-data
           ssh-key: ${{ secrets.socket_key }}
           sparse-checkout: data
@@ -106,9 +105,6 @@ jobs:
       - name: Build and push Liquibase Docker image to container repository
         run: |
           echo "Current working directory:"
-          pwd
-          echo "Listing contents:"
-          ls -la
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f Liquibase.Dockerfile  .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
         env:
@@ -127,6 +123,8 @@ jobs:
           ENV_NAME: ${{ inputs.environment_name }}
           GPFD_URL: ${{ inputs.gpfd_url }}
           SECRET_NAME: ${{ inputs.secret_name }}
+          DATA_REPOSITORY: ${{ vars.DEV_DATA_ECR_REPOSITORY }}
+          DATA_REGISTRY: ${{ steps.login-ecr-data.outputs.registry }}
         run: |
           template_processing=(
             "ingress:ingress"
@@ -135,7 +133,7 @@ jobs:
             "network-policy:network-policy"
             "prometheus-rules:prometheus-rules"
             "grafana-dashboard:grafana-dashboard:\$ENV_NAME,\$NAMESPACE"
-            "deployment:deployment:\$ENV_NAME,\$SECRET_NAME,\$GPFD_URL,\$REGISTRY,\$REPOSITORY,\$IMAGE_TAG"
+            "deployment:deployment:\$ENV_NAME,\$SECRET_NAME,\$GPFD_URL,\$REGISTRY,\$REPOSITORY,\$IMAGE_TAG,\$DATA_REPOSITORY,\$DATA_REGISTRY"
           )
           
           for item in "${template_processing[@]}"; do
