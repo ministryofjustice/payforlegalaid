@@ -1,6 +1,6 @@
 package uk.gov.laa.gpfd.dao.sql;
 
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import uk.gov.laa.gpfd.model.FieldProjection;
@@ -46,58 +46,79 @@ public sealed interface ChannelRowHandler extends
         return new StreamChannelRowHandler(stream);
     }
 
-    static ChannelRowHandler forStream(Sheet sheet, List<FieldProjection> fieldAttributes, CellValueSetter cellValueSetter) {
-        return new SheetChannelRowHandler(sheet, fieldAttributes, cellValueSetter);
+    /**
+     * Creates a ChannelRowHandler for the given sheet with field projections.
+     *
+     * @param sheet The Excel sheet to process
+     * @param fieldAttributes List of field projections that map database columns to sheet headers
+     * @return A ChannelRowHandler configured for the given sheet and field mappings
+     * @throws NullPointerException if either sheet or fieldAttributes is null
+     */
+    static ChannelRowHandler forSheet(Sheet sheet, List<FieldProjection> fieldAttributes) {
+        var mapping = new HashMap<String, Integer>();
+        var headerRow = sheet.getRow(0);
+
+        for (var pair : fieldAttributes) {
+            for (var headerCell : headerRow) {
+                if (pair.getMappedName().equals(headerCell.getStringCellValue())) {
+                    mapping.put(pair.getSourceName(), headerCell.getColumnIndex());
+                    break;
+                }
+            }
+        }
+        return new SheetChannelRowHandler(sheet, mapping);
     }
 
-    final class SheetChannelRowHandler implements ChannelRowHandler {
+    /**
+     * Implementation of ChannelRowHandler that processes database result sets into Excel sheet rows.
+     * Maps database columns to Excel columns based on the provided projection mapping.
+     */
+    final class SheetChannelRowHandler implements ChannelRowHandler, CellValueSetter {
         private final Sheet sheet;
-        private final Map<String, Integer> columnMapping;
-        private final CellValueSetter cellValueSetter;
+        private final Map<String, Integer> projection;
         private int rowNum = 1;
 
-        public SheetChannelRowHandler(Sheet sheet,
-                                      List<FieldProjection> fieldAttributes,
-                                      CellValueSetter cellValueSetter) {
+        /**
+         * Constructs a new SheetChannelRowHandler for the given sheet and column projection.
+         *
+         * @param sheet The Excel sheet to write to
+         * @param projection Mapping of database column names to Excel column indices
+         */
+        public SheetChannelRowHandler(Sheet sheet, Map<String, Integer> projection) {
             this.sheet = sheet;
-            this.cellValueSetter = cellValueSetter;
-            this.columnMapping = createColumnMapping(sheet, fieldAttributes);
+            this.projection = projection;
         }
 
+        /**
+         * Processes a single row from the result set and writes it to the Excel sheet.
+         * Only columns that exist in the projection mapping will be written.
+         *
+         * @param rs The result set containing the data to process
+         * @throws SQLException if a database access error occurs
+         */
         @Override
         public void processRow(ResultSet rs) throws SQLException {
             var row = sheet.createRow(rowNum++);
             var metaData = rs.getMetaData();
+            var columnCount = metaData.getColumnCount();
 
-            for (int i = 1; i <= metaData.getColumnCount(); i++) {
+            for (int i = 1; i <= columnCount; i++) {
                 var columnName = metaData.getColumnLabel(i);
 
-                if (columnMapping.containsKey(columnName)) {
-                    Cell cell = row.createCell(columnMapping.get(columnName));
+                if (projection.containsKey(columnName)) {
+                    var cell = row.createCell(projection.get(columnName), CellType.BLANK);
                     var value = rs.getObject(i);
-                    cellValueSetter.setCellValue(cell, value != null ? value : "");
+                    setCellValue(cell, value != null ? value : "");
                 }
             }
         }
 
-        private Map<String, Integer> createColumnMapping(Sheet sheet, List<FieldProjection> fieldAttributes) {
-            var mapping = new HashMap<String, Integer>();
-            var headerRow = sheet.getRow(0);
-
-            for (var pair : fieldAttributes) {
-                for (var headerCell : headerRow) {
-                    if (pair.getMappedName().equals(headerCell.getStringCellValue())) {
-                        mapping.put(pair.getSourceName(), headerCell.getColumnIndex());
-                        break;
-                    }
-                }
-            }
-            return mapping;
-        }
-
+        /**
+         * Closes this handler. This implementation does nothing.
+         */
         @Override
-        public void close() {
-        }
+        public void close() {}
+
     }
 
 

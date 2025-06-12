@@ -21,7 +21,6 @@ import org.springframework.security.web.access.intercept.RequestAuthorizationCon
 import org.springframework.web.client.RestTemplate;
 import uk.gov.laa.gpfd.dao.JdbcWorkbookDataStreamer;
 import uk.gov.laa.gpfd.dao.ReportDao;
-import uk.gov.laa.gpfd.dao.sql.ChannelRowHandler;
 import uk.gov.laa.gpfd.dao.sql.core.FetchSizePolicy;
 import uk.gov.laa.gpfd.dao.sql.core.ForwardOnlyReadOnlyPolicy;
 import uk.gov.laa.gpfd.dao.sql.core.QueryTimeoutPolicy;
@@ -59,6 +58,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+import static uk.gov.laa.gpfd.dao.sql.ChannelRowHandler.forSheet;
 import static uk.gov.laa.gpfd.services.DataStreamer.createJdbcStreamer;
 
 /**
@@ -167,7 +167,6 @@ public class AppConfig {
     @Bean
     public JdbcWorkbookDataStreamer workbookDataStreamer(
             JdbcTemplate readOnlyJdbcTemplate,
-            CellValueSetter cellValueSetter,
             StatementPolicy statementPolicy
     ) {
         return new JdbcWorkbookDataStreamer(readOnlyJdbcTemplate) {
@@ -189,7 +188,7 @@ public class AppConfig {
                         .map(FieldProjection.class::cast)
                         .toList();
 
-                return ChannelRowHandler.forStream(sheet, list, cellValueSetter);
+                return forSheet(sheet, list);
             }
         };
     }
