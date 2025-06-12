@@ -25,12 +25,7 @@ spec:
                 path: liquibase-changelogs.tar.gz
       initContainers:
         - name: liquibase
-          image: liquibase/liquibase:4.29.2
-          volumeMounts:
-            - name: liquibase-changelog
-              mountPath: /liquibase/changelog/liquibase-changelogs.tar.gz
-              subPath: liquibase-changelogs.tar.gz
-              readOnly: true
+          image: ${DATA_REGISTRY}/${DATA_REPOSITORY}:${IMAGE_TAG}
           env:
             - name: MOJFIN_DEV_WRITE_USERNAME
               valueFrom:
@@ -51,28 +46,19 @@ spec:
             - /bin/sh
             - -c
             - |
+              
+              echo "what's in here:"
+              ls -la
+              
               if [ -z "$MOJFIN_DB_URL" ] || [ -z "$MOJFIN_DEV_WRITE_USERNAME" ] || [ -z "$MOJFIN_DEV_WRITE_PASSWORD" ]; then
                   echo "❌ ERROR: Required database credentials not set"
                   exit 1
               fi
               
-              BASE_FOLDER="/liquibase/files"
-              EXPANDED_FOLDER="${BASE_FOLDER}/liquibase-config"
+              BASE_FOLDER="/liquibase/data"
               CHANGELOG_FILENAME="master-changelog.xml"
-              CHANGELOG="${EXPANDED_FOLDER}/${CHANGELOG_FILENAME}"
-              ARCHIVE="/liquibase/changelog/liquibase-changelogs.tar.gz"
-              
-              if [ ! -f ${ARCHIVE} ]; then
-                echo "❌ ERROR: Changelog archive file not found at ${ARCHIVE}"
-                exit 1
-              fi
-              
-              mkdir ${BASE_FOLDER}
-              if ! tar xzf ${ARCHIVE} -C ${BASE_FOLDER}; then
-                echo "❌ ERROR: Failed to extract $ARCHIVE"
-                exit 1
-              fi
-              
+              CHANGELOG="${BASE_FOLDER}/${CHANGELOG_FILENAME}"
+                            
               if [ ! -f ${CHANGELOG} ]; then
                 echo "❌ ERROR: Changelog file not found at ${CHANGELOG}"
                 exit 1
@@ -89,7 +75,7 @@ spec:
                           --username="$MOJFIN_DEV_WRITE_USERNAME" \
                           --password="$MOJFIN_DEV_WRITE_PASSWORD" \
                           --changelog-file=${CHANGELOG_FILENAME} \
-                          --searchPath=${EXPANDED_FOLDER} \
+                          --searchPath=${BASE_FOLDER} \
                           status; then
               
                           echo "Database connection established"
@@ -111,7 +97,7 @@ spec:
                       --password="$MOJFIN_DEV_WRITE_PASSWORD" \
                       --log-level=INFO \
                       --changelog-file=${CHANGELOG_FILENAME} \
-                      --searchPath=${EXPANDED_FOLDER} \
+                      --searchPath=${BASE_FOLDER} \
                       update
               }
               
@@ -122,7 +108,7 @@ spec:
                 --username="$MOJFIN_DEV_WRITE_USERNAME" \
                 --password="$MOJFIN_DEV_WRITE_PASSWORD" \
                 --changelog-file=${CHANGELOG_FILENAME} \
-                --searchPath=${EXPANDED_FOLDER} \
+                --searchPath=${BASE_FOLDER} \
                 drop-all --force
               
                 echo "Database cleaned, reapplying migrations"
