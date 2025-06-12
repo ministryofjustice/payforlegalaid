@@ -2,9 +2,7 @@ name: One to deploy them all
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch:
+    branches: foo-bar
 
 jobs:
   To_Dev:
@@ -25,43 +23,3 @@ jobs:
       kube_cluster: ${{ secrets.KUBE_CLUSTER_DEV }}
       kube_token: ${{ secrets.KUBE_TOKEN_DEV }}
       kube_cert: ${{ secrets.KUBE_CERT_DEV }}
-
-  To_Uat:
-    name: Deploy to UAT
-    needs: To_Dev
-    uses: ./.github/workflows/deploy_api_to_env.yml
-    with:
-      github_environment: uat
-      environment_name: uat
-      gpfd_url: laa-get-payments-finance-data-api-uat.apps.live.cloud-platform.service.justice.gov.uk
-      alert_severity: laa-get-legal-aid-data-uat
-      secret_name: gpfd-uat-secret-01
-    secrets:
-      api_socket_key: ${{ secrets.UAT_API_SOCKET_KEY }}
-      snyk_token: ${{ secrets.SNYK_TOKEN }}
-      socket_key: ${{ secrets.UAT_SOCKET_KEY }}
-      ecr_role_to_assume: ${{ secrets.UAT_ECR_ROLE_TO_ASSUME }}
-      kube_namespace: ${{ secrets.KUBE_NAMESPACE_UAT }}
-      kube_cluster: ${{ secrets.KUBE_CLUSTER_UAT }}
-      kube_token: ${{ secrets.KUBE_TOKEN_UAT }}
-      kube_cert: ${{ secrets.KUBE_CERT_UAT }}
-
-  To_Prod:
-    name: Deploy to prod
-    needs: To_Uat
-    uses: ./.github/workflows/deploy_api_to_env.yml
-    with:
-      github_environment: prod
-      environment_name: prod
-      gpfd_url: laa-get-payments-finance-data-api-prod.apps.live.cloud-platform.service.justice.gov.uk
-      alert_severity: laa-get-legal-aid-data-prod
-      secret_name: gpfd-prod-secret-01
-    secrets:
-      api_socket_key: ${{ secrets.PROD_API_SOCKET_KEY }}
-      snyk_token: ${{ secrets.SNYK_TOKEN }}
-      socket_key: ${{ secrets.PROD_SOCKET_KEY }}
-      ecr_role_to_assume: ${{ secrets.PROD_ECR_ROLE_TO_ASSUME }}
-      kube_namespace: ${{ secrets.KUBE_NAMESPACE_PROD }}
-      kube_cluster: ${{ secrets.KUBE_CLUSTER_PROD }}
-      kube_token: ${{ secrets.KUBE_TOKEN_PROD }}
-      kube_cert: ${{ secrets.KUBE_CERT_PROD }}

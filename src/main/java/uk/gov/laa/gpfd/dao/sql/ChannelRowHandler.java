@@ -1,6 +1,7 @@
 package uk.gov.laa.gpfd.dao.sql;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import uk.gov.laa.gpfd.model.FieldProjection;
@@ -73,7 +74,7 @@ public sealed interface ChannelRowHandler extends
                 var columnName = metaData.getColumnLabel(i);
 
                 if (columnMapping.containsKey(columnName)) {
-                    Cell cell = row.createCell(columnMapping.get(columnName));
+                    Cell cell = row.createCell(columnMapping.get(columnName), CellType.BLANK);
                     var value = rs.getObject(i);
                     cellValueSetter.setCellValue(cell, value != null ? value : "");
                 }

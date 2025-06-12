@@ -1,18 +1,22 @@
 package uk.gov.laa.gpfd.services.excel;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import uk.gov.laa.gpfd.dao.JdbcWorkbookDataStreamer;
 import uk.gov.laa.gpfd.model.Mapping;
 import uk.gov.laa.gpfd.model.Report;
+import uk.gov.laa.gpfd.model.excel.ExcelMappingProjection;
 import uk.gov.laa.gpfd.services.TemplateService;
 import uk.gov.laa.gpfd.services.DataStreamer.WorkbookDataStreamer;
 import uk.gov.laa.gpfd.services.excel.editor.FormulaCalculator;
 import uk.gov.laa.gpfd.services.excel.editor.PivotTableRefresher;
 import uk.gov.laa.gpfd.services.excel.formatting.CellFormatter;
 
+import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * The class is a Spring component responsible for generating Excel workbooks
@@ -53,10 +57,19 @@ public record ExcelCreationService(
             var sheet = workbook.createSheet(query.getExcelSheet().getName());
             setupSheetHeader(sheet, query);
             jdbcWorkbookDataStreamer.queryToSheet(sheet, query);
+            Collection<ExcelMappingProjection> fieldAttributes = query.getExcelSheet().getFieldAttributes();
+            int counter = 0;
+            for (ExcelMappingProjection fieldAttribute : fieldAttributes) {
+                double columnWidth = fieldAttribute.getColumnWidth();
+                sheet.setColumnWidth(counter,  (int) (columnWidth * 256));
+                counter++;
+            }
+
         }
 
         pivotTableRefresher.refreshPivotTables(workbook);
         formulaCalculator.evaluateAllFormulaCells(workbook);
+//        formatter.applyFormatting();
     }
 
     private void setupSheetHeader(Sheet sheet, Mapping query) {
@@ -66,7 +79,7 @@ public record ExcelCreationService(
         for (var column : query.getExcelSheet().getFieldAttributes()) {
             var cell = headerRow.createCell(columnIndex++);
             cell.setCellValue(column.getMappedName());
-            formatter.applyFormatting(sheet, cell, column);
+//            formatter.applyFormatting(sheet, cell, column);
         }
     }
 
