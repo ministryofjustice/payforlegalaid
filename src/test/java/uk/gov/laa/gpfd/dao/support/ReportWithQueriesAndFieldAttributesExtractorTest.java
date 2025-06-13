@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.laa.gpfd.model.ImmutableReportOwner;
 import uk.gov.laa.gpfd.model.ReportQuerySql;
-import uk.gov.laa.gpfd.model.TemplateDocument;
+import uk.gov.laa.gpfd.model.excel.ExcelTemplate;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -70,7 +70,7 @@ class ReportWithQueriesAndFieldAttributesExtractorTest {
         var report = reports.iterator().next();
         assertEquals(reportId, report.getId());
         assertEquals("Test Report", report.getName());
-        assertEquals(TemplateDocument.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d3"), report.getTemplateDocument());
+        assertEquals(ExcelTemplate.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d3"), report.getTemplateDocument());
         assertEquals("Test Description", report.getDescription());
         assertEquals(30, report.getNumDaysToKeep());
         ImmutableReportOwner ownerName = ImmutableReportOwner.newBuilder()
@@ -86,15 +86,13 @@ class ReportWithQueriesAndFieldAttributesExtractorTest {
         assertEquals(1, report.getQueries().size());
         var query = report.getQueries().iterator().next();
         assertEquals(queryId, query.getId());
-        assertEquals(reportId, query.getReportId());
         assertEquals(ReportQuerySql.of("SELECT * FROM ANY_REPORT.V_TABLE"), query.getQuery());
-        assertEquals("Sheet1", query.getSheetName());
+        assertEquals("Sheet1", query.getExcelSheet().getName());
 
         // Verify field attributes
-        assertEquals(2, query.getFieldAttributes().size());
-        var fieldAttribute = query.getFieldAttributes().iterator().next();
+        assertEquals(2, query.getExcelSheet().getFieldAttributes().size());
+        var fieldAttribute = query.getExcelSheet().getFieldAttributes().iterator().next();
         assertEquals(fieldAttributeId, fieldAttribute.getId());
-        assertEquals(queryId, fieldAttribute.getReportQueryId());
         assertEquals("source_column", fieldAttribute.getSourceName());
         assertEquals("mapped_column", fieldAttribute.getMappedName());
         assertEquals("dd/MM/yyyy", fieldAttribute.getFormat());
@@ -177,7 +175,7 @@ class ReportWithQueriesAndFieldAttributesExtractorTest {
 
         var query = report.getQueries().iterator().next();
         assertEquals(queryId, query.getId());
-        assertTrue(query.getFieldAttributes().isEmpty()); // No field attributes should be added
+        assertTrue(query.getExcelSheet().getFieldAttributes().isEmpty()); // No field attributes should be added
     }
 
     @Test

@@ -2,7 +2,7 @@ package uk.gov.laa.gpfd.services;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
-import uk.gov.laa.gpfd.model.TemplateDocument;
+import uk.gov.laa.gpfd.model.excel.ExcelTemplate;
 import uk.gov.laa.gpfd.services.excel.template.TemplateClient;
 import uk.gov.laa.gpfd.utils.SecurityPolicy;
 import uk.gov.laa.gpfd.utils.WorkbookFactory;
@@ -28,7 +28,7 @@ public sealed interface TemplateService permits TemplateService.ExcelTemplateSer
      * @param template the template to retrieve
      * @return the {@link Workbook} representing the template
      */
-    Workbook findTemplateById(TemplateDocument template);
+    Workbook findTemplateById(ExcelTemplate template);
 
     record ExcelTemplateService(TemplateClient repository, WorkbookFactory factory) implements TemplateService {
 
@@ -43,7 +43,7 @@ public sealed interface TemplateService permits TemplateService.ExcelTemplateSer
          * @throws ExcelTemplateCreationException if the template cannot be loaded
          */
         @Override
-        public Workbook findTemplateById(TemplateDocument template) {
+        public Workbook findTemplateById(ExcelTemplate template) {
             try (var input = repository.findTemplateById(template.getId())) {
                 return factory.create(input);
             } catch (IOException e) {

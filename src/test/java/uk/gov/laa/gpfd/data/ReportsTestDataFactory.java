@@ -1,6 +1,8 @@
 package uk.gov.laa.gpfd.data;
 
 import uk.gov.laa.gpfd.model.*;
+import uk.gov.laa.gpfd.model.excel.ExcelTemplate;
+import uk.gov.laa.gpfd.model.excel.ImmutableExcelSheet;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -19,7 +21,7 @@ public class ReportsTestDataFactory {
         return ImmutableReport.builder()
                 .id(reportId)
                 .name("Test Report")
-                .templateDocument(TemplateDocument.fromString("b36f9bbb-1178-432c-8f99-8090e285f2d3"))
+                .templateDocument(ExcelTemplate.fromString("b36f9bbb-1178-432c-8f99-8090e285f2d3"))
                 .creationTime(Timestamp.from(Instant.now()))
                 .lastDatabaseRefreshDate(Timestamp.from(Instant.now()))
                 .description("Test Description")
@@ -46,7 +48,9 @@ public class ReportsTestDataFactory {
 
     public static Report createTestReportWithQuery() {
         var query1 = ImmutableReportQuery.builder()
-                .sheetName("Sheet1")
+                .excelSheet(ImmutableExcelSheet.builder()
+                        .name("Sheet1")
+                        .build())
                 .query(ReportQuerySql.of("SELECT * FROM ANY_REPORT.DATA"))
                 .build();
         return createTestReport(UUID.randomUUID().toString(), List.of(query1) );
@@ -56,7 +60,7 @@ public class ReportsTestDataFactory {
         return ImmutableReport.builder()
                 .id(UUID.randomUUID())
                 .name("Test Report")
-                .templateDocument(TemplateDocument.fromString(secureDocumentId))
+                .templateDocument(ExcelTemplate.fromString(secureDocumentId))
                 .creationTime(Timestamp.from(Instant.now()))
                 .lastDatabaseRefreshDate(Timestamp.from(Instant.now()))
                 .description("Test Description")

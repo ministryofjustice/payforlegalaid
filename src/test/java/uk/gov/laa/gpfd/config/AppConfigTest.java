@@ -104,27 +104,6 @@ class AppConfigTest {
     }
 
     @Test
-    void shouldJdbcTemplateDataSource() {
-        // Given
-        // When
-        var jdbcTemplate = applicationContext.getBean("readOnlyJdbcTemplate", JdbcTemplate.class);
-
-        // Then
-        assertInstanceOf(DriverManagerDataSource.class, jdbcTemplate.getDataSource(), "JdbcTemplate should be using the correct DataSource.");
-    }
-
-    @Test
-    void shouldReadOnlyDataSourceBean() {
-        // Given
-        // When
-        var dataSource = applicationContext.getBean("readOnlyDataSource", DataSource.class);
-
-        // Then
-        assertNotNull(dataSource, "ReadOnlyDataSource bean should be created.");
-        assertInstanceOf(DriverManagerDataSource.class, dataSource, "DataSource should be of type DriverManagerDataSource.");
-    }
-
-    @Test
     void shouldWriteDataSourceBean() {
         // Given
         // When

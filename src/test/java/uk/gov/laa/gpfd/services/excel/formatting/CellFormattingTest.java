@@ -8,7 +8,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import uk.gov.laa.gpfd.model.FieldAttributes;
+import uk.gov.laa.gpfd.model.excel.ExcelMappingProjection;
 
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyShort;
@@ -27,7 +27,7 @@ class CellFormattingTest {
     private Workbook workbook;
     private CellStyle cellStyle;
     private DataFormat dataFormat;
-    private FieldAttributes fieldAttributes;
+    private ExcelMappingProjection mappingProjection;
 
     @BeforeEach
     void setUp() {
@@ -37,7 +37,7 @@ class CellFormattingTest {
         workbook = mock(Workbook.class);
         cellStyle = mock(CellStyle.class);
         dataFormat = mock(DataFormat.class);
-        fieldAttributes = mock(FieldAttributes.class);
+        mappingProjection = mock(ExcelMappingProjection.class);
 
         when(sheet.getWorkbook()).thenReturn(workbook);
         when(workbook.createCellStyle()).thenReturn(cellStyle);
@@ -48,11 +48,11 @@ class CellFormattingTest {
     void shouldApplyFormatWhenFormatIsPresent() {
         // Given
         var format = "dd/MM/yyyy";
-        when(fieldAttributes.getFormat()).thenReturn(format);
+        when(mappingProjection.getFormat()).thenReturn(format);
         when(dataFormat.getFormat(format)).thenReturn((short) 1);
 
         // When
-        strategy.apply(sheet, cell, fieldAttributes);
+        strategy.apply(sheet, cell, mappingProjection);
 
         // Then
         verify(workbook).createCellStyle();
@@ -64,10 +64,10 @@ class CellFormattingTest {
     @Test
     void shouldNotApplyFormatWhenFormatIsNull() {
         // Given
-        when(fieldAttributes.getFormat()).thenReturn(null);
+        when(mappingProjection.getFormat()).thenReturn(null);
 
         // When
-        strategy.apply(sheet, cell, fieldAttributes);
+        strategy.apply(sheet, cell, mappingProjection);
 
         // Then
         verify(workbook, never()).createCellStyle();
@@ -79,10 +79,10 @@ class CellFormattingTest {
     @Test
     void shouldApplyFormatWhenFormatIsEmpty() {
         // Given
-        when(fieldAttributes.getFormat()).thenReturn("");
+        when(mappingProjection.getFormat()).thenReturn("");
 
         // When
-        strategy.apply(sheet, cell, fieldAttributes);
+        strategy.apply(sheet, cell, mappingProjection);
 
         // Then
         verify(workbook).createCellStyle();
@@ -96,15 +96,15 @@ class CellFormattingTest {
         // Given
         var format1 = "dd/MM/yyyy";
         var format2 = "0.00%";
-        when(fieldAttributes.getFormat())
+        when(mappingProjection.getFormat())
                 .thenReturn(format1) // First call
                 .thenReturn(format2); // Second call
         when(dataFormat.getFormat(format1)).thenReturn((short) 1);
         when(dataFormat.getFormat(format2)).thenReturn((short) 2);
 
         // When
-        strategy.apply(sheet, cell, fieldAttributes); // First call
-        strategy.apply(sheet, cell, fieldAttributes); // Second call
+        strategy.apply(sheet, cell, mappingProjection); // First call
+        strategy.apply(sheet, cell, mappingProjection); // Second call
 
         // Then
         verify(workbook, times(2)).createCellStyle();
@@ -118,12 +118,12 @@ class CellFormattingTest {
     void shouldThrowExceptionWhenCreateCellStyleFails() {
         // Given
         var format = "dd/MM/yyyy";
-        when(fieldAttributes.getFormat()).thenReturn(format);
+        when(mappingProjection.getFormat()).thenReturn(format);
         when(workbook.createCellStyle()).thenThrow(new RuntimeException("Failed to create cell style"));
 
         // When & Then
         Assertions.assertThrows(RuntimeException.class, () -> {
-            strategy.apply(sheet, cell, fieldAttributes);
+            strategy.apply(sheet, cell, mappingProjection);
         });
         verify(dataFormat, never()).getFormat(anyString());
         verify(cellStyle, never()).setDataFormat(anyShort());
@@ -134,12 +134,12 @@ class CellFormattingTest {
     void shouldThrowExceptionWhenGetFormatFails() {
         // Given
         var format = "dd/MM/yyyy";
-        when(fieldAttributes.getFormat()).thenReturn(format);
+        when(mappingProjection.getFormat()).thenReturn(format);
         when(dataFormat.getFormat(format)).thenThrow(new RuntimeException("Failed to get format"));
 
         // When & Then
         Assertions.assertThrows(RuntimeException.class, () -> {
-            strategy.apply(sheet, cell, fieldAttributes);
+            strategy.apply(sheet, cell, mappingProjection);
         });
         verify(cellStyle, never()).setDataFormat(anyShort());
         verify(cell, never()).setCellStyle(any(CellStyle.class));
@@ -149,11 +149,11 @@ class CellFormattingTest {
     void shouldApplyCustomFormatWhenFormatIsCustom() {
         // Given
         var format = "$#,##0.00";
-        when(fieldAttributes.getFormat()).thenReturn(format);
+        when(mappingProjection.getFormat()).thenReturn(format);
         when(dataFormat.getFormat(format)).thenReturn((short) 3);
 
         // When
-        strategy.apply(sheet, cell, fieldAttributes);
+        strategy.apply(sheet, cell, mappingProjection);
 
         // Then
         verify(workbook).createCellStyle();
@@ -166,11 +166,11 @@ class CellFormattingTest {
     void shouldApplyDateFormatWhenFormatIsDate() {
         // Given
         var dateFormat = "dd/MM/yyyy"; // Date format to be applied
-        when(fieldAttributes.getFormat()).thenReturn(dateFormat); // Return the date format
+        when(mappingProjection.getFormat()).thenReturn(dateFormat); // Return the date format
         when(dataFormat.getFormat(dateFormat)).thenReturn((short) 14); // Simulate format index for date
 
         // When
-        strategy.apply(sheet, cell, fieldAttributes);
+        strategy.apply(sheet, cell, mappingProjection);
 
         // Then
         verify(workbook).createCellStyle();

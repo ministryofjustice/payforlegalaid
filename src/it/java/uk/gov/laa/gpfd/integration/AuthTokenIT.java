@@ -12,8 +12,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
+import uk.gov.laa.gpfd.config.TestDatabaseConfig;
 
-@SpringBootTest
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        classes = {
+                TestDatabaseConfig.class
+        }
+)
 @AutoConfigureMockMvc
 @ActiveProfiles("testauth")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
