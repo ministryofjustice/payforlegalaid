@@ -102,6 +102,12 @@ jobs:
           sparse-checkout: data
           sparse-checkout-cone-mode: true
 
+      - name: Filter liquibase files by extension
+        run:
+          |
+          mkdir -p liquibase-changeset
+          rsync -av --include="*.xml" payforlegalaid-data/* liquibase-changeset/
+
       - name: Build and push Liquibase Docker image to container repository
         run: |
           echo "Current working directory:"
