@@ -47,9 +47,6 @@ spec:
             - -c
             - |
               
-              echo "what's in here:"
-              ls -la
-              
               if [ -z "$MOJFIN_DB_URL" ] || [ -z "$MOJFIN_DEV_WRITE_USERNAME" ] || [ -z "$MOJFIN_DEV_WRITE_PASSWORD" ]; then
                   echo "❌ ERROR: Required database credentials not set"
                   exit 1
@@ -63,6 +60,10 @@ spec:
                 echo "❌ ERROR: Changelog file not found at ${CHANGELOG}"
                 exit 1
               fi
+              
+              echo "ℹ️ Changelog Content"
+              cat ${CHANGELOG}
+              echo "=========="
               
               db_healthcheck() {
               
@@ -134,6 +135,8 @@ spec:
                   echo "❌ Liquibase update failed even after clean"
                   exit 1
               fi
+              
+
           securityContext:
             runAsUser: 1001
             runAsGroup: 1001
