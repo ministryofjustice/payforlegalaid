@@ -28,7 +28,7 @@ on:
       ecr_role_to_assume:
         required: true
       data_ecr_role_to_assume:
-        required: false #todo make true
+        required: false
       kube_namespace:
         required: true
       kube_cluster:
@@ -80,40 +80,15 @@ jobs:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           SOCKET_KEY: ${{ secrets.api_socket_key }}
 
-      - uses: './.github/login-to-aws'
+      - name: Build the liquibase docker image and push it to the repository
+        uses: './.github/build-and-push-liquibase-image'
+        id: liquibase-image
         env:
           ROLE: ${{ secrets.data_ecr_role_to_assume }}
           AWS_REGION: ${{ vars.DEV_DATA_ECR_REGION }}
-
-      - name: Login to container repository
-        uses: aws-actions/amazon-ecr-login@v2
-        id: login-ecr-data
-
-      - name: Checkout GitHub Data repository
-        uses: actions/checkout@v4
-        with:
-          repository: "ministryofjustice/payforlegalaid-data"
-          path: payforlegalaid-data
-          ssh-key: ${{ secrets.socket_key }}
-          sparse-checkout: data
-          sparse-checkout-cone-mode: true
-
-      - name: Filter liquibase files by extension
-        run:
-          |
-          mkdir -p liquibase-changeset
-          rsync -av --include="*.xml" payforlegalaid-data/* liquibase-changeset/
-
-      - name: Build and push Liquibase Docker image to container repository
-        run: |
-          echo "Current working directory:"
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f Liquibase.Dockerfile  .
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-        env:
           REPOSITORY: ${{ vars.DEV_DATA_ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
-          REGISTRY: ${{ steps.login-ecr-data.outputs.registry }}
-        shell: bash
+          SOCKET_KEY: ${{ secrets.socket_key }}
 
       - name: Generate Kubernetes files from templates
         env:
@@ -126,7 +101,7 @@ jobs:
           GPFD_URL: ${{ inputs.gpfd_url }}
           SECRET_NAME: ${{ inputs.secret_name }}
           DATA_REPOSITORY: ${{ vars.DEV_DATA_ECR_REPOSITORY }}
-          DATA_REGISTRY: ${{ steps.login-ecr-data.outputs.registry }}
+          DATA_REGISTRY: ${{ steps.liquibase-image.outputs.data_registry }}
         run: |
           template_processing=(
             "ingress:ingress"
