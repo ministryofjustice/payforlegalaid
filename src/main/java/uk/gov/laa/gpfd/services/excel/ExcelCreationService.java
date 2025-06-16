@@ -1,6 +1,7 @@
 package uk.gov.laa.gpfd.services.excel;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import uk.gov.laa.gpfd.dao.JdbcWorkbookDataStreamer;
 import uk.gov.laa.gpfd.model.Mapping;
@@ -41,6 +42,11 @@ public record ExcelCreationService(
         return templateLoader.findTemplateById(report.getTemplateDocument());
     }
 
+    @Override
+    public Workbook createEmpty() {
+        return templateLoader.createEmpty();
+    }
+
     /**
      * Updates the provided workbook with data fetched from the database based on the queries defined
      * in the {@link Report}. This method iterates through the report's queries, finds the corresponding
@@ -53,6 +59,7 @@ public record ExcelCreationService(
     public void stream(Report report, Workbook workbook) {
         for (var query : report.extractAllMappings()) {
             var sheet = workbook.createSheet(query.getExcelSheet().getName());
+            setupSheetHeader(sheet, query);
             jdbcWorkbookDataStreamer.queryToSheet(sheet, query);
             int counter = 0;
             for (var config : query.getExcelSheet().getFieldAttributes()) {
@@ -64,6 +71,17 @@ public record ExcelCreationService(
 
         pivotTableRefresher.refreshPivotTables(workbook);
         formulaCalculator.evaluateAllFormulaCells(workbook);
+    }
+
+    private void setupSheetHeader(Sheet sheet, Mapping query) {
+        var headerRow = sheet.createRow(0);
+        var columnIndex = 0;
+
+        for (var column : query.getExcelSheet().getFieldAttributes()) {
+            var cell = headerRow.createCell(columnIndex++);
+            cell.setCellValue(column.getMappedName());
+            formatter.applyFormatting(sheet, cell, column);
+        }
     }
 
 }

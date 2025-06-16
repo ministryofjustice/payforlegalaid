@@ -1,6 +1,8 @@
 package uk.gov.laa.gpfd.services;
 
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
 import uk.gov.laa.gpfd.model.excel.ExcelTemplate;
 import uk.gov.laa.gpfd.services.excel.template.TemplateClient;
@@ -30,7 +32,9 @@ public sealed interface TemplateService permits TemplateService.ExcelTemplateSer
      */
     Workbook findTemplateById(ExcelTemplate template);
 
-    record ExcelTemplateService(TemplateClient repository, WorkbookFactory factory) implements TemplateService {
+    Workbook createEmpty();
+
+    record ExcelTemplateService(TemplateClient repository, WorkbookFactory streamingFactory, WorkbookFactory factory) implements TemplateService {
 
         /**
          * Retrieves an Excel template as a {@link Workbook} using the provided {@link TemplateClient} and unique identifier.
@@ -48,6 +52,14 @@ public sealed interface TemplateService permits TemplateService.ExcelTemplateSer
                 return factory.create(input);
             } catch (IOException e) {
                 throw new TemplateResourceException.ExcelTemplateCreationException("Failed to load template for ID: " + template, e);
+            }
+        }
+
+        public Workbook createEmpty() {
+            try {
+                return streamingFactory.create(null);
+            } catch (IOException e) {
+                throw new TemplateResourceException.ExcelTemplateCreationException("Failed to load template for ID: " , e);
             }
         }
 
@@ -96,7 +108,7 @@ public sealed interface TemplateService permits TemplateService.ExcelTemplateSer
                 var configuredFactory = streamingEnabled ?
                     factory.asStreamed(streamingWindowSize).withTransformation(security) : factory.withTransformation(security);
 
-                return new ExcelTemplateService(repository, configuredFactory);
+                return new ExcelTemplateService(repository, configuredFactory, factory.withTransformation(security));
             }
         }
     }

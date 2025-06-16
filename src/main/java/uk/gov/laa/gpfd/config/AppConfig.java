@@ -295,7 +295,7 @@ public class AppConfig {
      * @return a {@link TemplateService} instance
      */
     @Bean
-    public TemplateService templateService(TemplateClient templateClient) {
+    public TemplateService streamingTemplateService(TemplateClient templateClient) {
         if (allowedCompressionRatio <= 0) {
             throw new IllegalStateException("Compression ratio must be positive");
         }
