@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
+import uk.gov.laa.gpfd.exception.ReportGenerationException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
@@ -53,6 +54,33 @@ public class GlobalExceptionHandler {
         }};
 
         log.error("ExcelTemplateCreationException Thrown: {}", response.getError());
+        if (e.getCause() != null) {
+            log.error("Caused by: {}", e.getCause().getMessage());
+        }
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
+    /**
+     * Handles ReportGenerationException and responds with an HTTP 500 Internal Server Error.
+     *
+     * @param e the ReportGenerationException thrown when there is an issue while creating xls report
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
+     */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler({
+            ReportGenerationException.InvalidWorkbookTypeException.class,
+            ReportGenerationException.PivotTableCopyException.class,
+            ReportGenerationException.PivotTableCreationException.class,
+            ReportGenerationException.SheetCopyException.class,
+            ReportGenerationException.SheetNotFoundException.class
+    })
+    public ResponseEntity<ReportsGet500Response> handleReportGenerationException(ReportGenerationException e) {
+        var response = new ReportsGet500Response() {{
+            setError(e.getMessage());
+        }};
+
+        log.error("ReportGenerationException Thrown: {}", response.getError());
         if (e.getCause() != null) {
             log.error("Caused by: {}", e.getCause().getMessage());
         }
