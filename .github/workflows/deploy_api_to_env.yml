@@ -90,6 +90,18 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
           SOCKET_KEY: ${{ secrets.socket_key }}
 
+      - name: Get latest commit SHA from data repo
+        id: get_sha
+        run: |
+          SHA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          https://api.github.com/repos/ministryofjustice/payforlegalaid-data/commits/main \
+          | jq -r .sha)
+          echo "sha=$SHA" >> $GITHUB_OUTPUT
+
+      - name: print out sha
+        run: |
+          echo "Data SHA is ${{ steps.get_sha.outputs.sha }}"
+
       - name: Generate Kubernetes files from templates
         env:
           IMAGE_TAG: ${{ github.sha }} # Tags ECR image with commit sha
@@ -102,6 +114,7 @@ jobs:
           SECRET_NAME: ${{ inputs.secret_name }}
           DATA_REPOSITORY: ${{ vars.DEV_DATA_ECR_REPOSITORY }}
           DATA_REGISTRY: ${{ steps.liquibase-image.outputs.data_registry }}
+          DATA_IMAGE_TAG: ${{ steps.get_sha.outputs.sha }}
         run: |
           template_processing=(
             "ingress:ingress"
@@ -110,7 +123,7 @@ jobs:
             "network-policy:network-policy"
             "prometheus-rules:prometheus-rules"
             "grafana-dashboard:grafana-dashboard:\$ENV_NAME,\$NAMESPACE"
-            "deployment:deployment:\$ENV_NAME,\$SECRET_NAME,\$GPFD_URL,\$REGISTRY,\$REPOSITORY,\$IMAGE_TAG,\$DATA_REPOSITORY,\$DATA_REGISTRY"
+            "deployment:deployment:\$ENV_NAME,\$SECRET_NAME,\$GPFD_URL,\$REGISTRY,\$REPOSITORY,\$IMAGE_TAG,\$DATA_REPOSITORY,\$DATA_REGISTRY,\$DATA_IMAGE_TAG"
           )
           
           for item in "${template_processing[@]}"; do
