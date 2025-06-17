@@ -93,10 +93,20 @@ jobs:
       - name: Get latest commit SHA from data repo
         id: get_sha
         run: |
-          SHA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          https://api.github.com/repos/ministryofjustice/payforlegalaid-data/commits/main \
-          | jq -r .sha)
+          mkdir -p ~/.ssh
+          echo "${{ secrets.socket_key }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          SHA=$(git ls-remote git@github.com:ministryofjustice/payforlegalaid-data.git refs/heads/main | cut -f1)
           echo "sha=$SHA" >> $GITHUB_OUTPUT
+
+      #      - name: Get latest commit SHA from data repo
+#        id: get_sha
+#        run: |
+#          SHA=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+#          https://api.github.com/repos/ministryofjustice/payforlegalaid-data/commits/main \
+#          | jq -r .sha)
+#          echo "sha=$SHA" >> $GITHUB_OUTPUT
 
       - name: print out sha
         run: |
