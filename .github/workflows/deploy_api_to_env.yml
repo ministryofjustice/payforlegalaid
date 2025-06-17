@@ -83,15 +83,12 @@ jobs:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           SOCKET_KEY: ${{ secrets.api_socket_key }}
 
-      - name: Build the liquibase docker image and push it to the repository
-        uses: './.github/build-and-push-liquibase-image'
+      - name: Get data repository registry details
+        uses: './.github/get-data-registry-details'
         id: liquibase-image
         env:
           ROLE: ${{ secrets.data_ecr_role_to_assume }}
           AWS_REGION: ${{ vars.DEV_DATA_ECR_REGION }}
-          REPOSITORY: ${{ vars.DEV_DATA_ECR_REPOSITORY }}
-          IMAGE_TAG: ${{ github.sha }}
-          SOCKET_KEY: ${{ secrets.socket_key }}
 
       - name: Get latest commit SHA from data repo
         id: get_sha
