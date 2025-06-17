@@ -22,32 +22,6 @@ runs:
     uses: aws-actions/amazon-ecr-login@v2
     id: login-ecr-data
 
-  - name: Checkout GitHub Data repository
-    uses: actions/checkout@v4
-    with:
-      repository: "ministryofjustice/payforlegalaid-data"
-      path: payforlegalaid-data
-      ssh-key: ${{ env.SOCKET_KEY }}
-      sparse-checkout: data
-      sparse-checkout-cone-mode: true
-
-  - name: Filter liquibase files by extension
-    run:
-      |
-      mkdir -p liquibase-changeset
-      rsync -a --include="*.xml" --include="*/" --exclude='*' payforlegalaid-data/* liquibase-changeset/
-    shell: bash
-
-  - name: Build and push Liquibase Docker image to container repository
-    run: |
-      docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f Liquibase.Dockerfile  .
-      docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-    env:
-      REPOSITORY: ${{ env.REPOSITORY }}
-      IMAGE_TAG: ${{ env.IMAGE_TAG }}
-      REGISTRY: ${{ steps.login-ecr-data.outputs.registry }}
-    shell: bash
-
   - name: Set data registry output
     id: set-data-registry
     run: |
