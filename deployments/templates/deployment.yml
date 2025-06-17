@@ -50,11 +50,11 @@ spec:
                   echo "❌ ERROR: Required database credentials not set"
                   exit 1
               fi
-              
-              BASE_FOLDER="/liquibase/data"
+                            
+              BASE_FOLDER="/liquibase"
               CHANGELOG_FILENAME="master-changelog.xml"
               CHANGELOG="${BASE_FOLDER}/${CHANGELOG_FILENAME}"
-                            
+                                                  
               if [ ! -f ${CHANGELOG} ]; then
                 echo "❌ ERROR: Changelog file not found at ${CHANGELOG}"
                 exit 1
