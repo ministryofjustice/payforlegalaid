@@ -1,4 +1,4 @@
-name: Build and push liquibase image
+name: Get Data Registry Details
 
 outputs:
   data_registry:
