@@ -79,8 +79,8 @@ public record ExcelCreationService(
                     ));
         }
 
-        pivotTableRefresher.refreshPivotTables(workbook);
-        formulaCalculator.evaluateAllFormulaCells(workbook);
+      //  pivotTableRefresher.refreshPivotTables(workbook);
+     //   formulaCalculator.evaluateAllFormulaCells(workbook);
     }
 
 }
