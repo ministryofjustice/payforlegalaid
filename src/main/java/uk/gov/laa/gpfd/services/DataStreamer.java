@@ -191,6 +191,10 @@ public interface DataStreamer {
                 XSSFPivotCacheDefinition sourceCacheDef = pivotTable.getPivotCacheDefinition();
                 CTPivotCacheDefinition sourceCTCacheDef = sourceCacheDef.getCTPivotCacheDefinition();
 
+                sourceCacheDef.getCTPivotCacheDefinition().setRefreshOnLoad(false);
+                targetPivot.getPivotCacheDefinition().getCTPivotCacheDefinition().setRefreshOnLoad(false);
+
+
                 XSSFPivotCacheDefinition targetCacheDef = targetPivot.getPivotCacheDefinition();
                 CTPivotCacheDefinition targetCTCacheDef = targetCacheDef.getCTPivotCacheDefinition();
 
