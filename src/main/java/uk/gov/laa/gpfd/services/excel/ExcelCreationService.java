@@ -68,6 +68,8 @@ public record ExcelCreationService(
      * @param report   the report containing the queries and field attributes
      */
     private void updateTemplateWithData(Workbook workbook, Report report) {
+        pivotTableRefresher.stopRefreshPivotTable(workbook);
+
         for (var query : report.extractAllMappings()) {
             findSheetByName(workbook, query.getSheetName())
                     .ifPresent(sheet -> sheetDataWriter.writeDataToSheet(

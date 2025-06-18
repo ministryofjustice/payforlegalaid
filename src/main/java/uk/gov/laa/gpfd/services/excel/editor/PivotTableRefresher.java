@@ -41,4 +41,17 @@ public interface PivotTableRefresher {
                     .forEach(cache -> cache.getCTPivotCacheDefinition().setRefreshOnLoad(true));
         }
     }
+
+    default void stopRefreshPivotTable(Workbook workbook) {
+        if (workbook == null) {
+            throw new IllegalArgumentException("Workbook cannot be null");
+        }
+
+        if (workbook instanceof XSSFWorkbook xssfWorkbook) {
+            xssfWorkbook.getRelationParts().stream()
+                    .filter(part -> part.getRelationship().getRelationshipType().contains(PACKAGE_RELATIONSHIP_TYPE))
+                    .map(part -> (XSSFPivotCacheDefinition) xssfWorkbook.getRelationById(part.getRelationship().getId()))
+                    .forEach(cache -> cache.getCTPivotCacheDefinition().setRefreshOnLoad(false));
+        }
+    }
 }
