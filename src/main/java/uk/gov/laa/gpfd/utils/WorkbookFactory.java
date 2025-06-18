@@ -7,6 +7,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static org.apache.poi.ooxml.util.PackageHelper.open;
+
 /**
  * A factory interface for creating {@link Workbook} instances from input streams.
  * Provides functional composition capabilities for adding transformations and fallback behavior.
@@ -31,8 +33,8 @@ public interface WorkbookFactory {
         }
 
         try {
-            if (input.available() <= 0) {
-                return new XSSFWorkbook();
+            if (input.available() == 0) {
+                return new XSSFWorkbook(open(input, true));
             }
         } catch (Exception e) {
             return new XSSFWorkbook();
