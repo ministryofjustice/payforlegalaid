@@ -26,6 +26,7 @@
         <immutables.version>2.10.1</immutables.version>
         <spring-cloud-azure-dependencies.version>5.19.0</spring-cloud-azure-dependencies.version>
         <spring-security.version>6.4.6</spring-security.version>
+        <tomcat-embed-core.version>10.1.42</tomcat-embed-core.version>
 
         <payforlegalaid-openapi.version>0.0.3</payforlegalaid-openapi.version>
     </properties>
@@ -247,6 +248,11 @@
             <groupId>com.oracle.database.jdbc</groupId>
             <artifactId>ucp17</artifactId>
             <version>${oracle-jdbc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-core</artifactId>
+            <version>${tomcat-embed-core.version}</version>
         </dependency>
         <!-- Test Dependencies-->
         <dependency>
