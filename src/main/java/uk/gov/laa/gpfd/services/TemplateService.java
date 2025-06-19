@@ -6,6 +6,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
 import uk.gov.laa.gpfd.model.excel.ExcelTemplate;
 import uk.gov.laa.gpfd.services.excel.template.TemplateClient;
+import uk.gov.laa.gpfd.utils.RobWorkbook;
 import uk.gov.laa.gpfd.utils.SecurityPolicy;
 import uk.gov.laa.gpfd.utils.WorkbookFactory;
 
@@ -56,11 +57,7 @@ public sealed interface TemplateService permits TemplateService.ExcelTemplateSer
         }
 
         public Workbook createEmpty() {
-            try {
-                return streamingFactory.create(null);
-            } catch (IOException e) {
-                throw new TemplateResourceException.ExcelTemplateCreationException("Failed to load template for ID: " , e);
-            }
+            return new RobWorkbook();
         }
 
         public static final class Builder  {

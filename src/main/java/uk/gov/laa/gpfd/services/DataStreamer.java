@@ -124,15 +124,16 @@ public interface DataStreamer {
             Objects.requireNonNull(report, "Report must not be null");
             Objects.requireNonNull(output, "Output stream must not be null");
 
-            try (var sourceWorkbook = resolveTemplate(report);
+            try (var analitics = resolveTemplate(report);
                  var targetWorkbook = createEmpty()) {
+
 
                 stream(report, targetWorkbook);
 
-                for (int i = 0; i < sourceWorkbook.getNumberOfSheets(); i++) {
-                    Sheet sourceSheet = sourceWorkbook.getSheetAt(i);
-
-                    moveSheet(sourceWorkbook, targetWorkbook, sourceSheet.getSheetName());
+                int sheetCount = analitics.getNumberOfSheets();
+                for (int i = 0; i < 5; i++) {
+                    Sheet sourceSheet = analitics.getSheetAt(i);
+                    moveSheet(analitics, targetWorkbook, sourceSheet.getSheetName());
                 }
 
                 targetWorkbook.write(output);
@@ -141,14 +142,15 @@ public interface DataStreamer {
             }
         }
 
-        private void moveSheet(Workbook sourceWorkbook, Workbook t, String sheetName) {
+        private void moveSheet(Workbook sourceWorkbook, Workbook targetWorkbook, String sheetName) {
             Sheet sourceSheet = sourceWorkbook.getSheet(sheetName);
             if (sourceSheet == null) {
                 throw new IllegalArgumentException("Sheet '" + sheetName + "' not found in source workbook");
             }
 
-            XSSFWorkbook xssfTargetWorkbook = ((SXSSFWorkbook)  t).getXSSFWorkbook();
+            XSSFWorkbook xssfTargetWorkbook = ((SXSSFWorkbook) targetWorkbook).getXSSFWorkbook();
             XSSFSheet targetSheet = xssfTargetWorkbook.createSheet(sheetName);
+            targetSheet.setAutobreaks(false);
 
             copySheetContent(sourceSheet, targetSheet);
             copyColumnWidths(sourceSheet, targetSheet);
@@ -242,7 +244,7 @@ public interface DataStreamer {
         }
 
         private void copySheetContent(Sheet sourceSheet, Sheet targetSheet) {
-            Map<CellStyle, CellStyle> styleCache = new HashMap<>();
+//            Map<CellStyle, CellStyle> styleCache = new HashMap<>();
 
             for (int i = 0; i <= sourceSheet.getLastRowNum(); i++) {
                 Row sourceRow = sourceSheet.getRow(i);
@@ -259,38 +261,38 @@ public interface DataStreamer {
 
                             copyCell(sourceCell, targetCell);
 
-                            CellStyle sourceStyle = sourceCell.getCellStyle();
-                            CellStyle targetStyle;
+//                            CellStyle sourceStyle = sourceCell.getCellStyle();
+//                            CellStyle targetStyle;
+//
+//                            if (styleCache.containsKey(sourceStyle)) {
+//                                targetStyle = styleCache.get(sourceStyle);
+//                            } else {
+//                                targetStyle = targetSheet.getWorkbook().createCellStyle();
+//                                targetStyle.cloneStyleFrom(sourceStyle);
+//                                copyBorders(sourceStyle, targetStyle);
+//                                styleCache.put(sourceStyle, targetStyle);
+//                            }
 
-                            if (styleCache.containsKey(sourceStyle)) {
-                                targetStyle = styleCache.get(sourceStyle);
-                            } else {
-                                targetStyle = targetSheet.getWorkbook().createCellStyle();
-                                targetStyle.cloneStyleFrom(sourceStyle);
-                                copyBorders(sourceStyle, targetStyle);
-                                styleCache.put(sourceStyle, targetStyle);
-                            }
-
-                            targetCell.setCellStyle(targetStyle);
+//                            targetCell.setCellStyle(targetStyle);
                         }
                     }
                 }
             }
         }
 
-        private void copyBorders(CellStyle sourceStyle, CellStyle targetStyle) {
-            targetStyle.setBorderTop(sourceStyle.getBorderTop());
-            targetStyle.setTopBorderColor(sourceStyle.getTopBorderColor());
-
-            targetStyle.setBorderBottom(sourceStyle.getBorderBottom());
-            targetStyle.setBottomBorderColor(sourceStyle.getBottomBorderColor());
-
-            targetStyle.setBorderLeft(sourceStyle.getBorderLeft());
-            targetStyle.setLeftBorderColor(sourceStyle.getLeftBorderColor());
-
-            targetStyle.setBorderRight(sourceStyle.getBorderRight());
-            targetStyle.setRightBorderColor(sourceStyle.getRightBorderColor());
-        }
+//        private void copyBorders(CellStyle sourceStyle, CellStyle targetStyle) {
+//            targetStyle.setBorderTop(sourceStyle.getBorderTop());
+//            targetStyle.setTopBorderColor(sourceStyle.getTopBorderColor());
+//
+//            targetStyle.setBorderBottom(sourceStyle.getBorderBottom());
+//            targetStyle.setBottomBorderColor(sourceStyle.getBottomBorderColor());
+//
+//            targetStyle.setBorderLeft(sourceStyle.getBorderLeft());
+//            targetStyle.setLeftBorderColor(sourceStyle.getLeftBorderColor());
+//
+//            targetStyle.setBorderRight(sourceStyle.getBorderRight());
+//            targetStyle.setRightBorderColor(sourceStyle.getRightBorderColor());
+//        }
 
         private void copyCell(Cell sourceCell, Cell targetCell) {
             // Copy cell style
@@ -337,67 +339,67 @@ public interface DataStreamer {
 
 
 
-        private void copySheet(Sheet sourceSheet, Sheet targetSheet) {
-            // Copy each row
-            for (int i = 0; i <= sourceSheet.getLastRowNum(); i++) {
-                Row sourceRow = sourceSheet.getRow(i);
-                if (sourceRow != null) {
-                    Row targetRow = targetSheet.createRow(i);
+//        private void copySheet(Sheet sourceSheet, Sheet targetSheet) {
+//            // Copy each row
+//            for (int i = 0; i <= sourceSheet.getLastRowNum(); i++) {
+//                Row sourceRow = sourceSheet.getRow(i);
+//                if (sourceRow != null) {
+//                    Row targetRow = targetSheet.createRow(i);
+//
+//                    // Copy each cell
+//                    for (int j = 0; j < sourceRow.getLastCellNum(); j++) {
+//                        Cell sourceCell = sourceRow.getCell(j);
+//                        if (sourceCell != null) {
+//                            Cell targetCell = targetRow.createCell(j);
+//                            copyCell(sourceCell.getSheet().getWorkbook(), targetCell.getSheet().getWorkbook(), sourceCell, targetCell);
+//                        }
+//                    }
+//                }
+//            }
+//
+//            for (int i = 0; i < sourceSheet.getRow(0).getLastCellNum(); i++) {
+//                targetSheet.setColumnWidth(i, sourceSheet.getColumnWidth(i));
+//            }
+//
+//            for (int i = 0; i < sourceSheet.getNumMergedRegions(); i++) {
+//                CellRangeAddress mergedRegion = sourceSheet.getMergedRegion(i);
+//                targetSheet.addMergedRegion(mergedRegion);
+//            }
+//
+//        }
 
-                    // Copy each cell
-                    for (int j = 0; j < sourceRow.getLastCellNum(); j++) {
-                        Cell sourceCell = sourceRow.getCell(j);
-                        if (sourceCell != null) {
-                            Cell targetCell = targetRow.createCell(j);
-                            copyCell(sourceCell.getSheet().getWorkbook(), targetCell.getSheet().getWorkbook(), sourceCell, targetCell);
-                        }
-                    }
-                }
-            }
-
-            for (int i = 0; i < sourceSheet.getRow(0).getLastCellNum(); i++) {
-                targetSheet.setColumnWidth(i, sourceSheet.getColumnWidth(i));
-            }
-
-            for (int i = 0; i < sourceSheet.getNumMergedRegions(); i++) {
-                CellRangeAddress mergedRegion = sourceSheet.getMergedRegion(i);
-                targetSheet.addMergedRegion(mergedRegion);
-            }
-
-        }
-
-
-
-        private void copyCell(Workbook sourceWorkbook, Workbook targetWorkbook, Cell sourceCell, Cell targetCell) {
-            CellStyle sourceStyle = sourceCell.getCellStyle();
-            CellStyle targetStyle = targetWorkbook.createCellStyle();
-            targetStyle.cloneStyleFrom(sourceStyle);
-            targetCell.setCellStyle(targetStyle);
-
-            // Copy cell value based on type
-            switch (sourceCell.getCellType()) {
-                case STRING:
-                    targetCell.setCellValue(sourceCell.getStringCellValue());
-                    break;
-                case NUMERIC:
-                    targetCell.setCellValue(sourceCell.getNumericCellValue());
-                    break;
-                case BOOLEAN:
-                    targetCell.setCellValue(sourceCell.getBooleanCellValue());
-                    break;
-                case FORMULA:
-                    targetCell.setCellFormula(sourceCell.getCellFormula());
-                    break;
-                case BLANK:
-                    targetCell.setBlank();
-                    break;
-                case ERROR:
-                    targetCell.setCellErrorValue(sourceCell.getErrorCellValue());
-                    break;
-                default:
-                    break;
-            }
-        }
+//
+//
+//        private void copyCell(Workbook sourceWorkbook, Workbook targetWorkbook, Cell sourceCell, Cell targetCell) {
+//            CellStyle sourceStyle = sourceCell.getCellStyle();
+//            CellStyle targetStyle = targetWorkbook.createCellStyle();
+//            targetStyle.cloneStyleFrom(sourceStyle);
+//            targetCell.setCellStyle(targetStyle);
+//
+//            // Copy cell value based on type
+//            switch (sourceCell.getCellType()) {
+//                case STRING:
+//                    targetCell.setCellValue(sourceCell.getStringCellValue());
+//                    break;
+//                case NUMERIC:
+//                    targetCell.setCellValue(sourceCell.getNumericCellValue());
+//                    break;
+//                case BOOLEAN:
+//                    targetCell.setCellValue(sourceCell.getBooleanCellValue());
+//                    break;
+//                case FORMULA:
+//                    targetCell.setCellFormula(sourceCell.getCellFormula());
+//                    break;
+//                case BLANK:
+//                    targetCell.setBlank();
+//                    break;
+//                case ERROR:
+//                    targetCell.setCellErrorValue(sourceCell.getErrorCellValue());
+//                    break;
+//                default:
+//                    break;
+//            }
+//        }
 
 
         /**
@@ -409,7 +411,7 @@ public interface DataStreamer {
          * @throws TemplateResourceException if the template cannot be loaded
          */
         Workbook resolveTemplate(Report report);
-
+//org.apache.poi.xssf.streaming.SXSSFCell.getCellStyle ()
         Workbook createEmpty();
     }
 }

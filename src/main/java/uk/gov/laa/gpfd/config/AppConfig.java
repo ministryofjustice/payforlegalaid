@@ -304,7 +304,7 @@ public class AppConfig {
                 .repository(templateClient)
                 .factory(WorkbookFactory::newWorkbook)
                 .withSecurity(allowedCompressionRatio)
-                .withStream(rowAccessWindowSize)
+                .withStream(10_000)
                 .build();
     }
 

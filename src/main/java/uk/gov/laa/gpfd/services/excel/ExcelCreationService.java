@@ -1,8 +1,7 @@
 package uk.gov.laa.gpfd.services.excel;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import uk.gov.laa.gpfd.dao.JdbcWorkbookDataStreamer;
 import uk.gov.laa.gpfd.model.Mapping;
 import uk.gov.laa.gpfd.model.Report;
@@ -57,20 +56,43 @@ public record ExcelCreationService(
      */
     @Override
     public void stream(Report report, Workbook workbook) {
+        CellStyle headerStyle = createHeaderStyle(workbook);
+        CellStyle defaultStyle = createDefaultStyle(workbook);
         for (var query : report.extractAllMappings()) {
             var sheet = workbook.createSheet(query.getExcelSheet().getName());
+            sheet.setAutobreaks(false);
             setupSheetHeader(sheet, query);
             jdbcWorkbookDataStreamer.queryToSheet(sheet, query);
             int counter = 0;
+            sheet.setDefaultColumnWidth(25);
             for (var config : query.getExcelSheet().getFieldAttributes()) {
-                double columnWidth = config.getColumnWidth();
-                sheet.setColumnWidth(counter, (int) (columnWidth * 256));
+                sheet.setDefaultColumnStyle(counter, defaultStyle);
                 counter++;
             }
         }
 
-        pivotTableRefresher.refreshPivotTables(workbook);
-        formulaCalculator.evaluateAllFormulaCells(workbook);
+    }
+
+    private CellStyle createHeaderStyle(Workbook workbook) {
+        CellStyle style = workbook.createCellStyle();
+        Font font = workbook.createFont();
+        font.setBold(true);
+        font.setFontHeightInPoints((short)12);
+        style.setFont(font);
+        style.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        style.setAlignment(HorizontalAlignment.CENTER);
+        return style;
+    }
+
+
+    private CellStyle createDefaultStyle(Workbook workbook) {
+        CellStyle style = workbook.createCellStyle();
+        Font font = workbook.createFont();
+        font.setFontHeightInPoints((short)10);
+        style.setFont(font);
+        style.setAlignment(HorizontalAlignment.LEFT);
+        return style;
     }
 
     private void setupSheetHeader(Sheet sheet, Mapping query) {
