@@ -249,6 +249,7 @@
             <artifactId>ucp17</artifactId>
             <version>${oracle-jdbc.version}</version>
         </dependency>
+        <!-- Explicit dependency added to resolve CVE-2025-48988. A newer version of spring parent (> 3.5.0) should allow removal of this explicit dependency -->
         <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-core</artifactId>
