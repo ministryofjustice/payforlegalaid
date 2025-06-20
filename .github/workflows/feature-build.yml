@@ -15,7 +15,7 @@ jobs:
       - name: Build and test
         uses: './.github/build-and-test'
         env:
-          SOCKET_KEY: ${{ secrets.DEV_API_SOCKET_KEY }}
+          SOCKET_KEY: ${{ secrets.KUBE_TOKEN_DEV }}
 
       - name: Snyk Scan
         uses: './.github/snyk-scan'
