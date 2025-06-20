@@ -12,7 +12,7 @@ runs:
       with:
         distribution: 'corretto'
         java-version: '17'
-        cache: 'maven'
+#        cache: 'maven'
 
     - name: Build OpenAPI dependency
       uses: './.github/checkout-build-openapi'
