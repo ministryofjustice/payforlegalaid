@@ -28,7 +28,7 @@
         <spring-security.version>6.4.6</spring-security.version>
         <tomcat-embed-core.version>10.1.42</tomcat-embed-core.version>
 
-        <payforlegalaid-openapi.version>0.0.3</payforlegalaid-openapi.version>
+        <payforlegalaid-openapi.version>0.0.4</payforlegalaid-openapi.version>
     </properties>
 
     <build>
