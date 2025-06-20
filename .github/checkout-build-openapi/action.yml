@@ -9,7 +9,7 @@ runs:
       with:
         distribution: 'corretto'
         java-version: '17'
-        cache: 'maven'
+#        cache: 'maven'
 
     - name: Checkout OpenAPI repository
       uses: actions/checkout@v4
