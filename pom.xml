@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.5</version>
+        <version>3.4.7</version>
     </parent>
 
     <properties>
@@ -24,7 +24,7 @@
         <maven-surefire-junit5-tree-reporte.version>1.1.0</maven-surefire-junit5-tree-reporte.version>
         <poi.version>5.4.1</poi.version>
         <immutables.version>2.10.1</immutables.version>
-        <spring-cloud-azure-dependencies.version>5.19.0</spring-cloud-azure-dependencies.version>
+        <spring-cloud-azure-dependencies.version>5.22.0</spring-cloud-azure-dependencies.version>
         <spring-security.version>6.4.6</spring-security.version>
 
         <payforlegalaid-openapi.version>0.0.3</payforlegalaid-openapi.version>
@@ -248,6 +248,7 @@
             <artifactId>ucp17</artifactId>
             <version>${oracle-jdbc.version}</version>
         </dependency>
+
         <!-- Test Dependencies-->
         <dependency>
             <groupId>com.h2database</groupId>
