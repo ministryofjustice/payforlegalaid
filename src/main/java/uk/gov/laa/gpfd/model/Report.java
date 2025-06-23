@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import jakarta.annotation.Nullable;
+import uk.gov.laa.gpfd.model.excel.ExcelTemplate;
+
 import java.sql.Timestamp;
 
 import static org.immutables.value.Value.Immutable;
@@ -29,7 +31,7 @@ public abstract class Report implements Queryable<ReportQuery, Report>, Identifi
     public abstract String getOutputFileName();
 
     @NotBlank
-    public abstract TemplateDocument getTemplateDocument();
+    public abstract ExcelTemplate getTemplateDocument();
 
     @Nullable
     public abstract Timestamp getCreationTime();

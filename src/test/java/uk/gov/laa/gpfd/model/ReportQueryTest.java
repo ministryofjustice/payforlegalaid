@@ -2,6 +2,7 @@ package uk.gov.laa.gpfd.model;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import uk.gov.laa.gpfd.model.excel.ImmutableExcelSheet;
 
 import java.util.UUID;
 
@@ -30,16 +31,16 @@ class ReportQueryTest {
     void givenValidSql_shouldReturnCreatedObject(String sqlToTest) {
 
         ImmutableReportQuery createdObject = ImmutableReportQuery.builder()
-                .reportId(reportId)
                 .id(queryId)
-                .sheetName("Marshmallow_Types")
+                .excelSheet(ImmutableExcelSheet.builder()
+                        .name("Marshmallow_Types")
+                        .build())
                 .query(ReportQuerySql.of(sqlToTest))
                 .build();
 
         assertNotNull(createdObject);
-        assertEquals(reportId, createdObject.getReportId());
         assertEquals(queryId, createdObject.getId());
-        assertEquals("Marshmallow_Types", createdObject.getSheetName());
+        assertEquals("Marshmallow_Types", createdObject.getExcelSheet().getName());
         assertEquals(ReportQuerySql.of(sqlToTest), createdObject.getQuery());
     }
 
@@ -63,9 +64,10 @@ class ReportQueryTest {
     })
     void givenInvalidSql_shouldThrowExceptionWhenBuildingObject(String sqlToTest) {
         var builder = ImmutableReportQuery.builder()
-                .reportId(reportId)
                 .id(queryId)
-                .sheetName("Marshmallow_Types");
+                .excelSheet(ImmutableExcelSheet.builder()
+                        .name("Marshmallow_Types")
+                        .build());
 
         assertThrows(SqlFormatException.class, () -> builder.query(ReportQuerySql.of(sqlToTest)).build());
     }

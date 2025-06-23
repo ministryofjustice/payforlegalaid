@@ -5,7 +5,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import uk.gov.laa.gpfd.model.FieldAttributes;
+import uk.gov.laa.gpfd.model.excel.ExcelMappingProjection;
 
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.doThrow;
@@ -19,14 +19,14 @@ class ColumnFormattingStrategyTest {
     private ColumnFormatting strategy;
     private Sheet sheet;
     private Cell cell;
-    private FieldAttributes fieldAttributes;
+    private ExcelMappingProjection mappingProjection;
 
     @BeforeEach
     void setUp() {
         strategy = new ColumnFormatting() { };
         sheet = mock(Sheet.class);
         cell = mock(Cell.class);
-        fieldAttributes = mock(FieldAttributes.class);
+        mappingProjection = mock(ExcelMappingProjection.class);
         when(cell.getColumnIndex()).thenReturn(0);
     }
 
@@ -34,10 +34,10 @@ class ColumnFormattingStrategyTest {
     void shouldSetColumnWidthWhenWidthIsPositive() {
         // Given
         var columnWidth = 10.5;
-        when(fieldAttributes.getColumnWidth()).thenReturn(columnWidth);
+        when(mappingProjection.getColumnWidth()).thenReturn(columnWidth);
 
         // When
-        strategy.apply(sheet, cell, fieldAttributes);
+        strategy.apply(sheet, cell, mappingProjection);
 
         // Then
         verify(sheet).setColumnWidth(0, (int) (columnWidth * 256)); // Verify width is set correctly
@@ -47,10 +47,10 @@ class ColumnFormattingStrategyTest {
     void shouldNotSetColumnWidthWhenWidthIsZero() {
         // Given
         double columnWidth = 0;
-        when(fieldAttributes.getColumnWidth()).thenReturn(columnWidth);
+        when(mappingProjection.getColumnWidth()).thenReturn(columnWidth);
 
         // When
-        strategy.apply(sheet, cell, fieldAttributes);
+        strategy.apply(sheet, cell, mappingProjection);
 
         // Then
         verify(sheet, never()).setColumnWidth(anyInt(), anyInt()); // Verify no width is set
@@ -60,10 +60,10 @@ class ColumnFormattingStrategyTest {
     void shouldNotSetColumnWidthWhenWidthIsNegative() {
         // Given
         var columnWidth = -5.0;
-        when(fieldAttributes.getColumnWidth()).thenReturn(columnWidth);
+        when(mappingProjection.getColumnWidth()).thenReturn(columnWidth);
 
         // When
-        strategy.apply(sheet, cell, fieldAttributes);
+        strategy.apply(sheet, cell, mappingProjection);
 
         // Then
         verify(sheet, never()).setColumnWidth(anyInt(), anyInt()); // Verify no width is set
@@ -73,12 +73,12 @@ class ColumnFormattingStrategyTest {
     void shouldThrowExceptionWhenSheetSetColumnWidthFails() {
         // Given
         var columnWidth = 10.5;
-        when(fieldAttributes.getColumnWidth()).thenReturn(columnWidth);
+        when(mappingProjection.getColumnWidth()).thenReturn(columnWidth);
         doThrow(new RuntimeException("Failed to set column width")).when(sheet).setColumnWidth(anyInt(), anyInt());
 
         // When & Then
         Assertions.assertThrows(RuntimeException.class, () -> {
-            strategy.apply(sheet, cell, fieldAttributes);
+            strategy.apply(sheet, cell, mappingProjection);
         });
 
         verify(sheet).setColumnWidth(0, (int) (columnWidth * 256));
