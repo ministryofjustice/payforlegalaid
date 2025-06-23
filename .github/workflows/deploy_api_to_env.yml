@@ -20,7 +20,7 @@ on:
         required: true
       data_branch:
         type: string
-        default: LPF-915
+        default: main
     secrets:
       api_socket_key:
         required: true
