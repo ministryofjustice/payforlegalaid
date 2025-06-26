@@ -18,9 +18,6 @@ on:
       secret_name:
         type: string
         required: true
-      data_branch:
-        type: string
-        default: main
     secrets:
       api_socket_key:
         required: true
@@ -30,8 +27,6 @@ on:
         required: true
       ecr_role_to_assume:
         required: true
-      data_ecr_role_to_assume:
-        required: false
       kube_namespace:
         required: true
       kube_cluster:
@@ -83,23 +78,6 @@ jobs:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           SOCKET_KEY: ${{ secrets.api_socket_key }}
 
-      - name: Get data repository registry details
-        uses: './.github/get-data-registry-details'
-        id: liquibase-image
-        env:
-          ROLE: ${{ secrets.data_ecr_role_to_assume }}
-          AWS_REGION: ${{ vars.DEV_DATA_ECR_REGION }}
-
-      - name: Get latest commit SHA from data repo
-        id: get_sha
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.socket_key }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-          SHA=$(git ls-remote git@github.com:ministryofjustice/payforlegalaid-data.git refs/heads/${{ inputs.data_branch }} | cut -f1)
-          echo "sha=$SHA" >> $GITHUB_OUTPUT
-
       - name: Generate Kubernetes files from templates
         env:
           IMAGE_TAG: ${{ github.sha }} # Tags ECR image with commit sha
@@ -111,8 +89,6 @@ jobs:
           GPFD_URL: ${{ inputs.gpfd_url }}
           SECRET_NAME: ${{ inputs.secret_name }}
           DATA_REPOSITORY: ${{ vars.DEV_DATA_ECR_REPOSITORY }}
-          DATA_REGISTRY: ${{ steps.liquibase-image.outputs.data_registry }}
-          DATA_IMAGE_TAG: ${{ steps.get_sha.outputs.sha }}
         run: |
           template_processing=(
             "ingress:ingress"
@@ -121,7 +97,7 @@ jobs:
             "network-policy:network-policy"
             "prometheus-rules:prometheus-rules"
             "grafana-dashboard:grafana-dashboard:\$ENV_NAME,\$NAMESPACE"
-            "deployment:deployment:\$ENV_NAME,\$SECRET_NAME,\$GPFD_URL,\$REGISTRY,\$REPOSITORY,\$IMAGE_TAG,\$DATA_REPOSITORY,\$DATA_REGISTRY,\$DATA_IMAGE_TAG"
+            "deployment:deployment:\$ENV_NAME,\$SECRET_NAME,\$GPFD_URL,\$REGISTRY,\$REPOSITORY,\$IMAGE_TAG,\$DATA_REPOSITORY"
           )
           
           for item in "${template_processing[@]}"; do

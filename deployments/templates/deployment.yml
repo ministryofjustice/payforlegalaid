@@ -25,7 +25,7 @@ spec:
                 path: liquibase-changelogs.tar.gz
       initContainers:
         - name: liquibase
-          image: ${DATA_REGISTRY}/${DATA_REPOSITORY}:${DATA_IMAGE_TAG}
+          image: ${REGISTRY}/${DATA_REPOSITORY}:latest
           env:
             - name: MOJFIN_DEV_WRITE_USERNAME
               valueFrom:
