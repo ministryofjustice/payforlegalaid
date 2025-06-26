@@ -48,10 +48,6 @@ jobs:
       - name: Checkout Github Repository
         uses: actions/checkout@v4
 
-      - name: Setup XML tools
-        run: |
-          sudo apt-get update && sudo apt-get install -y libxml2-utils
-
       - name: Build and test the code
         uses: './.github/build-and-test'
         env:
@@ -92,6 +88,7 @@ jobs:
           ENV_NAME: ${{ inputs.environment_name }}
           GPFD_URL: ${{ inputs.gpfd_url }}
           SECRET_NAME: ${{ inputs.secret_name }}
+          DATA_REPOSITORY: ${{ vars.DEV_DATA_ECR_REPOSITORY }}
         run: |
           template_processing=(
             "ingress:ingress"
@@ -100,7 +97,7 @@ jobs:
             "network-policy:network-policy"
             "prometheus-rules:prometheus-rules"
             "grafana-dashboard:grafana-dashboard:\$ENV_NAME,\$NAMESPACE"
-            "deployment:deployment:\$ENV_NAME,\$SECRET_NAME,\$GPFD_URL,\$REGISTRY,\$REPOSITORY,\$IMAGE_TAG"
+            "deployment:deployment:\$ENV_NAME,\$SECRET_NAME,\$GPFD_URL,\$REGISTRY,\$REPOSITORY,\$IMAGE_TAG,\$DATA_REPOSITORY"
           )
           
           for item in "${template_processing[@]}"; do
@@ -115,15 +112,6 @@ jobs:
             fi
           done
 
-      - name: Checkout GitHub Data repository
-        uses: actions/checkout@v4
-        with:
-          repository: "ministryofjustice/payforlegalaid-data"
-          path: payforlegalaid-data
-          ssh-key: ${{ secrets.socket_key }}
-          sparse-checkout: data
-          sparse-checkout-cone-mode: true
-
       - name: Authenticate with Cloud Platform and Deploy
         env:
           KUBE_NAMESPACE: ${{ secrets.kube_namespace }}
@@ -134,31 +122,5 @@ jobs:
           kubectl config set-credentials deploy-user --token=${{ secrets.kube_token }}
           kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
           kubectl config use-context ${KUBE_CLUSTER}
-          
-          CHANGELOG_FOLDER="payforlegalaid-data/data"
-          ARCHIVE_NAME="liquibase-changelogs.tar.gz"
-          MAX_SIZE_MB=10
-          CURRENT_SIZE_MB=$(du -sm ${CHANGELOG_FOLDER} | cut -f1)          
-          echo "current size: $CURRENT_SIZE_MB"
-          if [ "$CURRENT_SIZE_MB" -gt "$MAX_SIZE_MB" ]; then
-            echo "❌ Error: Changelogs are ${CURRENT_SIZE_MB}MB which exceeds the ${MAX_SIZE_MB}MB limit "
-            exit 1
-          fi
-          
-          mkdir -p /tmp/liquibase-config
-          rsync -av --include="*.xml" ${CHANGELOG_FOLDER}/* /tmp/liquibase-config/
 
-          tar czf ${ARCHIVE_NAME} -C /tmp liquibase-config
-          
-          FOLDER_DIFF_SHA=$(sha256sum ${ARCHIVE_NAME} | cut -d' ' -f1)
-  
-          kubectl create configmap liquibase-changelog \
-          --namespace ${KUBE_NAMESPACE} \
-          --from-file=${ARCHIVE_NAME}=${ARCHIVE_NAME} \
-          --dry-run=client -o yaml | \
-          yq eval '
-          .metadata.annotations."diff-sha/xml" = "'"$FOLDER_DIFF_SHA"'" |
-          .metadata.labels."app.kubernetes.io/component" = "database-migrations"
-          ' - | kubectl apply -f -
-
-          kubectl -n ${KUBE_NAMESPACE} apply -f deployments/
+          kubectl -n ${KUBE_NAMESPACE} apply -f deployments
