@@ -123,7 +123,7 @@ spec:
                   exit 0
               fi
 
-              echo "⚠️ Initial update failed, performing clean and retrying.."
+              echo "⚠️ Initial update failed, performing clean and retrying..."
               cleanup
 
               echo "Running Liquibase update after clean..."
