@@ -103,9 +103,9 @@ public interface DataStreamer {
 
             try (var analytics = resolveTemplate(report);
                  var target = createEmpty(report)) {
-                stream(report, target);
+                stream(report, analytics);
 
-                transferAnalyticSheets(analytics, target);
+//                transferAnalyticSheets(analytics, target);
 
                 target.write(output);
             } catch (IOException e) {
