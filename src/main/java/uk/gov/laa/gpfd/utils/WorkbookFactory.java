@@ -1,11 +1,15 @@
 package uk.gov.laa.gpfd.utils;
 
+import org.apache.poi.ooxml.util.PackageHelper;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.IOException;
 import java.io.InputStream;
+
+import static org.apache.poi.ooxml.util.PackageHelper.open;
 
 /**
  * A factory interface for creating {@link Workbook} instances from input streams.
@@ -31,8 +35,8 @@ public interface WorkbookFactory {
         }
 
         try {
-            if (input.available() <= 0) {
-                return new XSSFWorkbook();
+            if (input.available() == 0) {
+                return new XSSFWorkbook(open(input, true));
             }
         } catch (Exception e) {
             return new XSSFWorkbook();
@@ -94,7 +98,7 @@ public interface WorkbookFactory {
         return (InputStream input) -> {
             var workbook = self.create(input);
             if (workbook instanceof XSSFWorkbook xssf) {
-                return new SXSSFWorkbook(xssf, rowAccessWindowSize);
+                return new SXSSFWorkbook(xssf, rowAccessWindowSize, true, true);
             }
             throw new IllegalStateException("Expected XSSF workbook but got: " + workbook.getClass().getSimpleName());
         };

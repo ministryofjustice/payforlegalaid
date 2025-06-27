@@ -2,8 +2,11 @@ package uk.gov.laa.gpfd.services;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
+import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.model.excel.ExcelTemplate;
 import uk.gov.laa.gpfd.services.excel.template.TemplateClient;
+import uk.gov.laa.gpfd.services.excel.workbook.ReportWorkbook;
+import uk.gov.laa.gpfd.services.excel.workbook.StyleManager;
 import uk.gov.laa.gpfd.utils.SecurityPolicy;
 import uk.gov.laa.gpfd.utils.WorkbookFactory;
 
@@ -30,7 +33,16 @@ public sealed interface TemplateService permits TemplateService.ExcelTemplateSer
      */
     Workbook findTemplateById(ExcelTemplate template);
 
-    record ExcelTemplateService(TemplateClient repository, WorkbookFactory factory) implements TemplateService {
+    /**
+     * Creates a new empty {@link Workbook} for the specified report. The created workbook
+     * will serve as a foundation for report generation
+     *
+     * @param report the report for which to create an empty workbook
+     * @return a new empty {@link Workbook} instance
+     */
+    Workbook createEmpty(Report report);
+
+    record ExcelTemplateService(TemplateClient repository, WorkbookFactory streamingFactory, WorkbookFactory factory, StyleManager styleManager) implements TemplateService {
 
         /**
          * Retrieves an Excel template as a {@link Workbook} using the provided {@link TemplateClient} and unique identifier.
@@ -51,6 +63,11 @@ public sealed interface TemplateService permits TemplateService.ExcelTemplateSer
             }
         }
 
+        @Override
+        public Workbook createEmpty(Report report) {
+            return new ReportWorkbook(report, styleManager);
+        }
+
         public static final class Builder  {
             private interface Defaults {
                 SecurityPolicy<InputStream> SECURITY = SecurityPolicy.zipBombProtection(1.0E-04);
@@ -59,6 +76,7 @@ public sealed interface TemplateService permits TemplateService.ExcelTemplateSer
             }
             private TemplateClient repository;
             private WorkbookFactory factory;
+            private StyleManager styleManager;
             private SecurityPolicy<InputStream> security = Defaults.SECURITY;
             private boolean streamingEnabled = Defaults.STREAMING_ENABLED;
             private int streamingWindowSize = Defaults.STREAMING_WINDOW_SIZE;
@@ -75,6 +93,11 @@ public sealed interface TemplateService permits TemplateService.ExcelTemplateSer
 
             public Builder withSecurity(double ratio) {
                 this.security = SecurityPolicy.zipBombProtection(ratio);
+                return this;
+            }
+
+            public Builder withStyleManager(StyleManager styleManager) {
+                this.styleManager = styleManager;
                 return this;
             }
 
@@ -96,7 +119,7 @@ public sealed interface TemplateService permits TemplateService.ExcelTemplateSer
                 var configuredFactory = streamingEnabled ?
                     factory.asStreamed(streamingWindowSize).withTransformation(security) : factory.withTransformation(security);
 
-                return new ExcelTemplateService(repository, configuredFactory);
+                return new ExcelTemplateService(repository, configuredFactory, factory.withTransformation(security), styleManager);
             }
         }
     }
