@@ -88,7 +88,7 @@ jobs:
           ENV_NAME: ${{ inputs.environment_name }}
           GPFD_URL: ${{ inputs.gpfd_url }}
           SECRET_NAME: ${{ inputs.secret_name }}
-          DATA_REPOSITORY: ${{ vars.DEV_DATA_ECR_REPOSITORY }}
+          DATA_REPOSITORY: ${{ vars.DATA_ECR_REPOSITORY }}
         run: |
           template_processing=(
             "ingress:ingress"
