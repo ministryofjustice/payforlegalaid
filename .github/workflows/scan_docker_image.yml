@@ -6,10 +6,6 @@ on:
     # Run at 7:30AM UTC every day
     - cron:  '30 07 * * *'
 
-env:
-  USERNAME: ${{ secrets.OPENAPI_PACKAGE_USER }}
-  PASSWORD: ${{ secrets.OPENAPI_PACKAGE_PASSWORD }}
-
 jobs:
   scan-docker-image:
       permissions:
@@ -19,6 +15,11 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v4
+
+        - name: Build OpenAPI dependency
+          uses: './.github/checkout-build-openapi'
+          env:
+            SOCKET_KEY: ${{ secrets.DEV_API_SOCKET_KEY }}
 
         - name: Build with Maven
           run: mvn -B -DskipTests clean package -s .github/settings.xml

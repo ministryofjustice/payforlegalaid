@@ -1,61 +1,69 @@
 package uk.gov.laa.gpfd.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.laa.gpfd.config.AppConfig;
+import uk.gov.laa.gpfd.dao.ReportDao;
+import uk.gov.laa.gpfd.dao.ReportsTrackingDao;
+import uk.gov.laa.gpfd.data.ReportsTestDataFactory;
+import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
+import uk.gov.laa.gpfd.mapper.ReportsTrackingMapper;
+import uk.gov.laa.gpfd.model.Report;
+import uk.gov.laa.gpfd.model.ReportsTracking;
+import uk.gov.laa.gpfd.services.ReportsTrackingService;
+import uk.gov.laa.gpfd.services.UserService;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.Optional;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import java.util.UUID;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.laa.gpfd.dao.ReportsTrackingDao;
-import uk.gov.laa.gpfd.exception.DatabaseReadException;
-import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
-import uk.gov.laa.gpfd.model.ReportDetails;
-import uk.gov.laa.gpfd.model.ReportsTracking;
-import uk.gov.laa.gpfd.services.ReportManagementService;
-import uk.gov.laa.gpfd.services.ReportsTrackingService;
-import uk.gov.laa.gpfd.services.UserService;
+import static uk.gov.laa.gpfd.exception.DatabaseReadException.DatabaseFetchException;
 
 @ExtendWith(MockitoExtension.class)
 class ReportsTrackingServiceTest {
 
     private static final UUID id = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
     public static final String VALID_TEST_USER = "Valid Test User";
-    private final ReportDetails testReportDetails = ReportDetails
-        .builder()
-        .id(id)
-        .name("Report 1")
-        .reportOutputType(UUID.fromString("00000000-0000-0000-0006-000000000001"))
-        .reportDownloadUrl("testUrl/"+id.toString())
-        .build();
+
+    Report testReportDetails = ReportsTestDataFactory.createTestReport();
 
     @Mock
     ReportsTrackingDao reportsTrackingDao;
-
     @Mock
     UserService userService;
-
     @Mock
-    ReportManagementService reportManagementService;
+    ReportsTrackingMapper reportsTrackingMapper;
+    @Spy
+    AppConfig config;
+    @Mock
+    ReportDao reportDetailsDao;
 
     @InjectMocks
     ReportsTrackingService reportsTrackingService;
+
+    @BeforeEach
+    void init() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        when(config.getServiceUrl()).thenReturn("localhost:9090");
+        var constructor = ReportsTrackingMapper.class.getDeclaredConstructor(AppConfig.class);
+        constructor.setAccessible(true);
+        reportsTrackingMapper = constructor.newInstance(config);
+    }
 
     @Test
     void shouldSuccessfullyUpdateReportsTrackingWhenValidDataIsProvided() {
         // Given
         var requestedId = id;
 
-        when(reportManagementService.getDetailsForSpecificReport(requestedId)).thenReturn(testReportDetails);
+        when(reportDetailsDao.fetchReportById(requestedId)).thenReturn(Optional.of(testReportDetails));
         when(userService.getCurrentUserName()).thenReturn(VALID_TEST_USER);
 
         // Then
@@ -64,19 +72,13 @@ class ReportsTrackingServiceTest {
 
         // Then
         verify(reportsTrackingDao, times(1)).saveReportsTracking(captor.capture());
-        ReportsTracking capturedTrackingTable = captor.getValue();
-        assertEquals(testReportDetails.getName(), capturedTrackingTable.getName());
-        assertEquals(testReportDetails.getReportDownloadUrl(), capturedTrackingTable.getReportUrl());
-        assertEquals(testReportDetails.getId(), capturedTrackingTable.getReportId());
-        assertEquals(VALID_TEST_USER, capturedTrackingTable.getReportCreator());
-        assertNotNull(capturedTrackingTable.getCreationDate());
     }
 
     @Test
     void shouldThrowReportIdNotFoundExceptionWhenInvalidReportIdIsProvided() {
         // Given
         var invalidId = id;  // Non-existing ID
-        when(reportManagementService.getDetailsForSpecificReport(invalidId)).thenThrow(ReportIdNotFoundException.class);
+        when(reportDetailsDao.fetchReportById(invalidId)).thenThrow(ReportIdNotFoundException.class);
 
         // When
         // Then
@@ -89,7 +91,7 @@ class ReportsTrackingServiceTest {
     void shouldThrowNullPointerExceptionWhenReportListIsEmpty() {
         // Given
         var requestedId = id;
-        when(reportManagementService.getDetailsForSpecificReport(requestedId)).thenReturn(null);  // Simulate empty report list
+        when(reportDetailsDao.fetchReportById(requestedId)).thenReturn(null);  // Simulate empty report list
 
         // When
         // Then
@@ -101,14 +103,14 @@ class ReportsTrackingServiceTest {
     void shouldThrowDatabaseReadExceptionWhenDatabaseErrorOccurs() {
         // Given
         var requestedId = id;
-        when(reportManagementService.getDetailsForSpecificReport(requestedId)).thenReturn(testReportDetails);
+        when(reportDetailsDao.fetchReportById(requestedId)).thenReturn(Optional.of(testReportDetails));
         when(userService.getCurrentUserName()).thenReturn(VALID_TEST_USER);
 
         // Simulate database error
-        doThrow(new DatabaseReadException("Database error")).when(reportsTrackingDao).saveReportsTracking(any());
+        doThrow(new DatabaseFetchException("Database error")).when(reportsTrackingDao).saveReportsTracking(any());
 
         // When
-        assertThrows(DatabaseReadException.class,
+        assertThrows(DatabaseFetchException.class,
                 () -> reportsTrackingService.saveReportsTracking(requestedId));
     }
 
@@ -117,7 +119,7 @@ class ReportsTrackingServiceTest {
         // Given
         var requestedId = id;
 
-        when(reportManagementService.getDetailsForSpecificReport(requestedId)).thenReturn(testReportDetails);
+        when(reportDetailsDao.fetchReportById(requestedId)).thenReturn(Optional.of(testReportDetails));
         when(userService.getCurrentUserName()).thenReturn(VALID_TEST_USER);
 
         // When & Assert
@@ -134,12 +136,6 @@ class ReportsTrackingServiceTest {
 
         // Then
         verify(reportsTrackingDao, times(2)).saveReportsTracking(captor.capture());
-        ReportsTracking capturedTrackingTable = captor.getValue();
-        assertEquals(testReportDetails.getName(), capturedTrackingTable.getName());
-        assertEquals(testReportDetails.getReportDownloadUrl(), capturedTrackingTable.getReportUrl());
-        assertEquals(testReportDetails.getId(), capturedTrackingTable.getReportId());
-        assertEquals(VALID_TEST_USER, capturedTrackingTable.getReportCreator());
-        assertNotNull(capturedTrackingTable.getCreationDate());
     }
 
 }

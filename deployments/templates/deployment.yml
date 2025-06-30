@@ -21,16 +21,11 @@ spec:
             name: liquibase-changelog
             optional: false
             items:
-              - key: changelog.xml
-                path: changelog.xml
+              - key: liquibase-changelogs.tar.gz
+                path: liquibase-changelogs.tar.gz
       initContainers:
         - name: liquibase
-          image: liquibase/liquibase:4.29.2
-          volumeMounts:
-            - name: liquibase-changelog
-              mountPath: /liquibase/changelog/changelog.xml
-              subPath: changelog.xml
-              readOnly: true
+          image: ${REGISTRY}/${DATA_REPOSITORY}:latest
           env:
             - name: MOJFIN_DEV_WRITE_USERNAME
               valueFrom:
@@ -52,16 +47,23 @@ spec:
             - -c
             - |
               if [ -z "$MOJFIN_DB_URL" ] || [ -z "$MOJFIN_DEV_WRITE_USERNAME" ] || [ -z "$MOJFIN_DEV_WRITE_PASSWORD" ]; then
-                  echo "ERROR: Required database credentials not set"
+                  echo "❌ ERROR: Required database credentials not set"
                   exit 1
               fi
-
-              if [ ! -f /liquibase/changelog/changelog.xml ]; then
-                echo "ERROR: Changelog file not found at /liquibase/changelog/changelog.xml"
+                            
+              BASE_FOLDER="/liquibase"
+              CHANGELOG_FILENAME="master-changelog.xml"
+              CHANGELOG="${BASE_FOLDER}/${CHANGELOG_FILENAME}"
+                                                  
+              if [ ! -f ${CHANGELOG} ]; then
+                echo "❌ ERROR: Changelog file not found at ${CHANGELOG}"
                 exit 1
               fi
-
-              cp /liquibase/changelog/changelog.xml /liquibase/changelog.xml
+              
+              echo "===== Changelog Content ====="
+              cat ${CHANGELOG}
+              echo "=========="
+              
               db_healthcheck() {
               
                 local max_retries=5
@@ -72,19 +74,20 @@ spec:
                           --url="$MOJFIN_DB_URL" \
                           --username="$MOJFIN_DEV_WRITE_USERNAME" \
                           --password="$MOJFIN_DEV_WRITE_PASSWORD" \
-                          --changelog-file=changelog.xml \
-                          status >/dev/null 2>&1; then
+                          --changelog-file=${CHANGELOG_FILENAME} \
+                          --searchPath=${BASE_FOLDER} \
+                          status; then
               
                           echo "Database connection established"
                           return 0
                     fi
               
-                    echo "Attempt $i/$max_retries failed. Retrying in $retry_delay seconds..."
+                    echo "⚠️ Attempt $i/$max_retries failed. Retrying in $retry_delay seconds..."
                     sleep $retry_delay
                 done
               
-                echo "Could not establish database connection"
-                exit 0
+                echo "❌ Error: Could not establish database connection"
+                exit 1
               }
               
               run_update() {
@@ -93,18 +96,19 @@ spec:
                       --username="$MOJFIN_DEV_WRITE_USERNAME" \
                       --password="$MOJFIN_DEV_WRITE_PASSWORD" \
                       --log-level=INFO \
-                      --changelog-file=changelog.xml \
+                      --changelog-file=${CHANGELOG_FILENAME} \
+                      --searchPath=${BASE_FOLDER} \
                       update
               }
               
               cleanup() {
-                echo "Executing clean database strategy"
+                echo "Executing clean database strategy"              
                 liquibase \
                 --url="$MOJFIN_DB_URL" \
                 --username="$MOJFIN_DEV_WRITE_USERNAME" \
                 --password="$MOJFIN_DEV_WRITE_PASSWORD" \
-                --log-level=INFO \
-                --changelog-file=changelog.xml \
+                --changelog-file=${CHANGELOG_FILENAME} \
+                --searchPath=${BASE_FOLDER} \
                 drop-all --force
               
                 echo "Database cleaned, reapplying migrations"
@@ -115,21 +119,22 @@ spec:
 
               echo "Running initial Liquibase update..."
               if run_update; then
-                  echo "Liquibase update completed successfully"
+                  echo "✅ Liquibase update completed successfully"
                   exit 0
               fi
 
-              echo "Initial update failed, performing clean and retrying..."
+              echo "⚠️ Initial update failed, performing clean and retrying..."
               cleanup
 
               echo "Running Liquibase update after clean..."
               if run_update; then
-                  echo "Liquibase update completed successfully after clean"
+                  echo "✅ Liquibase update completed successfully after clean"
                   exit 0
               else
-                  echo "Liquibase update failed even after clean"
+                  echo "❌ Liquibase update failed even after clean"
                   exit 1
               fi
+
           securityContext:
             runAsUser: 1001
             runAsGroup: 1001
@@ -193,7 +198,7 @@ spec:
           securityContext:
             capabilities:
               drop:
-              - ALL
+                - ALL
             runAsNonRoot: true
             allowPrivilegeEscalation: false
             seccompProfile:

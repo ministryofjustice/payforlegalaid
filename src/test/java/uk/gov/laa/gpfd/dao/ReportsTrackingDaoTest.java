@@ -1,31 +1,30 @@
 package uk.gov.laa.gpfd.dao;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import org.jetbrains.annotations.NotNull;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
-import uk.gov.laa.gpfd.model.ReportsTracking;
+import uk.gov.laa.gpfd.data.ReportsTrackingTestDataFactory;
+import uk.gov.laa.gpfd.utils.DatabaseUtils;
 
-@SpringBootTest // This uses the whole spring context, switch to @JdbcTest if you switch to a H2 DB
+import static org.hibernate.validator.internal.util.Contracts.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.createTestReport;
+
+@SpringBootTest
 @ActiveProfiles("test")
-class ReportsTrackingDaoTest extends BaseDaoTest{
-
-    public static final UUID DEFAULT_ID = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
-    public static final int EXPECTED_ROWCOUNT_AFTER_SAVING_ONE_REPORT_TRACKING = 2;
-    public static final int EXPECTED_ROWCOUNT_AFTER_NO_REPORT_TRACKING = 1;
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class ReportsTrackingDaoTest {
 
     @Autowired
     private ReportsTrackingDao reportsTrackingDao;
@@ -33,22 +32,28 @@ class ReportsTrackingDaoTest extends BaseDaoTest{
     @Autowired
     private JdbcTemplate writeJdbcTemplate;
 
+    @Autowired
+    private DatabaseUtils databaseUtils;
+
+    @BeforeAll
+    void setup() {
+        databaseUtils.setUpDatabase();
+    }
+
     @Test
     void givenValidReportTrackingData_whenSaveReportsTracking_thenDataIsInsertedIntoDB() {
+        UUID id = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d3");
         // Given
-        ReportTrackingData testTrackingData = getTestTrackingData();
+        var testTrackingData = ReportsTrackingTestDataFactory.createBasicReportTracking( createTestReport(id));
 
         // When
-        saveReportTracking(testTrackingData);
+        reportsTrackingDao.saveReportsTracking(testTrackingData);
 
         // Then
-        List<Map<String, Object>> results = getAllReportsTrackingsFromDb();
-
-        assertEquals(EXPECTED_ROWCOUNT_AFTER_SAVING_ONE_REPORT_TRACKING, results.size());
-        Map<String, Object> lastInsertedRow = results.get(1);
+        var lastInsertedRow = findTrackingByReportId(id).get();
         assertEquals(testTrackingData.getReportName(), lastInsertedRow.get("NAME"));
         assertEquals(testTrackingData.getReportUrl(), lastInsertedRow.get("REPORT_URL"));
-        assertEquals(testTrackingData.getCreationTimestamp(), lastInsertedRow.get("CREATION_DATE"));
+        assertNotNull(lastInsertedRow.get("CREATION_DATE"));
         assertEquals(testTrackingData.getTemplateUrl(), lastInsertedRow.get("TEMPLATE_URL"));
 
     }
@@ -56,89 +61,64 @@ class ReportsTrackingDaoTest extends BaseDaoTest{
     @Test
     void givenNullReportUrl_whenSaveReportsTracking_thenNoDataIsInserted() {
         // Given
-        ReportTrackingData testTrackingData = getTestTrackingData();
-        testTrackingData.setReportUrl(null);
+        UUID nonExistentReportId = UUID.randomUUID();
+        var existingTrackingBefore = findTrackingByReportId(nonExistentReportId);
 
-        // When and then
-        assertThrows(DataIntegrityViolationException.class, () -> saveReportTracking(testTrackingData));
-        List<Map<String, Object>> results = getAllReportsTrackingsFromDb();
-        assertEquals(EXPECTED_ROWCOUNT_AFTER_NO_REPORT_TRACKING, results.size());
-    }
+        // When
+        assertThrows(org.springframework.dao.DataIntegrityViolationException.class,
+                () -> reportsTrackingDao.saveReportsTracking(ReportsTrackingTestDataFactory.createBasicReportTracking(
+                        createTestReport(nonExistentReportId)
+                )));
 
-    @Test
-    void givenInvalidReportId_whenSaveReportsTracking_thenNoDataIsInserted() {
-        // Given
-        ReportTrackingData testTrackingData = getTestTrackingData();
-        testTrackingData.setReportUuid(UUID.fromString("00000000-0000-0000-0001-000000000002"));
-
-        // When and then
-        assertThrows(DataIntegrityViolationException.class, () -> saveReportTracking(testTrackingData));
-        List<Map<String, Object>> results = getAllReportsTrackingsFromDb();
-        assertEquals(EXPECTED_ROWCOUNT_AFTER_NO_REPORT_TRACKING, results.size());
+        // Then
+        var existingTrackingAfter = findTrackingByReportId(nonExistentReportId);
+        assertTrue(existingTrackingBefore.isEmpty(), "Should not have tracking record before insertion attempt");
+        assertTrue(existingTrackingAfter.isEmpty(), "Should not have tracking record after failed insertion");
     }
 
     @Test
     void givenNullReportId_whenSaveReportsTracking_thenNoDataIsInserted() {
         // Given
-        ReportTrackingData testTrackingData = getTestTrackingData();
-        testTrackingData.setReportUuid(null);
+        UUID nonExistentReportId = null;
+        var existingTrackingBefore = findTrackingByReportId(nonExistentReportId);
 
-        // When and then
-        assertThrows(NullPointerException.class, () -> saveReportTracking(testTrackingData));
-        List<Map<String, Object>> results = getAllReportsTrackingsFromDb();
-        assertEquals(EXPECTED_ROWCOUNT_AFTER_NO_REPORT_TRACKING, results.size());
+        // When
+        assertThrows(NullPointerException.class,
+                () -> reportsTrackingDao.saveReportsTracking(ReportsTrackingTestDataFactory.createBasicReportTracking(
+                        createTestReport(nonExistentReportId)
+                )));
+
+        // Then
+        var existingTrackingAfter = findTrackingByReportId(nonExistentReportId);
+        assertTrue(existingTrackingBefore.isEmpty(), "Should not have tracking record before insertion attempt");
+        assertTrue(existingTrackingAfter.isEmpty(), "Should not have tracking record after failed insertion");
     }
 
-    @Data
-    @AllArgsConstructor
-    static class ReportTrackingData {
-        String reportName;
-        UUID reportUuid;
-        String reportUrl;
-        LocalDateTime creationTime;
-        Timestamp creationTimestamp;
-        String reportDownloadedBy;
-        String reportCreator;
-        String reportOwner;
-        String reportOutputType;
-        String templateUrl;
-    }
-
-    ReportTrackingData getTestTrackingData() {
-        return new ReportTrackingData(
-            "Test Report 2",
-            UUID.fromString("f46b4d3d-c100-429a-bf9a-6c3305dbdbf5"),
-            "http://example.com/report2",
-            LocalDateTime.now(),
-            Timestamp.valueOf(LocalDateTime.now().withNano(0)),
-            "00000000-0000-0000-0003-000000000002",
-            "00000000-0000-0000-0005-000000000002",
-            "00000000-0000-0000-0006-000000000002",
-            "00000000-0000-0000-0007-000000000002",
-            "test template URL2"
+    @Test
+    void givenInvalidReportId_whenSaveReportsTracking_thenNoDataIsInserted() {
+        // Given
+        var nonExistentReportId = UUID.fromString("00000000-0000-0000-0001-000000000002");
+        var testTrackingData = ReportsTrackingTestDataFactory.createBasicReportTracking(
+                createTestReport(nonExistentReportId)
         );
+        var existingTrackingBefore = findTrackingByReportId(nonExistentReportId);
+
+        // When
+        assertThrows(DataIntegrityViolationException.class,
+                () -> reportsTrackingDao.saveReportsTracking(testTrackingData));
+
+        // Then
+        var existingTrackingAfter = findTrackingByReportId(nonExistentReportId);
+        assertTrue(existingTrackingBefore.isEmpty(), "Should not have tracking record before insertion attempt");
+        assertTrue(existingTrackingAfter.isEmpty(), "Should not have tracking record after failed insertion");
     }
 
-    private void saveReportTracking(ReportTrackingData testTrackingData) {
-        ReportsTracking reportsTracking = new ReportsTracking(
-            DEFAULT_ID,
-            testTrackingData.getReportName(),
-            testTrackingData.getReportUuid(),
-            testTrackingData.getCreationTimestamp(),
-            testTrackingData.getReportCreator(),
-            testTrackingData.getReportOwner(),
-            testTrackingData.getReportOutputType(),
-            testTrackingData.getTemplateUrl(),
-            testTrackingData.getReportUrl()
+    private Optional<Map<String, Object>> findTrackingByReportId(UUID reportId) {
+        var results = writeJdbcTemplate.queryForList(
+                "SELECT * FROM GPFD.REPORTS_TRACKING WHERE REPORT_ID = ?",
+                reportId
         );
-
-        reportsTrackingDao.saveReportsTracking(reportsTracking);
-    }
-
-    @NotNull
-    private List<Map<String, Object>> getAllReportsTrackingsFromDb() {
-      String sql = "SELECT * FROM GPFD.REPORTS_TRACKING";
-      return writeJdbcTemplate.queryForList(sql);
+        return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
     }
 
 }

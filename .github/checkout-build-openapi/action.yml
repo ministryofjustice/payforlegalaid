@@ -1,0 +1,26 @@
+name: Checkout and build OpenAPI repository
+
+runs:
+  using: 'composite'
+  steps:
+
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'corretto'
+        java-version: '17'
+        cache: 'maven'
+
+    - name: Checkout OpenAPI repository
+      uses: actions/checkout@v4
+      with:
+        repository: ministryofjustice/payforlegalaid-openapi
+        path: spec
+        ssh-key: ${{ env.SOCKET_KEY }}
+
+    - name: Build dependency
+      run: |
+        cd spec
+        mvn clean install -Dmaven.repo.local=${{ github.workspace }}/.m2/repository
+      shell:
+        bash

@@ -2,32 +2,31 @@ package uk.gov.laa.gpfd.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import uk.gov.laa.gpfd.api.CsvApi;
 import uk.gov.laa.gpfd.api.ExcelApi;
 import uk.gov.laa.gpfd.api.ReportsApi;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200Response;
-import uk.gov.laa.gpfd.services.ReportService;
 import uk.gov.laa.gpfd.services.ReportsTrackingService;
-import uk.gov.laa.gpfd.services.StreamingService;
 import uk.gov.laa.gpfd.services.ReportManagementService;
+import uk.gov.laa.gpfd.services.StreamingService;
 
 import java.util.Optional;
 import java.util.UUID;
 
+import static uk.gov.laa.gpfd.model.FileExtension.CSV;
+import static uk.gov.laa.gpfd.model.FileExtension.XLSX;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class ReportsController implements ReportsApi, ExcelApi {
+public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
 
     private final ReportsTrackingService reportsTrackingService;
-    private final ReportService reportService;
     private final ReportManagementService reportManagementService;
     private final StreamingService streamingService;
 
@@ -39,12 +38,11 @@ public class ReportsController implements ReportsApi, ExcelApi {
     @Override
     public ResponseEntity<GetReportById200Response> getReportById(UUID id) {
         log.debug("Returning a report response to user");
-        return ResponseEntity.ok(reportService.createReportResponse(id));
+        return ResponseEntity.ok(reportManagementService.createReportResponse(id));
     }
 
     @Override
     public ResponseEntity<ReportsGet200Response> reportsGet() {
-
         var reportListEntries = reportManagementService.fetchReportListEntries();
 
         var response = new ReportsGet200Response() {{
@@ -61,11 +59,11 @@ public class ReportsController implements ReportsApi, ExcelApi {
      * @param requestedId - id of the requested report
      * @return CSV data stream or reports data
      */
-    @RequestMapping(value = "/csv/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<StreamingResponseBody> getCSV(@PathVariable(value = "id") UUID requestedId) {
+    @Override
+    public ResponseEntity<StreamingResponseBody> csvIdGet(UUID requestedId) {
         log.debug("Returning a CSV response to user");
         reportsTrackingService.saveReportsTracking(requestedId);
-        return reportService.createCSVResponse(requestedId);
+        return streamingService.stream(requestedId, CSV);
     }
 
     /**
@@ -95,6 +93,6 @@ public class ReportsController implements ReportsApi, ExcelApi {
     @Override
     public ResponseEntity<StreamingResponseBody> getExcelById(UUID id) {
         reportsTrackingService.saveReportsTracking(id);
-        return streamingService.streamExcel(id);
+        return streamingService.stream(id, XLSX);
     }
 }

@@ -16,11 +16,12 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
 import uk.gov.laa.gpfd.data.ReportListEntryTestDataFactory;
+import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 import uk.gov.laa.gpfd.services.ReportManagementService;
-import uk.gov.laa.gpfd.services.ReportService;
 import uk.gov.laa.gpfd.services.ReportsTrackingService;
+import uk.gov.laa.gpfd.services.StreamingService;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
@@ -48,10 +49,10 @@ class ReportsControllerTest {
     ReportManagementService reportManagementServiceMock;
 
     @MockitoBean
-    ReportService reportServiceMock;
+    ReportsTrackingService reportsTrackingService; // This is required, despite the sonarlint suggestions
 
     @MockitoBean
-    ReportsTrackingService reportsTrackingService; // This is required, despite the sonarlint suggestions
+    StreamingService streamingService;
 
     @Autowired
     MockMvc mockMvc;
@@ -74,11 +75,11 @@ class ReportsControllerTest {
         ResponseEntity<StreamingResponseBody> mockResponseEntity = ResponseEntity.ok().header("Content-Disposition", "attachment; filename=data.csv").contentType(MediaType.APPLICATION_OCTET_STREAM).body(responseBody);
 
         // Mock method call
-        when(reportServiceMock.createCSVResponse(DEFAULT_ID)).thenReturn(mockResponseEntity);
+        when(streamingService.stream(DEFAULT_ID, FileExtension.CSV)).thenReturn(mockResponseEntity);
 
         // Perform the GET request
         mockMvc.perform(MockMvcRequestBuilders.get("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d1").with(oidcLogin()).with(oauth2Client("graph"))).andExpect(status().isOk()).andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=data.csv"));
-        verify(reportServiceMock).createCSVResponse(DEFAULT_ID);
+        verify(streamingService).stream(DEFAULT_ID, FileExtension.CSV);
     }
 
 
@@ -112,11 +113,11 @@ class ReportsControllerTest {
         GetReportById200Response reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();
 
         // Mock the service
-        when(reportServiceMock.createReportResponse(reportId)).thenReturn(reportResponseMock);
+        when(reportManagementServiceMock.createReportResponse(reportId)).thenReturn(reportResponseMock);
 
         // Perform request and assert results
         mockMvc.perform(MockMvcRequestBuilders.get("/reports/{id}", reportId)).andExpect(status().isOk()).andExpect(jsonPath("$.id").value(reportId.toString())).andExpect(jsonPath("$.reportName").value(reportResponseMock.getReportName()));
 
-        verify(reportServiceMock, times(1)).createReportResponse(reportId);
+        verify(reportManagementServiceMock, times(1)).createReportResponse(reportId);
     }
 }

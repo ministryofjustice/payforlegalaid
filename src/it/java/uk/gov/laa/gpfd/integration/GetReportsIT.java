@@ -11,15 +11,21 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
+import uk.gov.laa.gpfd.config.TestDatabaseConfig;
 
-@SpringBootTest
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        classes = {
+                TestDatabaseConfig.class
+        }
+)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestPropertySource(locations = "classpath:application-test.yml")
 class GetReportsIT extends BaseIT {
 
-    public static final int NUMBER_OF_REPORTS_IN_TEST_DATA = 8;
+    public static final int NUMBER_OF_REPORTS_IN_TEST_DATA = 10;
 
     @Autowired
     private JdbcTemplate writeJdbcTemplate;
@@ -33,7 +39,7 @@ class GetReportsIT extends BaseIT {
     }
 
     @Test
-    void shouldReturn404WhenNoReportsFound() throws Exception {
+    void shouldReturn200WhenNoReportsFound() throws Exception {
         writeJdbcTemplate.update("ALTER TABLE GPFD.REPORTS DROP CONSTRAINT fk_report_output_types_report_id");
         writeJdbcTemplate.update("ALTER TABLE GPFD.REPORT_GROUPS DROP CONSTRAINT fk_report_groups_report_id");
         writeJdbcTemplate.update("ALTER TABLE GPFD.REPORT_QUERIES DROP CONSTRAINT fk_report_queries_report_id");
@@ -42,6 +48,6 @@ class GetReportsIT extends BaseIT {
         writeJdbcTemplate.update("TRUNCATE TABLE GPFD.REPORTS");
 
         performGetRequest("/reports")
-            .andExpect(status().is5xxServerError());
+            .andExpect(status().is2xxSuccessful());
     }
 }

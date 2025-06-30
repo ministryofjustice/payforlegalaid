@@ -9,14 +9,19 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
+import uk.gov.laa.gpfd.config.TestDatabaseConfig;
 
-@SpringBootTest
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        classes = {
+                TestDatabaseConfig.class,
+                OAuth2TestConfig.class
+        }
+)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@Import(OAuth2TestConfig.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestPropertySource(locations = "classpath:application-test.yml")
 class GetReportsByIdIT extends BaseIT {
@@ -25,14 +30,20 @@ class GetReportsByIdIT extends BaseIT {
     private static final String GENERAL_LEDGER_REPORT = "f46b4d3d-c100-429a-bf9a-223305dbdbfb";
     private static final String CCMS_AND_CIS_BANK_ACCOUNT_REPORT_W_CATEGORY_CODE_YTD_REPORT = "eee30b23-2c8d-4b4b-bb11-8cd67d07915c";
     private static final String LEGAL_HELP_CONTRACT_BALANCES_REPORT = "7073dd13-e325-4863-a05c-a049a815d1f7";
+    private static final String AGFS_LATE_PROCESSED_BILLS_REPORT = "7bda9aa4-6129-4c71-bd12-7d4e46fdd882";
 
-    @Test
-    void givenCsvReportId_whenSingleReportRequested_thenCsvUrlReturned() throws Exception {
-        performGetRequest("/reports/" + BaseIT.REPORT_UUID_1)
+    private static final String INITIAL_TEST_REPORT = "0d4da9ec-b0b3-4371-af10-f375330d85d3";
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            INITIAL_TEST_REPORT,
+    })
+    void givenCsvReportId_whenSingleReportRequested_thenCsvUrlReturned(String id) throws Exception {
+        performGetRequest("/reports/" + id)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(BaseIT.REPORT_UUID_1))
+                .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.reportDownloadUrl")
-                        .value("http://localhost/csv/" + BaseIT.REPORT_UUID_1));
+                        .value("http://localhost/csv/" + id));
     }
 
     @ParameterizedTest
@@ -40,7 +51,7 @@ class GetReportsByIdIT extends BaseIT {
             CCMS_REPORT,
             GENERAL_LEDGER_REPORT,
             CCMS_AND_CIS_BANK_ACCOUNT_REPORT_W_CATEGORY_CODE_YTD_REPORT,
-            LEGAL_HELP_CONTRACT_BALANCES_REPORT
+            LEGAL_HELP_CONTRACT_BALANCES_REPORT, AGFS_LATE_PROCESSED_BILLS_REPORT
     })
     void givenExcelReportId_whenSingleReportRequested_thenExcelUrlReturned(String id) throws Exception {
         performGetRequest("/reports/" + id)
@@ -56,11 +67,16 @@ class GetReportsByIdIT extends BaseIT {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test
-    void givenABrandNewReportOutputType_whenSingleReportRequested_thenInternalServerError() throws Exception {
-        performGetRequest("/reports/b36f9bbb-1178-432c-8f99-8090e285f2d4")
-                .andExpect(status().isInternalServerError());
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "excel",
+            "csv"
+    })
+    void shouldReturn404WhenNoReportsFound(String type) throws Exception {
+        performGetRequest("/%s/0d4da9ec-b0b3-4371-af10-321".formatted(type))
+                .andExpect(status().isNotFound());
     }
+
 }
 
 

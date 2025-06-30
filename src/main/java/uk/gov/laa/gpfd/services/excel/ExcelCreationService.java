@@ -1,25 +1,20 @@
 package uk.gov.laa.gpfd.services.excel;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.springframework.stereotype.Component;
-import uk.gov.laa.gpfd.dao.ReportViewsDao;
+import uk.gov.laa.gpfd.dao.JdbcWorkbookDataStreamer;
+import uk.gov.laa.gpfd.model.Mapping;
 import uk.gov.laa.gpfd.model.Report;
-import uk.gov.laa.gpfd.model.ReportQuery;
+import uk.gov.laa.gpfd.model.excel.ExcelMappingProjection;
 import uk.gov.laa.gpfd.services.TemplateService;
+import uk.gov.laa.gpfd.services.DataStreamer.WorkbookDataStreamer;
 import uk.gov.laa.gpfd.services.excel.editor.FormulaCalculator;
 import uk.gov.laa.gpfd.services.excel.editor.PivotTableRefresher;
-import uk.gov.laa.gpfd.services.excel.editor.SheetDataWriter;
+import uk.gov.laa.gpfd.services.excel.formatting.CellFormatter;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-
-import static java.util.concurrent.CompletableFuture.completedFuture;
-import static java.util.concurrent.CompletableFuture.runAsync;
-import static java.util.concurrent.CompletableFuture.supplyAsync;
-import static uk.gov.laa.gpfd.services.excel.util.SheetUtils.findSheetByName;
+import java.util.Optional;
 
 /**
  * The class is a Spring component responsible for generating Excel workbooks
@@ -29,35 +24,21 @@ import static uk.gov.laa.gpfd.services.excel.util.SheetUtils.findSheetByName;
  * <p>This class leverages dependency injection to access the required services:
  * <ul>
  *     <li>{@link TemplateService} for loading Excel templates.</li>
- *     <li>{@link ReportViewsDao} for fetching data from the database based on report queries.</li>
- *     <li>{@link SheetDataWriter} for writing the fetched data to the appropriate sheets in the workbook.</li>
+ *     <li>{@link JdbcWorkbookDataStreamer<Map<String, Object>>} for fetching data from the database based on report queries.</li>
  * </ul>
  */
 @Slf4j
-@Component
 public record ExcelCreationService(
         TemplateService templateLoader,
-        ReportViewsDao dataFetcher,
-        SheetDataWriter sheetDataWriter,
+        JdbcWorkbookDataStreamer jdbcWorkbookDataStreamer,
         PivotTableRefresher pivotTableRefresher,
-        FormulaCalculator formulaCalculator
-) {
+        FormulaCalculator formulaCalculator,
+        CellFormatter formatter
+) implements WorkbookDataStreamer {
 
-    /**
-     * Builds an Excel workbook based on the provided {@link Report}. This method loads the template
-     * associated with the report, updates it with data fetched from the database, and returns the
-     * final workbook.
-     *
-     * @param report the report containing the template ID, queries, and field attributes
-     * @return the generated {@link Workbook} with data populated
-     */
-    public Workbook buildExcel(Report report) {
-        log.debug("Retrieving template for report: {}", report.getName());
-        var workbook = templateLoader.findTemplateById(report.getTemplateSecureDocumentId());
-        log.debug("Updating template with data for report: {}", report.getName());
-        updateTemplateWithData(workbook, report);
-        log.debug("Successfully built Excel workbook for report: {}", report.getName());
-        return workbook;
+    @Override
+    public Workbook resolveTemplate(Report report) {
+        return templateLoader.findTemplateById(report.getTemplateDocument());
     }
 
     /**
@@ -68,39 +49,21 @@ public record ExcelCreationService(
      * @param workbook the workbook to update with data
      * @param report   the report containing the queries and field attributes
      */
-    private void updateTemplateWithData(Workbook workbook, Report report) {
-        report.getQueries().parallelStream()
-                .flatMap(query -> findSheetByName(workbook, query.getTabName())
-                        .stream()
-                        .map(sheet -> new SheetToQuery(sheet, query)))
-                .map(sheetToQuery -> fetchData(sheetToQuery)
-                        .thenCompose(data -> writeDataToSheet(sheetToQuery, data)))
-                .reduce(CompletableFuture::allOf)
-                .orElse(completedFuture(null))
-                .join();
+    @Override
+    public void stream(Report report, Workbook workbook) {
+        for (var query : report.extractAllMappings()) {
+            var sheet = workbook.createSheet(query.getExcelSheet().getName());
+            jdbcWorkbookDataStreamer.queryToSheet(sheet, query);
+            int counter = 0;
+            for (var config : query.getExcelSheet().getFieldAttributes()) {
+                double columnWidth = config.getColumnWidth();
+                sheet.setColumnWidth(counter, (int) (columnWidth * 256));
+                counter++;
+            }
+        }
 
         pivotTableRefresher.refreshPivotTables(workbook);
         formulaCalculator.evaluateAllFormulaCells(workbook);
     }
-
-    /**
-     * Fetches data from the database asynchronously for a given SheetToQuery pair.
-     */
-    private CompletableFuture<List<Map<String, Object>>> fetchData(SheetToQuery sheetToQuery) {
-        return supplyAsync(() -> dataFetcher.callDataBase(sheetToQuery.reportQuery().getQuery()));
-    }
-
-    /**
-     * Writes data to the sheet asynchronously after fetching it.
-     */
-    private CompletableFuture<Void> writeDataToSheet(SheetToQuery sheetToQuery, List<Map<String, Object>> data) {
-        return runAsync(() -> sheetDataWriter.writeDataToSheet(
-                sheetToQuery.sheet(),
-                data,
-                sheetToQuery.reportQuery().getFieldAttributes()
-        ));
-    }
-
-    private record SheetToQuery(Sheet sheet, ReportQuery reportQuery) {}
 
 }

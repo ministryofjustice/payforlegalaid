@@ -17,8 +17,7 @@ jobs:
       alert_severity: laa-get-legal-aid-data-dev
       secret_name: gpfd-test-secret-01
     secrets:
-      openapi_package_user: ${{ secrets.OPENAPI_PACKAGE_USER }}
-      openapi_package_password: ${{ secrets.OPENAPI_PACKAGE_PASSWORD }}
+      api_socket_key: ${{ secrets.DEV_API_SOCKET_KEY }}
       snyk_token: ${{ secrets.SNYK_TOKEN }}
       socket_key: ${{ secrets.DEV_SOCKET_KEY }}
       ecr_role_to_assume: ${{ secrets.DEV_ECR_ROLE_TO_ASSUME }}
@@ -38,8 +37,7 @@ jobs:
       alert_severity: laa-get-legal-aid-data-uat
       secret_name: gpfd-uat-secret-01
     secrets:
-      openapi_package_user: ${{ secrets.OPENAPI_PACKAGE_USER }}
-      openapi_package_password: ${{ secrets.OPENAPI_PACKAGE_PASSWORD }}
+      api_socket_key: ${{ secrets.UAT_API_SOCKET_KEY }}
       snyk_token: ${{ secrets.SNYK_TOKEN }}
       socket_key: ${{ secrets.UAT_SOCKET_KEY }}
       ecr_role_to_assume: ${{ secrets.UAT_ECR_ROLE_TO_ASSUME }}
@@ -59,8 +57,7 @@ jobs:
       alert_severity: laa-get-legal-aid-data-prod
       secret_name: gpfd-prod-secret-01
     secrets:
-      openapi_package_user: ${{ secrets.OPENAPI_PACKAGE_USER }}
-      openapi_package_password: ${{ secrets.OPENAPI_PACKAGE_PASSWORD }}
+      api_socket_key: ${{ secrets.PROD_API_SOCKET_KEY }}
       snyk_token: ${{ secrets.SNYK_TOKEN }}
       socket_key: ${{ secrets.PROD_SOCKET_KEY }}
       ecr_role_to_assume: ${{ secrets.PROD_ECR_ROLE_TO_ASSUME }}

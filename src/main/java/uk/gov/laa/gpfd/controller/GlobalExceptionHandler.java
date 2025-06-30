@@ -1,7 +1,9 @@
 package uk.gov.laa.gpfd.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,6 +16,8 @@ import uk.gov.laa.gpfd.exception.TemplateResourceException;
 import uk.gov.laa.gpfd.model.ReportsGet400Response;
 import uk.gov.laa.gpfd.model.ReportsGet404Response;
 import uk.gov.laa.gpfd.model.ReportsGet500Response;
+
+import java.sql.SQLSyntaxErrorException;
 
 import static org.springframework.http.ResponseEntity.badRequest;
 import static org.springframework.http.ResponseEntity.internalServerError;
@@ -81,8 +85,12 @@ public class GlobalExceptionHandler {
      * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(DatabaseReadException.class)
-    public ResponseEntity<ReportsGet500Response> handleDatabaseReadException(DatabaseReadException e) {
+    @ExceptionHandler(value = {
+            DatabaseReadException.class,
+            DataAccessException.class,
+            SQLSyntaxErrorException.class
+    }, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ReportsGet500Response> handleDatabaseReadException(Exception e) {
         var response = new ReportsGet500Response() {{
             setError(e.getMessage());
         }};
@@ -90,7 +98,9 @@ public class GlobalExceptionHandler {
         log.error("DatabaseReadException Thrown: %s".formatted(response));
         log.error("DatabaseReadException stacktrace: %s".formatted((Object) e.getStackTrace()));
 
-        return internalServerError().body(response);
+        return internalServerError()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(response);
     }
 
     /**

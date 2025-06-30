@@ -12,9 +12,16 @@ runs:
       with:
         distribution: 'corretto'
         java-version: '17'
+        cache: 'maven'
+
+    - name: Build OpenAPI dependency
+      uses: './.github/checkout-build-openapi'
+      env:
+        SOCKET_KEY: ${{ env.SOCKET_KEY }}
 
     - name: Run tests
-      run: mvn -B clean test -s .github/settings.xml
+      run: |
+        mvn -B clean test -Dmaven.repo.local=${{ github.workspace }}/.m2/repository
       env:
         SPRING_PROFILES_ACTIVE: test
       shell:

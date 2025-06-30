@@ -4,19 +4,28 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.immutables.value.Value.Immutable;
 
-import javax.annotation.Nullable;
-import java.util.UUID;
+import static org.immutables.value.Value.Derived;
 
 @Immutable
-public abstract class ReportOutputType {
-    @Nullable
-    abstract UUID getId();
+public abstract class ReportOutputType implements Identifiable {
 
+    abstract FileExtension getFileExtension();
+
+    @Derived
     @NotBlank
     @Size(max = 10)
-    abstract String getExtension();
+    public String getExtension() {
+        return getFileExtension().getExtension();
+    }
+
+    @Derived
+    @NotBlank
+    @Size(max = 10)
+    public String getSubPath() {
+        return getFileExtension().getSubPath();
+    }
 
     @NotBlank
     @Size(max = 255)
-    abstract String getDescription();
+    public abstract String getDescription();
 }

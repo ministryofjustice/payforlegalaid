@@ -12,8 +12,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
+import uk.gov.laa.gpfd.config.TestDatabaseConfig;
 
-@SpringBootTest
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        classes = {
+                TestDatabaseConfig.class
+        }
+)
 @AutoConfigureMockMvc
 @ActiveProfiles("testauth")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -39,7 +45,7 @@ class AuthTokenIT extends BaseIT {
     @Test
     @WithMockUser(username = "Mock User")
     void getCsvWithIdShouldReturn200WhenLoginAuthTokenProvided() throws Exception {
-        performGetRequest("/csv/" + BaseIT.REPORT_UUID_1)
+        performGetRequest("/csv/" + "0fbec75b-2d72-44f5-a0e3-2dcb29d92f79")
             .andExpect(status().isOk());
     }
 }

@@ -29,3 +29,6 @@ modules.xml
 ### VS Code ###
 .vscode/
 **/.DS_Store
+
+# Generated swagger - not to be committed in this repo
+**/resources/static/swagger.yml

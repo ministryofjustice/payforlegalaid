@@ -1,35 +1,59 @@
 package uk.gov.laa.gpfd.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.annotation.Nullable;
 
 import java.sql.Timestamp;
 import java.util.UUID;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class ReportsTracking {
+import static java.util.UUID.randomUUID;
+import static org.immutables.value.Value.Derived;
+import static org.immutables.value.Value.Immutable;
 
-    private UUID id;
+@Immutable
+public abstract class ReportsTracking implements Identifiable {
 
-    private String name;
+    public abstract Report getReport();
 
-    private UUID reportId;
+    @Derived
+    public UUID getId() {
+        return randomUUID();
+    }
 
-    private Timestamp creationDate;
+    @Nullable
+    public abstract Timestamp getCreationDate();
 
-    private String reportCreator;
+    @Nullable
+    public abstract String getReportCreator();
 
-    private String reportOwner;
+    @Nullable
+    public abstract String getReportUrl();
 
-    private String reportOutputType;
+    @Derived
+    public String getReportOwner() {
+        return getReport().getOwner().getName();
+    }
 
-    private String templateUrl;
+    @Derived
+    public String getReportOutputType() {
+        return getReport().getOutputType().getExtension();
+    }
 
-    private String reportUrl;
+    @Derived
+    public String getTemplateUrl() {
+        return getReport().getTemplateDocument().getIdAsString();
+    }
 
+    @Derived
+    public String getReportName() {
+        return getReport().getName();
+    }
+
+    @Derived
+    public UUID getReportId() {
+        return getReport().getId();
+    }
+
+    public static ImmutableReportsTracking.Builder builderFor(Report report) {
+        return ImmutableReportsTracking.builder().report(report);
+    }
 }
