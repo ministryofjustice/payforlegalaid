@@ -3,9 +3,11 @@ package uk.gov.laa.gpfd.utils;
 import org.apache.poi.ss.usermodel.Workbook;
 import uk.gov.laa.gpfd.services.excel.copier.SheetCopier;
 
+import java.util.LinkedHashMap;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
+import static java.util.Map.Entry.comparingByValue;
 import static uk.gov.laa.gpfd.services.excel.copier.SheetCopierFactory.createCopier;
 
 /**
@@ -46,4 +48,25 @@ public interface WorkbookOperations {
                         .apply(sourceWorkbook, targetWorkbook)
         );
     }
+
+    /**
+     * Sorts the workbook sheets to match the expected template's sheet order
+     *
+     * @param workbook The workbook to sort
+     * @param template The template containing the desired order
+     */
+    default void sortWorkbookToTemplate(Workbook workbook, LinkedHashMap<String, Integer> template) {
+        template.entrySet().stream()
+                .sorted(comparingByValue())
+                .forEachOrdered(entry -> {
+                    var sheetName = entry.getKey();
+                    var currentIndex = workbook.getSheetIndex(sheetName);
+                    var targetIndex = entry.getValue();
+
+                    if (currentIndex != targetIndex) {
+                        workbook.setSheetOrder(sheetName, targetIndex);
+                    }
+                });
+    }
+
 }
