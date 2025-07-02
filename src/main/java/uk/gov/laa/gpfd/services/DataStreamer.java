@@ -106,6 +106,7 @@ public interface DataStreamer {
                 stream(report, target);
 
                 transferAnalyticSheets(analytics, target);
+                sortWorkbookToTemplate(target, report.getSheetOrder());
 
                 target.write(output);
             } catch (IOException e) {

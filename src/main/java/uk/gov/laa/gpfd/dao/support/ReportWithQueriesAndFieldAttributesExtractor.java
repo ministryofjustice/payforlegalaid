@@ -101,9 +101,10 @@ public class ReportWithQueriesAndFieldAttributesExtractor implements ResultSetEx
                     log.debug("Mapping data for query with ID: {}", id);
                     return ImmutableReportQuery.builder()
                             .id(queryUUID)
-                            .query(ReportQuerySql.of(rs.getString("QUERY")))
+                            .query(ReportQuerySql.ofNullable(rs.getString("QUERY")))
                             .excelSheet(ImmutableExcelSheet.builder()
                                     .name(rs.getString("TAB_NAME"))
+                                    .index(rs.getInt("INDEX"))
                                     .fieldAttributes(new ArrayList<>())
                                     .build())
                             .build();
