@@ -14,7 +14,6 @@ import uk.gov.laa.gpfd.exception.ReportGenerationException.SheetNotFoundExceptio
 import uk.gov.laa.gpfd.services.excel.copier.types.basic.BasicSheetCopier;
 import uk.gov.laa.gpfd.services.excel.copier.types.xssf.XSSFSheetCopier;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

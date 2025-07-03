@@ -97,6 +97,7 @@ public class ReportSXSSFSheet extends SXSSFSheet implements Sheet, OoxmlSheetExt
      * @param remaining the number of rows to keep in memory
      * @throws IOException if an error occurs while writing rows
      */
+    @Override
     public void flushRows(int remaining) throws IOException {
         var rows = getRows();
         while (rows.size() > remaining) {

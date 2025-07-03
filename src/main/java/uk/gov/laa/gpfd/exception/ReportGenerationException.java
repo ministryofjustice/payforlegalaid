@@ -8,13 +8,7 @@ package uk.gov.laa.gpfd.exception;
  * which classes can extend it, ensuring a closed set of possible exception types.
  * </p>
  */
-public abstract sealed class ReportGenerationException extends RuntimeException permits
-        ReportGenerationException.InvalidWorkbookTypeException,
-        ReportGenerationException.PivotTableCopyException,
-        ReportGenerationException.PivotTableCreationException,
-        ReportGenerationException.SheetCopyException,
-        ReportGenerationException.SheetNotFoundException
-{
+public abstract sealed class ReportGenerationException extends RuntimeException {
 
     /**
      * Constructs a new report generation exception with the specified detail message.
@@ -32,8 +26,8 @@ public abstract sealed class ReportGenerationException extends RuntimeException 
      *
      * @param message the detail message (which is saved for later retrieval
      *                by the {@link #getMessage()} method)
-     * @param cause the cause (which is saved for later retrieval by the
-     *              {@link #getCause()} method)
+     * @param cause   the cause (which is saved for later retrieval by the
+     *                {@link #getCause()} method)
      */
     protected ReportGenerationException(String message, Throwable cause) {
         super(message, cause);
@@ -46,7 +40,7 @@ public abstract sealed class ReportGenerationException extends RuntimeException 
      * a different workbook implementation.
      * </p>
      */
-    public final static class InvalidWorkbookTypeException extends ReportGenerationException {
+    public static final class InvalidWorkbookTypeException extends ReportGenerationException {
 
         /**
          * Constructs a new invalid workbook type exception with the specified detail message.
@@ -64,7 +58,7 @@ public abstract sealed class ReportGenerationException extends RuntimeException 
      * Contains details about the missing sheet to help with debugging.
      * </p>
      */
-    public final static class SheetNotFoundException extends ReportGenerationException {
+    public static final class SheetNotFoundException extends ReportGenerationException {
 
         /**
          * Constructs a new sheet not found exception with the specified detail message.
@@ -83,13 +77,13 @@ public abstract sealed class ReportGenerationException extends RuntimeException 
      * provides context about the copying operation that failed.
      * </p>
      */
-    public final static class SheetCopyException extends ReportGenerationException {
+    public static final class SheetCopyException extends ReportGenerationException {
 
         /**
          * Constructs a new sheet copy exception with the specified detail message and cause.
          *
          * @param message the detail message about the copying failure
-         * @param cause the underlying cause of the copying failure
+         * @param cause   the underlying cause of the copying failure
          */
         public SheetCopyException(String message, Throwable cause) {
             super(message, cause);
@@ -118,7 +112,7 @@ public abstract sealed class ReportGenerationException extends RuntimeException 
          * Constructs a new exception with a detailed message and cause.
          *
          * @param message the detail message explaining the failure
-         * @param cause the underlying cause of the exception
+         * @param cause   the underlying cause of the exception
          */
         public PivotTableCreationException(String message, Throwable cause) {
             super(message, cause);
@@ -147,7 +141,7 @@ public abstract sealed class ReportGenerationException extends RuntimeException 
          * Constructs a new pivot table copy exception with context details.
          *
          * @param sheetName the name of the sheet containing the pivot table
-         * @param message the detail message explaining the failure
+         * @param message   the detail message explaining the failure
          */
         public PivotTableCopyException(String sheetName, String message) {
             super(String.format("Failed to copy pivot table in sheet '%s': %s", sheetName, message));
@@ -158,8 +152,8 @@ public abstract sealed class ReportGenerationException extends RuntimeException 
          * Constructs a new pivot table copy exception with context details and cause.
          *
          * @param sheetName the name of the sheet containing the pivot table
-         * @param message the detail message explaining the failure
-         * @param cause the underlying cause of the failure
+         * @param message   the detail message explaining the failure
+         * @param cause     the underlying cause of the failure
          */
         public PivotTableCopyException(String sheetName, String message, Throwable cause) {
             super(String.format("Failed to copy pivot table in sheet '%s': %s",
