@@ -1,4 +1,4 @@
-package uk.gov.laa.gpfd.services.excel.copier.copier.xssf;
+package uk.gov.laa.gpfd.services.excel.copier.types.xssf;
 
 import static org.junit.jupiter.api.Assertions.*;
 

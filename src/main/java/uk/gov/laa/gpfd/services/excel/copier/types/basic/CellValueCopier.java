@@ -1,4 +1,4 @@
-package uk.gov.laa.gpfd.services.excel.copier.copier.basic;
+package uk.gov.laa.gpfd.services.excel.copier.types.basic;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;

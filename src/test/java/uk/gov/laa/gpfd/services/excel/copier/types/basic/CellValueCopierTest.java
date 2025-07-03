@@ -1,4 +1,4 @@
-package uk.gov.laa.gpfd.services.excel.copier.copier.basic;
+package uk.gov.laa.gpfd.services.excel.copier.types.basic;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static uk.gov.laa.gpfd.services.excel.copier.copier.basic.CellValueCopier.copyValue;
+import static uk.gov.laa.gpfd.services.excel.copier.types.basic.CellValueCopier.copyValue;
 
 @ExtendWith(MockitoExtension.class)
 class CellValueCopierTest {

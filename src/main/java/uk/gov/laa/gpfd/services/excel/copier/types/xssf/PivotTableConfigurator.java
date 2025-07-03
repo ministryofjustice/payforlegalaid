@@ -1,4 +1,4 @@
-package uk.gov.laa.gpfd.services.excel.copier.copier.xssf;
+package uk.gov.laa.gpfd.services.excel.copier.types.xssf;
 
 import org.apache.poi.xssf.usermodel.XSSFPivotTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotFields;
@@ -8,10 +8,10 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRowFields;
 import java.util.ArrayList;
 import java.util.List;
 
-import static uk.gov.laa.gpfd.services.excel.copier.copier.xssf.PivotTableConfigurator.CompositeConfigurator;
-import static uk.gov.laa.gpfd.services.excel.copier.copier.xssf.PivotTableConfigurator.CustomStyleConfigurator;
-import static uk.gov.laa.gpfd.services.excel.copier.copier.xssf.PivotTableConfigurator.DefinitionConfigurator;
-import static uk.gov.laa.gpfd.services.excel.copier.copier.xssf.PivotTableConfigurator.LayoutConfigurator;
+import static uk.gov.laa.gpfd.services.excel.copier.types.xssf.PivotTableConfigurator.CompositeConfigurator;
+import static uk.gov.laa.gpfd.services.excel.copier.types.xssf.PivotTableConfigurator.CustomStyleConfigurator;
+import static uk.gov.laa.gpfd.services.excel.copier.types.xssf.PivotTableConfigurator.DefinitionConfigurator;
+import static uk.gov.laa.gpfd.services.excel.copier.types.xssf.PivotTableConfigurator.LayoutConfigurator;
 
 /**
  * Configures pivot tables during copying operations. Provides factory methods for common

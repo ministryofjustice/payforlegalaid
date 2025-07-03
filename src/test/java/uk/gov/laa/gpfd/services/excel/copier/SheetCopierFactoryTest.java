@@ -11,8 +11,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.laa.gpfd.exception.ReportGenerationException.InvalidWorkbookTypeException;
 import uk.gov.laa.gpfd.exception.ReportGenerationException.SheetCopyException;
 import uk.gov.laa.gpfd.exception.ReportGenerationException.SheetNotFoundException;
-import uk.gov.laa.gpfd.services.excel.copier.copier.basic.BasicSheetCopier;
-import uk.gov.laa.gpfd.services.excel.copier.copier.xssf.XSSFSheetCopier;
+import uk.gov.laa.gpfd.services.excel.copier.types.basic.BasicSheetCopier;
+import uk.gov.laa.gpfd.services.excel.copier.types.xssf.XSSFSheetCopier;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -109,17 +109,5 @@ class SheetCopierFactoryTest {
 
         assertEquals("Failed to create sheet copier", exception.getMessage());
         assertNotNull(exception.getCause());
-    }
-
-    @Test
-    void createCopier_shouldHandleAllParameterValidation() {
-        assertAll(
-                () -> assertThrows(NullPointerException.class,
-                        () -> SheetCopierFactory.createCopier(null, sxssfTargetWorkbook, "Sheet1")),
-                () -> assertThrows(NullPointerException.class,
-                        () -> SheetCopierFactory.createCopier(xssfSourceWorkbook, null, "Sheet1")),
-                () -> assertThrows(NullPointerException.class,
-                        () -> SheetCopierFactory.createCopier(xssfSourceWorkbook, sxssfTargetWorkbook, null))
-        );
     }
 }

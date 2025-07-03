@@ -1,7 +1,7 @@
-package uk.gov.laa.gpfd.services.excel.copier.copier.xssf;
+package uk.gov.laa.gpfd.services.excel.copier.types.xssf;
 
-import static uk.gov.laa.gpfd.services.excel.copier.copier.xssf.PivotTableConfigurator.defaultConfigurator;
-import static uk.gov.laa.gpfd.services.excel.copier.copier.xssf.PivotTableConfigurator.minimalConfigurator;
+import static uk.gov.laa.gpfd.services.excel.copier.types.xssf.PivotTableConfigurator.defaultConfigurator;
+import static uk.gov.laa.gpfd.services.excel.copier.types.xssf.PivotTableConfigurator.minimalConfigurator;
 
 /**
  * Directs the construction of pivot tables using a configured {@link PivotTableBuilder}.

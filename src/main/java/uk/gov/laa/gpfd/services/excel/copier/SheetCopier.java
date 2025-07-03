@@ -1,7 +1,7 @@
 package uk.gov.laa.gpfd.services.excel.copier;
 
 import org.apache.poi.ss.usermodel.Sheet;
-import uk.gov.laa.gpfd.services.excel.copier.copier.basic.SheetContentCopier;
+import uk.gov.laa.gpfd.services.excel.copier.types.basic.SheetContentCopier;
 
 import java.util.Objects;
 import java.util.function.BiConsumer;

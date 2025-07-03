@@ -1,4 +1,4 @@
-package uk.gov.laa.gpfd.services.excel.copier.copier.xssf;
+package uk.gov.laa.gpfd.services.excel.copier.types.xssf;
 
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -60,7 +60,7 @@ public class XSSFSheetCopier extends SheetCopier {
             return;
         }
 
-        for (int i = 0; i < pivotTables.size();) {
+        for (int i = 0; i < pivotTables.size(); i++) {
             var pivotTable = pivotTables.get(i);
             try {
                 PivotTableDirector.standard(PivotTableBuilder.create(
@@ -73,7 +73,6 @@ public class XSSFSheetCopier extends SheetCopier {
             } catch (Exception e) {
                 throw new PivotTableCopyException(xssfSourceSheet.getSheetName(), "Failed to copy pivot table", e);
             }
-            i++;
         }
     }
 }

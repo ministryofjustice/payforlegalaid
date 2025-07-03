@@ -1,4 +1,4 @@
-package uk.gov.laa.gpfd.services.excel.copier.copier.basic;
+package uk.gov.laa.gpfd.services.excel.copier.types.basic;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import org.junit.jupiter.api.Test;
@@ -56,23 +56,13 @@ class BasicSheetCopierTest {
     }
 
     @Test
-    void copySheet_shouldCallParentImplementation() {
+    void copySheet_shouldNotModifySheets() {
         var copier = spy(new BasicSheetCopier(sourceSheet, targetSheet));
 
         copier.copySheet();
 
-        verify(copier).copyAdditionalFeatures();
-    }
-
-    @Test
-    void copyAdditionalFeatures_shouldNotModifySheets() {
-        var copier = new BasicSheetCopier(sourceSheet, targetSheet);
-
-        copier.copyAdditionalFeatures();
-
         verify(sourceSheet, never()).createRow(anyInt());
         verify(targetSheet, never()).createRow(anyInt());
-        verify(sourceSheet, never()).getRow(anyInt());
-        verify(targetSheet, never()).getRow(anyInt());
     }
+
 }

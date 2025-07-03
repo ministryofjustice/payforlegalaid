@@ -4,8 +4,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import uk.gov.laa.gpfd.services.excel.copier.copier.basic.BasicSheetCopier;
-import uk.gov.laa.gpfd.services.excel.copier.copier.xssf.XSSFSheetCopier;
+import uk.gov.laa.gpfd.services.excel.copier.types.basic.BasicSheetCopier;
+import uk.gov.laa.gpfd.services.excel.copier.types.xssf.XSSFSheetCopier;
 
 import java.util.Objects;
 

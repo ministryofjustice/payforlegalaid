@@ -1,4 +1,4 @@
-package uk.gov.laa.gpfd.services.excel.copier.copier.xssf;
+package uk.gov.laa.gpfd.services.excel.copier.types.xssf;
 
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.xssf.usermodel.XSSFPivotTable;
@@ -134,11 +134,10 @@ public class PivotTableBuilder implements PivotTableRefresher {
         }
 
         var lastCol = sourceArea.getLastCell().getCol();
-        for (var i = 0; i <= lastCol;) {
-            if (headerRow.getCell(i) == null) {
+        for (var i = 0; i <= lastCol; i++) {
+            if (null == headerRow.getCell(i)) {
                 headerRow.createCell(i);
             }
-            i++;
         }
     }
 

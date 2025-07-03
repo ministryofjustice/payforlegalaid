@@ -54,13 +54,13 @@ public class ReportWorkbook extends SXSSFWorkbook implements Workbook {
     /**
      * Creates a new sheet with the specified name and registers it in the internal mappings.
      *
-     * @param sheetname the name of the sheet
+     * @param sheetName the name of the sheet
      * @return the newly created SXSSFSheet
      * @throws IllegalStateException if sheet creation fails
      */
     @Override
-    public SXSSFSheet createSheet(String sheetname) {
-        return createAndRegisterSheet(_wb.createSheet(sheetname));
+    public SXSSFSheet createSheet(String sheetName) {
+        return createAndRegisterSheet(_wb.createSheet(sheetName));
     }
 
     /**
@@ -86,7 +86,7 @@ public class ReportWorkbook extends SXSSFWorkbook implements Workbook {
         try {
             reportQuery = report.extractAllMappings().stream().filter(e -> e.getExcelSheet().getName().equals(xSheet.getSheetName())).findFirst().orElse(null);
             var sxSheet = new ReportSXSSFSheet(this, xSheet, null);
-            registeMapping(sxSheet, xSheet);
+            registerMapping(sxSheet, xSheet);
             return sxSheet;
         } catch (IOException ioe) {
             throw new IllegalStateException("Failed to create sheet", ioe);
@@ -110,7 +110,7 @@ public class ReportWorkbook extends SXSSFWorkbook implements Workbook {
      * @param sxSheet the streaming sheet
      * @param xSheet  the backing XSSF sheet
      */
-    private void registeMapping(SXSSFSheet sxSheet, XSSFSheet xSheet) {
+    private void registerMapping(SXSSFSheet sxSheet, XSSFSheet xSheet) {
         updateSheetMapping(SX_FROM_X_FIELD, sxSheet, xSheet);
         updateSheetMapping(X_FROM_SX_FIELD, xSheet, sxSheet);
     }

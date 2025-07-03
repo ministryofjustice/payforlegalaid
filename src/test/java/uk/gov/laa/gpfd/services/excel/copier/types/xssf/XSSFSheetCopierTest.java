@@ -1,4 +1,4 @@
-package uk.gov.laa.gpfd.services.excel.copier.copier.xssf;
+package uk.gov.laa.gpfd.services.excel.copier.types.xssf;
 
 import org.apache.poi.xssf.usermodel.XSSFPivotTable;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -23,8 +23,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static uk.gov.laa.gpfd.services.excel.copier.copier.xssf.PivotTableBuilder.create;
-import static uk.gov.laa.gpfd.services.excel.copier.copier.xssf.PivotTableDirector.standard;
+import static uk.gov.laa.gpfd.services.excel.copier.types.xssf.PivotTableBuilder.create;
+import static uk.gov.laa.gpfd.services.excel.copier.types.xssf.PivotTableDirector.standard;
 
 @ExtendWith(MockitoExtension.class)
 class XSSFSheetCopierTest {

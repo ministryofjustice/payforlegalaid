@@ -1,4 +1,4 @@
-package uk.gov.laa.gpfd.services.excel.copier.copier.basic;
+package uk.gov.laa.gpfd.services.excel.copier.types.basic;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-import static uk.gov.laa.gpfd.services.excel.copier.copier.basic.CellValueCopier.copyValue;
+import static uk.gov.laa.gpfd.services.excel.copier.types.basic.CellValueCopier.copyValue;
 
 /**
  * A utility class for copying content (cells, styles, merged regions, etc.)
@@ -65,14 +65,13 @@ public abstract class SheetContentCopier {
          */
         @Override
         public void accept(Sheet sourceSheet, Sheet targetSheet) {
-            for (int i = 0; i <= sourceSheet.getLastRowNum(); ) {
+            for (int i = 0; i <= sourceSheet.getLastRowNum(); i++) {
                 var sourceRow = sourceSheet.getRow(i);
                 if (sourceRow != null) {
                     var targetRow = targetSheet.createRow(i);
                     copyRowProperties(sourceRow, targetRow);
                     copyCells(sourceRow, targetRow);
                 }
-                i++;
             }
         }
 
@@ -153,9 +152,8 @@ public abstract class SheetContentCopier {
             if (firstRowNum != -1) {
                 var firstRow = sourceSheet.getRow(firstRowNum);
                 if (firstRow != null) {
-                    for (int i = 0; i < firstRow.getLastCellNum(); ) {
+                    for (int i = 0; i < firstRow.getLastCellNum(); i++) {
                         targetSheet.setColumnWidth(i, sourceSheet.getColumnWidth(i));
-                        i++;
                     }
                 }
             }
@@ -178,13 +176,11 @@ public abstract class SheetContentCopier {
          */
         @Override
         public void accept(Sheet sourceSheet, Sheet targetSheet) {
-            for (int i = 0; i < sourceSheet.getNumMergedRegions(); ) {
+            for (int i = 0; i < sourceSheet.getNumMergedRegions(); i++) {
                 try {
                     targetSheet.addMergedRegion(sourceSheet.getMergedRegion(i));
                 } catch (IllegalStateException e) {
                     System.err.println("Failed to copy merged region: " + e.getMessage());
-                } finally {
-                    i++;
                 }
             }
         }

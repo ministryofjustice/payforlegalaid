@@ -1,4 +1,4 @@
-package uk.gov.laa.gpfd.services.excel.copier.copier.xssf;
+package uk.gov.laa.gpfd.services.excel.copier.types.xssf;
 
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;

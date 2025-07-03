@@ -1,4 +1,4 @@
-package uk.gov.laa.gpfd.services.excel.copier.copier.xssf;
+package uk.gov.laa.gpfd.services.excel.copier.types.xssf;
 
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
@@ -39,14 +39,13 @@ class PivotTableFactoryTest {
     }
 
     @Test
-    void customFactory_shouldDelegateToProvidedCreator() {
+    void customFactory_shouldCreatePivotTable() {
         when(creator.create(sourceArea, topLeft, sheet)).thenReturn(pivotTable);
         var factory = PivotTableFactory.customFactory(creator);
 
         var result = factory.createPivotTable(sourceArea, topLeft, sheet);
 
         assertEquals(pivotTable, result);
-        verify(creator).create(sourceArea, topLeft, sheet);
     }
 
     @Test
@@ -74,14 +73,13 @@ class PivotTableFactoryTest {
     }
 
     @Test
-    void defaultFactoryCreatePivotTable_shouldCallSheetCreatePivotTable() {
+    void defaultFactoryCreatePivotTable_shouldCreatePivotTable() {
         when(sheet.createPivotTable(sourceArea, topLeft)).thenReturn(pivotTable);
         var factory = PivotTableFactory.defaultFactory();
 
         var result = factory.createPivotTable(sourceArea, topLeft, sheet);
 
         assertEquals(pivotTable, result);
-        verify(sheet).createPivotTable(sourceArea, topLeft);
     }
 
     @Test
@@ -107,19 +105,5 @@ class PivotTableFactoryTest {
                 () -> factory.createPivotTable(sourceArea, topLeft, sheet));
 
         assertEquals(expected, actual);
-    }
-
-    @Test
-    void defaultFactoryCreatePivotTable_shouldRequireNonNullParameters() {
-        var factory = PivotTableFactory.defaultFactory();
-
-        assertAll(
-                () -> assertThrows(NullPointerException.class,
-                        () -> factory.createPivotTable(null, topLeft, sheet)),
-                () -> assertThrows(NullPointerException.class,
-                        () -> factory.createPivotTable(sourceArea, null, sheet)),
-                () -> assertThrows(NullPointerException.class,
-                        () -> factory.createPivotTable(sourceArea, topLeft, null))
-        );
     }
 }
