@@ -7,9 +7,8 @@ import uk.gov.laa.gpfd.dao.JdbcWorkbookDataStreamer;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
 import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.services.excel.ExcelCreationService;
-import uk.gov.laa.gpfd.services.excel.editor.FormulaCalculator;
-import uk.gov.laa.gpfd.services.excel.editor.PivotTableRefresher;
 import uk.gov.laa.gpfd.services.excel.formatting.CellFormatter;
+import uk.gov.laa.gpfd.utils.WorkbookOperations;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -48,8 +47,6 @@ public interface DataStreamer {
      *
      * @param templateLoader      Service for loading Excel templates (required)
      * @param dataFetcher         DAO for streaming data from source systems (required)
-     * @param pivotTableRefresher Component for refreshing pivot tables (required)
-     * @param formulaCalculator   Component for calculating formulas (required)
      * @param formatter           Component for formatting cells (required)
      * @return A fully configured Excel data streamer implementation
      * @throws IllegalArgumentException if any argument is null
@@ -57,21 +54,15 @@ public interface DataStreamer {
     static DataStreamer createExcelStreamer(
             TemplateService templateLoader,
             JdbcWorkbookDataStreamer dataFetcher,
-            PivotTableRefresher pivotTableRefresher,
-            FormulaCalculator formulaCalculator,
             CellFormatter formatter
     ) {
         Objects.requireNonNull(templateLoader, "Template service must not be null");
         Objects.requireNonNull(dataFetcher, "Data fetcher must not be null");
-        Objects.requireNonNull(pivotTableRefresher, "Pivot table refresher must not be null");
-        Objects.requireNonNull(formulaCalculator, "Formula calculator must not be null");
         Objects.requireNonNull(formatter, "Cell formatter must not be null");
 
         return new ExcelCreationService(
                 templateLoader,
                 dataFetcher,
-                pivotTableRefresher,
-                formulaCalculator,
                 formatter
         );
     }
@@ -84,7 +75,7 @@ public interface DataStreamer {
      */
     void stream(Report query, OutputStream output);
 
-    interface WorkbookDataStreamer extends DataStreamer {
+    interface WorkbookDataStreamer extends DataStreamer, WorkbookOperations {
 
         /**
          * Streams data from the db into the target workbook, applying all mappings
@@ -110,11 +101,23 @@ public interface DataStreamer {
             Objects.requireNonNull(report, "Report must not be null");
             Objects.requireNonNull(output, "Output stream must not be null");
 
-            try (var workbook = resolveTemplate(report)) {
-                stream(report, workbook);
-                workbook.write(output);
+            try (var analyticsSheets = resolveTemplate(report);
+                 var target = createEmpty(report)) {
+                stream(report, target);
+
+                transferAnalyticSheets(analyticsSheets, target);
+
+                target.write(output);
             } catch (IOException e) {
                 throw new ExcelTemplateCreationException(e, "Failed to generate Excel report '%s'", report.getName());
+            }
+        }
+
+        private void transferAnalyticSheets(Workbook analytics, Workbook target) {
+            int sheetCount = analytics.getNumberOfSheets();
+            for (int i = 0; i < sheetCount; i++) {
+                var sourceSheet = analytics.getSheetAt(i);
+                transferSheet(analytics, target, sourceSheet.getSheetName());
             }
         }
 
@@ -127,6 +130,15 @@ public interface DataStreamer {
          * @throws TemplateResourceException if the template cannot be loaded
          */
         Workbook resolveTemplate(Report report);
+
+        /**
+         * Creates a new empty {@link Workbook} for the specified report. The created workbook
+         * will serve as a foundation for report generation
+         *
+         * @param report the report for which to create an empty workbook
+         * @return a new empty {@link Workbook} instance
+         */
+        Workbook createEmpty(Report report);
     }
 }
 
