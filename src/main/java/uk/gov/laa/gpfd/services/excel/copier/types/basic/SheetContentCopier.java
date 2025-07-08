@@ -152,7 +152,7 @@ public abstract class SheetContentCopier {
          */
         @Override
         public void accept(Sheet sourceSheet, Sheet targetSheet) {
-            var ERROR_ROW_VALUE = -1;
+            final int ERROR_ROW_VALUE = -1;
             int firstRowNum = sourceSheet.getFirstRowNum();
             if (firstRowNum != ERROR_ROW_VALUE) {
                 var firstRow = sourceSheet.getRow(firstRowNum);

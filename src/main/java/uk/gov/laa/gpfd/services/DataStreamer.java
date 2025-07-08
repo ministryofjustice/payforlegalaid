@@ -118,6 +118,7 @@ public interface DataStreamer {
             for (int i = 0; i < sheetCount;) {
                 var sourceSheet = analytics.getSheetAt(i);
                 transferSheet(analytics, target, sourceSheet.getSheetName());
+                // Intentional placement for performance improvement
                 i++;
             }
         }
