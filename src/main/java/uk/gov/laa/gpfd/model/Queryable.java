@@ -192,13 +192,13 @@ public interface Queryable<Q extends Mapping, T extends Queryable<Q, T>> {
                     .map(key)
                     .filter(Objects::nonNull);
 
-            return (Function<ExcelSheet, String> indexFn, Function<ExcelSheet, Integer> valueFn) ->
+            return (Function<ExcelSheet, String> keyFn, Function<ExcelSheet, Integer> valueFn) ->
                     excelSheetStream.filter(sheet -> {
-                        var k = indexFn.apply(sheet);
+                        var k = keyFn.apply(sheet);
                         var v = valueFn.apply(sheet);
                         return k != null && v != null;
                     }).collect(toMap(
-                            indexFn,
+                            keyFn,
                             valueFn,
                             (existing, replacement) -> existing,
                             LinkedHashMap::new

@@ -3,7 +3,6 @@ package uk.gov.laa.gpfd.utils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -13,11 +12,13 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.stream.Stream;
 
+import static java.util.Map.of;
 import static java.util.stream.Stream.of;
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static uk.gov.laa.gpfd.exception.ReportGenerationException.InvalidWorkbookTypeException;
 import static uk.gov.laa.gpfd.exception.ReportGenerationException.SheetNotFoundException;
 
@@ -69,14 +70,20 @@ class WorkbookOperationsTest implements WorkbookOperations {
 
     @Test
     void shouldHandleEmptyTemplate() {
-        sortWorkbookToTemplate(null, new LinkedHashMap<>());
+        Workbook workbook = mock(Workbook.class);
+        sortWorkbookToTemplate(workbook, new LinkedHashMap<>());
 
-        assertTrue(true);
+        verifyNoInteractions(workbook);
     }
 
     @Test
     void shouldHandleNullWorkbook() {
-        assertThrows(NullPointerException.class, () -> sortWorkbookToTemplate(null, null));
+        var templateOrder = new LinkedHashMap<>(of(
+                "Extra1", 0,
+                "Extra2", 1
+        ));
+
+        assertThrows(NullPointerException.class, () -> sortWorkbookToTemplate(null, templateOrder));
     }
 
     @Test
@@ -90,9 +97,10 @@ class WorkbookOperationsTest implements WorkbookOperations {
             source.createSheet("Extra1");
             source.createSheet("Extra2");
 
-            var templateOrder = new LinkedHashMap<String, Integer>();
-            templateOrder.put("Extra1", 0);
-            templateOrder.put("Extra2", 1);
+            var templateOrder = new LinkedHashMap<>(of(
+                    "Extra1", 0,
+                    "Extra2", 1
+            ));
 
             sortWorkbookToTemplate(source, templateOrder);
 
@@ -107,9 +115,11 @@ class WorkbookOperationsTest implements WorkbookOperations {
             source.createSheet("Extra1");
             source.createSheet("Extra2");
 
-            var templateOrder = new LinkedHashMap<String, Integer>();
-            templateOrder.put("Extra1", 1);
-            templateOrder.put("Extra2", 0);
+            var templateOrder = new LinkedHashMap<>(of(
+                    "Extra1", 1,
+                    "Extra2", 0
+            ));
+
 
             sortWorkbookToTemplate(source, templateOrder);
 

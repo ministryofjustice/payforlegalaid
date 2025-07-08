@@ -26,7 +26,7 @@ class QueryableTest {
         }
 
         @Test
-        void testGroupByWithNullQueries() {
+        void shouldReturnAnEmptyListWhenThereIsNoSheetOrder() {
             var report = ReportsTestDataFactory.createTestReportWithQuery();
 
             var result = report.getSheetOrder();
