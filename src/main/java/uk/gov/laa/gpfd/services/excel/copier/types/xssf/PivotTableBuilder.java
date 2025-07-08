@@ -164,7 +164,15 @@ public class PivotTableBuilder implements PivotTableRefresher {
         targetCTCacheDef.set(sourcePivotTable.getPivotCacheDefinition().getCTPivotCacheDefinition());
 
         var newCacheId = targetWorkbook.getPivotTables().size() + 1;
-        targetCTCacheDef.setId(String.valueOf(newCacheId));
+        System.out.println("FFF newCacheId " + newCacheId);
+
+        var lastPivot = targetWorkbook.getPivotTables().get(targetWorkbook.getPivotTables().size()-1);
+        System.out.println("GGG lastPivot " + lastPivot.toString());
+
+        // TODO this overwrites the relationship (r:Id field) between pivotCacheDefinition and the pivotCacheRecords
+        // The Cache Id is not needed on the pivotCacheDefinition. It is only on the Workbook and the pivotTableDefinition
+        // Anything in the xml with r:Id must be in the associated _rel file
+        // targetCTCacheDef.setId(String.valueOf(newCacheId));
 
         var pivotDef = targetPivot.getCTPivotTableDefinition();
         pivotDef.setCacheId(newCacheId);
