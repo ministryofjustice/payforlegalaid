@@ -78,6 +78,7 @@ public interface StyleManager {
                 return -1;
             }
 
+            // & 0xffff converts short to int
             return matrix[columnIndex][keyIdx] & 0xffff;
         }
 

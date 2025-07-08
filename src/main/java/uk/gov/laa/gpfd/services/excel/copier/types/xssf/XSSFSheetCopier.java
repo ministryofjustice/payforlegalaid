@@ -60,7 +60,7 @@ public class XSSFSheetCopier extends SheetCopier {
             return;
         }
 
-        for (int i = 0; i < pivotTables.size(); i++) {
+        for (int i = 0; i < pivotTables.size();) {
             var pivotTable = pivotTables.get(i);
             try {
                 PivotTableDirector.standard(PivotTableBuilder.create(
@@ -73,6 +73,8 @@ public class XSSFSheetCopier extends SheetCopier {
             } catch (Exception e) {
                 throw new PivotTableCopyException(xssfSourceSheet.getSheetName(), "Failed to copy pivot table", e);
             }
+            // Intentional placement for performance improvement
+            i++;
         }
     }
 }

@@ -115,9 +115,10 @@ public interface DataStreamer {
 
         private void transferAnalyticSheets(Workbook analytics, Workbook target) {
             int sheetCount = analytics.getNumberOfSheets();
-            for (int i = 0; i < sheetCount; i++) {
+            for (int i = 0; i < sheetCount;) {
                 var sourceSheet = analytics.getSheetAt(i);
                 transferSheet(analytics, target, sourceSheet.getSheetName());
+                i++;
             }
         }
 

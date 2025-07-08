@@ -81,7 +81,7 @@ class StyleManagerTest {
     }
 
     @Test
-    void getColumnStyle_shouldHandleStyleIndexConversionCorrectly() {
+    void getColumnStyle_shouldHandleStyleIndexConversionFromShortToIntCorrectly() {
         when(mockCellStyle1.getIndex()).thenReturn((short) (Short.MAX_VALUE + 1));
 
         styleManager.setColumnStyle(0, "highValue", mockCellStyle1);

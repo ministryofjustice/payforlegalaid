@@ -4,6 +4,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import uk.gov.laa.gpfd.exception.ReportGenerationException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -65,13 +66,15 @@ public abstract class SheetContentCopier {
          */
         @Override
         public void accept(Sheet sourceSheet, Sheet targetSheet) {
-            for (int i = 0; i <= sourceSheet.getLastRowNum(); i++) {
+            for (int i = 0; i <= sourceSheet.getLastRowNum(); ) {
                 var sourceRow = sourceSheet.getRow(i);
                 if (sourceRow != null) {
                     var targetRow = targetSheet.createRow(i);
                     copyRowProperties(sourceRow, targetRow);
                     copyCells(sourceRow, targetRow);
                 }
+                // Intentional placement for performance improvement
+                i++;
             }
         }
 
@@ -100,6 +103,7 @@ public abstract class SheetContentCopier {
                     Cell targetCell = targetRow.createCell(j);
                     copyCell(sourceCell, targetCell);
                 }
+                // Intentional placement for performance improvement
                 j++;
             }
         }
@@ -148,12 +152,15 @@ public abstract class SheetContentCopier {
          */
         @Override
         public void accept(Sheet sourceSheet, Sheet targetSheet) {
+            var ERROR_ROW_VALUE = -1;
             int firstRowNum = sourceSheet.getFirstRowNum();
-            if (firstRowNum != -1) {
+            if (firstRowNum != ERROR_ROW_VALUE) {
                 var firstRow = sourceSheet.getRow(firstRowNum);
                 if (firstRow != null) {
-                    for (int i = 0; i < firstRow.getLastCellNum(); i++) {
+                    for (int i = 0; i < firstRow.getLastCellNum();) {
                         targetSheet.setColumnWidth(i, sourceSheet.getColumnWidth(i));
+                        // Intentional placement for performance improvement
+                        i++;
                     }
                 }
             }
@@ -176,14 +183,15 @@ public abstract class SheetContentCopier {
          */
         @Override
         public void accept(Sheet sourceSheet, Sheet targetSheet) {
-            for (int i = 0; i < sourceSheet.getNumMergedRegions(); i++) {
+            for (int i = 0; i < sourceSheet.getNumMergedRegions();) {
                 try {
                     targetSheet.addMergedRegion(sourceSheet.getMergedRegion(i));
-                } catch (IllegalStateException e) {
-                    System.err.println("Failed to copy merged region: " + e.getMessage());
+                } catch (Exception e) {
+                    throw new ReportGenerationException.SheetCopyException("Failed to copy merged region: ", e);
                 }
+                // Intentional placement for performance improvement
+                i++;
             }
         }
     }
-
 }

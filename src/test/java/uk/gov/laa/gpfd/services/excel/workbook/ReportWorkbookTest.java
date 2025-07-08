@@ -7,13 +7,13 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.createTestReportWithMultipleQueries;
+import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.createTestReportWithMultipleFieldAttributes;
 
 class ReportWorkbookTest {
 
     @Test
     void createSheet_withoutName_shouldReturnSXSSFSheetWithDefaultName()  throws IOException {
-        try (var workbook = new ReportWorkbook(createTestReportWithMultipleQueries(), null)) {
+        try (var workbook = new ReportWorkbook(createTestReportWithMultipleFieldAttributes(), null)) {
             var sheet = workbook.createSheet();
 
             assertNotNull(sheet);
@@ -32,7 +32,7 @@ class ReportWorkbookTest {
 
     @Test
     void workbook_shouldBeUsableInWorkbookContext() throws IOException {
-        try (var workbook = new ReportWorkbook(createTestReportWithMultipleQueries(), null)) {
+        try (var workbook = new ReportWorkbook(createTestReportWithMultipleFieldAttributes(), null)) {
             var sheet = workbook.createSheet("Sheet1");
             assertNotNull(sheet);
             assertEquals("Sheet1", sheet.getSheetName());

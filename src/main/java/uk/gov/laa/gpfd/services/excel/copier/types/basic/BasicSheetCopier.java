@@ -34,7 +34,6 @@ public class BasicSheetCopier extends SheetCopier {
     @Override
     protected void copyAdditionalFeatures() {
         // No additional features to copy for basic sheets
-        System.out.println("HIYAAAAA");
     }
 
 }
