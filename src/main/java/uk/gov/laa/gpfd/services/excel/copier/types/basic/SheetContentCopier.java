@@ -65,6 +65,7 @@ public abstract class SheetContentCopier {
          * @param targetSheet the sheet to copy to (must not be null)
          */
         @Override
+        @SuppressWarnings("java:S127") // "for" loop stop conditions should be invariant
         public void accept(Sheet sourceSheet, Sheet targetSheet) {
             for (int i = 0; i <= sourceSheet.getLastRowNum(); ) {
                 var sourceRow = sourceSheet.getRow(i);
@@ -96,6 +97,7 @@ public abstract class SheetContentCopier {
          * @param sourceRow the row containing source cells
          * @param targetRow the row to create target cells in
          */
+        @SuppressWarnings("java:S127") // "for" loop stop conditions should be invariant
         private void copyCells(Row sourceRow, Row targetRow) {
             for (int j = 0; j < sourceRow.getLastCellNum(); ) {
                 Cell sourceCell = sourceRow.getCell(j);
@@ -151,6 +153,7 @@ public abstract class SheetContentCopier {
          * @param targetSheet the sheet to copy to
          */
         @Override
+        @SuppressWarnings("java:S127") // "for" loop stop conditions should be invariant
         public void accept(Sheet sourceSheet, Sheet targetSheet) {
             final int ERROR_ROW_VALUE = -1;
             int firstRowNum = sourceSheet.getFirstRowNum();
@@ -182,6 +185,7 @@ public abstract class SheetContentCopier {
          * @param targetSheet the sheet to add regions to
          */
         @Override
+        @SuppressWarnings("java:S127") // "for" loop stop conditions should be invariant
         public void accept(Sheet sourceSheet, Sheet targetSheet) {
             for (int i = 0; i < sourceSheet.getNumMergedRegions();) {
                 try {

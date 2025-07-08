@@ -115,6 +115,7 @@ public class PivotTableBuilder implements PivotTableRefresher {
      *
      * @param sourceArea the source area reference used to determine column count
      */
+    @SuppressWarnings("java:S127") // "for" loop stop conditions should be invariant
     private void createHeaderRow(AreaReference sourceArea) {
         var headerRow = targetSheet.getRow(0);
         if (null == headerRow) {
