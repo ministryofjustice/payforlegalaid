@@ -145,6 +145,7 @@ public abstract class SheetContentCopier {
      * </p>
      */
     static class ColumnWidthCopier implements BiConsumer<Sheet, Sheet> {
+        private static final int ERROR_ROW_VALUE = -1;
 
         /**
          * Copies column widths between sheets.
@@ -155,12 +156,11 @@ public abstract class SheetContentCopier {
         @Override
         @SuppressWarnings("java:S127") // "for" loop stop conditions should be invariant
         public void accept(Sheet sourceSheet, Sheet targetSheet) {
-            final int ERROR_ROW_VALUE = -1;
             int firstRowNum = sourceSheet.getFirstRowNum();
             if (firstRowNum != ERROR_ROW_VALUE) {
                 var firstRow = sourceSheet.getRow(firstRowNum);
                 if (firstRow != null) {
-                    for (int i = 0; i < firstRow.getLastCellNum();) {
+                    for (int i = 0; i < firstRow.getLastCellNum(); ) {
                         targetSheet.setColumnWidth(i, sourceSheet.getColumnWidth(i));
                         // Intentional placement for performance improvement
                         i++;
@@ -185,16 +185,13 @@ public abstract class SheetContentCopier {
          * @param targetSheet the sheet to add regions to
          */
         @Override
-        @SuppressWarnings("java:S127") // "for" loop stop conditions should be invariant
         public void accept(Sheet sourceSheet, Sheet targetSheet) {
-            for (int i = 0; i < sourceSheet.getNumMergedRegions();) {
+            for (int i = 0; i < sourceSheet.getNumMergedRegions(); ) {
                 try {
-                    targetSheet.addMergedRegion(sourceSheet.getMergedRegion(i));
+                    targetSheet.addMergedRegion(sourceSheet.getMergedRegion(i++));
                 } catch (Exception e) {
                     throw new ReportGenerationException.SheetCopyException("Failed to copy merged region: ", e);
                 }
-                // Intentional placement for performance improvement
-                i++;
             }
         }
     }

@@ -248,7 +248,7 @@ public final class ReportSheetDataWriter extends SheetDataWriter implements Clos
     }
 
     /**
-     * Replicates private org.apache.poi.xssf.streaming.SheetDataWriter.writAttribute internals
+     * Replicates private org.apache.poi.xssf.streaming.SheetDataWriter.writeAttribute internals
      */
     private void writeXml(String name, String value) throws IOException {
         _out.write(' ');

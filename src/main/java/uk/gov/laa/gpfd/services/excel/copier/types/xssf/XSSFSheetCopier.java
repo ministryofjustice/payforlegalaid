@@ -54,7 +54,6 @@ public class XSSFSheetCopier extends SheetCopier {
      * Copies XSSF-specific features, primarily pivot tables, from source to target sheet.
      */
     @Override
-    @SuppressWarnings("java:S127") // "for" loop stop conditions should be invariant
     protected void copyAdditionalFeatures() {
         var pivotTables = xssfSourceSheet.getPivotTables();
         if (null == pivotTables || pivotTables.isEmpty()) {
@@ -62,7 +61,7 @@ public class XSSFSheetCopier extends SheetCopier {
         }
 
         for (int i = 0; i < pivotTables.size();) {
-            var pivotTable = pivotTables.get(i);
+            var pivotTable = pivotTables.get(i++);
             try {
                 PivotTableDirector.standard(PivotTableBuilder.create(
                         sourceWorkbook,
@@ -74,8 +73,6 @@ public class XSSFSheetCopier extends SheetCopier {
             } catch (Exception e) {
                 throw new PivotTableCopyException(xssfSourceSheet.getSheetName(), "Failed to copy pivot table", e);
             }
-            // Intentional placement for performance improvement
-            i++;
         }
     }
 }
