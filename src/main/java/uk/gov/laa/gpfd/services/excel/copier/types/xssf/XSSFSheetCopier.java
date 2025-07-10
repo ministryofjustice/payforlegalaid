@@ -54,6 +54,7 @@ public class XSSFSheetCopier extends SheetCopier {
      * Copies XSSF-specific features, primarily pivot tables, from source to target sheet.
      */
     @Override
+    @SuppressWarnings("java:S127") // "for" loop stop conditions should be invariant
     protected void copyAdditionalFeatures() {
         var pivotTables = xssfSourceSheet.getPivotTables();
         if (null == pivotTables || pivotTables.isEmpty()) {
