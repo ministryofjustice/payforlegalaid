@@ -72,6 +72,7 @@
       <column name="REPORT_ID" type="UUID"/>
       <column name="QUERY" type="VARCHAR(4000)"/>
       <column name="TAB_NAME" type="VARCHAR(100)"/>
+      <column name="INDEX" type="VARCHAR(100)"/>
     </createTable>
     <sql>ALTER TABLE GPFD.REPORT_QUERIES ALTER COLUMN ID SET DEFAULT sys_guid();</sql>
   </changeSet>
