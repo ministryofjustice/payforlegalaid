@@ -26,6 +26,25 @@ import java.lang.reflect.Field;
  *   <li>Implementing optimized number formatting</li>
  *   <li>Providing efficient string escaping</li>
  * </ul>
+ * <p><strong>Formatting Approach:</strong></p>
+ * <p>Unlike the original implementation which maintained individual cell formatting assignments,
+ * this optimized version uses a column-based formatting strategy. Instead of storing formatting
+ * information with each cell, we:</p>
+ *
+ * <ol>
+ * <li>Determine the column index of each cell being written</li>
+ * <li>Apply formatting based on pre-defined column styles</li>
+ * <li>Maintain a column-to-style mapping for efficient lookup</li>
+ * </ol>
+ * <p>This approach provides several advantages:</p>
+ * <ul>
+ * <li><strong>Reduced Memory Usage:</strong> Eliminates per-cell formatting storage</li>
+ * <li><strong>Improved Performance:</strong> Faster style lookups through column indexing</li>
+ * <li><strong>Consistent Formatting:</strong> Ensures uniform styling across entire columns</li>
+ * <li><strong>Simplified Style Management:</strong> Centralizes style definitions at column level</li>
+ * </ul>
+ * <p>Note that this design assumes formatting consistency within columns, which is typical
+ * for most data-oriented Excel files.</p>
  */
 public final class ReportSheetDataWriter extends SheetDataWriter implements Closeable {
     /**
@@ -85,6 +104,21 @@ public final class ReportSheetDataWriter extends SheetDataWriter implements Clos
 
     /**
      * Writes a cell to the output stream with optimized formatting.
+     *
+     * <p><strong>Performance Note:</strong> This method employs {@code sun.misc.Unsafe} for low-level memory
+     * access to achieve optimal performance in high-volume spreadsheet generation scenarios. The operation:
+     * <pre>
+     *   int rownum = UNSAFE.getInt(this, ROWNUM_OFFSET);
+     * </pre>
+     *
+     * <p>This approach provides several performance advantages:
+     * <ul>
+     *   <li><strong>Reduced Overhead:</strong> Eliminates method call overhead that would be incurred by
+     *       traditional getter methods, which is significant when processing millions of cells.</li>
+     *
+     *   <li><strong>Memory Efficiency:</strong> Avoids creating temporary objects or boxed primitives that
+     *       trigger garbage collection pressure during large file generation.</li>
+     * </ul>
      *
      * @param columnIndex the column index (0-based)
      * @param cell        the cell to write
