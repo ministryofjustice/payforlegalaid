@@ -1,11 +1,17 @@
 package uk.gov.laa.gpfd.model;
 
+import uk.gov.laa.gpfd.model.excel.ExcelSheet;
+
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+
+import static java.util.stream.Collectors.toMap;
 
 /**
  * Interface for types that contain queryable content with support for query processing.
@@ -50,7 +56,25 @@ public interface Queryable<Q extends Mapping, T extends Queryable<Q, T>> {
         @SuppressWarnings("unchecked")
         T self = (T) this;
         return Queryable.processor(self)
+                .filtering(e-> e.getQuery().isPresent())
                 .allMappings();
+    }
+
+    /**
+     * Retrieves the ordered mapping of Excel sheet names to their corresponding indices.
+     * This implementation provides a convenient way to obtain sheet ordering information
+     * while maintaining type safety. The returned map preserves the insertion order of sheets
+     * as they appear in the original document.
+     *
+     * @return a {@link LinkedHashMap} where keys represent sheet names ({@link String})
+     *         and values represent sheet indices ({@link Integer}), maintaining insertion order.
+     */
+    default LinkedHashMap<String, Integer> getSheetOrder() {
+        @SuppressWarnings("unchecked")
+        T self = (T) this;
+        return Queryable.processor(self)
+                .groupBy(Mapping::getExcelSheet)
+                .apply(ExcelSheet::getName, ExcelSheet::getIndex);
     }
 
     /**
@@ -151,6 +175,34 @@ public interface Queryable<Q extends Mapping, T extends Queryable<Q, T>> {
                     .flatMap(Collection::stream)
                     .filter(filter)
                     .toList();
+        }
+
+        /**
+         * Creates a grouping function that transforms query objects into an ordered map of Excel sheet properties.
+         */
+        public BiFunction<Function<ExcelSheet, String>, Function<ExcelSheet, Integer>, LinkedHashMap<String, Integer>> groupBy(
+                Function<Q, ExcelSheet> key
+        ) {
+            Objects.requireNonNull(key, "Key extractor function cannot be null");
+
+            var excelSheetStream = Optional.ofNullable(source.getQueries())
+                    .stream()
+                    .flatMap(Collection::stream)
+                    .filter(filter)
+                    .map(key)
+                    .filter(Objects::nonNull);
+
+            return (Function<ExcelSheet, String> keyFn, Function<ExcelSheet, Integer> valueFn) ->
+                    excelSheetStream.filter(sheet -> {
+                        var k = keyFn.apply(sheet);
+                        var v = valueFn.apply(sheet);
+                        return k != null && v != null;
+                    }).collect(toMap(
+                            keyFn,
+                            valueFn,
+                            (existing, replacement) -> existing,
+                            LinkedHashMap::new
+                    ));
         }
     }
 }

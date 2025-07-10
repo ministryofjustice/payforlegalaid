@@ -79,6 +79,7 @@ public class ReportsTestDataFactory {
         var query1 = ImmutableReportQuery.builder()
                 .excelSheet(ImmutableExcelSheet.builder()
                         .name("Sheet1")
+                        .index(0)
                         .fieldAttributes(List.of(
                                 ImmutableExcelMappingProjection.builder()
                                         .excelColumn(ImmutableExcelColumn.builder()
