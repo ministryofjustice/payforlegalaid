@@ -15,7 +15,7 @@ import uk.gov.laa.gpfd.services.excel.formatting.CellFormatter;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.createTestReportWithMultipleQueries;
+import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.createTestReportWithMultipleFieldAttributes;
 
 @ExtendWith(MockitoExtension.class)
 class ExcelCreationServiceTest {
@@ -42,7 +42,7 @@ class ExcelCreationServiceTest {
     private ExcelCreationService excelCreationService;
 
     @Test
-    void stream_ShouldCreateSheetForEachMapping() {
+    void stream_ShouldCreateSheetWithMapping() {
        var testReport = ReportsTestDataFactory.createTestReportWithQuery();
         when(mockWorkbook.createSheet("Sheet1")).thenReturn(mockSheet);
         when(mockSheet.createRow(0)).thenReturn(mockRow);
@@ -61,7 +61,7 @@ class ExcelCreationServiceTest {
         when(mockRow.createCell(0)).thenReturn(mockCell);
         when(mockRow.createCell(1)).thenReturn(mockCell);
 
-        excelCreationService.stream(createTestReportWithMultipleQueries(), mockWorkbook);
+        excelCreationService.stream(createTestReportWithMultipleFieldAttributes(), mockWorkbook);
 
         verify(mockRow).createCell(0);
         verify(mockRow).createCell(1);

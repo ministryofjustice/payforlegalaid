@@ -47,8 +47,7 @@ public abstract class PivotTableDirector {
         return new PivotTableDirector(builder) {
             @Override
             protected void configureBuilder() {
-                builder.withConfigurator(defaultConfigurator())
-                        .withRefreshOnLoad(true);
+                builder.withConfigurator(defaultConfigurator());
             }
         };
     }
@@ -63,8 +62,7 @@ public abstract class PivotTableDirector {
         return new PivotTableDirector(builder) {
             @Override
             protected void configureBuilder() {
-                builder.withConfigurator(minimalConfigurator())
-                        .withRefreshOnLoad(false);
+                builder.withConfigurator(minimalConfigurator());
             }
         };
     }
@@ -74,17 +72,15 @@ public abstract class PivotTableDirector {
      *
      * @param builder the builder to use
      * @param configurator the configurator to apply
-     * @param refreshOnLoad whether to refresh on load
      * @return a director with custom configuration
      */
     public static PivotTableDirector custom(PivotTableBuilder builder,
-                                            PivotTableConfigurator configurator,
-                                            boolean refreshOnLoad) {
+                                            PivotTableConfigurator configurator
+                                            ) {
         return new PivotTableDirector(builder) {
             @Override
             protected void configureBuilder() {
-                builder.withConfigurator(configurator)
-                        .withRefreshOnLoad(refreshOnLoad);
+                builder.withConfigurator(configurator);
             }
         };
     }

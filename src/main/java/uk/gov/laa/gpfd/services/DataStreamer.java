@@ -114,10 +114,11 @@ public interface DataStreamer {
             }
         }
 
+        @SuppressWarnings("java:S127") // "for" loop stop conditions should be invariant
         private void transferAnalyticSheets(Workbook analytics, Workbook target) {
             int sheetCount = analytics.getNumberOfSheets();
-            for (int i = 0; i < sheetCount; i++) {
-                var sourceSheet = analytics.getSheetAt(i);
+            for (int i = 0; i < sheetCount;) {
+                var sourceSheet = analytics.getSheetAt(i++);
                 transferSheet(analytics, target, sourceSheet.getSheetName());
             }
         }

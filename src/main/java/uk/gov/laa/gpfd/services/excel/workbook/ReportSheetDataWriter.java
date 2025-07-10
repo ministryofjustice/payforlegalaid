@@ -132,12 +132,13 @@ public final class ReportSheetDataWriter extends SheetDataWriter implements Clos
         int rownum = UNSAFE.getInt(this, ROWNUM_OFFSET);
         String ref = new CellReference(rownum, columnIndex).formatAsString();
         _out.write("<c");
-        write("r", ref);
+        writeXml("r", ref);
         int columnStyle = styleManager.getColumnStyle(columnIndex, report.getExcelSheet().getName());
         if (columnStyle != -1) {
-            write("s", Integer.toString(columnStyle));
+            writeXml("s", Integer.toString(columnStyle));
         }
 
+        // The following code replicates org.apache.poi.xssf.streaming.SheetDataWriter.writeCell internals
         CellType cellType = cell.getCellType();
         switch (cellType) {
             case BLANK: {
@@ -147,16 +148,16 @@ public final class ReportSheetDataWriter extends SheetDataWriter implements Clos
             case FORMULA: {
                 switch(cell.getCachedFormulaResultType()) {
                     case NUMERIC:
-                        write("t", "n");
+                        writeXml("t", "n");
                         break;
                     case STRING:
-                        write("t", STCellType.STR.toString());
+                        writeXml("t", STCellType.STR.toString());
                         break;
                     case BOOLEAN:
-                        write("t", "b");
+                        writeXml("t", "b");
                         break;
                     case ERROR:
-                        write("t", "e");
+                        writeXml("t", "e");
                         break;
                 }
                 _out.write("><f>");
@@ -200,15 +201,15 @@ public final class ReportSheetDataWriter extends SheetDataWriter implements Clos
                     RichTextString rt = cell.getRichStringCellValue();
                     int sRef = _sharedStringSource.addSharedStringItem(rt);
 
-                    write("t", STCellType.S.toString());
+                    writeXml("t", STCellType.S.toString());
                     _out.write("><v>");
                     _out.write(String.valueOf(sRef));
                     _out.write("</v>");
                 } else {
-                    write("t", "inlineStr");
+                    writeXml("t", "inlineStr");
                     _out.write("><is><t");
                     if (checkLeadingTrailingSpaces(cell.getStringCellValue())) {
-                        write("xml:space", "preserve");
+                        writeXml("xml:space", "preserve");
                     }
                     _out.write(">");
                     outputEscapedString(cell.getStringCellValue());
@@ -217,14 +218,14 @@ public final class ReportSheetDataWriter extends SheetDataWriter implements Clos
                 break;
             }
             case NUMERIC: {
-                write("t", "n");
+                writeXml("t", "n");
                 _out.write("><v>");
                 _out.write(Double.toString(cell.getNumericCellValue()));
                 _out.write("</v>");
                 break;
             }
             case BOOLEAN: {
-                write("t", "b");
+                writeXml("t", "b");
                 _out.write("><v>");
                 _out.write(cell.getBooleanCellValue() ? "1" : "0");
                 _out.write("</v>");
@@ -233,7 +234,7 @@ public final class ReportSheetDataWriter extends SheetDataWriter implements Clos
             case ERROR: {
                 FormulaError error = FormulaError.forInt(cell.getErrorCellValue());
 
-                write("t", "e");
+                writeXml("t", "e");
                 _out.write("><v>");
                 outputEscapedString(error.getString());
                 _out.write("</v>");
@@ -246,7 +247,10 @@ public final class ReportSheetDataWriter extends SheetDataWriter implements Clos
         _out.write("</c>");
     }
 
-    private void write(String name, String value) throws IOException {
+    /**
+     * Replicates private org.apache.poi.xssf.streaming.SheetDataWriter.writeAttribute internals
+     */
+    private void writeXml(String name, String value) throws IOException {
         _out.write(' ');
         _out.write(name);
         _out.write("=\"");

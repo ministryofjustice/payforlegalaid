@@ -27,7 +27,6 @@ public class PivotTableBuilder implements PivotTableRefresher {
     private final XSSFPivotTable sourcePivotTable;
     private PivotTableFactory factory = PivotTableFactory.defaultFactory();
     private PivotTableConfigurator configurator = new PivotTableConfigurator.CompositeConfigurator();
-    private boolean refreshOnLoad = true;
 
     /**
      * Constructs a new PivotTableBuilder instance.
@@ -90,17 +89,6 @@ public class PivotTableBuilder implements PivotTableRefresher {
     }
 
     /**
-     * Configures whether the pivot table should refresh automatically when loaded.
-     *
-     * @param refreshOnLoad true to enable refresh on load, false to disable
-     * @return this builder instance for method chaining
-     */
-    public PivotTableBuilder withRefreshOnLoad(boolean refreshOnLoad) {
-        this.refreshOnLoad = refreshOnLoad;
-        return this;
-    }
-
-    /**
      * Builds and configures the pivot table in the target workbook.
      * <p>
      * The build process:
@@ -127,6 +115,7 @@ public class PivotTableBuilder implements PivotTableRefresher {
      *
      * @param sourceArea the source area reference used to determine column count
      */
+    @SuppressWarnings("java:S127") // "for" loop stop conditions should be invariant
     private void createHeaderRow(AreaReference sourceArea) {
         var headerRow = targetSheet.getRow(0);
         if (null == headerRow) {
@@ -134,10 +123,12 @@ public class PivotTableBuilder implements PivotTableRefresher {
         }
 
         var lastCol = sourceArea.getLastCell().getCol();
-        for (var i = 0; i <= lastCol; i++) {
+        for (var i = 0; i <= lastCol;) {
             if (null == headerRow.getCell(i)) {
                 headerRow.createCell(i);
             }
+            // Intentional placement for performance improvement
+            i++;
         }
     }
 
@@ -160,6 +151,7 @@ public class PivotTableBuilder implements PivotTableRefresher {
      */
     private void configurePivotCache(XSSFPivotTable targetPivot) {
         var targetCacheDef = targetPivot.getPivotCacheDefinition();
+        // Java wrapper for xml pivot cache (complex type cache def)
         var targetCTCacheDef = targetCacheDef.getCTPivotCacheDefinition();
         targetCTCacheDef.set(sourcePivotTable.getPivotCacheDefinition().getCTPivotCacheDefinition());
 
@@ -175,8 +167,6 @@ public class PivotTableBuilder implements PivotTableRefresher {
             cacheSource.getWorksheetSource().setRef(ref);
         }
 
-        if (refreshOnLoad) {
-            refreshPivotTables(targetWorkbook);
-        }
+        refreshPivotTables(targetWorkbook);
     }
 }

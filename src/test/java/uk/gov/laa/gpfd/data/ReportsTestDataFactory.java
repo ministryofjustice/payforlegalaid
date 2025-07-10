@@ -75,7 +75,7 @@ public class ReportsTestDataFactory {
         return createTestReport(UUID.randomUUID().toString(), List.of(query1) );
     }
 
-    public static Report createTestReportWithMultipleQueries() {
+    public static Report createTestReportWithMultipleFieldAttributes() {
         var query1 = ImmutableReportQuery.builder()
                 .excelSheet(ImmutableExcelSheet.builder()
                         .name("Sheet1")

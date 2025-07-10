@@ -57,7 +57,7 @@ public record ExcelCreationService(
         }
     }
 
-    void setupSheetHeader(Sheet sheet, Mapping query) {
+    private void setupSheetHeader(Sheet sheet, Mapping query) {
         var headerRow = sheet.createRow(0);
         var columnIndex = 0;
 
