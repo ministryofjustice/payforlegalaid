@@ -16,7 +16,7 @@ class QueryableTest {
 
         @Test
         void testGroupByWithNonNullValues() {
-            var report = ReportsTestDataFactory.createTestReportWithMultipleQueries();
+            var report = ReportsTestDataFactory.createTestReportWithMultipleFieldAttributes();
             var expected = new LinkedHashMap<>();
             expected.put("Sheet1", 0);
 
