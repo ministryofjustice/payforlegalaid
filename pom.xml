@@ -248,7 +248,16 @@
             <artifactId>ucp17</artifactId>
             <version>${oracle-jdbc.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-core</artifactId>
+            <version>10.1.43</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.18.0</version>
+        </dependency>
         <!-- Test Dependencies-->
         <dependency>
             <groupId>com.h2database</groupId>
