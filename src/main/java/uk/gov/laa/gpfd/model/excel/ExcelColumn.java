@@ -7,22 +7,22 @@ import static org.immutables.value.Value.Immutable;
 @Immutable
 public abstract class ExcelColumn {
 
-    @Nullable
-    public abstract String getName();
+  @Nullable
+  public abstract String getName();
+
+  @Nullable
+  public abstract ColumnFormat getFormat();
+
+  @Immutable
+  public abstract static class ColumnFormat {
 
     @Nullable
-    public abstract ColumnFormat getFormat();
+    public abstract String getFormat();
 
-    @Immutable
-    public abstract static class ColumnFormat {
+    @Nullable
+    public abstract String getFormatType();
 
-        @Nullable
-        public abstract String getFormat();
+    public abstract double getColumnWidth();
 
-        @Nullable
-        public abstract String getFormatType();
-
-        public abstract double getColumnWidth();
-
-    }
+  }
 }

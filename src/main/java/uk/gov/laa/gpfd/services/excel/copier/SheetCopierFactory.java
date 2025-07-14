@@ -1,13 +1,18 @@
 package uk.gov.laa.gpfd.services.excel.copier;
 
+import jakarta.annotation.PostConstruct;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.stereotype.Component;
 import uk.gov.laa.gpfd.services.excel.copier.types.basic.BasicSheetCopier;
 import uk.gov.laa.gpfd.services.excel.copier.types.xssf.XSSFSheetCopier;
+import uk.gov.laa.gpfd.services.excel.formatting.CellFormatting;
 
 import java.util.Objects;
+import java.util.function.BiFunction;
 
 import static uk.gov.laa.gpfd.exception.ReportGenerationException.InvalidWorkbookTypeException;
 import static uk.gov.laa.gpfd.exception.ReportGenerationException.SheetCopyException;
@@ -24,10 +29,32 @@ import static uk.gov.laa.gpfd.exception.ReportGenerationException.SheetNotFoundE
  * </ul>
  * </p>
  */
+@Component
 public final class SheetCopierFactory {
 
-    private SheetCopierFactory() {
-        // Prevent instantiation
+    private static SheetCopierFactory INSTANCE;
+    private final BiFunction<XSSFSheet, XSSFSheet, SheetCopier> xssCopier;
+    private final BiFunction<Sheet, Sheet, SheetCopier> basic;
+
+    SheetCopierFactory(CellFormatting cellFormatter) {
+        xssCopier=  (sourceSheet,targetSheet) -> new XSSFSheetCopier(cellFormatter, sourceSheet, targetSheet);
+        basic =  (sourceSheet, targetSheet) -> new BasicSheetCopier(cellFormatter, sourceSheet, targetSheet);
+    }
+
+    @PostConstruct
+    private void init() {
+        INSTANCE = this;
+    }
+
+    /**
+     * Creates a function that produces a SheetCopier for transferring a specific sheet
+     * between workbooks.
+     *
+     * @param sheetName the name of the sheet to be copied
+     * @return a BiFunction that takes source and target workbooks and returns a SheetCopier
+     */
+    public static BiFunction<Workbook, Workbook, SheetCopier> createSheetTransfer(String sheetName) {
+        return (source, target) -> INSTANCE.createCopier(source, target, sheetName);
     }
 
     /**
@@ -41,7 +68,7 @@ public final class SheetCopierFactory {
      * @throws SheetNotFoundException if specified sheet doesn't exist in source workbook
      * @throws IllegalArgumentException if any parameter is null
      */
-    public static SheetCopier createCopier(Workbook sourceWorkbook, Workbook targetWorkbook, String sheetName) throws SheetNotFoundException {
+    private SheetCopier createCopier(Workbook sourceWorkbook, Workbook targetWorkbook, String sheetName) throws SheetNotFoundException {
         Objects.requireNonNull(sourceWorkbook, "Source workbook must not be null");
         Objects.requireNonNull(targetWorkbook, "Target workbook stream must not be null");
         Objects.requireNonNull(sheetName, "Sheet must not be null");
@@ -60,13 +87,11 @@ public final class SheetCopierFactory {
             var targetSheet = xssfTargetWorkbook.createSheet(sheetName);
             targetSheet.setAutobreaks(false);
 
-            return sourceWorkbook instanceof XSSFWorkbook
-                    ? new XSSFSheetCopier(
-                    (XSSFWorkbook) sourceWorkbook,
-                    xssfTargetWorkbook,
-                    (XSSFSheet) sourceSheet,
-                    targetSheet)
-                    : new BasicSheetCopier(sourceSheet, targetSheet);
+            if (sourceWorkbook instanceof XSSFWorkbook) {
+                return xssCopier.apply((XSSFSheet) sourceSheet, targetSheet);
+            } else {
+                return basic.apply(sourceSheet, targetSheet);
+            }
         } catch (Exception e) {
             throw new SheetCopyException("Failed to create sheet copier", e);
         }

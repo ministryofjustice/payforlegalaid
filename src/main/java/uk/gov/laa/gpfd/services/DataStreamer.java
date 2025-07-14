@@ -51,7 +51,7 @@ public interface DataStreamer {
      * @return A fully configured Excel data streamer implementation
      * @throws IllegalArgumentException if any argument is null
      */
-    static DataStreamer createExcelStreamer(
+    static WorkbookDataStreamer createExcelStreamer(
             TemplateService templateLoader,
             JdbcWorkbookDataStreamer dataFetcher,
             CellFormatter formatter

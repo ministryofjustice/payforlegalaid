@@ -4,11 +4,10 @@ import org.apache.poi.ss.usermodel.Workbook;
 import uk.gov.laa.gpfd.services.excel.copier.SheetCopier;
 
 import java.util.LinkedHashMap;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 import static java.util.Map.Entry.comparingByValue;
-import static uk.gov.laa.gpfd.services.excel.copier.SheetCopierFactory.createCopier;
+import static uk.gov.laa.gpfd.services.excel.copier.SheetCopierFactory.createSheetTransfer;
 
 /**
  * Provides utility operations for manipulating Excel workbooks.
@@ -16,17 +15,6 @@ import static uk.gov.laa.gpfd.services.excel.copier.SheetCopierFactory.createCop
  * immutability and composability of operations.
  */
 public interface WorkbookOperations {
-
-    /**
-     * Creates a function that produces a SheetCopier for transferring a specific sheet
-     * between workbooks.
-     *
-     * @param sheetName the name of the sheet to be copied
-     * @return a BiFunction that takes source and target workbooks and returns a SheetCopier
-     */
-    static BiFunction<Workbook, Workbook, SheetCopier> createSheetTransfer(String sheetName) {
-        return (source, target) -> createCopier(source, target, sheetName);
-    }
 
     /**
      * Consumer that executes the sheet copying operation.
@@ -43,10 +31,7 @@ public interface WorkbookOperations {
      * @throws IllegalArgumentException if the sheet doesn't exist in source workbook
      */
     default void transferSheet(Workbook sourceWorkbook, Workbook targetWorkbook, String sheetName) {
-        COPY_SHEET.accept(
-                createSheetTransfer(sheetName)
-                        .apply(sourceWorkbook, targetWorkbook)
-        );
+        COPY_SHEET.accept(createSheetTransfer(sheetName).apply(sourceWorkbook, targetWorkbook));
     }
 
     /**

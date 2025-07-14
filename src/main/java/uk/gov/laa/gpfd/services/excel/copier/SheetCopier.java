@@ -2,20 +2,25 @@ package uk.gov.laa.gpfd.services.excel.copier;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import uk.gov.laa.gpfd.services.excel.copier.types.basic.SheetContentCopier;
+import uk.gov.laa.gpfd.services.excel.formatting.Formatting;
 
 import java.util.Objects;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 /**
  * An abstract base class for copying content between Excel sheets.
  * Provides the core copying algorithm while allowing subclasses to implement sheet-specific features.
  */
 public abstract class SheetCopier {
+
+    private static final Function<Formatting, BiConsumer<Sheet, Sheet>> createContentCopier = SheetContentCopier::copyAll;
+
     /**
      * The standard copying operation that handles basic sheet content.
      * Uses all available {@link SheetContentCopier} implementations.
      */
-    private static final BiConsumer<Sheet, Sheet> copyAll = SheetContentCopier::copyAll;
+    private final BiConsumer<Sheet, Sheet> copyAll;
 
     /** The source sheet to copy from */
     protected final Sheet sourceSheet;
@@ -30,11 +35,12 @@ public abstract class SheetCopier {
      * @param targetSheet the target sheet to copy to (must not be null)
      * @throws IllegalArgumentException if either sheet parameter is null
      */
-    protected SheetCopier(Sheet sourceSheet, Sheet targetSheet) {
+    protected SheetCopier(Formatting cellFormatter, Sheet sourceSheet, Sheet targetSheet) {
         Objects.requireNonNull(sourceSheet, "SourceSheet must not be null");
         Objects.requireNonNull(targetSheet, "TargetSheet stream must not be null");
         this.sourceSheet = sourceSheet;
         this.targetSheet = targetSheet;
+        this.copyAll = createContentCopier.apply(cellFormatter);
     }
 
     /**

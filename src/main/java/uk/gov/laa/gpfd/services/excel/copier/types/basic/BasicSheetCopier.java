@@ -3,6 +3,7 @@ package uk.gov.laa.gpfd.services.excel.copier.types.basic;
 import org.apache.poi.ss.usermodel.Sheet;
 import uk.gov.laa.gpfd.services.excel.copier.SheetCopier;
 import uk.gov.laa.gpfd.services.excel.copier.types.xssf.XSSFSheetCopier;
+import uk.gov.laa.gpfd.services.excel.formatting.Formatting;
 
 /**
  * A basic implementation of {@link SheetCopier} that handles copying standard Excel sheet content
@@ -20,8 +21,8 @@ public class BasicSheetCopier extends SheetCopier {
      * @param targetSheet the target sheet to copy to (must not be null)
      * @throws IllegalArgumentException if either sheet is null
      */
-    public BasicSheetCopier(Sheet sourceSheet, Sheet targetSheet) {
-        super(sourceSheet, targetSheet);
+    public BasicSheetCopier(Formatting cellFormatter, Sheet sourceSheet, Sheet targetSheet) {
+        super(cellFormatter, sourceSheet, targetSheet);
     }
 
     /**

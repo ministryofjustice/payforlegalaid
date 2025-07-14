@@ -360,7 +360,7 @@ public class AppConfig {
      * @return a {@link CellFormatting} instance
      */
     @Bean
-    public CellFormatting cellFormattingStrategy(StyleManager styleManager) {
+    public Formatting cellFormattingStrategy(StyleManager styleManager) {
         return new CellFormatting(styleManager) {
         };
     }
@@ -372,7 +372,7 @@ public class AppConfig {
      * @return a {@link ColumnFormatting} instance
      */
     @Bean
-    public ColumnFormatting columnWidthStrategy() {
+    public Formatting columnWidthStrategy() {
         return new ColumnFormatting() {
         };
     }

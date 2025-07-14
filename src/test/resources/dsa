@@ -1,0 +1,48 @@
+private default transferAnalyticSheets(Lorg/apache/poi/ss/usermodel/Workbook;Lorg/apache/poi/ss/usermodel/Workbook;)V
+    // parameter  analytics
+    // parameter  target
+   L0
+    LINENUMBER 118 L0
+    ALOAD 1
+    INVOKEINTERFACE org/apache/poi/ss/usermodel/Workbook.getNumberOfSheets ()I (itf)
+    ISTORE 3
+   L1
+    LINENUMBER 119 L1
+    ICONST_0
+    ISTORE 4
+   L2
+   FRAME APPEND [I I]
+    ILOAD 4
+    ILOAD 3
+    IF_ICMPGE L3
+   L4
+    LINENUMBER 120 L4
+    ALOAD 1
+    ILOAD 4
+    IINC 4 1
+    INVOKEINTERFACE org/apache/poi/ss/usermodel/Workbook.getSheetAt (I)Lorg/apache/poi/ss/usermodel/Sheet; (itf)
+    ASTORE 5
+   L5
+    LINENUMBER 121 L5
+    ALOAD 0
+    ALOAD 1
+    ALOAD 2
+    ALOAD 5
+    INVOKEINTERFACE org/apache/poi/ss/usermodel/Sheet.getSheetName ()Ljava/lang/String; (itf)
+    INVOKEINTERFACE uk/gov/laa/gpfd/services/DataStreamer$WorkbookDataStreamer.transferSheet (Lorg/apache/poi/ss/usermodel/Workbook;Lorg/apache/poi/ss/usermodel/Workbook;Ljava/lang/String;)V (itf)
+   L6
+    LINENUMBER 122 L6
+    GOTO L2
+   L3
+    LINENUMBER 123 L3
+   FRAME CHOP 1
+    RETURN
+   L7
+    LOCALVARIABLE sourceSheet Lorg/apache/poi/ss/usermodel/Sheet; L5 L6 5
+    LOCALVARIABLE i I L2 L3 4
+    LOCALVARIABLE this Luk/gov/laa/gpfd/services/DataStreamer$WorkbookDataStreamer; L0 L7 0
+    LOCALVARIABLE analytics Lorg/apache/poi/ss/usermodel/Workbook; L0 L7 1
+    LOCALVARIABLE target Lorg/apache/poi/ss/usermodel/Workbook; L0 L7 2
+    LOCALVARIABLE sheetCount I L1 L7 3
+    MAXSTACK = 4
+    MAXLOCALS = 6

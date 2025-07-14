@@ -3,6 +3,7 @@ package uk.gov.laa.gpfd.services.excel.copier.types.xssf;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import uk.gov.laa.gpfd.services.excel.copier.SheetCopier;
+import uk.gov.laa.gpfd.services.excel.formatting.Formatting;
 
 import static uk.gov.laa.gpfd.exception.ReportGenerationException.PivotTableCopyException;
 
@@ -35,19 +36,16 @@ public class XSSFSheetCopier extends SheetCopier {
     /**
      * Creates a new XSSFSheetCopier instance for copying between XSSF sheets.
      *
-     * @param sourceWorkbook the source XSSF workbook (must not be null)
-     * @param targetWorkbook the target XSSF workbook (must not be null)
      * @param sourceSheet the source XSSF sheet to copy from (must not be null)
      * @param targetSheet the target XSSF sheet to copy to (must not be null)
      * @throws IllegalArgumentException if any parameter is null
      */
-    public XSSFSheetCopier(XSSFWorkbook sourceWorkbook, XSSFWorkbook targetWorkbook,
-                           XSSFSheet sourceSheet, XSSFSheet targetSheet) {
-        super(sourceSheet, targetSheet);
+    public XSSFSheetCopier(Formatting cellFormatter, XSSFSheet sourceSheet, XSSFSheet targetSheet) {
+        super(cellFormatter, sourceSheet, targetSheet);
         this.xssfSourceSheet = sourceSheet;
         this.xssfTargetSheet = targetSheet;
-        this.sourceWorkbook = sourceWorkbook;
-        this.targetWorkbook = targetWorkbook;
+        this.sourceWorkbook = sourceSheet.getWorkbook();
+        this.targetWorkbook = targetSheet.getWorkbook();
     }
 
     /**

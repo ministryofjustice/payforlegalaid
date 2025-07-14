@@ -9,6 +9,7 @@ import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.services.TemplateService;
 import uk.gov.laa.gpfd.services.DataStreamer.WorkbookDataStreamer;
 import uk.gov.laa.gpfd.services.excel.formatting.CellFormatter;
+import uk.gov.laa.gpfd.services.excel.workbook.StyleManager;
 
 import java.util.Map;
 
