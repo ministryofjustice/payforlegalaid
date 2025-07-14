@@ -292,6 +292,11 @@
             <artifactId>tomcat-embed-core</artifactId>
             <version>10.1.43</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.18.0</version>
+        </dependency>
     </dependencies>
 
     <repositories>
