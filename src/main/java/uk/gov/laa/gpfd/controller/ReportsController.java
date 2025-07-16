@@ -1,10 +1,18 @@
 package uk.gov.laa.gpfd.controller;
 
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.api.CsvApi;
 import uk.gov.laa.gpfd.api.ExcelApi;
@@ -15,6 +23,7 @@ import uk.gov.laa.gpfd.services.ReportsTrackingService;
 import uk.gov.laa.gpfd.services.ReportManagementService;
 import uk.gov.laa.gpfd.services.StreamingService;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,7 +31,7 @@ import static uk.gov.laa.gpfd.model.FileExtension.CSV;
 import static uk.gov.laa.gpfd.model.FileExtension.XLSX;
 
 @Slf4j
-@RestController
+@Controller
 @RequiredArgsConstructor
 public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
 
@@ -33,6 +42,42 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
     @Override
     public Optional<NativeWebRequest> getRequest() {
         return Optional.empty();
+    }
+
+    @GetMapping("/")
+    public String index() {
+        return "redirect:/reports";
+    }
+
+    public static record Breadcrumb(
+        String text,
+        String url
+    ) {}
+
+
+    @GetMapping("/reports")
+    public String getAllReports(Model model) {
+        ReportsGet200Response response = reportsGet().getBody();
+        model.addAttribute("reportListResponse", response);
+
+
+        List<Breadcrumb> breadcrumbs = List.of(
+                new Breadcrumb("Home", "/"),
+                new Breadcrumb("Reports", null)
+        );
+        model.addAttribute("breadcrumbs", breadcrumbs);
+//        model.addAttribute("content", "reports/list :: content");
+        return "reports/list";
+//        return "layout";
+    }
+
+    @GetMapping("/reports/{id}")
+    public String getReportDetails(@PathVariable UUID id, Model model) {
+        GetReportById200Response response = getReportById(id).getBody();
+        model.addAttribute("reportResponse", response);
+//        model.addAttribute("content", "reports/details :: content");
+        return "reports/list";
+//        return "layout";
     }
 
     @Override

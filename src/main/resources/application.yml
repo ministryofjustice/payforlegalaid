@@ -25,6 +25,9 @@ springdoc:
 
 
 spring:
+  web:
+    resources:
+      static-locations: "classpath:/META-INF/resources/webjars/,classpath:/static/"
   mvc:
-    async:
-      request-timeout: 3600000
+    static-path-pattern: /webjars/**,/resources/**,/static/**
+

@@ -1,0 +1,14 @@
+/* Add any custom styles here */
+.js-enabled .js-hidden {
+    display: none;
+}
+
+.govuk-header__logotype-crown-fallback-image {
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.govuk-tag--yellow {
+    background-color: #ffdd00;
+    color: #0b0c0c;
+}
