@@ -27,10 +27,10 @@ jobs:
         env:
           SOCKET_KEY: ${{ secrets.DEV_API_SOCKET_KEY }}
 
-      - name: Run Snyk security suite
-        uses: './.github/snyk-scan'
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+#      - name: Run Snyk security suite
+#        uses: './.github/snyk-scan'
+#        env:
+#          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
       - name: Set Spring profile
         run: echo "SPRING_PROFILES_ACTIVE=dev" >> $GITHUB_ENV

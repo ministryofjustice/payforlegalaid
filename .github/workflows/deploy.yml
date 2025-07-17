@@ -3,7 +3,7 @@ name: One to deploy them all
 on:
   push:
     branches:
-      - main
+      - foobar
   workflow_dispatch:
 
 jobs:
