@@ -253,12 +253,7 @@
             <artifactId>tomcat-embed-core</artifactId>
             <version>10.1.43</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.18.0</version>
-            <scope>test</scope>
-        </dependency>
+
         <!-- Test Dependencies-->
         <dependency>
             <groupId>com.h2database</groupId>
@@ -295,6 +290,12 @@
             <groupId>org.junit-pioneer</groupId>
             <artifactId>junit-pioneer</artifactId>
             <version>${junit-pioneer.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.18.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
