@@ -106,6 +106,7 @@ public interface DataStreamer {
                 stream(report, target);
 
                 transferAnalyticSheets(analyticsSheets, target);
+                copyPivotStyles(analyticsSheets, target);
                 sortWorkbookToTemplate(target, report.getSheetOrder());
 
                 target.write(output);

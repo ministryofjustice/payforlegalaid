@@ -1,6 +1,7 @@
 package uk.gov.laa.gpfd.utils;
 
 import org.apache.poi.ss.usermodel.Workbook;
+import uk.gov.laa.gpfd.services.excel.copier.PivotStyleCopier;
 import uk.gov.laa.gpfd.services.excel.copier.SheetCopier;
 
 import java.util.LinkedHashMap;
@@ -28,10 +29,16 @@ public interface WorkbookOperations {
         return (source, target) -> createCopier(source, target, sheetName);
     }
 
+    static BiFunction<Workbook, Workbook, PivotStyleCopier> createPivotFormatCopier() {
+        return PivotStyleCopier::new;
+    }
+
     /**
      * Consumer that executes the sheet copying operation.
      */
     Consumer<SheetCopier> COPY_SHEET = SheetCopier::copySheet;
+
+    Consumer<PivotStyleCopier> COPY_PIVOT_STYLES = PivotStyleCopier::copyPivotStyles;
 
     /**
      * Transfers a specified sheet from a source workbook to a target workbook.
@@ -47,6 +54,10 @@ public interface WorkbookOperations {
                 createSheetTransfer(sheetName)
                         .apply(sourceWorkbook, targetWorkbook)
         );
+    }
+
+    default void copyPivotStyles(Workbook sourceWorkbook, Workbook targetWorkbook) {
+        COPY_PIVOT_STYLES.accept(createPivotFormatCopier().apply(sourceWorkbook, targetWorkbook));
     }
 
     /**
