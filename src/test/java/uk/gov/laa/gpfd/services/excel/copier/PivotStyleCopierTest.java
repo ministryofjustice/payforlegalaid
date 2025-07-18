@@ -19,7 +19,7 @@ class PivotStyleCopierTest {
     private static CTDxf pivotStyleWithFont;
 
     @BeforeAll
-    public static void setupSourceWorkbookToHavePivotStyles() {
+    static void setupSourceWorkbookToHavePivotStyles() {
         sourceWorkbookWithPivots = new XSSFWorkbook();
         var sourceStyles = sourceWorkbookWithPivots.getStylesSource().getCTStylesheet();
         sourceStyles.addNewDxfs();
