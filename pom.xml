@@ -23,7 +23,7 @@
 
         <maven-surefire-junit5-tree-reporte.version>1.1.0</maven-surefire-junit5-tree-reporte.version>
         <poi.version>5.4.1</poi.version>
-        <immutables.version>2.10.1</immutables.version>
+        <immutables.version>2.11.0</immutables.version>
         <spring-cloud-azure-dependencies.version>5.22.0</spring-cloud-azure-dependencies.version>
         <spring-security.version>6.4.6</spring-security.version>
 
