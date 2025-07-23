@@ -121,6 +121,9 @@ public interface DataStreamer {
                 var sourceSheet = analytics.getSheetAt(i++);
                 transferSheet(analytics, target, sourceSheet.getSheetName());
             }
+
+            // We only need to do this once per workbook, as they are shared across sheets
+            copyPivotStyles(analytics, target);
         }
 
         /**
