@@ -99,6 +99,17 @@
     </insert>
 
     <insert tableName="REPORTS" schemaName="GPFD">
+      <column name="ID" value="8b9f0484-819f-4e0f-b60a-0b3f9d30d9ba"/>
+      <column name="NAME" value="CCMS Third party report"/>
+      <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="8b9f0484-819f-4e0f-b60a-0b3f9d30d9ba"/>
+      <column name="DESCRIPTION" value="CCMS Third party report"/>
+      <column name="FILE_NAME" value="CCMS_THIRD_PARTY_REPORT"/>
+      <column name="ACTIVE" value="Y"/>
+      <column name="REPORT_OUTPUT_TYPE" value="bd098666-94e4-4b0e-822c-8e5dfb04c908"/>
+      <column name="REPORT_OWNER_ID" value="00000000-0000-0000-0000-000000000003"/>
+    </insert>
+
+    <insert tableName="REPORTS" schemaName="GPFD">
       <column name="ID" value="f46b4d3d-c100-429a-bf9a-6c3305dbdbf1"/>
       <column name="NAME" value="CCMS Invoice Analysis (CIS to CCMS)"/>
       <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="00000000-0000-0000-0000-000000000000"/>
