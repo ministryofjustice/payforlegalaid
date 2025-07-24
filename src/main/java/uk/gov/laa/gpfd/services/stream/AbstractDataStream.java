@@ -109,7 +109,7 @@ public abstract class AbstractDataStream implements DataStream {
         @Override
         public ResponseEntity<StreamingResponseBody> stream(UUID uuid) {
             var report = reportDao.fetchReportById(uuid)
-                    .orElseThrow(() -> new ReportIdNotFoundException("Report with unrecognised ID "+ uuid.toString()));
+                    .orElseThrow(() -> new ReportIdNotFoundException(uuid));
 
             return buildResponse(report, output -> dataStreamer.stream(report, output));
         }
@@ -141,7 +141,7 @@ public abstract class AbstractDataStream implements DataStream {
         @Override
         public ResponseEntity<StreamingResponseBody> stream(UUID uuid) {
             var report = reportDao.fetchReportById(uuid)
-                    .orElseThrow(() -> new ReportIdNotFoundException("Report not found for ID "+ uuid.toString()));
+                    .orElseThrow(() -> new ReportIdNotFoundException(uuid));
 
             return buildResponse(report, output -> dataStreamer.stream(report, output));
         }

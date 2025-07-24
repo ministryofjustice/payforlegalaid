@@ -12,5 +12,8 @@ public abstract class ExcelSheet {
     public abstract String getName();
 
     @Nullable
+    public abstract Integer getIndex();
+
+    @Nullable
     public abstract Collection<ExcelMappingProjection> getFieldAttributes();
 }

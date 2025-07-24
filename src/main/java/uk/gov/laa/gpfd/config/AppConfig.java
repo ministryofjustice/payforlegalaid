@@ -36,7 +36,6 @@ import uk.gov.laa.gpfd.services.DataStreamer;
 import uk.gov.laa.gpfd.services.StreamingService;
 import uk.gov.laa.gpfd.services.TemplateService;
 import uk.gov.laa.gpfd.services.excel.editor.CellValueSetter;
-import uk.gov.laa.gpfd.services.excel.editor.FormulaCalculator;
 import uk.gov.laa.gpfd.services.excel.editor.PivotTableRefresher;
 import uk.gov.laa.gpfd.services.excel.formatting.BoldStyleFormatting;
 import uk.gov.laa.gpfd.services.excel.formatting.CellFormatter;
@@ -45,6 +44,7 @@ import uk.gov.laa.gpfd.services.excel.formatting.ColumnFormatting;
 import uk.gov.laa.gpfd.services.excel.formatting.Formatting;
 import uk.gov.laa.gpfd.services.excel.template.LocalTemplateClient;
 import uk.gov.laa.gpfd.services.excel.template.TemplateClient;
+import uk.gov.laa.gpfd.services.excel.workbook.StyleManager;
 import uk.gov.laa.gpfd.services.stream.AbstractDataStream;
 import uk.gov.laa.gpfd.services.stream.DataStream;
 import uk.gov.laa.gpfd.utils.StrategyFactory;
@@ -295,7 +295,7 @@ public class AppConfig {
      * @return a {@link TemplateService} instance
      */
     @Bean
-    public TemplateService templateService(TemplateClient templateClient) {
+    public TemplateService streamingTemplateService(TemplateClient templateClient, StyleManager styleManager) {
         if (allowedCompressionRatio <= 0) {
             throw new IllegalStateException("Compression ratio must be positive");
         }
@@ -304,6 +304,7 @@ public class AppConfig {
                 .repository(templateClient)
                 .factory(WorkbookFactory::newWorkbook)
                 .withSecurity(allowedCompressionRatio)
+                .withStyleManager(styleManager)
                 .withStream(rowAccessWindowSize)
                 .build();
     }
@@ -342,13 +343,25 @@ public class AppConfig {
     }
 
     /**
+     * Creates and configures a {@link StyleManager} bean for managing Excel cell styles.
+     *
+     * <p>This bean provides a centralized way to create, cache, and reuse cell styles
+     * throughout the application to ensure consistent formatting in generated Excel files
+     * while optimizing memory usage.</p>
+     */
+    @Bean
+    public StyleManager styleManager() {
+        return StyleManager.create();
+    }
+
+    /**
      * Creates a {@link CellFormatting} bean for applying cell-level formatting strategies.
      *
      * @return a {@link CellFormatting} instance
      */
     @Bean
-    public CellFormatting cellFormattingStrategy() {
-        return new CellFormatting() {
+    public CellFormatting cellFormattingStrategy(StyleManager styleManager) {
+        return new CellFormatting(styleManager) {
         };
     }
 
@@ -377,18 +390,6 @@ public class AppConfig {
     }
 
     /**
-     * Creates and returns a {@link FormulaCalculator} bean. This bean is responsible for
-     * evaluate formula cells in Excel workbooks.
-     *
-     * @return a {@link FormulaCalculator} instance
-     */
-    @Bean
-    public FormulaCalculator formulaCalculator() {
-        return new FormulaCalculator() {
-        };
-    }
-
-    /**
      * Creates and returns a {@link DataStreamer} bean. This bean is responsible for
      * streaming csv files.
      *
@@ -402,10 +403,8 @@ public class AppConfig {
     @Bean
     DataStreamer createExcelStreamer(TemplateService templateLoader,
                                      JdbcWorkbookDataStreamer dataFetcher,
-                                     PivotTableRefresher pivotTableRefresher,
-                                     FormulaCalculator formulaCalculator,
                                      CellFormatter formatter) {
-        return DataStreamer.createExcelStreamer(templateLoader, dataFetcher, pivotTableRefresher, formulaCalculator, formatter);
+        return DataStreamer.createExcelStreamer(templateLoader, dataFetcher, formatter);
     }
 
     @Bean

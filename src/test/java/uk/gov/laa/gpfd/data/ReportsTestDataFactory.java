@@ -1,8 +1,15 @@
 package uk.gov.laa.gpfd.data;
 
-import uk.gov.laa.gpfd.model.*;
-import uk.gov.laa.gpfd.model.excel.ExcelTemplate;
-import uk.gov.laa.gpfd.model.excel.ImmutableExcelSheet;
+import uk.gov.laa.gpfd.model.FileExtension;
+import uk.gov.laa.gpfd.model.ImmutableReport;
+import uk.gov.laa.gpfd.model.ImmutableReportCreator;
+import uk.gov.laa.gpfd.model.ImmutableReportOutputType;
+import uk.gov.laa.gpfd.model.ImmutableReportOwner;
+import uk.gov.laa.gpfd.model.ImmutableReportQuery;
+import uk.gov.laa.gpfd.model.Report;
+import uk.gov.laa.gpfd.model.ReportQuery;
+import uk.gov.laa.gpfd.model.ReportQuerySql;
+import uk.gov.laa.gpfd.model.excel.*;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -50,6 +57,51 @@ public class ReportsTestDataFactory {
         var query1 = ImmutableReportQuery.builder()
                 .excelSheet(ImmutableExcelSheet.builder()
                         .name("Sheet1")
+                        .fieldAttributes(List.of(
+                                ImmutableExcelMappingProjection.builder()
+                                        .excelColumn(ImmutableExcelColumn.builder()
+                                                .name("Field 1")
+                                                .format(ImmutableColumnFormat.builder()
+                                                        .columnWidth(10)
+                                                        .formatType("Foo")
+                                                        .formatType(".00")
+                                                        .build())
+                                                .build())
+                                        .build()
+                        ))
+                        .build())
+                .query(ReportQuerySql.of("SELECT * FROM ANY_REPORT.DATA"))
+                .build();
+        return createTestReport(UUID.randomUUID().toString(), List.of(query1) );
+    }
+
+    public static Report createTestReportWithMultipleFieldAttributes() {
+        var query1 = ImmutableReportQuery.builder()
+                .excelSheet(ImmutableExcelSheet.builder()
+                        .name("Sheet1")
+                        .index(0)
+                        .fieldAttributes(List.of(
+                                ImmutableExcelMappingProjection.builder()
+                                        .excelColumn(ImmutableExcelColumn.builder()
+                                                .name("Field 1")
+                                                .format(ImmutableColumnFormat.builder()
+                                                        .columnWidth(10)
+                                                        .formatType("Foo")
+                                                        .formatType(".00")
+                                                        .build())
+                                                .build())
+                                        .build(),
+                                ImmutableExcelMappingProjection.builder()
+                                        .excelColumn(ImmutableExcelColumn.builder()
+                                                .name("Field 2")
+                                                .format(ImmutableColumnFormat.builder()
+                                                        .columnWidth(10)
+                                                        .formatType("Foo")
+                                                        .formatType(".00")
+                                                        .build())
+                                                .build())
+                                        .build()
+                        ))
                         .build())
                 .query(ReportQuerySql.of("SELECT * FROM ANY_REPORT.DATA"))
                 .build();
