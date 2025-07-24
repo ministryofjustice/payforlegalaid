@@ -5,6 +5,8 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import uk.gov.laa.gpfd.exception.ReportGenerationException.InvalidWorkbookTypeException;
 
+import java.util.Objects;
+
 /**
  * A class to copy pivot styles from the template to the new workbook
  * Pivot styles (called dxf in the underlying xml) are stored differently to cell styles
@@ -16,7 +18,7 @@ public class PivotStyleCopier {
     private final Workbook sourceWorkbook;
 
     /** The target workbook to copy to */
-    private final Workbook targetWorkbook;
+    private final SXSSFWorkbook targetWorkbook;
 
     /**
      * Creates a new PivotStyleCopier instance.
@@ -25,7 +27,15 @@ public class PivotStyleCopier {
      * @param targetWorkbook the target workbook to copy to
      */
     public PivotStyleCopier(Workbook sourceWorkbook, Workbook targetWorkbook) {
-        this.targetWorkbook = targetWorkbook;
+
+        Objects.requireNonNull(sourceWorkbook, "Source workbook must not be null");
+        Objects.requireNonNull(targetWorkbook, "Target workbook must not be null");
+
+        if (!(targetWorkbook instanceof SXSSFWorkbook)) {
+            throw new InvalidWorkbookTypeException("Target workbook must be SXSSFWorkbook but was " + targetWorkbook.getClass().getSimpleName());
+        }
+
+        this.targetWorkbook = (SXSSFWorkbook) targetWorkbook;
         this.sourceWorkbook = sourceWorkbook;
     }
 
@@ -37,16 +47,12 @@ public class PivotStyleCopier {
      */
     public void copyPivotStyles() {
         if (!(sourceWorkbook instanceof XSSFWorkbook)) {
-            // Pivots not supported in this workbook
+            // Pivots not supported in this template so nothing to copy
             return;
         }
 
-        if (!(targetWorkbook instanceof SXSSFWorkbook)) {
-            throw new InvalidWorkbookTypeException("Target workbook must be SXSSFWorkbook but was " + targetWorkbook.getClass().getSimpleName());
-        }
-
         var srcStyleSheet = ((XSSFWorkbook) sourceWorkbook).getStylesSource().getCTStylesheet();
-        var targetStyleSheet = ((SXSSFWorkbook) targetWorkbook).getXSSFWorkbook().getStylesSource().getCTStylesheet();
+        var targetStyleSheet = targetWorkbook.getXSSFWorkbook().getStylesSource().getCTStylesheet();
 
         if (!srcStyleSheet.isSetDxfs()) {
             // No pivot styles on the source sheet
