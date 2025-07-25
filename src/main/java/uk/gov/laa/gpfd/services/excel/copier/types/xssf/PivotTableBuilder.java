@@ -156,7 +156,6 @@ public class PivotTableBuilder implements PivotTableRefresher {
         targetCTCacheDef.set(sourcePivotTable.getPivotCacheDefinition().getCTPivotCacheDefinition());
 
         var newCacheId = targetWorkbook.getPivotTables().size() + 1;
-        targetCTCacheDef.setId(String.valueOf(newCacheId));
 
         var pivotDef = targetPivot.getCTPivotTableDefinition();
         pivotDef.setCacheId(newCacheId);

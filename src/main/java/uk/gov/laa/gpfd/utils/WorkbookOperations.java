@@ -1,6 +1,7 @@
 package uk.gov.laa.gpfd.utils;
 
 import org.apache.poi.ss.usermodel.Workbook;
+import uk.gov.laa.gpfd.services.excel.copier.PivotStyleCopier;
 import uk.gov.laa.gpfd.services.excel.copier.SheetCopier;
 
 import java.util.LinkedHashMap;
@@ -29,9 +30,23 @@ public interface WorkbookOperations {
     }
 
     /**
+     * Creates a function that produces a PivotStyleCopier for transferring pivot styles between workbooks.
+     *
+     * @return a BiFunction that takes source and target workbooks and returns a PivotStyleCopier
+     */
+    static BiFunction<Workbook, Workbook, PivotStyleCopier> createPivotFormatCopier() {
+        return PivotStyleCopier::new;
+    }
+
+    /**
      * Consumer that executes the sheet copying operation.
      */
     Consumer<SheetCopier> COPY_SHEET = SheetCopier::copySheet;
+
+    /**
+     * Consumer that executes the pivot style copying operation.
+     */
+    Consumer<PivotStyleCopier> COPY_PIVOT_STYLES = PivotStyleCopier::copyPivotStyles;
 
     /**
      * Transfers a specified sheet from a source workbook to a target workbook.
@@ -47,6 +62,16 @@ public interface WorkbookOperations {
                 createSheetTransfer(sheetName)
                         .apply(sourceWorkbook, targetWorkbook)
         );
+    }
+
+    /**
+     * Transfers pivot table styles from a source workbook to a target workbook.
+     *
+     * @param sourceWorkbook the workbook containing the original pivot tables
+     * @param targetWorkbook the workbook that has the copied pivot tables
+     */
+    default void copyPivotStyles(Workbook sourceWorkbook, Workbook targetWorkbook) {
+        COPY_PIVOT_STYLES.accept(createPivotFormatCopier().apply(sourceWorkbook, targetWorkbook));
     }
 
     /**
