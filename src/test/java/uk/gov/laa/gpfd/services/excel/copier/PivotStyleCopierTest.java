@@ -59,6 +59,7 @@ class PivotStyleCopierTest {
             var pivotFormatCopier = new PivotStyleCopier(sourceWorkbook, targetWorkbook);
             pivotFormatCopier.copyPivotStyles();
 
+            // If target has no setDxfs it means we haven't copied anything - as this is the array that contains any dxf styles
             assertFalse(targetWorkbook.getXSSFWorkbook().getStylesSource().getCTStylesheet().isSetDxfs());
         }
     }

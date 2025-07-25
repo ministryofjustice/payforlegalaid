@@ -9,7 +9,7 @@ import java.util.Objects;
 
 /**
  * A class to copy pivot styles from the template to the new workbook
- * Pivot styles (called dxf in the underlying xml) are stored differently to cell styles
+ * Pivot styles (called dxf in the underlying xml - differential formating) are stored differently to cell styles
  * hence why it is necessary to copy these separately
  */
 public class PivotStyleCopier {
@@ -42,6 +42,7 @@ public class PivotStyleCopier {
     /**
      * Copies pivot table-specific styles over from the template to the new workbook.
      * Pivot styles are "dxf" style sections rather than the cellStyles used elsewhere
+     * They are stored in an array - so you create a dxfs array (e.g. via addNewDxfs) and then append in each style dxf
      *
      * @throws InvalidWorkbookTypeException if target is wrong type to add styles to
      */
@@ -66,6 +67,8 @@ public class PivotStyleCopier {
             return;
         }
 
+        // Unlikely it already has any set but if it does we'll add to it
+        // Otherwise, call addNewDxfs() to instantiate a new array of dxfs.
         var targetDxfs = targetStyleSheet.isSetDxfs() ? targetStyleSheet.getDxfs() : targetStyleSheet.addNewDxfs();
 
         for (var dxf : srcDxfs.getDxfList()) {
@@ -75,4 +78,5 @@ public class PivotStyleCopier {
 
         targetDxfs.setCount(targetDxfs.sizeOfDxfArray());
     }
+
 }
