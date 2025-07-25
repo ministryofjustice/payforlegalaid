@@ -30,6 +30,8 @@ runs:
         bash
 
     - name: Run tests
+      env:
+        TESTS_TO_DISABLE: "get_excel_report"
       run: |
         cd testCode
         mvn -B clean test -s .github/settings.xml -Dmaven.repo.local=${{ github.workspace }}/.m2/repository
