@@ -7,8 +7,8 @@ import java.util.LinkedHashMap;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
-import static java.util.Map.Entry.comparingByValue;
 import static uk.gov.laa.gpfd.services.excel.copier.SheetCopierFactory.createCopier;
+import static uk.gov.laa.gpfd.utils.WorkbookSorter.defaultSorter;
 
 /**
  * Provides utility operations for manipulating Excel workbooks.
@@ -56,17 +56,7 @@ public interface WorkbookOperations {
      * @param template The template containing the desired order
      */
     default void sortWorkbookToTemplate(Workbook workbook, LinkedHashMap<String, Integer> template) {
-        template.entrySet().stream()
-                .sorted(comparingByValue())
-                .forEachOrdered(entry -> {
-                    var sheetName = entry.getKey();
-                    var currentIndex = workbook.getSheetIndex(sheetName);
-                    var targetIndex = entry.getValue();
-
-                    if (currentIndex != targetIndex) {
-                        workbook.setSheetOrder(sheetName, targetIndex);
-                    }
-                });
+        defaultSorter().sort(workbook, template);
     }
 
 }
