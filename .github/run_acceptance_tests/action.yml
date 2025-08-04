@@ -23,6 +23,8 @@ runs:
         cd testCode
         VERSION=$(mvn help:evaluate -Dexpression=payforlegalaid-openapi.version -q -DforceStdout)
         echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+      shell:
+        bash
 
     - name: Checkout source code repo
       uses: actions/checkout@v4
@@ -40,6 +42,5 @@ runs:
       run: |
         cd testCode
         mvn -B clean test -s -Dpayforlegalaid-openapi.version=${{ steps.get_openapi_version.outputs.version }}
-
       shell:
         bash
