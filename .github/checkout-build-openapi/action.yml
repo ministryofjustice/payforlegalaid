@@ -17,6 +17,7 @@ runs:
         repository: ministryofjustice/payforlegalaid-openapi
         path: spec
         ssh-key: ${{ env.SOCKET_KEY }}
+        ref: refs/tags/v0.0.3
 
     - name: Build dependency
       run: |
