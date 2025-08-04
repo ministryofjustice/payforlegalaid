@@ -17,6 +17,13 @@ runs:
         java-version: '17'
         cache: 'maven'
 
+    - name: Get openapi version from pom
+      id: get_openapi_version
+      run: |
+        cd testCode
+        VERSION=$(mvn help:evaluate -Dexpression=payforlegalaid-openapi.version -q -DforceStdout)
+        echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
     - name: Checkout source code repo
       uses: actions/checkout@v4
       with:
@@ -25,14 +32,14 @@ runs:
     - name: Build source code
       run: |
         cd sourceCode
-        mvn -B -DskipTests clean install -s .github/settings.xml -Dmaven.repo.local=${{ github.workspace }}/.m2/repository
+        mvn -B -DskipTests clean install -Dpayforlegalaid-openapi.version=${{ steps.get_openapi_version.outputs.version }}
       shell:
         bash
 
     - name: Run tests
       run: |
         cd testCode
-        mvn -B clean test -s .github/settings.xml -Dmaven.repo.local=${{ github.workspace }}/.m2/repository
+        mvn -B clean test -s -Dpayforlegalaid-openapi.version=${{ steps.get_openapi_version.outputs.version }}
 
       shell:
         bash
