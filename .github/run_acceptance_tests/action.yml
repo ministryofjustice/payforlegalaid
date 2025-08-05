@@ -33,12 +33,12 @@ runs:
         path: openapi
         ref: refs/tags/v${{ steps.get_openapi_version.outputs.version }}
 
-    - name: Build openapi spec dependency
-      run: |
-        cd openapi
-        mvn -B clean install
-      shell:
-        bash
+#    - name: Build openapi spec dependency
+#      run: |
+#        cd openapi
+#        mvn -B clean install
+#      shell:
+#        bash
 
     - name: Checkout source code repo
       uses: actions/checkout@v4
