@@ -23,6 +23,7 @@ runs:
         cd testCode
         VERSION=$(mvn help:evaluate -Dexpression=payforlegalaid-openapi.version -q -DforceStdout)
         echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+        echo "THIS IS THE RIGHT $VERSION"
       shell:
         bash
 
