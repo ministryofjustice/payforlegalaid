@@ -12,15 +12,15 @@ jobs:
       - name: Checkout GitHub repository
         uses: actions/checkout@v4
 
-#      - name: Build and test
-#        uses: './.github/build-and-test'
-#        env:
-#          SOCKET_KEY: ${{ secrets.DEV_API_SOCKET_KEY }}
+      - name: Build and test
+        uses: './.github/build-and-test'
+        env:
+          SOCKET_KEY: ${{ secrets.DEV_API_SOCKET_KEY }}
 
-#      - name: Snyk Scan
-#        uses: './.github/snyk-scan'
-#        env:
-#          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN}}
+      - name: Snyk Scan
+        uses: './.github/snyk-scan'
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN}}
 
       - name: Run acceptance tests
         uses: './.github/run_acceptance_tests'
