@@ -19,7 +19,6 @@ runs:
     - name: Get openapi version from pom
       id: get_openapi_version
       run: |
-        cd testCode
         VERSION=$(mvn help:evaluate -Dexpression=payforlegalaid-openapi.version -q -DforceStdout)
         echo "version=$VERSION" >> "$GITHUB_OUTPUT"
       shell:
