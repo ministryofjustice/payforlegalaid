@@ -1,5 +1,10 @@
 name: Checkout and build OpenAPI repository
 
+outputs:
+  version:
+    description: 'Openapi version'
+    value: ${{ steps.get_openapi_version.outputs.version }}
+
 runs:
   using: 'composite'
   steps:
@@ -11,17 +16,25 @@ runs:
         java-version: '17'
         cache: 'maven'
 
-    - name: Checkout OpenAPI repository
+    - name: Get openapi version from pom
+      id: get_openapi_version
+      run: |
+        cd testCode
+        VERSION=$(mvn help:evaluate -Dexpression=payforlegalaid-openapi.version -q -DforceStdout)
+        echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+      shell:
+        bash
+
+    - name: Checkout openapi spec
       uses: actions/checkout@v4
       with:
         repository: ministryofjustice/payforlegalaid-openapi
-        path: spec
-        ssh-key: ${{ env.SOCKET_KEY }}
-        ref: refs/tags/v0.0.3
+        path: openapi
+        ref: refs/tags/v${{ steps.get_openapi_version.outputs.version }}
 
-    - name: Build dependency
+    - name: Build openapi spec dependency
       run: |
-        cd spec
-        mvn clean install -Dmaven.repo.local=${{ github.workspace }}/.m2/repository
+        cd openapi
+        mvn -B clean install
       shell:
         bash

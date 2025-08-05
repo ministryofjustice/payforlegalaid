@@ -17,28 +17,11 @@ runs:
         java-version: '17'
         cache: 'maven'
 
-    - name: Get openapi version from pom
+    - name: Checkout and build openapi
+      uses: './.github/checkout-build-openapi'
       id: get_openapi_version
-      run: |
-        cd testCode
-        VERSION=$(mvn help:evaluate -Dexpression=payforlegalaid-openapi.version -q -DforceStdout)
-        echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-      shell:
-        bash
-
-    - name: Checkout openapi spec
-      uses: actions/checkout@v4
       with:
-        repository: ministryofjustice/payforlegalaid-openapi
-        path: openapi
-        ref: refs/tags/v${{ steps.get_openapi_version.outputs.version }}
-
-#    - name: Build openapi spec dependency
-#      run: |
-#        cd openapi
-#        mvn -B clean install
-#      shell:
-#        bash
+        property-name: 'payforlegalaid-openapi.version'
 
     - name: Checkout source code repo
       uses: actions/checkout@v4
