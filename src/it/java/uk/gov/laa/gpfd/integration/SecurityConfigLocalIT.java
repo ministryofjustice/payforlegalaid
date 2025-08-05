@@ -18,6 +18,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CSV_REPORT;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -32,7 +33,7 @@ class SecurityConfigLocalIT extends BaseIT {
     // Local profile just ignores Azure and requires no login session.
     @Test
     void shouldNotRedirectToAzureLoginEvenIfNoActiveSession() throws Exception {
-        var reportId = UUID.fromString(BaseIT.REPORT_UUID_1);
+        var reportId = UUID.fromString(CSV_REPORT.getReportData().id());
         var reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();
 
         when(reportManagementService.createReportResponse(reportId)).thenReturn(reportResponseMock);
@@ -45,7 +46,7 @@ class SecurityConfigLocalIT extends BaseIT {
     @Test
     @WithMockUser(roles = "ADMIN")
     void shouldLoadPageIfValidSession() throws Exception {
-        var reportId = UUID.fromString(BaseIT.REPORT_UUID_1);
+        var reportId = UUID.fromString(CSV_REPORT.getReportData().id());
         var reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();
 
         when(reportManagementService.createReportResponse(reportId)).thenReturn(reportResponseMock);
@@ -56,7 +57,7 @@ class SecurityConfigLocalIT extends BaseIT {
 
     @Test
     public void shouldOnlyAllowSameOriginExternalFrames() throws Exception {
-        var reportId = UUID.fromString(BaseIT.REPORT_UUID_1);
+        var reportId = UUID.fromString(CSV_REPORT.getReportData().id());
         var reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();
 
         when(reportManagementService.createReportResponse(reportId)).thenReturn(reportResponseMock);

@@ -1,80 +1,73 @@
 package uk.gov.laa.gpfd.integration;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import org.junit.jupiter.api.Test;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import uk.gov.laa.gpfd.config.TestDatabaseConfig;
+import uk.gov.laa.gpfd.integration.config.OAuth2TestConfig;
+import uk.gov.laa.gpfd.integration.data.ReportTestData;
+
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CSV_REPORT;
 
 @SpringBootTest(
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = {
-                TestDatabaseConfig.class,
-                OAuth2TestConfig.class
-        }
+        webEnvironment = RANDOM_PORT,
+        classes = {TestDatabaseConfig.class, OAuth2TestConfig.class}
 )
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestPropertySource(locations = "classpath:application-test.yml")
-class GetReportsByIdIT extends BaseIT {
+final class GetReportsByIdIT extends BaseIT {
 
-    private static final String CCMS_REPORT = "b36f9bbb-1178-432c-8f99-8090e285f2d3";
-    private static final String GENERAL_LEDGER_REPORT = "f46b4d3d-c100-429a-bf9a-223305dbdbfb";
-    private static final String CCMS_AND_CIS_BANK_ACCOUNT_REPORT_W_CATEGORY_CODE_YTD_REPORT = "eee30b23-2c8d-4b4b-bb11-8cd67d07915c";
-    private static final String LEGAL_HELP_CONTRACT_BALANCES_REPORT = "7073dd13-e325-4863-a05c-a049a815d1f7";
-    private static final String AGFS_LATE_PROCESSED_BILLS_REPORT = "7bda9aa4-6129-4c71-bd12-7d4e46fdd882";
+    @SneakyThrows
+    @ParameterizedTest(name = "Given {0} when requested then returns correct URL")
+    @MethodSource("uk.gov.laa.gpfd.integration.data.ReportTestData#getAllTestReports")
+    void shouldReturnOkGivenValidExistedReport(ReportTestData testData) {
+        var uri = "/reports/%s".formatted(testData.id());
 
-    private static final String INITIAL_TEST_REPORT = "0d4da9ec-b0b3-4371-af10-f375330d85d3";
-
-    @ParameterizedTest
-    @ValueSource(strings = {
-            INITIAL_TEST_REPORT,
-    })
-    void givenCsvReportId_whenSingleReportRequested_thenCsvUrlReturned(String id) throws Exception {
-        performGetRequest("/reports/" + id)
+        performGetRequest(uri)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(id))
-                .andExpect(jsonPath("$.reportDownloadUrl")
-                        .value("http://localhost/csv/" + id));
+                .andExpect(jsonPath("$.id").value(testData.id()))
+                .andExpect(jsonPath("$.reportName").value(testData.name()))
+                .andExpect(jsonPath("$.reportDownloadUrl").value(testData.expectedUrl()));
     }
 
+    @SneakyThrows
     @ParameterizedTest
-    @ValueSource(strings = {
-            CCMS_REPORT,
-            GENERAL_LEDGER_REPORT,
-            CCMS_AND_CIS_BANK_ACCOUNT_REPORT_W_CATEGORY_CODE_YTD_REPORT,
-            LEGAL_HELP_CONTRACT_BALANCES_REPORT, AGFS_LATE_PROCESSED_BILLS_REPORT
-    })
-    void givenExcelReportId_whenSingleReportRequested_thenExcelUrlReturned(String id) throws Exception {
-        performGetRequest("/reports/" + id)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(id))
-                .andExpect(jsonPath("$.reportDownloadUrl")
-                        .value("http://localhost/excel/" + id));
+    @ValueSource(strings = {"excel", "csv"})
+    void shouldReturn400WhenGivenInvalidId(String type) {
+        var uri = "/%s/%s321".formatted(type, CSV_REPORT.getReportData().id());
+
+        performGetRequest(uri)
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andExpect(jsonPath("$.error")
+                        .value("Error: Invalid input for parameter id. Expected a numeric value"));
     }
 
-    @Test
-    void shouldReturn400WhenGivenInvalidId() throws Exception {
-        performGetRequest("/reports/" + BaseIT.REPORT_UUID_1 + "321")
-                .andExpect(status().isBadRequest());
-    }
-
+    @SneakyThrows
     @ParameterizedTest
-    @ValueSource(strings = {
-            "excel",
-            "csv"
-    })
-    void shouldReturn404WhenNoReportsFound(String type) throws Exception {
-        performGetRequest("/%s/0d4da9ec-b0b3-4371-af10-321".formatted(type))
-                .andExpect(status().isNotFound());
+    @ValueSource(strings = {"excel", "csv"})
+    void shouldReturn404WhenNoReportsFound(String type) {
+        var nonExistentReportId = "0d4da9ec-b0b3-4371-af10-321";
+        var uri = "/%s/%s".formatted(type, nonExistentReportId);
+
+        performGetRequest(uri)
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andExpect(jsonPath("$.error")
+                        .value("Report not found for ID 0d4da9ec-b0b3-4371-af10-000000000321"));
     }
 
 }

@@ -1,12 +1,17 @@
 package uk.gov.laa.gpfd.integration;
 
+import static org.junit.jupiter.params.provider.Arguments.of;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CCMS_REPORT;
+import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CSV_REPORT;
 
-import org.junit.jupiter.api.Test;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -14,38 +19,39 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import uk.gov.laa.gpfd.config.TestDatabaseConfig;
 
-@SpringBootTest(
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = {
-                TestDatabaseConfig.class
-        }
-)
+import java.util.stream.Stream;
+
+@SpringBootTest(webEnvironment = RANDOM_PORT, classes = {TestDatabaseConfig.class})
 @AutoConfigureMockMvc
 @ActiveProfiles("testauth")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestPropertySource(locations = "classpath:application-testauth.yml")
-class AuthTokenIT extends BaseIT {
+final class AuthTokenIT extends BaseIT {
 
-    @ParameterizedTest
-    @ValueSource(strings = {"/reports", "/reports/" + BaseIT.REPORT_UUID_1, "/csv/"+BaseIT.REPORT_UUID_1})
-    void shouldRedirectToLoginWithoutAuthToken(String endpoint) throws Exception {
+    private static Stream<Arguments> securedReportEndpoints() {
+        return Stream.of(
+                of("Root api endpoint", "/reports"),
+                of("Specific report endpoint", "/reports/%s".formatted(CSV_REPORT.getReportData().id())),
+                of("Excel download endpoint", "/excel/%s".formatted(CCMS_REPORT.getReportData().id())),
+                of("CSV download endpoint", "/csv/%s".formatted(CSV_REPORT.getReportData().id()))
+        );
+    }
+
+    @ParameterizedTest(name = "[{index}] {0} should redirect when unauthenticated")
+    @MethodSource("securedReportEndpoints")
+    @SneakyThrows
+    void unauthenticatedAccess_shouldRedirectToLogin(String description, String endpoint) {
         performGetRequest(endpoint)
-            .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrlPattern("http://localhost/oauth2/authorization/azure*"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("http://localhost/oauth2/authorization/azure*"));
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {"/reports", "/reports/"+BaseIT.REPORT_UUID_1})
+    @ParameterizedTest(name = "[{index}] {0} should return 200 when authenticated")
+    @MethodSource("securedReportEndpoints")
     @WithMockUser(username = "Mock User")
-    void shouldReturn200WhenLoginAuthTokenProvided(String endpoint) throws Exception {
-        performGetRequest(endpoint)
-            .andExpect(status().isOk());
+    @SneakyThrows
+    void authenticatedAccess_shouldReturnOk(String description, String endpoint) {
+        performGetRequest(endpoint).andExpect(status().isOk());
     }
 
-    @Test
-    @WithMockUser(username = "Mock User")
-    void getCsvWithIdShouldReturn200WhenLoginAuthTokenProvided() throws Exception {
-        performGetRequest("/csv/" + "0fbec75b-2d72-44f5-a0e3-2dcb29d92f79")
-            .andExpect(status().isOk());
-    }
 }

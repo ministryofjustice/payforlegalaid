@@ -16,7 +16,7 @@ public interface CellValueSetter {
     /**
      * Sets the value in the specified {@link Cell} based on the runtime type of the provided value.
      *
-     * <p>This method retrieves the appropriate handler from the {@link #CellValueHandler} map based on the
+     * <p>This method retrieves the appropriate handler from the {@link CellValueHandler} map based on the
      * runtime type of the value and applies it to the cell. If no specific handler is found for the
      * value's type, the default handler for {@link Object} is used, which converts the value to a string.
      *

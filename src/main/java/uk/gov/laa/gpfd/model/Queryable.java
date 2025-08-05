@@ -43,6 +43,7 @@ public interface Queryable<Q extends Mapping, T extends Queryable<Q, T>> {
         @SuppressWarnings("unchecked")
         T self = (T) this;
         return Queryable.processor(self)
+                .presentOnly()
                 .first()
                 .orElseThrow(() -> new IllegalStateException("No queries available"));
     }
@@ -102,6 +103,19 @@ public interface Queryable<Q extends Mapping, T extends Queryable<Q, T>> {
         private Predicate<Q> filter = q -> true;
 
         /**
+         * Creates a predicate that tests whether a mapping contains a present query.
+         *
+         * @param <Q> the mapping type that must implement {@code getQuery()}
+         * @return a predicate suitable for filtering mappings with present queries
+         */
+        public static <Q extends Mapping> Predicate<Q> hasPresentQuery() {
+            return q -> {
+                var query = q.getQuery();
+                return query != null && query.isPresent();
+            };
+        }
+
+        /**
          * Creates a new QueryProcessor for the given source.
          *
          * @param source the source object containing queries to process
@@ -134,6 +148,15 @@ public interface Queryable<Q extends Mapping, T extends Queryable<Q, T>> {
         public QueryProcessor<T, Q> filtering(Predicate<Q> filter) {
             this.filter = Objects.requireNonNull(filter);
             return this;
+        }
+
+        /**
+         * Filters the processor to only include mappings that have a present (non-NONE) query.
+         *
+         * @return this processor configured to only process present queries, enabling method chaining
+         */
+        public QueryProcessor<T, Q> presentOnly() {
+            return filtering(hasPresentQuery()::test);
         }
 
         /**
