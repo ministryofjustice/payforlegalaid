@@ -27,6 +27,19 @@ runs:
       shell:
         bash
 
+    - name: Checkout openapi spec
+      uses: actions/checkout@v4
+      with:
+        repository: ministryofjustice/payforlegalaid-openapi
+        path: openapi
+        ssh-key: ${{ secrets.DEPLOY_KEY_OPENAPI }}
+        ref: refs/tags/v${{ steps.get_openapi_version.outputs.version }}
+
+    - name: Build openapi spec dependency
+      run: |
+        cd openapi
+        mvn -B clean install
+
     - name: Checkout source code repo
       uses: actions/checkout@v4
       with:
