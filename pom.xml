@@ -27,7 +27,7 @@
         <spring-cloud-azure-dependencies.version>5.22.0</spring-cloud-azure-dependencies.version>
         <spring-security.version>6.4.6</spring-security.version>
 
-        <payforlegalaid-openapi.version>0.0.3</payforlegalaid-openapi.version>
+        <payforlegalaid-openapi.version>0.0.4</payforlegalaid-openapi.version>
     </properties>
 
     <build>

@@ -23,7 +23,6 @@ runs:
         cd testCode
         VERSION=$(mvn help:evaluate -Dexpression=payforlegalaid-openapi.version -q -DforceStdout)
         echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-        echo "THIS IS THE RIGHT $VERSION"
       shell:
         bash
 
@@ -32,7 +31,6 @@ runs:
       with:
         repository: ministryofjustice/payforlegalaid-openapi
         path: openapi
-#        ssh-key: ${{ secrets.DEPLOY_KEY_OPENAPI }}
         ref: refs/tags/v${{ steps.get_openapi_version.outputs.version }}
 
     - name: Build openapi spec dependency
@@ -58,6 +56,5 @@ runs:
       run: |
         cd testCode
         mvn -B clean test
-#        -Dpayforlegalaid-openapi.version=${{ steps.get_openapi_version.outputs.version }}
       shell:
         bash
