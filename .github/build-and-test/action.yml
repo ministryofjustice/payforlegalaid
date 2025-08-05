@@ -21,7 +21,8 @@ runs:
 
     - name: Run tests
       run: |
-        mvn -B clean test -Dmaven.repo.local=${{ github.workspace }}/.m2/repository
+        mvn -B clean test
+#        -Dmaven.repo.local=${{ github.workspace }}/.m2/repository
       env:
         SPRING_PROFILES_ACTIVE: test
       shell:
