@@ -57,6 +57,7 @@ runs:
     - name: Run tests
       run: |
         cd testCode
-        mvn -B clean test -s -Dpayforlegalaid-openapi.version=${{ steps.get_openapi_version.outputs.version }}
+        mvn -B clean test
+#        -Dpayforlegalaid-openapi.version=${{ steps.get_openapi_version.outputs.version }}
       shell:
         bash
