@@ -29,11 +29,10 @@ runs:
         path: sourceCode
 
     - name: Build source code
+#     Uses cached dependencies from build-and-test action
       run: |
         cd sourceCode
         mvn -B install -DskipTests
-#        clean install
-#        -Dpayforlegalaid-openapi.version=${{ steps.get_openapi_version.outputs.version }}
       shell:
         bash
 
