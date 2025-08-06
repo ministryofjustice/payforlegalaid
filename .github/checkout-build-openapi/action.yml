@@ -1,5 +1,10 @@
 name: Checkout and build OpenAPI repository
 
+inputs:
+  property-name:
+    description: 'Property name to extract'
+    required: true
+
 outputs:
   version:
     description: 'Openapi version'

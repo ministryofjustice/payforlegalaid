@@ -18,6 +18,8 @@ runs:
       uses: './.github/checkout-build-openapi'
       env:
         SOCKET_KEY: ${{ env.SOCKET_KEY }}
+      with:
+        property-name: 'payforlegalaid-openapi.version'
 
     - name: Run tests
       run: |

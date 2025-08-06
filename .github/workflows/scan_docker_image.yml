@@ -20,6 +20,8 @@ jobs:
           uses: './.github/checkout-build-openapi'
           env:
             SOCKET_KEY: ${{ secrets.DEV_API_SOCKET_KEY }}
+          with:
+            property-name: 'payforlegalaid-openapi.version'
 
         - name: Build with Maven
           run: mvn -B -DskipTests clean package -s .github/settings.xml
