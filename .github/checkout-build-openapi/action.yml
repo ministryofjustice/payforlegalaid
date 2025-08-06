@@ -21,8 +21,7 @@ runs:
         java-version: '17'
         cache: 'maven'
 
-    #        Define allowed properties to get openapi version safely
-    #        Protects against Log4Shell attack
+    #        Define allowed properties to get openapi version safely, to protect against Log4Shell attack
     - name: Get openapi version from pom
       id: get_openapi_version
       run: |
