@@ -28,14 +28,14 @@ runs:
       with:
         path: sourceCode
 
-#    - name: Build source code
-#      run: |
-#        cd sourceCode
-#        mvn -B -DskipTests
-##        clean install
-##        -Dpayforlegalaid-openapi.version=${{ steps.get_openapi_version.outputs.version }}
-#      shell:
-#        bash
+    - name: Build source code
+      run: |
+        cd sourceCode
+        mvn -B install -DskipTests
+#        clean install
+#        -Dpayforlegalaid-openapi.version=${{ steps.get_openapi_version.outputs.version }}
+      shell:
+        bash
 
     - name: Run tests
       env:
