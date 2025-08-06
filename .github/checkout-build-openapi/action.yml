@@ -1,10 +1,5 @@
 name: Checkout and build OpenAPI repository
 
-inputs:
-  property-name:
-    description: 'Property name to extract'
-    required: true
-
 outputs:
   version:
     description: 'Openapi version'
@@ -21,22 +16,11 @@ runs:
         java-version: '17'
         cache: 'maven'
 
-    #        Define allowed properties to get openapi version safely, to protect against Log4Shell attack
     - name: Get openapi version from pom
       id: get_openapi_version
       run: |
-        PROPERTY_NAME="${{ inputs.property-name }}"
-
-        case "$PROPERTY_NAME" in
-          "payforlegalaid-openapi.version")
-            VERSION=$(mvn help:evaluate -Dexpression="${{ inputs.property-name }}" -q -DforceStdout)
-            echo "version=$VERSION" >> $GITHUB_OUTPUT
-            ;;
-          *)
-            echo "Error: Unauthorized property name"
-            exit 1
-            ;;
-        esac
+        VERSION=$(mvn help:evaluate -Dexpression="payforlegalaid-openapi.version" -q -DforceStdout)
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
       shell:
         bash
 
