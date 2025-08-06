@@ -17,15 +17,20 @@ runs:
         java-version: '17'
         cache: 'maven'
 
+    - name: Checkout and build openapi
+      uses: './.github/checkout-build-openapi'
+      id: get_openapi_version
+
     - name: Checkout source code repo
       uses: actions/checkout@v4
       with:
         path: sourceCode
 
     - name: Build source code
+#     Uses cached dependencies from build-and-test action
       run: |
         cd sourceCode
-        mvn -B -DskipTests clean install -s .github/settings.xml -Dmaven.repo.local=${{ github.workspace }}/.m2/repository
+        mvn -B install -DskipTests
       shell:
         bash
 
@@ -34,7 +39,6 @@ runs:
         TESTS_TO_DISABLE: "get_excel_report"
       run: |
         cd testCode
-        mvn -B clean test -s .github/settings.xml -Dmaven.repo.local=${{ github.workspace }}/.m2/repository
-
+        mvn -B clean test
       shell:
         bash
