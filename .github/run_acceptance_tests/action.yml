@@ -31,7 +31,8 @@ runs:
     - name: Build source code
       run: |
         cd sourceCode
-        mvn -B -DskipTests clean install
+        mvn -B -DskipTests
+#        clean install
 #        -Dpayforlegalaid-openapi.version=${{ steps.get_openapi_version.outputs.version }}
       shell:
         bash
