@@ -19,7 +19,7 @@ runs:
     - name: Get openapi version from pom
       id: get_openapi_version
       run: |
-        VERSION=$(mvn help:evaluate -Dexpression=payforlegalaid-openapi.version -q -DforceStdout)
+        VERSION=$(mvn help:evaluate -Dexpression=test-test -q -DforceStdout)
         echo "version=$VERSION" >> "$GITHUB_OUTPUT"
       shell:
         bash
