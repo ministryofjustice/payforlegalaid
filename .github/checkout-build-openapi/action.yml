@@ -26,8 +26,10 @@ runs:
     - name: Get openapi version from pom
       id: get_openapi_version
       run: |
-        case "${{ inputs.property-name }}" in
-          "payforlegalaid-openapi.version"
+        PROPERTY_NAME="${{ inputs.property-name }}"
+
+        case "$PROPERTY_NAME" in
+          "payforlegalaid-openapi.version")
             VERSION=$(mvn help:evaluate -Dexpression="${{ inputs.property-name }}" -q -DforceStdout)
             echo "version=$VERSION" >> $GITHUB_OUTPUT
             ;;
