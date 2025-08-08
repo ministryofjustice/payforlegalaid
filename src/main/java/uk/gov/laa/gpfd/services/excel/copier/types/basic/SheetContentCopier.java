@@ -1,9 +1,13 @@
 package uk.gov.laa.gpfd.services.excel.copier.types.basic;
 
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorderPr;
 import uk.gov.laa.gpfd.exception.ReportGenerationException;
 
 import java.util.HashMap;
@@ -130,12 +134,48 @@ public abstract class SheetContentCopier {
         private void copyCellStyle(Cell sourceCell, Cell targetCell) {
             var sourceStyle = sourceCell.getCellStyle();
             var targetStyle = styleCache.computeIfAbsent(sourceStyle, style -> {
+
+                setupCellBorders(sourceCell, (XSSFCellStyle) style);
+
                 CellStyle newStyle = targetCell.getSheet().getWorkbook().createCellStyle();
                 newStyle.cloneStyleFrom(style);
                 return newStyle;
             });
             targetCell.setCellStyle(targetStyle);
         }
+
+        // Apache POI is not copying the border in the cell style by default - this is due to a flag called applyBorder
+        // Excel doesn't usually set applyBorder as it doesn't care about the value, but POI will ignore the border if it is not true
+        // So we work around this by looking up the border in the stylesheet and setting the border again,
+        // so everything is wired up properly when POI goes to copy the cell style to the target sheet.
+        // In future may need to add more border properties like colour to this
+        private static void setupCellBorders(Cell sourceCell, XSSFCellStyle style) {
+            var borderId = (int) style.getCoreXf().getBorderId();
+            if (borderId == 0) return;
+
+            var workbook = ((XSSFWorkbook) sourceCell.getSheet().getWorkbook());
+            var ctBorder = workbook.getStylesSource().getBorderAt(borderId).getCTBorder();
+
+            if (ctBorder.isSetTop()) {
+                style.setBorderTop(BorderStyle.valueOf(getBorderStyleValue(ctBorder.getTop())));
+            }
+            if (ctBorder.isSetBottom()) {
+                style.setBorderBottom(BorderStyle.valueOf(getBorderStyleValue(ctBorder.getBottom())));
+            }
+            if (ctBorder.isSetLeft()) {
+                style.setBorderLeft(BorderStyle.valueOf(getBorderStyleValue(ctBorder.getLeft())));
+            }
+            if (ctBorder.isSetRight()) {
+                style.setBorderRight(BorderStyle.valueOf(getBorderStyleValue(ctBorder.getRight())));
+            }
+
+        }
+
+        //  These are off-by-one due to getting it from an enum
+        private static short getBorderStyleValue(CTBorderPr borderPart) {
+            return (short) (borderPart.getStyle().intValue() - 1);
+        }
+
     }
 
     /**
