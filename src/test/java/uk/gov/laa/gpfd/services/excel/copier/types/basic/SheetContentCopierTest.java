@@ -113,10 +113,9 @@ public class SheetContentCopierTest {
 
     @Test
     void should_copy_borders_when_underlying_field_is_set_incorrectly() {
-        // Test issue whereby apache poi cares about the value of the borderApply field
+        // Test issue whereby Apache POI cares about the value of the borderApply field
         // Even though Excel does not care and so will not set it correctly
-        // So this test is that we copy the border even if through poi it thinks the border is not visible
-        // Because poi is wrong.
+        // So this test is that we copy the border even if POI wrongly thinks it is hidden
 
         workbook = new XSSFWorkbook();
         var sourceSheet = workbook.createSheet("source");
