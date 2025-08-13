@@ -26,6 +26,7 @@ spec:
       initContainers:
         - name: liquibase
           image: ${REGISTRY}/${DATA_REPOSITORY}:latest
+          imagePullPolicy: Always
           env:
             - name: MOJFIN_DEV_WRITE_USERNAME
               valueFrom:
