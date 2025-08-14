@@ -30,7 +30,7 @@
         <moj-frontend.version>5.1.5</moj-frontend.version>
 
         <payforlegalaid-openapi.version>0.0.3</payforlegalaid-openapi.version>
-        <tomcat-embed.version>10.1.43</tomcat-embed.version>
+        <tomcat-embed.version>10.1.44</tomcat-embed.version>
         <common-lang3.version>3.18.0</common-lang3.version>
     </properties>
 
