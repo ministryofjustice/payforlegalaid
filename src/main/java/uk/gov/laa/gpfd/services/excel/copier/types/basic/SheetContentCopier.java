@@ -4,6 +4,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import uk.gov.laa.gpfd.exception.ReportGenerationException;
 
 import java.util.HashMap;
@@ -130,11 +131,24 @@ public abstract class SheetContentCopier {
         private void copyCellStyle(Cell sourceCell, Cell targetCell) {
             var sourceStyle = sourceCell.getCellStyle();
             var targetStyle = styleCache.computeIfAbsent(sourceStyle, style -> {
+
+                prepareCellBordersForCopying(style);
+
                 CellStyle newStyle = targetCell.getSheet().getWorkbook().createCellStyle();
                 newStyle.cloneStyleFrom(style);
                 return newStyle;
             });
             targetCell.setCellStyle(targetStyle);
+        }
+
+        // Apache POI is not copying the border in the cell style by default - this is due to a flag called applyBorder
+        // Excel doesn't usually set applyBorder as it doesn't care about the value, but POI will ignore the border if it is not true
+        // So we work around this by - if there is a border - setting that flag ourselves, so POI will copy the border across
+        // as part of the cell style in the "cloneStyleFrom" step
+        private static void prepareCellBordersForCopying(CellStyle style) {
+            var coreXfStyleDetails = ((XSSFCellStyle) style).getCoreXf();
+            if (coreXfStyleDetails.getBorderId() == 0) return;
+            coreXfStyleDetails.setApplyBorder(true);
         }
     }
 

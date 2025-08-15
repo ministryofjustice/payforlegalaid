@@ -2,26 +2,10 @@
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
-  SNYK-JAVA-COMH2DATABASE-31685:
+  SNYK-JAVA-IONETTY-11799531:
     - '*':
         reason: >-
-          H2 have not fixed because only affects insecure environments. See
-          CVE-2018-10054 for more details.
-          H2 is only enabled in local and test environment
-        expires: 2025-03-12T17:40:56.565Z
-        created: 2024-02-12T17:40:56.567Z
-  SNYK-JAVA-IONETTY-8707739:
-    - '*':
-        reason: >-
-          Spring has yet to upgrade their versions with the new netty-handler.
-          See CVE-2025-24970 for more details
-        expires: 2025-03-12T13:36:23.710Z
-        created: 2025-02-12T13:36:23.725Z
-  SNYK-JAVA-NETMINIDEV-8689573:
-      - '*':
-          reason: >-
-            Spring has yet to upgrade their versions with the new json-smart.
-            See CVE-2024-57699 for more details
-          expires: 2025-03-12T13:36:23.710Z
-          created: 2025-02-12T13:36:23.725Z
+          Azure Spring Integration has yet to upgrade their versions with the new netty-handler.
+        expires: 2025-08-20T09:00:00.000Z
+        created: 2025-08-14T16:51:23.725Z
 patch: {}
