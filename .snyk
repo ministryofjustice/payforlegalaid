@@ -6,6 +6,12 @@ ignore:
     - '*':
         reason: >-
           Azure Spring Integration has yet to upgrade their versions with the new netty-handler.
-        expires: 2025-08-20T09:00:00.000Z
+        expires: 2025-08-27T09:00:00.000Z
         created: 2025-08-14T16:51:23.725Z
+  SNYK-JAVA-ORGSPRINGFRAMEWORK-12008931:
+    - '*':
+        reason: >-
+          Spring not upgraded yet, and we don't deploy in a way that requires this immediately
+      expires: 2025-08-27T09:00:00.000Z
+      created: 2025-08-20T13:06:23.725Z
 patch: {}
