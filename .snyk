@@ -11,7 +11,7 @@ ignore:
   SNYK-JAVA-ORGSPRINGFRAMEWORK-12008931:
     - '*':
         reason: >-
-          Spring not upgraded yet, and we don't deploy in a way that requires this immediately
-      expires: 2025-08-27T09:00:00.000Z
-      created: 2025-08-20T13:06:23.725Z
+          Spring not upgraded yet
+        expires: 2025-08-27T09:00:00.000Z
+        created: 2025-08-20T16:51:23.725Z
 patch: {}
