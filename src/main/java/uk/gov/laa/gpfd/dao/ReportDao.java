@@ -52,6 +52,7 @@ public record ReportDao(
         LEFT JOIN GPFD.FIELD_ATTRIBUTES fa ON q.ID = fa.REPORT_QUERY_ID
         LEFT JOIN GPFD.REPORT_OUTPUT_TYPES rot ON r.REPORT_OUTPUT_TYPE = rot.ID
         WHERE r.ID = ?
+        ORDER BY q."INDEX" ASC, fa.COLUMN_ORDER ASC;
     """;
 
     private static final String SELECT_ALL_REPORTS_SQL = """

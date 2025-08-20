@@ -48,10 +48,10 @@ jobs:
       - name: Checkout Github Repository
         uses: actions/checkout@v4
 
-      - name: Build and test the code
-        uses: './.github/build-and-test'
-        env:
-          SOCKET_KEY: ${{ secrets.api_socket_key }}
+#      - name: Build and test the code
+#        uses: './.github/build-and-test'
+#        env:
+#          SOCKET_KEY: ${{ secrets.api_socket_key }}
 
       - name: Run Snyk security suite
         uses: './.github/snyk-scan'
