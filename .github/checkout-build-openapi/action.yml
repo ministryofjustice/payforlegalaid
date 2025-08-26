@@ -23,7 +23,7 @@ runs:
     - name: Get openapi version from pom
       id: get_openapi_version
       run: |
-        if ["${{ inputs.subfolder }}" != '']; then 
+        if [[ -n "${{ inputs.subfolder }} ]]; then 
           cd inputs.subfolder
           echo "I WENT INTO THE IF"
           pwd
