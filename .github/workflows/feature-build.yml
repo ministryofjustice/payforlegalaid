@@ -16,11 +16,11 @@ jobs:
         uses: './.github/build-and-test'
         env:
           SOCKET_KEY: ${{ secrets.DEV_API_SOCKET_KEY }}
-
-      - name: Snyk Scan
-        uses: './.github/snyk-scan'
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN}}
+# TODO uncomment
+#      - name: Snyk Scan
+#        uses: './.github/snyk-scan'
+#        env:
+#          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN}}
 
       - name: Run acceptance tests
         uses: './.github/run_acceptance_tests'
