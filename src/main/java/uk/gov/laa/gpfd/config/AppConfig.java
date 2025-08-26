@@ -105,10 +105,12 @@ public class AppConfig {
     public DataSource readOnlyDataSource(
             @Value("${gpfd.datasource.read-only.url}") String url,
             @Value("${gpfd.datasource.read-only.username}") String username,
-            @Value("${gpfd.datasource.read-only.password}") String password
+            @Value("${gpfd.datasource.read-only.password}") String password,
+            @Value("${gpfd.datasource.read-only.driver-class-name}") String driverClass
     ) throws SQLException {
         PoolDataSource pds = PoolDataSourceFactory.getPoolDataSource();
-        pds.setConnectionFactoryClassName("oracle.jdbc.pool.OracleDataSource");
+
+        pds.setConnectionFactoryClassName(driverClass);
         pds.setURL(url);
         pds.setUser(username);
         pds.setPassword(password);
