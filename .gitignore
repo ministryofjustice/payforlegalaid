@@ -7,6 +7,9 @@
 /dataSources/
 /dataSources.local.xml
 
+# Templates used for local testing should not be committed
+**/src/main/resources/**/*.xlsx
+
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
