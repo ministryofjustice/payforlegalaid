@@ -109,6 +109,7 @@ public class AppConfig {
             @Value("${gpfd.datasource.read-only.driver-class-name}") String driverClass
     ) throws SQLException {
         PoolDataSource pds = PoolDataSourceFactory.getPoolDataSource();
+
         pds.setConnectionFactoryClassName(driverClass);
         pds.setURL(url);
         pds.setUser(username);
