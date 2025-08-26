@@ -7,7 +7,7 @@ outputs:
 
 inputs:
   subfolder:
-    description: 'Destination of code being used for build'
+    description: 'Destination of code being used to define openapi version'
 
 runs:
   using: 'composite'
