@@ -9,7 +9,6 @@ runs:
       with:
         repository: ministryofjustice/payforlegalaid-tests
         path: testCode
-        ref: 2eff1df1e715d91ba43d939bbce31b75359cc39a
 
     - name: Setup Java
       uses: actions/setup-java@v4
