@@ -8,7 +8,7 @@ runs:
       uses: actions/checkout@v4
       with:
         repository: ministryofjustice/payforlegalaid-tests
-        path:
+        path: testCode
         ref: 2eff1df1e715d91ba43d939bbce31b75359cc39a
 
     - name: Setup Java
