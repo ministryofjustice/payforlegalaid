@@ -9,7 +9,8 @@ on:
 
 jobs:
   feature_branch:
-
+#     todo not this
+    environment: development
     runs-on: ubuntu-latest
     steps:
       - name: Checkout GitHub repository
