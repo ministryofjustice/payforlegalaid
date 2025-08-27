@@ -26,17 +26,6 @@ runs:
       with:
         path: sourceCode
 
-    - uses: './.github/login-to-aws'
-      env:
-        ROLE: ${{ env.ROLE }}
-        AWS_REGION: ${{ env.AWS_REGION }}
-
-    - name: Test S3
-      run: |
-        aws s3 cp ${{ env.S3_BUCKET }}/templates templates
-      shell:
-        bash
-
     - name: Build source code
 #     Uses cached dependencies from build-and-test action
       run: |
