@@ -28,12 +28,12 @@ runs:
 
     - uses: './.github/login-to-aws'
       env:
-        ROLE: ${{ secrets.ecr_role_to_assume }}
-        AWS_REGION: ${{ vars.ECR_REGION }}
+        ROLE: ${{ env.ROLE }}
+        AWS_REGION: ${{ env.AWS_REGION }}
 
     - name: Test S3
       run: |
-        aws s3 cp ${{ secrets.s3_bucket }}/templates templates
+        aws s3 cp ${{ env.S3_BUCKET }}/templates templates
 
     - name: Build source code
 #     Uses cached dependencies from build-and-test action
@@ -45,6 +45,7 @@ runs:
 
     - name: Run tests
       env:
+        # todo ??????
         TESTS_TO_DISABLE: "get_excel_report"
       run: |
         cd testCode
