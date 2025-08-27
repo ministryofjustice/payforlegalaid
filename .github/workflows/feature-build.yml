@@ -9,7 +9,7 @@ on:
 
 jobs:
   feature_branch:
-#     todo not this
+#    We are for now connecting to the dev s3 bucket
     environment: development
     runs-on: ubuntu-latest
     steps:
@@ -27,10 +27,9 @@ jobs:
 #        env:
 #          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN}}
 
-# todo probably not reuse the ecr stuff
       - name: Run acceptance tests
         uses: './.github/run_acceptance_tests'
         env:
-          ROLE: ${{ secrets.dev_ecr_role_to_assume }}
-          AWS_REGION: ${{ vars.DEV_ECR_REGION }}
-          S3_BUCKET: ${{ secrets.s3_bucket}}
+          ROLE: ${{ secrets.FILE_STORE_DEV_S3_ROLE_TO_ASSUME }}
+          AWS_REGION: ${{ vars.FILE_STORE_DEV_S3_REGION }}
+          S3_BUCKET: ${{ vars.FILE_STORE_DEV_S3_BUCKET_NAME }}
