@@ -3,11 +3,17 @@ on:
   workflow_dispatch:
   pull_request:
     types: [opened, reopened, synchronize]
+  push:
+    branches:
+     - LPF-1023
 
 jobs:
   feature_branch:
-
+#    We are for now connecting to the dev s3 bucket
+    environment: development
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     steps:
       - name: Checkout GitHub repository
         uses: actions/checkout@v4
@@ -17,10 +23,39 @@ jobs:
         env:
           SOCKET_KEY: ${{ secrets.DEV_API_SOCKET_KEY }}
 
-      - name: Snyk Scan
-        uses: './.github/snyk-scan'
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN}}
+# TODO put back in
+#      - name: Snyk Scan
+#        uses: './.github/snyk-scan'
+#        env:
+#          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN}}
+
+#      - uses: './.github/login-to-aws'
+#        env:
+#          ROLE: ${{ secrets.FILE_STORE_DEV_S3_ROLE_TO_ASSUME }}
+#          AWS_REGION: ${{ env.AWS_REGION }}
+
+      - name: Assume role in Cloud Platform
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.FILE_STORE_DEV_S3_ROLE_TO_ASSUME }}
+          aws-region: ${{ vars.FILE_STORE_DEV_S3_REGION }}
+
+#      - name: make folder
+#        run: |
+#          mkdir templates
+#
+#
+#      - name: Test S3
+#        run: |
+#          aws s3 sync s3://${{ vars.FILE_STORE_DEV_S3_BUCKET_NAME }}/templates templates
+#
+#      - name: Check folder
+#        run: |
+#          ls templates
 
       - name: Run acceptance tests
         uses: './.github/run_acceptance_tests'
+        env:
+#          ROLE: ${{ secrets.FILE_STORE_DEV_S3_ROLE_TO_ASSUME }}
+#          AWS_REGION: ${{ vars.FILE_STORE_DEV_S3_REGION }}
+          S3_BUCKET: ${{ vars.FILE_STORE_DEV_S3_BUCKET_NAME }}

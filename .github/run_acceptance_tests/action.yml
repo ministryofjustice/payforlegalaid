@@ -28,6 +28,18 @@ runs:
       with:
         path: sourceCode
 
+    - name: Test S3
+      run: |
+        aws s3 sync s3://${{ env.S3_BUCKET }}/templates sourceCode/src/main/resources
+      shell:
+        bash
+
+    - name: Check folder
+      run: |
+        ls sourceCode/src/main/resources
+      shell:
+        bash
+
     - name: Build source code
 #     Uses cached dependencies from build-and-test action
       run: |
@@ -38,6 +50,7 @@ runs:
 
     - name: Run tests
       env:
+        # todo ??????
         TESTS_TO_DISABLE: "get_excel_report"
       run: |
         cd testCode
