@@ -5,6 +5,10 @@ outputs:
     description: 'Openapi version'
     value: ${{ steps.get_openapi_version.outputs.version }}
 
+inputs:
+  subfolder:
+    description: 'Location of code being used to define openapi version'
+
 runs:
   using: 'composite'
   steps:
@@ -19,6 +23,9 @@ runs:
     - name: Get openapi version from pom
       id: get_openapi_version
       run: |
+        if [[ -n "${{ inputs.subfolder }}" ]]; then 
+          cd ${{ inputs.subfolder }}
+        fi
         VERSION=$(mvn help:evaluate -Dexpression="payforlegalaid-openapi.version" -q -DforceStdout)
         echo "version=$VERSION" >> $GITHUB_OUTPUT
       shell:

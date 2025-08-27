@@ -20,6 +20,8 @@ runs:
     - name: Checkout and build openapi
       uses: './.github/checkout-build-openapi'
       id: get_openapi_version
+      with:
+        subfolder: 'testCode'
 
     - name: Checkout source code repo
       uses: actions/checkout@v4
