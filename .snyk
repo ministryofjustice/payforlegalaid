@@ -6,6 +6,6 @@ ignore:
     - '*':
         reason: >-
           Azure Spring Integration has yet to upgrade their versions with the new netty-handler.
-        expires: 2025-08-20T09:00:00.000Z
+        expires: 2025-08-27T09:00:00.000Z
         created: 2025-08-14T16:51:23.725Z
 patch: {}

@@ -104,8 +104,10 @@
       <column name="COLUMN_WIDTH" type="NUMBER(6,2)">
         <constraints nullable="false"/>
       </column>
+      <column name="COLUMN_ORDER" type="NUMBER(6,0)"/>
     </createTable>
     <sql>ALTER TABLE GPFD.FIELD_ATTRIBUTES ALTER COLUMN ID SET DEFAULT sys_guid();</sql>
+    <sql>ALTER TABLE GPFD.FIELD_ATTRIBUTES ALTER COLUMN COLUMN_ORDER SET DEFAULT 0;</sql>
   </changeSet>
 
   <changeSet id="2010" author="liquibase">
