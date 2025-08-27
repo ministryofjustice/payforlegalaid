@@ -26,6 +26,15 @@ runs:
       with:
         path: sourceCode
 
+    - uses: './.github/login-to-aws'
+      env:
+        ROLE: ${{ secrets.ecr_role_to_assume }}
+        AWS_REGION: ${{ vars.ECR_REGION }}
+
+    - name: Test S3
+      run: |
+        aws s3 cp ${{ secrets.s3_bucket }}/templates templates
+
     - name: Build source code
 #     Uses cached dependencies from build-and-test action
       run: |
