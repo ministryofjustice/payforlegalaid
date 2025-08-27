@@ -12,6 +12,8 @@ jobs:
 #    We are for now connecting to the dev s3 bucket
     environment: development
     runs-on: ubuntu-latest
+    permissions:
+      id-write
     steps:
       - name: Checkout GitHub repository
         uses: actions/checkout@v4
