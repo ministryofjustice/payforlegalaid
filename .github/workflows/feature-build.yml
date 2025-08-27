@@ -31,14 +31,18 @@ jobs:
 #        env:
 #          ROLE: ${{ secrets.FILE_STORE_DEV_S3_ROLE_TO_ASSUME }}
 #          AWS_REGION: ${{ env.AWS_REGION }}
+      - name: make folder
+        run: |
+          mkdir templates
+
 
       - name: Test S3
         run: |
-          mkdir templates
           aws s3 sync s3://${{ vars.FILE_STORE_DEV_S3_BUCKET_NAME }}/templates templates
+
+      - name: Check folder
+        run: |
           ls templates
-        shell:
-          bash
 
       - name: Run acceptance tests
         uses: './.github/run_acceptance_tests'
