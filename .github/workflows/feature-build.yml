@@ -31,6 +31,13 @@ jobs:
 #        env:
 #          ROLE: ${{ secrets.FILE_STORE_DEV_S3_ROLE_TO_ASSUME }}
 #          AWS_REGION: ${{ env.AWS_REGION }}
+
+      - name: Assume role in Cloud Platform
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.FILE_STORE_DEV_S3_ROLE_TO_ASSUME }}
+          aws-region: ${{ vars.FILE_STORE_DEV_S3_REGION }}
+
       - name: make folder
         run: |
           mkdir templates
