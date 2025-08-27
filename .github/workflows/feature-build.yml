@@ -34,7 +34,9 @@ jobs:
 
       - name: Test S3
         run: |
-          aws s3 cp ${{ vars.FILE_STORE_DEV_S3_BUCKET_NAME }}/templates templates
+          mkdir templates
+          aws s3 sync s3://${{ vars.FILE_STORE_DEV_S3_BUCKET_NAME }}/templates templates
+          ls templates
         shell:
           bash
 
