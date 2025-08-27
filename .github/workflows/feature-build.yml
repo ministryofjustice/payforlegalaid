@@ -13,7 +13,7 @@ jobs:
     environment: development
     runs-on: ubuntu-latest
     permissions:
-      id-write
+      id-token: write
     steps:
       - name: Checkout GitHub repository
         uses: actions/checkout@v4
