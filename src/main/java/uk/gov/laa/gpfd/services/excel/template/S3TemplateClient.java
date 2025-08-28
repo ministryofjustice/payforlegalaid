@@ -24,8 +24,8 @@ public record S3TemplateClient() implements TemplateClient {
         }
 
         S3Client s3 = S3Client.builder()
-                .credentialsProvider(WebIdentityTokenFileCredentialsProvider.create())
-                //.credentialsProvider(DefaultCredentialsProvider.builder().build())
+//                .credentialsProvider(WebIdentityTokenFileCredentialsProvider.create())
+                .credentialsProvider(DefaultCredentialsProvider.builder().build())
                 .region(Region.of("eu-west-2"))
                 .build();
 
