@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -43,6 +44,7 @@ import uk.gov.laa.gpfd.services.excel.formatting.CellFormatting;
 import uk.gov.laa.gpfd.services.excel.formatting.ColumnFormatting;
 import uk.gov.laa.gpfd.services.excel.formatting.Formatting;
 import uk.gov.laa.gpfd.services.excel.template.LocalTemplateClient;
+import uk.gov.laa.gpfd.services.excel.template.S3TemplateClient;
 import uk.gov.laa.gpfd.services.excel.template.TemplateClient;
 import uk.gov.laa.gpfd.services.excel.workbook.StyleManager;
 import uk.gov.laa.gpfd.services.stream.AbstractDataStream;
@@ -284,9 +286,21 @@ public class AppConfig {
      *
      * @return a {@link LocalTemplateClient} instance
      */
+    @Profile("local")
     @Bean
     public TemplateClient localTemplateClient() {
-        return new LocalTemplateClient();
+            return new LocalTemplateClient();
+    }
+
+    /**
+     * Creates a {@link TemplateClient} which returns local template.
+     *
+     * @return a {@link LocalTemplateClient} instance
+     */
+    @Profile("!local")
+    @Bean
+    public TemplateClient s3TemplateClient() {
+        return new S3TemplateClient();
     }
 
     /**
