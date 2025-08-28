@@ -1,6 +1,7 @@
 package uk.gov.laa.gpfd.services.excel.template;
 
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.WebIdentityTokenFileCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
@@ -23,7 +24,8 @@ public record S3TemplateClient() implements TemplateClient {
         }
 
         S3Client s3 = S3Client.builder()
-                .credentialsProvider(DefaultCredentialsProvider.builder().build())
+                .credentialsProvider(WebIdentityTokenFileCredentialsProvider.create())
+                //.credentialsProvider(DefaultCredentialsProvider.builder().build())
                 .region(Region.of("eu-west-2"))
                 .build();
 
