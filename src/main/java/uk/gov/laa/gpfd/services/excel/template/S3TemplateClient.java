@@ -2,6 +2,7 @@ package uk.gov.laa.gpfd.services.excel.template;
 
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.WebIdentityTokenFileCredentialsProvider;
+import software.amazon.awssdk.core.sync.ResponseTransformer;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
@@ -24,23 +25,21 @@ public record S3TemplateClient() implements TemplateClient {
         }
 
         S3Client s3 = S3Client.builder()
-                .credentialsProvider(WebIdentityTokenFileCredentialsProvider.create())
-                //.credentialsProvider(DefaultCredentialsProvider.builder().build())
+//                .credentialsProvider(WebIdentityTokenFileCredentialsProvider.create())
+                .credentialsProvider(DefaultCredentialsProvider.builder().build())
                 .region(Region.of("eu-west-2"))
                 .build();
 
         var getObjectRequest = GetObjectRequest.builder()
                 .bucket("laa-get-payments-finance-data-dev-file-store")
-                .key(filename)
+                .key("templates/" + filename)
                 .build();
 
-        var file = s3.getObject(getObjectRequest);
+        var fileAsStream = s3.getObject(getObjectRequest);
 
-        System.out.println(file);
+        //TODO check null etc
 
-        // todo - use s3 client
-
-        return null;
+        return fileAsStream;
     }
 
 }
