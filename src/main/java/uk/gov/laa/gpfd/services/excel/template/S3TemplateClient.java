@@ -31,7 +31,7 @@ public record S3TemplateClient() implements TemplateClient {
 
         var getObjectRequest = GetObjectRequest.builder()
                 .bucket("laa-get-payments-finance-data-dev-file-store")
-                .key(filename)
+                .key("templates/" + filename)
                 .build();
 
         var file = s3.getObject(getObjectRequest);
