@@ -195,6 +195,8 @@ spec:
                 secretKeyRef:
                   name: ${SECRET_NAME}
                   key: mojfin-db-url
+            - name: S3_FILE_STORE
+              value: laa-get-payments-finance-data-${ENV_NAME}-file-store
           securityContext:
             capabilities:
               drop:
