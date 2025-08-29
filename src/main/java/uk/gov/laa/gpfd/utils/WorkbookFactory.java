@@ -40,10 +40,11 @@ public interface WorkbookFactory {
             return new XSSFWorkbook();
         }
 
-        try {
+        // Use a try-with-resources to ensure stream is closed and cleans up s3 connections
+        // TODO test this
+        try (input) {
             return new XSSFWorkbook(input);
         } catch (IOException e) {
-            try { input.close(); } catch (IOException ignored) {}
             return new XSSFWorkbook();
         }
     }
