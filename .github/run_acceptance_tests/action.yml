@@ -4,7 +4,6 @@ runs:
   using: 'composite'
 
   steps:
-    # Do this first to avoid blatting the code checkouts further along
     - name: Assume role in Cloud Platform
       uses: './.github/login-to-aws'
       env:
@@ -49,9 +48,6 @@ runs:
         bash
 
     - name: Run tests
-#      env:
-        # todo ??????
-#        TESTS_TO_DISABLE: "get_excel_report"
       run: |
         cd testCode
         mvn -B clean test

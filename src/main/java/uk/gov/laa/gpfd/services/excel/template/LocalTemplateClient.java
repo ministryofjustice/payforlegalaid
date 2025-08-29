@@ -22,7 +22,6 @@ public record LocalTemplateClient() implements TemplateClient {
     @SneakyThrows
     public InputStream findTemplateById(UUID id) {
 
-
         var filename = getFileNameFromId(id);
 
         if (filename == null) {

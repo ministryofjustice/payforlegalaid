@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import uk.gov.laa.gpfd.services.S3ClientWrapper;
 import uk.gov.laa.gpfd.services.excel.template.S3TemplateClient;
@@ -31,7 +30,7 @@ public class S3Config {
      * @return an object which contains an S3Client with some of our custom config
      */
     @Bean
-    public S3ClientWrapper createS3Client(@Value("${AWS_REGION}") String awsRegion, @Value("${S3_FILE_STORE}") String fileStore){
+    public S3ClientWrapper createS3Client(@Value("${AWS_REGION}") String awsRegion, @Value("${S3_FILE_STORE}") String fileStore) {
         return new S3ClientWrapper(awsRegion, fileStore);
     }
 
