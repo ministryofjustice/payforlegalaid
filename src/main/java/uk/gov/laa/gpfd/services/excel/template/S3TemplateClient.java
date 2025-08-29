@@ -11,7 +11,7 @@ import uk.gov.laa.gpfd.exception.TemplateResourceException;
 import java.io.InputStream;
 import java.util.UUID;
 
-public record S3TemplateClient() implements TemplateClient {
+public record S3TemplateClient(S3Client s3Client) implements TemplateClient {
 
     @Override
     public InputStream findTemplateById(UUID id) {
@@ -24,18 +24,17 @@ public record S3TemplateClient() implements TemplateClient {
             return null;
         }
 
-        S3Client s3 = S3Client.builder()
-//                .credentialsProvider(WebIdentityTokenFileCredentialsProvider.create())
-                .credentialsProvider(DefaultCredentialsProvider.builder().build())
-                .region(Region.of("eu-west-2"))
-                .build();
+        // TODO check various parameters on the aws docs
+        // TODO use params instead of hardcoded
+        // TODO use shared S3 client
+        // TODO null checks etc
 
         var getObjectRequest = GetObjectRequest.builder()
                 .bucket("laa-get-payments-finance-data-dev-file-store")
                 .key("templates/" + filename)
                 .build();
 
-        var fileAsStream = s3.getObject(getObjectRequest);
+        var fileAsStream = s3Client.getObject(getObjectRequest);
 
         //TODO check null etc
 
