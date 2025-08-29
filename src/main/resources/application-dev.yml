@@ -17,6 +17,8 @@ gpfd:
       password: ${MOJFIN_DEV_WRITE_PASSWORD}
       driver-class-name: oracle.jdbc.pool.OracleDataSource
 
+  s3:
+    use-template-store: true
 
 # Azure AD and Graph config
 spring:

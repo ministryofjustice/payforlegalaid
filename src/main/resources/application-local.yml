@@ -28,6 +28,9 @@ gpfd:
       password:
       driver-class-name: org.h2.Driver
 
+  s3:
+    use-template-store: false
+
 spring:
   cloud:
     azure:

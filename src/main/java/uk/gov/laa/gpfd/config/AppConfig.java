@@ -7,6 +7,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -288,21 +289,10 @@ public class AppConfig {
      *
      * @return a {@link LocalTemplateClient} instance
      */
-    @Profile("local")
+    @ConditionalOnProperty(name = "gpfd.s3.use-template-store", havingValue = "false", matchIfMissing = true)
     @Bean
     public TemplateClient localTemplateClient() {
             return new LocalTemplateClient();
-    }
-
-    /**
-     * Creates a {@link TemplateClient} which returns local template.
-     *
-     * @return a {@link LocalTemplateClient} instance
-     */
-    @Profile("!local")
-    @Bean
-    public TemplateClient s3TemplateClient(S3Client s3Client) {
-        return new S3TemplateClient(s3Client);
     }
 
     /**
@@ -444,14 +434,5 @@ public class AppConfig {
     public StrategyFactory<FileExtension, DataStream> streamStrategyFactory(Collection<DataStream> strategies) {
         return StrategyFactory.createGenericStrategyFactory(strategies, DataStream::getFormat);
     }
-
-    @Profile("!local")
-    @Bean
-    public S3Client createS3Client(@Value("${AWS_REGION}") String awsRegion){
-        return S3Client.builder()
-                .region(Region.of(awsRegion))
-                .build();
-    }
-
 
 }
