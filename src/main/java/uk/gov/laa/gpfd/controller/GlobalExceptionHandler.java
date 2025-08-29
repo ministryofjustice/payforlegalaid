@@ -1,6 +1,7 @@
 package uk.gov.laa.gpfd.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportGenerationException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
@@ -205,4 +207,15 @@ public class GlobalExceptionHandler {
         return badRequest().body(response);
     }
 
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(AwsServiceException.class)
+    public ResponseEntity<ReportsGet500Response> handleAWSErrors(AwsServiceException e) {
+        var message = ERROR_STRING + "Failed to prepare report for download";
+        var errorResponse = new ReportsGet500Response();
+        errorResponse.setError(message);
+
+        log.error("AwsServiceException Thrown: %s".formatted(e.awsErrorDetails().toString()), e);
+
+        return badRequest().body(errorResponse);
+    }
 }

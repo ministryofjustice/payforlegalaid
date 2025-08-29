@@ -28,15 +28,16 @@ runs:
       with:
         path: sourceCode
 
-    - name: Test S3
+    - name: Assume role in Cloud Platform
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ env.ROLE }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Get necessary templates from S3
+#      If in future we add reports without adding an AT, we could filter this to just ones needed in a test
       run: |
         aws s3 sync s3://${{ env.S3_BUCKET }}/templates sourceCode/src/main/resources
-      shell:
-        bash
-
-    - name: Check folder
-      run: |
-        ls sourceCode/src/main/resources
       shell:
         bash
 
@@ -49,9 +50,9 @@ runs:
         bash
 
     - name: Run tests
-      env:
+#      env:
         # todo ??????
-        TESTS_TO_DISABLE: "get_excel_report"
+#        TESTS_TO_DISABLE: "get_excel_report"
       run: |
         cd testCode
         mvn -B clean test
