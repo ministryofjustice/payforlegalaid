@@ -1,7 +1,6 @@
 package uk.gov.laa.gpfd.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -216,6 +215,6 @@ public class GlobalExceptionHandler {
 
         log.error("AwsServiceException Thrown: %s".formatted(e.awsErrorDetails().toString()), e);
 
-        return badRequest().body(errorResponse);
+        return internalServerError().body(errorResponse);
     }
 }
