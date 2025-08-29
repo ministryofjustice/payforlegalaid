@@ -4,6 +4,13 @@ runs:
   using: 'composite'
 
   steps:
+    # Do this first to avoid blatting the code checkouts further along
+    - name: Assume role in Cloud Platform
+      uses: './.github/login-to-aws'
+      env:
+        ROLE: ${{ env.ROLE }}
+        AWS_REGION: ${{ env.AWS_REGION }}
+
     - name: Checkout GitHub repository
       uses: actions/checkout@v4
       with:
@@ -25,12 +32,6 @@ runs:
       uses: actions/checkout@v4
       with:
         path: sourceCode
-
-    - name: Assume role in Cloud Platform
-      uses: './.github/login-to-aws'
-      env:
-        ROLE: ${{ env.ROLE }}
-        AWS_REGION: ${{ env.AWS_REGION }}
 
     - name: Get necessary templates from S3
 #      If in future we add reports without adding an AT, we could filter this to just ones needed in a test
