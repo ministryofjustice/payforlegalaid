@@ -447,9 +447,9 @@ public class AppConfig {
 
     @Profile("!local")
     @Bean
-    public S3Client createS3Client(){
+    public S3Client createS3Client(@Value("${AWS_REGION}") String awsRegion){
         return S3Client.builder()
-                .region(Region.of("eu-west-2"))
+                .region(Region.of(awsRegion))
                 .build();
     }
 
