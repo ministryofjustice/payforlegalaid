@@ -6,8 +6,12 @@ on:
 
 jobs:
   feature_branch:
-
+#    We are for now connecting to the dev s3 bucket
+#    TODO uat this
+    environment: development
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write # needed so AWS can login in the acceptance test action
     steps:
       - name: Checkout GitHub repository
         uses: actions/checkout@v4
@@ -24,3 +28,7 @@ jobs:
 
       - name: Run acceptance tests
         uses: './.github/run_acceptance_tests'
+        env:
+          ROLE: ${{ secrets.FILE_STORE_DEV_S3_ROLE_TO_ASSUME }}
+          AWS_REGION: ${{ vars.FILE_STORE_DEV_S3_REGION }}
+          S3_BUCKET: ${{ vars.FILE_STORE_DEV_S3_BUCKET_NAME }}
