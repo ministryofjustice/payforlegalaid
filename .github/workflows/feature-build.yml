@@ -26,13 +26,9 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN}}
 
-      - name: Assume role in Cloud Platform
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.FILE_STORE_DEV_S3_ROLE_TO_ASSUME }}
-          aws-region: ${{ vars.FILE_STORE_DEV_S3_REGION }}
-
       - name: Run acceptance tests
         uses: './.github/run_acceptance_tests'
         env:
+          ROLE: ${{ secrets.FILE_STORE_DEV_S3_ROLE_TO_ASSUME }}
+          AWS_REGION: ${{ vars.FILE_STORE_DEV_S3_REGION }}
           S3_BUCKET: ${{ vars.FILE_STORE_DEV_S3_BUCKET_NAME }}
