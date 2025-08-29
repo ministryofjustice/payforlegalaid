@@ -42,7 +42,7 @@ runs:
         bash
 
     - name: Run tests
-      env:
+#      env:
         # todo ??????
 #        TESTS_TO_DISABLE: "get_excel_report"
       run: |
