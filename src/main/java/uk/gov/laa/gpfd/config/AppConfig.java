@@ -20,6 +20,8 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.web.client.RestTemplate;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
 import uk.gov.laa.gpfd.dao.JdbcWorkbookDataStreamer;
 import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.dao.sql.core.FetchSizePolicy;
@@ -299,8 +301,8 @@ public class AppConfig {
      */
     @Profile("!local")
     @Bean
-    public TemplateClient s3TemplateClient() {
-        return new S3TemplateClient();
+    public TemplateClient s3TemplateClient(S3Client s3Client) {
+        return new S3TemplateClient(s3Client);
     }
 
     /**
@@ -441,6 +443,14 @@ public class AppConfig {
     @Bean
     public StrategyFactory<FileExtension, DataStream> streamStrategyFactory(Collection<DataStream> strategies) {
         return StrategyFactory.createGenericStrategyFactory(strategies, DataStream::getFormat);
+    }
+
+    @Profile("!local")
+    @Bean
+    public S3Client createS3Client(){
+        return S3Client.builder()
+                .region(Region.of("eu-west-2"))
+                .build();
     }
 
 
