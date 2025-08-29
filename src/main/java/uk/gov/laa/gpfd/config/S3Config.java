@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import uk.gov.laa.gpfd.services.S3ClientWrapper;
 import uk.gov.laa.gpfd.services.excel.template.S3TemplateClient;
 import uk.gov.laa.gpfd.services.excel.template.TemplateClient;
 
@@ -19,21 +20,19 @@ public class S3Config {
      * @return a {@link S3TemplateClient} instance
      */
     @Bean
-    public TemplateClient s3TemplateClient(S3Client s3Client) {
-        return new S3TemplateClient(s3Client);
+    public TemplateClient s3TemplateClient(S3ClientWrapper s3ClientWrapper) {
+        return new S3TemplateClient(s3ClientWrapper);
     }
 
     /**
-     * Creates a {@link S3Client}
+     * Creates a {@link S3ClientWrapper}, a simple object that wraps around the AWS {@link S3Client}
      *
      * @param awsRegion - region S3 bucket is in
-     * @return a S3Client
+     * @return an object which contains an S3Client with some of our custom config
      */
     @Bean
-    public S3Client createS3Client(@Value("${AWS_REGION}") String awsRegion){
-        return S3Client.builder()
-                .region(Region.of(awsRegion))
-                .build();
+    public S3ClientWrapper createS3Client(@Value("${AWS_REGION}") String awsRegion, @Value("${S3_FILE_STORE}") String fileStore){
+        return new S3ClientWrapper(awsRegion, fileStore);
     }
 
 }
