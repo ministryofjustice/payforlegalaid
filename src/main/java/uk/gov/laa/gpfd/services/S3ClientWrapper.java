@@ -15,9 +15,16 @@ public class S3ClientWrapper {
     private final String s3Bucket;
 
     public S3ClientWrapper(String awsRegion, String s3Bucket) {
+
+        // By default, AWS does not limit API calls. Set some to avoid any risk of calls hanging
+        var config = ClientOverrideConfiguration.builder()
+                .apiCallAttemptTimeout(Duration.ofSeconds(3))
+                .apiCallTimeout(Duration.ofSeconds(10))
+                .build();
+
         this.s3Client = S3Client.builder()
                 .region(Region.of(awsRegion))
-                .overrideConfiguration(b -> b.apiCallAttemptTimeout(Duration.ofSeconds(20)).apiCallTimeout(Duration.ofSeconds(60)).build())
+                .overrideConfiguration(config)
                 .build();
         this.s3Bucket = s3Bucket;
     }
