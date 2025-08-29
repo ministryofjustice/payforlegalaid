@@ -4,6 +4,12 @@ runs:
   using: 'composite'
 
   steps:
+    - name: Assume role in Cloud Platform
+      uses: './.github/login-to-aws'
+      env:
+        ROLE: ${{ env.ROLE }}
+        AWS_REGION: ${{ env.AWS_REGION }}
+
     - name: Checkout GitHub repository
       uses: actions/checkout@v4
       with:
@@ -28,12 +34,6 @@ runs:
       with:
         path: sourceCode
 
-    - name: Assume role in Cloud Platform
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        role-to-assume: ${{ env.ROLE }}
-        aws-region: ${{ env.AWS_REGION }}
-
     - name: Get necessary templates from S3
 #      If in future we add reports without adding an AT, we could filter this to just ones needed in a test
       run: |
@@ -50,9 +50,6 @@ runs:
         bash
 
     - name: Run tests
-#      env:
-        # todo ??????
-#        TESTS_TO_DISABLE: "get_excel_report"
       run: |
         cd testCode
         mvn -B clean test

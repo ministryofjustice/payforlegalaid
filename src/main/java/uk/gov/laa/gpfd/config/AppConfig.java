@@ -11,7 +11,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,8 +20,6 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.web.client.RestTemplate;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
 import uk.gov.laa.gpfd.dao.JdbcWorkbookDataStreamer;
 import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.dao.sql.core.FetchSizePolicy;
@@ -47,7 +44,6 @@ import uk.gov.laa.gpfd.services.excel.formatting.CellFormatting;
 import uk.gov.laa.gpfd.services.excel.formatting.ColumnFormatting;
 import uk.gov.laa.gpfd.services.excel.formatting.Formatting;
 import uk.gov.laa.gpfd.services.excel.template.LocalTemplateClient;
-import uk.gov.laa.gpfd.services.excel.template.S3TemplateClient;
 import uk.gov.laa.gpfd.services.excel.template.TemplateClient;
 import uk.gov.laa.gpfd.services.excel.workbook.StyleManager;
 import uk.gov.laa.gpfd.services.stream.AbstractDataStream;
@@ -285,14 +281,14 @@ public class AppConfig {
     }
 
     /**
-     * Creates a {@link TemplateClient} which returns local template.
+     * Creates a {@link TemplateClient} which returns a local template.
      *
      * @return a {@link LocalTemplateClient} instance
      */
     @ConditionalOnProperty(name = "gpfd.s3.use-template-store", havingValue = "false", matchIfMissing = true)
     @Bean
     public TemplateClient localTemplateClient() {
-            return new LocalTemplateClient();
+        return new LocalTemplateClient();
     }
 
     /**
