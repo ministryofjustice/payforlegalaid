@@ -7,13 +7,13 @@ import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
 import java.io.InputStream;
 import java.util.UUID;
 
-public record S3TemplateClient(S3ClientWrapper s3Client) implements TemplateClient {
+public record S3TemplateClient(S3ClientWrapper s3Client, FileNameResolver fileNameResolver) implements TemplateClient {
 
     @Override
     @SneakyThrows
     public InputStream findTemplateById(UUID id) {
 
-        var filename = getFileNameFromId(id);
+        var filename = fileNameResolver.getFileNameFromId(id);
 
         if (filename == null) {
             return null;

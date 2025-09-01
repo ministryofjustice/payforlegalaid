@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.services.s3.S3Client;
+import uk.gov.laa.gpfd.services.excel.template.FileNameResolver;
 import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
 import uk.gov.laa.gpfd.services.excel.template.S3TemplateClient;
 import uk.gov.laa.gpfd.services.excel.template.TemplateClient;
@@ -19,8 +20,8 @@ public class S3Config {
      * @return a {@link S3TemplateClient} instance
      */
     @Bean
-    public TemplateClient s3TemplateClient(S3ClientWrapper s3ClientWrapper) {
-        return new S3TemplateClient(s3ClientWrapper);
+    public TemplateClient s3TemplateClient(S3ClientWrapper s3ClientWrapper, FileNameResolver fileNameResolver) {
+        return new S3TemplateClient(s3ClientWrapper, fileNameResolver);
     }
 
     /**

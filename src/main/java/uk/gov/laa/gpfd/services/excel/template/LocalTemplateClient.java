@@ -5,7 +5,6 @@ import lombok.SneakyThrows;
 import java.io.InputStream;
 import java.util.UUID;
 
-import static uk.gov.laa.gpfd.exception.TemplateResourceException.TemplateNotFoundException;
 import static uk.gov.laa.gpfd.exception.TemplateResourceException.TemplateResourceNotFoundException;
 
 /**
@@ -16,13 +15,13 @@ import static uk.gov.laa.gpfd.exception.TemplateResourceException.TemplateResour
  * Templates are identified by UUID strings and mapped to Excel file resources packaged
  * with the application.
  */
-public record LocalTemplateClient() implements TemplateClient {
+public record LocalTemplateClient(FileNameResolver fileNameResolver) implements TemplateClient {
 
     @Override
     @SneakyThrows
     public InputStream findTemplateById(UUID id) {
 
-        var filename = getFileNameFromId(id);
+        var filename = fileNameResolver.getFileNameFromId(id);
 
         if (filename == null) {
             return null;
