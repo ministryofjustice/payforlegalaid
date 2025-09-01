@@ -10,12 +10,12 @@ gpfd:
           url: ${MOJFIN_DB_URL}
           username: ${MOJFIN_DEV_READ_USERNAME}
           password: ${MOJFIN_DEV_READ_PASSWORD}
-          driver-class-name: oracle.jdbc.OracleDriver
+          driver-class-name: oracle.jdbc.pool.OracleDataSource
     write:
       url: ${MOJFIN_DB_URL}
       username: ${MOJFIN_DEV_WRITE_USERNAME}
       password: ${MOJFIN_DEV_WRITE_PASSWORD}
-      driver-class-name: oracle.jdbc.OracleDriver
+      driver-class-name: oracle.jdbc.pool.OracleDataSource
 
 
 # Azure AD and Graph config
