@@ -1,10 +1,15 @@
 package uk.gov.laa.gpfd.services.s3;
 
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import uk.gov.laa.gpfd.controller.GlobalExceptionHandler;
 
+/**
+ * Class that wraps around the default {@link S3Client}, allowing us to set default behaviours
+ */
 public class S3ClientWrapper {
 
     private final S3Client s3Client;
@@ -20,6 +25,13 @@ public class S3ClientWrapper {
         this.s3Bucket = s3Bucket;
     }
 
+    /**
+     * Fetches a given template from the S3 bucket.
+     * If there is an error, a {@link AwsServiceException} can be thrown. This will be caught by the {@link GlobalExceptionHandler}
+     *
+     * @param filename - template file name
+     * @return Stream of the file
+     */
     public ResponseInputStream<GetObjectResponse> getTemplate(String filename){
 
         var getObjectRequest = GetObjectRequest.builder()

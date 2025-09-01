@@ -27,6 +27,6 @@ jobs:
       - name: Run acceptance tests
         uses: './.github/run_acceptance_tests'
         env:
-          ROLE: ${{ secrets.FILE_STORE_DEV_S3_ROLE_TO_ASSUME }}
-          AWS_REGION: ${{ vars.FILE_STORE_DEV_S3_REGION }}
-          S3_BUCKET: ${{ vars.FILE_STORE_DEV_S3_BUCKET_NAME }}
+          ROLE: ${{ secrets.FILE_STORE_UAT_S3_ROLE_TO_ASSUME }}
+          AWS_REGION: ${{ vars.FILE_STORE_UAT_S3_REGION }}
+          S3_BUCKET: ${{ vars.FILE_STORE_UAT_S3_BUCKET_NAME }}

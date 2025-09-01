@@ -7,6 +7,10 @@ import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
 import java.io.InputStream;
 import java.util.UUID;
 
+/**
+ * An implementation of {@link TemplateClient} that provides template resources
+ * from an S3 bucket.
+ */
 public record S3TemplateClient(S3ClientWrapper s3Client, FileNameResolver fileNameResolver) implements TemplateClient {
 
     @Override

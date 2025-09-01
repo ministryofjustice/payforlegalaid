@@ -13,7 +13,7 @@ import static uk.gov.laa.gpfd.exception.TemplateResourceException.TemplateResour
  * them from memory.
  * <p>
  * Templates are identified by UUID strings and mapped to Excel file resources packaged
- * with the application.
+ * with the application, the mapping occurring in the {@link FileNameResolver}.
  */
 public record LocalTemplateClient(FileNameResolver fileNameResolver) implements TemplateClient {
 

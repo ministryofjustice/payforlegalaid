@@ -10,7 +10,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class S3ClientFactoryTest {
+class S3ClientFactoryTest {
 
     private final S3ClientFactory s3ClientFactory = new S3ClientFactory();
     private S3Client createdClient;

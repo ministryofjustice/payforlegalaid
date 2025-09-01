@@ -41,7 +41,6 @@ public interface WorkbookFactory {
         }
 
         // Use a try-with-resources to ensure stream is closed and cleans up s3 connections
-        // TODO test this
         try (input) {
             return new XSSFWorkbook(input);
         } catch (IOException e) {

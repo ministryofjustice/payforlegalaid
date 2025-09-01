@@ -213,7 +213,7 @@ public class GlobalExceptionHandler {
         var errorResponse = new ReportsGet500Response();
         errorResponse.setError(message);
 
-        log.error("AwsServiceException Thrown: %s".formatted(e.awsErrorDetails().toString()), e);
+        log.error("AwsServiceException Thrown: {}", e.awsErrorDetails().toString());
 
         return internalServerError().body(errorResponse);
     }

@@ -283,6 +283,7 @@ public class AppConfig {
 
     /**
      * Creates a {@link TemplateClient} which returns a local template.
+     * For environments with s3.use-template-store enabled, see {@link S3Config} for bean-creation.
      *
      * @return a {@link LocalTemplateClient} instance
      */
@@ -292,6 +293,11 @@ public class AppConfig {
         return new LocalTemplateClient(fileNameResolver);
     }
 
+    /**
+     * Creates a {@link FileNameResolver} for use in the app.
+     *
+     * @return a file name resolver instance.
+     */
     @Bean
     public FileNameResolver createFileNameResolver() {
         return new FileNameResolver();

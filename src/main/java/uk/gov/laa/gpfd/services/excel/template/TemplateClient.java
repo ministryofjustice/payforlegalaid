@@ -22,5 +22,4 @@ public interface TemplateClient {
      * @return an {@link InputStream} containing the template data
      */
     InputStream findTemplateById(UUID id);
-
 }

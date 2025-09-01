@@ -10,6 +10,9 @@ import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
 import uk.gov.laa.gpfd.services.excel.template.S3TemplateClient;
 import uk.gov.laa.gpfd.services.excel.template.TemplateClient;
 
+/**
+ * Configuration class for when we look at S3 buckets.
+ */
 @Configuration
 @ConditionalOnProperty(name = "gpfd.s3.use-template-store", havingValue = "true")
 public class S3Config {
