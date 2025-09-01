@@ -6,9 +6,7 @@ on:
 
 jobs:
   feature_branch:
-#    We are for now connecting to the dev s3 bucket
-#    TODO uat this
-    environment: development
+    environment: acceptance-tests
     runs-on: ubuntu-latest
     permissions:
       id-token: write # needed so AWS can login in the acceptance test action
