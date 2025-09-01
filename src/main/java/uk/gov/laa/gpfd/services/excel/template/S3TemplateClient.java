@@ -1,14 +1,8 @@
 package uk.gov.laa.gpfd.services.excel.template;
 
 import lombok.SneakyThrows;
-import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
-import software.amazon.awssdk.auth.credentials.WebIdentityTokenFileCredentialsProvider;
-import software.amazon.awssdk.core.sync.ResponseTransformer;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import uk.gov.laa.gpfd.exception.TemplateResourceException.TemplateResourceNotFoundException;
-import uk.gov.laa.gpfd.services.S3ClientWrapper;
+import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
 
 import java.io.InputStream;
 import java.util.UUID;
