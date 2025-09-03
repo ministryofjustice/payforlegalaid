@@ -1,50 +1,53 @@
 package uk.gov.laa.gpfd.services.excel.template;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.laa.gpfd.exception.TemplateResourceException.TemplateResourceNotFoundException;
 
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class LocalTemplateClientTest {
 
-    private TemplateClient client;
+    @Mock
+    private FileNameResolver fileNameResolver;
+
+    @InjectMocks
+    private LocalTemplateClient localTemplateClient;
+
+    private final UUID testUUID = UUID.randomUUID();
 
     @BeforeEach
-    void setUp() {
-        client = new LocalTemplateClient();
-    }
-
-    @ParameterizedTest
-    @DisplayName("Should return input stream for valid template ID")
-    @ValueSource(strings = {
-            "00000000-0000-0000-0000-000000000000",
-            "7073dd13-e325-4863-a05c-a049a815d1f7",
-            "eee30b23-2c8d-4b4b-bb11-8cd67d07915c",
-            "a017241a-359f-4fdb-a0cd-7f28f1946ef1"
-    })
-    void shouldReturnInputStreamForValidId(String id) {
-        assertNotNull(client.findTemplateById(UUID.fromString(id)));
-    }
-
-    @ParameterizedTest
-    @DisplayName("Should return null input stream for valid template ID")
-    @ValueSource(strings = {
-            "f46b4d3d-c100-429a-bf9a-223305dbdbfb",
-    })
-    void shouldReturnNullForValidId(String id) {
-        assertNull(client.findTemplateById(UUID.fromString(id)));
+    void resetMocks() {
+        reset(fileNameResolver);
     }
 
     @Test
-    void shouldThrowsExceptionForNullId() {
-        assertThrows(IllegalArgumentException.class, () -> client.findTemplateById(null));
+    void shouldReturnInputStreamForValidId() {
+        when(fileNameResolver.getFileNameFromId(testUUID)).thenReturn("testTemplate.xlsx");
+        assertNotNull(localTemplateClient.findTemplateById(testUUID));
+    }
+
+    @Test
+    void shouldReturnNullForNullFilename() {
+        when(fileNameResolver.getFileNameFromId(testUUID)).thenReturn(null);
+        assertNull(localTemplateClient.findTemplateById(testUUID));
+    }
+
+    @Test
+    void shouldThrowsExceptionForFileThatDoesNotExist() {
+        when(fileNameResolver.getFileNameFromId(testUUID)).thenReturn("notATestTemplate.xlsx");
+        assertThrows(TemplateResourceNotFoundException.class, () -> localTemplateClient.findTemplateById(testUUID));
     }
 
 }

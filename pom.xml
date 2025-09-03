@@ -32,6 +32,8 @@
         <payforlegalaid-openapi.version>0.0.6</payforlegalaid-openapi.version>
         <tomcat-embed.version>10.1.44</tomcat-embed.version>
         <common-lang3.version>3.18.0</common-lang3.version>
+
+        <aws.java.sdk.version>2.32.30</aws.java.sdk.version>
     </properties>
 
     <build>
@@ -105,14 +107,6 @@
                             </artifactItems>
                         </configuration>
                     </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.6.1</version>
-                <executions>
                     <execution>
                         <id>unpack-govuk</id>
                         <phase>generate-resources</phase>
@@ -135,7 +129,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -253,6 +246,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>bom</artifactId>
+                <version>${aws.java.sdk.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -359,6 +359,15 @@
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-core</artifactId>
             <version>${tomcat-embed.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>sts</artifactId>
         </dependency>
 
         <!-- Test Dependencies-->
