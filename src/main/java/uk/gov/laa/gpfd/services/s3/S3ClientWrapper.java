@@ -26,7 +26,7 @@ public class S3ClientWrapper {
     }
 
     /**
-     * Fetches a given template from the S3 bucket.
+     * Fetches the current version of a given template from the S3 bucket.
      * If there is an error, a {@link AwsServiceException} can be thrown. This will be caught by the {@link GlobalExceptionHandler}
      *
      * @param filename - template file name
