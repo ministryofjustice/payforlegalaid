@@ -42,11 +42,19 @@ jobs:
           repository: ${{ env.TEST_REPO }}
           path: testCode
 
-      - name: Checkout and build openapi
-        uses: './checkout-build-openapi/action.yml'
-        id: get_openapi_version
+      - name: Checkout openapi spec
+        uses: actions/checkout@v4
         with:
-          subfolder: 'testCode'
+          repository: ministryofjustice/payforlegalaid-openapi
+          path: openapi
+          ref: refs/tags/v0.0.7
+
+      - name: Build openapi spec dependency
+        run: |
+          cd openapi
+          mvn -B clean install
+        shell:
+          bash
 
 
       - name: Setup XML tools
