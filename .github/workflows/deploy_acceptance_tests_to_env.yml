@@ -42,10 +42,12 @@ jobs:
           repository: ${{ env.TEST_REPO }}
           path: testCode
 
-      - name: Build OpenAPI Spec
-        uses: ./.github/checkout-build-openapi
+      - name: Checkout and build openapi
+        uses: './.github/checkout-build-openapi'
+        id: get_openapi_version
         with:
-          subfolder:
+          subfolder: 'testCode'
+
 
       - name: Setup XML tools
         run: |

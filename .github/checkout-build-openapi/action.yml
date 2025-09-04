@@ -1,11 +1,6 @@
 name: Checkout and build OpenAPI repository
 
-on:
-  workflow_call:
-    inputs:
-      subfolder:
-        required: false
-        type: string
+
 
 outputs:
   version:
