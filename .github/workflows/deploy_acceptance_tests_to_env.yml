@@ -42,8 +42,8 @@ jobs:
           repository: ${{ env.TEST_REPO }}
           path: testCode
 
-      - name: build OPEN API repository
-        uses: ./.github/checkout-build-openapi/action.yml
+      - name: Build OpenAPI Spec
+        uses: ./.github/checkout-build-openapi
         with:
           subfolder:
 
