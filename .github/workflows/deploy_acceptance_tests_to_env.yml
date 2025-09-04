@@ -36,29 +36,33 @@ jobs:
           sparse-checkout: data
           sparse-checkout-cone-mode: true
 
+      - name: Checkout openapi spec
+        uses: actions/checkout@v4
+        with:
+          repository: ministryofjustice/payforlegalaid-openapi
+          path: openapi
+          ref: refs/tags/v0.0.6
+
+      - name: Build openapi spec dependency
+        run: |
+          ls -la
+           echo "Current directory: $(pwd)"
+          cd openapi
+          mvn -B clean install
+        shell:
+          bash
+
       - name: Checkout Test repository
         uses: actions/checkout@v4
         with:
           repository: ${{ env.TEST_REPO }}
           path: testCode
 
-      - name: Checkout openapi spec
-        uses: actions/checkout@v4
-        with:
-          repository: ministryofjustice/payforlegalaid-openapi
-          path: openapi
-          ref: refs/tags/v0.0.7
-
-      - name: Build openapi spec dependency
-        run: |
-          cd openapi
-          mvn -B clean install
-        shell:
-          bash
-
 
       - name: Setup XML tools
         run: |
+          echo "Installing XML tools..." 
+          echo pwd $(pwd) and ls -la 
           sudo apt-get update && sudo apt-get install -y libxml2-utils
 
       - name: Configure AWS credentials
@@ -97,7 +101,8 @@ jobs:
         run: |
           cd testCode
           echo "Building test container image..."
-          
+          ls -la
+          echo "Current directory: $(pwd)"
           export REGISTRY=${{ steps.login-ecr.outputs.registry }}
           
           docker buildx build \
