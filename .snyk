@@ -2,10 +2,12 @@
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
-  SNYK-JAVA-IONETTY-11799531:
+  SNYK-JAVA-IONETTY-12485149:
     - '*':
         reason: >-
-          Azure Spring Integration has yet to upgrade their versions with the new netty-handler.
-        expires: 2025-08-27T09:00:00.000Z
-        created: 2025-08-14T16:51:23.725Z
+          Neither Azure nor S3 have upgraded yet. We don't actively use netty as
+          a server or use async s3 calls so we do not run any netty processes at
+          present
+        expires: 2025-09-11T00:00:00.000Z
+        created: 2025-09-04T13:42:15.862Z
 patch: {}
