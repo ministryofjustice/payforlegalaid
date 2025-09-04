@@ -43,7 +43,9 @@ jobs:
           path: testCode
 
       - name: build OPEN API repository
-        uses: ./.github/checkout-build-openapi
+        uses: ./.github/checkout-build-openapi/action.yml
+        with:
+          subfolder:
 
       - name: Setup XML tools
         run: |
