@@ -43,7 +43,7 @@ jobs:
           path: testCode
 
       - name: Checkout and build openapi
-        uses: './.github/checkout-build-openapi'
+        uses: './checkout-build-openapi/action.yml'
         id: get_openapi_version
         with:
           subfolder: 'testCode'
