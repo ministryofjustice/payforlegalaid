@@ -114,71 +114,71 @@ jobs:
         env:
           DOCKER_BUILDKIT: 1
 
-      - name: Update deployment manifest
-        run: |
-          TEST_IMAGE="$REGISTRY/${{ env.ECR_REPOSITORY }}:${{ env.APP_NAME }}-${{ github.sha }}"
-          echo "TEST_IMAGE=$TEST_IMAGE" >> $GITHUB_ENV
-
-          yq eval --inplace \
-            ".spec.containers[0].image = \"$TEST_IMAGE\"" \
-            testCode/deployment/pod.yaml
-          
-          full_image=$(yq e '.spec.containers[0].image' testCode/deployment/pod.yaml)
-          ecr_repo=$(echo "$full_image" | cut -d':' -f1)
-          image_tag=$(echo "$full_image" | cut -d':' -f2)
-
-          echo "ECR_REPO=$ecr_repo" >> $GITHUB_ENV
-          echo "IMAGE_TAG=$image_tag" >> $GITHUB_ENV
-        shell: bash
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-
-      - name: Deploy to Kubernetes
-        run: |
-          xmllint --format --encode UTF-8 data/migrations/db.changelog-master.xml > normalized-changelog.xml
-          
-          CHECKSUM=$(sha256sum normalized-changelog.xml | cut -d' ' -f1)
-
-          kubectl create configmap liquibase-changelog \
-          --namespace ${{ env.KUBE_NAMESPACE }} \
-          --from-file=changelog.xml=normalized-changelog.xml \
-          --dry-run=client -o yaml | \
-          yq eval '
-          .metadata.annotations."checksum/xml" = "'"$CHECKSUM"'" |
-          .metadata.labels."app.kubernetes.io/component" = "database-migrations"
-          ' - | kubectl apply -f -
-
-          echo "✓ ConfigMap deployed with checksum: $CHECKSUM"
-          
-          echo "Checking for existing pod..."
-          
-          # Clean up any existing pod
-          if kubectl -n ${{ env.KUBE_NAMESPACE }} get pod -l app=${{ env.APP_NAME }} 2>/dev/null; then
-            echo "::warning::Existing test pod found - replacing it"
-            kubectl -n ${{ env.KUBE_NAMESPACE }} delete pod -l app=${{ env.APP_NAME }} --force --grace-period=0
-            sleep 5  # Wait for termination
-          fi
-
-          kubectl -n ${{ env.KUBE_NAMESPACE }} create -f testCode/deployment/pod.yaml
-        shell: bash
-
-      - name: Generate comprehensive deployment summary
-        shell: bash
-        run: |
-          ecr_repo=$(printf '%s' "$ECR_REPO" | sed 's/"/\\"/g')
-          image_tag=$(printf '%s' "$IMAGE_TAG" | sed 's/"/\\"/g')
-
-          cat <<EOF >> $GITHUB_STEP_SUMMARY
-          ### 🚀 Test Environment Deployment Summary
-          #### 🐳 Container Information
-          - **ECR Repository:** \`$ECR_REPO\`
-          - **Image Tag:** \`$IMAGE_TAG\`
-          
-          #### ✅ Validation
-          - ECR repository verified
-          - Image successfully pushed
-          - Kubernetes pod deployed and ready
-          
-          #### ⏱️ Deployment Timestamp
-          - $(date -u +'%Y-%m-%d %H:%M:%S UTC')
-          EOF
+#      - name: Update deployment manifest
+#        run: |
+#          TEST_IMAGE="$REGISTRY/${{ env.ECR_REPOSITORY }}:${{ env.APP_NAME }}-${{ github.sha }}"
+#          echo "TEST_IMAGE=$TEST_IMAGE" >> $GITHUB_ENV
+#
+#          yq eval --inplace \
+#            ".spec.containers[0].image = \"$TEST_IMAGE\"" \
+#            testCode/deployment/pod.yaml
+#
+#          full_image=$(yq e '.spec.containers[0].image' testCode/deployment/pod.yaml)
+#          ecr_repo=$(echo "$full_image" | cut -d':' -f1)
+#          image_tag=$(echo "$full_image" | cut -d':' -f2)
+#
+#          echo "ECR_REPO=$ecr_repo" >> $GITHUB_ENV
+#          echo "IMAGE_TAG=$image_tag" >> $GITHUB_ENV
+#        shell: bash
+#        env:
+#          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#
+#      - name: Deploy to Kubernetes
+#        run: |
+#          xmllint --format --encode UTF-8 data/migrations/db.changelog-master.xml > normalized-changelog.xml
+#
+#          CHECKSUM=$(sha256sum normalized-changelog.xml | cut -d' ' -f1)
+#
+#          kubectl create configmap liquibase-changelog \
+#          --namespace ${{ env.KUBE_NAMESPACE }} \
+#          --from-file=changelog.xml=normalized-changelog.xml \
+#          --dry-run=client -o yaml | \
+#          yq eval '
+#          .metadata.annotations."checksum/xml" = "'"$CHECKSUM"'" |
+#          .metadata.labels."app.kubernetes.io/component" = "database-migrations"
+#          ' - | kubectl apply -f -
+#
+#          echo "✓ ConfigMap deployed with checksum: $CHECKSUM"
+#
+#          echo "Checking for existing pod..."
+#
+#          # Clean up any existing pod
+#          if kubectl -n ${{ env.KUBE_NAMESPACE }} get pod -l app=${{ env.APP_NAME }} 2>/dev/null; then
+#            echo "::warning::Existing test pod found - replacing it"
+#            kubectl -n ${{ env.KUBE_NAMESPACE }} delete pod -l app=${{ env.APP_NAME }} --force --grace-period=0
+#            sleep 5  # Wait for termination
+#          fi
+#
+#          kubectl -n ${{ env.KUBE_NAMESPACE }} create -f testCode/deployment/pod.yaml
+#        shell: bash
+#
+#      - name: Generate comprehensive deployment summary
+#        shell: bash
+#        run: |
+#          ecr_repo=$(printf '%s' "$ECR_REPO" | sed 's/"/\\"/g')
+#          image_tag=$(printf '%s' "$IMAGE_TAG" | sed 's/"/\\"/g')
+#
+#          cat <<EOF >> $GITHUB_STEP_SUMMARY
+#          ### 🚀 Test Environment Deployment Summary
+#          #### 🐳 Container Information
+#          - **ECR Repository:** \`$ECR_REPO\`
+#          - **Image Tag:** \`$IMAGE_TAG\`
+#
+#          #### ✅ Validation
+#          - ECR repository verified
+#          - Image successfully pushed
+#          - Kubernetes pod deployed and ready
+#
+#          #### ⏱️ Deployment Timestamp
+#          - $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+#          EOF
