@@ -45,9 +45,8 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
     public ResponseEntity<ReportsGet200Response> reportsGet() {
         var reportListEntries = reportManagementService.fetchReportListEntries();
 
-        var response = new ReportsGet200Response() {{
-            reportListEntries.forEach(this::addReportListItem);
-        }};
+        var response = new ReportsGet200Response();
+        reportListEntries.forEach(response::addReportListItem);
 
         log.debug("Returning a reportListResponse to user");
         return ResponseEntity.ok(response);

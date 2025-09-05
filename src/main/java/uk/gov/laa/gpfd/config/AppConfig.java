@@ -262,12 +262,15 @@ public class AppConfig {
      */
     @Bean
     RestTemplate restTemplate() {
-        return new RestTemplate() {{
-            setMessageConverters(List.of(
-                    new StringHttpMessageConverter(),
-                    new ByteArrayHttpMessageConverter()
-            ));
-        }};
+        var restTemplate = new RestTemplate();
+        restTemplate.setMessageConverters(
+                List.of(
+                        new StringHttpMessageConverter(),
+                        new ByteArrayHttpMessageConverter()
+                )
+        );
+
+        return restTemplate;
     }
 
     /**
