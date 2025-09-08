@@ -22,7 +22,7 @@ public abstract class JdbcWorkbookDataStreamer {
      *
      * @param jdbcOperations the Spring JDBC operations template (must not be null)
      */
-    public JdbcWorkbookDataStreamer(JdbcOperations jdbcOperations) {
+    protected JdbcWorkbookDataStreamer(JdbcOperations jdbcOperations) {
         this.jdbcOperations = jdbcOperations;
     }
 
