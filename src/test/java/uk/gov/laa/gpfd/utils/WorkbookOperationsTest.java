@@ -131,7 +131,7 @@ class WorkbookOperationsTest implements WorkbookOperations {
     @ParameterizedTest
     @MethodSource("nullParametersProvider")
     void transferSheet_throwsWhenNullParams(Workbook source, Workbook target, String sheetName) throws IOException {
-        try (var __ = new SXSSFWorkbook()) {
+        try (var unused_sheet = new SXSSFWorkbook()) {
 
             assertThrows(NullPointerException.class, () -> transferSheet(source, target, sheetName));
         }
