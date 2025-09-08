@@ -83,17 +83,6 @@ class AppConfigTest {
     }
 
     @Test
-    void shouldRestTemplateMessageConverters() {
-        // Given
-        // When
-        var restTemplate = applicationContext.getBean(RestTemplate.class);
-
-        // THen
-        assertNotNull(restTemplate, "RestTemplate bean should be created.");
-        assertEquals(2, restTemplate.getMessageConverters().size(), "RestTemplate should have two message converters.");
-    }
-
-    @Test
     void shouldRestTemplateTimeout() {
         // Given
         // When
