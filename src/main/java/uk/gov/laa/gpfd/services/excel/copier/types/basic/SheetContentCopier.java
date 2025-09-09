@@ -19,6 +19,9 @@ import static uk.gov.laa.gpfd.services.excel.copier.types.basic.CellValueCopier.
  * between Excel worksheets using Apache POI.
  */
 public abstract class SheetContentCopier {
+    private SheetContentCopier() {
+        // Prevent instantiation
+    }
 
     /**
      * Creates a {@link BiConsumer} that copies cell content (values, styles) from source to target sheet.

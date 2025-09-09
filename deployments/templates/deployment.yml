@@ -26,6 +26,7 @@ spec:
       initContainers:
         - name: liquibase
           image: ${REGISTRY}/${DATA_REPOSITORY}:latest
+          imagePullPolicy: Always
           env:
             - name: MOJFIN_DEV_WRITE_USERNAME
               valueFrom:
@@ -195,6 +196,8 @@ spec:
                 secretKeyRef:
                   name: ${SECRET_NAME}
                   key: mojfin-db-url
+            - name: S3_FILE_STORE
+              value: laa-get-payments-finance-data-${ENV_NAME}-file-store
           securityContext:
             capabilities:
               drop:

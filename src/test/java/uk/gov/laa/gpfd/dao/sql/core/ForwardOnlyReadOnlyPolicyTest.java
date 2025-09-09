@@ -16,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -35,9 +34,9 @@ class ForwardOnlyReadOnlyPolicyTest {
     void createStatement_WithValidParameters_CreatesForwardOnlyReadOnlyStatement() throws SQLException {
         var policy = new ForwardOnlyReadOnlyPolicy();
         when(mockConnection.prepareStatement(
-                        eq(VALID_SQL),
-                        eq(ResultSet.TYPE_FORWARD_ONLY),
-                        eq(ResultSet.CONCUR_READ_ONLY)))
+                        VALID_SQL,
+                        ResultSet.TYPE_FORWARD_ONLY,
+                        ResultSet.CONCUR_READ_ONLY))
                 .thenReturn(mockPreparedStatement);
 
         var result = policy.createStatement(mockConnection, VALID_SQL);

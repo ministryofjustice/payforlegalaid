@@ -7,6 +7,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,6 +43,7 @@ import uk.gov.laa.gpfd.services.excel.formatting.CellFormatter;
 import uk.gov.laa.gpfd.services.excel.formatting.CellFormatting;
 import uk.gov.laa.gpfd.services.excel.formatting.ColumnFormatting;
 import uk.gov.laa.gpfd.services.excel.formatting.Formatting;
+import uk.gov.laa.gpfd.services.excel.template.FileNameResolver;
 import uk.gov.laa.gpfd.services.excel.template.LocalTemplateClient;
 import uk.gov.laa.gpfd.services.excel.template.TemplateClient;
 import uk.gov.laa.gpfd.services.excel.workbook.StyleManager;
@@ -105,10 +107,12 @@ public class AppConfig {
     public DataSource readOnlyDataSource(
             @Value("${gpfd.datasource.read-only.url}") String url,
             @Value("${gpfd.datasource.read-only.username}") String username,
-            @Value("${gpfd.datasource.read-only.password}") String password
+            @Value("${gpfd.datasource.read-only.password}") String password,
+            @Value("${gpfd.datasource.read-only.driver-class-name}") String driverClass
     ) throws SQLException {
         PoolDataSource pds = PoolDataSourceFactory.getPoolDataSource();
-        pds.setConnectionFactoryClassName("oracle.jdbc.pool.OracleDataSource");
+
+        pds.setConnectionFactoryClassName(driverClass);
         pds.setURL(url);
         pds.setUser(username);
         pds.setPassword(password);
@@ -258,12 +262,15 @@ public class AppConfig {
      */
     @Bean
     RestTemplate restTemplate() {
-        return new RestTemplate() {{
-            setMessageConverters(List.of(
-                    new StringHttpMessageConverter(),
-                    new ByteArrayHttpMessageConverter()
-            ));
-        }};
+        var restTemplate = new RestTemplate();
+        restTemplate.setMessageConverters(
+                List.of(
+                        new StringHttpMessageConverter(),
+                        new ByteArrayHttpMessageConverter()
+                )
+        );
+
+        return restTemplate;
     }
 
     /**
@@ -278,13 +285,25 @@ public class AppConfig {
     }
 
     /**
-     * Creates a {@link TemplateClient} which returns local template.
+     * Creates a {@link TemplateClient} which returns a local template.
+     * For environments with s3.use-template-store enabled, see {@link S3Config} for bean-creation.
      *
      * @return a {@link LocalTemplateClient} instance
      */
+    @ConditionalOnProperty(name = "gpfd.s3.use-template-store", havingValue = "false", matchIfMissing = true)
     @Bean
-    public TemplateClient localTemplateClient() {
-        return new LocalTemplateClient();
+    public TemplateClient localTemplateClient(FileNameResolver fileNameResolver) {
+        return new LocalTemplateClient(fileNameResolver);
+    }
+
+    /**
+     * Creates a {@link FileNameResolver} for use in the app.
+     *
+     * @return a file name resolver instance.
+     */
+    @Bean
+    public FileNameResolver createFileNameResolver() {
+        return new FileNameResolver();
     }
 
     /**
@@ -426,6 +445,5 @@ public class AppConfig {
     public StrategyFactory<FileExtension, DataStream> streamStrategyFactory(Collection<DataStream> strategies) {
         return StrategyFactory.createGenericStrategyFactory(strategies, DataStream::getFormat);
     }
-
 
 }

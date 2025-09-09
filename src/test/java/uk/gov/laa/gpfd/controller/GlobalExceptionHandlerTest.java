@@ -5,6 +5,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import software.amazon.awssdk.awscore.exception.AwsErrorDetails;
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
@@ -352,6 +354,18 @@ class GlobalExceptionHandlerTest {
         // Then
         assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertEquals("Invalid file extension: xyz", response.getBody().getError());
+    }
+
+    @Test
+    void shouldHandleAWSServiceExceptionByThrowing500() {
+        var exception = NoSuchKeyException.builder().message("File don't exist and some maybe sensitive stuff about addresses here")
+                .awsErrorDetails(AwsErrorDetails.builder().errorCode("312").errorMessage("uh oh").build())
+                .build();
+
+        var response = globalExceptionHandler.handleAWSErrors(exception);
+
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Error: Failed to prepare report for download", response.getBody().getError());
     }
 
 }

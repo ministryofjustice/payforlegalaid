@@ -49,7 +49,7 @@ public abstract class AbstractDataStream implements DataStream {
      */
     ResponseEntity<StreamingResponseBody> buildResponse(Report report, StreamingResponseBody responseBody) {
         requireNonNull(report, "Report cannot be null");
-        //todo Use getOutputFileName()
+        //todo LPF-1067 Use getOutputFileName()
         var filename = String.format("%s.%s", report.getName(), getFormat().getExtension());
 
         return ResponseEntity.ok()

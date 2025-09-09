@@ -5,7 +5,7 @@ package uk.gov.laa.gpfd.exception;
  * This class serves as the base for specific exceptions that can occur during template creation,
  * downloading, or reading. It extends {@link RuntimeException}, making it an unchecked exception.
  */
-public sealed abstract class TemplateResourceException extends RuntimeException {
+public abstract sealed class TemplateResourceException extends RuntimeException {
 
     /**
      * Constructs a new {@code TemplateResourceException} with the specified error message.
