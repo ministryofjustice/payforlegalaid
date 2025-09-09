@@ -60,9 +60,9 @@ public final class SheetCopierFactory {
             var targetSheet = xssfTargetWorkbook.createSheet(sheetName);
             targetSheet.setAutobreaks(false);
 
-            return sourceWorkbook instanceof XSSFWorkbook
+            return sourceWorkbook instanceof XSSFWorkbook xssfSourceWorkbook
                     ? new XSSFSheetCopier(
-                    (XSSFWorkbook) sourceWorkbook,
+                    xssfSourceWorkbook,
                     xssfTargetWorkbook,
                     (XSSFSheet) sourceSheet,
                     targetSheet)
