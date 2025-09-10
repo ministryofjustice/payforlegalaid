@@ -69,17 +69,12 @@ public sealed interface TemplateService permits TemplateService.ExcelTemplateSer
         }
 
         public static final class Builder  {
-            private interface Defaults {
-                SecurityPolicy<InputStream> SECURITY = SecurityPolicy.zipBombProtection(1.0E-04);
-                boolean STREAMING_ENABLED = false;
-                int STREAMING_WINDOW_SIZE = 100;
-            }
             private TemplateClient repository;
             private WorkbookFactory factory;
             private StyleManager styleManager;
-            private SecurityPolicy<InputStream> security = Defaults.SECURITY;
-            private boolean streamingEnabled = Defaults.STREAMING_ENABLED;
-            private int streamingWindowSize = Defaults.STREAMING_WINDOW_SIZE;
+            private SecurityPolicy<InputStream> security = SecurityPolicy.zipBombProtection(1.0E-04);
+            private boolean streamingEnabled = false;
+            private int streamingWindowSize = 100;
 
             public Builder repository(TemplateClient repository) {
                 this.repository = repository;

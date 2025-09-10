@@ -29,8 +29,8 @@ public class ReportWorkbook extends SXSSFWorkbook implements Workbook {
 
     static {
         try {
-            SX_FROM_X_HASH_OFFSET = UNSAFE.objectFieldOffset(SXSSFWorkbook.class.getDeclaredField("_sxFromXHash"));
-            X_FROM_SX_HASH_OFFSET = UNSAFE.objectFieldOffset(SXSSFWorkbook.class.getDeclaredField("_xFromSxHash"));
+            SX_FROM_X_HASH_OFFSET = UNSAFE.objectFieldOffset(SXSSFWorkbook.class.getDeclaredField(SX_FROM_X_FIELD));
+            X_FROM_SX_HASH_OFFSET = UNSAFE.objectFieldOffset(SXSSFWorkbook.class.getDeclaredField(X_FROM_SX_FIELD));
         } catch (NoSuchFieldException e) {
             throw new Error(e);
         }
@@ -126,7 +126,7 @@ public class ReportWorkbook extends SXSSFWorkbook implements Workbook {
      */
     @SuppressWarnings("unchecked")
     private <K, V> void updateSheetMapping(String fieldName, K key, V value) {
-        var offset = fieldName.equals("_sxFromXHash") ? SX_FROM_X_HASH_OFFSET : X_FROM_SX_HASH_OFFSET;
+        var offset = fieldName.equals(SX_FROM_X_FIELD) ? SX_FROM_X_HASH_OFFSET : X_FROM_SX_HASH_OFFSET;
 
         var map = (Map<K, V>) UNSAFE.getObject(this, offset);
         map.put(key, value);
