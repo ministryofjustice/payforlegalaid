@@ -57,17 +57,23 @@ class GlobalExceptionHandlerTest {
         assertNull(response.getBody().getError());
     }
 
-    @Test
-    void shouldHandleReportIdNotFoundExceptionWithEmptyMessage() {
+    @ParameterizedTest
+    @ValueSource(strings = {"",
+            "\n\n\n",
+            "Report ID not found",
+            "Report   ID   not   found",
+            "Informe no encontrado",
+            "Ni chanfuwyd adnabodwyr adroddiad"})
+    void shouldHandleReportIdNotFoundException(String messageToTest) {
         // Given
-        var exception = new ReportIdNotFoundException("");
+        var exception = new ReportIdNotFoundException(messageToTest);
 
         // When
         var response = globalExceptionHandler.handleReportIdNotFoundException(exception);
 
         // Then
         assertEquals(NOT_FOUND, response.getStatusCode());
-        assertEquals("", response.getBody().getError());
+        assertEquals(messageToTest, response.getBody().getError());
     }
 
     @ParameterizedTest
@@ -159,188 +165,20 @@ class GlobalExceptionHandlerTest {
         );
     }
 
-
-    @Test
-    void shouldHandleReportIdNotFoundException() {
+    @ParameterizedTest
+    @ValueSource(strings = {"Index out of bounds",
+            "Custom error message",
+        "","Error: \n---\n|   |\n---"})
+    void shouldHandleIndexOutOfBoundsException(String messageToTest) {
         // Given
-        var exception = new ReportIdNotFoundException("Report ID not found");
-
-        // When
-        var response = globalExceptionHandler.handleReportIdNotFoundException(exception);
-
-        // Then
-        assertEquals(NOT_FOUND, response.getStatusCode());
-        assertEquals("Report ID not found", response.getBody().getError());
-    }
-
-    @Test
-    void shouldHandleIndexOutOfBoundsException() {
-        // Given
-        var exception = new IndexOutOfBoundsException("Index out of bounds");
+        var exception = new IndexOutOfBoundsException(messageToTest);
 
         // When
         var response = globalExceptionHandler.handleIndexOutOfBoundsException(exception);
 
         // Then
         assertEquals(BAD_REQUEST, response.getStatusCode());
-        assertEquals("Index out of bounds", response.getBody().getError());
-    }
-
-    @Test
-    void shouldHandleIndexOutOfBoundsExceptionWithCustomMessage() {
-        // Given
-        var exception = new IndexOutOfBoundsException("Custom error message");
-
-        // When
-        var response = globalExceptionHandler.handleIndexOutOfBoundsException(exception);
-
-        // Then
-        assertEquals(BAD_REQUEST, response.getStatusCode());
-        assertEquals("Custom error message", response.getBody().getError());
-    }
-
-    @Test
-    void shouldHandleReportIdNotFoundExceptionWithLongMessage() {
-        // Given
-        var longMessage = "Report ID not found: " + "X".repeat(1000);
-        var exception = new ReportIdNotFoundException(longMessage);
-
-        // When
-        var response = globalExceptionHandler.handleReportIdNotFoundException(exception);
-
-        // Then
-        assertEquals(NOT_FOUND, response.getStatusCode());
-        assertEquals(longMessage, response.getBody().getError());
-    }
-
-    @Test
-    void shouldHandleIndexOutOfBoundsExceptionWithDefaultMessage() {
-        // Given
-        var exception = new IndexOutOfBoundsException();
-
-        // When
-        var response = globalExceptionHandler.handleIndexOutOfBoundsException(exception);
-
-        // Then
-        assertEquals(BAD_REQUEST, response.getStatusCode());
-        assertNull(response.getBody().getError());
-    }
-
-    @Test
-    void shouldHandleIndexOutOfBoundsExceptionWithZeroIndex() {
-        // Given
-        var exception = new IndexOutOfBoundsException("Index 0 is out of bounds");
-
-        // When
-        var response = globalExceptionHandler.handleIndexOutOfBoundsException(exception);
-
-        // Then
-        assertEquals(BAD_REQUEST, response.getStatusCode());
-        assertEquals("Index 0 is out of bounds", response.getBody().getError());
-    }
-
-    @Test
-    void shouldHandleReportIdNotFoundExceptionWithExtraSpacesInMessage() {
-        // Given
-        var exception = new ReportIdNotFoundException("Report   ID   not   found");
-
-        // When
-        var response = globalExceptionHandler.handleReportIdNotFoundException(exception);
-
-        // Then
-        assertEquals(NOT_FOUND, response.getStatusCode());
-        assertEquals("Report   ID   not   found", response.getBody().getError());
-    }
-
-    @Test
-    void shouldHandleIndexOutOfBoundsExceptionWithLargeNumericIndex() {
-        // Given
-        var exception = new IndexOutOfBoundsException("Index 1000000 is out of bounds");
-
-        // When
-        var response = globalExceptionHandler.handleIndexOutOfBoundsException(exception);
-
-        // Then
-        assertEquals(BAD_REQUEST, response.getStatusCode());
-        assertEquals("Index 1000000 is out of bounds", response.getBody().getError());
-    }
-
-    @Test
-    void shouldHandleReportIdNotFoundExceptionWithForeignLanguageMessage() {
-        // Given
-        var exception = new ReportIdNotFoundException("Informe no encontrado");
-
-        // When
-        var response = globalExceptionHandler.handleReportIdNotFoundException(exception);
-
-        // Then
-        assertEquals(NOT_FOUND, response.getStatusCode());
-        assertEquals("Informe no encontrado", response.getBody().getError());
-    }
-
-    @Test
-    void shouldHandleIndexOutOfBoundsExceptionWithNegativeIndex() {
-        // Given
-        var exception = new IndexOutOfBoundsException("Index -5 is out of bounds");
-
-        // When
-        var response = globalExceptionHandler.handleIndexOutOfBoundsException(exception);
-
-        // Then
-        assertEquals(BAD_REQUEST, response.getStatusCode());
-        assertEquals("Index -5 is out of bounds", response.getBody().getError());
-    }
-
-    @Test
-    void shouldHandleReportIdNotFoundExceptionWithWelshMessage() {
-        // Given
-        var exception = new ReportIdNotFoundException("Ni chanfuwyd adnabodwyr adroddiad");
-
-        // When
-        var response = globalExceptionHandler.handleReportIdNotFoundException(exception);
-
-        // Then
-        assertEquals(NOT_FOUND, response.getStatusCode());
-        assertEquals("Ni chanfuwyd adnabodwyr adroddiad", response.getBody().getError());
-    }
-
-    @Test
-    void shouldHandleIndexOutOfBoundsExceptionWithIsoDateMessage() {
-        // Given
-        var exception = new IndexOutOfBoundsException("Index out of bounds on 2024-11-24");
-
-        // When
-        var response = globalExceptionHandler.handleIndexOutOfBoundsException(exception);
-
-        // Then
-        assertEquals(BAD_REQUEST, response.getStatusCode());
-        assertEquals("Index out of bounds on 2024-11-24", response.getBody().getError());
-    }
-
-    @Test
-    void shouldHandleReportIdNotFoundExceptionWithExcessiveNewlines() {
-        // Given
-        var exception = new ReportIdNotFoundException("\n\n\n");
-
-        // When
-        var response = globalExceptionHandler.handleReportIdNotFoundException(exception);
-
-        // Then
-        assertEquals(NOT_FOUND, response.getStatusCode());
-        assertEquals("\n\n\n", response.getBody().getError());
-    }
-
-    @Test
-    void shouldHandleIndexOutOfBoundsExceptionWithAsciiArtMessage() {
-        // Given
-        var exception = new IndexOutOfBoundsException("Error: \n---\n|   |\n---");
-
-        // When
-        var response = globalExceptionHandler.handleIndexOutOfBoundsException(exception);
-
-        // Then
-        assertEquals(BAD_REQUEST, response.getStatusCode());
-        assertEquals("Error: \n---\n|   |\n---", response.getBody().getError());
+        assertEquals(messageToTest, response.getBody().getError());
     }
 
     @Test

@@ -2,6 +2,9 @@ package uk.gov.laa.gpfd.dao.sql.core;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -58,35 +61,15 @@ class ForwardOnlyReadOnlyPolicyTest {
         assertEquals("Connection cannot be null", exception.getMessage());
     }
 
-    @Test
-    void createStatement_WithNullSql_ThrowsIllegalArgumentException() {
+    @ParameterizedTest
+    @ValueSource(strings = {"", "   "})
+    @NullSource
+    void createStatementWithInvalidSqlThrowsIllegalArgumentException(String sql) {
         var policy = new ForwardOnlyReadOnlyPolicy();
 
         var exception = assertThrows(
                 IllegalArgumentException.class,
-                () -> policy.createStatement(mockConnection, null));
-
-        assertEquals("SQL statement cannot be null or empty", exception.getMessage());
-    }
-
-    @Test
-    void createStatement_WithEmptySql_ThrowsIllegalArgumentException() {
-        var policy = new ForwardOnlyReadOnlyPolicy();
-
-        var exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> policy.createStatement(mockConnection, ""));
-
-        assertEquals("SQL statement cannot be null or empty", exception.getMessage());
-    }
-
-    @Test
-    void createStatement_WithBlankSql_ThrowsIllegalArgumentException() {
-        var policy = new ForwardOnlyReadOnlyPolicy();
-
-        var exception = assertThrows(
-                IllegalArgumentException.class,
-                () -> policy.createStatement(mockConnection, "   "));
+                () -> policy.createStatement(mockConnection, sql));
 
         assertEquals("SQL statement cannot be null or empty", exception.getMessage());
     }
