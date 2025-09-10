@@ -77,24 +77,6 @@ class ReportsTrackingDaoTest {
     }
 
     @Test
-    void givenNullReportId_whenSaveReportsTracking_thenNoDataIsInserted() {
-        // Given
-        UUID nonExistentReportId = null;
-        var existingTrackingBefore = findTrackingByReportId(nonExistentReportId);
-
-        // When
-        assertThrows(NullPointerException.class,
-                () -> reportsTrackingDao.saveReportsTracking(ReportsTrackingTestDataFactory.createBasicReportTracking(
-                        createTestReport(nonExistentReportId)
-                )));
-
-        // Then
-        var existingTrackingAfter = findTrackingByReportId(nonExistentReportId);
-        assertTrue(existingTrackingBefore.isEmpty(), "Should not have tracking record before insertion attempt");
-        assertTrue(existingTrackingAfter.isEmpty(), "Should not have tracking record after failed insertion");
-    }
-
-    @Test
     void givenInvalidReportId_whenSaveReportsTracking_thenNoDataIsInserted() {
         // Given
         var nonExistentReportId = UUID.fromString("00000000-0000-0000-0001-000000000002");

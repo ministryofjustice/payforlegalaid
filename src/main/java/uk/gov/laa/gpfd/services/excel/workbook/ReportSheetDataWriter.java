@@ -76,7 +76,9 @@ public final class ReportSheetDataWriter extends SheetDataWriter implements Clos
     /**
      * Creates a new ReportSheetDataWriter with the specified shared strings table.
      *
-     * @param sharedStringsTable the shared strings table to use
+     * @param sharedStringSource the shared strings table to use
+     * @param report the report query we are getting data for
+     * @param styleManager the styleManager to use for this workbook
      * @throws IOException if the writer cannot be initialized
      */
     public ReportSheetDataWriter(SharedStringsTable sharedStringSource, ReportQuery report, StyleManager styleManager) throws IOException {

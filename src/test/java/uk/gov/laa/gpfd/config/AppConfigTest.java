@@ -83,6 +83,17 @@ class AppConfigTest {
     }
 
     @Test
+    void shouldHaveARestTemplateBeanAndMessageConverters() {
+        // Given
+        // When
+        var restTemplate = applicationContext.getBean(RestTemplate.class);
+
+        // THen
+        assertNotNull(restTemplate, "RestTemplate bean should be created.");
+        assertEquals(2, restTemplate.getMessageConverters().size(), "RestTemplate should have two message converters.");
+    }
+
+    @Test
     void shouldRestTemplateTimeout() {
         // Given
         // When
@@ -119,17 +130,6 @@ class AppConfigTest {
         // When
         var jdbcTemplate = applicationContext.getBean("writeJdbcTemplate", JdbcTemplate.class);
         assertNotNull(jdbcTemplate, "WriteJdbcTemplate bean should be created.");
-    }
-
-    @Test
-    void shouldRestTemplateBean() {
-        // Given
-        // When
-        var restTemplate = applicationContext.getBean(RestTemplate.class);
-        assertNotNull(restTemplate, "RestTemplate bean should be created.");
-
-        // Then
-        assertEquals(2, restTemplate.getMessageConverters().size(), "RestTemplate should have two message converters.");
     }
 
     @Test

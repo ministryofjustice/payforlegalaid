@@ -17,9 +17,9 @@ import java.util.List;
 
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyList;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -90,7 +90,7 @@ class ReportsViewControllerTest {
         var viewName = reportsViewController.getAllReports(model);
 
         assertEquals("reports/list", viewName);
-        verify(model).addAttribute(eq("reportListResponse"), eq(List.of()));
+        verify(model).addAttribute("reportListResponse", List.of());
         verify(reportsApiController).reportsGet();
         verify(reportsApiController, never()).getReportById(any());
     }
