@@ -4,6 +4,7 @@ import org.apache.poi.ss.usermodel.Cell;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -133,12 +134,12 @@ public enum CellValueHandler implements BiConsumer<Cell, Object> {
      * The map is initialized once when the enum is loaded and is immutable thereafter.
      */
     public static final Map<Class<?>, CellValueHandler> CellValueHandlerMap =
-            stream(values()).collect(toMap(
+            Collections.unmodifiableMap(stream(values()).collect(toMap(
                     handler -> handler.targetType,
                     identity(),
                     (existing, replacement) -> existing,
                     LinkedHashMap::new
-            ));
+            )));
 
     private final Class<?> targetType;
 

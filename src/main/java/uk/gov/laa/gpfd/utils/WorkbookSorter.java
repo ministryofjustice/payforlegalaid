@@ -68,7 +68,7 @@ public interface WorkbookSorter {
      * @return the XSSFWorkbook for SXSSF inputs, original workbook otherwise
      */
     private static Workbook handleSXSSF(Workbook wb) {
-        return wb instanceof SXSSFWorkbook ? ((SXSSFWorkbook) wb).getXSSFWorkbook() : wb;
+        return wb instanceof SXSSFWorkbook sxssfWb ? sxssfWb.getXSSFWorkbook() : wb;
     }
 
     /**
@@ -78,7 +78,7 @@ public interface WorkbookSorter {
      * @return the XSSFWorkbook for ReportWorkbook inputs, original workbook otherwise
      */
     private static Workbook handleReportWorkbook(Workbook wb) {
-        return wb instanceof ReportWorkbook ? ((ReportWorkbook) wb).getXSSFWorkbook() : wb;
+        return wb instanceof ReportWorkbook reportWb ? reportWb.getXSSFWorkbook() : wb;
     }
 
     /**

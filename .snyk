@@ -10,4 +10,20 @@ ignore:
           present
         expires: 2025-09-11T00:00:00.000Z
         created: 2025-09-04T13:42:15.862Z
+  SNYK-JAVA-IONETTY-12485150:
+    - '*':
+        reason: >-
+          Neither Azure nor S3 have upgraded yet. We don't actively use netty as
+          a server or use async s3 calls so we do not run any netty processes at
+          present
+        expires: 2025-09-11T00:00:00.000Z
+        created: 2025-09-09T12:42:15.862Z
+  SNYK-JAVA-IONETTY-12485151:
+    - '*':
+        reason: >-
+          Neither Azure nor S3 have upgraded yet. We don't actively use netty as
+          a server or use async s3 calls so we do not run any netty processes at
+          present
+        expires: 2025-09-11T00:00:00.000Z
+        created: 2025-09-09T12:42:15.862Z
 patch: {}
