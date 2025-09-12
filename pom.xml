@@ -372,7 +372,12 @@
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
-            <artifactId>netty-codec</artifactId>
+            <artifactId>netty-codec-http</artifactId>
+            <version>${io.netty-codec-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec-http2</artifactId>
             <version>${io.netty-codec-version}</version>
         </dependency>
         <!-- Test Dependencies-->
