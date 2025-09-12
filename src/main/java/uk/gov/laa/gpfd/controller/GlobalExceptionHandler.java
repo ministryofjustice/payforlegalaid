@@ -14,6 +14,7 @@ import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.ReportGenerationException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
+import uk.gov.laa.gpfd.exception.ServiceUnavailableException;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
 import uk.gov.laa.gpfd.model.ReportsGet400Response;
 import uk.gov.laa.gpfd.model.ReportsGet404Response;
@@ -214,6 +215,17 @@ public class GlobalExceptionHandler {
         errorResponse.setError(message);
 
         log.error("AwsServiceException Thrown: {}", e.awsErrorDetails().toString());
+
+        return internalServerError().body(errorResponse);
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(ServiceUnavailableException.class)
+    public ResponseEntity<ReportsGet500Response> handleServiceUnavailable(ServiceUnavailableException e) {
+        var errorResponse = new ReportsGet500Response();
+        errorResponse.setError(e.getMessage());
+
+        log.error("ServiceUnavailableException Thrown: {}", e.getMessage());
 
         return internalServerError().body(errorResponse);
     }
