@@ -448,16 +448,4 @@ public class AppConfig {
     public StrategyFactory<FileExtension, DataStream> streamStrategyFactory(Collection<DataStream> strategies) {
         return StrategyFactory.createGenericStrategyFactory(strategies, DataStream::getFormat);
     }
-
-    @Configuration
-    public class WebConfig implements WebMvcConfigurer {
-        @Autowired
-        private TimeBasedAccessInterceptor timeInterceptor;
-
-        @Override
-        public void addInterceptors(InterceptorRegistry registry) {
-            registry.addInterceptor(timeInterceptor);
-        }
-    }
-
 }
