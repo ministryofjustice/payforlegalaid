@@ -8,6 +8,9 @@ import uk.gov.laa.gpfd.exception.ServiceUnavailableException;
 
 import java.time.LocalTime;
 
+/**
+ * Class intercepts api call, allowing endpoint response to reflect  out of hours service availability
+ */
 @Component
 public class TimeBasedAccessInterceptor implements HandlerInterceptor {
 
