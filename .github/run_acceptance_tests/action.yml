@@ -14,6 +14,7 @@ runs:
       uses: actions/checkout@v4
       with:
         repository: ministryofjustice/payforlegalaid-tests
+        ref: LPF-1043-v1
         path: testCode
 
     - name: Setup Java
