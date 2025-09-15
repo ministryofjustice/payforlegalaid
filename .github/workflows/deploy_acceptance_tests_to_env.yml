@@ -94,7 +94,7 @@ jobs:
           echo "Current directory: $(pwd)"
           pwd
           ls -la
-          echo "Building test container image..."
+          echo "Building test container image 1 ..."
           
           export REGISTRY=${{ steps.login-ecr.outputs.registry }}
           
