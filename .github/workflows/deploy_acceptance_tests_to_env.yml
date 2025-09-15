@@ -36,6 +36,7 @@ jobs:
         with:
           repository: ${{ env.TEST_REPO }}
           ref: LPF-1043-v1
+          path: testCode
 
       - name: Checkout GitHub repository
         uses: actions/checkout@v4
@@ -44,6 +45,7 @@ jobs:
           ssh-key: ${{ secrets.DEV_SOCKET_KEY }}
           sparse-checkout: data
           sparse-checkout-cone-mode: true
+          path: dataRepo
 
       - name: Setup XML tools
         run: |
@@ -102,6 +104,9 @@ jobs:
             --secret id=maven_password,env=PASSWORD \
             --tag $REGISTRY/${{ env.ECR_REPOSITORY }}:${{ env.APP_NAME }}-${{ github.sha }} \
             .
+
+          echo "Docker image built and pushed successfully."
+
         shell: bash
         env:
           DOCKER_BUILDKIT: 1
