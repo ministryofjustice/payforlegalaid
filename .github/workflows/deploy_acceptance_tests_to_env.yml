@@ -84,10 +84,12 @@ jobs:
         id: build-container
         run: |
           echo "Current directory: $(pwd)"
+          pwd
           ls -la
           echo "going in to testCode dir"
-          cd testCode
+          
           echo "Current directory: $(pwd)"
+          pwd
           ls -la
           echo "Building test container image..."
           
