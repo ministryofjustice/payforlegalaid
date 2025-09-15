@@ -89,7 +89,7 @@ jobs:
           pwd
           ls -la
           echo "going in to testCode dir"
-          
+          cd testCode
           echo "Current directory: $(pwd)"
           pwd
           ls -la
