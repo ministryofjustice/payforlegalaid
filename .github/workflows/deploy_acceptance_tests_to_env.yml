@@ -36,7 +36,6 @@ jobs:
         with:
           repository: ${{ env.TEST_REPO }}
           ref: LPF-1043-v1
-          path: testCode
 
       - name: Checkout GitHub repository
         uses: actions/checkout@v4
