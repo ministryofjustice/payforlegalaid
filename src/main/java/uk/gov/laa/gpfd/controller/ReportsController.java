@@ -2,7 +2,10 @@ package uk.gov.laa.gpfd.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
@@ -14,6 +17,7 @@ import uk.gov.laa.gpfd.model.ReportsGet200Response;
 import uk.gov.laa.gpfd.services.ReportsTrackingService;
 import uk.gov.laa.gpfd.services.ReportManagementService;
 import uk.gov.laa.gpfd.services.StreamingService;
+import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -94,4 +98,5 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
         reportsTrackingService.saveReportsTracking(id);
         return streamingService.stream(id, XLSX);
     }
+
 }
