@@ -107,7 +107,7 @@ jobs:
             --tag $REGISTRY/${{ env.ECR_REPOSITORY }}:${{ env.APP_NAME }}-${{ github.sha }} \
             .
 
-          echo "Docker image built and pushed successfully."
+          echo "Docker image built and pushed successfully"
 
         shell: bash
         env:
