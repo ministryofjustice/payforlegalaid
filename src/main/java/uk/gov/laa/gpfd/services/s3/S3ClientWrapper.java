@@ -68,4 +68,16 @@ public class S3ClientWrapper {
         return response.url().toExternalForm();
 
     }
+
+    //TODO one could note this is the exact same code as getTemplate currently
+    public ResponseInputStream<GetObjectResponse> getDownload(String filename){
+
+        var getObjectRequest = GetObjectRequest.builder()
+                .bucket(s3Bucket)
+                .key("templates/" + filename)
+                .build();
+
+        return s3Client.getObject(getObjectRequest);
+
+    }
 }
