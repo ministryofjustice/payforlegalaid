@@ -1,6 +1,10 @@
 name: Deploy Acceptance Tests to Environment
 
-on: workflow_dispatch
+on:
+  push:
+    branches:
+      - LPF-1043-v4
+      - LPF-1043-v3
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.pull_request.number }}
@@ -17,6 +21,7 @@ env:
   KUBE_CLUSTER: ${{ secrets.KUBE_CLUSTER_DEV }}
   KUBE_CERT: ${{ secrets.KUBE_CERT_DEV }}
   KUBE_TOKEN: ${{ secrets.KUBE_TOKEN_DEV }}
+  AWS_REGION: ${{ vars.AWS_REGION }}
 
 jobs:
   build-and-deploy-to-testable:
@@ -32,6 +37,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ${{ env.TEST_REPO }}
+          ref: LPF-1043-v1
           path: testCode
 
       - name: Checkout GitHub repository
@@ -41,6 +47,7 @@ jobs:
           ssh-key: ${{ secrets.DEV_SOCKET_KEY }}
           sparse-checkout: data
           sparse-checkout-cone-mode: true
+          path: dataRepo
 
       - name: Setup XML tools
         run: |
@@ -80,8 +87,15 @@ jobs:
       - name: Build and push Docker image
         id: build-container
         run: |
+          echo "Current directory: $(pwd)"
+          pwd
+          ls -la
+          echo "going in to testCode dir"
           cd testCode
-          echo "Building test container image..."
+          echo "Current directory: $(pwd)"
+          pwd
+          ls -la
+          echo "Building test container image 1 ..."
           
           export REGISTRY=${{ steps.login-ecr.outputs.registry }}
           
@@ -92,6 +106,9 @@ jobs:
             --secret id=maven_password,env=PASSWORD \
             --tag $REGISTRY/${{ env.ECR_REPOSITORY }}:${{ env.APP_NAME }}-${{ github.sha }} \
             .
+
+          echo "Docker image built and pushed successfully Docker"
+
         shell: bash
         env:
           DOCKER_BUILDKIT: 1
@@ -117,9 +134,12 @@ jobs:
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
 
+
       - name: Deploy to Kubernetes
         run: |
-          xmllint --format --encode UTF-8 data/migrations/db.changelog-master.xml > normalized-changelog.xml
+          echo "Normalising Liquibase changelog and calculating checksum..."
+          pwd && ls -la 
+          xmllint --format --encode UTF-8 dataRepo/data/master-changelog.xml > normalized-changelog.xml
           
           CHECKSUM=$(sha256sum normalized-changelog.xml | cut -d' ' -f1)
 
