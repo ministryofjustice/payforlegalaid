@@ -21,6 +21,7 @@ env:
   KUBE_CLUSTER: ${{ secrets.KUBE_CLUSTER_DEV }}
   KUBE_CERT: ${{ secrets.KUBE_CERT_DEV }}
   KUBE_TOKEN: ${{ secrets.KUBE_TOKEN_DEV }}
+  AWS_REGION: ${{ vars.AWS_REGION }}
 
 jobs:
   build-and-deploy-to-testable:
