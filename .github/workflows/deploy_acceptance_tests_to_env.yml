@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - LPF-1043-v4
-      - LPF-1043-v2
+      - LPF-1043-v3
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.pull_request.number }}
