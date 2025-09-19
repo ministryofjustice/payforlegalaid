@@ -137,9 +137,8 @@ jobs:
       - name: Deploy to Kubernetes
         run: |
           echo "Normalising Liquibase changelog and calculating checksum..."
-          pwd && ls -la   
-          ls -l /data/migratio
-          xmllint --format --encode UTF-8 data/migrations/db.changelog-master.xml > normalized-changelog.xml
+          pwd && ls -la 
+          xmllint --format --encode UTF-8 dataRepo/data/master-changelog.xml > normalized-changelog.xml
           
           CHECKSUM=$(sha256sum normalized-changelog.xml | cut -d' ' -f1)
 
