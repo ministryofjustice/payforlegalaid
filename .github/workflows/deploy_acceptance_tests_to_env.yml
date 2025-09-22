@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - LPF-1043-v4
-      - LPF-1043-v3
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.pull_request.number }}
@@ -21,7 +20,7 @@ env:
   KUBE_CLUSTER: ${{ secrets.KUBE_CLUSTER_DEV }}
   KUBE_CERT: ${{ secrets.KUBE_CERT_DEV }}
   KUBE_TOKEN: ${{ secrets.KUBE_TOKEN_DEV }}
-  AWS_REGION: ${{ vars.AWS_REGION }}
+
 
 jobs:
   build-and-deploy-to-testable:
@@ -107,7 +106,7 @@ jobs:
             --tag $REGISTRY/${{ env.ECR_REPOSITORY }}:${{ env.APP_NAME }}-${{ github.sha }} \
             .
 
-          echo "Docker image built and pushed successfully Docker"
+          echo "Docker image built and pushed successfully Docker."
 
         shell: bash
         env:
@@ -133,7 +132,6 @@ jobs:
         shell: bash
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-
 
       - name: Deploy to Kubernetes
         run: |
@@ -186,3 +184,10 @@ jobs:
           #### ⏱️ Deployment Timestamp
           - $(date -u +'%Y-%m-%d %H:%M:%S UTC')
           EOF
+
+      - name: Kill test pod after test
+        shell: bash
+        run: |
+          echo "Waiting 5 minutes before killing test pod..."
+          sleep 300
+          kubectl -n ${{ env.KUBE_NAMESPACE }} delete pod -l app=${{ env.APP_NAME }} --force --grace-period=0
