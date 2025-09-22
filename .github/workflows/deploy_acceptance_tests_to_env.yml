@@ -188,6 +188,6 @@ jobs:
       - name: Kill test pod after test
         shell: bash
         run: |
-          echo "Waiting 5 minutes before killing test pod..."
-          sleep 300
+          echo "Waiting 2 minutes before killing test pod..."
+          sleep 120
           kubectl -n ${{ env.KUBE_NAMESPACE }} delete pod -l app=${{ env.APP_NAME }} --force --grace-period=0
