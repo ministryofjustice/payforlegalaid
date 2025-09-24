@@ -86,15 +86,14 @@ jobs:
       - name: Build and push Docker image
         id: build-container
         run: |
-          echo "Current directory: $(pwd)"
+          echo "Current MY directory: $(pwd)"
           pwd
           ls -la
-          echo "going in to testCode dir"
           cd testCode
           echo "Current directory: $(pwd)"
           pwd
           ls -la
-          echo "Building test container image 1 ..."
+          echo "Building test container image 2 ..."
           
           export REGISTRY=${{ steps.login-ecr.outputs.registry }}
           
