@@ -150,7 +150,6 @@ jobs:
 
           echo "✓ ConfigMap deployed with checksum: $CHECKSUM"
           
-          echo "Checking for existing pod..."
           
           # Clean up any existing pod
           if kubectl -n ${{ env.KUBE_NAMESPACE }} get pod -l app=${{ env.APP_NAME }} 2>/dev/null; then
