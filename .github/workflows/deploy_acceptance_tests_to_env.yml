@@ -21,7 +21,6 @@ env:
   KUBE_CERT: ${{ secrets.KUBE_CERT_DEV }}
   KUBE_TOKEN: ${{ secrets.KUBE_TOKEN_DEV }}
 
-
 jobs:
   build-and-deploy-to-testable:
     name: Build and Deploy Tests to Environment
@@ -86,14 +85,7 @@ jobs:
       - name: Build and push Docker image
         id: build-container
         run: |
-          echo "Current MY directory: $(pwd)"
-          pwd
-          ls -la
           cd testCode
-          echo "Current directory: $(pwd)"
-          pwd
-          ls -la
-          echo "Building test container image 2 ..."
           
           export REGISTRY=${{ steps.login-ecr.outputs.registry }}
           
@@ -187,6 +179,6 @@ jobs:
       - name: Kill test pod after 2 minutes
         shell: bash
         run: |
-          echo "Waiting 2 minutes before killing test pod..."
-          sleep 120
+          echo "Waiting 5 minutes before killing test pod..."
+          sleep 300
           kubectl delete pod ${{ env.APP_NAME }} -n ${{ env.KUBE_NAMESPACE }} --force --grace-period=0
