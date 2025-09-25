@@ -85,7 +85,7 @@ jobs:
       - name: Build and push Docker image
         id: build-container
         run: |
-          echo "Current MY directory: $(pwd)"
+          echo "Current MY directy: $(pwd)"
           pwd
           ls -la
           cd testCode
