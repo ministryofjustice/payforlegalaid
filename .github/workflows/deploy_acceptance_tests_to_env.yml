@@ -180,9 +180,9 @@ jobs:
           - $(date -u +'%Y-%m-%d %H:%M:%S UTC')
           EOF
 
-      - name: Kill test pod after 2 minutes
+      - name: Kill test pod after 5 minutes
         shell: bash
         run: |
-          echo "Waiting 2 minutes before killing test pod..."
-          sleep 120
+          echo "Waiting 5 minutes before killing test pod..."
+          sleep 300
           kubectl delete pod ${{ env.APP_NAME }} -n ${{ env.KUBE_NAMESPACE }} --force --grace-period=0
