@@ -89,7 +89,6 @@ jobs:
           pwd
           ls -la
           cd testCode
-          echo "Current directory: $(pwd)"
           pwd
           ls -la
           echo "Building test container image 2 ..."
@@ -149,7 +148,6 @@ jobs:
           ' - | kubectl apply -f -
 
           echo "✓ ConfigMap deployed with checksum: $CHECKSUM"
-          
           
           # Clean up any existing pod
           if kubectl -n ${{ env.KUBE_NAMESPACE }} get pod -l app=${{ env.APP_NAME }} 2>/dev/null; then
