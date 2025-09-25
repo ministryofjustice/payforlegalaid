@@ -88,11 +88,7 @@ jobs:
           echo "Current MY directy: $(pwd)"
           pwd
           ls -la
-          cd testCode
-          pwd
-          ls -la
-          echo "Building test container image 2 ..."
-          
+          cd testCode          
           export REGISTRY=${{ steps.login-ecr.outputs.registry }}
           
           docker buildx build \
