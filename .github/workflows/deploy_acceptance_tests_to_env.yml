@@ -41,6 +41,7 @@ jobs:
           ssh-key: ${{ secrets.DEV_SOCKET_KEY }}
           sparse-checkout: data
           sparse-checkout-cone-mode: true
+          path: dataRepo
 
       - name: Setup XML tools
         run: |
@@ -80,9 +81,10 @@ jobs:
       - name: Build and push Docker image
         id: build-container
         run: |
-          cd testCode
-          echo "Building test container image..."
-          
+          echo "Current MY directy: $(pwd)"
+          pwd
+          ls -la
+          cd testCode          
           export REGISTRY=${{ steps.login-ecr.outputs.registry }}
           
           docker buildx build \
@@ -92,6 +94,9 @@ jobs:
             --secret id=maven_password,env=PASSWORD \
             --tag $REGISTRY/${{ env.ECR_REPOSITORY }}:${{ env.APP_NAME }}-${{ github.sha }} \
             .
+
+          echo "Docker image built and pushed successfully Docker."
+
         shell: bash
         env:
           DOCKER_BUILDKIT: 1
@@ -119,7 +124,9 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
-          xmllint --format --encode UTF-8 data/migrations/db.changelog-master.xml > normalized-changelog.xml
+          echo "Normalising Liquibase changelog and calculating checksum..."
+          pwd && ls -la 
+          xmllint --format --encode UTF-8 dataRepo/data/master-changelog.xml > normalized-changelog.xml
           
           CHECKSUM=$(sha256sum normalized-changelog.xml | cut -d' ' -f1)
 
@@ -166,3 +173,10 @@ jobs:
           #### ⏱️ Deployment Timestamp
           - $(date -u +'%Y-%m-%d %H:%M:%S UTC')
           EOF
+
+      - name: Stop test pod after 5 minutes
+        shell: bash
+        run: |
+          echo "Waiting 5 minutes before killing test pod..."
+          sleep 300
+          kubectl delete pod ${{ env.APP_NAME }} -n ${{ env.KUBE_NAMESPACE }} --force --grace-period=0
