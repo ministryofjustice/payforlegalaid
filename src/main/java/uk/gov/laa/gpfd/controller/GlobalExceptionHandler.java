@@ -21,6 +21,7 @@ import uk.gov.laa.gpfd.model.GetReportDownloadById501Response;
 import uk.gov.laa.gpfd.model.ReportsGet400Response;
 import uk.gov.laa.gpfd.model.ReportsGet404Response;
 import uk.gov.laa.gpfd.model.ReportsGet500Response;
+import uk.gov.laa.gpfd.model.ReportsIdFileGet501Response;
 
 import java.sql.SQLSyntaxErrorException;
 
