@@ -43,7 +43,7 @@ import uk.gov.laa.gpfd.services.excel.formatting.CellFormatter;
 import uk.gov.laa.gpfd.services.excel.formatting.CellFormatting;
 import uk.gov.laa.gpfd.services.excel.formatting.ColumnFormatting;
 import uk.gov.laa.gpfd.services.excel.formatting.Formatting;
-import uk.gov.laa.gpfd.services.excel.template.FileNameResolver;
+import uk.gov.laa.gpfd.services.excel.template.TemplateFileNameResolver;
 import uk.gov.laa.gpfd.services.excel.template.LocalTemplateClient;
 import uk.gov.laa.gpfd.services.excel.template.TemplateClient;
 import uk.gov.laa.gpfd.services.excel.workbook.StyleManager;
@@ -292,18 +292,18 @@ public class AppConfig {
      */
     @ConditionalOnProperty(name = "gpfd.s3.use-template-store", havingValue = "false", matchIfMissing = true)
     @Bean
-    public TemplateClient localTemplateClient(FileNameResolver fileNameResolver) {
-        return new LocalTemplateClient(fileNameResolver);
+    public TemplateClient localTemplateClient(TemplateFileNameResolver templateFileNameResolver) {
+        return new LocalTemplateClient(templateFileNameResolver);
     }
 
     /**
-     * Creates a {@link FileNameResolver} for use in the app.
+     * Creates a {@link TemplateFileNameResolver} for use in the app.
      *
      * @return a file name resolver instance.
      */
     @Bean
-    public FileNameResolver createFileNameResolver() {
-        return new FileNameResolver();
+    public TemplateFileNameResolver createFileNameResolver() {
+        return new TemplateFileNameResolver();
     }
 
     /**

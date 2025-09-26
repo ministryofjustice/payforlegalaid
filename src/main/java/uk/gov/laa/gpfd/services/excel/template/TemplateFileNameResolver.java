@@ -8,7 +8,7 @@ import java.util.UUID;
  * Allows us to go from a template id (a UUID from the database) to a file name, which the associated
  * {@link TemplateClient} can then use to fetch the template.
  */
-public class FileNameResolver {
+public class TemplateFileNameResolver {
 
     /**
      * Get the template file-name from the ID
