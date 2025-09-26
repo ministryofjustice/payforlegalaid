@@ -11,9 +11,10 @@ import uk.gov.laa.gpfd.api.ExcelApi;
 import uk.gov.laa.gpfd.api.ReportsApi;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200Response;
-import uk.gov.laa.gpfd.services.ReportsTrackingService;
 import uk.gov.laa.gpfd.services.ReportManagementService;
+import uk.gov.laa.gpfd.services.ReportsTrackingService;
 import uk.gov.laa.gpfd.services.StreamingService;
+import uk.gov.laa.gpfd.services.s3.FileDownloadService;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -29,6 +30,7 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
     private final ReportsTrackingService reportsTrackingService;
     private final ReportManagementService reportManagementService;
     private final StreamingService streamingService;
+    private final FileDownloadService fileDownloadService;
 
     @Override
     public Optional<NativeWebRequest> getRequest() {
@@ -94,4 +96,10 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
         reportsTrackingService.saveReportsTracking(id);
         return streamingService.stream(id, XLSX);
     }
+
+    @Override
+    public ResponseEntity<StreamingResponseBody> reportsIdFileGet(UUID id) {
+        return fileDownloadService.getFileStreamResponse(id);
+    }
+
 }

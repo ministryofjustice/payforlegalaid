@@ -5,10 +5,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.services.s3.S3Client;
-import uk.gov.laa.gpfd.services.excel.template.TemplateFileNameResolver;
-import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
 import uk.gov.laa.gpfd.services.excel.template.S3TemplateClient;
 import uk.gov.laa.gpfd.services.excel.template.TemplateClient;
+import uk.gov.laa.gpfd.services.excel.template.TemplateFileNameResolver;
+import uk.gov.laa.gpfd.services.s3.FileDownloadFromS3Service;
+import uk.gov.laa.gpfd.services.s3.FileDownloadService;
+import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
 
 /**
  * Configuration class for when we look at S3 buckets.
@@ -36,6 +38,11 @@ public class S3Config {
     @Bean
     public S3ClientWrapper createS3Client(@Value("${AWS_REGION}") String awsRegion, @Value("${S3_FILE_STORE}") String fileStore) {
         return new S3ClientWrapper(awsRegion, fileStore);
+    }
+
+    @Bean
+    public FileDownloadService createFileDownloadService() {
+        return new FileDownloadFromS3Service();
     }
 
 }

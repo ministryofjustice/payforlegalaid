@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
+import uk.gov.laa.gpfd.exception.OperationNotSupportedException;
 import uk.gov.laa.gpfd.exception.ReportGenerationException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
@@ -19,6 +20,7 @@ import uk.gov.laa.gpfd.exception.TemplateResourceException;
 import uk.gov.laa.gpfd.model.ReportsGet400Response;
 import uk.gov.laa.gpfd.model.ReportsGet404Response;
 import uk.gov.laa.gpfd.model.ReportsGet500Response;
+import uk.gov.laa.gpfd.model.ReportsIdFileGet501Response;
 
 import java.sql.SQLSyntaxErrorException;
 
@@ -228,5 +230,17 @@ public class GlobalExceptionHandler {
         log.error("ServiceUnavailableException Thrown: {}", e.getMessage());
 
         return internalServerError().body(errorResponse);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_IMPLEMENTED)
+    @ExceptionHandler(OperationNotSupportedException.class)
+    public ResponseEntity<ReportsIdFileGet501Response> handleNotSupportedException(OperationNotSupportedException e) {
+        var errorResponse = new ReportsIdFileGet501Response();
+        errorResponse.setError(e.getMessage());
+
+        log.error("OperationNotSupportedException Thrown: {}", e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
+                .body(errorResponse);
     }
 }
