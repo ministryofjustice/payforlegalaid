@@ -42,4 +42,14 @@ public class S3ClientWrapper {
         return s3Client.getObject(getObjectRequest);
 
     }
+
+    public ResponseInputStream<GetObjectResponse> getResultCsv(String filename) {
+        //TODO refactor
+        var getObjectRequest = GetObjectRequest.builder()
+                .bucket(s3Bucket)
+                .key("reports/" + filename)
+                .build();
+
+        return s3Client.getObject(getObjectRequest);
+    }
 }
