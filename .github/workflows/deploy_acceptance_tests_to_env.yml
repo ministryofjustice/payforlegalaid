@@ -175,7 +175,7 @@ jobs:
           - $(date -u +'%Y-%m-%d %H:%M:%S UTC')
           EOF
 
-      - name: Stop test pod after 5 minutes
+      - name: Stop test pod after 5 minutes - end
         shell: bash
         run: |
           echo "Waiting 5 minutes before killing test pod..."
