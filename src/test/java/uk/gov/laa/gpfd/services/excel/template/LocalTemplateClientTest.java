@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
 class LocalTemplateClientTest {
 
     @Mock
-    private FileNameResolver fileNameResolver;
+    private TemplateFileNameResolver templateFileNameResolver;
 
     @InjectMocks
     private LocalTemplateClient localTemplateClient;
@@ -29,24 +29,24 @@ class LocalTemplateClientTest {
 
     @BeforeEach
     void resetMocks() {
-        reset(fileNameResolver);
+        reset(templateFileNameResolver);
     }
 
     @Test
     void shouldReturnInputStreamForValidId() {
-        when(fileNameResolver.getFileNameFromId(testUUID)).thenReturn("testTemplate.xlsx");
+        when(templateFileNameResolver.getFileNameFromId(testUUID)).thenReturn("testTemplate.xlsx");
         assertNotNull(localTemplateClient.findTemplateById(testUUID));
     }
 
     @Test
     void shouldReturnNullForNullFilename() {
-        when(fileNameResolver.getFileNameFromId(testUUID)).thenReturn(null);
+        when(templateFileNameResolver.getFileNameFromId(testUUID)).thenReturn(null);
         assertNull(localTemplateClient.findTemplateById(testUUID));
     }
 
     @Test
     void shouldThrowsExceptionForFileThatDoesNotExist() {
-        when(fileNameResolver.getFileNameFromId(testUUID)).thenReturn("notATestTemplate.xlsx");
+        when(templateFileNameResolver.getFileNameFromId(testUUID)).thenReturn("notATestTemplate.xlsx");
         assertThrows(TemplateResourceNotFoundException.class, () -> localTemplateClient.findTemplateById(testUUID));
     }
 

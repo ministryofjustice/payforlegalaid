@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 class S3TemplateClientTest {
 
     @Mock
-    private FileNameResolver fileNameResolver;
+    private TemplateFileNameResolver templateFileNameResolver;
 
     @Mock
     private S3ClientWrapper s3ClientWrapper;
@@ -38,9 +38,9 @@ class S3TemplateClientTest {
 
     @BeforeEach
     void resetMocks() {
-        reset(fileNameResolver);
+        reset(templateFileNameResolver);
         reset(s3ClientWrapper);
-        when(fileNameResolver.getFileNameFromId(testUUID)).thenReturn("testTemplate.xlsx");
+        when(templateFileNameResolver.getFileNameFromId(testUUID)).thenReturn("testTemplate.xlsx");
     }
 
     @Test
@@ -55,7 +55,7 @@ class S3TemplateClientTest {
 
     @Test
     void shouldReturnNullForNullFilename() {
-        when(fileNameResolver.getFileNameFromId(testUUID)).thenReturn(null);
+        when(templateFileNameResolver.getFileNameFromId(testUUID)).thenReturn(null);
         assertNull(s3TemplateClient.findTemplateById(testUUID));
     }
 

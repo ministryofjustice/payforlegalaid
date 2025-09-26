@@ -11,13 +11,13 @@ import java.util.UUID;
  * An implementation of {@link TemplateClient} that provides template resources
  * from an S3 bucket.
  */
-public record S3TemplateClient(S3ClientWrapper s3Client, FileNameResolver fileNameResolver) implements TemplateClient {
+public record S3TemplateClient(S3ClientWrapper s3Client, TemplateFileNameResolver templateFileNameResolver) implements TemplateClient {
 
     @Override
     @SneakyThrows
     public InputStream findTemplateById(UUID id) {
 
-        var filename = fileNameResolver.getFileNameFromId(id);
+        var filename = templateFileNameResolver.getFileNameFromId(id);
 
         if (filename == null) {
             return null;
