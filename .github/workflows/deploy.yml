@@ -4,15 +4,18 @@ on:
   push:
     branches:
       - main
+      - LPF-1035-v10
   workflow_dispatch:
 
 jobs:
   To_ATs:
     name: Deploy Acceptance Tests to Dev
     uses: ./.github/workflows/deploy_acceptance_tests_to_env.yml
+    secrets: inherit
 
   To_Dev:
     name: Deploy to dev
+    needs: To_ATs
     uses: ./.github/workflows/deploy_api_to_env.yml
     with:
       github_environment: development
