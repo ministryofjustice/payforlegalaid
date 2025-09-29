@@ -88,8 +88,8 @@ jobs:
           docker buildx build \
             --push \
             --platform linux/amd64 \
-            --secret id=maven_username,env=USERNAME \
-            --secret id=maven_password,env=PASSWORD \
+#            --secret id=maven_username,env=USERNAME \
+#            --secret id=maven_password,env=PASSWORD \
             --tag $REGISTRY/${{ env.ECR_REPOSITORY }}:${{ env.APP_NAME }}-${{ github.sha }} \
             .
 
@@ -169,9 +169,9 @@ jobs:
           - $(date -u +'%Y-%m-%d %H:%M:%S UTC')
           EOF
 
-      - name: Stop test pod after 2 minutes
+      - name: Stop test pod after 5 minutes
         shell: bash
         run: |
-          echo "Waiting 1H before killing the test pod to allow tests to run..."
-          sleep 3600
+          echo "Waiting before killing the test pod to allow tests to run..."
+          sleep 360
           kubectl delete pod ${{ env.APP_NAME }} -n ${{ env.KUBE_NAMESPACE }} --force --grace-period=0
