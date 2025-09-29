@@ -1,6 +1,10 @@
 name: Deploy Acceptance Tests to Environment
 
-on: workflow_dispatch
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.pull_request.number }}
@@ -32,6 +36,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ${{ env.TEST_REPO }}
+          ref: main
           path: testCode
 
       - name: Checkout GitHub repository
@@ -41,6 +46,7 @@ jobs:
           ssh-key: ${{ secrets.DEV_SOCKET_KEY }}
           sparse-checkout: data
           sparse-checkout-cone-mode: true
+          path: dataRepo
 
       - name: Setup XML tools
         run: |
@@ -82,7 +88,7 @@ jobs:
         run: |
           cd testCode
           echo "Building test container image..."
-          
+            
           export REGISTRY=${{ steps.login-ecr.outputs.registry }}
           
           docker buildx build \
@@ -119,7 +125,8 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
-          xmllint --format --encode UTF-8 data/migrations/db.changelog-master.xml > normalized-changelog.xml
+          echo "Normalising Liquibase changelog and calculating checksum..."
+          xmllint --format --encode UTF-8 dataRepo/data/master-changelog.xml > normalized-changelog.xml
           
           CHECKSUM=$(sha256sum normalized-changelog.xml | cut -d' ' -f1)
 
@@ -166,3 +173,10 @@ jobs:
           #### ⏱️ Deployment Timestamp
           - $(date -u +'%Y-%m-%d %H:%M:%S UTC')
           EOF
+
+      - name: Stop test pod after 5 minutes
+        shell: bash
+        run: |
+          echo "Waiting before killing the test pod to allow tests to run..."
+          sleep 360
+          kubectl delete pod ${{ env.APP_NAME }} -n ${{ env.KUBE_NAMESPACE }} --force --grace-period=0
