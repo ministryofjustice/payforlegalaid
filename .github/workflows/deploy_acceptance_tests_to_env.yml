@@ -1,6 +1,11 @@
 name: Deploy Acceptance Tests to Environment
 
-on: workflow_dispatch
+on:
+  push:
+    branches:
+      - LPF-1043-v5
+  workflow_dispatch:
+
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.pull_request.number }}
@@ -88,8 +93,6 @@ jobs:
           docker buildx build \
             --push \
             --platform linux/amd64 \
-#            --secret id=maven_username,env=USERNAME \
-#            --secret id=maven_password,env=PASSWORD \
             --tag $REGISTRY/${{ env.ECR_REPOSITORY }}:${{ env.APP_NAME }}-${{ github.sha }} \
             .
 
