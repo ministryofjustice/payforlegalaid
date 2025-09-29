@@ -29,6 +29,15 @@ jobs:
       id-token: write
       contents: read
     steps:
+      - name: Checkout GitHub DATA_REPO repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.DATA_REPO }}
+          ssh-key: ${{ secrets.DEV_SOCKET_KEY }}
+          sparse-checkout: data
+          sparse-checkout-cone-mode: true
+          path: dataRepo
+
       - name: Checkout GitHub testCode repository
         uses: actions/checkout@v4
         with:
@@ -36,15 +45,6 @@ jobs:
           ref: main
           path: testCode
 
-      - name: Checkout GitHub DATA_REPO repository
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ env.DATA_REPO }}
-          ref: main
-          ssh-key: ${{ secrets.DEV_SOCKET_KEY }}
-          sparse-checkout: data
-          sparse-checkout-cone-mode: true
-          path: dataRepo
 
       - name: Setup XML tools
         run: |
