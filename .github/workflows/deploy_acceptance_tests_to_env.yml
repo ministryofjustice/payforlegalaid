@@ -32,7 +32,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ${{ env.TEST_REPO }}
-          ref: LPF-1043-v2
+          ref: main
           path: testCode
 
       - name: Checkout GitHub repository
@@ -172,6 +172,6 @@ jobs:
       - name: Stop test pod after 2 minutes
         shell: bash
         run: |
-          echo "Waiting 5 minutes before killing the test pod to allow tests to run..."
+          echo "Waiting 1H before killing the test pod to allow tests to run..."
           sleep 3600
           kubectl delete pod ${{ env.APP_NAME }} -n ${{ env.KUBE_NAMESPACE }} --force --grace-period=0
