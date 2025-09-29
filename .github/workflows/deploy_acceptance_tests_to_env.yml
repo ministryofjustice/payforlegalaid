@@ -93,6 +93,8 @@ jobs:
           docker buildx build \
             --push \
             --platform linux/amd64 \
+            --secret id=maven_username,env=USERNAME \
+            --secret id=maven_password,env=PASSWORD \
             --tag $REGISTRY/${{ env.ECR_REPOSITORY }}:${{ env.APP_NAME }}-${{ github.sha }} \
             .
 
