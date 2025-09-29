@@ -1,10 +1,7 @@
-name: Deploy Acceptance Tests to Environment
+name: Deploy Acceptance Tests to Environment (reusable)
 
 on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+  workflow_call: {}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.pull_request.number }}

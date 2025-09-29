@@ -4,12 +4,26 @@ on:
   push:
     branches:
       - main
+      - LPF-1035
   workflow_dispatch:
 
 jobs:
+  To_Acceptance_Tests:
+    name: Deploy Acceptance Tests DEV
+    uses: ./.github/workflows/deploy_acceptance_tests_to_env.yml
+    with:
+    # Add any required 'with' inputs here
+    secrets:
+      ECR_ROLE: ${{ secrets.DEV_TEST_ECR_ROLE_TO_ASSUME }}
+      KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
+      KUBE_CLUSTER: ${{ secrets.KUBE_CLUSTER_DEV }}
+      KUBE_CERT: ${{ secrets.KUBE_CERT_DEV }}
+      KUBE_TOKEN: ${{ secrets.KUBE_TOKEN_DEV }}
+
   To_Dev:
     name: Deploy to dev
     uses: ./.github/workflows/deploy_api_to_env.yml
+    needs: To_Acceptance_Tests
     with:
       github_environment: development
       environment_name: dev
@@ -38,13 +52,13 @@ jobs:
       secret_name: gpfd-uat-secret-01
     secrets:
       api_socket_key: ${{ secrets.UAT_API_SOCKET_KEY }}
-      snyk_token: ${{ secrets.SNYK_TOKEN }}
-      socket_key: ${{ secrets.UAT_SOCKET_KEY }}
-      ecr_role_to_assume: ${{ secrets.UAT_ECR_ROLE_TO_ASSUME }}
-      kube_namespace: ${{ secrets.KUBE_NAMESPACE_UAT }}
-      kube_cluster: ${{ secrets.KUBE_CLUSTER_UAT }}
-      kube_token: ${{ secrets.KUBE_TOKEN_UAT }}
-      kube_cert: ${{ secrets.KUBE_CERT_UAT }}
+#      snyk_token: ${{ secrets.SNYK_TOKEN }}
+#      socket_key: ${{ secrets.UAT_SOCKET_KEY }}
+#      ecr_role_to_assume: ${{ secrets.UAT_ECR_ROLE_TO_ASSUME }}
+#      kube_namespace: ${{ secrets.KUBE_NAMESPACE_UAT }}
+#      kube_cluster: ${{ secrets.KUBE_CLUSTER_UAT }}
+#      kube_token: ${{ secrets.KUBE_TOKEN_UAT }}
+#      kube_cert: ${{ secrets.KUBE_CERT_UAT }}
 
   To_Prod:
     name: Deploy to prod
