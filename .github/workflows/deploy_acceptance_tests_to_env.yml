@@ -41,7 +41,6 @@ jobs:
           ssh-key: ${{ secrets.DEV_SOCKET_KEY }}
           sparse-checkout: data
           sparse-checkout-cone-mode: true
-          path: dataRepo
 
       - name: Setup XML tools
         run: |
@@ -91,7 +90,6 @@ jobs:
             --secret id=maven_password,env=PASSWORD \
             --tag $REGISTRY/${{ env.ECR_REPOSITORY }}:${{ env.APP_NAME }}-${{ github.sha }} \
             .
-
         shell: bash
         env:
           DOCKER_BUILDKIT: 1
