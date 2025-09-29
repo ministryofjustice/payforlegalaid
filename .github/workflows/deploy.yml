@@ -11,8 +11,6 @@ jobs:
   To_Acceptance_Tests:
     name: Deploy Acceptance Tests DEV
     uses: ./.github/workflows/deploy_acceptance_tests_to_env.yml
-    with:
-    # Add any required 'with' inputs here
     secrets:
       ECR_ROLE: ${{ secrets.DEV_TEST_ECR_ROLE_TO_ASSUME }}
       KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
