@@ -7,6 +7,10 @@ on:
   workflow_dispatch:
 
 jobs:
+  To_ATs:
+    name: Deploy Acceptance Tests to Dev
+    uses: ./.github/workflows/deploy_acceptance_tests_to_env.yml
+
   To_Dev:
     name: Deploy to dev
     uses: ./.github/workflows/deploy_api_to_env.yml
