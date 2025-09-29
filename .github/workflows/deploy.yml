@@ -11,12 +11,6 @@ jobs:
   To_Acceptance_Tests:
     name: Deploy Acceptance Tests DEV
     uses: ./.github/workflows/deploy_acceptance_tests_to_env.yml
-    secrets:
-      ECR_ROLE: ${{ secrets.DEV_TEST_ECR_ROLE_TO_ASSUME }}
-      KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
-      KUBE_CLUSTER: ${{ secrets.KUBE_CLUSTER_DEV }}
-      KUBE_CERT: ${{ secrets.KUBE_CERT_DEV }}
-      KUBE_TOKEN: ${{ secrets.KUBE_TOKEN_DEV }}
 
   To_Dev:
     name: Deploy to dev
