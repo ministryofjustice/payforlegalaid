@@ -29,14 +29,14 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - name: Checkout GitHub repository
+      - name: Checkout GitHub testCode repository
         uses: actions/checkout@v4
         with:
           repository: ${{ env.TEST_REPO }}
           ref: main
           path: testCode
 
-      - name: Checkout GitHub repository
+      - name: Checkout GitHub DATA_REPO repository
         uses: actions/checkout@v4
         with:
           repository: ${{ env.DATA_REPO }}
