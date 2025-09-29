@@ -6,7 +6,6 @@ on:
       - LPF-1043-v5
   workflow_dispatch:
 
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.pull_request.number }}
   cancel-in-progress: true
@@ -74,7 +73,7 @@ jobs:
             --certificate-authority=./ca.crt \
             --server=https://${{ env.KUBE_CLUSTER }}
           
-          kubectl config set-credentials deploy-user \  
+          kubectl config set-credentials deploy-user \
             --token=${{ secrets.KUBE_TOKEN_DEV }}
           
           kubectl config set-context ${{ env.KUBE_CLUSTER }} \
