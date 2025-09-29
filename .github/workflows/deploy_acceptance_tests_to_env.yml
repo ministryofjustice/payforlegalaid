@@ -1,6 +1,10 @@
-name: Deploy Acceptance Tests to Environment (reusable)
+name: Deploy Acceptance Tests to Environment
 
 on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
   workflow_call: {}
 
 concurrency:
