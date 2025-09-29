@@ -74,7 +74,7 @@ jobs:
             --certificate-authority=./ca.crt \
             --server=https://${{ env.KUBE_CLUSTER }}
           
-          kubectl config set-credentials deploy-user \
+          kubectl config set-credentials deploy-user \  
             --token=${{ secrets.KUBE_TOKEN_DEV }}
           
           kubectl config set-context ${{ env.KUBE_CLUSTER }} \
