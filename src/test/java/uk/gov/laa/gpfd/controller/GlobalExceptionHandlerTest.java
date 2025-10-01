@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import software.amazon.awssdk.awscore.exception.AwsErrorDetails;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
+import uk.gov.laa.gpfd.exception.OperationNotSupportedException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.NOT_IMPLEMENTED;
 import static uk.gov.laa.gpfd.exception.DatabaseReadException.DatabaseFetchException;
 import static uk.gov.laa.gpfd.exception.DatabaseReadException.MappingException;
 import static uk.gov.laa.gpfd.exception.DatabaseReadException.SqlFormatException;
@@ -204,6 +206,16 @@ class GlobalExceptionHandlerTest {
 
         assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertEquals("Error: Failed to prepare report for download", response.getBody().getError());
+    }
+
+    @Test
+    void shouldHandleOperationNotSupportedExceptions() {
+        var exception = new OperationNotSupportedException("/reports/id/file");
+
+        var response = globalExceptionHandler.handleNotSupportedException(exception);
+
+        assertEquals(NOT_IMPLEMENTED, response.getStatusCode());
+        assertEquals("Operation /reports/id/file is not supported on this instance", response.getBody().getError());
     }
 
 }

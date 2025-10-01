@@ -39,7 +39,6 @@ class S3ConfigLocalTest {
 
     @Test
     void shouldNotHaveAS3Client() {
-
         assertThrows(NoSuchBeanDefinitionException.class, () -> context.getBean(S3ClientWrapper.class));
     }
 
