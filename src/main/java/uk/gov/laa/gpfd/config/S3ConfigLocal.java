@@ -14,12 +14,12 @@ import uk.gov.laa.gpfd.services.s3.FileDownloadService;
  * In practice this doesn't do much other than turn off the feature on local as we have no S3 mocking currently.
  */
 @Configuration
-@ConditionalOnProperty(name = "gpfd.s3.use-template-store", havingValue = "false", matchIfMissing = true)
+@ConditionalOnProperty(name = "gpfd.s3.has-s3-access", havingValue = "false", matchIfMissing = true)
 public class S3ConfigLocal {
 
     /**
      * Creates a {@link TemplateClient} which returns a local template.
-     * For environments with s3.use-template-store enabled, see {@link S3Config} for bean-creation.
+     * For environments with s3.has-s3-access enabled, see {@link S3Config} for bean-creation.
      *
      * @return a {@link LocalTemplateClient} instance
      */

@@ -16,7 +16,7 @@ gpfd:
       driver-class-name: oracle.jdbc.pool.OracleDataSource
 
   s3:
-    use-template-store: true
+    has-s3-access: true
 
 spring:
   cloud:

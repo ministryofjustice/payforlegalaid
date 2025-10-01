@@ -16,7 +16,7 @@ import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
  * Configuration class for when we look at S3 buckets.
  */
 @Configuration
-@ConditionalOnProperty(name = "gpfd.s3.use-template-store", havingValue = "true")
+@ConditionalOnProperty(name = "gpfd.s3.has-s3-access", havingValue = "true")
 public class S3Config {
 
     /**
