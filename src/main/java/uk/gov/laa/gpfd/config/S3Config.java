@@ -22,6 +22,8 @@ public class S3Config {
     /**
      * Creates a {@link TemplateClient} which returns templates from S3.
      *
+     * @param s3ClientWrapper - an S3 Client
+     * @param templateFileNameResolver - a class that maps report templates to filenames
      * @return a {@link S3TemplateClient} instance
      */
     @Bean
@@ -40,9 +42,15 @@ public class S3Config {
         return new S3ClientWrapper(awsRegion, fileStore);
     }
 
+    /**
+     * Creates a {@link FileDownloadService}, an object that handles S3 file requests and so allows different behaviour on local vs live systems.
+     *
+     * @param s3ClientWrapper - an S3 Client
+     * @return an object that determines how file download should behave for this system
+     */
     @Bean
-    public FileDownloadService createFileDownloadService() {
-        return new FileDownloadFromS3Service();
+    public FileDownloadService createFileDownloadService(S3ClientWrapper s3ClientWrapper) {
+        return new FileDownloadFromS3Service(s3ClientWrapper);
     }
 
 }

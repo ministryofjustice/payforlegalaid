@@ -7,7 +7,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,12 +42,9 @@ import uk.gov.laa.gpfd.services.excel.formatting.CellFormatter;
 import uk.gov.laa.gpfd.services.excel.formatting.CellFormatting;
 import uk.gov.laa.gpfd.services.excel.formatting.ColumnFormatting;
 import uk.gov.laa.gpfd.services.excel.formatting.Formatting;
-import uk.gov.laa.gpfd.services.excel.template.TemplateFileNameResolver;
-import uk.gov.laa.gpfd.services.excel.template.LocalTemplateClient;
 import uk.gov.laa.gpfd.services.excel.template.TemplateClient;
+import uk.gov.laa.gpfd.services.excel.template.TemplateFileNameResolver;
 import uk.gov.laa.gpfd.services.excel.workbook.StyleManager;
-import uk.gov.laa.gpfd.services.s3.FileDownloadLocalService;
-import uk.gov.laa.gpfd.services.s3.FileDownloadService;
 import uk.gov.laa.gpfd.services.stream.AbstractDataStream;
 import uk.gov.laa.gpfd.services.stream.DataStream;
 import uk.gov.laa.gpfd.utils.StrategyFactory;
@@ -284,25 +280,6 @@ public class AppConfig {
     @Bean
     public AuthorizationManager<RequestAuthorizationContext> authManager() {
         return new ContextBasedAuthorizationManager();
-    }
-
-    /**
-     * Creates a {@link TemplateClient} which returns a local template.
-     * For environments with s3.use-template-store enabled, see {@link S3Config} for bean-creation.
-     *
-     * @return a {@link LocalTemplateClient} instance
-     */
-    @ConditionalOnProperty(name = "gpfd.s3.use-template-store", havingValue = "false", matchIfMissing = true)
-    @Bean
-    public TemplateClient localTemplateClient(TemplateFileNameResolver templateFileNameResolver) {
-        return new LocalTemplateClient(templateFileNameResolver);
-    }
-
-    //TODO refactor
-    @ConditionalOnProperty(name = "gpfd.s3.use-template-store", havingValue = "false", matchIfMissing = true)
-    @Bean
-    public FileDownloadService getFileDownloadService() {
-        return new FileDownloadLocalService();
     }
 
     /**
