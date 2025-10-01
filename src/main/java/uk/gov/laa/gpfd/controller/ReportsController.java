@@ -2,6 +2,7 @@ package uk.gov.laa.gpfd.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -98,7 +99,7 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
     }
 
     @Override
-    public ResponseEntity<StreamingResponseBody> reportsIdFileGet(UUID id) {
+    public ResponseEntity<InputStreamResource> reportsIdFileGet(UUID id) {
         return fileDownloadService.getFileStreamResponse(id);
     }
 
