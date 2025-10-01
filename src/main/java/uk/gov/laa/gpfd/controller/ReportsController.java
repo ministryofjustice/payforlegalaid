@@ -99,7 +99,7 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
     }
 
     @Override
-    public ResponseEntity<InputStreamResource> reportsIdFileGet(UUID id) {
+    public ResponseEntity<InputStreamResource> getReportDownloadById(UUID id) {
         return fileDownloadService.getFileStreamResponse(id);
     }
 

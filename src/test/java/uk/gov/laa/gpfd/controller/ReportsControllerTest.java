@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,9 @@ import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 import uk.gov.laa.gpfd.services.ReportManagementService;
 import uk.gov.laa.gpfd.services.ReportsTrackingService;
 import uk.gov.laa.gpfd.services.StreamingService;
+import uk.gov.laa.gpfd.services.s3.FileDownloadService;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.List;
@@ -37,6 +40,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -53,6 +57,9 @@ class ReportsControllerTest {
 
     @MockitoBean
     StreamingService streamingService;
+
+    @MockitoBean
+    FileDownloadService fileDownloadService;
 
     @Autowired
     MockMvc mockMvc;
@@ -81,7 +88,6 @@ class ReportsControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d1").with(oidcLogin()).with(oauth2Client("graph"))).andExpect(status().isOk()).andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=data.csv"));
         verify(streamingService).stream(DEFAULT_ID, FileExtension.CSV);
     }
-
 
     @Test
     @WithMockUser(roles = "ADMIN")
@@ -120,4 +126,22 @@ class ReportsControllerTest {
 
         verify(reportManagementServiceMock, times(1)).createReportResponse(reportId);
     }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void getReportDownloadByIdReturnsCorrectResponseEntity() throws Exception {
+        var reportId = DEFAULT_ID;
+
+        var inputStreamResource = new InputStreamResource(new ByteArrayInputStream("test".getBytes()));
+        var mockResponse = ResponseEntity.ok(inputStreamResource);
+
+        when(fileDownloadService.getFileStreamResponse(reportId)).thenReturn(mockResponse);
+
+        var result = mockMvc.perform(MockMvcRequestBuilders.get("/reports/{id}/file", reportId))
+                .andExpect(status().isOk()).andReturn();
+
+        assertEquals("test", result.getResponse().getContentAsString());
+        verify(fileDownloadService, times(1)).getFileStreamResponse(reportId);
+    }
+
 }
