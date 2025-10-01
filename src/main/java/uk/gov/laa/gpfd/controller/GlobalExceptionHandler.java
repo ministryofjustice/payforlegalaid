@@ -17,10 +17,10 @@ import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.exception.ServiceUnavailableException;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
+import uk.gov.laa.gpfd.model.GetReportDownloadById501Response;
 import uk.gov.laa.gpfd.model.ReportsGet400Response;
 import uk.gov.laa.gpfd.model.ReportsGet404Response;
 import uk.gov.laa.gpfd.model.ReportsGet500Response;
-import uk.gov.laa.gpfd.model.ReportsIdFileGet501Response;
 
 import java.sql.SQLSyntaxErrorException;
 
@@ -234,8 +234,8 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.NOT_IMPLEMENTED)
     @ExceptionHandler(OperationNotSupportedException.class)
-    public ResponseEntity<ReportsIdFileGet501Response> handleNotSupportedException(OperationNotSupportedException e) {
-        var errorResponse = new ReportsIdFileGet501Response();
+    public ResponseEntity<GetReportDownloadById501Response> handleNotSupportedException(OperationNotSupportedException e) {
+        var errorResponse = new GetReportDownloadById501Response();
         errorResponse.setError(e.getMessage());
 
         log.error("OperationNotSupportedException Thrown: {}", e.getMessage());
