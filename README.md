@@ -100,6 +100,9 @@ You will need to populate the `src/main/resources` folder with any template file
 hold a skeleton of the report in. E.g. if you want to test the Third Party Report you should place a copy of the Third Party Report template in the folder.
 For more details on how to get this template visit the [Confluence](https://dsdmoj.atlassian.net/wiki/spaces/LPF/pages/5803409516/How+to+create+a+template#How-do-I-get-a-template-to-use-on-my-local-system)
 
+### Scanning Snky tools
+- `snyk test --policy-path=.snyk`
+
 ### Access on development
 - There is a shared password-manager group account for the GPFD team, ask the manager of the team for access. This group has a number of test users which can be used to access the Dev environment - these accounts have been registered with the DEV environment's active directory, and so will pass the SSO authentication.
 
