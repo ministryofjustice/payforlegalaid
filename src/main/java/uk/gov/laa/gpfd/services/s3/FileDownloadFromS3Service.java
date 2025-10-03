@@ -10,17 +10,17 @@ import java.util.UUID;
 public class FileDownloadFromS3Service implements FileDownloadService {
 
     private final S3ClientWrapper s3ClientWrapper;
+    private final ReportFileNameResolver fileNameResolver;
 
-    public FileDownloadFromS3Service(S3ClientWrapper s3ClientWrapper) {
+    public FileDownloadFromS3Service(S3ClientWrapper s3ClientWrapper, ReportFileNameResolver fileNameResolver) {
         this.s3ClientWrapper = s3ClientWrapper;
+        this.fileNameResolver = fileNameResolver;
     }
 
     @Override
     public ResponseEntity<InputStreamResource> getFileStreamResponse(UUID id) {
-        // TODO may need to inject as bean to make this testable
-        var fileResolver = new ReportFileNameResolver();
 
-        var fileName = fileResolver.getFileNameFromId(id);
+        var fileName = fileNameResolver.getFileNameFromId(id);
 
         var fileStream = s3ClientWrapper.getResultCsv(fileName);
 

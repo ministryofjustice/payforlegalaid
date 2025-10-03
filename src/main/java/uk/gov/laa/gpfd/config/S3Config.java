@@ -10,6 +10,7 @@ import uk.gov.laa.gpfd.services.excel.template.TemplateClient;
 import uk.gov.laa.gpfd.services.excel.template.TemplateFileNameResolver;
 import uk.gov.laa.gpfd.services.s3.FileDownloadFromS3Service;
 import uk.gov.laa.gpfd.services.s3.FileDownloadService;
+import uk.gov.laa.gpfd.services.s3.ReportFileNameResolver;
 import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
 
 /**
@@ -50,7 +51,7 @@ public class S3Config {
      */
     @Bean
     public FileDownloadService createFileDownloadService(S3ClientWrapper s3ClientWrapper) {
-        return new FileDownloadFromS3Service(s3ClientWrapper);
+        return new FileDownloadFromS3Service(s3ClientWrapper, new ReportFileNameResolver());
     }
 
 }
