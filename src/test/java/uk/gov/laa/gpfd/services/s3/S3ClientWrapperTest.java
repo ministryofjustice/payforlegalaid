@@ -26,7 +26,7 @@ class S3ClientWrapperTest {
     private S3Client s3Client;
 
     @Test
-    void shouldGetTemplateFromS3AndReturnInputStream() {
+    void getTemplate_shouldGetFileFromS3AndReturnInputStream() {
 
         var responseMetadata = GetObjectResponse.builder().build();
         var inputStream = new ByteArrayInputStream("mock template data".getBytes());
@@ -49,12 +49,45 @@ class S3ClientWrapperTest {
     }
 
     @Test
-    void shouldLetAwsExceptionBeCaughtByExceptionHandler() {
+    void getTemplate_shouldLetAwsExceptionBeCaughtByExceptionHandler() {
 
         when(s3Client.getObject(any(GetObjectRequest.class))).thenThrow(NoSuchKeyException.builder().build());
         var s3ClientWrapper = new S3ClientWrapper(s3Client, "bucket");
 
         assertThrows(NoSuchKeyException.class, () -> s3ClientWrapper.getTemplate("file.xlsx"));
+
+    }
+
+    @Test
+    void getResultCsv_shouldGetFileFromS3AndReturnInputStream() {
+
+        var responseMetadata = GetObjectResponse.builder().build();
+        var inputStream = new ByteArrayInputStream("mock,csv,data".getBytes());
+        var mockResponse = new ResponseInputStream<>(responseMetadata, inputStream);
+
+        when(s3Client.getObject(any(GetObjectRequest.class))).thenReturn(mockResponse);
+        var s3ClientWrapper = new S3ClientWrapper(s3Client, "bucket");
+
+        var result = s3ClientWrapper.getResultCsv("report.csv");
+
+        assertEquals(mockResponse, result);
+
+        // Check wrapper builds up the correct request to S3
+        var captor = ArgumentCaptor.forClass(GetObjectRequest.class);
+        verify(s3Client).getObject(captor.capture());
+        var requestToS3 = captor.getValue();
+        assertEquals("bucket", requestToS3.bucket());
+        assertEquals("reports/report.csv", requestToS3.key());
+
+    }
+
+    @Test
+    void getResultCsv_shouldLetAwsExceptionBeCaughtByExceptionHandler() {
+
+        when(s3Client.getObject(any(GetObjectRequest.class))).thenThrow(NoSuchKeyException.builder().build());
+        var s3ClientWrapper = new S3ClientWrapper(s3Client, "bucket");
+
+        assertThrows(NoSuchKeyException.class, () -> s3ClientWrapper.getResultCsv("file.csv"));
 
     }
 

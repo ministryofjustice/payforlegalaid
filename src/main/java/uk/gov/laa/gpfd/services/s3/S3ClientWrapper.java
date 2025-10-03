@@ -33,23 +33,17 @@ public class S3ClientWrapper {
      * @return Stream of the file
      */
     public ResponseInputStream<GetObjectResponse> getTemplate(String filename){
-
-        var getObjectRequest = GetObjectRequest.builder()
-                .bucket(s3Bucket)
-                .key("templates/" + filename)
-                .build();
-
-        return s3Client.getObject(getObjectRequest);
-
+        return s3Client.getObject(buildRequest("templates", filename));
     }
 
     public ResponseInputStream<GetObjectResponse> getResultCsv(String filename) {
-        //TODO refactor
-        var getObjectRequest = GetObjectRequest.builder()
-                .bucket(s3Bucket)
-                .key("reports/" + filename)
-                .build();
+        return s3Client.getObject(buildRequest("reports", filename));
+    }
 
-        return s3Client.getObject(getObjectRequest);
+    private GetObjectRequest buildRequest(String folder, String filename){
+        return GetObjectRequest.builder()
+                .bucket(s3Bucket)
+                .key(folder + "/" + filename)
+                .build();
     }
 }
