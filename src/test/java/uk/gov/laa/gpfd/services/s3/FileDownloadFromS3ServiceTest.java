@@ -83,8 +83,8 @@ class FileDownloadFromS3ServiceTest {
     void shouldLetExceptionHandlerHandleExceptionThrownByFileNameResolver() {
         when(fileNameResolver.getFileNameFromId(testUUID)).thenThrow(new IllegalArgumentException("Report ID cannot be null or blank"));
 
-        assertThrows(IllegalArgumentException.class, () -> fileDownloadFromS3Service.getFileStreamResponse(testUUID),
-                "Report ID cannot be null or blank");
+        var exception = assertThrows(IllegalArgumentException.class, () -> fileDownloadFromS3Service.getFileStreamResponse(testUUID));
+        assertEquals("Report ID cannot be null or blank", exception.getMessage());
 
         verifyNoInteractions(s3ClientWrapper);
     }
