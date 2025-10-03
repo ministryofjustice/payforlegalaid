@@ -209,6 +209,12 @@ public class GlobalExceptionHandler {
         return badRequest().body(response);
     }
 
+    /**
+     * Handles {@link AwsServiceException} and its subtypes, and responds with an HTTP 500 Internal Server Error.
+     *
+     * @param e the exception thrown when there is an issue connecting to S3.
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
+     */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(AwsServiceException.class)
     public ResponseEntity<ReportsGet500Response> handleAWSErrors(AwsServiceException e) {
@@ -221,6 +227,12 @@ public class GlobalExceptionHandler {
         return internalServerError().body(errorResponse);
     }
 
+    /**
+     * Handles {@link ServiceUnavailableException} and responds with an HTTP 500 Internal Server Error.
+     *
+     * @param e the exception thrown when the user is acting outside of service active hours.
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
+     */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(ServiceUnavailableException.class)
     public ResponseEntity<ReportsGet500Response> handleServiceUnavailable(ServiceUnavailableException e) {
@@ -232,6 +244,12 @@ public class GlobalExceptionHandler {
         return internalServerError().body(errorResponse);
     }
 
+    /**
+     * Handles {@link OperationNotSupportedException} and responds with an HTTP 501 Not Implemented.
+     *
+     * @param e the exception thrown when the user is on a system that doesn't support the endpoint.
+     * @return a {@link ResponseEntity} containing a {@link GetReportDownloadById501Response} with error details.
+     */
     @ResponseStatus(HttpStatus.NOT_IMPLEMENTED)
     @ExceptionHandler(OperationNotSupportedException.class)
     public ResponseEntity<GetReportDownloadById501Response> handleNotSupportedException(OperationNotSupportedException e) {

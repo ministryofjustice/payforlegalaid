@@ -5,6 +5,12 @@ import java.util.UUID;
 
 public class ReportFileNameResolver {
 
+    /**
+     * Fetch the file name for a given report ID
+     *
+     * @param id - report ID
+     * @return - completed filename for this report
+     */
     String getFileNameFromId(UUID id) {
         if (id == null) {
             throw new IllegalArgumentException("Report ID cannot be null or blank");
