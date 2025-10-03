@@ -53,14 +53,4 @@ public class S3ClientWrapper {
                 .key(folder + "/" + filename)
                 .build();
     }
-
-    public ResponseInputStream<GetObjectResponse> getResultCsv(String filename) {
-        //TODO refactor
-        var getObjectRequest = GetObjectRequest.builder()
-                .bucket(s3Bucket)
-                .key("reports/" + filename)
-                .build();
-
-        return s3Client.getObject(getObjectRequest);
-    }
 }
