@@ -6,6 +6,7 @@ import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import uk.gov.laa.gpfd.exception.InvalidDownloadFormatException;
 
 import java.util.UUID;
 
@@ -33,6 +34,10 @@ public class FileDownloadFromS3Service implements FileDownloadService {
     public ResponseEntity<InputStreamResource> getFileStreamResponse(UUID id) {
 
         var fileName = fileNameResolver.getFileNameFromId(id);
+
+        if (!fileName.endsWith(".csv")) {
+            throw new InvalidDownloadFormatException(fileName, id);
+        }
 
         var fileStream = s3ClientWrapper.getResultCsv(fileName);
         var contentDisposition = ContentDisposition.attachment().filename(fileName).build();

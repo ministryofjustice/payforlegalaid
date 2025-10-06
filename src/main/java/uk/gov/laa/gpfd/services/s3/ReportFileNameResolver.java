@@ -22,7 +22,7 @@ public class ReportFileNameResolver {
             case "aca2120c-8f82-45a8-a682-8dedfb7997a7" -> "report_013.csv";
 
             // TODO these are here to test things on dev in short term. can be removed when we have real test examples and won't work on uat/prod
-            case "00d5a89d-a28f-44b5-ae26-070ce86b0dae" -> "oneMbCsv.csv";
+            case "00d5a89d-a28f-44b5-ae26-070ce86b0dae" -> "oneMbCsv.csg";
             case "0548ee0a-3532-4b50-8fed-372cef9bf493" -> "elevenMbCsv.csv";
             case "d7306ae6-6a29-4fcc-98b6-4a77c55881c1" -> "seventyMbCsv.csv";
             case "0dda98c9-e949-4816-9c4a-fbbf2af1295d" -> "hundredMbCsv.csv";
