@@ -21,7 +21,7 @@ runs:
 
     - name: Run tests
       run: |
-        mvn -B -DskipTests clean test
+        mvn -B clean test
       env:
         SPRING_PROFILES_ACTIVE: test
       shell:
