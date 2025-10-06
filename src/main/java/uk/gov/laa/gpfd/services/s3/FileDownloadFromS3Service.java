@@ -9,7 +9,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import uk.gov.laa.gpfd.exception.InvalidDownloadFormatException;
 
-import java.io.IOException;
 import java.util.UUID;
 
 /**
@@ -42,16 +41,14 @@ public class FileDownloadFromS3Service implements FileDownloadService {
             throw new InvalidDownloadFormatException(fileName, id);
         }
 
-        throw new IOException("test");
+        var fileStream = s3ClientWrapper.getResultCsv(fileName);
+        var contentDisposition = ContentDisposition.attachment().filename(fileName).build();
 
-//        var fileStream = s3ClientWrapper.getResultCsv(fileName);
-//        var contentDisposition = ContentDisposition.attachment().filename(fileName).build();
-//
-//        log.info("About to stream report with ID " + id + " to user");
-//        return ResponseEntity.ok()
-//                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString())
-//                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-//                .contentLength(fileStream.response().contentLength())
-//                .body(new InputStreamResource(fileStream));
+        log.info("About to stream report with ID " + id + " to user");
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString())
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentLength(fileStream.response().contentLength())
+                .body(new InputStreamResource(fileStream));
     }
 }
