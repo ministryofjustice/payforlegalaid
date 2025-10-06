@@ -29,7 +29,6 @@ public class ReportFileNameResolver {
             case "d7306ae6-6a29-4fcc-98b6-4a77c55881c1" -> "seventyMbCsv.csv";
             case "0dda98c9-e949-4816-9c4a-fbbf2af1295d" -> "hundredMbCsv.csv";
 
-            //"Report not valid for file retrieval: " +
             default -> throw new ReportNotSupportedForDownloadException(id);
         };
 
