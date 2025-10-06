@@ -26,4 +26,24 @@ ignore:
           present
         expires: 2025-09-11T00:00:00.000Z
         created: 2025-09-09T12:42:15.862Z
+  "snyk:lic:maven:ch.qos.logback:logback-classic:(EPL-1.0_OR_LGPL-2.1)":
+      - '*':
+          reason: >
+            Logback is pulled in transitively by Spring Boot. License is weak
+            copyleft (EPL-1.0 and LGPL-2.1). Service is not distributed. Replacement would be disproportionate effort.
+          expires: 2026-03-31T00:00:00.000Z
+          created: 2025-10-02T09:00:00.000Z
+  "snyk:lic:maven:ch.qos.logback:logback-core:(EPL-1.0_OR_LGPL-2.1)":
+      - '*':
+          reason: >
+            Same reasoning as logback-classic. License accepted under org policy.
+          expires: 2026-03-31T00:00:00.000Z
+          created: 2025-10-02T09:00:00.000Z
+  "snyk:lic:maven:com.h2database:h2:(EPL-1.0_OR_MPL-2.0)":
+      - '*':
+          reason: >
+            H2 is used only for development and testing, not distributed in
+            production.
+          expires: 2026-03-31T00:00:00.000Z
+          created: 2025-10-02T09:30:00.000Z
 patch: {}
