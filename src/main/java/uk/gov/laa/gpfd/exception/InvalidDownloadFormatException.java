@@ -1,13 +1,16 @@
 package uk.gov.laa.gpfd.exception;
 
+import lombok.Getter;
+
 import java.util.UUID;
 
 /**
  * Exception class to indicate that the endpoint is not supported
  */
+@Getter
 public class InvalidDownloadFormatException extends RuntimeException {
-    public String fileName;
-    public UUID reportId;
+    final String fileName;
+    final UUID reportId;
 
     public InvalidDownloadFormatException(String fileName, UUID reportId) {
         super();

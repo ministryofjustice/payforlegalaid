@@ -275,9 +275,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidDownloadFormatException.class)
     public ResponseEntity<ReportsGet400Response> handleInvalidDownloadFormatException(InvalidDownloadFormatException e) {
         var errorResponse = new ReportsGet400Response();
-        errorResponse.setError("Unable to download file for report with ID " + e.reportId);
+        errorResponse.setError("Unable to download file for report with ID " + e.getReportId());
 
-        log.error("InvalidDownloadFormatException Thrown: Report {} has file {} which is not a csv file", e.reportId, e.fileName);
+        log.error("InvalidDownloadFormatException Thrown: Report {} has file {} which is not a csv file", e.getReportId(), e.getFileName());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(errorResponse);
@@ -293,9 +293,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ReportNotSupportedForDownloadException.class)
     public ResponseEntity<ReportsGet400Response> handleReportNotSupportedForDownloadException(ReportNotSupportedForDownloadException e) {
         var errorResponse = new ReportsGet400Response();
-        errorResponse.setError("Report " + e.reportId + " is not valid for file retrieval");
+        errorResponse.setError("Report " + e.getReportId() + " is not valid for file retrieval");
 
-        log.error("ReportNotSupportedForDownloadException Thrown: Report {} is not supported on the '/report/{id}/file' endpoint", e.reportId);
+        log.error("ReportNotSupportedForDownloadException Thrown: Report {} is not supported on the '/report/{id}/file' endpoint", e.getReportId());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(errorResponse);
