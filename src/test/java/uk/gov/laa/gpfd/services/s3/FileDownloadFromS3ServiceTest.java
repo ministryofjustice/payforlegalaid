@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
+import uk.gov.laa.gpfd.exception.InvalidDownloadFormatException;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -77,6 +78,16 @@ class FileDownloadFromS3ServiceTest {
         verify(fileNameResolver).getFileNameFromId(testUUID);
         verify(s3ClientWrapper).getResultCsv(testFilename);
 
+    }
+
+    @Test
+    void shouldErrorIfFileFormatIsIncorrect() {
+        when(fileNameResolver.getFileNameFromId(testUUID)).thenReturn("report_numero_uno.xlsx");
+
+        assertThrows(InvalidDownloadFormatException.class, () -> fileDownloadFromS3Service.getFileStreamResponse(testUUID));
+
+        verify(fileNameResolver).getFileNameFromId(testUUID);
+        verifyNoInteractions(s3ClientWrapper);
     }
 
     @Test

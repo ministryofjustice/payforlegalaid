@@ -273,7 +273,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidDownloadFormatException.class)
     public ResponseEntity<ReportsGet400Response> handleInvalidDownloadFormatException(InvalidDownloadFormatException e) {
         var errorResponse = new ReportsGet400Response();
-        errorResponse.setError("Unable to download file for ID " + e.reportId);
+        errorResponse.setError("Unable to download file for report with ID " + e.reportId);
 
         log.error("InvalidDownloadFormatException Thrown: Report {} has file {} which is not a csv file", e.reportId, e.fileName);
 

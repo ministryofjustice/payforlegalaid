@@ -8,12 +8,14 @@ import org.junit.jupiter.params.provider.ValueSource;
 import software.amazon.awssdk.awscore.exception.AwsErrorDetails;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
+import uk.gov.laa.gpfd.exception.InvalidDownloadFormatException;
 import uk.gov.laa.gpfd.exception.OperationNotSupportedException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
 import uk.gov.laa.gpfd.exception.TransferException;
 
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static java.util.stream.Stream.of;
@@ -216,6 +218,17 @@ class GlobalExceptionHandlerTest {
 
         assertEquals(NOT_IMPLEMENTED, response.getStatusCode());
         assertEquals("Operation /reports/id/file is not supported on this instance", response.getBody().getError());
+    }
+
+    @Test
+    void shouldHandleInvalidDownloadFormatException() {
+        var reportId = UUID.randomUUID();
+        var exception = new InvalidDownloadFormatException("blah.docx", reportId);
+
+        var response = globalExceptionHandler.handleInvalidDownloadFormatException(exception);
+
+        assertEquals(BAD_REQUEST, response.getStatusCode());
+        assertEquals("Unable to download file for report with ID " + reportId, response.getBody().getError());
     }
 
 }
