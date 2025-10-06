@@ -224,7 +224,8 @@ public class GlobalExceptionHandler {
         var errorResponse = new ReportsGet500Response();
         errorResponse.setError(message);
 
-        log.error("AwsServiceException Thrown: {}", e.awsErrorDetails().toString());
+        // Ensure log has specific AWS exception class name in, such as NoSuchKeyException.
+        log.error("AwsServiceException ({}) Thrown: {}", e.getClass().getSimpleName(), e.awsErrorDetails().toString());
 
         return internalServerError().body(errorResponse);
     }

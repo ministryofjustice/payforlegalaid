@@ -44,7 +44,7 @@ public class FileDownloadFromS3Service implements FileDownloadService {
         var fileStream = s3ClientWrapper.getResultCsv(fileName);
         var contentDisposition = ContentDisposition.attachment().filename(fileName).build();
 
-        log.info("About to stream report with ID " + id + " to user");
+        log.info("About to stream report with ID {} to user", id);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString())
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
