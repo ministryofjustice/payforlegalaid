@@ -1,6 +1,7 @@
 package uk.gov.laa.gpfd.services.s3;
 
 import org.junit.jupiter.api.Test;
+import uk.gov.laa.gpfd.exception.ReportNotSupportedForDownloadException;
 
 import java.util.UUID;
 
@@ -36,5 +37,9 @@ class ReportFileNameResolverTest {
         assertThrows(IllegalArgumentException.class, () -> reportFileNameResolver.getFileNameFromId(null));
     }
 
+    @Test
+    void shouldThrowNotSupportedExceptionIfIdIsNotInList() {
+        assertThrows(ReportNotSupportedForDownloadException.class, () -> reportFileNameResolver.getFileNameFromId(UUID.fromString("bda2120c-8f82-45a8-a682-8dedfb7997a7")));
+    }
 
 }

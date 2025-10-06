@@ -15,6 +15,7 @@ import uk.gov.laa.gpfd.exception.InvalidDownloadFormatException;
 import uk.gov.laa.gpfd.exception.OperationNotSupportedException;
 import uk.gov.laa.gpfd.exception.ReportGenerationException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
+import uk.gov.laa.gpfd.exception.ReportNotSupportedForDownloadException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.exception.ServiceUnavailableException;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
@@ -276,6 +277,24 @@ public class GlobalExceptionHandler {
         errorResponse.setError("Unable to download file for report with ID " + e.reportId);
 
         log.error("InvalidDownloadFormatException Thrown: Report {} has file {} which is not a csv file", e.reportId, e.fileName);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(errorResponse);
+    }
+
+    /**
+     * Handles {@link ReportNotSupportedForDownloadException} and responds with an HTTP 400 Bad Request.
+     *
+     * @param e the exception thrown when the report can't be downloaded via this endpoint
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet400Response} with error details.
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ReportNotSupportedForDownloadException.class)
+    public ResponseEntity<ReportsGet400Response> handleReportNotSupportedForDownloadException(ReportNotSupportedForDownloadException e) {
+        var errorResponse = new ReportsGet400Response();
+        errorResponse.setError("Report " + e.reportId + " is not valid for file retrieval");
+
+        log.error("ReportNotSupportedForDownloadException Thrown: Report {} is not supported on the '/report/{id}/file' endpoint", e.reportId);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(errorResponse);

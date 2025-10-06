@@ -11,6 +11,7 @@ import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.InvalidDownloadFormatException;
 import uk.gov.laa.gpfd.exception.OperationNotSupportedException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
+import uk.gov.laa.gpfd.exception.ReportNotSupportedForDownloadException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
 import uk.gov.laa.gpfd.exception.TransferException;
@@ -229,6 +230,17 @@ class GlobalExceptionHandlerTest {
 
         assertEquals(BAD_REQUEST, response.getStatusCode());
         assertEquals("Unable to download file for report with ID " + reportId, response.getBody().getError());
+    }
+
+    @Test
+    void shouldHandleReportNotSupportedForDownloadException() {
+        var reportId = UUID.randomUUID();
+        var exception = new ReportNotSupportedForDownloadException(reportId);
+
+        var response = globalExceptionHandler.handleReportNotSupportedForDownloadException(exception);
+
+        assertEquals(BAD_REQUEST, response.getStatusCode());
+        assertEquals("Report " + reportId + " is not valid for file retrieval", response.getBody().getError());
     }
 
 }
