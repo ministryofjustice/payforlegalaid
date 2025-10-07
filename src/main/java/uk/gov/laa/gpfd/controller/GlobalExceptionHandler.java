@@ -11,11 +11,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
+import uk.gov.laa.gpfd.exception.OperationNotSupportedException;
 import uk.gov.laa.gpfd.exception.ReportGenerationException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.exception.ServiceUnavailableException;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
+import uk.gov.laa.gpfd.model.GetReportDownloadById501Response;
 import uk.gov.laa.gpfd.model.ReportsGet400Response;
 import uk.gov.laa.gpfd.model.ReportsGet404Response;
 import uk.gov.laa.gpfd.model.ReportsGet500Response;
@@ -207,6 +209,12 @@ public class GlobalExceptionHandler {
         return badRequest().body(response);
     }
 
+    /**
+     * Handles {@link AwsServiceException} and its subtypes, and responds with an HTTP 500 Internal Server Error.
+     *
+     * @param e the exception thrown when there is an issue connecting to S3.
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
+     */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(AwsServiceException.class)
     public ResponseEntity<ReportsGet500Response> handleAWSErrors(AwsServiceException e) {
@@ -219,6 +227,12 @@ public class GlobalExceptionHandler {
         return internalServerError().body(errorResponse);
     }
 
+    /**
+     * Handles {@link ServiceUnavailableException} and responds with an HTTP 500 Internal Server Error.
+     *
+     * @param e the exception thrown when the user is acting outside of service active hours.
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
+     */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(ServiceUnavailableException.class)
     public ResponseEntity<ReportsGet500Response> handleServiceUnavailable(ServiceUnavailableException e) {
@@ -228,5 +242,23 @@ public class GlobalExceptionHandler {
         log.error("ServiceUnavailableException Thrown: {}", e.getMessage());
 
         return internalServerError().body(errorResponse);
+    }
+
+    /**
+     * Handles {@link OperationNotSupportedException} and responds with an HTTP 501 Not Implemented.
+     *
+     * @param e the exception thrown when the user is on a system that doesn't support the endpoint.
+     * @return a {@link ResponseEntity} containing a {@link GetReportDownloadById501Response} with error details.
+     */
+    @ResponseStatus(HttpStatus.NOT_IMPLEMENTED)
+    @ExceptionHandler(OperationNotSupportedException.class)
+    public ResponseEntity<GetReportDownloadById501Response> handleNotSupportedException(OperationNotSupportedException e) {
+        var errorResponse = new GetReportDownloadById501Response();
+        errorResponse.setError(e.getMessage());
+
+        log.error("OperationNotSupportedException Thrown: {}", e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
+                .body(errorResponse);
     }
 }

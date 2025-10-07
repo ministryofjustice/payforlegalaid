@@ -1,0 +1,47 @@
+package uk.gov.laa.gpfd.services.s3;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+
+import java.util.UUID;
+
+/**
+ Implements how to download files when we have S3 access.
+ */
+@Slf4j
+public class FileDownloadFromS3Service implements FileDownloadService {
+
+    private final S3ClientWrapper s3ClientWrapper;
+    private final ReportFileNameResolver fileNameResolver;
+
+    public FileDownloadFromS3Service(S3ClientWrapper s3ClientWrapper, ReportFileNameResolver fileNameResolver) {
+        this.s3ClientWrapper = s3ClientWrapper;
+        this.fileNameResolver = fileNameResolver;
+    }
+
+    /**
+     * Fetches a file stream from S3 and passes it to the user's browser
+     *
+     * @param id - UUID of the report
+     * @return an {@link ResponseEntity} with status OK and an {@link InputStreamResource} containing the CSV file inside.
+     */
+    @Override
+    public ResponseEntity<InputStreamResource> getFileStreamResponse(UUID id) {
+
+        var fileName = fileNameResolver.getFileNameFromId(id);
+
+        var fileStream = s3ClientWrapper.getResultCsv(fileName);
+        var contentDisposition = ContentDisposition.attachment().filename(fileName).build();
+
+        log.info("About to stream report with ID " + id + " to user");
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString())
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentLength(fileStream.response().contentLength())
+                .body(new InputStreamResource(fileStream));
+    }
+}

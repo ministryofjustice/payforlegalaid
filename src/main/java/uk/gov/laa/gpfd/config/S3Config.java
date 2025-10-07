@@ -5,21 +5,26 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.services.s3.S3Client;
-import uk.gov.laa.gpfd.services.excel.template.TemplateFileNameResolver;
-import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
 import uk.gov.laa.gpfd.services.excel.template.S3TemplateClient;
 import uk.gov.laa.gpfd.services.excel.template.TemplateClient;
+import uk.gov.laa.gpfd.services.excel.template.TemplateFileNameResolver;
+import uk.gov.laa.gpfd.services.s3.FileDownloadFromS3Service;
+import uk.gov.laa.gpfd.services.s3.FileDownloadService;
+import uk.gov.laa.gpfd.services.s3.ReportFileNameResolver;
+import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
 
 /**
  * Configuration class for when we look at S3 buckets.
  */
 @Configuration
-@ConditionalOnProperty(name = "gpfd.s3.use-template-store", havingValue = "true")
+@ConditionalOnProperty(name = "gpfd.s3.has-s3-access", havingValue = "true")
 public class S3Config {
 
     /**
      * Creates a {@link TemplateClient} which returns templates from S3.
      *
+     * @param s3ClientWrapper - an S3 Client
+     * @param templateFileNameResolver - a class that maps report templates to filenames
      * @return a {@link S3TemplateClient} instance
      */
     @Bean
@@ -36,6 +41,17 @@ public class S3Config {
     @Bean
     public S3ClientWrapper createS3Client(@Value("${AWS_REGION}") String awsRegion, @Value("${S3_FILE_STORE}") String fileStore) {
         return new S3ClientWrapper(awsRegion, fileStore);
+    }
+
+    /**
+     * Creates a {@link FileDownloadService}, an object that handles S3 file requests and so allows different behaviour on local vs live systems.
+     *
+     * @param s3ClientWrapper - an S3 Client
+     * @return an object that determines how file download should behave for this system
+     */
+    @Bean
+    public FileDownloadService createFileDownloadService(S3ClientWrapper s3ClientWrapper) {
+        return new FileDownloadFromS3Service(s3ClientWrapper, new ReportFileNameResolver());
     }
 
 }

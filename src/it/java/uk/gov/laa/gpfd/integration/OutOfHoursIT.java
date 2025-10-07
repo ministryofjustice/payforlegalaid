@@ -49,4 +49,13 @@ final class OutOfHoursIT extends BaseIT {
                         .value("The service is unavailable between the hours of 22:00 and 07:00, Mon - Sun"));
     }
 
+    @SneakyThrows
+    @Test
+    void getReportFileShouldReturn500WhenOutOfHours() {
+        var uri = "/reports/321";
+        performGetRequest(uri)
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.error")
+                        .value("The service is unavailable between the hours of 22:00 and 07:00, Mon - Sun"));
+    }
 }

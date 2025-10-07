@@ -33,13 +33,24 @@ public class S3ClientWrapper {
      * @return Stream of the file
      */
     public ResponseInputStream<GetObjectResponse> getTemplate(String filename){
+        return s3Client.getObject(buildRequest("templates", filename));
+    }
 
-        var getObjectRequest = GetObjectRequest.builder()
+    /**
+     * Fetches the current version of a given report file from the S3 bucket.
+     * If there is an error, a {@link AwsServiceException} can be thrown. This will be caught by the {@link GlobalExceptionHandler}
+     *
+     * @param filename - report file name
+     * @return Stream of the file
+     */
+    public ResponseInputStream<GetObjectResponse> getResultCsv(String filename) {
+        return s3Client.getObject(buildRequest("reports", filename));
+    }
+
+    private GetObjectRequest buildRequest(String folder, String filename){
+        return GetObjectRequest.builder()
                 .bucket(s3Bucket)
-                .key("templates/" + filename)
+                .key(folder + "/" + filename)
                 .build();
-
-        return s3Client.getObject(getObjectRequest);
-
     }
 }

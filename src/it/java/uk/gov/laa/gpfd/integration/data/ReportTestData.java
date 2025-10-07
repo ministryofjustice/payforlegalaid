@@ -72,4 +72,7 @@ public record ReportTestData(
             return reportData;
         }
     }
+
+    // Left out of report enum above as this currently won't show in e.g. /reports/ list
+    public static String REP012Id = "cc55e276-97b0-4dd8-a919-26d4aa373266";
 }
