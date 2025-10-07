@@ -1,9 +1,10 @@
 name: Deploy Acceptance Tests to Environment
 
 on:
-  push:
-    branches:
-      - main
+# Disabling as ATs fail currently so no value - LPF-1107
+#  push:
+#    branches:
+#      - main
   workflow_dispatch:
 
 concurrency:
