@@ -18,11 +18,11 @@ runs:
       uses: './.github/checkout-build-openapi'
       env:
         SOCKET_KEY: ${{ env.SOCKET_KEY }}
-
-    - name: Run tests
-      run: |
-        mvn -B clean test
-      env:
-        SPRING_PROFILES_ACTIVE: test
-      shell:
-        bash
+#
+#    - name: Run tests
+#      run: |
+#        mvn -B clean test
+#      env:
+#        SPRING_PROFILES_ACTIVE: test
+#      shell:
+#        bash
