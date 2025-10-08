@@ -1,11 +1,13 @@
 package uk.gov.laa.gpfd.services.s3;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import uk.gov.laa.gpfd.exception.InvalidDownloadFormatException;
 
 import java.util.UUID;
 
@@ -29,15 +31,20 @@ public class FileDownloadFromS3Service implements FileDownloadService {
      * @param id - UUID of the report
      * @return an {@link ResponseEntity} with status OK and an {@link InputStreamResource} containing the CSV file inside.
      */
+    @SneakyThrows
     @Override
     public ResponseEntity<InputStreamResource> getFileStreamResponse(UUID id) {
 
         var fileName = fileNameResolver.getFileNameFromId(id);
 
+        if (!fileName.endsWith(".csv")) {
+            throw new InvalidDownloadFormatException(fileName, id);
+        }
+
         var fileStream = s3ClientWrapper.getResultCsv(fileName);
         var contentDisposition = ContentDisposition.attachment().filename(fileName).build();
 
-        log.info("About to stream report with ID " + id + " to user");
+        log.info("About to stream report with ID {} to user", id);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString())
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)

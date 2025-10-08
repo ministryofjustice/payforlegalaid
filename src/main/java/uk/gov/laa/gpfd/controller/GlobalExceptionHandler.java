@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
+import uk.gov.laa.gpfd.exception.InvalidDownloadFormatException;
 import uk.gov.laa.gpfd.exception.OperationNotSupportedException;
 import uk.gov.laa.gpfd.exception.ReportGenerationException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
+import uk.gov.laa.gpfd.exception.ReportNotSupportedForDownloadException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.exception.ServiceUnavailableException;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
@@ -222,7 +224,8 @@ public class GlobalExceptionHandler {
         var errorResponse = new ReportsGet500Response();
         errorResponse.setError(message);
 
-        log.error("AwsServiceException Thrown: {}", e.awsErrorDetails().toString());
+        // Ensure log has specific AWS exception class name in, such as NoSuchKeyException.
+        log.error("AwsServiceException ({}) Thrown: {}", e.getClass().getSimpleName(), e.awsErrorDetails().toString());
 
         return internalServerError().body(errorResponse);
     }
@@ -259,6 +262,42 @@ public class GlobalExceptionHandler {
         log.error("OperationNotSupportedException Thrown: {}", e.getMessage());
 
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
+                .body(errorResponse);
+    }
+
+    /**
+     * Handles {@link InvalidDownloadFormatException} and responds with an HTTP 400 Bad Request.
+     *
+     * @param e the exception thrown when the file being downloaded would not be a csv
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet400Response} with error details.
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidDownloadFormatException.class)
+    public ResponseEntity<ReportsGet400Response> handleInvalidDownloadFormatException(InvalidDownloadFormatException e) {
+        var errorResponse = new ReportsGet400Response();
+        errorResponse.setError("Unable to download file for report with ID " + e.getReportId());
+
+        log.error("InvalidDownloadFormatException Thrown: Report {} has file {} which is not a csv file", e.getReportId(), e.getFileName());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(errorResponse);
+    }
+
+    /**
+     * Handles {@link ReportNotSupportedForDownloadException} and responds with an HTTP 400 Bad Request.
+     *
+     * @param e the exception thrown when the report can't be downloaded via this endpoint
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet400Response} with error details.
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ReportNotSupportedForDownloadException.class)
+    public ResponseEntity<ReportsGet400Response> handleReportNotSupportedForDownloadException(ReportNotSupportedForDownloadException e) {
+        var errorResponse = new ReportsGet400Response();
+        errorResponse.setError("Report " + e.getReportId() + " is not valid for file retrieval");
+
+        log.error("ReportNotSupportedForDownloadException Thrown: Report {} is not supported on the '/report/{id}/file' endpoint", e.getReportId());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(errorResponse);
     }
 }

@@ -144,4 +144,13 @@ class ReportsControllerTest {
         verify(fileDownloadService, times(1)).getFileStreamResponse(reportId);
     }
 
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void getReportDownloadByIdReturnsErrorWhenIdInvalid() throws Exception {
+        var reportId = "not a uuid";
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/reports/{id}/file", reportId))
+                .andExpect(status().isBadRequest()).andReturn();
+    }
+
 }

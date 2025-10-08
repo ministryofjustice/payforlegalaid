@@ -1,6 +1,8 @@
 package uk.gov.laa.gpfd.services.s3;
 
 
+import uk.gov.laa.gpfd.exception.ReportNotSupportedForDownloadException;
+
 import java.util.UUID;
 
 public class ReportFileNameResolver {
@@ -26,8 +28,8 @@ public class ReportFileNameResolver {
             case "0548ee0a-3532-4b50-8fed-372cef9bf493" -> "elevenMbCsv.csv";
             case "d7306ae6-6a29-4fcc-98b6-4a77c55881c1" -> "seventyMbCsv.csv";
             case "0dda98c9-e949-4816-9c4a-fbbf2af1295d" -> "hundredMbCsv.csv";
-            //TODO unhappy path ticket - handle this exception, use custom one etc.
-            default -> throw new RuntimeException("Report not valid for file retrieval: " + id);
+
+            default -> throw new ReportNotSupportedForDownloadException(id);
         };
 
     }
