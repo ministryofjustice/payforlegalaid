@@ -62,7 +62,7 @@ public class S3Config {
      */
     @Bean
     public FileDownloadService createFileDownloadService(S3ClientWrapper s3ClientWrapper) {
-        return new FileDownloadFromS3Service(s3ClientWrapper, new ReportFileNameResolver());
+        return new FileDownloadFromS3Service(s3ClientWrapper, new ReportFileNameResolver(), this);
     }
 
 }
