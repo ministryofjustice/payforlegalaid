@@ -45,6 +45,7 @@ public class FileDownloadFromS3Service implements FileDownloadService {
     public ResponseEntity<InputStreamResource> getFileStreamResponse(UUID id) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("token type is " + authentication.getClass().getName());
         var principal = (DefaultOidcUser) authentication.getPrincipal();
         var claims = principal.getIdToken().getClaims();
         var groups = (List<String>) claims.get("groups");
