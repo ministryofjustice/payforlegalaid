@@ -1,5 +1,7 @@
 package uk.gov.laa.gpfd.config;
 
+import com.azure.core.annotation.Get;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +21,15 @@ import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
 @Configuration
 @ConditionalOnProperty(name = "gpfd.s3.has-s3-access", havingValue = "true")
 public class S3Config {
+
+    // When SILAS RBAC is introduced we can replace these with storing permissions in database.
+    @Value("{gpfd.s3.permissions.rep000")
+    @Getter
+    private String rep000GroupId;
+
+    @Value("{gpfd.s3.permissions.submission-reconciliation")
+    @Getter
+    private String submissionReconciliationGroupId;
 
     /**
      * Creates a {@link TemplateClient} which returns templates from S3.
