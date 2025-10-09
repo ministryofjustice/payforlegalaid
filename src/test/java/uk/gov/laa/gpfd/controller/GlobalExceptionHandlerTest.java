@@ -15,6 +15,9 @@ import uk.gov.laa.gpfd.exception.ReportNotSupportedForDownloadException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
 import uk.gov.laa.gpfd.exception.TransferException;
+import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.AuthenticationIsNullException;
+import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.PrincipalIsNullException;
+import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.UnexpectedAuthClassException;
 
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -242,5 +245,37 @@ class GlobalExceptionHandlerTest {
         assertEquals(BAD_REQUEST, response.getStatusCode());
         assertEquals("Report " + reportId + " is not valid for file retrieval", response.getBody().getError());
     }
+
+    @Test
+    void shouldHandleUnexpectedAuthClassException() {
+        var exception = new UnexpectedAuthClassException("spring.User");
+
+        var response = globalExceptionHandler.handleUnexpectedAuthTypeException(exception);
+
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Authentication response error.", response.getBody().getError());
+    }
+
+    @Test
+    void shouldHandleAuthenticationIsNullException() {
+        var exception = new AuthenticationIsNullException();
+
+        var response = globalExceptionHandler.handleUnexpectedAuthTypeException(exception);
+
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Authentication response error.", response.getBody().getError());
+    }
+
+    @Test
+    void shouldHandlePrincipalIsNullException() {
+        var exception = new PrincipalIsNullException();
+
+        var response = globalExceptionHandler.handleUnexpectedAuthTypeException(exception);
+
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Authentication response error.", response.getBody().getError());
+    }
+
+
 
 }

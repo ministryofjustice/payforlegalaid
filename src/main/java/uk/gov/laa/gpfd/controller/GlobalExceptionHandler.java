@@ -19,6 +19,7 @@ import uk.gov.laa.gpfd.exception.ReportNotSupportedForDownloadException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.exception.ServiceUnavailableException;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
+import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException;
 import uk.gov.laa.gpfd.model.GetReportDownloadById501Response;
 import uk.gov.laa.gpfd.model.ReportsGet400Response;
 import uk.gov.laa.gpfd.model.ReportsGet404Response;
@@ -298,6 +299,24 @@ public class GlobalExceptionHandler {
         log.error("ReportNotSupportedForDownloadException Thrown: Report {} is not supported on the '/report/{id}/file' endpoint", e.getReportId());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(errorResponse);
+    }
+
+    /**
+     * Handles {@link UnableToGetAuthGroupException} and responds with an HTTP 500 Internal Server Error.
+     *
+     * @param e the exception thrown when we can't extract a group from the user's auth token
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
+     */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(UnableToGetAuthGroupException.class)
+    public ResponseEntity<ReportsGet500Response> handleUnexpectedAuthTypeException(UnableToGetAuthGroupException e) {
+        var errorResponse = new ReportsGet500Response();
+        errorResponse.setError("Authentication response error.");
+
+        log.error("UnexpectedAuthTypeException Thrown: {}", e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(errorResponse);
     }
 }
