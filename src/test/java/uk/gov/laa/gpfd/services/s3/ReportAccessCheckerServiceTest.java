@@ -1,20 +1,16 @@
 package uk.gov.laa.gpfd.services.s3;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
-import uk.gov.laa.gpfd.config.S3Config;
 import uk.gov.laa.gpfd.exception.ReportAccessException;
 
 import java.util.List;
@@ -25,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP000;
 import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP012;
@@ -38,16 +33,7 @@ class ReportAccessCheckerServiceTest {
     private final String submissionRecPermission = "hdscv2343rvf";
     private final String someOtherPermission = "mkfgj34534f-2344r-rfe";
 
-    @Mock
-    private S3Config s3Config;
-
-    @InjectMocks
-    private ReportAccessCheckerService reportAccessCheckerService;
-
-    @BeforeEach
-    void beforeEach() {
-        reset(s3Config);
-    }
+    private final ReportAccessCheckerService reportAccessCheckerService = new ReportAccessCheckerService(rep000Permission, submissionRecPermission);
 
     @AfterEach
     void afterEach() {
@@ -72,14 +58,12 @@ class ReportAccessCheckerServiceTest {
 
     @Test
     void shouldAllowAccessToRep000IfUserHasPermission() {
-        mockRep000Config();
         setupAuthMocks(List.of(rep000Permission));
         assertTrue(reportAccessCheckerService.checkUserCanAccessReport(ID_REP000));
     }
 
     @Test
     void shouldBlockAccessToRep000IfUserLacksPermission() {
-        mockRep000Config();
         // Give the user wrong permission for this report
         setupAuthMocks(List.of(submissionRecPermission));
 
@@ -90,15 +74,13 @@ class ReportAccessCheckerServiceTest {
     @ParameterizedTest
     @MethodSource("submissionReconciliationReports")
     void shouldAllowAccessToSubmissionReconciliationReportsIfUserHasPermission(UUID testReport) {
-        mockSubmissionReconciliationConfig();
         setupAuthMocks(List.of(submissionRecPermission));
-        assertTrue(reportAccessCheckerService.checkUserCanAccessReport(ID_REP012));
+        assertTrue(reportAccessCheckerService.checkUserCanAccessReport(testReport));
     }
 
     @ParameterizedTest
     @MethodSource("submissionReconciliationReports")
     void shouldBlockAccessToSubmissionReconciliationReportsIfUserLacksPermission(UUID testReport) {
-        mockSubmissionReconciliationConfig();
         // Give the user wrong permission for this report
         setupAuthMocks(List.of(rep000Permission));
 
@@ -110,13 +92,6 @@ class ReportAccessCheckerServiceTest {
     @MethodSource("allReports")
     void shouldAllowAccessToAllReportsIfAllPermissionsAreHad(UUID testReport) {
 
-        // To stop it complaining that unused things are stubbed...
-        if (testReport == ID_REP000) {
-            mockRep000Config();
-        } else {
-            mockSubmissionReconciliationConfig();
-        }
-
         setupAuthMocks(List.of(rep000Permission, submissionRecPermission, someOtherPermission));
 
         assertTrue(reportAccessCheckerService.checkUserCanAccessReport(testReport));
@@ -126,13 +101,6 @@ class ReportAccessCheckerServiceTest {
     @ParameterizedTest
     @MethodSource("allReports")
     void shouldNotAllowAccessToReportsIfUserGotDifferentPermissionOnly(UUID testReport) {
-
-        // To stop it complaining that unused things are stubbed...
-        if (testReport == ID_REP000) {
-            mockRep000Config();
-        } else {
-            mockSubmissionReconciliationConfig();
-        }
 
         setupAuthMocks(List.of(someOtherPermission));
 
@@ -144,13 +112,6 @@ class ReportAccessCheckerServiceTest {
     @ParameterizedTest
     @MethodSource("allReports")
     void shouldNotAllowAccessToReportsIfUserHasNoPermissions(UUID testReport) {
-
-        // To stop it complaining that unused things are stubbed...
-        if (testReport == ID_REP000) {
-            mockRep000Config();
-        } else {
-            mockSubmissionReconciliationConfig();
-        }
 
         setupAuthMocks(List.of());
 
@@ -169,14 +130,6 @@ class ReportAccessCheckerServiceTest {
         when(mockSecurityContext.getAuthentication()).thenReturn(mockAuth);
         SecurityContextHolder.setContext(mockSecurityContext);
 
-    }
-
-    private void mockRep000Config() {
-        when(s3Config.getRep000GroupId()).thenReturn(rep000Permission);
-    }
-
-    private void mockSubmissionReconciliationConfig() {
-        when(s3Config.getSubmissionReconciliationGroupId()).thenReturn(submissionRecPermission);
     }
 
     private static Stream<Arguments> submissionReconciliationReports() {

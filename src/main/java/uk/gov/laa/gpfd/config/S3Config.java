@@ -1,7 +1,5 @@
 package uk.gov.laa.gpfd.config;
 
-import com.azure.core.annotation.Get;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -25,11 +23,9 @@ public class S3Config {
 
     // When SILAS RBAC is introduced we can replace these with storing permissions in database.
     @Value("{gpfd.s3.permissions.rep000")
-    @Getter
     private String rep000GroupId;
 
     @Value("{gpfd.s3.permissions.submission-reconciliation")
-    @Getter
     private String submissionReconciliationGroupId;
 
     /**
@@ -63,7 +59,7 @@ public class S3Config {
      */
     @Bean
     public FileDownloadService createFileDownloadService(S3ClientWrapper s3ClientWrapper) {
-        return new FileDownloadFromS3Service(s3ClientWrapper, new ReportFileNameResolver(), new ReportAccessCheckerService(this));
+        return new FileDownloadFromS3Service(s3ClientWrapper, new ReportFileNameResolver(), new ReportAccessCheckerService(rep000GroupId, submissionReconciliationGroupId));
     }
 
 }

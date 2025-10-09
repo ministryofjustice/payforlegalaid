@@ -2,8 +2,6 @@ package uk.gov.laa.gpfd.services.s3;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import uk.gov.laa.gpfd.config.S3Config;
-import uk.gov.laa.gpfd.exception.OperationNotSupportedException;
 import uk.gov.laa.gpfd.exception.ReportAccessException;
 import uk.gov.laa.gpfd.utils.TokenUtils;
 
@@ -21,10 +19,12 @@ import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP013;
  */
 public class ReportAccessCheckerService {
 
-    private final S3Config s3Config;
+    private final String rep000GroudId;
+    private final String submissionReconciliationGroupId;
 
-    public ReportAccessCheckerService(S3Config s3Config) {
-        this.s3Config = s3Config;
+    public ReportAccessCheckerService(String rep000GroudId, String submissionReconciliationGroupId) {
+        this.rep000GroudId = rep000GroudId;
+        this.submissionReconciliationGroupId = submissionReconciliationGroupId;
     }
 
     public boolean checkUserCanAccessReport(UUID reportId) {
@@ -39,13 +39,13 @@ public class ReportAccessCheckerService {
     }
 
     private boolean doesUserHaveAccess(UUID reportId, List<String> groups){
-        if (reportId == ID_REP000 && !groups.contains(s3Config.getRep000GroupId())){
+        if (reportId == ID_REP000 && !groups.contains(rep000GroudId)) {
             return false;
         }
-        if (reportId == ID_REP012 && !groups.contains(s3Config.getSubmissionReconciliationGroupId())) {
+        if (reportId == ID_REP012 && !groups.contains(submissionReconciliationGroupId)) {
             return false;
         }
-        if (reportId == ID_REP013 && !groups.contains(s3Config.getSubmissionReconciliationGroupId())) {
+        if (reportId == ID_REP013 && !groups.contains(submissionReconciliationGroupId)) {
             return false;
         }
             return true;
