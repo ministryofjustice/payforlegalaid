@@ -19,9 +19,9 @@ public class FileDownloadFromS3Service implements FileDownloadService {
 
     private final S3ClientWrapper s3ClientWrapper;
     private final ReportFileNameResolver fileNameResolver;
-    private final reportAccessCheckerService reportAccessCheckerService;
+    private final ReportAccessCheckerService reportAccessCheckerService;
 
-    public FileDownloadFromS3Service(S3ClientWrapper s3ClientWrapper, ReportFileNameResolver fileNameResolver, reportAccessCheckerService reportAccessCheckerService) {
+    public FileDownloadFromS3Service(S3ClientWrapper s3ClientWrapper, ReportFileNameResolver fileNameResolver, ReportAccessCheckerService reportAccessCheckerService) {
         this.s3ClientWrapper = s3ClientWrapper;
         this.fileNameResolver = fileNameResolver;
         this.reportAccessCheckerService = reportAccessCheckerService;

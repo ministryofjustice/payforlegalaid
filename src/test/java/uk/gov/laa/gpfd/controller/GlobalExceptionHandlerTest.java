@@ -10,6 +10,7 @@ import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.InvalidDownloadFormatException;
 import uk.gov.laa.gpfd.exception.OperationNotSupportedException;
+import uk.gov.laa.gpfd.exception.ReportAccessException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.exception.ReportNotSupportedForDownloadException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
@@ -26,6 +27,7 @@ import static java.util.stream.Stream.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.NOT_IMPLEMENTED;
@@ -276,6 +278,15 @@ class GlobalExceptionHandlerTest {
         assertEquals("Authentication response error.", response.getBody().getError());
     }
 
+    @Test
+    void shouldHandleReportAccessException() {
+        var reportId = UUID.randomUUID();
+        var exception = new ReportAccessException(reportId);
 
+        var response = globalExceptionHandler.handleReportAccessException(exception);
+
+        assertEquals(FORBIDDEN, response.getStatusCode());
+        assertEquals("You cannot access report with ID " + reportId, response.getBody().getError());
+    }
 
 }
