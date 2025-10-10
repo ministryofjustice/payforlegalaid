@@ -10,11 +10,15 @@ import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.InvalidDownloadFormatException;
 import uk.gov.laa.gpfd.exception.OperationNotSupportedException;
+import uk.gov.laa.gpfd.exception.ReportAccessException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.exception.ReportNotSupportedForDownloadException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
 import uk.gov.laa.gpfd.exception.TransferException;
+import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.AuthenticationIsNullException;
+import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.PrincipalIsNullException;
+import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.UnexpectedAuthClassException;
 
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -23,6 +27,7 @@ import static java.util.stream.Stream.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.NOT_IMPLEMENTED;
@@ -241,6 +246,47 @@ class GlobalExceptionHandlerTest {
 
         assertEquals(BAD_REQUEST, response.getStatusCode());
         assertEquals("Report " + reportId + " is not valid for file retrieval", response.getBody().getError());
+    }
+
+    @Test
+    void shouldHandleUnexpectedAuthClassException() {
+        var exception = new UnexpectedAuthClassException("spring.User");
+
+        var response = globalExceptionHandler.handleUnexpectedAuthTypeException(exception);
+
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Authentication response error.", response.getBody().getError());
+    }
+
+    @Test
+    void shouldHandleAuthenticationIsNullException() {
+        var exception = new AuthenticationIsNullException();
+
+        var response = globalExceptionHandler.handleUnexpectedAuthTypeException(exception);
+
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Authentication response error.", response.getBody().getError());
+    }
+
+    @Test
+    void shouldHandlePrincipalIsNullException() {
+        var exception = new PrincipalIsNullException();
+
+        var response = globalExceptionHandler.handleUnexpectedAuthTypeException(exception);
+
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Authentication response error.", response.getBody().getError());
+    }
+
+    @Test
+    void shouldHandleReportAccessException() {
+        var reportId = UUID.randomUUID();
+        var exception = new ReportAccessException(reportId);
+
+        var response = globalExceptionHandler.handleReportAccessException(exception);
+
+        assertEquals(FORBIDDEN, response.getStatusCode());
+        assertEquals("You cannot access report with ID " + reportId, response.getBody().getError());
     }
 
 }
