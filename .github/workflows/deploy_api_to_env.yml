@@ -103,7 +103,7 @@ jobs:
             "network-policy:network-policy"
             "prometheus-rules:prometheus-rules"
             "grafana-dashboard:grafana-dashboard:\$ENV_NAME,\$NAMESPACE"
-            "deployment:deployment:\$ENV_NAME,\$SECRET_NAME,\$GPFD_URL,\$REGISTRY,\$REPOSITORY,\$IMAGE_TAG,\$DATA_REPOSITORY"
+            "deployment:deployment:\$ENV_NAME,\$SECRET_NAME,\$GPFD_URL,\$REGISTRY,\$REPOSITORY,\$IMAGE_TAG,\$DATA_REPOSITORY,\$PERMISSION_REP000_GROUP_ID,\$PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID"
           )
           
           for item in "${template_processing[@]}"; do

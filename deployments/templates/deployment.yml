@@ -200,6 +200,8 @@ spec:
               value: laa-get-payments-finance-data-${ENV_NAME}-file-store
             - name: PERMISSION_REP000_GROUP_ID
               value: ${PERMISSION_REP000_GROUP_ID}
+            - name: PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID
+              value: ${PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID}
           securityContext:
             capabilities:
               drop:
