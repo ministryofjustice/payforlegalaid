@@ -21,11 +21,11 @@ import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP013;
 @Slf4j
 public class ReportAccessCheckerService {
 
-    private final String rep000GroudId;
+    private final String rep000GroupId;
     private final String submissionReconciliationGroupId;
 
-    public ReportAccessCheckerService(String rep000GroudId, String submissionReconciliationGroupId) {
-        this.rep000GroudId = rep000GroudId;
+    public ReportAccessCheckerService(String rep000GroupId, String submissionReconciliationGroupId) {
+        this.rep000GroupId = rep000GroupId;
         this.submissionReconciliationGroupId = submissionReconciliationGroupId;
     }
 
@@ -34,7 +34,7 @@ public class ReportAccessCheckerService {
         var groups = TokenUtils.getGroupsFromToken(authentication);
 
         log.info("Checking user can access report {}", reportId);
-        log.info("testing: permission needed is {}", rep000GroudId);
+        log.info("testing: permission needed is {}", rep000GroupId);
 
         if (doesUserHaveAccess(reportId, groups)) {
             return true;
@@ -45,7 +45,7 @@ public class ReportAccessCheckerService {
 
     private boolean doesUserHaveAccess(UUID reportId, List<String> groups) {
         //TODO if group permission empty??
-        if (reportId == ID_REP000 && !groups.contains(rep000GroudId)) {
+        if (reportId == ID_REP000 && !groups.contains(rep000GroupId)) {
             return false;
         }
         if (reportId == ID_REP012 && !groups.contains(submissionReconciliationGroupId)) {
