@@ -29,6 +29,11 @@ public class ReportAccessCheckerService {
         this.submissionReconciliationGroupId = submissionReconciliationGroupId;
     }
 
+    /**
+     * Given a report ID, check if the user can access it. If they can't, throw an exception
+     * @param reportId - report to check permission for
+     * @return - true if user has access, exception will be thrown otherwise
+     */
     public boolean checkUserCanAccessReport(UUID reportId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         var groups = TokenUtils.getGroupsFromToken(authentication);

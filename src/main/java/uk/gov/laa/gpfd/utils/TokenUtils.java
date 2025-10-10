@@ -29,6 +29,11 @@ public abstract class TokenUtils {
 
     private static final String GROUPS_CLAIM = "groups";
 
+    /**
+     * Get the user's group memberships from the auth token.
+     * @param authentication - auth details from Spring context
+     * @return - list of groups user is in
+     */
     public static List<String> getGroupsFromToken(Authentication authentication){
 
         if (authentication == null){
