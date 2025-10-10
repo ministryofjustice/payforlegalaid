@@ -18,6 +18,10 @@ on:
       secret_name:
         type: string
         required: true
+#      rep000Permission:
+#        required: false
+#      subRecPermission:
+#        required: false
     secrets:
       api_socket_key:
         required: true
@@ -89,6 +93,8 @@ jobs:
           GPFD_URL: ${{ inputs.gpfd_url }}
           SECRET_NAME: ${{ inputs.secret_name }}
           DATA_REPOSITORY: ${{ vars.DATA_ECR_REPOSITORY }}
+          PERMISSION_REP000_GROUP_ID: ${{ vars.PERMISSION_REP000_GROUP_ID }}
+          PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID: ${{ vars.PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID }}
         run: |
           template_processing=(
             "ingress:ingress"
