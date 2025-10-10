@@ -16,7 +16,7 @@ import static uk.gov.laa.gpfd.utils.TokenUtils.ID_TEMP_70MB;
 
 public class ReportFileNameResolver {
 
-    private final static Map<UUID, String> fileMap = Map.of(
+    private static final Map<UUID, String> fileMap = Map.of(
             ID_REP000, "report_000.csv",
             ID_REP012, "report_012.csv",
             ID_REP013, "report_013.csv",
