@@ -34,15 +34,17 @@ public class ReportAccessCheckerService {
         var groups = TokenUtils.getGroupsFromToken(authentication);
 
         log.info("Checking user can access report {}", reportId);
+        log.info("testing: permission needed is {}", rep000GroudId);
 
-        if (doesUserHaveAccess(reportId, groups)){
+        if (doesUserHaveAccess(reportId, groups)) {
             return true;
         } else {
             throw new ReportAccessException(reportId);
         }
     }
 
-    private boolean doesUserHaveAccess(UUID reportId, List<String> groups){
+    private boolean doesUserHaveAccess(UUID reportId, List<String> groups) {
+        //TODO if group permission empty??
         if (reportId == ID_REP000 && !groups.contains(rep000GroudId)) {
             return false;
         }
@@ -52,7 +54,7 @@ public class ReportAccessCheckerService {
         if (reportId == ID_REP013 && !groups.contains(submissionReconciliationGroupId)) {
             return false;
         }
-            return true;
+        return true;
     }
 
 }
