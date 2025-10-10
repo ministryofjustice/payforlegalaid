@@ -45,13 +45,13 @@ public class ReportAccessCheckerService {
 
     private boolean doesUserHaveAccess(UUID reportId, List<String> groups) {
         //TODO if group permission empty??
-        if (reportId == ID_REP000 && !groups.contains(rep000GroupId)) {
+        if (reportId.equals(ID_REP000) && !groups.contains(rep000GroupId)) {
             return false;
         }
-        if (reportId == ID_REP012 && !groups.contains(submissionReconciliationGroupId)) {
+        if (reportId.equals(ID_REP012) && !groups.contains(submissionReconciliationGroupId)) {
             return false;
         }
-        if (reportId == ID_REP013 && !groups.contains(submissionReconciliationGroupId)) {
+        if (reportId.equals(ID_REP013) && !groups.contains(submissionReconciliationGroupId)) {
             return false;
         }
         return true;

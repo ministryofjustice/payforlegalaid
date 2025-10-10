@@ -120,6 +120,18 @@ class ReportAccessCheckerServiceTest {
 
     }
 
+    @Test
+    void shouldEnforceAccessChecksIfUUIDConvertedFromString() {
+        // This tests a bug caused by the difference between UUID1 == UUID2 and UUID1.equals(UUID2)
+
+        setupAuthMocks(List.of());
+
+        // This string is the same as ID_REP000 but needs to be set separately for this test scenario
+        var ex = assertThrows(ReportAccessException.class, () -> reportAccessCheckerService.checkUserCanAccessReport(UUID.fromString("523f38f0-2179-4824-b885-3a38c5e149e8")));
+        assertEquals(ID_REP000, ex.getReportId());
+    }
+
+
     private void setupAuthMocks(List<String> groups) {
         var mockAuth = mock(Authentication.class);
         var mockPrincipal = mock(DefaultOidcUser.class);
