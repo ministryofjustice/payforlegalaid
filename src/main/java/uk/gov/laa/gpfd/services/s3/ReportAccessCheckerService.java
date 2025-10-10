@@ -34,7 +34,6 @@ public class ReportAccessCheckerService {
         var groups = TokenUtils.getGroupsFromToken(authentication);
 
         log.info("Checking user can access report {}", reportId);
-        log.info("testing: permission needed is {}", rep000GroupId);
 
         if (doesUserHaveAccess(reportId, groups)) {
             return true;
@@ -44,7 +43,6 @@ public class ReportAccessCheckerService {
     }
 
     private boolean doesUserHaveAccess(UUID reportId, List<String> groups) {
-        //TODO if group permission empty??
         if (reportId.equals(ID_REP000) && !groups.contains(rep000GroupId)) {
             return false;
         }
