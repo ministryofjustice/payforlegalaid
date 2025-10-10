@@ -1,5 +1,6 @@
 package uk.gov.laa.gpfd.services.s3;
 
+import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -10,6 +11,7 @@ import uk.gov.laa.gpfd.controller.GlobalExceptionHandler;
 /**
  * Class that wraps around the default {@link S3Client}, allowing us to set default behaviours
  */
+@Slf4j
 public class S3ClientWrapper {
 
     private final S3Client s3Client;
@@ -48,6 +50,7 @@ public class S3ClientWrapper {
     }
 
     private GetObjectRequest buildRequest(String folder, String filename){
+        log.info("Attempting to fetch {}/{} from S3 bucket", folder, filename);
         return GetObjectRequest.builder()
                 .bucket(s3Bucket)
                 .key(folder + "/" + filename)
