@@ -22,10 +22,10 @@ import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
 public class S3Config {
 
     // When SILAS RBAC is introduced we can replace these with storing permissions in database.
-    @Value("{gpfd.s3.permissions.rep000}")
+    @Value("${gpfd.s3.permissions.rep000}")
     private String rep000GroupId;
 
-    @Value("{gpfd.s3.permissions.submission-reconciliation}")
+    @Value("${gpfd.s3.permissions.submission-reconciliation}")
     private String submissionReconciliationGroupId;
 
     /**
