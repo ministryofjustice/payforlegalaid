@@ -18,10 +18,6 @@ on:
       secret_name:
         type: string
         required: true
-#      rep000Permission:
-#        required: false
-#      subRecPermission:
-#        required: false
     secrets:
       api_socket_key:
         required: true
