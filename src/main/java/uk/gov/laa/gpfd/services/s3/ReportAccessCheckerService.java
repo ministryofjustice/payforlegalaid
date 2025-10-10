@@ -1,5 +1,6 @@
 package uk.gov.laa.gpfd.services.s3;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import uk.gov.laa.gpfd.exception.ReportAccessException;
@@ -17,6 +18,7 @@ import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP013;
  * For the claim reports we want to check the users are in the security groups that they are locked down to
  * We store these in the GitHub secrets as there are only two for now. Long-run with full RBAC they will be in database etc.
  */
+@Slf4j
 public class ReportAccessCheckerService {
 
     private final String rep000GroudId;
@@ -30,6 +32,8 @@ public class ReportAccessCheckerService {
     public boolean checkUserCanAccessReport(UUID reportId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         var groups = TokenUtils.getGroupsFromToken(authentication);
+
+        log.info("Checking user can access report {}", reportId);
 
         if (doesUserHaveAccess(reportId, groups)){
             return true;
