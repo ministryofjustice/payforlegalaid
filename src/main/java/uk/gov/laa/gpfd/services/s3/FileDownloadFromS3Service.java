@@ -19,10 +19,12 @@ public class FileDownloadFromS3Service implements FileDownloadService {
 
     private final S3ClientWrapper s3ClientWrapper;
     private final ReportFileNameResolver fileNameResolver;
+    private final ReportAccessCheckerService reportAccessCheckerService;
 
-    public FileDownloadFromS3Service(S3ClientWrapper s3ClientWrapper, ReportFileNameResolver fileNameResolver) {
+    public FileDownloadFromS3Service(S3ClientWrapper s3ClientWrapper, ReportFileNameResolver fileNameResolver, ReportAccessCheckerService reportAccessCheckerService) {
         this.s3ClientWrapper = s3ClientWrapper;
         this.fileNameResolver = fileNameResolver;
+        this.reportAccessCheckerService = reportAccessCheckerService;
     }
 
     /**
@@ -34,6 +36,8 @@ public class FileDownloadFromS3Service implements FileDownloadService {
     @SneakyThrows
     @Override
     public ResponseEntity<InputStreamResource> getFileStreamResponse(UUID id) {
+
+        reportAccessCheckerService.checkUserCanAccessReport(id);
 
         var fileName = fileNameResolver.getFileNameFromId(id);
 
@@ -51,4 +55,5 @@ public class FileDownloadFromS3Service implements FileDownloadService {
                 .contentLength(fileStream.response().contentLength())
                 .body(new InputStreamResource(fileStream));
     }
+
 }

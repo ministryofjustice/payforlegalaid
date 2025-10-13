@@ -17,6 +17,9 @@ gpfd:
 
   s3:
     has-s3-access: true
+    permissions:
+      rep000: ${PERMISSION_REP000_GROUP_ID}
+      submission-reconciliation: ${PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID}
 
 spring:
   cloud:
