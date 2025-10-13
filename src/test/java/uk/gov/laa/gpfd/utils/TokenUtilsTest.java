@@ -13,7 +13,9 @@ import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.UnexpectedAuthCla
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -59,7 +61,7 @@ class TokenUtilsTest {
     }
 
     @Test
-    void shouldErrorIfPrincipalIsUnsupportedClass(){
+    void shouldErrorIfPrincipalIsUnsupportedClass() {
         var auth = mock(Authentication.class);
         var principal = mock(User.class);
         when(auth.getPrincipal()).thenReturn(principal);
@@ -69,7 +71,7 @@ class TokenUtilsTest {
     }
 
     @Test
-    void shouldErrorIfPrincipalIsUndefined(){
+    void shouldErrorIfPrincipalIsUndefined() {
         var auth = mock(Authentication.class);
         when(auth.getPrincipal()).thenReturn(null);
 

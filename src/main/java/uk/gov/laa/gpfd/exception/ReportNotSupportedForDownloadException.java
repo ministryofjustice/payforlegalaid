@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.util.UUID;
 
 /**
- * Exception class to indicate that the endpoint is not supported
+ * Exception class to indicate that the report cannot be downloaded via this endpoint
  */
 @Getter
 public class ReportNotSupportedForDownloadException extends RuntimeException {

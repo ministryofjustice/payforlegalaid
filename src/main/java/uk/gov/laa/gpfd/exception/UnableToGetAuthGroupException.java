@@ -19,7 +19,7 @@ public abstract sealed class UnableToGetAuthGroupException extends RuntimeExcept
 
 
     /**
-     * Exception throw when we can't get an authentication context from Spring
+     * Exception thrown when we can't get an authentication context from Spring
      */
     public static final class AuthenticationIsNullException extends UnableToGetAuthGroupException {
 
@@ -32,7 +32,7 @@ public abstract sealed class UnableToGetAuthGroupException extends RuntimeExcept
     }
 
     /**
-     * Exception throw when we can't get a principal from the authentication context in Spring
+     * Exception thrown when we can't get a principal from the authentication context in Spring
      */
     public static final class PrincipalIsNullException extends UnableToGetAuthGroupException {
 
@@ -45,7 +45,7 @@ public abstract sealed class UnableToGetAuthGroupException extends RuntimeExcept
     }
 
     /**
-     * Exception throw when we can't get a principal from the authentication context in Spring
+     * Exception throw when we get an authentication class that we haven't setup to parse a group from / doesn't support groups.
      */
     public static final class UnexpectedAuthClassException extends UnableToGetAuthGroupException {
 
