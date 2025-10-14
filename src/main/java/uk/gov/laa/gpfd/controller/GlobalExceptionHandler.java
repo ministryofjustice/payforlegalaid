@@ -13,12 +13,15 @@ import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.InvalidDownloadFormatException;
 import uk.gov.laa.gpfd.exception.OperationNotSupportedException;
+import uk.gov.laa.gpfd.exception.ReportAccessException;
 import uk.gov.laa.gpfd.exception.ReportGenerationException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.exception.ReportNotSupportedForDownloadException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.exception.ServiceUnavailableException;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
+import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException;
+import uk.gov.laa.gpfd.model.GetReportDownloadById403Response;
 import uk.gov.laa.gpfd.model.GetReportDownloadById501Response;
 import uk.gov.laa.gpfd.model.ReportsGet400Response;
 import uk.gov.laa.gpfd.model.ReportsGet404Response;
@@ -298,6 +301,42 @@ public class GlobalExceptionHandler {
         log.error("ReportNotSupportedForDownloadException Thrown: Report {} is not supported on the '/report/{id}/file' endpoint", e.getReportId());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(errorResponse);
+    }
+
+    /**
+     * Handles {@link UnableToGetAuthGroupException} and responds with an HTTP 500 Internal Server Error.
+     *
+     * @param e the exception thrown when we can't extract a group from the user's auth token
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
+     */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(UnableToGetAuthGroupException.class)
+    public ResponseEntity<ReportsGet500Response> handleUnexpectedAuthTypeException(UnableToGetAuthGroupException e) {
+        var errorResponse = new ReportsGet500Response();
+        errorResponse.setError("Authentication response error.");
+
+        log.error("UnexpectedAuthTypeException Thrown: {}", e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(errorResponse);
+    }
+
+    /**
+     * Handles {@link ReportAccessException} and responds with an HTTP 403 Forbidden.
+     *
+     * @param e the exception thrown when we can't extract a group from the user's auth token
+     * @return a {@link ResponseEntity} containing a {@link GetReportDownloadById403Response} with error details.
+     */
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(ReportAccessException.class)
+    public ResponseEntity<GetReportDownloadById403Response> handleReportAccessException(ReportAccessException e) {
+        var errorResponse = new GetReportDownloadById403Response();
+        errorResponse.setError("You cannot access report with ID " + e.getReportId());
+
+        log.error("ReportAccessException Thrown: User tried to access report {} but lacks the relevant permission(s)", e.getReportId());
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(errorResponse);
     }
 }

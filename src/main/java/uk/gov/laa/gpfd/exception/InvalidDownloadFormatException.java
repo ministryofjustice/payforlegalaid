@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.util.UUID;
 
 /**
- * Exception class to indicate that the endpoint is not supported
+ * Exception class to indicate that the file cannot be downloaded from this endpoint
  */
 @Getter
 public class InvalidDownloadFormatException extends RuntimeException {
