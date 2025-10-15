@@ -15,14 +15,6 @@ spec:
         app: gpfd-${ENV_NAME}
     spec:
       serviceAccountName: laa-get-payments-finance-data-${ENV_NAME}-service
-      volumes:
-        - name: liquibase-changelog
-          configMap:
-            name: liquibase-changelog
-            optional: false
-            items:
-              - key: liquibase-changelogs.tar.gz
-                path: liquibase-changelogs.tar.gz
       initContainers:
         - name: liquibase
           image: ${REGISTRY}/${DATA_REPOSITORY}:latest
