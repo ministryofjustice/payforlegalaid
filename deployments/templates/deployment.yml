@@ -104,7 +104,7 @@ spec:
               db_healthcheck
 
               echo "Validating changelog..."
-              if validate then
+              if validate; then
                   echo "Running liquibase update..."
                   if run_update; then
                       echo "✅ Liquibase update completed successfully"
