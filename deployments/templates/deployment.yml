@@ -93,19 +93,15 @@ spec:
                       --searchPath=${BASE_FOLDER} \
                       update
               }
-              
-              validate() {
-                liquibase \
-                --changelog-file=${CHANGELOG_FILENAME}\ 
-                validate
-              }
-              
+                           
               echo "Checking database connectivity..."
               db_healthcheck
 
               echo "Validating changelog..."
-              if validate; then
-                  echo "Running liquibase update..."
+              
+              liquibase  --changelog-file=${CHANGELOG_FILENAME} validate
+              if [ $? -eq 0 ]; then
+                  echo "✅ Validation passed, Running liquibase update..."
                   if run_update; then
                       echo "✅ Liquibase update completed successfully"
                       exit 0
