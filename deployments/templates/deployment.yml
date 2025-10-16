@@ -93,15 +93,24 @@ spec:
                       --searchPath=${BASE_FOLDER} \
                       update
               }
+              
+              run_validate() {
+                  liquibase \
+                        --url="$MOJFIN_DB_URL" \
+                        --username="$MOJFIN_DEV_WRITE_USERNAME" \
+                        --password="$MOJFIN_DEV_WRITE_PASSWORD" \
+                        --log-level=INFO \
+                        --changelog-file=${CHANGELOG_FILENAME} \
+                        --searchPath=${BASE_FOLDER} \
+                        validate
+              }
                            
               echo "Checking database connectivity..."
               db_healthcheck
 
               echo "Validating changelog..."
-              
-              liquibase  --changelog-file=${CHANGELOG_FILENAME} validate
-              if [ $? -eq 0 ]; then
-                  echo "✅ Validation passed, Running liquibase update..."
+              if run_validate; then
+                  echo "✅ Validation passed, running liquibase update..."
                   if run_update; then
                       echo "✅ Liquibase update completed successfully"
                       exit 0
@@ -110,7 +119,7 @@ spec:
                       exit 1
                   fi
               else 
-                 echo "❌ Error: Changelog Validation Failed"
+                 echo "❌ Error: Changelog validation failed"
                  exit 1
               fi
 
