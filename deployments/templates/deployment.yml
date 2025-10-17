@@ -15,14 +15,6 @@ spec:
         app: gpfd-${ENV_NAME}
     spec:
       serviceAccountName: laa-get-payments-finance-data-${ENV_NAME}-service
-      volumes:
-        - name: liquibase-changelog
-          configMap:
-            name: liquibase-changelog
-            optional: false
-            items:
-              - key: liquibase-changelogs.tar.gz
-                path: liquibase-changelogs.tar.gz
       initContainers:
         - name: liquibase
           image: ${REGISTRY}/${DATA_REPOSITORY}:latest
@@ -102,38 +94,33 @@ spec:
                       update
               }
               
-              cleanup() {
-                echo "Executing clean database strategy"              
-                liquibase \
-                --url="$MOJFIN_DB_URL" \
-                --username="$MOJFIN_DEV_WRITE_USERNAME" \
-                --password="$MOJFIN_DEV_WRITE_PASSWORD" \
-                --changelog-file=${CHANGELOG_FILENAME} \
-                --searchPath=${BASE_FOLDER} \
-                drop-all --force
-              
-                echo "Database cleaned, reapplying migrations"
+              run_validate() {
+                  liquibase \
+                        --url="$MOJFIN_DB_URL" \
+                        --username="$MOJFIN_DEV_WRITE_USERNAME" \
+                        --password="$MOJFIN_DEV_WRITE_PASSWORD" \
+                        --log-level=INFO \
+                        --changelog-file=${CHANGELOG_FILENAME} \
+                        --searchPath=${BASE_FOLDER} \
+                        validate
               }
-              
+                           
               echo "Checking database connectivity..."
               db_healthcheck
 
-              echo "Running initial Liquibase update..."
-              if run_update; then
-                  echo "✅ Liquibase update completed successfully"
-                  exit 0
-              fi
-
-              echo "⚠️ Initial update failed, performing clean and retrying..."
-              cleanup
-
-              echo "Running Liquibase update after clean..."
-              if run_update; then
-                  echo "✅ Liquibase update completed successfully after clean"
-                  exit 0
-              else
-                  echo "❌ Liquibase update failed even after clean"
-                  exit 1
+              echo "Validating changelog..."
+              if run_validate; then
+                  echo "✅ Validation passed, running liquibase update..."
+                  if run_update; then
+                      echo "✅ Liquibase update completed successfully"
+                      exit 0
+                  else
+                      echo "❌ Liquibase update failed"
+                      exit 1
+                  fi
+              else 
+                 echo "❌ Error: Changelog validation failed"
+                 exit 1
               fi
 
           securityContext:
