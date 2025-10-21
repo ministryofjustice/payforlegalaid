@@ -118,7 +118,10 @@ jobs:
         env:
           KUBE_NAMESPACE: ${{ secrets.kube_namespace }}
           KUBE_CLUSTER: ${{ secrets.kube_cluster }}
+          ENV_NAME: ${{ inputs.environment-name }}
         run: |
+          echo "KUBE_NAMESPACE : $KUBE_NAMESPACE"
+          echo "ENV_NAME is $ENV_NAME"
           echo "${{ secrets.kube_cert }}" > ca.crt
           kubectl config set-cluster ${KUBE_CLUSTER} --certificate-authority=./ca.crt --server=https://${KUBE_CLUSTER}
           kubectl config set-credentials deploy-user --token=${{ secrets.kube_token }}
@@ -130,7 +133,6 @@ jobs:
       - name : Verify Pod
         env:
           KUBE_NAMESPACE: ${{ secrets.kube_namespace }}
-          KUBE_CLUSTER: ${{ secrets.kube_cluster }}
           ENV_NAME: ${{ inputs.environment-name }}
         run: |
               POD_STATUS=$(kubectl get pods -n ${KUBE_NAMESPACE} -l app.kubernetes.io/instance=${ENV_NAME} -o jsonpath='{.items[*].status.phase}')
