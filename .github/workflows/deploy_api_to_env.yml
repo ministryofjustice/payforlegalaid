@@ -139,8 +139,9 @@ jobs:
               echo "Ready pods: $READY_PODS"
 
               if [[ "$POD_STATUS" == *"Running"* && $READY_PODS -gt 0 ]]; then
-                echo "✅ At least one pod is running"
+                echo "✅ pod is running"
                 echo "pods_running=true" >> $GITHUB_OUTPUT
+                exit 0
               else
                 echo "::error::❌ No pods in Running state"
                 echo "pods_running=false" >> $GITHUB_OUTPUT
