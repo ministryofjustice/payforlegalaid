@@ -130,13 +130,14 @@ jobs:
 
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments
 
-      - name : Verify Pod
+      - name : Verify Pod is running
         env:
           KUBE_NAMESPACE: ${{ secrets.kube_namespace }}
-          ENV_NAME: ${{ inputs.environment_name }}
+          ENV_NAME_PREFIX: "gpfd-"
+          ENV_NAME: "${ENV_NAME_PREFIX}${{ inputs.environment_name }}"
         run: |
-              POD_STATUS=$(kubectl get pods -n ${KUBE_NAMESPACE} -l app=gpfd-dev -o jsonpath='{.items[*].status.phase}')
-              READY_PODS=$(kubectl get pods -n ${KUBE_NAMESPACE} -l app=gpfd-dev --field-selector=status.phase=Running --no-headers | wc -l)
+              POD_STATUS=$(kubectl get pods -n ${KUBE_NAMESPACE} -l app=${ENV_NAME} -o jsonpath='{.items[*].status.phase}')
+              READY_PODS=$(kubectl get pods -n ${KUBE_NAMESPACE} -l app=${ENV_NAME} --field-selector=status.phase=Running --no-headers | wc -l)
           
               echo "ENV_NAME is $ENV_NAME"
               echo "KUBE_NAMESPACE is $KUBE_NAMESPACE"
