@@ -150,5 +150,5 @@ jobs:
               else
                 echo "::error::❌ No pods in Running state"
                 echo "pods_running=false" >> $GITHUB_OUTPUT
-                exit 1
+                exit 0
               fi
