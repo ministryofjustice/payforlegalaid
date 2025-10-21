@@ -135,8 +135,8 @@ jobs:
           KUBE_NAMESPACE: ${{ secrets.kube_namespace }}
           ENV_NAME: gpfd-${ENV_NAME}
         run: |
-              POD_STATUS=$(kubectl get pods -n ${KUBE_NAMESPACE} -l app.kubernetes.io/instance=${ENV_NAME} -o jsonpath='{.items[*].status.phase}')
-              READY_PODS=$(kubectl get pods -n ${KUBE_NAMESPACE} -l app.kubernetes.io/instance=${ENV_NAME} --field-selector=status.phase=Running --no-headers | wc -l)
+              POD_STATUS=$(kubectl get pods -n ${KUBE_NAMESPACE} -l app=${ENV_NAME} -o jsonpath='{.items[*].status.phase}')
+              READY_PODS=$(kubectl get pods -n ${KUBE_NAMESPACE} -l app=${ENV_NAME} --field-selector=status.phase=Running --no-headers | wc -l)
           
               echo "ENV_NAME is $ENV_NAME"
               echo "KUBE_NAMESPACE is $KUBE_NAMESPACE"
