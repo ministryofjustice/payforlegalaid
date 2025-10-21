@@ -126,3 +126,23 @@ jobs:
           kubectl config use-context ${KUBE_CLUSTER}
 
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments
+
+      - name : Verify Pod
+        env:
+          KUBE_NAMESPACE: ${{ secrets.kube_namespace }}
+          KUBE_CLUSTER: ${{ secrets.kube_cluster }}
+        run: |
+              POD_STATUS=$(kubectl get pods -n ${KUBE_NAMESPACE} -l app.kubernetes.io/instance=${{ inputs.environment-name }} -o jsonpath='{.items[*].status.phase}')
+              READY_PODS=$(kubectl get pods -n ${KUBE_NAMESPACE} -l app.kubernetes.io/instance=${{ inputs.environment-name }} --field-selector=status.phase=Running --no-headers | wc -l)
+
+              echo "Pod statuses: $POD_STATUS"
+              echo "Ready pods: $READY_PODS"
+
+              if [[ "$POD_STATUS" == *"Running"* && $READY_PODS -gt 0 ]]; then
+                echo "✅ At least one pod is running"
+                echo "pods_running=true" >> $GITHUB_OUTPUT
+              else
+                echo "::error::❌ No pods in Running state"
+                echo "pods_running=false" >> $GITHUB_OUTPUT
+                exit 1
+              fi
