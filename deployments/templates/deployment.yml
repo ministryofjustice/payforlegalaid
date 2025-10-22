@@ -44,7 +44,7 @@ spec:
                   exit 1
               fi
                             
-              BASE_FOLDER="/data"
+              BASE_FOLDER="/liquibase"
               CHANGELOG_FILENAME="master-changelog.xml"
               CHANGELOG="${BASE_FOLDER}/${CHANGELOG_FILENAME}"
                                                   
