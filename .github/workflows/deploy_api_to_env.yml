@@ -127,18 +127,17 @@ jobs:
 
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments
 
-      - name : Verify Pod is running
+      - name : Verify pod is running
         env:
           KUBE_NAMESPACE: ${{ secrets.kube_namespace }}
           ENV_NAME: "gpfd-${{ inputs.environment_name }}"
           DEPLOYMENT_NAME: "deployment/gpfd-${{ inputs.environment_name }}-deployment"
         run: |
-              kubectl rollout status ${DEPLOYMENT_NAME} -n ${KUBE_NAMESPACE} --timeout=45s
+              DEPLOYMENT_STATUS = kubectl rollout status ${DEPLOYMENT_NAME} -n ${KUBE_NAMESPACE} --timeout=45s
+              echo "DeploymentL $DEPLOYMENT_STATUS"
               POD_STATUS=$(kubectl get pods -n ${KUBE_NAMESPACE} -l app=${ENV_NAME} -o jsonpath='{.items[*].status.phase}')
               READY_PODS=$(kubectl get pods -n ${KUBE_NAMESPACE} -l app=${ENV_NAME} --field-selector=status.phase=Running --no-headers | wc -l)
-          
-              echo "ENV_NAME is $ENV_NAME"
-              echo "KUBE_NAMESPACE is $KUBE_NAMESPACE"
+              
               echo "Pod statuses: $POD_STATUS"
               echo "Ready pods: $READY_PODS"
 
