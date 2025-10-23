@@ -24,7 +24,8 @@ public class ReportFileNameResolver {
             ID_TEMP_1MB, "oneMbCsv.csv",
             ID_TEMP_11MB, "elevenMbCsv.csv",
             ID_TEMP_70MB, "seventyMbCsv.csv",
-            ID_TEMP_100MB, "hundredMbCsv.csv"
+            ID_TEMP_100MB, "hundredMbCsv.csv",
+            UUID.fromString("847374f1-3c64-45e1-9fb2-817038cc55ec"), "bigfile.csv"
     );
 
     /**
