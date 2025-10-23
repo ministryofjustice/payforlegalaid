@@ -126,3 +126,27 @@ jobs:
           kubectl config use-context ${KUBE_CLUSTER}
 
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments
+
+      - name : Verify pod is running
+        env:
+          KUBE_NAMESPACE: ${{ secrets.kube_namespace }}
+          ENV_NAME: "gpfd-${{ inputs.environment_name }}"
+          DEPLOYMENT_NAME: "deployment/gpfd-${{ inputs.environment_name }}-deployment"
+        run: |
+              DEPLOYMENT_STATUS=$(kubectl rollout status ${DEPLOYMENT_NAME} -n ${KUBE_NAMESPACE} --timeout=45s)
+              echo "Deployment: $DEPLOYMENT_STATUS"
+              POD_STATUS=$(kubectl get pods -n ${KUBE_NAMESPACE} -l app=${ENV_NAME} -o jsonpath='{.items[*].status.phase}')
+              READY_PODS=$(kubectl get pods -n ${KUBE_NAMESPACE} -l app=${ENV_NAME} --field-selector=status.phase=Running --no-headers | wc -l)
+              
+              echo "Pod statuses: $POD_STATUS"
+              echo "Ready pods: $READY_PODS"
+
+              if [[ "$POD_STATUS" == *"Running"* && $READY_PODS -gt 0 ]]; then
+                echo "✅ pod is running"
+                echo "pods_running=true" >> $GITHUB_OUTPUT
+                exit 0
+              else
+                echo "::error::❌ No pods in Running state"
+                echo "pods_running=false" >> $GITHUB_OUTPUT
+                exit 0
+              fi
