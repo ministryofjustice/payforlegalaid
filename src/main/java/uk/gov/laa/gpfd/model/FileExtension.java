@@ -12,7 +12,8 @@ import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 @Getter
 public enum FileExtension {
     CSV("csv", "csv"),
-    XLSX("xlsx", "excel");
+    XLSX("xlsx", "excel"),
+    S3STORAGE("csv", "csv");
 
     private static final Map<String, FileExtension> EXTENSION_MAP =
             Stream.of(values()).collect(Collectors.toMap(FileExtension::getExtension, e -> e));
