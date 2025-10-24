@@ -3,6 +3,7 @@ package uk.gov.laa.gpfd.mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.laa.gpfd.config.AppConfig;
+import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.model.Report;
 
 import java.net.URI;
@@ -36,6 +37,9 @@ public abstract class AbstractReportMapper {
     protected URI constructDownloadUrl(Report report) {
         try {
             var reportId = report.getIdAsString();
+            if (Objects.equals(report.getOutputType().getExtension(), FileExtension.S3STORAGE.getExtension())) {
+                return URI.create("%s/%s/%s/%s".formatted(baseUrl,"reports", reportId, "file"));
+            }
             var extensionPath = report.getOutputType().getSubPath();
             return URI.create("%s/%s/%s".formatted(baseUrl, extensionPath, reportId));
         } catch (Exception e) {
