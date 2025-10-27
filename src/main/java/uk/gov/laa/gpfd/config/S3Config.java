@@ -1,5 +1,6 @@
 package uk.gov.laa.gpfd.config;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -31,23 +32,36 @@ public class S3Config {
     /**
      * Creates a {@link TemplateClient} which returns templates from S3.
      *
-     * @param s3ClientWrapper - an S3 Client
+     * @param s3ClientWrapper          - an S3 Client
      * @param templateFileNameResolver - a class that maps report templates to filenames
      * @return a {@link S3TemplateClient} instance
      */
     @Bean
-    public TemplateClient s3TemplateClient(S3ClientWrapper s3ClientWrapper, TemplateFileNameResolver templateFileNameResolver) {
+    public TemplateClient s3TemplateClient(@Qualifier("createS3TemplateClient") S3ClientWrapper s3ClientWrapper, TemplateFileNameResolver templateFileNameResolver) {
         return new S3TemplateClient(s3ClientWrapper, templateFileNameResolver);
     }
 
     /**
      * Creates a {@link S3ClientWrapper}, a simple object that wraps around the AWS {@link S3Client}
+     * This one is for the template store bucket
      *
      * @param awsRegion - region S3 bucket is in
      * @return an object which contains an S3Client with some of our custom config
      */
     @Bean
-    public S3ClientWrapper createS3Client(@Value("${AWS_REGION}") String awsRegion, @Value("${S3_FILE_STORE}") String fileStore) {
+    public S3ClientWrapper createS3TemplateClient(@Value("${AWS_REGION}") String awsRegion, @Value("${S3_TEMPLATE_STORE}") String fileStore) {
+        return new S3ClientWrapper(awsRegion, fileStore);
+    }
+
+    /**
+     * Creates a {@link S3ClientWrapper}, a simple object that wraps around the AWS {@link S3Client}
+     * This one is for the reports bucket
+     *
+     * @param awsRegion - region S3 bucket is in
+     * @return an object which contains an S3Client with some of our custom config
+     */
+    @Bean
+    public S3ClientWrapper createS3ReportClient(@Value("${AWS_REGION}") String awsRegion, @Value("${S3_REPORT_STORE}") String fileStore) {
         return new S3ClientWrapper(awsRegion, fileStore);
     }
 
@@ -58,7 +72,7 @@ public class S3Config {
      * @return an object that determines how file download should behave for this system
      */
     @Bean
-    public FileDownloadService createFileDownloadService(S3ClientWrapper s3ClientWrapper) {
+    public FileDownloadService createFileDownloadService(@Qualifier("createS3ReportClient") S3ClientWrapper s3ClientWrapper) {
         return new FileDownloadFromS3Service(s3ClientWrapper, new ReportFileNameResolver(), new ReportAccessCheckerService(rep000GroupId, submissionReconciliationGroupId));
     }
 

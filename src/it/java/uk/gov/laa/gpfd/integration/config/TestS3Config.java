@@ -13,9 +13,16 @@ public class TestS3Config {
 
     @Bean
     @Primary
-    public S3ClientWrapper mockS3ClientWrapper() {
+    public S3ClientWrapper createS3TemplateClient() {
         return new S3ClientWrapper(mockS3Client(), "test-bucket");
     }
+
+    @Bean
+    @Primary
+    public S3ClientWrapper createS3ReportClient() {
+        return new S3ClientWrapper(mockS3Client(), "test-bucket-reports");
+    }
+
 
     @Bean
     public S3Client mockS3Client() {
