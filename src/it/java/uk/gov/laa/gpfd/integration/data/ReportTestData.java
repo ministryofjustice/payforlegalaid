@@ -69,7 +69,7 @@ public record ReportTestData(
         }
 
         /**
-         * Gets the ReportTestData instance for this enum value.s
+         * Gets the ReportTestData instance for this enum value.
          *
          * @return the immutable ReportTestData instance
          */
