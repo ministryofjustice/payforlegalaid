@@ -23,6 +23,12 @@
       <column name="DESCRIPTION" value="Brand new Output Type"/>
     </insert>
 
+    <insert tableName="REPORT_OUTPUT_TYPES" schemaName="GPFD">
+        <column name="ID" value="bd098666-94e4-4b0e-822c-8e5dfb04c910"/>
+        <column name="EXTENSION" value="s3storage"/>
+        <column name="DESCRIPTION" value="New Output Type"/>
+    </insert>
+
     <insert tableName="REPORTS" schemaName="GPFD">
       <column name="ID" value="b36f9bbb-1178-432c-8f99-8090e285f2d3"/>
       <column name="NAME" value="CCMS Invoice Analysis (CIS to CCMS)"/>
@@ -202,6 +208,21 @@
       <column name="TEMPLATE_URL" value="www.example.org/template"/>
       <column name="REPORT_URL" value="www.example.org/report"/>
     </insert>
+    <insert tableName="REPORTS" schemaName="GPFD">
+      <column name="ID" value="cc55e276-97b0-4dd8-a919-26d4aa373266"/>
+      <column name="NAME" value="REP012 - Original Submissions Value Report"/>
+      <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="00000000-0000-0000-0000-000000000000"/>
+      <column name="REPORT_CREATION_DATE" value="2025-03-15 00:00:00"/>
+      <column name="DESCRIPTION" value="A report from s3 storage"/>
+      <column name="NUM_DAYS_TO_KEEP" value="30"/>
+      <column name="FILE_NAME" value="New report"/>
+      <column name="ACTIVE" value="Y"/>
+      <column name="REPORT_OUTPUT_TYPE" value="bd098666-94e4-4b0e-822c-8e5dfb04c910"/>
+      <column name="REPORT_OWNER_ID" value="00000000-0000-0000-0000-000000000001"/>
+      <column name="REPORT_OWNER_NAME" value="Dr Frankenstein"/>
+      <column name="REPORT_OWNER_EMAIL" value="dr.frankenstein@example.com"/>
+    </insert>
+
 
   </changeSet>
 
