@@ -46,6 +46,7 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
 
     @Override
     public ResponseEntity<ReportsGet200Response> reportsGet() {
+        log.info("Getting report list");
         var reportListEntries = reportManagementService.fetchReportListEntries();
 
         var response = new ReportsGet200Response();
@@ -100,6 +101,7 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
 
     @Override
     public ResponseEntity<InputStreamResource> getReportDownloadById(UUID id) {
+        log.info("Downloading report for id {}", id);
         return fileDownloadService.getFileStreamResponse(id);
     }
 
