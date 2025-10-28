@@ -34,14 +34,14 @@ jobs:
       contents: read
     steps:
       - name: Checkout GitHub repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: ${{ env.TEST_REPO }}
           ref: main
           path: testCode
 
       - name: Checkout GitHub repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: ${{ env.DATA_REPO }}
           ssh-key: ${{ secrets.DEV_SOCKET_KEY }}
@@ -54,7 +54,7 @@ jobs:
           sudo apt-get update && sudo apt-get install -y libxml2-utils
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: ${{ env.ECR_ROLE }}
           aws-region: ${{ env.ECR_REGION }}
