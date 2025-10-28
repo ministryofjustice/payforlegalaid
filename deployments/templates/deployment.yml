@@ -197,8 +197,10 @@ spec:
                 secretKeyRef:
                   name: ${SECRET_NAME}
                   key: mojfin-db-url
-            - name: S3_FILE_STORE
+            - name: S3_TEMPLATE_STORE
               value: laa-get-payments-finance-data-${ENV_NAME}-file-store
+            - name: S3_REPORT_STORE
+              value: laa-get-payments-finance-data-${ENV_NAME}-report-store
             - name: PERMISSION_REP000_GROUP_ID
               value: ${PERMISSION_REP000_GROUP_ID}
             - name: PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID
