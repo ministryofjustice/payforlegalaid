@@ -53,6 +53,35 @@ public class ReportsTestDataFactory {
                 .build();
     }
 
+    public static Report createTestReportForTacticalSol(UUID reportId) {
+        return ImmutableReport.builder()
+                .id(reportId)
+                .name("Test Report")
+                .templateDocument(ExcelTemplate.fromString("00000000-0000-0000-0000-000000000000"))
+                .creationTime(Timestamp.from(Instant.now()))
+                .lastDatabaseRefreshDate(Timestamp.from(Instant.now()))
+                .description("REP0000 - Test Description")
+                .numDaysToKeep(30)
+                .outputType(ImmutableReportOutputType.builder()
+                        .description("foo")
+                        .id(reportId)
+                        .fileExtension(FileExtension.S3STORAGE)
+                        .build())
+                .creator(ImmutableReportCreator.newBuilder()
+                        .withId(UUID.randomUUID())
+                        .withName("Owner Name")
+                        .withEmail("owner@example.com")
+                        .create())
+                .owner(ImmutableReportOwner.newBuilder()
+                        .withName("Creator Name")
+                        .withEmail("creator@example.com")
+                        .create())
+                .outputFileName("test_report")
+                .active(true)
+                .queries(Collections.emptyList())
+                .build();
+    }
+
     public static Report createTestReportWithQuery() {
         var query1 = ImmutableReportQuery.builder()
                 .excelSheet(ImmutableExcelSheet.builder()

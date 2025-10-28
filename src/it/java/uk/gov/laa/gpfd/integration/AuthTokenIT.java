@@ -4,8 +4,8 @@ import static org.junit.jupiter.params.provider.Arguments.of;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.gov.laa.gpfd.integration.data.ReportTestData.REP012Id;
 import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CCMS_REPORT;
+import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.REP012ID;
 import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CSV_REPORT;
 
 import lombok.SneakyThrows;
@@ -36,7 +36,7 @@ final class AuthTokenIT extends BaseIT {
                 of("Specific report endpoint", "/reports/%s".formatted(CSV_REPORT.getReportData().id())),
                 of("Excel download endpoint", "/excel/%s".formatted(CCMS_REPORT.getReportData().id())),
                 of("CSV download endpoint", "/csv/%s".formatted(CSV_REPORT.getReportData().id())),
-                of("File download endpoint", "/reports/%s/file".formatted(REP012Id))
+                of("File download endpoint", "/reports/%s/file".formatted(REP012ID.getReportData().id()))
         );
     }
 

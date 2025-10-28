@@ -21,7 +21,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.createTestReport;
 import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.createTestReportWithQuery;
+import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.createTestReportForTacticalSol;
 import static uk.gov.laa.gpfd.model.FileExtension.CSV;
+import static uk.gov.laa.gpfd.model.FileExtension.S3STORAGE;
 import static uk.gov.laa.gpfd.services.stream.AbstractDataStream.createCsvStreamStrategy;
 import static uk.gov.laa.gpfd.services.stream.AbstractDataStream.createExcelStreamStrategy;
 
@@ -48,6 +50,18 @@ class AbstractDataStreamTest {
         assertEquals(streamingResponseBody, response.getBody());
         assertEquals("attachment; filename=\"Test Report.csv\"",
                 response.getHeaders().getFirst("Content-Disposition"));
+    }
+
+    @Test
+    void shouldCreateProperResponseForS3StorageReports() {
+        var testStream = new TestDataStream1();
+        var reportId = randomUUID();
+
+        var response = testStream.buildResponse(createTestReportForTacticalSol(reportId), streamingResponseBody);
+
+        assertEquals(streamingResponseBody, response.getBody());
+        assertEquals("application/octet-stream",
+                response.getHeaders().getFirst("Content-Type"));
     }
 
     @Test
@@ -108,6 +122,18 @@ class AbstractDataStreamTest {
         @Override
         public FileExtension getFormat() {
             return CSV;
+        }
+
+        @Override
+        public ResponseEntity<StreamingResponseBody> stream(UUID uuid) {
+            return null;
+        }
+    }
+
+    private static class TestDataStream1 extends AbstractDataStream {
+        @Override
+        public FileExtension getFormat() {
+            return S3STORAGE;
         }
 
         @Override
