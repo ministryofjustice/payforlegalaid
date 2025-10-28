@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.createTestReport;
+import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.createTestReportForTacticalSol;
 
 class GetReportById200ResponseMapperTest {
     Report report = createTestReport(fromString("8dd30c01-700a-4790-96d6-bd5440a31692"));
@@ -54,6 +55,18 @@ class GetReportById200ResponseMapperTest {
     @Test
     void shouldThrowWhenReportIsNull() {
         assertThrows(NullPointerException.class, () -> mapper.map(null));
+    }
+
+    @Test
+    void shouldReturnCorrectResponseWhenDownloadedFromS3Storage() {
+        var reportId = fromString("8dd30c01-700a-4790-96d6-bd5440a31692");
+
+        var response = mapper.map(createTestReportForTacticalSol(reportId));
+
+        assertNotNull(response);
+        assertEquals(reportId, response.getId());
+        assertEquals("Test Report", response.getReportName());
+        assertEquals(URI.create("https://api.example.com/reports/" + reportId + "/file"), response.getReportDownloadUrl());
     }
 
 }

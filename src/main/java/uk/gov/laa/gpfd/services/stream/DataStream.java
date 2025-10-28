@@ -50,7 +50,7 @@ public interface DataStream {
     default MediaType getContentType() {
         return switch(getFormat()) {
             case XLSX -> MediaType.valueOf(APPLICATION_EXCEL);
-            case CSV -> MediaType.APPLICATION_OCTET_STREAM;
+            case CSV, S3STORAGE -> MediaType.APPLICATION_OCTET_STREAM;
         };
     }
 }

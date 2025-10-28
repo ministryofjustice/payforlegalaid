@@ -3,11 +3,13 @@ package uk.gov.laa.gpfd.mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.laa.gpfd.config.AppConfig;
+import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.model.Report;
 
 import java.net.URI;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * Abstract base class for report mappers that provides common functionality
@@ -34,9 +36,11 @@ public abstract class AbstractReportMapper {
      */
     protected URI constructDownloadUrl(Report report) {
         try {
-            var extensionPath = report.getOutputType().getSubPath();
             var reportId = report.getIdAsString();
-
+            if (Objects.equals(report.getOutputType().getExtension(), FileExtension.S3STORAGE.getExtension())) {
+                return URI.create("%s/%s/%s/%s".formatted(baseUrl,"reports", reportId, "file"));
+            }
+            var extensionPath = report.getOutputType().getSubPath();
             return URI.create("%s/%s/%s".formatted(baseUrl, extensionPath, reportId));
         } catch (Exception e) {
             throw new IllegalStateException("Failed to construct report URL", e);
