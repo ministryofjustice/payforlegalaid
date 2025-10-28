@@ -80,7 +80,7 @@ For more details on how to get this template visit the [Confluence](https://dsdm
 - `snyk test --policy-path=.snyk`
 
 ### Access on development
-- There is a shared password-manager group account for the GPFD team, ask the manager of the team for access. 
+- There is a shared password-manager group account for the GPFD team, ask the team for details on how to request access. 
 This group has a number of test users which can be used to access the Dev environment - these accounts have been registered with the DEV environment's active directory, and so will pass the SSO authentication.
 
 ## Tests
