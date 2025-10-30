@@ -36,15 +36,15 @@ public class ReportsViewController {
         ) {
         }
         var reportList = Objects.requireNonNull(api.reportsGet().getBody()).getReportList().stream()
-                    .map(reportItem ->
-                            new Dto(
-                                    reportItem.getId(),
-                                    reportItem.getReportName(),
-                                    reportItem.getDescription(),
-                                    api.getReportById(reportItem.getId()).getBody().getReportDownloadUrl()
-                            )
-                    )
-                    .toList();
+                .map(reportItem ->
+                        new Dto(
+                                reportItem.getId(),
+                                reportItem.getReportName(),
+                                reportItem.getDescription(),
+                                api.getReportById(reportItem.getId()).getBody().getReportDownloadUrl()
+                        )
+                )
+                .toList();
         model.addAttribute("reportListResponse", reportList);
         return "reports/list";
     }
