@@ -35,8 +35,7 @@ public class ReportsViewController {
                 URI reportDownloadUrl
         ) {
         }
-        List<Dto> reportList = null;
-        reportList = Objects.requireNonNull(api.reportsGet().getBody()).getReportList().stream()
+        var reportList = Objects.requireNonNull(api.reportsGet().getBody()).getReportList().stream()
                     .map(reportItem ->
                             new Dto(
                                     reportItem.getId(),
