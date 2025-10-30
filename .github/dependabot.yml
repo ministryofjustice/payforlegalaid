@@ -11,12 +11,18 @@ updates:
       interval: "weekly"
       day: "sunday"
       time: "16:00"
+    groups:
+      all-maven:
+        patterns: [ "*" ]
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "sunday"
       time: "16:00"
+    groups:
+      all-docker:
+        patterns: [ "*" ]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -24,5 +30,5 @@ updates:
       day: "sunday"
       time: "16:00"
     groups:
-      all-actions:
+      all-github-actions:
         patterns: [ "*" ]
