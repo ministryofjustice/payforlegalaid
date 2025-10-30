@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import uk.gov.laa.gpfd.api.ReportsApi;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -45,6 +44,7 @@ public class ReportsViewController {
                         )
                 )
                 .toList();
+
         model.addAttribute("reportListResponse", reportList);
         return "reports/list";
     }
