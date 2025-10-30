@@ -38,10 +38,8 @@ public class ReportsViewController {
                 URI reportDownloadUrl
         ) {
         }
-        log.info("Request to get all reports");
         List<Dto> reportList = null;
-        try {
-            reportList = Objects.requireNonNull(api.reportsGet().getBody()).getReportList().stream()
+        reportList = Objects.requireNonNull(api.reportsGet().getBody()).getReportList().stream()
                     .map(reportItem ->
                             new Dto(
                                     reportItem.getId(),
@@ -51,12 +49,6 @@ public class ReportsViewController {
                             )
                     )
                     .toList();
-            log.info("Responding with status: {} Total reports found: {}", HttpStatus.OK.value(), reportList.size());
-        } catch (Exception e) {
-            log.error("Failed to fetch reports: {}", e.getMessage());
-            model.addAttribute("reportListResponse", List.of());
-        }
-
         model.addAttribute("reportListResponse", reportList);
         return "reports/list";
     }
