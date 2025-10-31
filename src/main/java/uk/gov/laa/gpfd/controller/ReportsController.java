@@ -46,12 +46,13 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
 
     @Override
     public ResponseEntity<ReportsGet200Response> reportsGet() {
+        log.info("Requesting report list from service");
         var reportListEntries = reportManagementService.fetchReportListEntries();
 
         var response = new ReportsGet200Response();
         reportListEntries.forEach(response::addReportListItem);
 
-        log.debug("Returning a reportListResponse to user");
+        log.info("Successfully pulled report list - total reports : {}", reportListEntries.size());
         return ResponseEntity.ok(response);
     }
 
@@ -63,7 +64,7 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
      */
     @Override
     public ResponseEntity<StreamingResponseBody> csvIdGet(UUID requestedId) {
-        log.debug("Returning a CSV response to user");
+        log.info("Returning a CSV report for id {} to user", requestedId);
         reportsTrackingService.saveReportsTracking(requestedId);
         return streamingService.stream(requestedId, CSV);
     }
@@ -94,12 +95,14 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
      */
     @Override
     public ResponseEntity<StreamingResponseBody> getExcelById(UUID id) {
+        log.info("Returning an Excel report for id {} to user", id);
         reportsTrackingService.saveReportsTracking(id);
         return streamingService.stream(id, XLSX);
     }
 
     @Override
     public ResponseEntity<InputStreamResource> getReportDownloadById(UUID id) {
+        log.info("Downloading report for id {}", id);
         return fileDownloadService.getFileStreamResponse(id);
     }
 
