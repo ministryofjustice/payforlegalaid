@@ -64,8 +64,7 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
      */
     @Override
     public ResponseEntity<StreamingResponseBody> csvIdGet(UUID requestedId) {
-        log.debug("Returning a CSV response to user");
-        log.info("Returning a Csv report for {} to user", requestedId);
+        log.info("Returning a CSV report for id {} to user", requestedId);
         reportsTrackingService.saveReportsTracking(requestedId);
         return streamingService.stream(requestedId, CSV);
     }
@@ -96,7 +95,7 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
      */
     @Override
     public ResponseEntity<StreamingResponseBody> getExcelById(UUID id) {
-        log.info("Returning a Excel report for {} to user", id);
+        log.info("Returning an Excel report for id {} to user", id);
         reportsTrackingService.saveReportsTracking(id);
         return streamingService.stream(id, XLSX);
     }
