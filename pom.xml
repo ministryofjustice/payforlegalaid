@@ -10,38 +10,38 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.10</version>
+        <version>3.5.7</version>
     </parent>
 
     <properties>
         <java.version>17</java.version>
-        <oracle-jdbc.version>23.9.0.25.07</oracle-jdbc.version>
-        <h2.version>2.3.232</h2.version>
-        <junit-pioneer.version>2.0.1</junit-pioneer.version>
+        <oracle-jdbc.version>23.26.0.0.0</oracle-jdbc.version>
+        <h2.version>2.4.240</h2.version>
+        <junit-pioneer.version>2.3.0</junit-pioneer.version>
 
-        <springdoc-oas.version>2.8.9</springdoc-oas.version>
+        <springdoc-oas.version>2.8.13</springdoc-oas.version>
 
-        <maven-surefire-junit5-tree-reporte.version>1.1.0</maven-surefire-junit5-tree-reporte.version>
+        <maven-surefire-junit5-tree-reporte.version>1.5.1</maven-surefire-junit5-tree-reporte.version>
         <poi.version>5.4.1</poi.version>
-        <immutables.version>2.11.1</immutables.version>
-        <spring-cloud-azure-dependencies.version>5.22.0</spring-cloud-azure-dependencies.version>
+        <immutables.version>2.11.6</immutables.version>
+        <spring-cloud-azure-dependencies.version>6.0.0</spring-cloud-azure-dependencies.version>
         <spring-security.version>6.4.11</spring-security.version>
-        <govuk-frontend.version>5.11.0</govuk-frontend.version>
+        <govuk-frontend.version>5.13.0</govuk-frontend.version>
         <moj-frontend.version>5.1.5</moj-frontend.version>
 
         <payforlegalaid-openapi.version>0.0.10</payforlegalaid-openapi.version>
-        <tomcat-embed.version>10.1.44</tomcat-embed.version>
-        <common-lang3.version>3.18.0</common-lang3.version>
+        <tomcat-embed.version>11.0.13</tomcat-embed.version>
+        <common-lang3.version>3.19.0</common-lang3.version>
 
-        <aws.java.sdk.version>2.33.8</aws.java.sdk.version>
-        <io.netty-codec-version>4.1.125.Final</io.netty-codec-version>
+        <aws.java.sdk.version>2.36.3</aws.java.sdk.version>
+        <io.netty-codec-version>4.2.7.Final</io.netty-codec-version>
     </properties>
 
     <build>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>3.14.1</version>
                 <executions>
                     <execution>
                         <id>default-testCompile</id>
@@ -80,14 +80,14 @@
                     <consoleOutputReporter>
                         <disable>true</disable>
                     </consoleOutputReporter>
-                    <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporterUnicode"/>
+                    <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter"/>
                 </configuration>
                 <version>3.2.3</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.6.1</version>
+                <version>3.9.0</version>
                 <executions>
                     <execution>
                         <phase>generate-resources</phase>
@@ -133,7 +133,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.6.2</version>
                 <executions>
                     <execution>
                         <id>download-moj-frontend</id>
@@ -229,7 +229,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>3.3.2</version>
+                <version>3.5.0</version>
                 <configuration>
                     <attachClasses>true</attachClasses>
                     <classesClassifier>classes</classesClassifier>
@@ -253,6 +253,11 @@
                 <version>${aws.java.sdk.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.4</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
