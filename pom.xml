@@ -23,8 +23,8 @@
 
         <maven-surefire-junit5-tree-reporte.version>1.5.1</maven-surefire-junit5-tree-reporte.version>
         <poi.version>5.4.1</poi.version>
-        <immutables.version>2.11.1</immutables.version>
-        <spring-cloud-azure-dependencies.version>5.22.0</spring-cloud-azure-dependencies.version>
+        <immutables.version>2.11.6</immutables.version>
+        <spring-cloud-azure-dependencies.version>6.0.0</spring-cloud-azure-dependencies.version>
         <spring-security.version>6.4.11</spring-security.version>
         <govuk-frontend.version>5.13.0</govuk-frontend.version>
         <moj-frontend.version>5.1.5</moj-frontend.version>
@@ -33,8 +33,8 @@
         <tomcat-embed.version>11.0.13</tomcat-embed.version>
         <common-lang3.version>3.19.0</common-lang3.version>
 
-        <aws.java.sdk.version>2.33.8</aws.java.sdk.version>
-        <io.netty-codec-version>4.1.125.Final</io.netty-codec-version>
+        <aws.java.sdk.version>2.37.3</aws.java.sdk.version>
+        <io.netty-codec-version>4.2.7.Final</io.netty-codec-version>
     </properties>
 
     <build>
@@ -253,6 +253,11 @@
                 <version>${aws.java.sdk.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.4</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven.plugins</groupId>
