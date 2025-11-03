@@ -8,6 +8,7 @@ metadata:
     nginx.ingress.kubernetes.io/backend-protocol: http
     nginx.ingress.kubernetes.io/affinity: "cookie"
     nginx.ingress.kubernetes.io/limit-connections: "1"
+    nginx.ingress.kubernetes.io/limit-conn-zone: "$binary_remote_addr zone=addr:10m"
 spec:
   ingressClassName: default
   tls:
