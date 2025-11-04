@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: nginx-configuration
-  namespace: ingress-nginx
+  name: gpfd-${ENV_NAME}-ingress
+  namespace: laa-get-payments-finance-data-dev
 data:
   enable-conn-limit: "true"
 ---
