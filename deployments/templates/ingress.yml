@@ -8,7 +8,7 @@ metadata:
     nginx.ingress.kubernetes.io/backend-protocol: http
     nginx.ingress.kubernetes.io/affinity: "cookie"
     nginx.ingress.kubernetes.io/limit-rps: "1"
-    nginx.ingress.kubernetes.io/limit-conn-status: "429"
+    nginx.ingress.kubernetes.io/limit-req-status-code: "429"
 
 spec:
   ingressClassName: default
