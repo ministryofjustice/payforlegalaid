@@ -26,12 +26,5 @@ spec:
             service:
               name: gpfd-${ENV_NAME}-service
               port:
-                number: 8080
-        - path: src/main/resources/templates/reports/customError429.html
-          pathType: ImplementationSpecific
-          backend:
-            service:
-              name: custom-error-service
-              port:
-              number: 8080
+                number: 8080S
 
