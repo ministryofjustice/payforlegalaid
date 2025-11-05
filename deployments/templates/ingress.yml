@@ -26,5 +26,5 @@ spec:
             service:
               name: gpfd-${ENV_NAME}-service
               port:
-                number: 8080S
+                number: 8080
 
