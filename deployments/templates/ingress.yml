@@ -8,7 +8,8 @@ metadata:
     nginx.ingress.kubernetes.io/backend-protocol: http
     nginx.ingress.kubernetes.io/affinity: "cookie"
     nginx.ingress.kubernetes.io/limit-rps: "1"
-    nginx.ingress.kubernetes.io/limit-conn-status: "429"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      limit_req_status 429;       
 
 spec:
   ingressClassName: default
@@ -26,4 +27,11 @@ spec:
               name: gpfd-${ENV_NAME}-service
               port:
                 number: 8080
+        - path: src/main/resources/templates/reports/customError429.html
+          pathType: ImplementationSpecific
+          backend:
+            service:
+              name: custom-error-service
+              port:
+              number: 8080
 
