@@ -16,7 +16,7 @@ metadata:
       SecDefaultAction "phase:2,pass,log,tag:github_team=payforlegalaid"  
       
 spec:
-  ingressClassName: default
+  ingressClassName: modsec
   tls:
     - hosts:
       - '${GPFD_URL}'
