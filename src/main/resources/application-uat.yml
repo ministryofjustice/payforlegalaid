@@ -1,5 +1,5 @@
 gpfd:
-  url: https://uat.get-legal-aid-data.service.justice.gov.uk
+  url: https://uat-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk
   redirect-uri-template: ${gpfd.url}/login/oauth2/code/gpfd-azure-uat
 
   # MOJFIN database config
