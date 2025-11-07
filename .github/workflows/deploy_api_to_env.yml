@@ -100,7 +100,7 @@ jobs:
           DATA_REPOSITORY: ${{ vars.DATA_ECR_REPOSITORY }}
           PERMISSION_REP000_GROUP_ID: ${{ vars.PERMISSION_REP000_GROUP_ID }}
           PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID: ${{ vars.PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID }}
-          INGRESS_CLASS_NAME: ${{ steps.ingress_class.outputs }}
+          INGRESS_CLASS_NAME: ${{ steps.ingress_class.outputs.ingress_class }}
         run: |
           template_processing=(
             "ingress:ingress"
