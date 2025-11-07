@@ -82,6 +82,7 @@ jobs:
         run: |
           IP_LIST = $(curl -s https://raw.githubusercontent.com/ministryofjustice/laa-ip-allowlist/main/cidrs.txt | tr -d ' ' | tr '\n' ',' | sed 's/,/\\,/g' | sed 's/\\,$//')
           echo "IP LIST: $IP_LIST"
+        shell: bash
         env:
           ALLOWED_IP_LIST: IP_LIST
 
