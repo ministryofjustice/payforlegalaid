@@ -79,11 +79,12 @@ jobs:
           SOCKET_KEY: ${{ secrets.api_socket_key }}
 
       - name: Set ingress class based on environment
+        id: ingress_class
         run: |
           if [[ "${{ inputs.environment_name }}" == "prod" ]]; then
-            echo "ingress_class=modsec" >> $GITHUB_ENV
+            echo "ingress_class=modsec" >> $GITHUB_OUTPUT
           else
-            echo "ingress_class=modsec-non-prod" >> $GITHUB_ENV
+            echo "ingress_class=modsec-non-prod" >> $GITHUB_OUTPUT
           fi
 
       - name: Generate Kubernetes files from templates
