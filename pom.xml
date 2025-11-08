@@ -29,7 +29,7 @@
         <govuk-frontend.version>5.13.0</govuk-frontend.version>
         <moj-frontend.version>5.1.5</moj-frontend.version>
 
-        <payforlegalaid-openapi.version>0.0.14</payforlegalaid-openapi.version>
+        <payforlegalaid-openapi.version>0.0.15</payforlegalaid-openapi.version>
         <tomcat-embed.version>11.0.13</tomcat-embed.version>
         <common-lang3.version>3.19.0</common-lang3.version>
 
