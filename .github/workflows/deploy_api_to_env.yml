@@ -77,13 +77,6 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           SOCKET_KEY: ${{ secrets.api_socket_key }}
-
-      - name: Fetch IP list
-        id: fetch_ip
-        run: |
-          IP_LIST=$(curl -s https://raw.githubusercontent.com/ministryofjustice/laa-ip-allowlist/main/cidrs.txt | tr -d ' ' | tr '\n' ',' | sed 's/,/\\,/g' | sed 's/\\,$//')
-          echo "IP_LIST=$IP_LIST"
-          echo "ip_list=$IP_LIST" >> $GITHUB_OUTPUT
         
       - name: Set ingress class based on environment
         id: ingress_class
@@ -93,6 +86,13 @@ jobs:
           else
             echo "ingress_class=modsec-non-prod" >> $GITHUB_OUTPUT
           fi
+
+      - name: Fetch IP list
+        id: fetch_ip
+        run: |
+          IP_LIST=$(curl -s https://raw.githubusercontent.com/ministryofjustice/laa-ip-allowlist/main/cidrs.txt |  tr -d ' ' | awk 'ORS=","' | sed 's/,$//')
+          echo "IP_LIST=$IP_LIST"
+          echo "ip_list=$IP_LIST" >> $GITHUB_OUTPUT
 
       - name: Generate Kubernetes files from templates
         env:
@@ -107,8 +107,9 @@ jobs:
           DATA_REPOSITORY: ${{ vars.DATA_ECR_REPOSITORY }}
           PERMISSION_REP000_GROUP_ID: ${{ vars.PERMISSION_REP000_GROUP_ID }}
           PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID: ${{ vars.PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID }}
-          IP_LIST: ${{ steps.fetch_ip.outputs.ip_list }}
           INGRESS_CLASS_NAME: ${{ steps.ingress_class.outputs.ingress_class }}
+          IP_LIST: ${{ steps.fetch_ip.outputs.ip_list }}
+
         run: |
           template_processing=(
             "ingress:ingress"
