@@ -15,7 +15,7 @@ metadata:
       SecRuleEngine On
 
 spec:
-  ingressClassName: modsec
+  ingressClassName: '${INGRESS_CLASS_NAME}'
   tls:
     - hosts:
       - '${GPFD_URL}'
