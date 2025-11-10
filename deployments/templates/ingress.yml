@@ -16,7 +16,7 @@ metadata:
     nginx.ingress.kubernetes.io/whitelist-source-range: '${IP_LIST}'
 
 spec:
-  ingressClassName: modsec
+  ingressClassName: '${INGRESS_CLASS_NAME}'
   tls:
     - hosts:
       - '${GPFD_URL}'
