@@ -77,7 +77,7 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           SOCKET_KEY: ${{ secrets.api_socket_key }}
-
+        
       - name: Set ingress class based on environment
         id: ingress_class
         run: |
@@ -86,6 +86,13 @@ jobs:
           else
             echo "ingress_class=modsec-non-prod" >> $GITHUB_OUTPUT
           fi
+
+      - name: Fetch IP list
+        id: fetch_ip
+        run: |
+          IP_LIST=$(curl -s https://raw.githubusercontent.com/ministryofjustice/laa-ip-allowlist/main/cidrs.txt |  tr -d ' ' | awk 'ORS=","' | sed 's/,$//')
+          echo "IP_LIST=$IP_LIST"
+          echo "ip_list=$IP_LIST" >> $GITHUB_OUTPUT
 
       - name: Generate Kubernetes files from templates
         env:
@@ -101,6 +108,8 @@ jobs:
           PERMISSION_REP000_GROUP_ID: ${{ vars.PERMISSION_REP000_GROUP_ID }}
           PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID: ${{ vars.PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID }}
           INGRESS_CLASS_NAME: ${{ steps.ingress_class.outputs.ingress_class }}
+          IP_LIST: ${{ steps.fetch_ip.outputs.ip_list }}
+
         run: |
           template_processing=(
             "ingress:ingress"
@@ -109,7 +118,7 @@ jobs:
             "network-policy:network-policy"
             "prometheus-rules:prometheus-rules"
             "grafana-dashboard:grafana-dashboard:\$ENV_NAME,\$NAMESPACE"
-            "deployment:deployment:\$ENV_NAME,\$SECRET_NAME,\$GPFD_URL,\$REGISTRY,\$REPOSITORY,\$IMAGE_TAG,\$DATA_REPOSITORY,\$PERMISSION_REP000_GROUP_ID,\$PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID,\$INGRESS_CLASS_NAME"
+            "deployment:deployment:\$ENV_NAME,\$SECRET_NAME,\$GPFD_URL,\$REGISTRY,\$REPOSITORY,\$IMAGE_TAG,\$DATA_REPOSITORY,\$PERMISSION_REP000_GROUP_ID,\$PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID,\$INGRESS_CLASS_NAME,\$IP_LIST"
           )
           
           for item in "${template_processing[@]}"; do
