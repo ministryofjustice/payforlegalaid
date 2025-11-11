@@ -38,9 +38,9 @@ class ReportsViewControllerTest {
     ReportsViewController reportsViewController;
 
     @Test
-    void index_shouldRedirectToReportsPage() {
+    void index_shouldRedirectToRoot() {
         var result = reportsViewController.index();
-        assertEquals("redirect:/ui/reports", result);
+        assertEquals("redirect:/", result);
     }
 
     @Test

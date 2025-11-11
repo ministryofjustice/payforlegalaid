@@ -22,10 +22,10 @@ public class ReportsViewController {
 
     @GetMapping("/ui")
     public String index() {
-        return "redirect:/ui/reports";
+        return "redirect:/";
     }
 
-    @GetMapping("/ui/reports")
+    @GetMapping({"/", "/ui/reports"})
     public String getAllReports(Model model) {
         record Dto(
                 UUID id,
