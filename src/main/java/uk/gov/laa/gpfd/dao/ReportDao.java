@@ -86,6 +86,7 @@ public record ReportDao(
         LEFT JOIN GPFD.REPORT_QUERIES q ON r.ID = q.REPORT_ID
         LEFT JOIN GPFD.FIELD_ATTRIBUTES fa ON q.ID = fa.REPORT_QUERY_ID
         LEFT JOIN GPFD.REPORT_OUTPUT_TYPES rot ON r.REPORT_OUTPUT_TYPE = rot.ID
+        WHERE r.ACTIVE = 'Y'
     """;
 
 
