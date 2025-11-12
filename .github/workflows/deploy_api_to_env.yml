@@ -91,9 +91,9 @@ jobs:
         id: fetch_ip
         run: |
           WHITELISTED_IP=$(curl -s https://raw.githubusercontent.com/ministryofjustice/laa-ip-allowlist/main/cidrs.txt | tr -d ' ' | awk 'ORS=","' | sed 's/,$//')
-          PINGDOM_IP_LIST=$(curl -s https://my.pingdom.com/probes/ipv4 | tr -d ' ' | awk 'ORS=","' | sed 's/,$//')
-          echo "IP_LIST=${WHITELISTED_IP},${PINGDOM_IP_LIST}"
-          echo "ip_list=$IP_LIST" >> $GITHUB_OUTPUT
+          PINGDOM_IP_LIST=$(curl -s https://my.pingdom.com/probes/ipv4 | tr -d ' ' | awk '{print $0 "/32"}' ORS=',' | sed 's/,$//')
+          IP_LIST="${WHITELISTED_IP},${PINGDOM_IP_LIST}"
+          echo "ip_list=$IP_LIST" >> "$GITHUB_OUTPUT"
 
       - name: Generate Kubernetes files from templates
         env:
