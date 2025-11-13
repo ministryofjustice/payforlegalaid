@@ -7,6 +7,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.client.HttpClientErrorException;
 import uk.gov.laa.gpfd.api.ReportsApi;
 
 import java.net.URI;
@@ -53,9 +54,12 @@ public class ReportsViewController {
                     )
                     .toList();
         } catch (Exception e) {
-        // Fallback for anything else
-        errorMessage = "General error: " + e.toString();
-        log.debug("errorMessage : {}", e.getMessage());
+        // If API returned an error JSON instead of throwing, you need to inspect the body
+            if (e instanceof HttpClientErrorException httpEx) {
+                errorMessage = httpEx.getResponseBodyAsString(); // will contain {error: "..."}
+            } else {
+                errorMessage = e.getMessage();
+            }
     }
       log.debug("Error message: {}", errorMessage);
         model.addAttribute("errorMessage", errorMessage);
