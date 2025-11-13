@@ -5,6 +5,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -148,7 +149,7 @@ public class GlobalExceptionHandler {
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(ReportOutputTypeNotFoundException.class)
-    public ResponseEntity<ReportsGet500Response> handleReportOutputTypeNotFoundException(ReportOutputTypeNotFoundException e) {
+    public String handleReportOutputTypeNotFoundException(ReportOutputTypeNotFoundException e, Model model) {
         var response = new ReportsGet500Response() {{
             setError(e.getMessage());
         }};
@@ -156,7 +157,9 @@ public class GlobalExceptionHandler {
         log.error("ReportOutputTypeNotFoundException Thrown: %s".formatted(response));
         log.error("ReportOutputTypeNotFoundException stacktrace: %s".formatted((Object) e.getStackTrace()));
 
-        return internalServerError().body(response);
+        model.addAttribute("errorMessage", e.getMessage() != null ? e.getMessage() : "Unexpected error");
+        return "reports/list"; // Thymeleaf template with GOV.UK error summary
+       // return internalServerError().body(response);
     }
 
     /**
@@ -338,5 +341,11 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(errorResponse);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public String handleUiException(Exception e, Model model) {
+        model.addAttribute("errorMessage", e.getMessage() != null ? e.getMessage() : "Unexpected error");
+        return "reports/list"; // Thymeleaf template with GOV.UK error summary
     }
 }
