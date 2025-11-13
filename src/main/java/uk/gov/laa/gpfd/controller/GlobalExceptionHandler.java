@@ -167,8 +167,10 @@ public class GlobalExceptionHandler {
         }
 
         // Otherwise treat as UI call
-        log.info("Its a UI call: {}", e.getMessage());
-        model.addAttribute("errorMessage", e.getMessage());
+        String errorMessage = e.getMessage();
+        log.info("Its a UI call: {}", errorMessage);
+
+        model.addAttribute("errorMessage", errorMessage);
         return "reports/list"; // Thymeleaf template
     }
 
