@@ -1,5 +1,6 @@
 package uk.gov.laa.gpfd.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -149,17 +150,25 @@ public class GlobalExceptionHandler {
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(ReportOutputTypeNotFoundException.class)
-    public String handleReportOutputTypeNotFoundException(ReportOutputTypeNotFoundException e, Model model) {
-        var response = new ReportsGet500Response() {{
-            setError(e.getMessage());
-        }};
+    public Object handleReportOutputTypeNotFoundException(ReportOutputTypeNotFoundException e, HttpServletRequest request,
+                                                                                         Model model) {
+        String uri = request.getRequestURI();
+        String acceptHeader = request.getHeader("Accept");
 
-        log.error("ReportOutputTypeNotFoundException Thrown: %s".formatted(response));
-        log.error("ReportOutputTypeNotFoundException stacktrace: %s".formatted((Object) e.getStackTrace()));
+        if (uri.startsWith("/reports") || (acceptHeader != null && acceptHeader.contains("application/json"))) {
+            var response = new ReportsGet500Response() {{
+                setError(e.getMessage());
+            }};
 
-        model.addAttribute("errorMessage", e.getMessage() != null ? e.getMessage() : "Unexpected error");
-        return "reports/list"; // Thymeleaf template with GOV.UK error summary
-       // return internalServerError().body(response);
+            log.error("ReportOutputTypeNotFoundException Thrown: %s".formatted(response));
+            log.error("ReportOutputTypeNotFoundException stacktrace: %s".formatted((Object) e.getStackTrace()));
+
+            return internalServerError().body(response);
+        }
+
+        // Otherwise treat as UI call
+        model.addAttribute("errorMessage", e.getMessage());
+        return "reports/list"; // Thymeleaf template
     }
 
     /**
@@ -343,9 +352,4 @@ public class GlobalExceptionHandler {
                 .body(errorResponse);
     }
 
-    @ExceptionHandler(Exception.class)
-    public String handleUiException(Exception e, Model model) {
-        model.addAttribute("errorMessage", e.getMessage() != null ? e.getMessage() : "Unexpected error");
-        return "reports/list"; // Thymeleaf template with GOV.UK error summary
-    }
 }

@@ -42,7 +42,7 @@ class GlobalExceptionHandlerTest {
 
     private static final GlobalExceptionHandler globalExceptionHandler = new GlobalExceptionHandler();
     @Mock
-    Model model;
+    private Model model;
 
     @Test
     void shouldHandleDatabaseFetchExceptionWithLongMessage() {
@@ -198,14 +198,14 @@ class GlobalExceptionHandlerTest {
     @Test
     void shouldHandleReportOutputTypeNotFoundExceptionWithExpectedErrorMessage() {
         // Given
-       /* var exception = new ReportOutputTypeNotFoundException("Invalid file extension: xyz");
+        var exception = new ReportOutputTypeNotFoundException("Invalid file extension: xyz");
 
         // When
-        var response = globalExceptionHandler.handleReportOutputTypeNotFoundException(exception, model);
+        //var response = globalExceptionHandler.handleReportOutputTypeNotFoundException(exception);
 
         // Then
-        assertEquals(INTERNAL_SERVER_ERROR, response.);
-        assertEquals("Invalid file extension: xyz", response.getBody().getError());*/
+       //assertEquals(INTERNAL_SERVER_ERROR, response.getBody());
+        //assertEquals("Invalid file extension: xyz", response.getBody().getError());
     }
 
     @Test
