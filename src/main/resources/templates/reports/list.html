@@ -64,6 +64,20 @@
     <main class="govuk-main-wrapper" id="main-content">
         <h1 class="govuk-heading-xl">Get Legal Aid Data</h1>
         <section class="govuk-!-margin-bottom-5">
+            <div th:if="${errorMessage}">
+                <div class="govuk-error-summary" data-module="govuk-error-summary">
+                    <div role="alert">
+                        <h2 class="govuk-error-summary__title">
+                            There is a problem
+                        </h2>
+                        <div class="govuk-error-summary__body">
+                            <ul class="govuk-list govuk-error-summary__list">
+                              <p>${errorMessage}</p>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div th:fragment="content">
                 <div th:each="report,iterStat : ${reportListResponse}">
                     <div class="govuk-grid-row">

@@ -65,7 +65,7 @@ public class ReportsTestDataFactory {
                 .outputType(ImmutableReportOutputType.builder()
                         .description("foo")
                         .id(reportId)
-                        .fileExtension(FileExtension.S3STORAGE)
+                        .fileExtension(FileExtension.CSV)
                         .build())
                 .creator(ImmutableReportCreator.newBuilder()
                         .withId(UUID.randomUUID())

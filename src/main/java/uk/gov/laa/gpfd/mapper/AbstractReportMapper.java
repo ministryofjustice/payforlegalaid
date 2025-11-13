@@ -37,9 +37,9 @@ public abstract class AbstractReportMapper {
     protected URI constructDownloadUrl(Report report) {
         try {
             var reportId = report.getIdAsString();
-            if (Objects.equals(report.getOutputType().getExtension(), FileExtension.S3STORAGE.getExtension())) {
+            /*if (Objects.equals(report.getOutputType().getExtension(), FileExtension.S3STORAGE.getExtension())) {
                 return URI.create("%s/%s/%s/%s".formatted(baseUrl,"reports", reportId, "file"));
-            }
+            }*/
             var extensionPath = report.getOutputType().getSubPath();
             return URI.create("%s/%s/%s".formatted(baseUrl, extensionPath, reportId));
         } catch (Exception e) {

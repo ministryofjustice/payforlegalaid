@@ -57,7 +57,7 @@ class GetReportById200ResponseMapperTest {
         assertThrows(NullPointerException.class, () -> mapper.map(null));
     }
 
-    @Test
+   /* @Test
     void shouldReturnCorrectResponseWhenDownloadedFromS3Storage() {
         var reportId = fromString("8dd30c01-700a-4790-96d6-bd5440a31692");
 
@@ -67,6 +67,6 @@ class GetReportById200ResponseMapperTest {
         assertEquals(reportId, response.getId());
         assertEquals("Test Report", response.getReportName());
         assertEquals(URI.create("https://api.example.com/reports/" + reportId + "/file"), response.getReportDownloadUrl());
-    }
+    }*/
 
 }

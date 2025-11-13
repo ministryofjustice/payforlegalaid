@@ -3,12 +3,16 @@ package uk.gov.laa.gpfd.controller.ui;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import uk.gov.laa.gpfd.api.ReportsApi;
 
 import java.net.URI;
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -34,17 +38,26 @@ public class ReportsViewController {
                 URI reportDownloadUrl
         ) {
         }
-        var reportList = Objects.requireNonNull(api.reportsGet().getBody()).getReportList().stream()
-                .map(reportItem ->
-                        new Dto(
-                                reportItem.getId(),
-                                reportItem.getReportName(),
-                                reportItem.getDescription(),
-                                api.getReportById(reportItem.getId()).getBody().getReportDownloadUrl()
-                        )
-                )
-                .toList();
+        String errorMessage = null;
+        List<Dto> reportList = Collections.emptyList();
+        try {
 
+            reportList = Objects.requireNonNull(api.reportsGet().getBody()).getReportList().stream()
+                    .map(reportItem ->
+                            new Dto(
+                                    reportItem.getId(),
+                                    reportItem.getReportName(),
+                                    reportItem.getDescription(),
+                                    api.getReportById(reportItem.getId()).getBody().getReportDownloadUrl()
+                            )
+                    )
+                    .toList();
+        } catch (Exception e) {
+        // Fallback for anything else
+        errorMessage = "General error: " + e.toString();
+    }
+      log.debug("Error message: {}", errorMessage);
+        model.addAttribute("errorMessage", errorMessage);
         model.addAttribute("reportListResponse", reportList);
         return "reports/list";
     }

@@ -23,7 +23,6 @@ import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.createTestReport;
 import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.createTestReportWithQuery;
 import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.createTestReportForTacticalSol;
 import static uk.gov.laa.gpfd.model.FileExtension.CSV;
-import static uk.gov.laa.gpfd.model.FileExtension.S3STORAGE;
 import static uk.gov.laa.gpfd.services.stream.AbstractDataStream.createCsvStreamStrategy;
 import static uk.gov.laa.gpfd.services.stream.AbstractDataStream.createExcelStreamStrategy;
 
@@ -133,7 +132,7 @@ class AbstractDataStreamTest {
     private static class TestDataStream1 extends AbstractDataStream {
         @Override
         public FileExtension getFormat() {
-            return S3STORAGE;
+            return CSV;
         }
 
         @Override

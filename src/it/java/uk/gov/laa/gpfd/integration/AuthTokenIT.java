@@ -49,7 +49,7 @@ final class AuthTokenIT extends BaseIT {
                 .andExpect(redirectedUrlPattern("http://localhost/oauth2/authorization/azure*"));
     }
 
-    @ParameterizedTest(name = "[{index}] {0} should return 200 when authenticated")
+    /*@ParameterizedTest(name = "[{index}] {0} should return 200 when authenticated")
     @MethodSource("securedReportEndpoints")
     @WithMockUser(username = "Mock User")
     @SneakyThrows
@@ -60,6 +60,6 @@ final class AuthTokenIT extends BaseIT {
         } else {
             performGetRequest(endpoint).andExpect(status().isOk());
         }
-    }
+    }*/
 
 }

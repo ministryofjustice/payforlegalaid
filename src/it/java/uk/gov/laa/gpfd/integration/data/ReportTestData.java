@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 import static java.util.Arrays.stream;
 import static uk.gov.laa.gpfd.model.FileExtension.CSV;
 import static uk.gov.laa.gpfd.model.FileExtension.XLSX;
-import static uk.gov.laa.gpfd.model.FileExtension.S3STORAGE;
 
 /**
  * Immutable record representing test data for report-related test cases.
@@ -42,9 +41,9 @@ public record ReportTestData(
      * @return formatted URL string following the pattern: <a href="http://localhost/">...</a>{type-subpath}/{id}
      */
     public String expectedUrl() {
-        if (fileType.equals(FileExtension.S3STORAGE)) {
+       /* if (fileType.equals(FileExtension.S3STORAGE)) {
             return "http://localhost/%s/%s/%s".formatted("reports", id, "file");
-        }
+        }*/
         return "http://localhost/%s/%s".formatted(fileType.getSubPath(), id);
     }
 
@@ -60,7 +59,7 @@ public record ReportTestData(
         LEGAL_HELP_CONTRACT_BALANCES_REPORT("7073dd13-e325-4863-a05c-a049a815d1f7", "Legal Help contract balances", XLSX),
         AGFS_LATE_PROCESSED_BILLS_REPORT("7bda9aa4-6129-4c71-bd12-7d4e46fdd882", "AGFS late processed bills", XLSX),
         CCMS_THIRD_PARTY_REPORT("8b9f0484-819f-4e0f-b60a-0b3f9d30d9ba", "CCMS Third party report", XLSX),
-        REP012ID("cc55e276-97b0-4dd8-a919-26d4aa373266", "REP012 - Original Submissions Value Report", S3STORAGE);
+        REP012ID("cc55e276-97b0-4dd8-a919-26d4aa373266", "REP012 - Original Submissions Value Report", CSV);
 
         private final ReportTestData reportData;
 

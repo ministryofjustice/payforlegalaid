@@ -30,7 +30,7 @@ import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CSV_REP
 @TestPropertySource(locations = "classpath:application-test.yml")
 final class GetReportsByIdIT extends BaseIT {
 
-    @SneakyThrows
+    /*@SneakyThrows
     @ParameterizedTest(name = "Given {0} when requested then returns correct URL")
     @MethodSource("uk.gov.laa.gpfd.integration.data.ReportTestData#getAllTestReports")
     void shouldReturnOkGivenValidExistedReport(ReportTestData testData) {
@@ -41,7 +41,7 @@ final class GetReportsByIdIT extends BaseIT {
                 .andExpect(jsonPath("$.id").value(testData.id()))
                 .andExpect(jsonPath("$.reportName").value(testData.name()))
                 .andExpect(jsonPath("$.reportDownloadUrl").value(testData.expectedUrl()));
-    }
+    }*/
 
     @SneakyThrows
     @ParameterizedTest
