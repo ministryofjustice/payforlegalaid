@@ -55,6 +55,7 @@ public class ReportsViewController {
         } catch (Exception e) {
         // Fallback for anything else
         errorMessage = "General error: " + e.toString();
+        log.debug("errorMessage : {}", e.getMessage());
     }
       log.debug("Error message: {}", errorMessage);
         model.addAttribute("errorMessage", errorMessage);
