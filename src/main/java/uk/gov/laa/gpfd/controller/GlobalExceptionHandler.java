@@ -154,7 +154,7 @@ public class GlobalExceptionHandler {
                                                                                          Model model) {
         String uri = request.getRequestURI();
         String acceptHeader = request.getHeader("Accept");
-
+        log.debug("ReportOutputTypeNotFoundException: uri: {}, acceptHeader: {}", uri, acceptHeader);
         if (uri.startsWith("/reports") || (acceptHeader != null && acceptHeader.contains("application/json"))) {
             var response = new ReportsGet500Response() {{
                 setError(e.getMessage());
@@ -167,6 +167,7 @@ public class GlobalExceptionHandler {
         }
 
         // Otherwise treat as UI call
+        log.debug("Its a UI call: {}", e.getMessage());
         model.addAttribute("errorMessage", e.getMessage());
         return "reports/list"; // Thymeleaf template
     }
