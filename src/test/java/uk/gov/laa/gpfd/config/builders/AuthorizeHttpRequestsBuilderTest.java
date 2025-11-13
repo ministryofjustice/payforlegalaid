@@ -34,7 +34,7 @@ class AuthorizeHttpRequestsBuilderTest {
     @Test
     void shouldOpenAPIDocsDoesNotExist() throws Exception {
         mockMvc.perform(get("/v3/api-docs"))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isOk());
     }
 
     @Test

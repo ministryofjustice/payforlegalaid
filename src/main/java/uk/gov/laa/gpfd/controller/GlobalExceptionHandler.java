@@ -5,6 +5,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -338,5 +339,22 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(errorResponse);
+    }
+
+    /**
+     * Handles any unhandled exception in UI controllers.
+     * <p>Adds an {@code errorMessage} to the model and returns
+     * the {@code reports/list} view so Thymeleaf can display
+     * an exception to user.</p>
+     *
+     * @param e     the thrown exception
+     * @param model the model to pass attributes to the view
+     * @return      the Thymeleaf view name "reports/list"
+     */
+    @ExceptionHandler(Exception.class)
+    public String handleAnyExceptionUi(Exception e, Model model) {
+        log.error("Unhandled exception handled (UI)", e);
+        model.addAttribute("errorMessage", e.getMessage());
+        return "reports/list"; // fallback Thymeleaf view
     }
 }

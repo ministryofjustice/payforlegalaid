@@ -5,6 +5,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.ui.ConcurrentModel;
+import org.springframework.ui.Model;
 import software.amazon.awssdk.awscore.exception.AwsErrorDetails;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
@@ -22,6 +24,7 @@ import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.UnexpectedAuthCla
 
 import java.util.UUID;
 import java.util.stream.Stream;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import static java.util.stream.Stream.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -287,6 +290,18 @@ class GlobalExceptionHandlerTest {
 
         assertEquals(FORBIDDEN, response.getStatusCode());
         assertEquals("You cannot access report with ID " + reportId, response.getBody().getError());
+    }
+
+      @Test
+    void handleAnyException_shouldAddErrorMessageAndReturnView() {
+        Exception ex = new Exception("Something went wrong");
+        Model model = new ConcurrentModel();
+
+        String viewName = globalExceptionHandler.handleAnyExceptionUi(ex, model);
+
+        assertThat(viewName).isEqualTo("reports/list");
+        assertThat(model.getAttribute("errorMessage"))
+                .isEqualTo("Something went wrong");
     }
 
 }
