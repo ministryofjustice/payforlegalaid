@@ -5,7 +5,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.ConcurrentModel;
+import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import software.amazon.awssdk.awscore.exception.AwsErrorDetails;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
@@ -21,6 +25,7 @@ import uk.gov.laa.gpfd.exception.TransferException;
 import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.AuthenticationIsNullException;
 import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.PrincipalIsNullException;
 import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.UnexpectedAuthClassException;
+import uk.gov.laa.gpfd.model.ReportsGet500Response;
 
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -197,14 +202,42 @@ class GlobalExceptionHandlerTest {
     @Test
     void shouldHandleReportOutputTypeNotFoundExceptionWithExpectedErrorMessage() {
         // Given
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("/excel/123");
+
+        Model model = new ExtendedModelMap();
         var exception = new ReportOutputTypeNotFoundException("Invalid file extension: xyz");
 
-        // When
-        var response = globalExceptionHandler.handleReportOutputTypeNotFoundException(exception);
+        //when
+        Object result = globalExceptionHandler.handleReportOutputTypeNotFoundException(exception, request, model);
 
-        // Then
-        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals("Invalid file extension: xyz", response.getBody().getError());
+        assertThat(result).isInstanceOf(ResponseEntity.class);
+
+        //then
+        ResponseEntity<?> responseEntity = (ResponseEntity<?>) result;
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(responseEntity.getBody()).isInstanceOf(ReportsGet500Response.class);
+
+        ReportsGet500Response body = (ReportsGet500Response) responseEntity.getBody();
+        assertThat(body.getError()).isEqualTo("Invalid file extension: xyz");
+    }
+
+    @Test
+    void shouldHandleReportOutputTypeNotFoundExceptionWithExpectedErrorMessageOnUI() {
+        //given
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("/ui/reports/123");
+
+        var exception = new ReportOutputTypeNotFoundException("Test error");
+        Model model = new ExtendedModelMap();
+
+        //when
+        Object result = globalExceptionHandler.handleReportOutputTypeNotFoundException(exception, request, model);
+
+        //then
+        assertThat(result).isInstanceOf(String.class);
+        assertThat(result).isEqualTo("reports/list");
+        assertThat(model.getAttribute("errorMessage")).isEqualTo("Test error");
     }
 
     @Test
