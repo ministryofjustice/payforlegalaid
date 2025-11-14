@@ -1,10 +1,14 @@
 package uk.gov.laa.gpfd.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -38,7 +42,8 @@ import static uk.gov.laa.gpfd.exception.TransferException.StreamException.ExcelS
  */
 @Slf4j
 @ControllerAdvice
-@SuppressWarnings({"java:S1171", "java:S3599"}) //Disabling due to generated code
+@SuppressWarnings({"java:S1171", "java:S3599"})
+@Order(Ordered.LOWEST_PRECEDENCE) //Disabling due to generated code
 public class GlobalExceptionHandler {
 
     private static final String ERROR_STRING = "Error: ";
@@ -148,7 +153,11 @@ public class GlobalExceptionHandler {
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(ReportOutputTypeNotFoundException.class)
-    public ResponseEntity<ReportsGet500Response> handleReportOutputTypeNotFoundException(ReportOutputTypeNotFoundException e) {
+    public Object handleReportOutputTypeNotFoundException(ReportOutputTypeNotFoundException e, HttpServletRequest request, Model model) {
+
+        if (request.getRequestURI().startsWith("/ui/reports")) {
+           return handleAnyExceptionUi(e, model);
+        }
         var response = new ReportsGet500Response() {{
             setError(e.getMessage());
         }};
@@ -338,5 +347,22 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(errorResponse);
+    }
+
+    /**
+     * Handles any unhandled exception in UI controllers.
+     * <p>Adds an {@code errorMessage} to the model and returns
+     * the {@code reports/list} view so Thymeleaf can display
+     * an exception to user.</p>
+     *
+     * @param e     the thrown exception
+     * @param model the model to pass attributes to the view
+     * @return      the Thymeleaf view name "reports/list"
+     */
+    @ExceptionHandler(Exception.class)
+    public String handleAnyExceptionUi(Exception e, Model model) {
+        log.error("Unhandled exception handled (UI): {}", e.getMessage());
+        model.addAttribute("errorMessage", e.getMessage());
+        return "reports/list"; // fallback Thymeleaf view
     }
 }
