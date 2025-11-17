@@ -38,7 +38,9 @@ import static org.springframework.http.ResponseEntity.internalServerError;
 import static uk.gov.laa.gpfd.exception.TransferException.StreamException.ExcelStreamWriteException;
 
 /**
- * Global exception handler for managing exceptions thrown by controllers.
+ * Global exception handler for API controllers.
+ * Catches unhandled exceptions, logs them, and returns
+ * appropriate HTTP responses to the client.
  */
 @Slf4j
 @ControllerAdvice

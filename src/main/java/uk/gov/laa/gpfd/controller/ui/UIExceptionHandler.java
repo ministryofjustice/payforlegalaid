@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class UIExceptionHandler {
     /**
      * Handles any unhandled exception in UI controllers.
-     * <p>Adds an {@code errorMessage} to the model and returns
-     * the {@code reports/list} view so Thymeleaf can display
-     * an exception to user.</p>
+     * Adds an errorMessage to the model and returns
+     * the {reports/list} view so Thymeleaf can display
+     * an exception to user.
      *
      * @param e     the thrown exception
      * @param model the model to pass attributes to the view
