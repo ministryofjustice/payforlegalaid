@@ -155,7 +155,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ReportOutputTypeNotFoundException.class)
     public Object handleReportOutputTypeNotFoundException(ReportOutputTypeNotFoundException e, HttpServletRequest request, Model model) {
 
-        if (request.getRequestURI().startsWith("/ui/reports")) {
+        String uri = request.getRequestURI();
+        if (uri.startsWith("/ui/reports") || uri.startsWith("/")) {
            return handleAnyExceptionUi(e, model);
         }
         var response = new ReportsGet500Response() {{
