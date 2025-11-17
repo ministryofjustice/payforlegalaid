@@ -43,7 +43,7 @@ public class ReportAccessCheckerService {
         if (doesUserHaveAccess(reportId, groups)) {
             return true;
         } else {
-            throw new ReportAccessException(reportId, "You cannot access report with ID: " + reportId);
+            throw new ReportAccessException(reportId);
         }
     }
 

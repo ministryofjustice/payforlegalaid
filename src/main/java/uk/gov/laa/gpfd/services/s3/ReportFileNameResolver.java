@@ -41,7 +41,7 @@ public class ReportFileNameResolver {
         if (fileMap.containsKey(id)) {
             return fileMap.get(id);
         } else {
-            throw new ReportNotSupportedForDownloadException(id, "Report " + id + " is not valid for file retrieval.");
+            throw new ReportNotSupportedForDownloadException(id);
         }
     }
 

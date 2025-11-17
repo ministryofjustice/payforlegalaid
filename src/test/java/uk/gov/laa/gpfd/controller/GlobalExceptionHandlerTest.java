@@ -7,14 +7,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import software.amazon.awssdk.awscore.exception.AwsErrorDetails;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
-import uk.gov.laa.gpfd.exception.DatabaseReadException;
-import uk.gov.laa.gpfd.exception.InvalidDownloadFormatException;
-import uk.gov.laa.gpfd.exception.OperationNotSupportedException;
-import uk.gov.laa.gpfd.exception.ReportAccessException;
-import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
-import uk.gov.laa.gpfd.exception.ReportNotSupportedForDownloadException;
-import uk.gov.laa.gpfd.exception.TemplateResourceException;
-import uk.gov.laa.gpfd.exception.TransferException;
+import uk.gov.laa.gpfd.exception.*;
 import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.AuthenticationIsNullException;
 import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.PrincipalIsNullException;
 import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.UnexpectedAuthClassException;
@@ -191,6 +184,19 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
+    void shouldHandleReportOutputTypeNotFoundExceptionWithExpectedErrorMessage() {
+        // Given
+        var exception = new ReportOutputTypeNotFoundException("Invalid file extension: xyz");
+
+        // When
+        var response = globalExceptionHandler.handleReportOutputTypeNotFoundException(exception);
+
+        // Then
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Invalid file extension: xyz", response.getBody().getError());
+    }
+
+    @Test
     void shouldHandleAWSServiceExceptionByThrowing500() {
         var exception = NoSuchKeyException.builder().message("File don't exist and some maybe sensitive stuff about addresses here")
                 .awsErrorDetails(AwsErrorDetails.builder().errorCode("312").errorMessage("uh oh").build())
@@ -215,7 +221,7 @@ class GlobalExceptionHandlerTest {
     @Test
     void shouldHandleInvalidDownloadFormatException() {
         var reportId = UUID.randomUUID();
-        var exception = new InvalidDownloadFormatException("blah.docx", reportId, "Unable to download file for report with ID: " + reportId);
+        var exception = new InvalidDownloadFormatException("blah.docx", reportId);
 
         var response = globalExceptionHandler.handleInvalidDownloadFormatException(exception);
 
@@ -226,12 +232,12 @@ class GlobalExceptionHandlerTest {
     @Test
     void shouldHandleReportNotSupportedForDownloadException() {
         var reportId = UUID.randomUUID();
-        var exception = new ReportNotSupportedForDownloadException(reportId, "Report " + reportId + " is not valid for file retrieval");
+        var exception = new ReportNotSupportedForDownloadException(reportId);
 
         var response = globalExceptionHandler.handleReportNotSupportedForDownloadException(exception);
 
         assertEquals(BAD_REQUEST, response.getStatusCode());
-        assertEquals("Report " + reportId + " is not valid for file retrieval", response.getBody().getError());
+        assertEquals("Report " + reportId + " is not valid for file retrieval.", response.getBody().getError());
     }
 
     @Test
@@ -267,12 +273,13 @@ class GlobalExceptionHandlerTest {
     @Test
     void shouldHandleReportAccessException() {
         var reportId = UUID.randomUUID();
-        var exception = new ReportAccessException(reportId, "You cannot access report with ID: "+reportId);
+        var exception = new ReportAccessException(reportId);
 
         var response = globalExceptionHandler.handleReportAccessException(exception);
 
         assertEquals(FORBIDDEN, response.getStatusCode());
-        assertEquals("You cannot access report with ID: " + reportId, response.getBody().getError());
+        assertEquals("You cannot access report with ID: " + reportId,
+                response.getBody().getError());
     }
 
 }

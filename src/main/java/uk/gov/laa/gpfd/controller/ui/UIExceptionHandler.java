@@ -6,6 +6,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+/**
+ * Exception handler for ReportsViewController.
+ * Catches any exception thrown by UI, puts the message in the model,
+ * and returns the reports list view.
+ */
 @Slf4j
 @ControllerAdvice(assignableTypes = ReportsViewController.class)
 @Order(1)
@@ -22,7 +27,7 @@ public class UIExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public String handleAnyExceptionUi(Exception e, Model model) {
-        log.error("Unhandled exception handled (UI): {}", e.getMessage());
+        log.error("{} handled (UI): {}", e.getClass().getName(), e.getMessage());
         model.addAttribute("errorMessage", e.getMessage());
         return "reports/list";
     }

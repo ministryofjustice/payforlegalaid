@@ -13,9 +13,9 @@ public class ReportAccessException extends RuntimeException {
     private final UUID reportId;
     private final String errorMessage;
 
-    public ReportAccessException(UUID reportId, String errorMessage) {
+    public ReportAccessException(UUID reportId) {
         super();
         this.reportId = reportId;
-        this.errorMessage = errorMessage;
+        this.errorMessage = "You cannot access report with ID: " + reportId;
     }
 }

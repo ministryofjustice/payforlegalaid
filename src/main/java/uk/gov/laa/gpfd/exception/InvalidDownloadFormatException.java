@@ -13,10 +13,10 @@ public class InvalidDownloadFormatException extends RuntimeException {
     final UUID reportId;
     final String errorMessage;
 
-    public InvalidDownloadFormatException(String fileName, UUID reportId, String errorMessage) {
+    public InvalidDownloadFormatException(String fileName, UUID reportId) {
         super();
         this.fileName = fileName;
         this.reportId = reportId;
-        this.errorMessage = errorMessage;
+        this.errorMessage = "Unable to download file for report with ID: " + reportId;
     }
 }
