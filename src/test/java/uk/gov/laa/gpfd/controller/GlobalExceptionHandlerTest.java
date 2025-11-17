@@ -235,8 +235,9 @@ class GlobalExceptionHandlerTest {
         Object result = globalExceptionHandler.handleReportOutputTypeNotFoundException(exception, request, model);
 
         //then
-        assertThat(result).isInstanceOf(String.class);
-        assertThat(result).isEqualTo("reports/list");
+        assertThat(result)
+                .isInstanceOf(String.class)
+                .isEqualTo("reports/list");
         assertThat(model.getAttribute("errorMessage")).isEqualTo("Test error");
     }
 
