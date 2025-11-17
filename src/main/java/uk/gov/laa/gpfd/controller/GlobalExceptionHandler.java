@@ -39,7 +39,7 @@ import static uk.gov.laa.gpfd.exception.TransferException.StreamException.ExcelS
  * Global exception handler for managing exceptions thrown by controllers.
  */
 @Slf4j
-@ControllerAdvice
+@ControllerAdvice(assignableTypes = ReportsController.class)
 @SuppressWarnings({"java:S1171", "java:S3599"}) //Disabling due to generated code
 public class GlobalExceptionHandler {
 
@@ -150,12 +150,8 @@ public class GlobalExceptionHandler {
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(ReportOutputTypeNotFoundException.class)
-    public Object handleReportOutputTypeNotFoundException(ReportOutputTypeNotFoundException e, HttpServletRequest request, Model model) {
+    public ResponseEntity<ReportsGet500Response> handleReportOutputTypeNotFoundException(ReportOutputTypeNotFoundException e) {
 
-        String uri = request.getRequestURI();
-        if (uri.startsWith("/ui/reports") || uri.equals("/")) {
-           return handleAnyExceptionUi(e, model);
-        }
         var response = new ReportsGet500Response() {{
             setError(e.getMessage());
         }};
@@ -285,7 +281,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidDownloadFormatException.class)
     public ResponseEntity<ReportsGet400Response> handleInvalidDownloadFormatException(InvalidDownloadFormatException e) {
         var errorResponse = new ReportsGet400Response();
-        errorResponse.setError("Unable to download file for report with ID " + e.getReportId());
+        errorResponse.setError(e.getErrorMessage());
 
         log.error("InvalidDownloadFormatException Thrown: Report {} has file {} which is not a csv file", e.getReportId(), e.getFileName());
 
@@ -303,7 +299,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ReportNotSupportedForDownloadException.class)
     public ResponseEntity<ReportsGet400Response> handleReportNotSupportedForDownloadException(ReportNotSupportedForDownloadException e) {
         var errorResponse = new ReportsGet400Response();
-        errorResponse.setError("Report " + e.getReportId() + " is not valid for file retrieval");
+        errorResponse.setError(e.getErrorMessage());
 
         log.error("ReportNotSupportedForDownloadException Thrown: Report {} is not supported on the '/report/{id}/file' endpoint", e.getReportId());
 
@@ -339,7 +335,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ReportAccessException.class)
     public ResponseEntity<GetReportDownloadById403Response> handleReportAccessException(ReportAccessException e) {
         var errorResponse = new GetReportDownloadById403Response();
-        errorResponse.setError("You cannot access report with ID " + e.getReportId());
+        errorResponse.setError(e.getErrorMessage());
 
         log.error("ReportAccessException Thrown: User tried to access report {} but lacks the relevant permission(s)", e.getReportId());
 
@@ -347,20 +343,4 @@ public class GlobalExceptionHandler {
                 .body(errorResponse);
     }
 
-    /**
-     * Handles any unhandled exception in UI controllers.
-     * <p>Adds an {@code errorMessage} to the model and returns
-     * the {@code reports/list} view so Thymeleaf can display
-     * an exception to user.</p>
-     *
-     * @param e     the thrown exception
-     * @param model the model to pass attributes to the view
-     * @return      the Thymeleaf view name "reports/list"
-     */
-    @ExceptionHandler(Exception.class)
-    public String handleAnyExceptionUi(Exception e, Model model) {
-        log.error("Unhandled exception handled (UI): {}", e.getMessage());
-        model.addAttribute("errorMessage", e.getMessage());
-        return "reports/list"; // fallback Thymeleaf view
-    }
 }

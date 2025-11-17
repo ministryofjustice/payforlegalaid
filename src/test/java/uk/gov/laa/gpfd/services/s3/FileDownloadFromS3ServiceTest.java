@@ -91,7 +91,7 @@ class FileDownloadFromS3ServiceTest {
 
     @Test
     void shouldThrowExceptionIfUserLacksPermissionToAccessReport() {
-        when(reportAccessCheckerService.checkUserCanAccessReport(testUUID)).thenThrow(new ReportAccessException(testUUID));
+        when(reportAccessCheckerService.checkUserCanAccessReport(testUUID)).thenThrow(new ReportAccessException(testUUID, "You cannot access report with ID:"+testUUID));
 
         assertThrows(ReportAccessException.class, () -> fileDownloadFromS3Service.getFileStreamResponse(testUUID));
 

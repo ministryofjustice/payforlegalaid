@@ -5,10 +5,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.ui.ConcurrentModel;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import software.amazon.awssdk.awscore.exception.AwsErrorDetails;
@@ -25,11 +21,9 @@ import uk.gov.laa.gpfd.exception.TransferException;
 import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.AuthenticationIsNullException;
 import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.PrincipalIsNullException;
 import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.UnexpectedAuthClassException;
-import uk.gov.laa.gpfd.model.ReportsGet500Response;
 
 import java.util.UUID;
 import java.util.stream.Stream;
-import static org.assertj.core.api.Assertions.assertThat;
 
 import static java.util.stream.Stream.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -200,48 +194,6 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void shouldHandleReportOutputTypeNotFoundExceptionWithExpectedErrorMessage() {
-        // Given
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRequestURI("/excel/123");
-
-        Model model = new ExtendedModelMap();
-        var exception = new ReportOutputTypeNotFoundException("Invalid file extension: xyz");
-
-        //when
-        Object result = globalExceptionHandler.handleReportOutputTypeNotFoundException(exception, request, model);
-
-        assertThat(result).isInstanceOf(ResponseEntity.class);
-
-        //then
-        ResponseEntity<?> responseEntity = (ResponseEntity<?>) result;
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-        assertThat(responseEntity.getBody()).isInstanceOf(ReportsGet500Response.class);
-
-        ReportsGet500Response body = (ReportsGet500Response) responseEntity.getBody();
-        assertThat(body.getError()).isEqualTo("Invalid file extension: xyz");
-    }
-
-    @Test
-    void shouldHandleReportOutputTypeNotFoundExceptionWithExpectedErrorMessageOnUI() {
-        //given
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRequestURI("/ui/reports/123");
-
-        var exception = new ReportOutputTypeNotFoundException("Test error");
-        Model model = new ExtendedModelMap();
-
-        //when
-        Object result = globalExceptionHandler.handleReportOutputTypeNotFoundException(exception, request, model);
-
-        //then
-        assertThat(result)
-                .isInstanceOf(String.class)
-                .isEqualTo("reports/list");
-        assertThat(model.getAttribute("errorMessage")).isEqualTo("Test error");
-    }
-
-    @Test
     void shouldHandleAWSServiceExceptionByThrowing500() {
         var exception = NoSuchKeyException.builder().message("File don't exist and some maybe sensitive stuff about addresses here")
                 .awsErrorDetails(AwsErrorDetails.builder().errorCode("312").errorMessage("uh oh").build())
@@ -266,18 +218,18 @@ class GlobalExceptionHandlerTest {
     @Test
     void shouldHandleInvalidDownloadFormatException() {
         var reportId = UUID.randomUUID();
-        var exception = new InvalidDownloadFormatException("blah.docx", reportId);
+        var exception = new InvalidDownloadFormatException("blah.docx", reportId, "Unable to download file for report with ID: " + reportId);
 
         var response = globalExceptionHandler.handleInvalidDownloadFormatException(exception);
 
         assertEquals(BAD_REQUEST, response.getStatusCode());
-        assertEquals("Unable to download file for report with ID " + reportId, response.getBody().getError());
+        assertEquals("Unable to download file for report with ID: " + reportId, response.getBody().getError());
     }
 
     @Test
     void shouldHandleReportNotSupportedForDownloadException() {
         var reportId = UUID.randomUUID();
-        var exception = new ReportNotSupportedForDownloadException(reportId);
+        var exception = new ReportNotSupportedForDownloadException(reportId, "Report " + reportId + " is not valid for file retrieval");
 
         var response = globalExceptionHandler.handleReportNotSupportedForDownloadException(exception);
 
@@ -318,24 +270,12 @@ class GlobalExceptionHandlerTest {
     @Test
     void shouldHandleReportAccessException() {
         var reportId = UUID.randomUUID();
-        var exception = new ReportAccessException(reportId);
+        var exception = new ReportAccessException(reportId, "You cannot access report with ID: "+reportId);
 
         var response = globalExceptionHandler.handleReportAccessException(exception);
 
         assertEquals(FORBIDDEN, response.getStatusCode());
-        assertEquals("You cannot access report with ID " + reportId, response.getBody().getError());
-    }
-
-      @Test
-    void handleAnyException_shouldAddErrorMessageAndReturnView() {
-        Exception ex = new Exception("Something went wrong");
-        Model model = new ConcurrentModel();
-
-        String viewName = globalExceptionHandler.handleAnyExceptionUi(ex, model);
-
-        assertThat(viewName).isEqualTo("reports/list");
-        assertThat(model.getAttribute("errorMessage"))
-                .isEqualTo("Something went wrong");
+        assertEquals("You cannot access report with ID: " + reportId, response.getBody().getError());
     }
 
 }

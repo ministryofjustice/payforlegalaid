@@ -40,9 +40,10 @@ public class FileDownloadFromS3Service implements FileDownloadService {
         reportAccessCheckerService.checkUserCanAccessReport(id);
 
         var fileName = fileNameResolver.getFileNameFromId(id);
+        var errorMessage = "Unable to download file for report with ID: " + id;
 
         if (!fileName.endsWith(".csv")) {
-            throw new InvalidDownloadFormatException(fileName, id);
+            throw new InvalidDownloadFormatException(fileName, id, errorMessage);
         }
 
         var fileStream = s3ClientWrapper.getResultCsv(fileName);
