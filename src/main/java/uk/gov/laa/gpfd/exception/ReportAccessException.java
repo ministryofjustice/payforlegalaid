@@ -1,7 +1,6 @@
 package uk.gov.laa.gpfd.exception;
 
 import lombok.Getter;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.util.UUID;
 
