@@ -1,12 +1,14 @@
 package uk.gov.laa.gpfd.controller.ui;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.Order;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @Slf4j
-@ControllerAdvice(assignableTypes = {ReportsViewController.class})
+@ControllerAdvice(assignableTypes = ReportsViewController.class)
+@Order(1)
 public class UIExceptionHandler {
     /**
      * Handles any unhandled exception in UI controllers.

@@ -2,6 +2,8 @@ package uk.gov.laa.gpfd.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -39,8 +41,9 @@ import static uk.gov.laa.gpfd.exception.TransferException.StreamException.ExcelS
  * Global exception handler for managing exceptions thrown by controllers.
  */
 @Slf4j
-@ControllerAdvice(assignableTypes = ReportsController.class)
+@ControllerAdvice
 @SuppressWarnings({"java:S1171", "java:S3599"}) //Disabling due to generated code
+@Order(Ordered.LOWEST_PRECEDENCE)
 public class GlobalExceptionHandler {
 
     private static final String ERROR_STRING = "Error: ";
