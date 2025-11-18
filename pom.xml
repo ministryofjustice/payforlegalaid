@@ -34,7 +34,6 @@
         <common-lang3.version>3.20.0</common-lang3.version>
 
         <aws.java.sdk.version>2.38.7</aws.java.sdk.version>
-        <io.netty-codec-version>4.2.7.Final</io.netty-codec-version>
     </properties>
 
     <build>
@@ -259,11 +258,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.4</version>
             </dependency>
-            <dependency>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.5.4</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -379,16 +373,6 @@
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>sts</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec-http</artifactId>
-            <version>${io.netty-codec-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec-http2</artifactId>
-            <version>${io.netty-codec-version}</version>
         </dependency>
         <!-- Test Dependencies-->
         <dependency>
