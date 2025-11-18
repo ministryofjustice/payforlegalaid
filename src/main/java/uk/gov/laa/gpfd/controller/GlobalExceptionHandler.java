@@ -1,10 +1,14 @@
 package uk.gov.laa.gpfd.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -34,11 +38,14 @@ import static org.springframework.http.ResponseEntity.internalServerError;
 import static uk.gov.laa.gpfd.exception.TransferException.StreamException.ExcelStreamWriteException;
 
 /**
- * Global exception handler for managing exceptions thrown by controllers.
+ * Global exception handler for API controllers.
+ * Catches unhandled exceptions, logs them, and returns
+ * appropriate HTTP responses to the client.
  */
 @Slf4j
 @ControllerAdvice
 @SuppressWarnings({"java:S1171", "java:S3599"}) //Disabling due to generated code
+@Order(Ordered.LOWEST_PRECEDENCE)
 public class GlobalExceptionHandler {
 
     private static final String ERROR_STRING = "Error: ";
@@ -149,6 +156,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(ReportOutputTypeNotFoundException.class)
     public ResponseEntity<ReportsGet500Response> handleReportOutputTypeNotFoundException(ReportOutputTypeNotFoundException e) {
+
         var response = new ReportsGet500Response() {{
             setError(e.getMessage());
         }};
@@ -278,7 +286,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidDownloadFormatException.class)
     public ResponseEntity<ReportsGet400Response> handleInvalidDownloadFormatException(InvalidDownloadFormatException e) {
         var errorResponse = new ReportsGet400Response();
-        errorResponse.setError("Unable to download file for report with ID " + e.getReportId());
+        errorResponse.setError(e.getErrorMessage());
 
         log.error("InvalidDownloadFormatException Thrown: Report {} has file {} which is not a csv file", e.getReportId(), e.getFileName());
 
@@ -296,7 +304,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ReportNotSupportedForDownloadException.class)
     public ResponseEntity<ReportsGet400Response> handleReportNotSupportedForDownloadException(ReportNotSupportedForDownloadException e) {
         var errorResponse = new ReportsGet400Response();
-        errorResponse.setError("Report " + e.getReportId() + " is not valid for file retrieval");
+        errorResponse.setError(e.getErrorMessage());
 
         log.error("ReportNotSupportedForDownloadException Thrown: Report {} is not supported on the '/report/{id}/file' endpoint", e.getReportId());
 
@@ -332,11 +340,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ReportAccessException.class)
     public ResponseEntity<GetReportDownloadById403Response> handleReportAccessException(ReportAccessException e) {
         var errorResponse = new GetReportDownloadById403Response();
-        errorResponse.setError("You cannot access report with ID " + e.getReportId());
+        errorResponse.setError(e.getErrorMessage());
 
         log.error("ReportAccessException Thrown: User tried to access report {} but lacks the relevant permission(s)", e.getReportId());
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(errorResponse);
     }
+
 }
