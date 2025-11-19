@@ -141,7 +141,7 @@
                 <version>3.1.0</version>
                 <executions>
                     <execution>
-                        <id>copy-govuk-css-js</id>
+                        <id>copy-govuk-assets</id>
                         <phase>process-resources</phase>
                         <configuration>
                             <target>
@@ -151,19 +151,6 @@
                                     </fileset>
                                     <mapper type="flatten"/>
                                 </copy>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-
-                    <!-- Copy assets (images + fonts, keep structure) -->
-                    <execution>
-                        <id>copy-govuk-assets</id>
-                        <phase>process-resources</phase>
-                        <configuration>
-                            <target>
                                 <copy todir="${project.basedir}/src/main/resources/static/assets">
                                     <fileset dir="${project.build.directory}/govuk/META-INF/resources/webjars/govuk-frontend/${govuk-frontend.version}/dist/govuk/assets">
                                         <include name="images/**"/>
