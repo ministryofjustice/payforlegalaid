@@ -142,7 +142,7 @@
                 <executions>
                     <execution>
                         <id>copy-govuk-assets</id>
-                        <phase>process-resources</phase>
+                        <phase>generate-resources</phase>
                         <configuration>
                             <target>
                                 <copy todir="${project.basedir}/src/main/resources/static/govuk">
