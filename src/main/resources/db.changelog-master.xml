@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <!-- Include all changelog files in the correct order -->
+    <include file="db.changelog-gpfd-schema.xml" relativeToChangelogFile="false"/>
+    <include file="db.changelog-gpfd-reports-schema.xml" relativeToChangelogFile="false"/>
+    <include file="db.changelog-gpfd-data.xml" relativeToChangelogFile="false"/>
+    <include file="db.changelog-gpfd-reports-data.xml" relativeToChangelogFile="false"/>
+    <include file="db.changelog-any-report-schema.xml" relativeToChangelogFile="false"/>
+    <include file="db.changelog-any-report-data.xml" relativeToChangelogFile="false"/>
+
+</databaseChangeLog>

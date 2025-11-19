@@ -1,0 +1,43 @@
+services:
+  payforlegalaid:
+    image: payforlegalaid:with-db
+    container_name: payforlegalaid-app
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=local
+      - GPFD_DATASOURCE_READ_ONLY_URL=jdbc:h2:file:/app/data/gpfd;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE;MODE=Oracle
+      - GPFD_DATASOURCE_READ_ONLY_USERNAME=sa
+      - GPFD_DATASOURCE_READ_ONLY_PASSWORD=
+      - GPFD_DATASOURCE_READ_ONLY_DRIVER_CLASS_NAME=org.h2.Driver
+      - GPFD_DATASOURCE_WRITE_URL=jdbc:h2:file:/app/data/gpfd;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE;MODE=Oracle
+      - GPFD_DATASOURCE_WRITE_USERNAME=sa
+      - GPFD_DATASOURCE_WRITE_PASSWORD=
+      - GPFD_DATASOURCE_WRITE_DRIVER_CLASS_NAME=org.h2.Driver
+      - SPRING_H2_CONSOLE_ENABLED=true
+      - SPRING_H2_CONSOLE_PATH=/h2-console
+      - SPRING_H2_CONSOLE_SETTINGS_WEB_ALLOW_OTHERS=true
+    volumes:
+      - h2_data:/app/data
+      - app_logs:/app/logs
+      # Mount template files if they exist locally
+      - ./templates:/app/templates:ro
+    networks:
+      - payforlegalaid-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  h2_data:
+    driver: local
+  app_logs:
+    driver: local
+
+networks:
+  payforlegalaid-network:
+    driver: bridge

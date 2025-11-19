@@ -1,0 +1,22 @@
+# Ignore files that shouldn't be copied to Docker context
+target/
+# But allow the built JAR file
+!target/*.jar
+# Allow pre-initialized database files
+!target/docker-db-init/
+.git/
+.gitignore
+*.md
+.DS_Store
+.idea/
+.vscode/
+*.iml
+*.log
+.env
+.env.local
+.env.*.local
+
+# Keep only essential files for build
+!src/
+!pom.xml
+!templates/
