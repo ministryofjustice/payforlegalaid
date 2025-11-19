@@ -143,12 +143,34 @@
                 <version>3.1.0</version>
                 <executions>
                     <execution>
-                        <id>copy-govuk-assets</id>
-                        <phase>generate-resources</phase>
+                        <id>copy-govuk-css-js</id>
+                        <phase>process-resources</phase>
                         <configuration>
                             <target>
                                 <copy todir="${project.basedir}/src/main/resources/static/govuk">
-                                    <fileset dir="${project.build.directory}/govuk/META-INF/resources/webjars/govuk-frontend/${govuk-frontend.version}/dist/govuk"/>
+                                    <fileset dir="${project.build.directory}/govuk/META-INF/resources/webjars/govuk-frontend/${govuk-frontend.version}/dist/govuk">
+                                        <include name="**/*.css"/>
+                                    </fileset>
+                                    <mapper type="flatten"/>
+                                </copy>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+
+                    <!-- Copy assets (images + fonts, keep structure) -->
+                    <execution>
+                        <id>copy-govuk-assets</id>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <target>
+                                <copy todir="${project.basedir}/src/main/resources/static/assets">
+                                    <fileset dir="${project.build.directory}/govuk/META-INF/resources/webjars/govuk-frontend/${govuk-frontend.version}/dist/govuk/assets">
+                                        <include name="images/**"/>
+                                        <include name="fonts/**"/>
+                                    </fileset>
                                 </copy>
                             </target>
                         </configuration>
@@ -177,20 +199,10 @@
                                 <!-- Unzip -->
                                 <unzip src="${project.build.directory}/moj-frontend.zip"
                                        dest="${project.basedir}/src/main/resources/static/moj"/>
-                                <!-- Copy CSS/JS -->
+                                <!-- Copy CSS -->
                                 <copy file="${project.basedir}/src/main/resources/static/moj/moj-frontend-${moj-frontend.version}.min.css"
                                       tofile="${project.basedir}/src/main/resources/static/moj/css/moj.css"
                                       overwrite="true"/>
-                                <copy file="${project.basedir}/src/main/resources/static/moj/moj-frontend-${moj-frontend.version}.min.js"
-                                      tofile="${project.basedir}/src/main/resources/static/moj/js/moj.js"
-                                      overwrite="true"/>
-                                <!-- Copy assets -->
-                                <copy todir="${project.basedir}/src/main/resources/static/assets/images">
-                                    <fileset dir="${project.basedir}/src/main/resources/static/moj/assets/images"/>
-                                </copy>
-                                <copy todir="${project.basedir}/src/main/resources/static/assets">
-                                    <fileset dir="${project.basedir}/src/main/resources/static/govuk/assets"/>
-                                </copy>
                             </target>
                         </configuration>
                         <goals><goal>run</goal></goals>
