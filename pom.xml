@@ -27,7 +27,7 @@
         <spring-cloud-azure-dependencies.version>6.0.0</spring-cloud-azure-dependencies.version>
         <spring-security.version>6.4.11</spring-security.version>
         <govuk-frontend.version>5.13.0</govuk-frontend.version>
-        <moj-frontend.version>5.1.5</moj-frontend.version>
+        <moj-frontend.version>6.0.0</moj-frontend.version>
 
         <payforlegalaid-openapi.version>0.0.15</payforlegalaid-openapi.version>
         <tomcat-embed.version>11.0.13</tomcat-embed.version>
@@ -108,6 +108,13 @@
                             </artifactItems>
                         </configuration>
                     </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
                     <execution>
                         <id>unpack-govuk</id>
                         <phase>generate-resources</phase>
@@ -122,80 +129,74 @@
                                     <version>${govuk-frontend.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-                                    <includes>**/*.css,**/*.js,**/assets/**</includes>
+                                    <outputDirectory>${project.build.directory}/govuk</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+            <!-- Copy govuk-frontend assets into resources -->
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.6.2</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
-                        <id>download-moj-frontend</id>
+                        <id>flatten-govuk-assets</id>
                         <phase>generate-resources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
                         <configuration>
-                            <executable>curl</executable>
-                            <arguments>
-                                <argument>-L</argument>
-                                <argument>-o</argument>
-                                <argument>${project.build.directory}/moj-frontend.zip</argument>
-                                <argument>https://github.com/ministryofjustice/moj-frontend/releases/download/v${moj-frontend.version}/release-v${moj-frontend.version}.zip</argument>
-                            </arguments>
+                            <target>
+                                <copy todir="${project.basedir}/src/main/resources/static/govuk">
+                                    <fileset dir="${project.build.directory}/govuk/META-INF/resources/webjars/govuk-frontend/${govuk-frontend.version}/dist/govuk"/>
+                                </copy>
+                            </target>
                         </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>unzip-moj-frontend</id>
-                        <phase>generate-resources</phase>
                         <goals>
-                            <goal>exec</goal>
+                            <goal>run</goal>
                         </goals>
-                        <configuration>
-                            <executable>unzip</executable>
-                            <arguments>
-                                <argument>-q</argument>
-                                <argument>${project.build.directory}/moj-frontend.zip</argument>
-                                <argument>-d</argument>
-                                <argument>${project.build.directory}/classes/META-INF/resources/webjars/moj-frontend</argument>
-                            </arguments>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.3.1</version>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
-                        <id>copy-moj-resources</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
+                        <id>download-and-prepare-moj-frontend</id>
+                        <phase>generate-resources</phase>
                         <configuration>
-                            <resources>
-                                <resource>
-                                    <directory>${project.build.directory}/moj-frontend/moj-frontend-5.1.5/dist</directory>
-                                    <includes>
-                                        <include>**/*</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                            <outputDirectory>${project.build.outputDirectory}/static/moj</outputDirectory>
+                            <target>
+                                <!-- Download ZIP from GitHub -->
+                                <get src="https://github.com/ministryofjustice/moj-frontend/releases/download/v${moj-frontend.version}/release-v${moj-frontend.version}.zip"
+                                     dest="${project.build.directory}/moj-frontend.zip"
+                                     verbose="true"/>
+                                <!-- Delete old moj folder -->
+                                <delete dir="${project.basedir}/src/main/resources/static/moj"/>
+                                <!-- Unzip -->
+                                <unzip src="${project.build.directory}/moj-frontend.zip"
+                                       dest="${project.basedir}/src/main/resources/static/moj"/>
+                                <!-- Copy CSS/JS -->
+                                <copy file="${project.basedir}/src/main/resources/static/moj/moj-frontend-${moj-frontend.version}.min.css"
+                                      tofile="${project.basedir}/src/main/resources/static/moj/css/moj.css"
+                                      overwrite="true"/>
+                                <copy file="${project.basedir}/src/main/resources/static/moj/moj-frontend-${moj-frontend.version}.min.js"
+                                      tofile="${project.basedir}/src/main/resources/static/moj/js/moj.js"
+                                      overwrite="true"/>
+                                <!-- Copy assets -->
+                                <copy todir="${project.basedir}/src/main/resources/static/assets/images">
+                                    <fileset dir="${project.basedir}/src/main/resources/static/moj/assets/images"/>
+                                </copy>
+                                <copy todir="${project.basedir}/src/main/resources/static/assets">
+                                    <fileset dir="${project.basedir}/src/main/resources/static/govuk/assets"/>
+                                </copy>
+                            </target>
                         </configuration>
+                        <goals><goal>run</goal></goals>
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
