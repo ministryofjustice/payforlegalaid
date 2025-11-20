@@ -7,11 +7,17 @@ import jakarta.annotation.Nullable;
 import uk.gov.laa.gpfd.model.excel.ExcelTemplate;
 
 import java.sql.Timestamp;
+import java.util.Collection;
+import java.util.UUID;
 
 import static org.immutables.value.Value.Immutable;
 
 @Immutable
 public abstract class Report implements Queryable<ReportQuery, Report>, Identifiable {
+
+    @Nullable
+    public abstract UUID getId();
+
     @NotBlank
     public abstract String getName();
 
@@ -43,5 +49,8 @@ public abstract class Report implements Queryable<ReportQuery, Report>, Identifi
 
     @Nullable
     public abstract Boolean getActive();
+
+    @Nullable
+    public abstract Collection<ReportQuery> getQueries();
 }
 

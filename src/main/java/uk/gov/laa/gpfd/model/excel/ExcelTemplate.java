@@ -2,6 +2,7 @@ package uk.gov.laa.gpfd.model.excel;
 
 import uk.gov.laa.gpfd.model.Identifiable;
 
+import jakarta.annotation.Nullable;
 import java.util.UUID;
 
 import static org.immutables.value.Value.Immutable;
@@ -13,6 +14,9 @@ import static org.immutables.value.Value.Style;
 @Immutable
 @Style(strictBuilder = true)
 public abstract class ExcelTemplate implements Identifiable {
+
+    @Nullable
+    public abstract UUID getId();
 
     public static ExcelTemplate fromString(String id) {
         return ImmutableExcelTemplate.builder()
