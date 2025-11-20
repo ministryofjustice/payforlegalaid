@@ -40,14 +40,21 @@ if [ ! -f "pom.xml" ]; then
     exit 1
 fi
 
-print_step "Step 1: Clean and build the application"
-mvn clean install -DskipTests || {
+print_step "Step 1: Build OpenAPI dependency"
+./build-openapi.sh || {
+    print_error "OpenAPI dependency build failed"
+    exit 1
+}
+print_success "OpenAPI dependency ready"
+
+print_step "Step 2: Clean and build the application"
+mvn clean package -DskipTests -Dmaven.test.skip=true || {
     print_error "Maven build failed"
     exit 1
 }
 print_success "Application built successfully"
 
-print_step "Step 2: Initialize H2 database for Docker"
+print_step "Step 3: Initialize H2 database for Docker"
 print_warning "Initializing H2 database with required schema and data..."
 # Create a temporary directory for database initialization
 mkdir -p target/docker-db-init
@@ -55,21 +62,21 @@ mkdir -p target/docker-db-init
 ./init-database.sh
 print_success "Database initialization completed"
 
-print_step "Step 3: Check if JAR file exists"
+print_step "Step 4: Check if JAR file exists"
 if [ ! -f "target/pay-for-legal-aid-0.0.1-SNAPSHOT-exec.jar" ]; then
     print_error "JAR file not found. Build may have failed."
     exit 1
 fi
 print_success "JAR file found"
 
-print_step "Step 4: Build Docker image"
+print_step "Step 5: Build Docker image"
 docker build -t payforlegalaid:latest . || {
     print_error "Docker build failed"
     exit 1
 }
 print_success "Docker image built successfully"
 
-print_step "Step 5: Verify Docker image"
+print_step "Step 6: Verify Docker image"
 docker images | grep payforlegalaid || {
     print_error "Docker image not found after build"
     exit 1

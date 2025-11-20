@@ -28,6 +28,28 @@ docker build -t payforlegalaid:latest .
 docker run -p 8080:8080 payforlegalaid:latest
 ```
 
+## OpenAPI Dependency Resolution
+
+The application depends on the `payforlegalaid-openapi` specification. The build process automatically handles this dependency:
+
+### Automatic Resolution Process
+1. **Check Local Maven Repository**: First checks if `uk.gov.laa:payforlegalaid-openapi:0.0.15` is already installed
+2. **Clone from GitHub**: If not found, clones the OpenAPI repository from `https://github.com/ministryofjustice/payforlegalaid-openapi.git`
+3. **Build and Install**: Builds the OpenAPI specification and installs it to the local Maven repository
+4. **Clean Up**: Removes the temporary checkout after successful build
+
+### Manual OpenAPI Build
+If you need to manually build the OpenAPI dependency:
+```bash
+./build-openapi.sh
+```
+
+This script:
+- Extracts the OpenAPI version from `pom.xml`
+- Clones the correct version tag from GitHub
+- Builds and installs the dependency locally
+- Handles both fresh environments and environments with existing dependencies
+
 ## Application Access
 
 Once running, the application will be available at:
@@ -86,12 +108,29 @@ If you need to add Excel template files for reports:
 
 ### Build Issues
 ```bash
+# OpenAPI dependency not found error
+# This is automatically resolved by build-docker.sh, but if needed:
+./build-openapi.sh
+
 # Check if all dependencies are available
 mvn dependency:resolve
 
 # Clean everything and rebuild
 mvn clean
 rm -rf target/
+./build-docker.sh
+```
+
+### OpenAPI Dependency Issues
+If you encounter OpenAPI dependency errors:
+```bash
+# Error: Could not resolve dependencies for project uk.gov.laa:pay-for-legal-aid:jar
+# Could not find artifact uk.gov.laa:payforlegalaid-openapi:jar:0.0.15
+
+# Solution: The build-openapi.sh script automatically resolves this
+./build-openapi.sh
+
+# Or run the full build which includes OpenAPI resolution
 ./build-docker.sh
 ```
 
