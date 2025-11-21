@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  payforlegalaid:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: payforlegalaid-local
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=local
+      # Override H2 database path to use /home/appuser which is writable
+      - GPFD_DATASOURCE_READ-ONLY_URL=jdbc:h2:file:/home/appuser/localGpfdDb;MODE=Oracle
+      - GPFD_DATASOURCE_WRITE_URL=jdbc:h2:file:/home/appuser/localGpfdDb;MODE=Oracle
+    volumes:
+      # Mount a volume for the H2 database to persist data
+      - h2-data:/home/appuser
+      # Mount templates directory if needed
+      - ./src/main/resources:/app/templates:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+
+volumes:
+  h2-data:
+    driver: local
