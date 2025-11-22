@@ -31,18 +31,19 @@ public class LocalDatabaseInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        log.info("Initializing local H2 database schema...");
+        log.info("Initializing local H2 database schema and data...");
         
         try {
             ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
             populator.addScript(new ClassPathResource("schema-local.sql"));
+            populator.addScript(new ClassPathResource("data-local.sql"));
             populator.setContinueOnError(false);
             populator.setSeparator(";");
             populator.execute(dataSource);
             
-            log.info("Successfully initialized local H2 database schema");
+            log.info("Successfully initialized local H2 database schema and data");
         } catch (Exception e) {
-            log.error("Failed to initialize local H2 database schema", e);
+            log.error("Failed to initialize local H2 database", e);
             throw e;
         }
     }
