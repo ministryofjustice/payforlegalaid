@@ -25,7 +25,6 @@ public class TimeBasedAccessInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws ServiceUnavailableException {
         LocalTime now = timeProvider.getCurrentTime();
-        
         if (now.isBefore(startTime) || now.isAfter(endTime)) {
             throw new ServiceUnavailableException("The service is unavailable between the hours of 22:00 and 07:00, Mon - Sun");
         }
