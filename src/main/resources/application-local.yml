@@ -57,8 +57,9 @@ spring:
 
   h2:
     console:
-      enabled:
-        true
+      enabled: true
+      settings:
+        web-allow-others: true
   jpa:
     database-platform:
       org.hibernate.dialect.Oracle12cDialect
