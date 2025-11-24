@@ -7,6 +7,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +32,23 @@ public class LocalDatabaseInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        log.info("Initializing local H2 database schema and data...");
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        
+        // Check if database is already initialized
+        try {
+            Integer count = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM GPFD.REPORT_OUTPUT_TYPES", 
+                Integer.class
+            );
+            
+            if (count != null && count > 0) {
+                log.info("Local H2 database already initialized with {} report output types", count);
+                return;
+            }
+        } catch (Exception e) {
+            // Table doesn't exist yet, proceed with initialization
+            log.info("Initializing local H2 database schema and data...");
+        }
         
         try {
             ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
