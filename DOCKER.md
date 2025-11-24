@@ -34,7 +34,7 @@ This document describes how to run the Pay For Legal Aid application using Docke
 
 1. Build the Docker image:
    ```bash
-   docker build -t payforlegalaid:local .
+   docker build -f Dockerfile.local .
    ```
 
 2. Run the container:
