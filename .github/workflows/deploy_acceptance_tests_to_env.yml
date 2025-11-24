@@ -34,14 +34,14 @@ jobs:
       contents: read
     steps:
       - name: Checkout GitHub repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: ${{ env.TEST_REPO }}
           ref: main
           path: testCode
 
       - name: Checkout GitHub repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: ${{ env.DATA_REPO }}
           ssh-key: ${{ secrets.DEV_SOCKET_KEY }}

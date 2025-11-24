@@ -234,7 +234,7 @@ class GlobalExceptionHandlerTest {
         var response = globalExceptionHandler.handleInvalidDownloadFormatException(exception);
 
         assertEquals(BAD_REQUEST, response.getStatusCode());
-        assertEquals("Unable to download file for report with ID " + reportId, response.getBody().getError());
+        assertEquals("Unable to download file for report with ID: " + reportId, response.getBody().getError());
     }
 
     @Test
@@ -245,7 +245,7 @@ class GlobalExceptionHandlerTest {
         var response = globalExceptionHandler.handleReportNotSupportedForDownloadException(exception);
 
         assertEquals(BAD_REQUEST, response.getStatusCode());
-        assertEquals("Report " + reportId + " is not valid for file retrieval", response.getBody().getError());
+        assertEquals("Report " + reportId + " is not valid for file retrieval.", response.getBody().getError());
     }
 
     @Test
@@ -286,7 +286,8 @@ class GlobalExceptionHandlerTest {
         var response = globalExceptionHandler.handleReportAccessException(exception);
 
         assertEquals(FORBIDDEN, response.getStatusCode());
-        assertEquals("You cannot access report with ID " + reportId, response.getBody().getError());
+        assertEquals("You cannot access report with ID: " + reportId,
+                response.getBody().getError());
     }
 
 }
