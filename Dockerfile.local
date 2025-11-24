@@ -8,8 +8,10 @@ RUN yum install -y git && yum clean all
 
 COPY pom.xml .
 COPY build-openapi.sh .
+COPY build-tests.sh .
 
 RUN chmod +x build-openapi.sh
+RUN chmod +x build-tests.sh
 
 RUN ./build-openapi.sh
 
@@ -18,6 +20,8 @@ RUN mvn dependency:go-offline -B
 COPY src ./src
 
 RUN mvn package
+
+RUN ./build-tests.sh
 
 # Stage 2: Runtime
 FROM amazoncorretto:17-alpine
