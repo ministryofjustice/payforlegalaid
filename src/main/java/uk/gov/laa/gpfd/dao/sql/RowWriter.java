@@ -2,6 +2,7 @@ package uk.gov.laa.gpfd.dao.sql;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.Objects;
 
@@ -64,8 +65,15 @@ public sealed interface RowWriter permits
         @Override
         public void writeRow(ValueExtractor extractor, int columnCount) throws IOException {
             try {
-                for (var i = 1; i <= columnCount; i++) {
-                    stream.write(extractor.extract(i).getBytes());
+                for (int i = 1; i <= columnCount; i++) {
+                    String columnValue = extractor.extract(i);
+                    // For each column: skip empty values, otherwise escape and write to the output stream
+                    if (columnValue == null || columnValue.isEmpty()) {
+                        // write nothing
+                    } else {
+                        String escapedColumnValue = "\"" + columnValue.replace("\"", "\"\"") + "\"";
+                        stream.write(escapedColumnValue.getBytes(StandardCharsets.UTF_8));
+                    }
                     if (i < columnCount) {
                         stream.write(COMMA);
                     }

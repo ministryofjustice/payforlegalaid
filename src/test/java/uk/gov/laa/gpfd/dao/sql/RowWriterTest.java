@@ -51,7 +51,7 @@ class RowWriterTest {
 
         rowWriter.writeRow(mockExtractor, 1);
 
-        assertEquals("value1\n", testOutputStream.toString());
+        assertEquals("\"value1\"\n", testOutputStream.toString());
     }
 
     @Test
@@ -62,7 +62,7 @@ class RowWriterTest {
         when(mockExtractor.extract(3)).thenReturn("val3");
 
         rowWriter.writeRow(mockExtractor, 3);
-        assertEquals("val1,val2,val3\n", testOutputStream.toString());
+        assertEquals("\"val1\",\"val2\",\"val3\"\n", testOutputStream.toString());
     }
 
     @Test
@@ -73,7 +73,7 @@ class RowWriterTest {
 
         rowWriter.writeRow(mockExtractor, 2);
 
-        assertEquals(",value\n", testOutputStream.toString());
+        assertEquals(",\"value\"\n", testOutputStream.toString());
     }
 
     @Test
@@ -121,7 +121,22 @@ class RowWriterTest {
 
         rowWriter.writeRow(mockExtractor, 2);
 
-        assertEquals("first,second\n", testOutputStream.toString());
+        assertEquals("\"first\",\"second\"\n", testOutputStream.toString());
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldConsiderEscapeCharacters() {
+        when(mockExtractor.extract(1)).thenReturn("123");
+        when(mockExtractor.extract(2)).thenReturn("banana");
+        when(mockExtractor.extract(3)).thenReturn("Smith, Mr. S");
+        when(mockExtractor.extract(4)).thenReturn("97.5");
+
+        rowWriter.writeRow(mockExtractor, 4);
+
+        String expected = "\"123\",\"banana\",\"Smith, Mr. S\",\"97.5\"\n";
+
+       assertEquals(expected, testOutputStream.toString());
     }
 
 }
