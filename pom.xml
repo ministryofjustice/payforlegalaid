@@ -19,7 +19,7 @@
         <h2.version>2.4.240</h2.version>
         <junit-pioneer.version>2.3.0</junit-pioneer.version>
 
-        <springdoc-oas.version>3.0.0</springdoc-oas.version>
+        <springdoc-oas.version>2.8.14</springdoc-oas.version>
 
         <maven-surefire-junit5-tree-reporte.version>1.5.1</maven-surefire-junit5-tree-reporte.version>
         <poi.version>5.5.0</poi.version>
