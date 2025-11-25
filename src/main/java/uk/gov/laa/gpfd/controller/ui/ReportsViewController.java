@@ -14,7 +14,6 @@ import java.util.UUID;
 
 @Slf4j
 @Controller
-@Profile({"local", "dev", "uat"})
 @RequiredArgsConstructor
 public class ReportsViewController {
 
