@@ -29,6 +29,16 @@ gpfd:
       driver-class-name: org.h2.Driver
 
 spring:
+  datasource:
+    url: jdbc:h2:file:~/localGpfdDb;MODE=Oracle
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  sql:
+    init:
+      mode: never
+  liquibase:
+    enabled: false
   cloud:
     azure:
       active-directory:
@@ -47,8 +57,9 @@ spring:
 
   h2:
     console:
-      enabled:
-        true
+      enabled: true
+      settings:
+        web-allow-others: true
   jpa:
     database-platform:
       org.hibernate.dialect.Oracle12cDialect
