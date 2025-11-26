@@ -34,6 +34,7 @@ Dockerfile*
 
 # Build scripts - keep these
 !build-openapi.sh
+!build-tests.sh
 
 # Deployment
 deployments/
@@ -54,5 +55,6 @@ Thumbs.db
 .tmp/
 temp/
 
-# OpenAPI build directory
+# build directories
 openapi/
+payforlegalaid-tests/
