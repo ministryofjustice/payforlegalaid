@@ -30,12 +30,19 @@ RUN apk update && apk add --no-cache curl
 
 WORKDIR /app
 
-COPY --from=builder /build/target/pay-for-legal-aid-0.0.1-SNAPSHOT-exec.jar ./app.jar
-
 RUN addgroup -S appgroup && adduser -u 1001 -S appuser -G appgroup
 
 # Create directory for H2 database with proper permissions
 RUN mkdir -p /home/appuser && chown -R appuser:appgroup /home/appuser
+
+COPY --from=builder /build/target/pay-for-legal-aid-0.0.1-SNAPSHOT-exec.jar ./app.jar
+
+# Copy the H2 database files created by the tests (if they exist)
+RUN --mount=type=bind,from=builder,source=/root,target=/tmp/root \
+    cp /tmp/root/localGpfdDb.* /home/appuser/ 2>/dev/null || \
+    echo "No database files found from tests, will be created at runtime"
+
+RUN chown -R appuser:appgroup /home/appuser
 
 USER 1001
 
