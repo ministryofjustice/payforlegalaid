@@ -1,8 +1,14 @@
 package uk.gov.laa.gpfd.dao.sql;
 
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static uk.gov.laa.gpfd.dao.sql.RowWriter.StreamRowWriter;
@@ -64,13 +70,33 @@ public sealed interface RowWriter permits
         @Override
         public void writeRow(ValueExtractor extractor, int columnCount) throws IOException {
             try {
-                for (var i = 1; i <= columnCount; i++) {
-                    stream.write(extractor.extract(i).getBytes());
-                    if (i < columnCount) {
-                        stream.write(COMMA);
-                    }
+                if (columnCount == 0) {
+                    stream.write(NEWLINE);
+                    return;
                 }
-                stream.write(NEWLINE);
+                // Build schema dynamically based on column count
+                CsvSchema.Builder schemaBuilder = CsvSchema.builder();
+                for (int i = 1; i <= columnCount; i++) {
+                    schemaBuilder.addColumn(extractor.extract(i));
+                }
+                CsvSchema schema = schemaBuilder.build();
+
+                // Create CsvMapper
+                CsvMapper csvMapper = new CsvMapper();
+
+                // Collect row values into a List
+                List<String> rowValues = new ArrayList<>();
+                for (int i = 1; i <= columnCount; i++) {
+                    String columnValue = extractor.extract(i);
+                    rowValues.add(columnValue == null ? "" : columnValue);
+                }
+
+                // Write row using CsvMapper
+                String csvRow = csvMapper.writer(schema).writeValueAsString(rowValues);
+
+                // Write to stream
+                stream.write(csvRow.getBytes(StandardCharsets.UTF_8));
+
             } catch (SQLException e) {
                 throw new IOException("Error extracting row data", e);
             }

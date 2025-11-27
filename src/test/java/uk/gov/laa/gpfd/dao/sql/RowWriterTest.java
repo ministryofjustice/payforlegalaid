@@ -124,4 +124,19 @@ class RowWriterTest {
         assertEquals("first,second\n", testOutputStream.toString());
     }
 
+    @Test
+    @SneakyThrows
+    void shouldConsiderEscapeCharacters() {
+        when(mockExtractor.extract(1)).thenReturn("123");
+        when(mockExtractor.extract(2)).thenReturn("banana");
+        when(mockExtractor.extract(3)).thenReturn("Smith, Mr. S");
+        when(mockExtractor.extract(4)).thenReturn("97.5");
+
+        rowWriter.writeRow(mockExtractor, 4);
+
+        String expected = "123,banana,\"Smith, Mr. S\",97.5\n";
+
+       assertEquals(expected, testOutputStream.toString());
+    }
+
 }
