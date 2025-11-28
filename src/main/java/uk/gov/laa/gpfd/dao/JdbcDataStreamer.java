@@ -1,11 +1,15 @@
 package uk.gov.laa.gpfd.dao;
 
+import tools.jackson.dataformat.csv.CsvMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcOperations;
+import uk.gov.laa.gpfd.config.AppConfig;
 import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.services.DataStreamer;
 
 import java.io.OutputStream;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static uk.gov.laa.gpfd.dao.sql.ChannelRowHandler.forStream;
 
@@ -19,7 +23,7 @@ import static uk.gov.laa.gpfd.dao.sql.ChannelRowHandler.forStream;
  *           row-by-row callback mechanism for streaming.
  */
 @Slf4j
-public record JdbcDataStreamer(JdbcOperations jdbc) implements DataStreamer {
+public record JdbcDataStreamer(JdbcOperations jdbc, AppConfig appConfig) implements DataStreamer {
     private static final char END_OF_LINE_SEPARATOR = '\n', EMPTY = ' ';
 
     /**
@@ -47,13 +51,17 @@ public record JdbcDataStreamer(JdbcOperations jdbc) implements DataStreamer {
     }
 
     private void stream(String sql, OutputStream stream) {
+
         if (null == sql || sql.isBlank()) {
             log.error("Attempted to execute null/empty SQL query");
             throw new IllegalArgumentException("SQL query must not be null or empty");
         }
 
+        Map<String, String> row = new LinkedHashMap<>();
+        var csvMapper = new CsvMapper();
+
         log.debug("Initiating streaming for query: [{}]", sql.replace(END_OF_LINE_SEPARATOR, EMPTY));
-        jdbc.query(sql, forStream(stream));
+        jdbc.query(sql, forStream(stream, csvMapper, row, appConfig.getCsvBufferFlushFrequency()));
         log.debug("Finished streaming for query: [{}]", sql.replace(END_OF_LINE_SEPARATOR, EMPTY));
     }
 }

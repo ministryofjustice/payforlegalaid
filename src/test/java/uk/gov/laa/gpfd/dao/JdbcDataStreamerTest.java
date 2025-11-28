@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.RowCallbackHandler;
+import uk.gov.laa.gpfd.config.AppConfig;
 
 import java.io.ByteArrayOutputStream;
 
@@ -24,6 +25,9 @@ class JdbcDataStreamerTest {
 
     @Mock
     private JdbcOperations jdbcOperations;
+
+    @Mock
+    private AppConfig appConfig;
 
     @InjectMocks
     private JdbcDataStreamer jdbcDataStreamer;
