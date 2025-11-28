@@ -3,6 +3,8 @@ package uk.gov.laa.gpfd.dao.sql;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.jdbc.core.RowCallbackHandler;
+import tools.jackson.dataformat.csv.CsvMapper;
+import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.model.FieldProjection;
 import uk.gov.laa.gpfd.services.excel.editor.CellValueSetter;
 
@@ -17,10 +19,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import tools.jackson.core.exc.JacksonIOException;
+import tools.jackson.databind.ObjectWriter;
+import tools.jackson.databind.SequenceWriter;
+import tools.jackson.dataformat.csv.CsvSchema;
+
 import static uk.gov.laa.gpfd.dao.sql.ChannelRowHandler.SheetChannelRowHandler;
 import static uk.gov.laa.gpfd.dao.sql.ChannelRowHandler.StreamChannelRowHandler;
-import static uk.gov.laa.gpfd.dao.sql.ValueExtractor.ofHeader;
-import static uk.gov.laa.gpfd.dao.sql.ValueExtractor.ofRow;
 
 /**
  * A handler for processing database result set rows and writing them to an output channel.
@@ -41,9 +46,9 @@ public sealed interface ChannelRowHandler extends
      * @return a new {@code ChannelRowHandler} instance configured for the given stream
      * @throws NullPointerException if {@code stream} is {@code null}
      */
-    static ChannelRowHandler forStream(OutputStream stream) {
+    static ChannelRowHandler forStream(OutputStream stream, CsvMapper csvMapper, Map<String, String> row, int bufferFlushFrequency) {
         Objects.requireNonNull(stream, "OutputStream cannot be null");
-        return new StreamChannelRowHandler(stream);
+        return new StreamChannelRowHandler(stream, csvMapper, row, bufferFlushFrequency);
     }
 
     /**
@@ -124,21 +129,27 @@ public sealed interface ChannelRowHandler extends
 
     /**
      * Stream-based implementation of {@link ChannelRowHandler} that writes to an {@link OutputStream}.
+     * In the laa-data-claims-reporting-service, the equivalent is the CsvRowCallbackHandler.
      */
     final class StreamChannelRowHandler implements ChannelRowHandler {
         private final AtomicBoolean headerWritten = new AtomicBoolean(false);
         private final OutputStream stream;
-        private final RowWriter rowWriter;
+        private final CsvMapper csvMapper;
+        private final Map<String, String> row;
+        private final int bufferFlushFrequency;
+        private SequenceWriter sequenceWriter;
 
         /**
          * Constructs a new handler for the specified output stream.
          *
-         * @param stream the output stream to write to (must not be {@code null})
+         * @param stream    the output stream to write to (must not be {@code null})
          * @throws NullPointerException if {@code stream} is {@code null}
          */
-        public StreamChannelRowHandler(OutputStream stream) {
+        public StreamChannelRowHandler(OutputStream stream, CsvMapper csvMapper, Map<String, String> row, int bufferFlushFrequency) {
             this.stream = Objects.requireNonNull(stream, "OutputStream cannot be null");
-            this.rowWriter = RowWriter.forStream(stream);
+            this.csvMapper = Objects.requireNonNull(csvMapper, "CsvMapper cannot be null");
+            this.row = Objects.requireNonNull(row, "Row cannot be null");
+            this.bufferFlushFrequency = bufferFlushFrequency;
         }
 
         /**
@@ -154,27 +165,52 @@ public sealed interface ChannelRowHandler extends
          */
         @Override
         public void processRow(ResultSet rs) throws SQLException {
+
             try {
                 var metaData = rs.getMetaData();
+                if (metaData == null) {
+                    // todo new  csv generation exception???.
+                    throw new DatabaseReadException.MappingException("error");
+                }
                 int columnCount = metaData.getColumnCount();
 
                 writeHeaderIfNeeded(metaData, columnCount);
-                writeRowData(rs, columnCount);
 
-                stream.flush();
-            } catch (IOException e) {
+                // Clear Map instead of creating new instance,
+                // as performance saving
+                row.clear();
+
+                for (int i = 1; i <= columnCount; i++) {
+                    row.put(metaData.getColumnName(i), rs.getString(i));
+                }
+                sequenceWriter.write(row);
+
+                // Regular flush of buffer reduces memory usage when
+                // processing large files.
+                if (rs.getRow() % bufferFlushFrequency == 0) {
+                    sequenceWriter.flush();
+                }
+
+            } catch (JacksonIOException | SQLException e) {
+                // todo new  csv generation exception???.
                 throw new SQLException("Error writing to output stream", e);
             }
         }
 
-        private void writeHeaderIfNeeded(ResultSetMetaData metaData, int columnCount) throws IOException {
+        private void writeHeaderIfNeeded(ResultSetMetaData metaData, int columnCount) throws SQLException {
             if (headerWritten.compareAndSet(false, true)) {
-                rowWriter.writeRow(ofHeader(metaData), columnCount);
-            }
-        }
 
-        private void writeRowData(ResultSet rs, int columnCount) throws IOException {
-            rowWriter.writeRow(ofRow(rs), columnCount);
+                CsvSchema.Builder schemaBuilder = CsvSchema.builder().setUseHeader(true);
+                for (int i = 1; i <= columnCount; i++) {
+                    schemaBuilder.addColumn(metaData.getColumnName(i));
+                }
+                CsvSchema schema = schemaBuilder.build();
+                // Knows what schema and format to use
+                ObjectWriter objectWriter = csvMapper.writer(schema);
+                // Streaming writer that handles CSV formatting, quotations, line endings etc.
+                sequenceWriter = objectWriter.writeValues(stream);
+
+            }
         }
 
         /**

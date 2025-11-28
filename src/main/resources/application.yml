@@ -36,3 +36,5 @@ gpfd:
   s3:
     # If this is true, the environment will need to be deployed with appropriate config and permission for accessing an S3 bucket.
     has-s3-access: false
+  csv-generation:
+    buffer-flush-frequency: 5000
