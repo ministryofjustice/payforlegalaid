@@ -6,11 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import tools.jackson.core.exc.JacksonIOException;
-import tools.jackson.databind.ObjectWriter;
-import tools.jackson.databind.SequenceWriter;
-import tools.jackson.dataformat.csv.CsvMapper;
-import tools.jackson.dataformat.csv.CsvSchema;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SequenceWriter;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 
 import java.io.IOException;
@@ -135,8 +134,9 @@ class ChannelRowHandlerTest {
         verify(sequenceWriter, times(1)).flush();
     }
 
+    @SneakyThrows
     @Test
-    void willHandleCommaInData() throws SQLException {
+    void willHandleCommaInData()  {
         var expectedResultWithComma = new LinkedHashMap<String, String>();
         setupResultSetData(1, "Data, Mrs. S");
         for (int i = 1; i <= 10; i++) {
@@ -180,7 +180,7 @@ class ChannelRowHandlerTest {
 
         when(csvMapper.writer(any(CsvSchema.class))).thenReturn(objectWriter);
         when(objectWriter.writeValues(stream)).thenReturn(sequenceWriter);
-        when(sequenceWriter.write(any())).thenThrow(JacksonIOException.class);
+        when(sequenceWriter.write(any())).thenThrow(IOException.class);
         // todo new  csv generation exception???.
         assertThrows(SQLException.class, () -> handler.processRow(resultSet));
     }

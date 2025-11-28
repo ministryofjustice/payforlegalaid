@@ -3,7 +3,7 @@ package uk.gov.laa.gpfd.dao.sql;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.jdbc.core.RowCallbackHandler;
-import tools.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.model.FieldProjection;
 import uk.gov.laa.gpfd.services.excel.editor.CellValueSetter;
@@ -19,10 +19,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import tools.jackson.core.exc.JacksonIOException;
-import tools.jackson.databind.ObjectWriter;
-import tools.jackson.databind.SequenceWriter;
-import tools.jackson.dataformat.csv.CsvSchema;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SequenceWriter;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 import static uk.gov.laa.gpfd.dao.sql.ChannelRowHandler.SheetChannelRowHandler;
 import static uk.gov.laa.gpfd.dao.sql.ChannelRowHandler.StreamChannelRowHandler;
@@ -191,13 +190,13 @@ public sealed interface ChannelRowHandler extends
                     sequenceWriter.flush();
                 }
 
-            } catch (JacksonIOException | SQLException e) {
+            } catch (IOException | SQLException e) {
                 // todo new  csv generation exception???.
                 throw new SQLException("Error writing to output stream", e);
             }
         }
 
-        private void writeHeaderIfNeeded(ResultSetMetaData metaData, int columnCount) throws SQLException {
+        private void writeHeaderIfNeeded(ResultSetMetaData metaData, int columnCount) throws IOException, SQLException {
             if (headerWritten.compareAndSet(false, true)) {
 
                 CsvSchema.Builder schemaBuilder = CsvSchema.builder().setUseHeader(true);
