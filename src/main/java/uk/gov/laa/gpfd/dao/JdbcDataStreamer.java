@@ -7,6 +7,7 @@ import uk.gov.laa.gpfd.config.AppConfig;
 import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.services.DataStreamer;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -36,7 +37,7 @@ public record JdbcDataStreamer(JdbcOperations jdbc, AppConfig appConfig) impleme
      * @implNote The caller is responsible for closing the output stream.
      */
     @Override
-    public void stream(Report report, OutputStream stream) {
+    public void stream(Report report, OutputStream stream) throws IOException {
         if (null == report) {
             log.error("Null report provided for processing");
             throw new IllegalArgumentException("Report must not be null");
@@ -50,7 +51,7 @@ public record JdbcDataStreamer(JdbcOperations jdbc, AppConfig appConfig) impleme
         stream(report.extractFirstQuery().value(), stream);
     }
 
-    private void stream(String sql, OutputStream stream) {
+    private void stream(String sql, OutputStream stream) throws IOException {
 
         if (null == sql || sql.isBlank()) {
             log.error("Attempted to execute null/empty SQL query");
@@ -62,6 +63,7 @@ public record JdbcDataStreamer(JdbcOperations jdbc, AppConfig appConfig) impleme
 
         log.debug("Initiating streaming for query: [{}]", sql.replace(END_OF_LINE_SEPARATOR, EMPTY));
         jdbc.query(sql, forStream(stream, csvMapper, row, appConfig.getCsvBufferFlushFrequency()));
+        stream.flush();
         log.debug("Finished streaming for query: [{}]", sql.replace(END_OF_LINE_SEPARATOR, EMPTY));
     }
 }

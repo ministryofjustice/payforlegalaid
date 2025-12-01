@@ -75,7 +75,7 @@ public interface DataStreamer {
      * @param output The target output stream to write data to. Must not be null.
      * @throws IllegalArgumentException if query is null/empty or output is null
      */
-    void stream(Report query, OutputStream output);
+    void stream(Report query, OutputStream output) throws IOException;
 
     interface WorkbookDataStreamer extends DataStreamer, WorkbookOperations {
 
