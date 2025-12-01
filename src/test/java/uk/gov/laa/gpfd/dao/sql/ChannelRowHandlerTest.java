@@ -71,9 +71,9 @@ class ChannelRowHandlerTest {
 
     @Test
     void shouldReturnNonNullHandler() {
-        ChannelRowHandler handler = forStream(stream, csvMapper, row, 1000);
-        assertNotNull(handler);
-        assertInstanceOf(StreamChannelRowHandler.class, handler);
+        ChannelRowHandler handlerToTest = forStream(stream, csvMapper, row, 1000);
+        assertNotNull(handlerToTest);
+        assertInstanceOf(StreamChannelRowHandler.class, handlerToTest);
     }
 
     @Test
