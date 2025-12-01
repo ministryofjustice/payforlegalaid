@@ -1,6 +1,5 @@
-<!DOCTYPE html>
-    <div xmlns:th="http://www.thymeleaf.org" lang="en"
-      th:replace="~{application :: layout(~{::content})}">
+<div xmlns:th="http://www.thymeleaf.org" lang="en"
+     th:replace="~{application :: layout(~{::content})}">
     <section th:fragment="content">
         <h1 class="govuk-heading-xl">Get Legal Aid Data</h1>
         <section class="govuk-!-margin-bottom-5">
@@ -25,12 +24,14 @@
                     <p class="govuk-body">
                         <a th:href="${report.reportDownloadUrl}" class="govuk-link">
                             Download report
-                            <span class="govuk-visually-hidden" th:text="'for ' + ${report.reportName}">for report name</span>
+                            <span class="govuk-visually-hidden"
+                                  th:text="'for ' + ${report.reportName}">for report name</span>
                         </a>
                         <span aria-hidden="true"> (.xlsx file)</span>
                     </p>
                 </article>
-                <hr th:unless="${iterStat.last}" class="govuk-section-break govuk-section-break--l govuk-section-break--visible"/>
+                <hr th:unless="${iterStat.last}"
+                    class="govuk-section-break govuk-section-break--l govuk-section-break--visible"/>
             </div>
         </section>
     </section>
