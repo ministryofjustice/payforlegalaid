@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SequenceWriter;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import uk.gov.laa.gpfd.exception.DatabaseReadException;
+import uk.gov.laa.gpfd.exception.CsvGenerationException;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -169,8 +169,7 @@ class ChannelRowHandlerTest {
     @SneakyThrows
     void willThrowIfMetadataIsNull() {
         when(resultSet.getMetaData()).thenReturn(null);
-        // todo new  csv generation exception???.
-        assertThrows(DatabaseReadException.MappingException.class, () -> handler.processRow(resultSet));
+        assertThrows(CsvGenerationException.MetadataInvalidException.class, () -> handler.processRow(resultSet));
     }
 
     @Test
@@ -181,12 +180,11 @@ class ChannelRowHandlerTest {
         when(csvMapper.writer(any(CsvSchema.class))).thenReturn(objectWriter);
         when(objectWriter.writeValues(stream)).thenReturn(sequenceWriter);
         when(sequenceWriter.write(any())).thenThrow(IOException.class);
-        // todo new  csv generation exception???.
-        assertThrows(SQLException.class, () -> handler.processRow(resultSet));
+        assertThrows(CsvGenerationException.WritingToCsvException.class, () -> handler.processRow(resultSet));
     }
 
     @Test
-    void willThrowCsvCreationExceptionIfResultSetThrows() throws SQLException {
+    void willThrowSqlExceptionUpToJdbcLevel() throws SQLException {
         when(resultSet.getMetaData()).thenThrow(SQLException.class);
         assertThrows(SQLException.class, () -> handler.processRow(resultSet));
     }

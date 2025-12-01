@@ -1,10 +1,14 @@
 package uk.gov.laa.gpfd.dao.sql;
 
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SequenceWriter;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.jdbc.core.RowCallbackHandler;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import uk.gov.laa.gpfd.exception.DatabaseReadException;
+import uk.gov.laa.gpfd.exception.CsvGenerationException.MetadataInvalidException;
+import uk.gov.laa.gpfd.exception.CsvGenerationException.WritingToCsvException;
 import uk.gov.laa.gpfd.model.FieldProjection;
 import uk.gov.laa.gpfd.services.excel.editor.CellValueSetter;
 
@@ -18,10 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SequenceWriter;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 import static uk.gov.laa.gpfd.dao.sql.ChannelRowHandler.SheetChannelRowHandler;
 import static uk.gov.laa.gpfd.dao.sql.ChannelRowHandler.StreamChannelRowHandler;
@@ -53,7 +53,7 @@ public sealed interface ChannelRowHandler extends
     /**
      * Creates a ChannelRowHandler for the given sheet with field projections.
      *
-     * @param sheet The Excel sheet to process
+     * @param sheet           The Excel sheet to process
      * @param fieldAttributes List of field projections that map database columns to sheet headers
      * @return A ChannelRowHandler configured for the given sheet and field mappings
      * @throws NullPointerException if either sheet or fieldAttributes is null
@@ -85,7 +85,7 @@ public sealed interface ChannelRowHandler extends
         /**
          * Constructs a new SheetChannelRowHandler for the given sheet and column projection.
          *
-         * @param sheet The Excel sheet to write to
+         * @param sheet      The Excel sheet to write to
          * @param projection Mapping of database column names to Excel column indices
          */
         public SheetChannelRowHandler(Sheet sheet, Map<String, Integer> projection) {
@@ -141,7 +141,7 @@ public sealed interface ChannelRowHandler extends
         /**
          * Constructs a new handler for the specified output stream.
          *
-         * @param stream    the output stream to write to (must not be {@code null})
+         * @param stream the output stream to write to (must not be {@code null})
          * @throws NullPointerException if {@code stream} is {@code null}
          */
         public StreamChannelRowHandler(OutputStream stream, CsvMapper csvMapper, Map<String, String> row, int bufferFlushFrequency) {
@@ -168,8 +168,7 @@ public sealed interface ChannelRowHandler extends
             try {
                 var metaData = rs.getMetaData();
                 if (metaData == null) {
-                    // todo new  csv generation exception???.
-                    throw new DatabaseReadException.MappingException("error");
+                    throw new MetadataInvalidException("Result set metadata is null");
                 }
                 int columnCount = metaData.getColumnCount();
 
@@ -190,9 +189,8 @@ public sealed interface ChannelRowHandler extends
                     sequenceWriter.flush();
                 }
 
-            } catch (IOException | SQLException e) {
-                // todo new  csv generation exception???.
-                throw new SQLException("Error writing to output stream", e);
+            } catch (IOException e) {
+                throw new WritingToCsvException("Error writing to output stream", e);
             }
         }
 
