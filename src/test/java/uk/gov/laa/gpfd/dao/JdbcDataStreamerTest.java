@@ -1,14 +1,13 @@
 package uk.gov.laa.gpfd.dao;
 
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.RowCallbackHandler;
-import uk.gov.laa.gpfd.config.AppConfig;
 
 import java.io.ByteArrayOutputStream;
 
@@ -28,11 +27,12 @@ class JdbcDataStreamerTest {
     @Mock
     private JdbcOperations jdbcOperations;
 
-    @Mock
-    private AppConfig appConfig;
-
-    @InjectMocks
     private JdbcDataStreamer jdbcDataStreamer;
+
+    @BeforeEach
+    void beforeEach() {
+        jdbcDataStreamer = new JdbcDataStreamer(jdbcOperations, 100);
+    }
 
     @Test
     void shouldThrowIllegalArgumentExceptionWhenSqlIsNull() {

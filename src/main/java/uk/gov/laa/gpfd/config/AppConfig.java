@@ -406,7 +406,7 @@ public class AppConfig {
      */
     @Bean
     DataStreamer dataStreamer(JdbcTemplate readOnlyJdbcTemplate) {
-        return createJdbcStreamer(readOnlyJdbcTemplate, this);
+        return createJdbcStreamer(readOnlyJdbcTemplate, getCsvBufferFlushFrequency());
     }
 
     @Bean

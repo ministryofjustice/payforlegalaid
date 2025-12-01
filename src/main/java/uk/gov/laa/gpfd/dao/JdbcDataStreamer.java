@@ -3,7 +3,6 @@ package uk.gov.laa.gpfd.dao;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcOperations;
-import uk.gov.laa.gpfd.config.AppConfig;
 import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.services.DataStreamer;
 
@@ -24,7 +23,7 @@ import static uk.gov.laa.gpfd.dao.sql.ChannelRowHandler.forStream;
  *           row-by-row callback mechanism for streaming.
  */
 @Slf4j
-public record JdbcDataStreamer(JdbcOperations jdbc, AppConfig appConfig) implements DataStreamer {
+public record JdbcDataStreamer(JdbcOperations jdbc, int csvBufferFlushFrequency) implements DataStreamer {
     private static final char END_OF_LINE_SEPARATOR = '\n', EMPTY = ' ';
 
     /**
@@ -48,10 +47,7 @@ public record JdbcDataStreamer(JdbcOperations jdbc, AppConfig appConfig) impleme
             throw new IllegalArgumentException("Output stream must not be null");
         }
 
-        stream(report.extractFirstQuery().value(), stream);
-    }
-
-    private void stream(String sql, OutputStream stream) throws IOException {
+        var sql = report.extractFirstQuery().value();
 
         if (null == sql || sql.isBlank()) {
             log.error("Attempted to execute null/empty SQL query");
@@ -62,7 +58,7 @@ public record JdbcDataStreamer(JdbcOperations jdbc, AppConfig appConfig) impleme
         var csvMapper = new CsvMapper();
 
         log.debug("Initiating streaming for query: [{}]", sql.replace(END_OF_LINE_SEPARATOR, EMPTY));
-        jdbc.query(sql, forStream(stream, csvMapper, row, appConfig.getCsvBufferFlushFrequency()));
+        jdbc.query(sql, forStream(stream, csvMapper, row, csvBufferFlushFrequency));
         stream.flush();
         log.debug("Finished streaming for query: [{}]", sql.replace(END_OF_LINE_SEPARATOR, EMPTY));
     }

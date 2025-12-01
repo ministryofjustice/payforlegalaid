@@ -2,7 +2,6 @@ package uk.gov.laa.gpfd.services;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.jdbc.core.JdbcOperations;
-import uk.gov.laa.gpfd.config.AppConfig;
 import uk.gov.laa.gpfd.dao.JdbcDataStreamer;
 import uk.gov.laa.gpfd.dao.JdbcWorkbookDataStreamer;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
@@ -35,13 +34,13 @@ public interface DataStreamer {
      * and stream results row-by-row to the output destination.
      *
      * @param jdbcOperations The configured JdbcOperations instance. Must not be null.
-     * @param appConfig app config
+     * @param csvBufferFlushFrequency CSV buffer flush frequency
      * @return A ready-to-use JDBC data streamer
      * @throws IllegalArgumentException if jdbcTemplate is null
      * @see JdbcDataStreamer
      */
-    static DataStreamer createJdbcStreamer(JdbcOperations jdbcOperations, AppConfig appConfig) {
-        return new JdbcDataStreamer(jdbcOperations, appConfig);
+    static DataStreamer createJdbcStreamer(JdbcOperations jdbcOperations, int csvBufferFlushFrequency) {
+        return new JdbcDataStreamer(jdbcOperations, csvBufferFlushFrequency);
     }
 
     /**
