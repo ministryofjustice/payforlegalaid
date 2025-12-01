@@ -124,13 +124,13 @@ class ChannelRowHandlerTest {
     @SneakyThrows
     @Test
     void willFlushWhenRowNumberEqualsFlushSize() {
-        var handler = new StreamChannelRowHandler(stream, csvMapper, row, 1);
+        var testHandler = new StreamChannelRowHandler(stream, csvMapper, row, 1);
         setupResultSetData(1, "data");
 
         when(csvMapper.writer(any(CsvSchema.class))).thenReturn(objectWriter);
         when(objectWriter.writeValues(stream)).thenReturn(sequenceWriter);
 
-        handler.processRow(resultSet);
+        testHandler.processRow(resultSet);
         verify(sequenceWriter, times(1)).flush();
     }
 
