@@ -54,6 +54,6 @@ runs:
         cd testCode
         mvn -B clean test
       env:
-        TESTS_TO_DISABLE: "Be able to view UI"
+        TESTS_TO_DISABLE: "Load the UI,UI needs auth or will error"
       shell:
         bash
