@@ -19,21 +19,23 @@
             </div>
             <div th:each="report,iterStat : ${reportListResponse}">
                 <div class="govuk-grid-row">
-                    <h2 class="govuk-heading-m govuk-!-margin-bottom-2" th:text="${report.reportName}">Report
-                        Name</h2>
-                    <p class="govuk-body govuk-!-margin-bottom-3" th:text="${report.description}">Report
-                        description</p>
-                    <p class="govuk-body">
-                        <a th:href="${report.reportDownloadUrl}" class="govuk-link">
-                            Download report
-                            <span class="govuk-visually-hidden"
-                                  th:text="'for ' + ${report.reportName}">for report name</span>
-                        </a>
-                        <span aria-hidden="true"> (.xlsx file)</span>
-                    </p>
+                    <div class="govuk-grid-column-three-quarters">
+                        <h2 class="govuk-heading-m govuk-!-margin-bottom-2" th:text="${report.reportName}">Report
+                            Name</h2>
+                        <p class="govuk-body govuk-!-margin-bottom-3" th:text="${report.description}">Report
+                            description</p>
+                        <p class="govuk-body">
+                            <a th:href="${report.reportDownloadUrl}" class="govuk-link">
+                                Download report
+                                <span class="govuk-visually-hidden"
+                                      th:text="'for ' + ${report.reportName}">for report name</span>
+                            </a>
+                            <span aria-hidden="true"> (.xlsx file)</span>
+                        </p>
+                        <hr th:unless="${iterStat.last}"
+                            class="govuk-section-break govuk-section-break--l govuk-section-break--visible"/>
+                    </div>
                 </div>
-                <hr th:unless="${iterStat.last}"
-                    class="govuk-section-break govuk-section-break--l govuk-section-break--visible"/>
             </div>
         </section>
     </section>
