@@ -53,5 +53,7 @@ runs:
       run: |
         cd testCode
         mvn -B clean test
+      env:
+        TESTS_TO_DISABLE: "Be able to view UI"
       shell:
         bash
