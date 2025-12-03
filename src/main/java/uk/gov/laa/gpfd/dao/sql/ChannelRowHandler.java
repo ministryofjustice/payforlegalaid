@@ -53,7 +53,7 @@ public sealed interface ChannelRowHandler extends
     /**
      * Creates a ChannelRowHandler for the given sheet with field projections.
      *
-     * @param sheet           The Excel sheet to process
+     * @param sheet The Excel sheet to process
      * @param fieldAttributes List of field projections that map database columns to sheet headers
      * @return A ChannelRowHandler configured for the given sheet and field mappings
      * @throws NullPointerException if either sheet or fieldAttributes is null
@@ -85,7 +85,7 @@ public sealed interface ChannelRowHandler extends
         /**
          * Constructs a new SheetChannelRowHandler for the given sheet and column projection.
          *
-         * @param sheet      The Excel sheet to write to
+         * @param sheet The Excel sheet to write to
          * @param projection Mapping of database column names to Excel column indices
          */
         public SheetChannelRowHandler(Sheet sheet, Map<String, Integer> projection) {
@@ -128,7 +128,6 @@ public sealed interface ChannelRowHandler extends
 
     /**
      * Stream-based implementation of {@link ChannelRowHandler} that writes to an {@link OutputStream}.
-     * In the laa-data-claims-reporting-service, the equivalent is the CsvRowCallbackHandler.
      */
     final class StreamChannelRowHandler implements ChannelRowHandler {
         private final AtomicBoolean headerWritten = new AtomicBoolean(false);
