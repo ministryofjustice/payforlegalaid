@@ -406,6 +406,15 @@
             <artifactId>commons-lang3</artifactId>
             <version>${common-lang3.version}</version>
         </dependency>
+        <!-- Spring Boot 3 generates code with Jackson 2 in OpenAPI
+           So for consistency sticking to v2.
+           When we move to Spring Boot 4 we can upgrade to Jackson 3 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-csv</artifactId>
+            <version>2.20.1</version>
+        </dependency>
+
     </dependencies>
 
     <repositories>

@@ -7,6 +7,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import software.amazon.awssdk.awscore.exception.AwsErrorDetails;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
+import uk.gov.laa.gpfd.exception.CsvGenerationException.WritingToCsvException;
+import uk.gov.laa.gpfd.exception.CsvGenerationException.MetadataInvalidException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.InvalidDownloadFormatException;
 import uk.gov.laa.gpfd.exception.OperationNotSupportedException;
@@ -20,6 +22,7 @@ import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.AuthenticationIsN
 import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.PrincipalIsNullException;
 import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.UnexpectedAuthClassException;
 
+import java.io.IOException;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -288,6 +291,29 @@ class GlobalExceptionHandlerTest {
         assertEquals(FORBIDDEN, response.getStatusCode());
         assertEquals("You cannot access report with ID: " + reportId,
                 response.getBody().getError());
+    }
+
+    @Test
+    void shouldHandleMetadataInvalidException() {
+        var exception = new MetadataInvalidException("Metadata is null");
+        var response = globalExceptionHandler.handleCsvGenerationException(exception);
+
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Metadata is null",
+                response.getBody().getError());
+
+    }
+
+    @Test
+    void shouldHandleWritingToCsvException() {
+        var source = new IOException("Can't write to file");
+        var exception = new WritingToCsvException("File creation error", source);
+        var response = globalExceptionHandler.handleCsvGenerationException(exception);
+
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("File creation error",
+                response.getBody().getError());
+
     }
 
 }

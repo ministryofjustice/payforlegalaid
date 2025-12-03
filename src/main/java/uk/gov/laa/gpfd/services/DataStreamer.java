@@ -34,12 +34,13 @@ public interface DataStreamer {
      * and stream results row-by-row to the output destination.
      *
      * @param jdbcOperations The configured JdbcOperations instance. Must not be null.
+     * @param csvBufferFlushFrequency CSV buffer flush frequency
      * @return A ready-to-use JDBC data streamer
      * @throws IllegalArgumentException if jdbcTemplate is null
      * @see JdbcDataStreamer
      */
-    static DataStreamer createJdbcStreamer(JdbcOperations jdbcOperations) {
-        return new JdbcDataStreamer(jdbcOperations);
+    static DataStreamer createJdbcStreamer(JdbcOperations jdbcOperations, int csvBufferFlushFrequency) {
+        return new JdbcDataStreamer(jdbcOperations, csvBufferFlushFrequency);
     }
 
     /**
@@ -73,7 +74,7 @@ public interface DataStreamer {
      * @param output The target output stream to write data to. Must not be null.
      * @throws IllegalArgumentException if query is null/empty or output is null
      */
-    void stream(Report query, OutputStream output);
+    void stream(Report query, OutputStream output) throws IOException;
 
     interface WorkbookDataStreamer extends DataStreamer, WorkbookOperations {
 

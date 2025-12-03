@@ -1,8 +1,9 @@
 package uk.gov.laa.gpfd.dao;
 
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jdbc.core.JdbcOperations;
@@ -15,6 +16,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.createTestReport;
 import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.createTestReportWithQuery;
@@ -25,8 +27,12 @@ class JdbcDataStreamerTest {
     @Mock
     private JdbcOperations jdbcOperations;
 
-    @InjectMocks
     private JdbcDataStreamer jdbcDataStreamer;
+
+    @BeforeEach
+    void beforeEach() {
+        jdbcDataStreamer = new JdbcDataStreamer(jdbcOperations, 100);
+    }
 
     @Test
     void shouldThrowIllegalArgumentExceptionWhenSqlIsNull() {
@@ -42,6 +48,7 @@ class JdbcDataStreamerTest {
         assertThrows(IllegalArgumentException.class, () -> jdbcDataStreamer.stream(testReport, null));
     }
 
+    @SneakyThrows
     @Test
     void shouldExecuteQueryWhenValidParametersProvided() {
         var testReport = createTestReportWithQuery();
@@ -50,6 +57,17 @@ class JdbcDataStreamerTest {
         jdbcDataStreamer.stream(testReport, outputStream);
 
         verify(jdbcOperations).query(eq("SELECT * FROM ANY_REPORT.DATA"), any(RowCallbackHandler.class));
+    }
+
+    @SneakyThrows
+    @Test
+    void shouldFlushWhenFinishedWriting() {
+        var testReport = createTestReportWithQuery();
+        var outputStream = mock(ByteArrayOutputStream.class);
+
+        jdbcDataStreamer.stream(testReport, outputStream);
+
+        verify(outputStream).flush();
     }
 
     @Test

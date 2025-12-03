@@ -93,6 +93,10 @@ public class AppConfig {
     @Value("${spring.cloud.azure.active-directory.profile.tenant-id}")
     private String entraIdTenantId;
 
+    @Getter
+    @Value("${gpfd.csv-generation.buffer-flush-frequency:1000}")
+    private int csvBufferFlushFrequency;
+
     /**
      * Configures a read-only {@link DataSource}.
      * <p>
@@ -402,7 +406,7 @@ public class AppConfig {
      */
     @Bean
     DataStreamer dataStreamer(JdbcTemplate readOnlyJdbcTemplate) {
-        return createJdbcStreamer(readOnlyJdbcTemplate);
+        return createJdbcStreamer(readOnlyJdbcTemplate, getCsvBufferFlushFrequency());
     }
 
     @Bean
