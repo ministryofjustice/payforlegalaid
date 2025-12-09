@@ -11,12 +11,10 @@ import java.util.UUID;
 public class InvalidDownloadFormatException extends RuntimeException {
     final String fileName;
     final UUID reportId;
-    final String errorMessage;
 
     public InvalidDownloadFormatException(String fileName, UUID reportId) {
-        super();
+        super("Unable to download file for report with ID: " + reportId);
         this.fileName = fileName;
         this.reportId = reportId;
-        this.errorMessage = "Unable to download file for report with ID: " + reportId;
     }
 }

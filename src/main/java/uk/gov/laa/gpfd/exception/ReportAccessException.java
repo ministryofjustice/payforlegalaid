@@ -11,11 +11,9 @@ import java.util.UUID;
 public class ReportAccessException extends RuntimeException {
 
     private final UUID reportId;
-    private final String errorMessage;
 
     public ReportAccessException(UUID reportId) {
-        super();
+        super("You cannot access report with ID: " + reportId);
         this.reportId = reportId;
-        this.errorMessage = "You cannot access report with ID: " + reportId;
     }
 }

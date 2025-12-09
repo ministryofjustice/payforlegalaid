@@ -285,7 +285,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidDownloadFormatException.class)
     public ResponseEntity<ReportsGet400Response> handleInvalidDownloadFormatException(InvalidDownloadFormatException e) {
         var errorResponse = new ReportsGet400Response();
-        errorResponse.setError(e.getErrorMessage());
+        errorResponse.setError(e.getMessage());
 
         log.error("InvalidDownloadFormatException Thrown: Report {} has file {} which is not a csv file", e.getReportId(), e.getFileName());
 
@@ -303,7 +303,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ReportNotSupportedForDownloadException.class)
     public ResponseEntity<ReportsGet400Response> handleReportNotSupportedForDownloadException(ReportNotSupportedForDownloadException e) {
         var errorResponse = new ReportsGet400Response();
-        errorResponse.setError(e.getErrorMessage());
+        errorResponse.setError(e.getMessage());
 
         log.error("ReportNotSupportedForDownloadException Thrown: Report {} is not supported on the '/report/{id}/file' endpoint", e.getReportId());
 
@@ -339,7 +339,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ReportAccessException.class)
     public ResponseEntity<GetReportDownloadById403Response> handleReportAccessException(ReportAccessException e) {
         var errorResponse = new GetReportDownloadById403Response();
-        errorResponse.setError(e.getErrorMessage());
+        errorResponse.setError(e.getMessage());
 
         log.error("ReportAccessException Thrown: User tried to access report {} but lacks the relevant permission(s)", e.getReportId());
 
