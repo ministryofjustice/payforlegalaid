@@ -2,7 +2,6 @@ package uk.gov.laa.gpfd.controller.ui;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import uk.gov.laa.gpfd.utils.GpfdUrlClient;
@@ -20,16 +19,16 @@ public class PolicyController {
 
     @GetMapping("/cookies")
     public String cookies() {
-        return "cookies";
+        return "cookies"; // resolves to cookies.html
     }
 
     @GetMapping("/privacy")
     public String privacy() {
-        return "privacy";
+        return "privacy"; // resolves to privacy.html
     }
 
     @GetMapping("/accessibility")
     public String accessibility() {
-        return "accessibility";
+        return "accessibility"; // resolves to accessibility.html
     }
 }

@@ -11,6 +11,7 @@ import uk.gov.laa.gpfd.controller.ReportsController;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
+import uk.gov.laa.gpfd.utils.GpfdUrlClient;
 
 import java.net.URI;
 import java.util.List;
@@ -36,6 +37,9 @@ class ReportsViewControllerTest {
 
     @InjectMocks
     ReportsViewController reportsViewController;
+
+    @Mock
+    GpfdUrlClient gpfdUrlClient;
 
     @Test
     void index_shouldRedirectToRoot() {
