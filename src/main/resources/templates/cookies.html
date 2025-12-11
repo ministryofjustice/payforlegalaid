@@ -1,22 +1,21 @@
 <div xmlns:th="http://www.thymeleaf.org" lang="en"
      th:replace="~{application :: layout(~{::content})}">
     <section th:fragment="content">
-        <main class="govuk-main-wrapper" id="main-content" role="main">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
 
                     <h1 class="govuk-heading-l">Cookies</h1>
 
                     <p class="govuk-body">
-                        <a href="https://laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk/ui/reports" target="_blank" rel="noreferrer noopener">
-                            Get legal aid data
+                        <a th:href="${gpfdUrl}" target="_blank" rel="noreferrer noopener">
+                            Get legal aid data service
                         </a> puts small files (known as ‘cookies’) on your computer.
                     </p>
 
                     <p class="govuk-body">
                         These cookies are used across the
-                        <a href="https://laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk/ui/reports" target="_blank" rel="noreferrer noopener">
-                            Get legal aid data
+                        <a th:href="${gpfdUrl}" target="_blank" rel="noreferrer noopener">
+                            Get legal aid data service
                         </a> website.
                     </p>
 
@@ -70,6 +69,5 @@
                     </table>
                 </div>
             </div>
-        </main>
     </section>
 </div>
