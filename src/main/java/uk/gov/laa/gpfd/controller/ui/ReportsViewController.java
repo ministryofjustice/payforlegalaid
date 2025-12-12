@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import uk.gov.laa.gpfd.api.ReportsApi;
+import uk.gov.laa.gpfd.config.AppConfig;
 
 import java.net.URI;
 import java.util.Objects;
@@ -17,6 +18,7 @@ import java.util.UUID;
 public class ReportsViewController {
 
     private final ReportsApi api;
+    private final AppConfig appConfig;
 
     @GetMapping("/ui")
     public String index() {
@@ -44,6 +46,7 @@ public class ReportsViewController {
                 .toList();
 
         model.addAttribute("reportListResponse", reportList);
+        model.addAttribute("gpfdUrl", appConfig.getServiceUrl());
         return "reports/list";
     }
 
