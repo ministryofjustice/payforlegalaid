@@ -7,11 +7,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ui.Model;
+import uk.gov.laa.gpfd.config.AppConfig;
 import uk.gov.laa.gpfd.controller.ReportsController;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
-import uk.gov.laa.gpfd.utils.GpfdUrlClient;
 
 import java.net.URI;
 import java.util.List;
@@ -39,7 +39,7 @@ class ReportsViewControllerTest {
     ReportsViewController reportsViewController;
 
     @Mock
-    GpfdUrlClient gpfdUrlClient;
+    AppConfig appConfig;
 
     @Test
     void index_shouldRedirectToRoot() {

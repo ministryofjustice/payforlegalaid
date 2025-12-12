@@ -1,12 +1,12 @@
 package uk.gov.laa.gpfd.controller.ui;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import uk.gov.laa.gpfd.api.ReportsApi;
-import uk.gov.laa.gpfd.utils.GpfdUrlClient;
+import uk.gov.laa.gpfd.config.AppConfig;
 
 import java.net.URI;
 import java.util.Objects;
@@ -14,11 +14,11 @@ import java.util.UUID;
 
 @Slf4j
 @Controller
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ReportsViewController {
 
     private final ReportsApi api;
-    GpfdUrlClient gpfdUrlClient;
+    private final AppConfig appConfig;
 
     @GetMapping("/ui")
     public String index() {
@@ -46,7 +46,7 @@ public class ReportsViewController {
                 .toList();
 
         model.addAttribute("reportListResponse", reportList);
-        model.addAttribute("gpfdUrl", gpfdUrlClient.getGpfdUrl());
+        model.addAttribute("gpfdUrl", appConfig.getServiceUrl());
         return "reports/list";
     }
 

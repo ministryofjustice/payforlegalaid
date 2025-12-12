@@ -4,17 +4,17 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import uk.gov.laa.gpfd.utils.GpfdUrlClient;
+import uk.gov.laa.gpfd.config.AppConfig;
 
 @Controller
 @AllArgsConstructor
 public class PolicyController {
 
-    private final GpfdUrlClient gpfdUrlClient;
+    private final AppConfig appConfig;
 
     @ModelAttribute("gpfdUrl")
     public String gpfdUrl() {
-        return gpfdUrlClient.getGpfdUrl();
+        return appConfig.getServiceUrl();
     }
 
     @GetMapping("/cookies")
