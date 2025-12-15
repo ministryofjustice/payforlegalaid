@@ -43,6 +43,18 @@ public class S3ClientWrapper {
         return s3Client.getObject(buildRequest("templates", filename));
     }
 
+    public record S3CsvDownload(String key, ResponseInputStream<GetObjectResponse> stream) implements AutoCloseable {
+
+        @Override
+        public void close() throws Exception {
+            stream.close();
+        }
+
+        public String getFileName() {
+            return key.substring(key.lastIndexOf('/') + 1);
+        }
+    }
+
     /**
      * Fetches the current version of a given report file from the S3 bucket.
      * If there is an error, a {@link AwsServiceException} can be thrown. This will be caught by the {@link GlobalExceptionHandler}
@@ -50,7 +62,7 @@ public class S3ClientWrapper {
      * @param filename - report file name
      * @return Stream of the file
      */
-    public ResponseInputStream<GetObjectResponse> getResultCsv(String filename, String folder, String prefix) {
+    public S3CsvDownload getResultCsv(String filename, String folder, String prefix) {
 
         log.info("Prefix is {}", prefix);
         var listReq = ListObjectsV2Request.builder()
@@ -75,7 +87,7 @@ public class S3ClientWrapper {
                 .key(item.get().key())
                 .build();
 
-        return s3Client.getObject(req);
+        return new S3CsvDownload(item.get().key(), s3Client.getObject(req));
     }
 
     private GetObjectRequest buildRequest(String folder, String filename){

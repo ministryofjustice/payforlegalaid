@@ -49,15 +49,14 @@ public class FileDownloadFromS3Service implements FileDownloadService {
         var prefix = fileNameResolver.getPrefixFromId(id);
 
         var fileStream = s3ClientWrapper.getResultCsv(fileName, folder, prefix);
-        fileStream.response().metadata().forEach((k, v) -> log.info("metadata {}->{}", k, v));
-        var contentDisposition = ContentDisposition.attachment().filename(fileName).build();
+        var contentDisposition = ContentDisposition.attachment().filename(fileStream.getFileName()).build();
 
         log.info("About to stream report with ID {} to user", id);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString())
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .contentLength(fileStream.response().contentLength())
-                .body(new InputStreamResource(fileStream));
+                .contentLength(fileStream.stream().response().contentLength())
+                .body(new InputStreamResource(fileStream.stream()));
     }
 
 }
