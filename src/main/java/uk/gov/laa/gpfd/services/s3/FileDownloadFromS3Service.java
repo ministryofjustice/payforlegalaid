@@ -45,7 +45,11 @@ public class FileDownloadFromS3Service implements FileDownloadService {
             throw new InvalidDownloadFormatException(fileName, id);
         }
 
-        var fileStream = s3ClientWrapper.getResultCsv(fileName);
+        var folder = fileNameResolver.getFolderFromId(id);
+        var prefix = fileNameResolver.getPrefixFromId(id);
+
+        var fileStream = s3ClientWrapper.getResultCsv(fileName, folder, prefix);
+        fileStream.response().metadata().forEach((k, v) -> log.info("metadata {}->{}", k, v));
         var contentDisposition = ContentDisposition.attachment().filename(fileName).build();
 
         log.info("About to stream report with ID {} to user", id);

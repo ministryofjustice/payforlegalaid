@@ -6,7 +6,12 @@ import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.S3Object;
 import uk.gov.laa.gpfd.controller.GlobalExceptionHandler;
+
+import java.util.ArrayList;
+import java.util.Comparator;
 
 /**
  * Class that wraps around the default {@link S3Client}, allowing us to set default behaviours
@@ -45,8 +50,32 @@ public class S3ClientWrapper {
      * @param filename - report file name
      * @return Stream of the file
      */
-    public ResponseInputStream<GetObjectResponse> getResultCsv(String filename) {
-        return s3Client.getObject(buildRequest("reports", filename));
+    public ResponseInputStream<GetObjectResponse> getResultCsv(String filename, String folder, String prefix) {
+
+        log.info("Prefix is {}", prefix);
+        var listReq = ListObjectsV2Request.builder()
+                .bucket(s3Bucket)
+                .prefix(prefix)
+                .build();
+
+        var listRes = s3Client.listObjectsV2(listReq);
+
+        // List in AWS response is not modifiable
+        var sortedList = new ArrayList<>(listRes.contents());
+        sortedList.sort(Comparator.comparing(S3Object::lastModified).reversed());
+
+        sortedList.forEach(obj -> log.info("Found in s3 {} with lastmodified {}", obj.key(), obj.lastModified()));
+
+        var item = sortedList.stream().findFirst();
+
+        log.info("Have chosen file {}", item.get().key());
+
+        var req = GetObjectRequest.builder()
+                .bucket(s3Bucket)
+                .key(item.get().key())
+                .build();
+
+        return s3Client.getObject(req);
     }
 
     private GetObjectRequest buildRequest(String folder, String filename){
