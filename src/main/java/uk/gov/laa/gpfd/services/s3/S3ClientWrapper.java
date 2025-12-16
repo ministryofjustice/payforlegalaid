@@ -19,6 +19,7 @@ import java.util.Optional;
 @Slf4j
 public class S3ClientWrapper {
 
+    public static final String TEMPLATE_FOLDER = "templates";
     private final S3Client s3Client;
     private final String s3Bucket;
 
@@ -39,10 +40,22 @@ public class S3ClientWrapper {
      * @param filename - template file name
      * @return Stream of the file
      */
-    public ResponseInputStream<GetObjectResponse> getTemplate(String filename){
-        return s3Client.getObject(buildRequest("templates", filename));
+    public ResponseInputStream<GetObjectResponse> getTemplate(String filename) {
+        log.info("Attempting to fetch {}/{} from S3 bucket", TEMPLATE_FOLDER, filename);
+        var req = GetObjectRequest.builder()
+                .bucket(s3Bucket)
+                .key(TEMPLATE_FOLDER + "/" + filename)
+                .build();
+        return s3Client.getObject(req);
     }
 
+    /**
+     * Used to return the stream and key back to the caller
+     * The key is needed to name the file correctly when the user downloads it
+     *
+     * @param key - file name in S3 with the path
+     * @param stream - file stream
+     */
     public record S3CsvDownload(String key, ResponseInputStream<GetObjectResponse> stream) implements AutoCloseable {
 
         @Override
@@ -50,6 +63,12 @@ public class S3ClientWrapper {
             stream.close();
         }
 
+        /**
+         * Create the file name for the download. It strips out the path from the key and just leaves the file name.
+         * e.g. reports/daily/report_000_2025-12-12.csv -> report_000_2025-12-12.csv
+         *
+         * @return file name to use for the downloaded file
+         */
         public String getFileName() {
             return key.substring(key.lastIndexOf('/') + 1);
         }
@@ -73,7 +92,7 @@ public class S3ClientWrapper {
                 .build();
 
         var listRes = s3Client.listObjectsV2(listReq);
-        if (listRes.contents().isEmpty()){
+        if (listRes.contents().isEmpty()) {
             log.error("No file matching prefix {} found", filePrefix);
             return Optional.empty();
         }
@@ -95,11 +114,4 @@ public class S3ClientWrapper {
 
     }
 
-    private GetObjectRequest buildRequest(String folder, String filename){
-        log.info("Attempting to fetch {}/{} from S3 bucket", folder, filename);
-        return GetObjectRequest.builder()
-                .bucket(s3Bucket)
-                .key(folder + "/" + filename)
-                .build();
-    }
 }
