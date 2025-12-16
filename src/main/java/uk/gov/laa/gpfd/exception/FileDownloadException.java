@@ -9,7 +9,7 @@ import java.util.UUID;
  */
 public abstract sealed class FileDownloadException extends RuntimeException {
 
-    public FileDownloadException(String message) {
+    protected FileDownloadException(String message) {
         super(message);
     }
 
