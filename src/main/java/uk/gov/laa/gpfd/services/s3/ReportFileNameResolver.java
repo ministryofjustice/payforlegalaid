@@ -11,66 +11,40 @@ import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP000;
 import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP012;
 import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP013;
 
+/*
+ Class for activities related to finding the report name for tactical solution reports
+ */
 public class ReportFileNameResolver {
 
     @AllArgsConstructor
     private static class FileDetails {
-        String fileName;
         String folder;
         String prefix;
     }
 
     private static final String DAILY_FOLDER = "daily";
     private static final String MONTHLY_FOLDER = "monthly";
+    // When we add more tactical solution reports - should these details be transitioned to the db?
     private static final Map<UUID, FileDetails> fileMap = Map.of(
-            ID_REP000, new FileDetails("report_000.csv", MONTHLY_FOLDER, "report_000"),
-            ID_REP012, new FileDetails("report_012.csv", DAILY_FOLDER, "report_012"),
-            ID_REP013, new FileDetails("report_013.csv", DAILY_FOLDER, "report_013")
+            ID_REP000, new FileDetails(MONTHLY_FOLDER, "report_000"),
+            ID_REP012, new FileDetails(DAILY_FOLDER, "report_012"),
+            ID_REP013, new FileDetails(DAILY_FOLDER, "report_013")
     );
 
     /**
-     * Fetch the file name for a given report ID
+     * Returns prefix needed to search for file in S3, e.g. reports/daily/report_012
      *
-     * @param id - report ID
-     * @return - completed filename for this report
+     * @param id UUID of report to build prefix for
+     * @return prefix needed to search in S3
      */
-    String getFileNameFromId(UUID id) {
+    String getS3PrefixFromId(UUID id) {
         if (id == null) {
             throw new IllegalArgumentException("Report ID cannot be null or blank");
         }
 
         if (fileMap.containsKey(id)) {
-            return fileMap.get(id).fileName;
-        } else {
-            throw new ReportNotSupportedForDownloadException(id);
-        }
-    }
-
-    /**
-     * Fetch the folder for a given report ID
-     *
-     * @param id - report ID
-     * @return - completed filename for this report
-     */
-    String getFolderFromId(UUID id) {
-        if (id == null) {
-            throw new IllegalArgumentException("Report ID cannot be null or blank");
-        }
-
-        if (fileMap.containsKey(id)) {
-            return fileMap.get(id).folder;
-        } else {
-            throw new ReportNotSupportedForDownloadException(id);
-        }
-    }
-
-    String getPrefixFromId(UUID id) {
-        if (id == null) {
-            throw new IllegalArgumentException("Report ID cannot be null or blank");
-        }
-
-        if (fileMap.containsKey(id)) {
-            return "reports/" + fileMap.get(id).folder + "/" + fileMap.get(id).prefix;
+            var reportDetails = fileMap.get(id);
+            return "reports/" + reportDetails.folder + "/" + reportDetails.prefix;
         } else {
             throw new ReportNotSupportedForDownloadException(id);
         }

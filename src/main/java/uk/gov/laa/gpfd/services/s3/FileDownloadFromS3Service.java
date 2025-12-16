@@ -8,7 +8,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import uk.gov.laa.gpfd.exception.FileDownloadException.S3BucketHasNoCopiesOfReportException;
-import uk.gov.laa.gpfd.exception.FileDownloadException.InvalidDownloadFormatException;
 
 import java.util.UUID;
 
@@ -40,14 +39,7 @@ public class FileDownloadFromS3Service implements FileDownloadService {
 
         reportAccessCheckerService.checkUserCanAccessReport(id);
 
-        var fileName = fileNameResolver.getFileNameFromId(id);
-
-        if (!fileName.endsWith(".csv")) {
-            throw new InvalidDownloadFormatException(fileName, id);
-        }
-
-        var folder = fileNameResolver.getFolderFromId(id);
-        var prefix = fileNameResolver.getPrefixFromId(id);
+        var prefix = fileNameResolver.getS3PrefixFromId(id);
 
         var fileStreamOptional = s3ClientWrapper.getResultCsv(prefix);
         try (var fileStream = fileStreamOptional

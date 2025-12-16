@@ -63,9 +63,7 @@ class FileDownloadFromS3ServiceTest {
         var inputStream = new ByteArrayInputStream("csv,data,here,123,4.3,cat".getBytes());
         var mockS3Response = new ResponseInputStream<>(responseMetadata, inputStream);
 
-        when(fileNameResolver.getFileNameFromId(testUUID)).thenReturn(testFilename);
-        when(fileNameResolver.getFolderFromId(testUUID)).thenReturn("daily");
-        when(fileNameResolver.getPrefixFromId(testUUID)).thenReturn("");
+        when(fileNameResolver.getS3PrefixFromId(testUUID)).thenReturn("");
         when(s3ClientWrapper.getResultCsv("")).thenReturn(Optional.of(new S3ClientWrapper.S3CsvDownload("reports/daily/report_numero_uno.csv", mockS3Response)));
         when(reportAccessCheckerService.checkUserCanAccessReport(testUUID)).thenReturn(true);
 
@@ -87,7 +85,7 @@ class FileDownloadFromS3ServiceTest {
         assertEquals("csv,data,here,123,4.3,cat", content);
 
         verify(reportAccessCheckerService).checkUserCanAccessReport(testUUID);
-        verify(fileNameResolver).getFileNameFromId(testUUID);
+        verify(fileNameResolver).getS3PrefixFromId(testUUID);
         verify(s3ClientWrapper).getResultCsv("");
 
     }
@@ -104,20 +102,9 @@ class FileDownloadFromS3ServiceTest {
     }
 
     @Test
-    void shouldErrorIfFileFormatIsIncorrect() {
-        when(reportAccessCheckerService.checkUserCanAccessReport(testUUID)).thenReturn(true);
-        when(fileNameResolver.getFileNameFromId(testUUID)).thenReturn("report_numero_uno.xlsx");
-
-        assertThrows(InvalidDownloadFormatException.class, () -> fileDownloadFromS3Service.getFileStreamResponse(testUUID));
-
-        verify(fileNameResolver).getFileNameFromId(testUUID);
-        verifyNoInteractions(s3ClientWrapper);
-    }
-
-    @Test
     void shouldLetExceptionHandlerHandleExceptionThrownByFileNameResolver() {
         when(reportAccessCheckerService.checkUserCanAccessReport(testUUID)).thenReturn(true);
-        when(fileNameResolver.getFileNameFromId(testUUID)).thenThrow(new IllegalArgumentException("Report ID cannot be null or blank"));
+        when(fileNameResolver.getS3PrefixFromId(testUUID)).thenThrow(new IllegalArgumentException("Report ID cannot be null or blank"));
 
         var exception = assertThrows(IllegalArgumentException.class, () -> fileDownloadFromS3Service.getFileStreamResponse(testUUID));
         assertEquals("Report ID cannot be null or blank", exception.getMessage());
@@ -128,9 +115,7 @@ class FileDownloadFromS3ServiceTest {
     @Test
     void shouldLetExceptionHandlerHandleExceptionThrownByS3Client() {
         when(reportAccessCheckerService.checkUserCanAccessReport(testUUID)).thenReturn(true);
-        when(fileNameResolver.getFileNameFromId(testUUID)).thenReturn(testFilename);
-        when(fileNameResolver.getFolderFromId(testUUID)).thenReturn("folder");
-        when(fileNameResolver.getPrefixFromId(testUUID)).thenReturn("prefix");
+        when(fileNameResolver.getS3PrefixFromId(testUUID)).thenReturn("prefix");
         when(s3ClientWrapper.getResultCsv("prefix")).thenThrow(NoSuchKeyException.builder().build());
 
         assertThrows(NoSuchKeyException.class, () -> fileDownloadFromS3Service.getFileStreamResponse(testUUID));
