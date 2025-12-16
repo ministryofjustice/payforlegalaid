@@ -2,7 +2,7 @@ package uk.gov.laa.gpfd.services.s3;
 
 
 import lombok.AllArgsConstructor;
-import uk.gov.laa.gpfd.exception.ReportNotSupportedForDownloadException;
+import uk.gov.laa.gpfd.exception.FileDownloadException.ReportNotSupportedForDownloadException;
 
 import java.util.Map;
 import java.util.UUID;

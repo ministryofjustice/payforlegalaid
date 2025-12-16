@@ -14,12 +14,12 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import uk.gov.laa.gpfd.exception.CsvGenerationException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
-import uk.gov.laa.gpfd.exception.InvalidDownloadFormatException;
+import uk.gov.laa.gpfd.exception.FileDownloadException.InvalidDownloadFormatException;
 import uk.gov.laa.gpfd.exception.OperationNotSupportedException;
 import uk.gov.laa.gpfd.exception.ReportAccessException;
 import uk.gov.laa.gpfd.exception.ReportGenerationException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
-import uk.gov.laa.gpfd.exception.ReportNotSupportedForDownloadException;
+import uk.gov.laa.gpfd.exception.FileDownloadException.ReportNotSupportedForDownloadException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.exception.ServiceUnavailableException;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;

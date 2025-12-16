@@ -1,7 +1,7 @@
 package uk.gov.laa.gpfd.services.s3;
 
 import org.junit.jupiter.api.Test;
-import uk.gov.laa.gpfd.exception.ReportNotSupportedForDownloadException;
+import uk.gov.laa.gpfd.exception.FileDownloadException.ReportNotSupportedForDownloadException;
 
 import java.util.UUID;
 

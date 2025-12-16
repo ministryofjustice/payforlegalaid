@@ -7,7 +7,7 @@ import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import uk.gov.laa.gpfd.exception.InvalidDownloadFormatException;
+import uk.gov.laa.gpfd.exception.FileDownloadException.InvalidDownloadFormatException;
 
 import java.util.UUID;
 
