@@ -10,10 +10,6 @@ import java.util.UUID;
 import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP000;
 import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP012;
 import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP013;
-import static uk.gov.laa.gpfd.utils.TokenUtils.ID_TEMP_100MB;
-import static uk.gov.laa.gpfd.utils.TokenUtils.ID_TEMP_11MB;
-import static uk.gov.laa.gpfd.utils.TokenUtils.ID_TEMP_1MB;
-import static uk.gov.laa.gpfd.utils.TokenUtils.ID_TEMP_70MB;
 
 public class ReportFileNameResolver {
 

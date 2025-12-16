@@ -21,12 +21,6 @@ public abstract class TokenUtils {
     public static final UUID ID_REP012 = UUID.fromString("cc55e276-97b0-4dd8-a919-26d4aa373266");
     public static final UUID ID_REP013 = UUID.fromString("aca2120c-8f82-45a8-a682-8dedfb7997a7");
 
-    // These are here to test things on dev in short term. can be removed when we have real test examples and won't work on uat/prod
-    public static final UUID ID_TEMP_1MB = UUID.fromString("00d5a89d-a28f-44b5-ae26-070ce86b0dae");
-    public static final UUID ID_TEMP_11MB = UUID.fromString("0548ee0a-3532-4b50-8fed-372cef9bf493");
-    public static final UUID ID_TEMP_70MB = UUID.fromString("d7306ae6-6a29-4fcc-98b6-4a77c55881c1");
-    public static final UUID ID_TEMP_100MB = UUID.fromString("0dda98c9-e949-4816-9c4a-fbbf2af1295d");
-
     private static final String GROUPS_CLAIM = "groups";
 
     /**
