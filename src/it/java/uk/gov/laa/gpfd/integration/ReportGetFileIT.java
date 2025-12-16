@@ -32,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -77,6 +78,29 @@ final class ReportGetFileIT extends BaseIT {
                 .andExpect(header().longValue("Content-Length", 25L))
                 .andExpect(header().string("Content-Disposition", "attachment; filename=\"report_2025-12-15.csv\""))
                 .andExpect(content().string("csv,data,here,123,4.3,cat"));
+    }
+
+    @Test
+    @SneakyThrows
+    void shouldCloseStreamWhenSuccessful() {
+
+        var responseList = List.of(
+                S3Object.builder().key("reports/daily/report_2025-12-14.csv").lastModified(Instant.parse("2025-12-14T05:00:00Z")).build(),
+                S3Object.builder().key("reports/daily/report_2025-12-15.csv").lastModified(Instant.parse("2025-12-15T05:00:00Z")).build()
+        );
+        var mockListResponse = ListObjectsV2Response.builder().contents(new ArrayList<>(responseList)).build();
+        when(s3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenReturn(mockListResponse);
+
+        var mockS3Response = mock(ResponseInputStream.class);
+        var mockS3ResponseInternal = mock(GetObjectResponse.class);
+        when(s3Client.getObject(any(GetObjectRequest.class))).thenReturn(mockS3Response);
+        when(mockS3Response.response()).thenReturn(mockS3ResponseInternal);
+        when(mockS3ResponseInternal.contentLength()).thenReturn(32L);
+
+
+        performGetRequestWithUserHavingGroup("/reports/" + ID_REP012 + "/file", "jfdsf234-32434fd-34234")
+                .andExpect(status().isOk());
+        verify(mockS3Response).close();
     }
 
     @Test

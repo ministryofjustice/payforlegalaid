@@ -12,7 +12,7 @@ import uk.gov.laa.gpfd.exception.FileDownloadException.S3BucketHasNoCopiesOfRepo
 import java.util.UUID;
 
 /**
- Implements how to download files when we have S3 access.
+ * Implements how to download files when we have S3 access.
  */
 @Slf4j
 public class FileDownloadFromS3Service implements FileDownloadService {
@@ -39,11 +39,12 @@ public class FileDownloadFromS3Service implements FileDownloadService {
 
         reportAccessCheckerService.checkUserCanAccessReport(id);
 
-        var prefix = fileNameResolver.getS3PrefixFromId(id);
+        var s3Prefix = fileNameResolver.getS3PrefixFromId(id);
 
-        var fileStreamOptional = s3ClientWrapper.getResultCsv(prefix);
-        try (var fileStream = fileStreamOptional
-                .orElseThrow(() -> new S3BucketHasNoCopiesOfReportException(id, prefix))) {
+        var fileStreamOptional = s3ClientWrapper.getResultCsv(s3Prefix);
+        var fileStream = fileStreamOptional
+                .orElseThrow(() -> new S3BucketHasNoCopiesOfReportException(id, s3Prefix));
+
             var contentDisposition = ContentDisposition.attachment().filename(fileStream.getFileName()).build();
 
             log.info("About to stream report with ID {} to user", id);
@@ -52,7 +53,7 @@ public class FileDownloadFromS3Service implements FileDownloadService {
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .contentLength(fileStream.stream().response().contentLength())
                     .body(new InputStreamResource(fileStream.stream()));
-        }
+
     }
 
 }

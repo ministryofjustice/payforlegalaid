@@ -53,13 +53,14 @@ public class S3ClientWrapper {
      * Used to return the stream and key back to the caller
      * The key is needed to name the file correctly when the user downloads it
      *
-     * @param key - file name in S3 with the path
+     * @param key    - file name in S3 with the path
      * @param stream - file stream
      */
     public record S3CsvDownload(String key, ResponseInputStream<GetObjectResponse> stream) implements AutoCloseable {
 
         @Override
         public void close() throws Exception {
+            log.info("Closing stream S3CsvDownload");
             stream.close();
         }
 
@@ -101,7 +102,7 @@ public class S3ClientWrapper {
                 .sorted(Comparator.comparing(S3Object::lastModified).reversed());
         var latestFile = sortedList.findFirst();
 
-        return latestFile.flatMap(first -> {
+        return latestFile.map(first -> {
             log.info("Attempting to download file with key {}, last modified {}", latestFile.get().key(), latestFile.get().lastModified());
 
             var req = GetObjectRequest.builder()
@@ -109,7 +110,7 @@ public class S3ClientWrapper {
                     .key(latestFile.get().key())
                     .build();
 
-            return Optional.of(new S3CsvDownload(latestFile.get().key(), s3Client.getObject(req)));
+            return new S3CsvDownload(latestFile.get().key(), s3Client.getObject(req));
         });
 
     }

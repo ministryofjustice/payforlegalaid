@@ -12,13 +12,13 @@ import org.springframework.http.MediaType;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
-import uk.gov.laa.gpfd.exception.FileDownloadException.InvalidDownloadFormatException;
+import uk.gov.laa.gpfd.exception.FileDownloadException.S3BucketHasNoCopiesOfReportException;
 import uk.gov.laa.gpfd.exception.ReportAccessException;
+import uk.gov.laa.gpfd.services.s3.S3ClientWrapper.S3CsvDownload;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -47,8 +48,6 @@ class FileDownloadFromS3ServiceTest {
     private FileDownloadFromS3Service fileDownloadFromS3Service;
 
     private final UUID testUUID = UUID.randomUUID();
-    private final String testFilename = "report_numero_uno.csv";
-    private final List<String> groupList = List.of("34fdsfh324-fdsfsdaf324-ds", "asjd324jnfdsf", "hdscv2343rvf");
 
     @BeforeEach
     void beforeEach() {
@@ -62,10 +61,11 @@ class FileDownloadFromS3ServiceTest {
         var responseMetadata = GetObjectResponse.builder().contentLength(25L).build();
         var inputStream = new ByteArrayInputStream("csv,data,here,123,4.3,cat".getBytes());
         var mockS3Response = new ResponseInputStream<>(responseMetadata, inputStream);
+        var s3Download = new S3CsvDownload("reports/daily/report_numero_uno_2025-12-13.csv", mockS3Response);
 
-        when(fileNameResolver.getS3PrefixFromId(testUUID)).thenReturn("");
-        when(s3ClientWrapper.getResultCsv("")).thenReturn(Optional.of(new S3ClientWrapper.S3CsvDownload("reports/daily/report_numero_uno.csv", mockS3Response)));
         when(reportAccessCheckerService.checkUserCanAccessReport(testUUID)).thenReturn(true);
+        when(fileNameResolver.getS3PrefixFromId(testUUID)).thenReturn("reports/daily/report_numero_uno");
+        when(s3ClientWrapper.getResultCsv(any())).thenReturn(Optional.of(s3Download));
 
         var result = fileDownloadFromS3Service.getFileStreamResponse(testUUID);
 
@@ -77,7 +77,7 @@ class FileDownloadFromS3ServiceTest {
 
         var contentDisposition = headers.getContentDisposition();
         assertTrue(contentDisposition.isAttachment());
-        assertEquals(testFilename, contentDisposition.getFilename());
+        assertEquals("report_numero_uno_2025-12-13.csv", contentDisposition.getFilename());
 
         var content = new BufferedReader(new InputStreamReader(result.getBody().getInputStream()))
                 .lines()
@@ -86,7 +86,19 @@ class FileDownloadFromS3ServiceTest {
 
         verify(reportAccessCheckerService).checkUserCanAccessReport(testUUID);
         verify(fileNameResolver).getS3PrefixFromId(testUUID);
-        verify(s3ClientWrapper).getResultCsv("");
+        verify(s3ClientWrapper).getResultCsv("reports/daily/report_numero_uno");
+    }
+
+    @Test
+    void shouldThrowExceptionIfS3ReturnsNoReport() {
+
+        when(reportAccessCheckerService.checkUserCanAccessReport(testUUID)).thenReturn(true);
+        when(fileNameResolver.getS3PrefixFromId(testUUID)).thenReturn("reports/daily/report_numero_uno");
+        when(s3ClientWrapper.getResultCsv(any())).thenReturn(Optional.empty());
+
+        assertThrows(S3BucketHasNoCopiesOfReportException.class, () -> fileDownloadFromS3Service.getFileStreamResponse(testUUID));
+
+        verify(s3ClientWrapper).getResultCsv("reports/daily/report_numero_uno");
 
     }
 
