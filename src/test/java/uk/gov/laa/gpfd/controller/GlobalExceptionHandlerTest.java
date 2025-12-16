@@ -21,6 +21,7 @@ import uk.gov.laa.gpfd.exception.TransferException;
 import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.AuthenticationIsNullException;
 import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.PrincipalIsNullException;
 import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.UnexpectedAuthClassException;
+import uk.gov.laa.gpfd.exception.FileDownloadException.S3BucketHasNoCopiesOfReportException;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -314,6 +315,17 @@ class GlobalExceptionHandlerTest {
         assertEquals("File creation error",
                 response.getBody().getError());
 
+    }
+
+    @Test
+    void shouldHandleS3BucketHasNoCopiesOfReportException() {
+        var reportId = UUID.randomUUID();
+        var exception = new S3BucketHasNoCopiesOfReportException(reportId, "reports/folder/filename");
+
+        var response = globalExceptionHandler.handleS3BucketHasNoCopiesOfReportException(exception);
+
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Failed to download report with id " + reportId + ".", response.getBody().getError());
     }
 
 }

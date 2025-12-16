@@ -7,6 +7,7 @@ import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import uk.gov.laa.gpfd.exception.FileDownloadException.S3BucketHasNoCopiesOfReportException;
 import uk.gov.laa.gpfd.exception.FileDownloadException.InvalidDownloadFormatException;
 
 import java.util.UUID;
@@ -48,15 +49,18 @@ public class FileDownloadFromS3Service implements FileDownloadService {
         var folder = fileNameResolver.getFolderFromId(id);
         var prefix = fileNameResolver.getPrefixFromId(id);
 
-        var fileStream = s3ClientWrapper.getResultCsv(fileName, folder, prefix);
-        var contentDisposition = ContentDisposition.attachment().filename(fileStream.getFileName()).build();
+        var fileStreamOptional = s3ClientWrapper.getResultCsv(prefix);
+        try (var fileStream = fileStreamOptional
+                .orElseThrow(() -> new S3BucketHasNoCopiesOfReportException(id, prefix))) {
+            var contentDisposition = ContentDisposition.attachment().filename(fileStream.getFileName()).build();
 
-        log.info("About to stream report with ID {} to user", id);
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString())
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .contentLength(fileStream.stream().response().contentLength())
-                .body(new InputStreamResource(fileStream.stream()));
+            log.info("About to stream report with ID {} to user", id);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString())
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .contentLength(fileStream.stream().response().contentLength())
+                    .body(new InputStreamResource(fileStream.stream()));
+        }
     }
 
 }

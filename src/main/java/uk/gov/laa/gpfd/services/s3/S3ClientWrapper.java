@@ -10,8 +10,8 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import uk.gov.laa.gpfd.controller.GlobalExceptionHandler;
 
-import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Optional;
 
 /**
  * Class that wraps around the default {@link S3Client}, allowing us to set default behaviours
@@ -56,38 +56,43 @@ public class S3ClientWrapper {
     }
 
     /**
-     * Fetches the current version of a given report file from the S3 bucket.
+     * Fetches the latest version of a given report file from the S3 bucket.
+     * It will look for anything matching the prefix (which is the path + start of the filename, e.g. for REP000 it might be
+     * "reports/monthly/report_000") and pick the one with the most recent Last Modified date
      * If there is an error, a {@link AwsServiceException} can be thrown. This will be caught by the {@link GlobalExceptionHandler}
      *
-     * @param filename - report file name
+     * @param filePrefix - path + start of the filename
      * @return Stream of the file
      */
-    public S3CsvDownload getResultCsv(String filename, String folder, String prefix) {
+    public Optional<S3CsvDownload> getResultCsv(String filePrefix) {
 
-        log.info("Prefix is {}", prefix);
+        log.info("Getting list of all files matching {}", filePrefix);
         var listReq = ListObjectsV2Request.builder()
                 .bucket(s3Bucket)
-                .prefix(prefix)
+                .prefix(filePrefix)
                 .build();
 
         var listRes = s3Client.listObjectsV2(listReq);
+        if (listRes.contents().isEmpty()){
+            log.error("No file matching prefix {} found", filePrefix);
+            return Optional.empty();
+        }
 
-        // List in AWS response is not modifiable
-        var sortedList = new ArrayList<>(listRes.contents());
-        sortedList.sort(Comparator.comparing(S3Object::lastModified).reversed());
+        var sortedList = listRes.contents().stream().filter(obj -> obj.key().endsWith(".csv"))
+                .sorted(Comparator.comparing(S3Object::lastModified).reversed());
+        var latestFile = sortedList.findFirst();
 
-        sortedList.forEach(obj -> log.info("Found in s3 {} with lastmodified {}", obj.key(), obj.lastModified()));
+        return latestFile.flatMap(first -> {
+            log.info("Attempting to download file with key {}, last modified {}", latestFile.get().key(), latestFile.get().lastModified());
 
-        var item = sortedList.stream().findFirst();
+            var req = GetObjectRequest.builder()
+                    .bucket(s3Bucket)
+                    .key(latestFile.get().key())
+                    .build();
 
-        log.info("Have chosen file {}", item.get().key());
+            return Optional.of(new S3CsvDownload(latestFile.get().key(), s3Client.getObject(req)));
+        });
 
-        var req = GetObjectRequest.builder()
-                .bucket(s3Bucket)
-                .key(item.get().key())
-                .build();
-
-        return new S3CsvDownload(item.get().key(), s3Client.getObject(req));
     }
 
     private GetObjectRequest buildRequest(String folder, String filename){

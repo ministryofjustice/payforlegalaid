@@ -28,7 +28,6 @@ public abstract sealed class FileDownloadException extends RuntimeException {
         }
     }
 
-
     /**
      * Exception class to indicate that the report cannot be downloaded via this endpoint
      */
@@ -42,5 +41,19 @@ public abstract sealed class FileDownloadException extends RuntimeException {
         }
     }
 
+  /**
+     * Exception class to indicate that the s3 bucket doesn't contain any matching reports
+     */
+    @Getter
+    public static class S3BucketHasNoCopiesOfReportException extends RuntimeException {
+        final UUID reportId;
+        final String prefix;
+
+        public S3BucketHasNoCopiesOfReportException(UUID reportId, String prefix) {
+            super("Failed to download report with id " + reportId + ".");
+            this.reportId = reportId;
+            this.prefix = prefix;
+        }
+    }
 
 }
