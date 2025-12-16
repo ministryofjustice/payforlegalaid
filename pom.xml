@@ -22,7 +22,7 @@
 
         <maven-surefire-junit5-tree-reporte.version>1.5.1</maven-surefire-junit5-tree-reporte.version>
         <poi.version>5.5.1</poi.version>
-        <immutables.version>2.11.7</immutables.version>
+        <immutables.version>2.12.0</immutables.version>
         <spring-cloud-azure-dependencies.version>6.0.0</spring-cloud-azure-dependencies.version>
         <spring-security.version>6.4.11</spring-security.version>
         <govuk-frontend.version>5.13.0</govuk-frontend.version>
@@ -30,7 +30,8 @@
 
         <payforlegalaid-openapi.version>0.0.15</payforlegalaid-openapi.version>
         <common-lang3.version>3.20.0</common-lang3.version>
-        <aws.java.sdk.version>2.40.3</aws.java.sdk.version>
+        <aws.java.sdk.version>2.40.8</aws.java.sdk.version>
+        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
     </properties>
 
     <build>
@@ -253,7 +254,7 @@
             <dependency>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.5.4</version>
+                <version>${maven-surefire-plugin.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
