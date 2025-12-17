@@ -60,7 +60,6 @@ public class S3ClientWrapper {
 
         @Override
         public void close() throws Exception {
-            log.info("Closing stream S3CsvDownload");
             stream.close();
         }
 
