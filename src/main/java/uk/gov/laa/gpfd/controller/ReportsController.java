@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import uk.gov.laa.gpfd.api.CsvApi;
 import uk.gov.laa.gpfd.api.ExcelApi;
 import uk.gov.laa.gpfd.api.ReportsApi;
@@ -47,6 +48,13 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
     @Override
     public ResponseEntity<ReportsGet200Response> reportsGet() {
         log.info("Requesting report list from service");
+
+        String baseUrl = ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .build()
+                .toUriString();
+
+        log.info("Debugging URL " + baseUrl);
         var reportListEntries = reportManagementService.fetchReportListEntries();
 
         var response = new ReportsGet200Response();
