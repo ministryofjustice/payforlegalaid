@@ -142,7 +142,8 @@ jobs:
                 | .spec.rules += [{"host": ["get-legal-aid-data.service.justice.gov.uk"], "http": [{"paths": {"path": "/", "pathType": "ImplementationSpecific", "backend": .spec.rules[0].http.paths[0].backend}}]}]
                 ' deployments/ingress.yml
           fi
-        
+          
+          yq deployments/ingress.yml
 
       - name: Authenticate with Cloud Platform and Deploy
         env:
