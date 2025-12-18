@@ -14,12 +14,13 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import uk.gov.laa.gpfd.exception.CsvGenerationException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
-import uk.gov.laa.gpfd.exception.InvalidDownloadFormatException;
+import uk.gov.laa.gpfd.exception.FileDownloadException.InvalidDownloadFormatException;
+import uk.gov.laa.gpfd.exception.FileDownloadException.ReportNotSupportedForDownloadException;
+import uk.gov.laa.gpfd.exception.FileDownloadException.S3BucketHasNoCopiesOfReportException;
 import uk.gov.laa.gpfd.exception.OperationNotSupportedException;
 import uk.gov.laa.gpfd.exception.ReportAccessException;
 import uk.gov.laa.gpfd.exception.ReportGenerationException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
-import uk.gov.laa.gpfd.exception.ReportNotSupportedForDownloadException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.exception.ServiceUnavailableException;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
@@ -370,5 +371,25 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+
+    /**
+     * Handles {@link S3BucketHasNoCopiesOfReportException} and responds with an HTTP 500 Internal Server Error.
+     *
+     * @param e the exception thrown when the S3 doesn't contain any copies of the report
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
+     */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(S3BucketHasNoCopiesOfReportException.class)
+    public ResponseEntity<ReportsGet500Response> handleS3BucketHasNoCopiesOfReportException(S3BucketHasNoCopiesOfReportException e) {
+        var errorResponse = new ReportsGet500Response();
+        errorResponse.setError(e.getMessage());
+
+        log.error("S3BucketHasNoCopiesOfReportException Thrown: No matching entries in the S3 bucket were found for report with ID {} using prefix {}.",
+                e.getReportId(), e.getPrefix());
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(errorResponse);
+    }
+
 
 }

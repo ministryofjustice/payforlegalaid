@@ -1,7 +1,7 @@
 package uk.gov.laa.gpfd.services.s3;
 
 import org.junit.jupiter.api.Test;
-import uk.gov.laa.gpfd.exception.ReportNotSupportedForDownloadException;
+import uk.gov.laa.gpfd.exception.FileDownloadException.ReportNotSupportedForDownloadException;
 
 import java.util.UUID;
 
@@ -16,33 +16,33 @@ class ReportFileNameResolverTest {
     private final ReportFileNameResolver reportFileNameResolver = new ReportFileNameResolver();
 
     @Test
-    void shouldReturnFileNameForRep000() {
-        assertEquals("report_000.csv", reportFileNameResolver.getFileNameFromId(ID_REP000));
+    void shouldReturnS3PrefixForRep000() {
+        assertEquals("reports/monthly/report_000", reportFileNameResolver.getS3PrefixFromId(ID_REP000));
     }
 
     @Test
-    void shouldReturnFileNameForRep012() {
-        assertEquals("report_012.csv", reportFileNameResolver.getFileNameFromId(ID_REP012));
+    void shouldReturnS3PrefixForRep012() {
+        assertEquals("reports/daily/report_012", reportFileNameResolver.getS3PrefixFromId(ID_REP012));
     }
 
     @Test
-    void shouldReturnFileNameForRep013() {
-        assertEquals("report_013.csv", reportFileNameResolver.getFileNameFromId(ID_REP013));
+    void shouldReturnS3PrefixForRep013() {
+        assertEquals("reports/daily/report_013", reportFileNameResolver.getS3PrefixFromId(ID_REP013));
     }
 
     @Test
     void shouldThrowIllegalArgumentExceptionIfBlankUUIDSupplied() {
-        assertThrows(IllegalArgumentException.class, () -> reportFileNameResolver.getFileNameFromId(UUID.fromString("")));
+        assertThrows(IllegalArgumentException.class, () -> reportFileNameResolver.getS3PrefixFromId(UUID.fromString("")));
     }
 
     @Test
     void shouldThrowIllegalArgumentExceptionIfNullUUIDSupplied() {
-        assertThrows(IllegalArgumentException.class, () -> reportFileNameResolver.getFileNameFromId(null));
+        assertThrows(IllegalArgumentException.class, () -> reportFileNameResolver.getS3PrefixFromId(null));
     }
 
     @Test
     void shouldThrowNotSupportedExceptionIfIdIsNotInList() {
-        assertThrows(ReportNotSupportedForDownloadException.class, () -> reportFileNameResolver.getFileNameFromId(UUID.fromString("bda2120c-8f82-45a8-a682-8dedfb7997a7")));
+        assertThrows(ReportNotSupportedForDownloadException.class, () -> reportFileNameResolver.getS3PrefixFromId(UUID.fromString("bda2120c-8f82-45a8-a682-8dedfb7997a7")));
     }
 
 }
