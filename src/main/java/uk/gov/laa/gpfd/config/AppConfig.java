@@ -85,6 +85,7 @@ public class AppConfig {
     @Value("${excel.jdbc.streamer.default-fetch-size:1000}")
     private int defaultFetchSize;
 
+    //TODO are these used??
     @Getter
     @Value("${spring.cloud.azure.active-directory.credential.client-id}")
     private String entraIdClientId;
@@ -248,6 +249,7 @@ public class AppConfig {
         return new JdbcTemplate(dataSource);
     }
 
+    // TODO is this used...
     /**
      * Configures a {@link RestTemplate} bean for making REST API calls.
      * <p>

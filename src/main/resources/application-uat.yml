@@ -1,6 +1,6 @@
 gpfd:
   url: ${GPFD_URL}
-  redirect-uri-template: ${gpfd.url}/login/oauth2/code/gpfd-azure-uat
+  redirect-uri-template: "{baseUrl}/login/oauth2/code/gpfd-azure-uat"
 
   # MOJFIN database config
   datasource:

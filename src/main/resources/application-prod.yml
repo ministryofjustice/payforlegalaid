@@ -1,7 +1,7 @@
 gpfd:
   url: ${GPFD_URL}
   #This is the url which the Active directory dev app registration will redirect to after SSO is complete
-  redirect-uri-template: ${gpfd.url}/login/oauth2/code/gpfd-azure-prod
+  redirect-uri-template: "{baseUrl}/login/oauth2/code/gpfd-azure-prod"
   # Note,"gpfd-azure-dev" is also known as the Oauth2 'registrationId'
 
   # MOJFIN database config
