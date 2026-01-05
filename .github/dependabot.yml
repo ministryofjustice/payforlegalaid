@@ -9,35 +9,36 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
-      time: "14:00"
+      time: "16:00"
     groups:
-      maven-minor-patch:
-        patterns: [ "*" ]
-        update-types: [ "minor", "patch" ]
-      maven-major:
-        patterns: [ "*" ]
-        update-types: [ "major" ]
+      minor:
+        update-types:
+          - "minor"
+          - "patch"
+        patterns:
+          - "*"
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
       interval: "daily"
-      time: "14:00"
+      time: "16:00"
     groups:
-      docker-minor-patch:
-        patterns: [ "*" ]
-        update-types: [ "minor", "patch" ]
-      docker-major:
-        patterns: [ "*" ]
-        update-types: [ "major" ]
+      minor:
+        update-types:
+          - "minor"
+          - "patch"
+        patterns:
+          - "*"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "daily"
-      time: "14:00"
+      time: "16:00"
     groups:
-      all-github-actions-minor-patch:
-        patterns: [ "*" ]
-        update-types: [ "minor", "patch" ]
-      all-github-actions-major:
-        patterns: [ "*" ]
-        update-types: [ "major" ]
+      groups:
+        minor:
+          update-types:
+            - "minor"
+            - "patch"
+          patterns:
+            - "*"
