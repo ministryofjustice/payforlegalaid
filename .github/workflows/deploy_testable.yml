@@ -51,7 +51,6 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           SOCKET_KEY: ${{ secrets.DEV_API_SOCKET_KEY }}
-          GPFD_URL: https://test-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk
 
       - name: Generate Kubernetes files from templates
         env:

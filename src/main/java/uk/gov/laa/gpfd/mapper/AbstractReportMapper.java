@@ -1,5 +1,6 @@
 package uk.gov.laa.gpfd.mapper;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.laa.gpfd.config.AppConfig;
@@ -15,6 +16,7 @@ import java.util.Objects;
  * Abstract base class for report mappers that provides common functionality
  * for constructing report URLs and basic mapping operations.
  */
+@Slf4j
 @Component
 public abstract class AbstractReportMapper {
 
@@ -36,6 +38,8 @@ public abstract class AbstractReportMapper {
      */
     protected URI constructDownloadUrl(Report report) {
         try {
+            log.info("ServiceURL is " + appConfig.getServiceUrl());
+            log.info("BaseURL is " + baseUrl);
             var reportId = report.getIdAsString();
             if (Objects.equals(report.getOutputType().getExtension(), FileExtension.S3STORAGE.getExtension())) {
                 return URI.create("%s/%s/%s/%s".formatted(baseUrl,"reports", reportId, "file"));

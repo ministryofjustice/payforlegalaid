@@ -9,9 +9,6 @@ on:
       environment_name:
         type: string
         required: true
-      gpfd_url:
-        type: string
-        required: true
       alert_severity:
         type: string
         required: true
@@ -103,7 +100,6 @@ jobs:
           NAMESPACE: ${{ secrets.kube_namespace }}
           ALERT_SEVERITY: ${{ inputs.alert_severity }}
           ENV_NAME: ${{ inputs.environment_name }}
-          GPFD_URL: ${{ inputs.gpfd_url }}
           SECRET_NAME: ${{ inputs.secret_name }}
           DATA_REPOSITORY: ${{ vars.DATA_ECR_REPOSITORY }}
           PERMISSION_REP000_GROUP_ID: ${{ vars.PERMISSION_REP000_GROUP_ID }}
@@ -119,7 +115,7 @@ jobs:
             "network-policy:network-policy"
             "prometheus-rules:prometheus-rules"
             "grafana-dashboard:grafana-dashboard:\$ENV_NAME,\$NAMESPACE"
-            "deployment:deployment:\$ENV_NAME,\$SECRET_NAME,\$GPFD_URL,\$REGISTRY,\$REPOSITORY,\$IMAGE_TAG,\$DATA_REPOSITORY,\$PERMISSION_REP000_GROUP_ID,\$PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID,\$INGRESS_CLASS_NAME,\$IP_LIST"
+            "deployment:deployment:\$ENV_NAME,\$SECRET_NAME,\$REGISTRY,\$REPOSITORY,\$IMAGE_TAG,\$DATA_REPOSITORY,\$PERMISSION_REP000_GROUP_ID,\$PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID,\$INGRESS_CLASS_NAME,\$IP_LIST"
           )
           
           for item in "${template_processing[@]}"; do
