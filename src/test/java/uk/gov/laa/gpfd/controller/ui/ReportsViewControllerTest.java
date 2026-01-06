@@ -1,12 +1,16 @@
 package uk.gov.laa.gpfd.controller.ui;
 
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.ui.Model;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import uk.gov.laa.gpfd.config.AppConfig;
 import uk.gov.laa.gpfd.controller.ReportsController;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
@@ -38,8 +42,23 @@ class ReportsViewControllerTest {
     @InjectMocks
     ReportsViewController reportsViewController;
 
+
+    //TODO remove
     @Mock
     AppConfig appConfig;
+
+    //TODO mock this better
+    @BeforeEach
+    void beforeEach(){
+        // Mock the URL returned - it is based on the server context
+        var req = new MockHttpServletRequest();
+        req.setScheme("http");
+        req.setServerName("example.com");
+        req.setServerPort(80);
+        req.setContextPath("");
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(req));
+
+    }
 
     @Test
     void index_shouldRedirectToRoot() {

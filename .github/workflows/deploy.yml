@@ -13,6 +13,7 @@ jobs:
     with:
       github_environment: development
       environment_name: dev
+      ingress_url: dev-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk
       alert_severity: laa-get-legal-aid-data-dev
       secret_name: gpfd-test-secret-01
     secrets:
@@ -32,6 +33,7 @@ jobs:
     with:
       github_environment: uat
       environment_name: uat
+      ingress_url: uat-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk
       alert_severity: laa-get-legal-aid-data-uat
       secret_name: gpfd-uat-secret-01
     secrets:
@@ -51,6 +53,7 @@ jobs:
     with:
       github_environment: prod
       environment_name: prod
+      ingress_url: laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk
       alert_severity: laa-get-legal-aid-data-prod
       secret_name: gpfd-prod-secret-01
     secrets:

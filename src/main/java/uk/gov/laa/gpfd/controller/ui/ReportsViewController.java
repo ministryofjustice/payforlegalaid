@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import uk.gov.laa.gpfd.api.ReportsApi;
 import uk.gov.laa.gpfd.config.AppConfig;
+import uk.gov.laa.gpfd.utils.UrlUtils;
 
 import java.net.URI;
 import java.util.Objects;
@@ -46,7 +47,8 @@ public class ReportsViewController {
                 .toList();
 
         model.addAttribute("reportListResponse", reportList);
-        model.addAttribute("gpfdUrl", appConfig.getServiceUrl());
+        //TODO is this doing anythign???
+        model.addAttribute("gpfdUrl", UrlUtils.getServiceUrl());
         return "reports/list";
     }
 

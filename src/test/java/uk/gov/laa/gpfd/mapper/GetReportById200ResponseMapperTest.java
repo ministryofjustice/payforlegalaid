@@ -1,7 +1,12 @@
 package uk.gov.laa.gpfd.mapper;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import uk.gov.laa.gpfd.config.AppConfig;
 import uk.gov.laa.gpfd.model.Report;
 
@@ -27,10 +32,23 @@ class GetReportById200ResponseMapperTest {
     void init() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         var constructor = GetReportById200ResponseMapper.class.getDeclaredConstructor(AppConfig.class);
         constructor.setAccessible(true);
+        //TODO still needed?
         var appConfig = mock(AppConfig.class);
-        when(appConfig.getServiceUrl()).thenReturn("https://api.example.com///");
+
+        // Mock the URL returned - it is based on the server context
+        var req = new MockHttpServletRequest();
+        req.setScheme("https");
+        req.setServerName("api.example.com");
+        req.setServerPort(443);
+        req.setContextPath("");
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(req));
 
         mapper = constructor.newInstance(appConfig);
+    }
+
+    @AfterEach
+    void afterEach() {
+        RequestContextHolder.resetRequestAttributes();
     }
 
     @Test

@@ -72,10 +72,6 @@ import static uk.gov.laa.gpfd.services.DataStreamer.createJdbcStreamer;
 @Configuration
 public class AppConfig {
 
-    @Getter
-    @Value("${gpfd.url}")
-    private String serviceUrl;
-
     @Value("${excel.security.compression-ratio:0.001}")
     private double allowedCompressionRatio;
 

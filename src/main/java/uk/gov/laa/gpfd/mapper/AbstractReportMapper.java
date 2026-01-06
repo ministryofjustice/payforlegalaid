@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.laa.gpfd.config.AppConfig;
 import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.model.Report;
+import uk.gov.laa.gpfd.utils.UrlUtils;
 
 import java.net.URI;
 import java.sql.Timestamp;
@@ -21,12 +22,11 @@ import java.util.Objects;
 public abstract class AbstractReportMapper {
 
     protected final AppConfig appConfig;
-    protected final String baseUrl;
 
     @Autowired
     protected AbstractReportMapper(AppConfig appConfig) {
+        //TODO???
         this.appConfig = appConfig;
-        baseUrl = appConfig.getServiceUrl().replaceAll("/+$", "");
     }
 
     /**
@@ -38,8 +38,8 @@ public abstract class AbstractReportMapper {
      */
     protected URI constructDownloadUrl(Report report) {
         try {
-            log.info("ServiceURL is " + appConfig.getServiceUrl());
-            log.info("BaseURL is " + baseUrl);
+            var baseUrl = UrlUtils.getServiceUrl();
+            log.info("BaseURL is " + UrlUtils.getServiceUrl());
             var reportId = report.getIdAsString();
             if (Objects.equals(report.getOutputType().getExtension(), FileExtension.S3STORAGE.getExtension())) {
                 return URI.create("%s/%s/%s/%s".formatted(baseUrl,"reports", reportId, "file"));

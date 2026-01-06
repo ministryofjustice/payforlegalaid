@@ -19,9 +19,9 @@ spec:
   ingressClassName: '${INGRESS_CLASS_NAME}'
   tls:
     - hosts:
-      - '${GPFD_URL}'
+      - '${INGRESS_URL}'
   rules:
-    - host: '${GPFD_URL}'
+    - host: '${INGRESS_URL}'
       http:
         paths:
         - path: /

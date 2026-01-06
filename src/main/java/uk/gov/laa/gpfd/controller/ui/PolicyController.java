@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import uk.gov.laa.gpfd.config.AppConfig;
+import uk.gov.laa.gpfd.utils.UrlUtils;
 
 @Controller
 @AllArgsConstructor
@@ -14,7 +15,7 @@ public class PolicyController {
 
     @ModelAttribute("gpfdUrl")
     public String gpfdUrl() {
-        return appConfig.getServiceUrl();
+        return UrlUtils.getServiceUrl();
     }
 
     @GetMapping("/cookies")

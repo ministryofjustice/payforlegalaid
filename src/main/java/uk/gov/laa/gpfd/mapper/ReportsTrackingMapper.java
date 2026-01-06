@@ -34,9 +34,9 @@ public class ReportsTrackingMapper extends AbstractReportMapper  {
      * @throws IllegalArgumentException if any input is invalid
      * @throws IllegalStateException if URL construction fails
      */
-    public ReportsTracking map(Report report, String currentUserName) {
+    public ReportsTracking map(Report report, String currentUserName, String requestUrl) {
         return ImmutableReportsTracking.builderFor(report)
-                .reportUrl(constructReportUrl(report))
+                .reportUrl(requestUrl)
                 .creationDate(currentTimestamp())
                 .reportCreator(currentUserName)
                 .build();

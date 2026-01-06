@@ -1,8 +1,7 @@
 gpfd:
-  # This is the Spring runtime variable for the url, format will be e.g. http://get-legal-aid-data.justice.gov.uk
-  url: "{baseUrl}"
   # This is the url which the Active directory dev app registration will redirect to after SSO is complete
-  redirect-uri-template: ${gpfd.url}/login/oauth2/code/gpfd-azure-dev
+  # baseUrl is a Spring Security template that resolves based on the current URL
+  redirect-uri-template: "{baseUrl}/login/oauth2/code/gpfd-azure-dev"
   # Note,"gpfd-azure-dev" is also known as the Oauth2 'registrationId'
 
   # DEV MOJFIN database config

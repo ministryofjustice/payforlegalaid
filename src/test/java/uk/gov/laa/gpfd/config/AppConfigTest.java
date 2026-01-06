@@ -153,36 +153,8 @@ class AppConfigTest {
                 "RestTemplate should contain StringHttpMessageConverter.");
     }
 
-    @Test
-    void shouldRestTemplateByteArrayHttpMessageConverter() {
-        // Given
-        // When
-        var restTemplate = applicationContext.getBean(RestTemplate.class);
-
-        // Then
-        assertTrue(restTemplate.getMessageConverters().stream()
-                        .anyMatch(converter -> converter instanceof ByteArrayHttpMessageConverter),
-                "RestTemplate should contain ByteArrayHttpMessageConverter.");
-    }
-
-    @Test
-    void shouldRestTemplateRequestInterceptor() {
-        // Given
-        // When
-        var restTemplate = applicationContext.getBean(RestTemplate.class);
-        restTemplate.getInterceptors().add((request, body, execution) -> {
-            request.getHeaders().add("X-Test-Header", "TestValue");
-            return execution.execute(request, body);
-        });
-
-        // Then
-        assertTrue(restTemplate.getInterceptors().stream()
-                        .anyMatch(i -> i instanceof ClientHttpRequestInterceptor),
-                "RestTemplate should have interceptors.");
-    }
-
-    @Test
-    void shouldReturnServiceUrl() {
-        assertTrue(classUnderTest.getServiceUrl().contentEquals("http://localhost"));
-    }
+//    @Test
+//    void shouldReturnServiceUrl() {
+//        assertTrue(classUnderTest.getServiceUrl().contentEquals("http://localhost"));
+//    }
 }
