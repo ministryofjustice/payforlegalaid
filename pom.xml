@@ -20,7 +20,7 @@
 
         <springdoc-oas.version>2.8.15</springdoc-oas.version>
 
-        <maven-surefire-junit5-tree-reporte.version>1.5.1</maven-surefire-junit5-tree-reporte.version>
+        <maven-surefire-junit5-tree-reporter.version>1.5.1</maven-surefire-junit5-tree-reporter.version>
         <poi.version>5.5.1</poi.version>
         <immutables.version>2.12.0</immutables.version>
         <spring-cloud-azure-dependencies.version>6.1.0</spring-cloud-azure-dependencies.version>
@@ -45,7 +45,7 @@
                         <dependency>
                             <groupId>me.fabriciorby</groupId>
                             <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
-                            <version>${maven-surefire-junit5-tree-reporte.version}</version>
+                            <version>${maven-surefire-junit5-tree-reporter.version}</version>
                         </dependency>
                     </dependencies>
                     <configuration>
