@@ -20,7 +20,7 @@
 
         <springdoc-oas.version>2.8.15</springdoc-oas.version>
 
-        <maven-surefire-junit5-tree-reporter.version>1.5.1</maven-surefire-junit5-tree-reporter.version>
+        <maven-surefire-junit5-tree-reporter.version>1.3.0</maven-surefire-junit5-tree-reporter.version>
         <poi.version>5.5.1</poi.version>
         <immutables.version>2.12.0</immutables.version>
         <spring-cloud-azure-dependencies.version>6.1.0</spring-cloud-azure-dependencies.version>
