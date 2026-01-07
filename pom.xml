@@ -129,6 +129,26 @@
                 </plugin>
                 <!-- Copy govuk-frontend assets into resources -->
                 <plugin>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-antrun-plugin</artifactId>
                     <version>3.2.0</version>

@@ -21,7 +21,7 @@ runs:
 
     - name: Run tests
       run: |
-        mvn -B clean test
+        mvn -B clean verify
       env:
         SPRING_PROFILES_ACTIVE: test
       shell:
