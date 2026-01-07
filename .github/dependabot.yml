@@ -9,7 +9,6 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
-      time: "16:00"
     groups:
       minor:
         update-types:
@@ -21,7 +20,6 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      time: "16:00"
     groups:
       minor:
         update-types:
@@ -33,7 +31,6 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      time: "16:00"
     groups:
       minor:
         update-types:
