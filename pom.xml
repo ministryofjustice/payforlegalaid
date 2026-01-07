@@ -99,7 +99,7 @@
                                     <version>${payforlegalaid-openapi.version}</version>
                                     <type>jar</type>
                                     <overWrite>false</overWrite>
-                                    <outputDirectory>${project.basedir}/src/main/resources/static</outputDirectory>
+                                    <outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
                                     <includes>swagger.yml</includes>
                                 </artifactItem>
                             </artifactItems>
