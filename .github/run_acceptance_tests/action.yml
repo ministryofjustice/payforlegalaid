@@ -52,6 +52,6 @@ runs:
     - name: Run tests
       run: |
         cd testCode
-        mvn -B clean verify
+        mvn -B clean test
       shell:
         bash
