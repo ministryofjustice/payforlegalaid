@@ -35,58 +35,56 @@
     </properties>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>${maven-surefire-plugin.version}</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>me.fabriciorby</groupId>
-                            <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
-                            <version>${maven-surefire-junit5-tree-reporter.version}</version>
-                        </dependency>
-                    </dependencies>
-                    <configuration>
-                        <includes>
-                            <include>**/*Tests.java</include>
-                            <include>**/*Test.java</include>
-                            <include>**/*IT.java</include>
-                        </includes>
-                        <reportFormat>plain</reportFormat>
-                        <consoleOutputReporter>
-                            <disable>true</disable>
-                        </consoleOutputReporter>
-                        <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter"/>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.14.1</version>
-                    <executions>
-                        <execution>
-                            <id>default-testCompile</id>
-                            <phase>test-compile</phase>
-                            <goals>
-                                <goal>testCompile</goal>
-                            </goals>
-                            <configuration>
-                                <compileSourceRoots>
-                                    <compileSourceRoot>src/test/java</compileSourceRoot>
-                                    <compileSourceRoot>src/it/java</compileSourceRoot>
-                                </compileSourceRoots>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.9.0</version>
-                    <executions>
-                        <execution>
-                        <id>unpack-swagger</id>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>me.fabriciorby</groupId>
+                        <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
+                        <version>${maven-surefire-junit5-tree-reporter.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <includes>
+                        <include>**/*Tests.java</include>
+                        <include>**/*Test.java</include>
+                        <include>**/*IT.java</include>
+                    </includes>
+                    <reportFormat>plain</reportFormat>
+                    <consoleOutputReporter>
+                        <disable>true</disable>
+                    </consoleOutputReporter>
+                    <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter"/>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.14.1</version>
+                <executions>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                        <configuration>
+                            <compileSourceRoots>
+                                <compileSourceRoot>src/test/java</compileSourceRoot>
+                                <compileSourceRoot>src/it/java</compileSourceRoot>
+                            </compileSourceRoots>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.9.0</version>
+                <executions>
+                    <execution>
                         <phase>generate-resources</phase>
                         <goals>
                             <goal>unpack</goal>
@@ -99,13 +97,19 @@
                                     <version>${payforlegalaid-openapi.version}</version>
                                     <type>jar</type>
                                     <overWrite>false</overWrite>
-                                    <outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
+                                    <outputDirectory>${project.basedir}/src/main/resources/static</outputDirectory>
                                     <includes>swagger.yml</includes>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
                     </execution>
-                    <!-- Execution 2: GOV.UK assets -->
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.9.0</version>
+                <executions>
                     <execution>
                         <id>unpack-govuk</id>
                         <phase>generate-resources</phase>
@@ -126,121 +130,107 @@
                         </configuration>
                     </execution>
                 </executions>
-                </plugin>
-                <!-- Copy govuk-frontend assets into resources -->
-                <plugin>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-antrun-plugin</artifactId>
-                    <version>3.2.0</version>
-                    <executions>
-                        <execution>
-                            <id>copy-govuk-assets</id>
-                            <phase>generate-resources</phase>
-                            <configuration>
-                                <target>
-                                    <copy todir="${project.basedir}/src/main/resources/static/govuk">
-                                        <fileset dir="${project.build.directory}/govuk/META-INF/resources/webjars/govuk-frontend/${govuk-frontend.version}/dist/govuk">
-                                            <include name="**/*.css"/>
-                                        </fileset>
-                                        <mapper type="flatten"/>
-                                    </copy>
-                                    <copy todir="${project.basedir}/src/main/resources/static/assets">
-                                        <fileset dir="${project.build.directory}/govuk/META-INF/resources/webjars/govuk-frontend/${govuk-frontend.version}/dist/govuk/assets">
-                                            <include name="images/**"/>
-                                            <include name="fonts/**"/>
-                                        </fileset>
-                                    </copy>
-                                </target>
-                            </configuration>
-                            <goals>
-                                <goal>run</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>download-and-prepare-moj-frontend</id>
-                            <phase>generate-resources</phase>
-                            <configuration>
-                                <target>
-                                    <!-- Download ZIP from GitHub -->
-                                    <get src="https://github.com/ministryofjustice/moj-frontend/releases/download/v${moj-frontend.version}/release-v${moj-frontend.version}.zip"
-                                         dest="${project.build.directory}/moj-frontend.zip"
-                                         verbose="true"/>
-                                    <!-- Delete old moj folder -->
-                                    <delete dir="${project.basedir}/src/main/resources/static/moj"/>
-                                    <!-- Unzip -->
-                                    <unzip src="${project.build.directory}/moj-frontend.zip"
-                                           dest="${project.basedir}/src/main/resources/static/moj"/>
-                                    <!-- Copy CSS -->
-                                    <copy file="${project.basedir}/src/main/resources/static/moj/moj-frontend-${moj-frontend.version}.min.css"
-                                          tofile="${project.basedir}/src/main/resources/static/moj/css/moj.css"
-                                          overwrite="true"/>
-                                </target>
-                            </configuration>
-                            <goals><goal>run</goal></goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                    <configuration>
-                        <classifier>exec</classifier>
-                        <mainClass>uk.gov.laa.gpfd.Application</mainClass>
-                        <layers>
-                            <enabled>true</enabled> <!-- Enables layered JAR for container optimization -->
-                        </layers>
-                        <excludes>
-                            <exclude>
-                                <groupId>org.projectlombok</groupId>
-                                <artifactId>lombok</artifactId>
-                            </exclude>
-                        </excludes>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>build-info</id>
-                            <goals>
-                                <goal>build-info</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>repackage</id>
-                            <goals>
-                                <goal>repackage</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-war-plugin</artifactId>
-                    <version>3.5.1</version>
-                    <configuration>
-                        <attachClasses>true</attachClasses>
-                        <classesClassifier>classes</classesClassifier>
-                    </configuration>
-                </plugin>
+            </plugin>
+            <!-- Copy govuk-frontend assets into resources -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-govuk-assets</id>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <target>
+                                <copy todir="${project.basedir}/src/main/resources/static/govuk">
+                                    <fileset dir="${project.build.directory}/govuk/META-INF/resources/webjars/govuk-frontend/${govuk-frontend.version}/dist/govuk">
+                                        <include name="**/*.css"/>
+                                    </fileset>
+                                    <mapper type="flatten"/>
+                                </copy>
+                                <copy todir="${project.basedir}/src/main/resources/static/assets">
+                                    <fileset dir="${project.build.directory}/govuk/META-INF/resources/webjars/govuk-frontend/${govuk-frontend.version}/dist/govuk/assets">
+                                        <include name="images/**"/>
+                                        <include name="fonts/**"/>
+                                    </fileset>
+                                </copy>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>download-and-prepare-moj-frontend</id>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <target>
+                                <!-- Download ZIP from GitHub -->
+                                <get src="https://github.com/ministryofjustice/moj-frontend/releases/download/v${moj-frontend.version}/release-v${moj-frontend.version}.zip"
+                                     dest="${project.build.directory}/moj-frontend.zip"
+                                     verbose="true"/>
+                                <!-- Delete old moj folder -->
+                                <delete dir="${project.basedir}/src/main/resources/static/moj"/>
+                                <!-- Unzip -->
+                                <unzip src="${project.build.directory}/moj-frontend.zip"
+                                       dest="${project.basedir}/src/main/resources/static/moj"/>
+                                <!-- Copy CSS -->
+                                <copy file="${project.basedir}/src/main/resources/static/moj/moj-frontend-${moj-frontend.version}.min.css"
+                                      tofile="${project.basedir}/src/main/resources/static/moj/css/moj.css"
+                                      overwrite="true"/>
+                            </target>
+                        </configuration>
+                        <goals><goal>run</goal></goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <classifier>exec</classifier>
+                    <mainClass>uk.gov.laa.gpfd.Application</mainClass>
+                    <layers>
+                        <enabled>true</enabled> <!-- Enables layered JAR for container optimization -->
+                    </layers>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>build-info</id>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>repackage</id>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.5.1</version>
+                <configuration>
+                    <attachClasses>true</attachClasses>
+                    <classesClassifier>classes</classesClassifier>
+                </configuration>
+            </plugin>
         </plugins>
-        </pluginManagement>
     </build>
 
     <dependencyManagement>
@@ -258,6 +248,11 @@
                 <version>${aws.java.sdk.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
