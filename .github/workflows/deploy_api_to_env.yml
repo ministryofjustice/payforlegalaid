@@ -133,9 +133,7 @@ jobs:
               DOLLAR='$' envsubst < "$input" > "$output"
             fi
           done
-          
-          yq deployments/ingress.yml
-          
+                    
           if [[ "${ENV_NAME}" == "prod" ]]; then
             yq -i '
                 .spec.tls |= (. // []) + [{
@@ -154,8 +152,6 @@ jobs:
                 }]
                 ' deployments/ingress.yml
           fi
-          
-          yq deployments/ingress.yml
 
       - name: Authenticate with Cloud Platform and Deploy
         env:

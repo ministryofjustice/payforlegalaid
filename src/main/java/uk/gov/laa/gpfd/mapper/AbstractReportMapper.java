@@ -1,12 +1,9 @@
 package uk.gov.laa.gpfd.mapper;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.laa.gpfd.config.AppConfig;
 import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.model.Report;
-import uk.gov.laa.gpfd.utils.UrlUtils;
+import uk.gov.laa.gpfd.utils.UrlBuilder;
 
 import java.net.URI;
 import java.sql.Timestamp;
@@ -17,16 +14,13 @@ import java.util.Objects;
  * Abstract base class for report mappers that provides common functionality
  * for constructing report URLs and basic mapping operations.
  */
-@Slf4j
 @Component
 public abstract class AbstractReportMapper {
 
-    protected final AppConfig appConfig;
+    protected final UrlBuilder urlBuilder;
 
-    @Autowired
-    protected AbstractReportMapper(AppConfig appConfig) {
-        //TODO???
-        this.appConfig = appConfig;
+    protected AbstractReportMapper(UrlBuilder urlBuilder) {
+        this.urlBuilder = urlBuilder;
     }
 
     /**
@@ -38,8 +32,7 @@ public abstract class AbstractReportMapper {
      */
     protected URI constructDownloadUrl(Report report) {
         try {
-            var baseUrl = UrlUtils.getServiceUrl();
-            log.info("BaseURL is " + UrlUtils.getServiceUrl());
+            var baseUrl = urlBuilder.getServiceUrl();
             var reportId = report.getIdAsString();
             if (Objects.equals(report.getOutputType().getExtension(), FileExtension.S3STORAGE.getExtension())) {
                 return URI.create("%s/%s/%s/%s".formatted(baseUrl,"reports", reportId, "file"));
@@ -49,17 +42,6 @@ public abstract class AbstractReportMapper {
         } catch (Exception e) {
             throw new IllegalStateException("Failed to construct report URL", e);
         }
-    }
-
-    /**
-     * Constructs a simple string URL for the given report.
-     *
-     * @param report the report to construct URL for
-     * @return the constructed URL string
-     * @throws IllegalStateException if URL construction fails
-     */
-    protected String constructReportUrl(Report report) {
-        return constructDownloadUrl(report).toString();
     }
 
     /**

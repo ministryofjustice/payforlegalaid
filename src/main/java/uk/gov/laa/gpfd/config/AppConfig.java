@@ -255,6 +255,9 @@ public class AppConfig {
      * These converters enable the application to handle various content types when interacting
      * with external APIs.
      * </p>
+     * <p>
+     * Although it appears to have no usages in this repo, this is needed by the acceptance tests currently.
+     * </p>
      *
      * @return a configured {@link RestTemplate} instance with custom message converters.
      */

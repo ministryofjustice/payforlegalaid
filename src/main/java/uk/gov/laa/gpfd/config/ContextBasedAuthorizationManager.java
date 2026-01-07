@@ -14,11 +14,9 @@ public class ContextBasedAuthorizationManager implements AuthorizationManager<Re
 
     @Override
     public AuthorizationDecision check(Supplier<Authentication> authenticationSupplier, RequestAuthorizationContext context) {
-
         if (authenticationSupplier == null || context == null) {
             throw new IllegalArgumentException("Authentication supplier and context must not be null");
         }
-
 
         Authentication authentication = authenticationSupplier.get();
         if (authentication == null || !authentication.isAuthenticated()) {

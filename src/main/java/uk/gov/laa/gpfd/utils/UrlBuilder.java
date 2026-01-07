@@ -1,14 +1,12 @@
 package uk.gov.laa.gpfd.utils;
 
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-public abstract class UrlUtils {
+@Component
+public class UrlBuilder {
 
-    private UrlUtils() {
-        // Can't instantiate utility class
-    }
-
-    public static String getServiceUrl() {
+    public String getServiceUrl() {
         return ServletUriComponentsBuilder.fromCurrentContextPath().build().toString();
     }
 }
