@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.laa.gpfd.config.AppConfig;
 import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.dao.ReportsTrackingDao;
 import uk.gov.laa.gpfd.data.ReportsTestDataFactory;
@@ -31,23 +30,21 @@ class ReportsTrackingServiceTest {
 
     private static final UUID id = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
     private static final String VALID_TEST_USER = "Valid Test User";
-    private static final String testUrl = "http://localhost:8080/excel/" + id;
+    private static final String TEST_URL = "http://localhost:8080/excel/" + id;
 
-    Report testReportDetails = ReportsTestDataFactory.createTestReport();
+    private final Report testReportDetails = ReportsTestDataFactory.createTestReport();
 
     @Mock
-    ReportsTrackingDao reportsTrackingDao;
+    private ReportsTrackingDao reportsTrackingDao;
     @Mock
-    UserService userService;
+    private UserService userService;
     @Mock
-    ReportsTrackingMapper reportsTrackingMapper;
-    @Spy
-    AppConfig config;
+    private ReportsTrackingMapper reportsTrackingMapper;
     @Mock
-    ReportDao reportDetailsDao;
+    private ReportDao reportDetailsDao;
 
     @InjectMocks
-    ReportsTrackingService reportsTrackingService;
+    private ReportsTrackingService reportsTrackingService;
 
     @Test
     void shouldSuccessfullyUpdateReportsTrackingWhenValidDataIsProvided() {
@@ -58,7 +55,7 @@ class ReportsTrackingServiceTest {
         when(userService.getCurrentUserName()).thenReturn(VALID_TEST_USER);
 
         // Then
-        reportsTrackingService.saveReportsTracking(requestedId, testUrl);
+        reportsTrackingService.saveReportsTracking(requestedId, TEST_URL);
         ArgumentCaptor<ReportsTracking> captor = ArgumentCaptor.forClass(ReportsTracking.class);
 
         // Then
@@ -74,7 +71,7 @@ class ReportsTrackingServiceTest {
         // When
         // Then
         assertThrows(ReportIdNotFoundException.class,
-                () -> reportsTrackingService.saveReportsTracking(invalidId, testUrl));
+                () -> reportsTrackingService.saveReportsTracking(invalidId, TEST_URL));
     }
 
 
@@ -87,7 +84,7 @@ class ReportsTrackingServiceTest {
         // When
         // Then
         assertThrows(NullPointerException.class,
-                () -> reportsTrackingService.saveReportsTracking(requestedId, testUrl));
+                () -> reportsTrackingService.saveReportsTracking(requestedId, TEST_URL));
     }
 
     @Test
@@ -102,7 +99,7 @@ class ReportsTrackingServiceTest {
 
         // When
         assertThrows(DatabaseFetchException.class,
-                () -> reportsTrackingService.saveReportsTracking(requestedId, testUrl));
+                () -> reportsTrackingService.saveReportsTracking(requestedId, TEST_URL));
     }
 
     @Test
@@ -114,8 +111,8 @@ class ReportsTrackingServiceTest {
         when(userService.getCurrentUserName()).thenReturn(VALID_TEST_USER);
 
         // When & Assert
-        Thread thread1 = new Thread(() -> reportsTrackingService.saveReportsTracking(requestedId, testUrl));
-        Thread thread2 = new Thread(() -> reportsTrackingService.saveReportsTracking(requestedId, testUrl));
+        Thread thread1 = new Thread(() -> reportsTrackingService.saveReportsTracking(requestedId, TEST_URL));
+        Thread thread2 = new Thread(() -> reportsTrackingService.saveReportsTracking(requestedId, TEST_URL));
 
         thread1.start();
         thread2.start();
