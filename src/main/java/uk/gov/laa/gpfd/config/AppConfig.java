@@ -72,10 +72,6 @@ import static uk.gov.laa.gpfd.services.DataStreamer.createJdbcStreamer;
 @Configuration
 public class AppConfig {
 
-    @Getter
-    @Value("${gpfd.url}")
-    private String serviceUrl;
-
     @Value("${excel.security.compression-ratio:0.001}")
     private double allowedCompressionRatio;
 
@@ -258,6 +254,9 @@ public class AppConfig {
      * </ul>
      * These converters enable the application to handle various content types when interacting
      * with external APIs.
+     * </p>
+     * <p>
+     * Although it appears to have no usages in this repo, this is needed by the acceptance tests currently.
      * </p>
      *
      * @return a configured {@link RestTemplate} instance with custom message converters.
