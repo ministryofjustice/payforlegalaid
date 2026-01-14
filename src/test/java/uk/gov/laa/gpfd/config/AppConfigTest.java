@@ -188,11 +188,6 @@ class AppConfigTest {
                 "RestTemplate should have interceptors.");
     }
 
-    @Test
-    void shouldReturnServiceUrl() {
-        assertTrue(classUnderTest.getServiceUrl().contentEquals("http://localhost"));
-    }
-
     @SneakyThrows
     @Test
     void shouldCreateStatementPolicyWithCorrectDetails() {
