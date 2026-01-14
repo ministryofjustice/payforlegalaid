@@ -2,10 +2,10 @@ package uk.gov.laa.gpfd.mapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.laa.gpfd.config.AppConfig;
 import uk.gov.laa.gpfd.model.ImmutableReportsTracking;
 import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.model.ReportsTracking;
+import uk.gov.laa.gpfd.utils.UrlBuilder;
 
 /**
  * Mapper that converts {@link Report} entities to {@link ReportsTracking} DTOs with tracking information.
@@ -18,11 +18,11 @@ import uk.gov.laa.gpfd.model.ReportsTracking;
  * </ul>
  */
 @Component
-public class ReportsTrackingMapper extends AbstractReportMapper  {
+public class ReportsTrackingMapper extends AbstractReportMapper {
 
     @Autowired
-    private ReportsTrackingMapper(AppConfig appConfig) {
-        super(appConfig);
+    private ReportsTrackingMapper(UrlBuilder urlBuilder) {
+        super(urlBuilder);
     }
 
     /**
@@ -34,9 +34,9 @@ public class ReportsTrackingMapper extends AbstractReportMapper  {
      * @throws IllegalArgumentException if any input is invalid
      * @throws IllegalStateException if URL construction fails
      */
-    public ReportsTracking map(Report report, String currentUserName) {
+    public ReportsTracking map(Report report, String currentUserName, String requestUrl) {
         return ImmutableReportsTracking.builderFor(report)
-                .reportUrl(constructReportUrl(report))
+                .reportUrl(requestUrl)
                 .creationDate(currentTimestamp())
                 .reportCreator(currentUserName)
                 .build();

@@ -1,6 +1,8 @@
 gpfd:
-  url: ${GPFD_URL}
-  redirect-uri-template: ${gpfd.url}/login/oauth2/code/gpfd-azure-uat
+  # This is the url which the Active directory dev app registration will redirect to after SSO is complete
+  # baseUrl is a Spring Security template that resolves based on the current URL
+  redirect-uri-template: "{baseUrl}/login/oauth2/code/gpfd-azure-uat"
+  # Note,"gpfd-azure-uat" is also known as the Oauth2 'registrationId'
 
   # MOJFIN database config
   datasource:

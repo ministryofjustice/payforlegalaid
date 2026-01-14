@@ -9,7 +9,7 @@ on:
       environment_name:
         type: string
         required: true
-      gpfd_url:
+      ingress_url:
         type: string
         required: true
       alert_severity:
@@ -103,7 +103,7 @@ jobs:
           NAMESPACE: ${{ secrets.kube_namespace }}
           ALERT_SEVERITY: ${{ inputs.alert_severity }}
           ENV_NAME: ${{ inputs.environment_name }}
-          GPFD_URL: ${{ inputs.gpfd_url }}
+          INGRESS_URL: ${{ inputs.ingress_url }}
           SECRET_NAME: ${{ inputs.secret_name }}
           DATA_REPOSITORY: ${{ vars.DATA_ECR_REPOSITORY }}
           PERMISSION_REP000_GROUP_ID: ${{ vars.PERMISSION_REP000_GROUP_ID }}
@@ -119,7 +119,7 @@ jobs:
             "network-policy:network-policy"
             "prometheus-rules:prometheus-rules"
             "grafana-dashboard:grafana-dashboard:\$ENV_NAME,\$NAMESPACE"
-            "deployment:deployment:\$ENV_NAME,\$SECRET_NAME,\$GPFD_URL,\$REGISTRY,\$REPOSITORY,\$IMAGE_TAG,\$DATA_REPOSITORY,\$PERMISSION_REP000_GROUP_ID,\$PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID,\$INGRESS_CLASS_NAME,\$IP_LIST"
+            "deployment:deployment:\$ENV_NAME,\$SECRET_NAME,\$INGRESS_URL,\$REGISTRY,\$REPOSITORY,\$IMAGE_TAG,\$DATA_REPOSITORY,\$PERMISSION_REP000_GROUP_ID,\$PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID,\$INGRESS_CLASS_NAME,\$IP_LIST"
           )
           
           for item in "${template_processing[@]}"; do
@@ -133,6 +133,25 @@ jobs:
               DOLLAR='$' envsubst < "$input" > "$output"
             fi
           done
+                    
+          if [[ "${ENV_NAME}" == "prod" ]]; then
+            yq -i '
+                .spec.tls |= (. // []) + [{
+                  "hosts": ["get-legal-aid-data.service.justice.gov.uk"], 
+                  "secretName": "tls-certificate"
+                }]
+                | .spec.rules += [{
+                    "host": "get-legal-aid-data.service.justice.gov.uk",
+                    "http": {
+                      "paths": [{
+                        "path": "/", 
+                        "pathType": "ImplementationSpecific", 
+                        "backend": .spec.rules[0].http.paths[0].backend
+                      }]
+                  }
+                }]
+                ' deployments/ingress.yml
+          fi
 
       - name: Authenticate with Cloud Platform and Deploy
         env:

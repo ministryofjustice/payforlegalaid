@@ -40,9 +40,6 @@ class AppConfigTest {
     @Autowired
     ApplicationContext applicationContext;
 
-    @Autowired
-    AppConfig classUnderTest;
-
     @Test
     void shouldReadOnlyDataSourceBeanWithQualifier() {
         // Given

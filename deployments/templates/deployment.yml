@@ -153,8 +153,6 @@ spec:
             timeoutSeconds: 5
             failureThreshold: 3
           env:
-            - name: GPFD_URL
-              value: https://${GPFD_URL}
             - name: SPRING_PROFILES_ACTIVE
               value: ${ENV_NAME}
             - name: AZURE_CLIENT_SECRET

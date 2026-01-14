@@ -8,8 +8,7 @@ updates:
   - package-ecosystem: "maven" # See documentation for possible values
     directory: "/" # Location of package manifests
     schedule:
-      interval: "daily"
-      time: "15:00"
+      interval: "weekly"
     groups:
       minor:
         update-types:
@@ -20,8 +19,7 @@ updates:
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
-      interval: "daily"
-      time: "15:00"
+      interval: "weekly"
     groups:
       minor:
         update-types:
@@ -32,8 +30,7 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "daily"
-      time: "15:00"
+      interval: "weekly"
     groups:
       minor:
         update-types:
