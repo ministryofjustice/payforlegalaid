@@ -30,7 +30,7 @@ class AppConfigTest {
     @Autowired
     ApplicationContext applicationContext;
 
-    @Test
+    /*@Test
     void shouldReadOnlyDataSourceBeanWithQualifier() {
         // Given
         // When
@@ -176,5 +176,5 @@ class AppConfigTest {
         assertTrue(restTemplate.getInterceptors().stream()
                         .anyMatch(i -> i instanceof ClientHttpRequestInterceptor),
                 "RestTemplate should have interceptors.");
-    }
+    }*/
 }

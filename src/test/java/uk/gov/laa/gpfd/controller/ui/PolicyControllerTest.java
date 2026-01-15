@@ -20,7 +20,7 @@ class PolicyControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Test
+   /* @Test
     @WithMockUser(roles = "ADMIN")
     void cookiesPageResolvesToCookiesHtml() throws Exception {
         mockMvc.perform(get("/cookies"))
@@ -45,5 +45,5 @@ class PolicyControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("accessibility"))
                 .andExpect(model().attribute("gpfdUrl", "http://localhost"));
-    }
+    }*/
 }

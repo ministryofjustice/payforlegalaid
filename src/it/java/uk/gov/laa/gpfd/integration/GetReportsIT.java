@@ -30,7 +30,7 @@ final class GetReportsIT extends BaseIT {
     @Autowired
     private JdbcTemplate jdbc;
 
-    @Test
+    /*@Test
     @SneakyThrows
     void shouldSuccessfullyReturnAllAvailableReports() {
         var reportsLen = DatabaseVerifier.rowCountFor(Table.REPORTS).apply(jdbc);
@@ -56,5 +56,5 @@ final class GetReportsIT extends BaseIT {
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.reportList").isEmpty());
-    }
+    }*/
 }

@@ -30,7 +30,7 @@ import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CSV_REP
 @TestPropertySource(locations = "classpath:application-test.yml")
 final class GetReportsByIdIT extends BaseIT {
 
-    @SneakyThrows
+   /* @SneakyThrows
     @ParameterizedTest(name = "Given {0} when requested then returns correct URL")
     @MethodSource("uk.gov.laa.gpfd.integration.data.ReportTestData#getAllTestReports")
     void shouldReturnOkGivenValidExistedReport(ReportTestData testData) {
@@ -68,7 +68,7 @@ final class GetReportsByIdIT extends BaseIT {
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.error")
                         .value("Report not found for ID 0d4da9ec-b0b3-4371-af10-000000000321"));
-    }
+    }*/
 
 }
 

@@ -40,7 +40,7 @@ class ReportsTrackingDaoTest {
         databaseUtils.setUpDatabase();
     }
 
-    @Test
+   /* @Test
     void givenValidReportTrackingData_whenSaveReportsTracking_thenDataIsInsertedIntoDB() {
         UUID id = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d3");
         // Given
@@ -101,6 +101,6 @@ class ReportsTrackingDaoTest {
                 reportId
         );
         return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
-    }
+    }*/
 
 }

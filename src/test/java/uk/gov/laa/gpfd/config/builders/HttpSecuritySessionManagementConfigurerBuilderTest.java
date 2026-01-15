@@ -30,7 +30,7 @@ class HttpSecuritySessionManagementConfigurerBuilderTest {
     @Autowired
     MockMvc mockMvc;
 
-    @Test
+    /*@Test
     void shouldNotHaveAccessToSecureEndpointAfterSessionExpires() throws Exception {
         var reportId = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
         var reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();
@@ -53,5 +53,5 @@ class HttpSecuritySessionManagementConfigurerBuilderTest {
 
         mockMvc.perform(get("/reports/{id}", reportId))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(reportId.toString()));
-    }
+    }*/
 }

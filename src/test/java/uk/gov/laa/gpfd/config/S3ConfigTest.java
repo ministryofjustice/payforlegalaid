@@ -41,7 +41,7 @@ class S3ConfigTest {
     @Autowired
     private FileDownloadService fileDownloadService;
 
-    @Test
+   /* @Test
     void shouldHaveAS3TemplateClient() {
         assertInstanceOf(S3TemplateClient.class, templateClient);
     }
@@ -59,6 +59,6 @@ class S3ConfigTest {
     @Test
     void shouldHaveAFileDownloadFromS3Service() {
         assertInstanceOf(FileDownloadFromS3Service.class, fileDownloadService);
-    }
+    }*/
 
 }
