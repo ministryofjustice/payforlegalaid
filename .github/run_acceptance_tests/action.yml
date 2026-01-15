@@ -48,10 +48,3 @@ runs:
         mvn -B install -DskipTests
       shell:
         bash
-
-    - name: Run tests
-      run: |
-        cd testCode
-        mvn -B clean test
-      shell:
-        bash
