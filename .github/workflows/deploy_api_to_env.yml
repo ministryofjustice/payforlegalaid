@@ -57,9 +57,10 @@ jobs:
         uses: './.github/snyk-scan'
         env:
           SNYK_TOKEN: ${{ secrets.snyk_token }}
-          ENV_NAME: ${{ inputs.environment_name }}
 
       - name: Set Spring profile
+        env:
+          ENV_NAME: ${{ inputs.environment_name }}
         run: echo "SPRING_PROFILES_ACTIVE=${ENV_NAME}" >> $GITHUB_ENV
 
       - uses: './.github/login-to-aws'

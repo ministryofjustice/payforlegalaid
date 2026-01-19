@@ -183,4 +183,4 @@ jobs:
         run: |
           echo "Waiting before killing the test pod to allow tests to run..."
           sleep 360
-          kubectl delete pod "$KUBE_NAMESPACE" -n "$APP_NAME" --force --grace-period=0
+          kubectl delete pod "$APP_NAME" -n "$KUBE_NAMESPACE" --force --grace-period=0
