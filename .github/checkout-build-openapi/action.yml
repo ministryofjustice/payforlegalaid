@@ -40,7 +40,7 @@ runs:
       with:
         repository: ministryofjustice/payforlegalaid-openapi
         path: openapi
-        ref: refs/tags/v${OPENAPI_VERSION}
+        ref: refs/tags/v${{ env.OPENAPI_VERSION }}
 
 
     - name: Build openapi spec dependency
