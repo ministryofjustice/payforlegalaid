@@ -36,11 +36,12 @@ runs:
     - name: Checkout openapi spec
       uses: actions/checkout@v4
       env:
-        OPEN_API_VERSION: ${{ steps.get_openapi_version.outputs.version }}
+        OPENAPI_VERSION: ${{ steps.get_openapi_version.outputs.version }}
       with:
         repository: ministryofjustice/payforlegalaid-openapi
         path: openapi
-        ref: refs/tags/v$OPEN_API_VERSION
+        ref: refs/tags/v$OPENAPI_VERSION
+
 
     - name: Build openapi spec dependency
       run: |
