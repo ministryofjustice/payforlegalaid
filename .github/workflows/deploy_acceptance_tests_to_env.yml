@@ -36,15 +36,17 @@ jobs:
       - name: Checkout GitHub repository
         uses: actions/checkout@v6
         with:
-          repository: ${{ env.TEST_REPO }}
+          repository: $TEST_REPO
           ref: main
           path: testCode
 
       - name: Checkout GitHub repository
         uses: actions/checkout@v6
+        env:
+          DEV_SOCKET_KEY: ${{ secrets.DEV_SOCKET_KEY }}
         with:
-          repository: ${{ env.DATA_REPO }}
-          ssh-key: ${{ secrets.DEV_SOCKET_KEY }}
+          repository: $DATA_REPO
+          ssh-key: $DEV_SOCKET_KEY
           sparse-checkout: data
           sparse-checkout-cone-mode: true
           path: dataRepo
@@ -56,58 +58,61 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
-          role-to-assume: ${{ env.ECR_ROLE }}
-          aws-region: ${{ env.ECR_REGION }}
+          role-to-assume: $ECR_ROLE
+          aws-region: $ECR_REGION
 
       - name: Login to ECR
         uses: aws-actions/amazon-ecr-login@v2
         id: login-ecr
         with:
-          role-to-assume: ${{ env.ECR_ROLE }}
-          aws-region: ${{ env.ECR_REGION }}
+          role-to-assume: $ECR_ROLE
+          aws-region: $ECR_REGION
 
       - name: Configure Kubernetes access
         run: |
-          echo "${{ env.KUBE_CERT }}" > ca.crt
+          echo "$KUBE_CERT" > ca.crt
           
-          kubectl config set-cluster ${{ env.KUBE_CLUSTER }} \
+          kubectl config set-cluster $KUBE_CLUSTER \
             --certificate-authority=./ca.crt \
-            --server=https://${{ env.KUBE_CLUSTER }}
+            --server=https://$KUBE_CLUSTER
           
           kubectl config set-credentials deploy-user \
-            --token=${{ secrets.KUBE_TOKEN_DEV }}
+            --token=$KUBE_TOKEN
           
-          kubectl config set-context ${{ env.KUBE_CLUSTER }} \
-            --cluster=${{ env.KUBE_CLUSTER }} \
+          kubectl config set-context $KUBE_CLUSTER \
+            --cluster=$KUBE_CLUSTER \
             --user=deploy-user \
-            --namespace=${{ env.KUBE_NAMESPACE }}
+            --namespace=$KUBE_NAMESPACE
           
-          kubectl config use-context ${{ env.KUBE_CLUSTER }}
+          kubectl config use-context $KUBE_CLUSTER
 
       - name: Build and push Docker image
         id: build-container
+        env:
+         DOCKER_BUILDKIT: 1
+         USERNAME: ${{ secrets.OPENAPI_PACKAGE_USER }}
+         PASSWORD: ${{ secrets.OPENAPI_PACKAGE_PASSWORD }}
+         REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+         GIT_SHA: ${{ github.sha }}
         run: |
           cd testCode
           echo "Building test container image..."
-            
-          export REGISTRY=${{ steps.login-ecr.outputs.registry }}
-          
+                      
           docker buildx build \
             --push \
             --platform linux/amd64 \
             --secret id=maven_username,env=USERNAME \
             --secret id=maven_password,env=PASSWORD \
-            --tag $REGISTRY/${{ env.ECR_REPOSITORY }}:${{ env.APP_NAME }}-${{ github.sha }} \
+            --tag "$REGISTRY/$ECR_REPOSITORY:$APP_NAME-$GIT_SHA" \
             .
         shell: bash
-        env:
-          DOCKER_BUILDKIT: 1
-          USERNAME: ${{ secrets.OPENAPI_PACKAGE_USER }}
-          PASSWORD: ${{ secrets.OPENAPI_PACKAGE_PASSWORD }}
 
       - name: Update deployment manifest
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          GIT_SHA: ${{ github.sha }}
         run: |
-          TEST_IMAGE="$REGISTRY/${{ env.ECR_REPOSITORY }}:${{ env.APP_NAME }}-${{ github.sha }}"
+          TEST_IMAGE="$REGISTRY/$ECR_REPOSITORY:$APP_NAME-$GIT_SHA" 
           echo "TEST_IMAGE=$TEST_IMAGE" >> $GITHUB_ENV
 
           yq eval --inplace \
@@ -121,8 +126,6 @@ jobs:
           echo "ECR_REPO=$ecr_repo" >> $GITHUB_ENV
           echo "IMAGE_TAG=$image_tag" >> $GITHUB_ENV
         shell: bash
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
 
       - name: Deploy to Kubernetes
         run: |
@@ -132,7 +135,7 @@ jobs:
           CHECKSUM=$(sha256sum normalized-changelog.xml | cut -d' ' -f1)
 
           kubectl create configmap liquibase-changelog \
-          --namespace ${{ env.KUBE_NAMESPACE }} \
+          --namespace $KUBE_NAMESPACE \
           --from-file=changelog.xml=normalized-changelog.xml \
           --dry-run=client -o yaml | \
           yq eval '
@@ -145,13 +148,13 @@ jobs:
           echo "Checking for existing pod..."
           
           # Clean up any existing pod
-          if kubectl -n ${{ env.KUBE_NAMESPACE }} get pod -l app=${{ env.APP_NAME }} 2>/dev/null; then
+          if kubectl -n $KUBE_NAMESPACE get pod -l app=$APP_NAME 2>/dev/null; then
             echo "::warning::Existing test pod found - replacing it"
-            kubectl -n ${{ env.KUBE_NAMESPACE }} delete pod -l app=${{ env.APP_NAME }} --force --grace-period=0
+            kubectl -n $KUBE_NAMESPACE delete pod -l app=$APP_NAME --force --grace-period=0
             sleep 5  # Wait for termination
           fi
 
-          kubectl -n ${{ env.KUBE_NAMESPACE }} create -f testCode/deployment/pod.yaml
+          kubectl -n $KUBE_NAMESPACE create -f testCode/deployment/pod.yaml
         shell: bash
 
       - name: Generate comprehensive deployment summary
@@ -180,4 +183,4 @@ jobs:
         run: |
           echo "Waiting before killing the test pod to allow tests to run..."
           sleep 360
-          kubectl delete pod ${{ env.APP_NAME }} -n ${{ env.KUBE_NAMESPACE }} --force --grace-period=0
+          kubectl delete pod "$APP_NAME" -n "$KUBE_NAMESPACE" --force --grace-period=0
