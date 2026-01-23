@@ -59,7 +59,9 @@ jobs:
           SNYK_TOKEN: ${{ secrets.snyk_token }}
 
       - name: Set Spring profile
-        run: echo "SPRING_PROFILES_ACTIVE=${{ inputs.environment_name }}" >> $GITHUB_ENV
+        env:
+          ENV_NAME: ${{ inputs.environment_name }}
+        run: echo "SPRING_PROFILES_ACTIVE=${ENV_NAME}" >> $GITHUB_ENV
 
       - uses: './.github/login-to-aws'
         env:
@@ -80,8 +82,10 @@ jobs:
         
       - name: Set ingress class based on environment
         id: ingress_class
+        env:
+          ENV_NAME: ${{ inputs.environment_name }}
         run: |
-          if [[ "${{ inputs.environment_name }}" == "prod" ]]; then
+          if [[ "${ENV_NAME}" == "prod" ]]; then
             echo "ingress_class=modsec" >> $GITHUB_OUTPUT
           else
             echo "ingress_class=modsec-non-prod" >> $GITHUB_OUTPUT
@@ -157,10 +161,12 @@ jobs:
         env:
           KUBE_NAMESPACE: ${{ secrets.kube_namespace }}
           KUBE_CLUSTER: ${{ secrets.kube_cluster }}
+          KUBE_CERT: ${{ secrets.kube_cert }}
+          KUBE_TOKEN: ${{ secrets.kube_token }}
         run: |
-          echo "${{ secrets.kube_cert }}" > ca.crt
+          echo "${KUBE_CERT}" > ca.crt
           kubectl config set-cluster ${KUBE_CLUSTER} --certificate-authority=./ca.crt --server=https://${KUBE_CLUSTER}
-          kubectl config set-credentials deploy-user --token=${{ secrets.kube_token }}
+          kubectl config set-credentials deploy-user --token=${KUBE_TOKEN}
           kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
           kubectl config use-context ${KUBE_CLUSTER}
 

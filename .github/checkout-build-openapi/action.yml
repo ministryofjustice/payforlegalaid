@@ -22,9 +22,11 @@ runs:
 
     - name: Get openapi version from pom
       id: get_openapi_version
+      env:
+        SUBFOLDER: ${{ inputs.subfolder }}
       run: |
-        if [[ -n "${{ inputs.subfolder }}" ]]; then 
-          cd ${{ inputs.subfolder }}
+        if [[ -n "$SUBFOLDER" ]]; then 
+          cd "$SUBFOLDER"
         fi
         VERSION=$(mvn help:evaluate -Dexpression="payforlegalaid-openapi.version" -q -DforceStdout)
         echo "version=$VERSION" >> $GITHUB_OUTPUT
@@ -33,10 +35,13 @@ runs:
 
     - name: Checkout openapi spec
       uses: actions/checkout@v4
+      env:
+        OPENAPI_VERSION: ${{ steps.get_openapi_version.outputs.version }}
       with:
         repository: ministryofjustice/payforlegalaid-openapi
         path: openapi
-        ref: refs/tags/v${{ steps.get_openapi_version.outputs.version }}
+        ref: refs/tags/v${{ env.OPENAPI_VERSION }}
+
 
     - name: Build openapi spec dependency
       run: |
