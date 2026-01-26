@@ -1,10 +1,13 @@
 package uk.gov.laa.gpfd.config;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -31,8 +34,12 @@ import java.util.stream.Collectors;
  * to manage specific security aspects.
  * </p>
  */
+
+@Slf4j
+@Profile("!local & !ephemeral & !e2e")
 @Configuration
 @RequiredArgsConstructor
+@EnableWebSecurity
 public class SecurityConfig {
 
     /**
@@ -42,7 +49,7 @@ public class SecurityConfig {
      * This dependency is injected via constructor injection due to the
      * {@link RequiredArgsConstructor} annotation.
      */
-    private final AuthorizeHttpRequestsBuilder authorizeHttpRequestsBuilder;
+   // private final AuthorizeHttpRequestsBuilder authorizeHttpRequestsBuilder;
 
     /**
      * The custom {@link SessionManagementConfigurerBuilder} responsible for configuring
@@ -75,6 +82,8 @@ public class SecurityConfig {
      */
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+        log.info(">>> Building SecurityFilterChain from SecurityConfig");
+
         return httpSecurity
                 .authorizeHttpRequests(auth -> auth .requestMatchers(PUBLIC_PATHS).permitAll()
                         .anyRequest().authenticated() )
