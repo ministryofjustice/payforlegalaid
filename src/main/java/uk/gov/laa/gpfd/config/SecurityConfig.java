@@ -6,8 +6,20 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+
+import java.util.Map;
+import java.util.Set;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Configuration class to set up Spring Security for the application.
@@ -39,6 +51,15 @@ public class SecurityConfig {
      * {@link RequiredArgsConstructor} annotation.
      */
     private final SessionManagementConfigurerBuilder sessionManagementConfigurerBuilder;
+    public static final String[] PUBLIC_PATHS = {
+            "/actuator/**",
+            "/logout",
+            "/logout-success",
+            "/css/**",
+            "/assets/**",
+            "/webjars/**",
+            "/favicon.ico"
+    };
 
     /**
      * Configures the {@link SecurityFilterChain} for the HTTP security settings.
@@ -54,7 +75,6 @@ public class SecurityConfig {
      */
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
         return httpSecurity
                 .authorizeHttpRequests(auth -> auth .requestMatchers(PUBLIC_PATHS).permitAll()
                         .anyRequest().authenticated() )
