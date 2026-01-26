@@ -21,7 +21,6 @@ import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
  */
 @Configuration
 @RequiredArgsConstructor
-@ConditionalOnProperty(name = "spring.cloud.azure.active-directory.enabled", havingValue = "true")
 public class SecurityConfig {
 
     /**
@@ -56,9 +55,47 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .authorizeHttpRequests(authorizeHttpRequestsBuilder)    // Apply authorization rules
-                .sessionManagement(sessionManagementConfigurerBuilder)  // Apply session management configuration
+        return httpSecurity
+                .authorizeHttpRequests(auth -> auth .requestMatchers(PUBLIC_PATHS).permitAll()
+                        .anyRequest().authenticated() )
+
+                .oauth2Login(oauth2 -> oauth2 .userInfoEndpoint(userInfo -> userInfo.oidcUserService(oidcUserService()))
+                        .successHandler((request, response, authentication) -> { response.sendRedirect("/"); }) )
+                .sessionManagement(sessionManagementConfigurerBuilder)
                 .build();
     }
+
+    @Bean
+    public OidcUserService oidcUserService() {
+        return new OidcUserService() {
+            @Override
+            public OidcUser loadUser(OidcUserRequest userRequest) {
+                OidcUser oidcUser = super.loadUser(userRequest);
+                Set<GrantedAuthority> authorities = getAuthorities(oidcUser.getAttributes());
+                return new DefaultOidcUser(authorities, oidcUser.getIdToken(), oidcUser.getUserInfo());
+            }
+        };
+    }
+
+    public Set<GrantedAuthority> getAuthorities(Map<String, Object> attributes) {
+        List<String> roles = parseRawRoles(attributes.get("LAA_APP_ROLES"));
+        return new SimpleAuthorityMapper()
+                .mapAuthorities(
+                        roles.stream()
+                                .map(SimpleGrantedAuthority::new)
+                                .collect(Collectors.toList())
+                );
+    }
+
+    private List<String> parseRawRoles(Object rawRoles) {
+        if (rawRoles instanceof List<?> list) {
+            return list.stream().map(Object::toString).toList();
+        } else if (rawRoles instanceof String str) {
+            return List.of(str.split(","));
+        } else {
+            return List.of();
+        }
+    }
+
 
 }
