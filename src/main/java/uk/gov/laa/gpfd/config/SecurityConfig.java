@@ -2,6 +2,7 @@ package uk.gov.laa.gpfd.config;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
+import jakarta.annotation.PostConstruct;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,10 +37,9 @@ import java.util.stream.Collectors;
  */
 
 @Slf4j
-@Profile("!local & !ephemeral & !e2e")
 @Configuration
-@RequiredArgsConstructor
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     /**
@@ -67,6 +67,10 @@ public class SecurityConfig {
             "/webjars/**",
             "/favicon.ico"
     };
+
+    @PostConstruct public void init() {
+        log.info(">>> SecurityConfig @PostConstruct executed");
+    }
 
     /**
      * Configures the {@link SecurityFilterChain} for the HTTP security settings.
