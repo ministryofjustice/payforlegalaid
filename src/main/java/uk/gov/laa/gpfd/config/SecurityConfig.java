@@ -1,5 +1,6 @@
 package uk.gov.laa.gpfd.config;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import jakarta.annotation.PostConstruct;
@@ -9,6 +10,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,6 +26,7 @@ import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.List;
@@ -85,18 +92,58 @@ public class SecurityConfig {
      * @throws Exception if any error occurs during the configuration of HTTP security.
      */
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity httpSecurity, ClientRegistrationRepository clientRegistrationRepository) throws Exception {
         log.info(">>> Building SecurityFilterChain from SecurityConfig");
 
         return httpSecurity
                 .authorizeHttpRequests(auth -> auth .requestMatchers(PUBLIC_PATHS).permitAll()
                         .anyRequest().authenticated() )
-
-                .oauth2Login(oauth2 -> oauth2 .userInfoEndpoint(userInfo -> userInfo.oidcUserService(oidcUserService()))
-                        .successHandler((request, response, authentication) -> { response.sendRedirect("/"); }) )
+                .oauth2Login(oauth2 -> oauth2 .authorizationEndpoint(authorization ->
+                        authorization.authorizationRequestResolver( authorizationRequestResolver(clientRegistrationRepository)))
+                .userInfoEndpoint(userInfo -> userInfo.oidcUserService(oidcUserService())))
                 .sessionManagement(sessionManagementConfigurerBuilder)
                 .build();
     }
+
+    @Bean
+    public OAuth2AuthorizationRequestResolver authorizationRequestResolver(
+            ClientRegistrationRepository repo) {
+
+        DefaultOAuth2AuthorizationRequestResolver defaultResolver =
+                new DefaultOAuth2AuthorizationRequestResolver(
+                        repo,
+                        OAuth2AuthorizationRequestRedirectFilter.DEFAULT_AUTHORIZATION_REQUEST_BASE_URI
+                );
+
+        return new OAuth2AuthorizationRequestResolver() {
+
+            @Override
+            public OAuth2AuthorizationRequest resolve(HttpServletRequest request) {
+                OAuth2AuthorizationRequest authRequest = defaultResolver.resolve(request);
+                return customize(authRequest);
+            }
+
+            @Override
+            public OAuth2AuthorizationRequest resolve(HttpServletRequest request, String clientRegistrationId) {
+                OAuth2AuthorizationRequest authRequest = defaultResolver.resolve(request, clientRegistrationId);
+                return customize(authRequest);
+            }
+
+            private OAuth2AuthorizationRequest customize(OAuth2AuthorizationRequest authRequest) {
+                if (authRequest == null) {
+                    return null;
+                }
+
+                Map<String, Object> extraParams = new HashMap<>(authRequest.getAdditionalParameters());
+                extraParams.put("prompt", "none");   // ⭐ silent authentication
+
+                return OAuth2AuthorizationRequest.from(authRequest)
+                        .additionalParameters(extraParams)
+                        .build();
+            }
+        };
+    }
+
 
     @Bean
     public OidcUserService oidcUserService() {
