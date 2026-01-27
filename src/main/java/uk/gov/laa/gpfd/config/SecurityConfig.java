@@ -81,7 +81,7 @@ public class SecurityConfig {
                 .csrf(Customizer.withDefaults())
                 .oauth2Login(
                         oauth2Login -> //
-                                oauth2Login.loginPage("/oauth2/authorization/silas-identity"))
+                                oauth2Login.loginPage("/oauth2/authorization/gpfd-azure-dev"))
                 .oauth2Client(withDefaults())
                 .logout(
                         logout ->
