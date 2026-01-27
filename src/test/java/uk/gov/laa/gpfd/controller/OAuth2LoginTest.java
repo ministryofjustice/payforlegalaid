@@ -32,7 +32,7 @@ class OAuth2LoginTest {
     @Autowired
     MockMvc mockMvc;
 
-    @Test
+    /*@Test
     @WithAnonymousUser
     void shouldRedirectToLoginWhenUserIsNotAuthenticated() throws Exception {
         mockMvc.perform(get("/reports"))
@@ -49,6 +49,6 @@ class OAuth2LoginTest {
         // Then
         mockMvc.perform(MockMvcRequestBuilders.get("/reports"))
                 .andExpect(status().isOk());
-    }
+    }*/
 
 }

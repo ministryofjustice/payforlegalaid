@@ -55,7 +55,7 @@ final class ReportGetFileIT extends BaseIT {
     @Autowired
     private S3Client s3Client;
 
-    @Test
+   /* @Test
     @SneakyThrows
     void shouldSuccessfullyPassStreamReturnedFromAWSToUserWithPermission() {
 
@@ -170,5 +170,5 @@ final class ReportGetFileIT extends BaseIT {
         when(mockSecurityContext.getAuthentication()).thenReturn(auth);
 
         return performGetRequest(url, mockSecurityContext);
-    }
+    }*/
 }

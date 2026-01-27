@@ -76,11 +76,11 @@ public class AppConfig {
     private int defaultFetchSize;
 
     @Getter
-    @Value("${spring.cloud.azure.active-directory.credential.client-id}")
+    @Value("${spring.security.oauth2.client.registration.gpfd-azure-dev.client-id}")
     private String entraIdClientId;
 
     @Getter
-    @Value("${spring.cloud.azure.active-directory.profile.tenant-id}")
+    @Value("${entra.tenant-id}")
     private String entraIdTenantId;
 
     @Getter

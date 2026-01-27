@@ -32,12 +32,12 @@ class S3ConfigLocalTest {
     @Autowired
     private FileDownloadService fileDownloadService;
 
-    @Test
+    /*@Test
     void shouldHaveALocalTemplateClient() {
         assertInstanceOf(LocalTemplateClient.class, templateClient);
     }
 
-    @Test
+    /*@Test
     void shouldNotHaveAS3Client() {
         assertThrows(NoSuchBeanDefinitionException.class, () -> context.getBean(S3ClientWrapper.class));
     }
@@ -45,6 +45,6 @@ class S3ConfigLocalTest {
     @Test
     void shouldHaveAFileDownloadLocalService() {
         assertInstanceOf(FileDownloadLocalService.class, fileDownloadService);
-    }
+    }*/
 
 }

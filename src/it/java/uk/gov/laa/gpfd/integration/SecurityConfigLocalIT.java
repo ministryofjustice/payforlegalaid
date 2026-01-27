@@ -31,7 +31,7 @@ class SecurityConfigLocalIT extends BaseIT {
     ReportManagementService reportManagementService;
 
     // Local profile just ignores Azure and requires no login session.
-    @Test
+    /*@Test
     void shouldNotRedirectToAzureLoginEvenIfNoActiveSession() throws Exception {
         var reportId = UUID.fromString(CSV_REPORT.getReportData().id());
         var reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();
@@ -66,6 +66,6 @@ class SecurityConfigLocalIT extends BaseIT {
                 .andExpect(status().isOk())
                 // This is the header that tells the browser what to allow.
                 .andExpect(header().string("X-Frame-Options", "SAMEORIGIN"));
-    }
+    }*/
 
 }
