@@ -136,6 +136,7 @@ public class SecurityConfig {
 
                 Map<String, Object> extraParams = new HashMap<>(authRequest.getAdditionalParameters());
                 extraParams.put("prompt", "none");   // ⭐ silent authentication
+                extraParams.put("domain_hint", "organizations");
 
                 return OAuth2AuthorizationRequest.from(authRequest)
                         .additionalParameters(extraParams)
