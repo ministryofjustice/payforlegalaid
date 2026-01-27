@@ -50,15 +50,6 @@ public class SecurityConfig {
      * {@link RequiredArgsConstructor} annotation.
      */
     private final SessionManagementConfigurerBuilder sessionManagementConfigurerBuilder;
-    public static final String[] PUBLIC_PATHS = {
-            "/actuator/**",
-            "/logout",
-            "/logout-success",
-            "/css/**",
-            "/assets/**",
-            "/webjars/**",
-            "/favicon.ico"
-    };
 
     @PostConstruct public void init() {
         log.info(">>> SecurityConfig @PostConstruct executed");
