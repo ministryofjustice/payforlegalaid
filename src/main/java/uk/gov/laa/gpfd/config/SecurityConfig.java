@@ -1,36 +1,21 @@
 package uk.gov.laa.gpfd.config;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import jakarta.annotation.PostConstruct;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
-import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
-import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
-import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
-import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
-import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
-import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.List;
-import java.util.stream.Collectors;
+import static org.springframework.security.config.Customizer.withDefaults;
 
 /**
  * Configuration class to set up Spring Security for the application.
@@ -92,90 +77,34 @@ public class SecurityConfig {
      * @throws Exception if any error occurs during the configuration of HTTP security.
      */
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity httpSecurity, ClientRegistrationRepository clientRegistrationRepository) throws Exception {
-        log.info(">>> Building SecurityFilterChain from SecurityConfig");
-
-        return httpSecurity
-                .authorizeHttpRequests(auth -> auth .requestMatchers(PUBLIC_PATHS).permitAll()
-                        .anyRequest().authenticated() )
-                .oauth2Login(oauth2 -> oauth2 .authorizationEndpoint(authorization ->
-                        authorization.authorizationRequestResolver( authorizationRequestResolver(clientRegistrationRepository)))
-                .userInfoEndpoint(userInfo -> userInfo.oidcUserService(oidcUserService())))
-                .sessionManagement(sessionManagementConfigurerBuilder)
-                .build();
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity httpSecurity, ClientRegistrationRepository clientRegistrationRepository)
+            throws Exception {
+        httpSecurity.authorizeHttpRequests(
+                        authz -> //
+                                authz
+                                        .requestMatchers("/logged-out")
+                                        .permitAll()
+                                        .anyRequest() //
+                                        .authenticated())
+                .csrf(Customizer.withDefaults())
+                .oauth2Login(
+                        oauth2Login -> //
+                                oauth2Login.loginPage("/oauth2/authorization/silas-identity"))
+                .oauth2Client(withDefaults())
+                .logout(
+                        logout ->
+                                logout.logoutSuccessHandler(
+                                        oidcLogoutSuccessHandler(clientRegistrationRepository)));
+        return httpSecurity.build();
     }
 
-    @Bean
-    public OAuth2AuthorizationRequestResolver authorizationRequestResolver(
-            ClientRegistrationRepository repo) {
-
-        DefaultOAuth2AuthorizationRequestResolver defaultResolver =
-                new DefaultOAuth2AuthorizationRequestResolver(
-                        repo,
-                        OAuth2AuthorizationRequestRedirectFilter.DEFAULT_AUTHORIZATION_REQUEST_BASE_URI
-                );
-
-        return new OAuth2AuthorizationRequestResolver() {
-
-            @Override
-            public OAuth2AuthorizationRequest resolve(HttpServletRequest request) {
-                OAuth2AuthorizationRequest authRequest = defaultResolver.resolve(request);
-                return customize(authRequest);
-            }
-
-            @Override
-            public OAuth2AuthorizationRequest resolve(HttpServletRequest request, String clientRegistrationId) {
-                OAuth2AuthorizationRequest authRequest = defaultResolver.resolve(request, clientRegistrationId);
-                return customize(authRequest);
-            }
-
-            private OAuth2AuthorizationRequest customize(OAuth2AuthorizationRequest authRequest) {
-                if (authRequest == null) {
-                    return null;
-                }
-
-                Map<String, Object> extraParams = new HashMap<>(authRequest.getAdditionalParameters());
-                extraParams.put("prompt", "none");   // ⭐ silent authentication
-                extraParams.put("domain_hint", "organizations");
-
-                return OAuth2AuthorizationRequest.from(authRequest)
-                        .additionalParameters(extraParams)
-                        .build();
-            }
-        };
-    }
-
-
-    @Bean
-    public OidcUserService oidcUserService() {
-        return new OidcUserService() {
-            @Override
-            public OidcUser loadUser(OidcUserRequest userRequest) {
-                OidcUser oidcUser = super.loadUser(userRequest);
-                Set<GrantedAuthority> authorities = getAuthorities(oidcUser.getAttributes());
-                return new DefaultOidcUser(authorities, oidcUser.getIdToken(), oidcUser.getUserInfo());
-            }
-        };
-    }
-
-    public Set<GrantedAuthority> getAuthorities(Map<String, Object> attributes) {
-        List<String> roles = parseRawRoles(attributes.get("LAA_APP_ROLES"));
-        return new SimpleAuthorityMapper()
-                .mapAuthorities(
-                        roles.stream()
-                                .map(SimpleGrantedAuthority::new)
-                                .collect(Collectors.toList())
-                );
-    }
-
-    private List<String> parseRawRoles(Object rawRoles) {
-        if (rawRoles instanceof List<?> list) {
-            return list.stream().map(Object::toString).toList();
-        } else if (rawRoles instanceof String str) {
-            return List.of(str.split(","));
-        } else {
-            return List.of();
-        }
+    private LogoutSuccessHandler oidcLogoutSuccessHandler(
+            ClientRegistrationRepository clientRegistrationRepository) {
+        OidcClientInitiatedLogoutSuccessHandler successHandler =
+                new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
+        successHandler.setPostLogoutRedirectUri("{baseUrl}/logged-out");
+        return successHandler;
     }
 
 
