@@ -40,7 +40,7 @@ class HttpSecuritySessionManagementConfigurerBuilderTest {
         mockMvc.perform(get("/reports/{id}", reportId)
                         .sessionAttr("SPRING_SECURITY_CONTEXT", "null"))
                 .andExpect(status().is3xxRedirection())  // Should redirect after session expires
-                .andExpect(header().string("Location", "http://localhost/oauth2/authorization/azure"));  // Check that redirection goes to /login?expired
+                .andExpect(header().string("Location", "http://localhost/oauth2/authorization/gpfd-azure-dev"));  // Check that redirection goes to /login?expired
     }
 
     @Test

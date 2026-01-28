@@ -1,6 +1,5 @@
 package uk.gov.laa.gpfd.config;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,7 +26,6 @@ import java.util.List;
  * </p>
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.cloud.azure.active-directory.enabled", havingValue = "false")
 public class SecurityConfigLocal {
 
     /**
