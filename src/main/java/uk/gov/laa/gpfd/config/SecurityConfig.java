@@ -1,15 +1,24 @@
 package uk.gov.laa.gpfd.config;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.security.web.SecurityFilterChain;
@@ -22,8 +31,10 @@ import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.HttpSecuritySessionManagementConfigurerBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
 
-import static com.azure.spring.cloud.autoconfigure.implementation.aad.security.AadWebApplicationHttpSecurityConfigurer.aadWebApplication;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Configuration class to set up Spring Security for the application.
@@ -35,10 +46,11 @@ import java.util.List;
  * to manage specific security aspects.
  * </p>
  */
+@Slf4j
+@Profile("!local & !test")
 @SuppressWarnings("java:S4502") // CSRF disabled only for CSP report POST endpoint
 @Configuration
 @RequiredArgsConstructor
-@ConditionalOnProperty(name = "spring.cloud.azure.active-directory.enabled", havingValue = "true")
 public class SecurityConfig {
 
     private final AuthorizationManager<RequestAuthorizationContext> authManager;
@@ -94,11 +106,16 @@ public class SecurityConfig {
         var authorizeHttpRequestsBuilder = new AuthorizeHttpRequestsBuilder(authManager);
         var sessionManagementConfigurerBuilder = new SessionManagementConfigurerBuilder(concurrencyControlConfigurerCustomizer);
         return httpSecurity
+                .authorizeHttpRequests(authorizeHttpRequestsBuilder)
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo -> userInfo.oidcUserService(oidcUserService()))
+                        .successHandler((request, response, authentication) -> {
+                            response.sendRedirect("/");
+                        }))
                 // Allow csp-report to ignore CSRF or else POST requests will be blocked
                 .csrf(csrf -> csrf.ignoringRequestMatchers(
                         PathPatternRequestMatcher.withDefaults().matcher("/csp-report")
                 ))
-                .with(aadWebApplication())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authorizeHttpRequestsBuilder)    // Apply authorization rules
                 .sessionManagement(sessionManagementConfigurerBuilder)  // Apply session management configuration
@@ -135,6 +152,40 @@ public class SecurityConfig {
                         )
                 )
                 .build();
+    }
+
+    @Bean
+    public OidcUserService oidcUserService() {
+        return new OidcUserService() {
+            @Override
+            public OidcUser loadUser(OidcUserRequest userRequest) {
+                OidcUser oidcUser = super.loadUser(userRequest);
+                Set<GrantedAuthority> authorities = getAuthorities(oidcUser.getAttributes());
+                return new DefaultOidcUser(authorities, oidcUser.getIdToken(), oidcUser.getUserInfo());
+            }
+        };
+    }
+
+    public Set<GrantedAuthority> getAuthorities(Map<String, Object> attributes) {
+        log.info("OIDC attributes: {}", attributes);
+        List<String> roles = parseRawRoles(attributes.get("LAA_APP_ROLES"));
+        log.info("Parsed roles: {}", roles);
+        return new SimpleAuthorityMapper()
+                .mapAuthorities(
+                        roles.stream()
+                                .map(SimpleGrantedAuthority::new)
+                                .collect(Collectors.toList())
+                );
+    }
+
+    private List<String> parseRawRoles(Object rawRoles) {
+        if (rawRoles instanceof List<?> list) {
+            return list.stream().map(Object::toString).toList();
+        } else if (rawRoles instanceof String str) {
+            return List.of(str.split(","));
+        } else {
+            return List.of();
+        }
     }
 
     @Bean
