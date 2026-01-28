@@ -16,23 +16,24 @@ gpfd:
       driver-class-name: org.h2.Driver
 
 
-# Azure AD and Graph config
 spring:
   liquibase:
     enabled: false
-  cloud:
-    azure:
-      active-directory:
-        enabled: true
-        profile:
-          tenant-id: AZURE_TENANT_ID
-        credential:
-          client-id: AZURE_CLIENT_ID
-          client-secret: AZURE_CLIENT_SECRET
-        redirect-uri-template: ${gpfd.redirect-uri-template}
-        authorization-clients:
-          graph:
-            scopes: https://graph.microsoft.com/User.Read
+  security:
+    oauth2:
+      client:
+        registration:
+          gpfd-azure-dev:
+            client-id: test
+            client-secret: test
+            scope: openid, profile, email
+            redirect-uri: http://localhost
+            authorization-grant-type: authorization_code
+            client-authentication-method: client_secret_basic
+
+        provider:
+          gpfd-azure-dev:
+            issuer-uri: http://localhost
   sql:
     init:
       platform: h2
