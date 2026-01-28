@@ -1,7 +1,6 @@
 package uk.gov.laa.gpfd.config;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -38,7 +37,6 @@ import java.util.List;
 @SuppressWarnings("java:S4502") // CSRF disabled only for H2 console — local/test profiles only, never active in prod
 @Profile({"local", "test"})
 @Configuration
-@ConditionalOnProperty(name = "spring.cloud.azure.active-directory.enabled", havingValue = "false")
 public class SecurityConfigLocal {
     @Value("${gpfd.security.cors.allowed-origin:https://127.0.0.1:8080}")
     private String allowedCorsOrigin;
