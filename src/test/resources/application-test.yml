@@ -19,26 +19,10 @@ gpfd:
       driver-class-name: org.h2.Driver
 
 
-# Azure AD and Graph config
-
 spring:
   liquibase:
     enabled: false
     change-log: classpath:db/changelog/db.changelog-master.xml
-  cloud:
-    azure:
-      active-directory:
-        enabled: false
-        profile:
-          tenant-id: AZURE_TENANT_ID
-        credential:
-          client-id: AZURE_CLIENT_ID
-          client-secret: AZURE_CLIENT_SECRET
-        redirect-uri-template: ${gpfd.redirect-uri-template}
-        authorization-clients:
-          graph:
-            scopes:
-              - https://graph.microsoft.com/User.Read
   sql:
     init:
       platform: h2
@@ -50,3 +34,9 @@ spring:
 
   main:
     allow-bean-definition-overriding: true
+
+springdoc:
+ api-docs:
+  enabled: false
+ swagger-ui:
+  enabled: false
