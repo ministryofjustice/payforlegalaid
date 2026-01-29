@@ -75,13 +75,13 @@ public class AppConfig {
     @Value("${excel.jdbc.streamer.default-fetch-size:1000}")
     private int defaultFetchSize;
 
-    @Getter
+   /* @Getter
     @Value("${spring.security.oauth2.client.registration.gpfd-azure-dev.client-id}")
     private String entraIdClientId;
 
     @Getter
     @Value("${entra.tenant-id}")
-    private String entraIdTenantId;
+    private String entraIdTenantId;*/
 
     @Getter
     @Value("${gpfd.csv-generation.buffer-flush-frequency:1000}")
