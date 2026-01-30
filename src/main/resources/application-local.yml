@@ -28,10 +28,10 @@ gpfd:
       password:
       driver-class-name: org.h2.Driver
 
-entra:
-  tenant-id: test
-
 spring:
+  config:
+    activate:
+      on-profile: local
   security:
     oauth2:
       client:

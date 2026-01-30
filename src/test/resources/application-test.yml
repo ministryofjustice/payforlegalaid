@@ -19,21 +19,6 @@ gpfd:
 spring:
   liquibase:
     enabled: false
-  security:
-    oauth2:
-      client:
-        registration:
-          gpfd-azure-dev:
-            client-id: test
-            client-secret: test
-            scope: openid, profile, email
-            redirect-uri: http://localhost
-            authorization-grant-type: authorization_code
-            client-authentication-method: client_secret_basic
-      provider:
-        azure:
-          issuer-uri: http://localhost
-
   sql:
     init:
       platform: h2
@@ -45,3 +30,9 @@ spring:
 
   main:
     allow-bean-definition-overriding: true
+
+springdoc:
+ api-docs:
+  enabled: false
+ swagger-ui:
+  enabled: false

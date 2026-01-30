@@ -1,8 +1,10 @@
 package uk.gov.laa.gpfd.config;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,6 +32,7 @@ import java.util.stream.Collectors;
  * to manage specific security aspects.
  * </p>
  */
+@Profile("!local & !test")
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {

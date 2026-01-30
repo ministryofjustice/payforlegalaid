@@ -24,7 +24,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("testauth")
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Import(SecurityConfig.class)
 class HttpSecuritySessionManagementConfigurerBuilderTest {
 
     @MockitoBean
@@ -42,8 +41,8 @@ class HttpSecuritySessionManagementConfigurerBuilderTest {
 
         mockMvc.perform(get("/reports/{id}", reportId)
                         .sessionAttr("SPRING_SECURITY_CONTEXT", "null"))
-                .andExpect(status().is2xxSuccessful());// Should redirect after session expires
-                //.andExpect(header().string("Location", "http://localhost/oauth2/authorization/gpfd-azure-dev"));  // Check that redirection goes to /login?expired
+                .andExpect(status().is3xxRedirection())// Should redirect after session expires
+                .andExpect(header().string("Location", "http://localhost/oauth2/authorization/gpfd-azure-dev"));  // Check that redirection goes to /login?expired
     }
 
     @Test

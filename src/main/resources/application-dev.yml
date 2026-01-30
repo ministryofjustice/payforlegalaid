@@ -23,9 +23,6 @@ gpfd:
       rep000: ${PERMISSION_REP000_GROUP_ID}
       submission-reconciliation: ${PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID}
 
-entra:
-  tenant-id: ${AZURE_TENANT_ID}
-
 spring:
   security:
     oauth2:

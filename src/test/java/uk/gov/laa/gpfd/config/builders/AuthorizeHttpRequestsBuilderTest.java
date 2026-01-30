@@ -58,13 +58,13 @@ class AuthorizeHttpRequestsBuilderTest {
     @Test
     void shouldNonAuthenticatedUserCannotAccessRestrictedPage() throws Exception {
         mockMvc.perform(get("/reports"))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().is3xxRedirection());
     }
 
     @Test
     void shouldUnauthenticatedAccessDeniedToOtherEndpoints() throws Exception {
         mockMvc.perform(get("/private-endpoint"))
-                .andExpect(status().is4xxClientError());  // Should be forbidden without authentication
+                .andExpect(status().is3xxRedirection());  // Should be forbidden without authentication
     }
 
     @Test
@@ -86,7 +86,7 @@ class AuthorizeHttpRequestsBuilderTest {
     @Test
     void shouldUnauthorizedAccessToOtherPagesBeBlocked() throws Exception {
         mockMvc.perform(get("/private-endpoint"))
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().is3xxRedirection());
     }
 
     @Test
@@ -111,7 +111,7 @@ class AuthorizeHttpRequestsBuilderTest {
     @Test
     void shouldOtherEndpointsSecuredWithAuthentication() throws Exception {
         mockMvc.perform(get("/other-endpoint"))
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().is3xxRedirection());
     }
 
     @Test
@@ -132,7 +132,7 @@ class AuthorizeHttpRequestsBuilderTest {
         mockMvc.perform(get("/swagger-ui/index.html"))
                 .andExpect(status().isOk());
         mockMvc.perform(get("/private-endpoint"))
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().is3xxRedirection());
     }
 
     @Test
