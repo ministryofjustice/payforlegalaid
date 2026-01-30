@@ -81,6 +81,7 @@ public class SecurityConfig {
 
     public Set<GrantedAuthority> getAuthorities(Map<String, Object> attributes) {
         List<String> roles = parseRawRoles(attributes.get("LAA_APP_ROLES"));
+        roles.forEach(role -> System.out.println("Role: " + role));
         return new SimpleAuthorityMapper()
                 .mapAuthorities(
                         roles.stream()
