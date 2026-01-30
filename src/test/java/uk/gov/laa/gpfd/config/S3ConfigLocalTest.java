@@ -16,7 +16,7 @@ import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest
+@SpringBootTest(properties = "spring.liquibase.enabled=false")
 @ActiveProfiles("test")
 @TestPropertySource(properties = {
         "gpfd.s3.has-s3-access=false"
