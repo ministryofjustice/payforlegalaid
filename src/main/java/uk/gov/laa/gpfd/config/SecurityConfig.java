@@ -2,6 +2,7 @@ package uk.gov.laa.gpfd.config;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
  * to manage specific security aspects.
  * </p>
  */
+@Slf4j
 @Profile("!local & !test")
 @Configuration
 @RequiredArgsConstructor
@@ -80,8 +82,9 @@ public class SecurityConfig {
     }
 
     public Set<GrantedAuthority> getAuthorities(Map<String, Object> attributes) {
+        log.info("OIDC attributes: {}", attributes);
         List<String> roles = parseRawRoles(attributes.get("LAA_APP_ROLES"));
-        roles.forEach(role -> System.out.println("Role: " + role));
+        log.info("Parsed roles: {}", roles);
         return new SimpleAuthorityMapper()
                 .mapAuthorities(
                         roles.stream()
