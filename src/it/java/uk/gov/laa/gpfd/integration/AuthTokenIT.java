@@ -40,7 +40,7 @@ final class AuthTokenIT extends BaseIT {
         );
     }
 
-    /*@ParameterizedTest(name = "[{index}] {0} should redirect when unauthenticated")
+    /* @ParameterizedTest(name = "[{index}] {0} should redirect when unauthenticated")
     @MethodSource("securedReportEndpoints")
     @SneakyThrows
     void unauthenticatedAccess_shouldRedirectToLogin(String description, String endpoint) {
