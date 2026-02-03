@@ -5,9 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
+import uk.gov.laa.gpfd.exception.InvalidReportFormatException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.mapper.ResourceResponseMapper;
+import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
@@ -68,5 +70,39 @@ public record ReportManagementService(
 
         log.info("Returning report response object for report ID {}", id);
         return reportByIdMapper.map(reportDetails.get());
+    }
+
+    /**
+     * Validates that the requested report exists and supports the requested file format.
+     * <p>
+     * This method checks if a report with the given ID exists in the database and verifies
+     * that its output type is compatible with the requested format. If the formats don't match,
+     * it throws an {@link InvalidReportFormatException}.
+     * </p>
+     *
+     * @param id - the UUID of the report to validate
+     * @param requestedFormat - the file format being requested (e.g., CSV, XLSX)
+     * @throws ReportIdNotFoundException if no report exists with the given ID
+     * @throws InvalidReportFormatException if the report's format doesn't match the requested format
+     * @throws DatabaseReadException if there is an error fetching data from the database
+     */
+    public void validateReportFormat(UUID id, FileExtension requestedFormat) {
+        log.debug("Validating report format for ID {} with requested format {}", id, requestedFormat);
+
+        var reportDetails = reportDetailsDao.fetchReportById(id);
+        if (reportDetails.isEmpty()) {
+            throw new ReportIdNotFoundException("Report with unrecognised ID");
+        }
+
+        var report = reportDetails.get();
+        var actualExtension = report.getOutputType().getExtension();
+        var requestedExtension = requestedFormat.getExtension();
+
+        if (!actualExtension.equalsIgnoreCase(requestedExtension)) {
+            log.warn("Format mismatch for report {}: requested={}, actual={}", id, requestedExtension, actualExtension);
+            throw new InvalidReportFormatException(id, requestedExtension.toUpperCase(), actualExtension.toUpperCase());
+        }
+
+        log.debug("Report format validation passed for ID {}", id);
     }
 }
