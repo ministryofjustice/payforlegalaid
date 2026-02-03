@@ -98,6 +98,10 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
     @Override
     public ResponseEntity<StreamingResponseBody> getExcelById(UUID id) {
         log.info("Returning an Excel report for id {} to user", id);
+
+        // Validate format before attempting to stream
+        reportManagementService.validateReportFormat(id, XLSX);
+
         reportsTrackingService.saveReportsTracking(id, urlBuilder.getServiceUrl());
         return streamingService.stream(id, XLSX);
     }
