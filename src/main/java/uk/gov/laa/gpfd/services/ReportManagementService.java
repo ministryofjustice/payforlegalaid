@@ -91,7 +91,7 @@ public record ReportManagementService(
 
         var reportDetails = reportDetailsDao.fetchReportById(id);
         if (reportDetails.isEmpty()) {
-            throw new ReportIdNotFoundException("Report with unrecognised ID");
+            throw new ReportIdNotFoundException("Report not found for ID " + id);
         }
 
         var report = reportDetails.get();
