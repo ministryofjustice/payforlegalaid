@@ -21,13 +21,7 @@ import org.springframework.security.web.access.intercept.RequestAuthorizationCon
 import org.springframework.web.client.RestTemplate;
 import uk.gov.laa.gpfd.dao.JdbcWorkbookDataStreamer;
 import uk.gov.laa.gpfd.dao.ReportDao;
-import uk.gov.laa.gpfd.dao.sql.core.FetchSizePolicy;
-import uk.gov.laa.gpfd.dao.sql.core.ForwardOnlyReadOnlyPolicy;
-import uk.gov.laa.gpfd.dao.sql.core.QueryTimeoutPolicy;
-import uk.gov.laa.gpfd.dao.sql.core.StatementConfigurationPolicy;
-import uk.gov.laa.gpfd.dao.sql.core.StatementCreationPolicy;
 import uk.gov.laa.gpfd.dao.sql.core.StatementPolicy;
-import uk.gov.laa.gpfd.dao.sql.core.StatementPolicyBuilder;
 import uk.gov.laa.gpfd.model.FieldProjection;
 import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.model.Mapping;
@@ -137,33 +131,11 @@ public class AppConfig {
     }
 
     @Bean
-    public StatementCreationPolicy defaultCreationPolicy() {
-        return new ForwardOnlyReadOnlyPolicy();
-    }
-
-    @Bean
-    public StatementConfigurationPolicy fetchSizePolicy(
-            @Value("${jdbc.fetch-size:1000}") int fetchSize) {
-        return new FetchSizePolicy(fetchSize);
-    }
-
-    @Bean
-    public StatementConfigurationPolicy queryTimeoutPolicy(
-            @Value("${jdbc.query-timeout:30}") int timeout) {
-        return new QueryTimeoutPolicy(timeout);
-    }
-
-    @Bean
     public StatementPolicy statementPolicy(
-            StatementCreationPolicy creationPolicy,
-            List<StatementConfigurationPolicy> configurationPolicies
+            @Value("${jdbc.fetch-size:1000}") int fetchSize,
+            @Value("${jdbc.query-timeout:30}") int timeout
     ) {
-        var builder = new StatementPolicyBuilder()
-                .withCreationPolicy(creationPolicy);
-
-        configurationPolicies.forEach(builder::addConfigurationPolicy);
-
-        return builder.build();
+        return new StatementPolicy(fetchSize, timeout);
     }
 
     @Bean
