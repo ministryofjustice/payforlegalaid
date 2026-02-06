@@ -196,4 +196,52 @@ class ReportManagementServiceTest {
 
         verify(reportDetailsDao).fetchReportById(reportId);
     }
+
+    @Test
+    void validateReportFormat_shouldThrowInvalidReportFormatExceptionWhenS3StorageReportRequestedAsExcel() {
+        // Given
+        var reportId = UUID.randomUUID();
+        var s3OutputType = ImmutableReportOutputType.builder()
+                .id(UUID.randomUUID())
+                .fileExtension(FileExtension.S3STORAGE)
+                .description("Tactical Solution Report")
+                .build();
+        var s3Report = ReportsTestDataFactory.createTestReportWithOutputType(s3OutputType);
+
+        when(reportDetailsDao.fetchReportById(reportId)).thenReturn(Optional.of(s3Report));
+
+        // When/Then
+        var exception = assertThrows(InvalidReportFormatException.class, () ->
+                reportManagementService.validateReportFormat(reportId, FileExtension.XLSX)
+        );
+
+        assertEquals(reportId, exception.getReportId());
+        assertEquals("XLSX", exception.getRequestedFormat());
+        assertEquals("S3STORAGE", exception.getActualFormat());
+        verify(reportDetailsDao).fetchReportById(reportId);
+    }
+
+    @Test
+    void validateReportFormat_shouldThrowInvalidReportFormatExceptionWhenS3StorageReportRequestedAsCsv() {
+        // Given
+        var reportId = UUID.randomUUID();
+        var s3OutputType = ImmutableReportOutputType.builder()
+                .id(UUID.randomUUID())
+                .fileExtension(FileExtension.S3STORAGE)
+                .description("Tactical Solution Report")
+                .build();
+        var s3Report = ReportsTestDataFactory.createTestReportWithOutputType(s3OutputType);
+
+        when(reportDetailsDao.fetchReportById(reportId)).thenReturn(Optional.of(s3Report));
+
+        // When/Then
+        var exception = assertThrows(InvalidReportFormatException.class, () ->
+                reportManagementService.validateReportFormat(reportId, FileExtension.CSV)
+        );
+
+        assertEquals(reportId, exception.getReportId());
+        assertEquals("CSV", exception.getRequestedFormat());
+        assertEquals("S3STORAGE", exception.getActualFormat());
+        verify(reportDetailsDao).fetchReportById(reportId);
+    }
 }
