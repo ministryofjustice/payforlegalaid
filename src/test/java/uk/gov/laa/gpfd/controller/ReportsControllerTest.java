@@ -310,4 +310,62 @@ class ReportsControllerTest {
         verify(streamingService, times(0)).stream(s3ReportId, FileExtension.CSV);
     }
 
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void getReportDownloadByIdRejectsCsvReport() throws Exception {
+        var csvReportId = UUID.fromString("f46b4d3d-c100-429a-bf9a-6c3305dbdbfa");
+
+        // Mock the validation to throw InvalidReportFormatException
+        doThrow(new InvalidReportFormatException(csvReportId, "S3STORAGE", "CSV"))
+                .when(reportManagementServiceMock)
+                .validateReportFormat(csvReportId, FileExtension.S3STORAGE);  // Updated this line
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/reports/{id}/file", csvReportId))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(
+                        "Report " + csvReportId + " is not valid for S3STORAGE retrieval. This report is in CSV format."));
+
+        verify(reportManagementServiceMock).validateReportFormat(csvReportId, FileExtension.S3STORAGE);  // Updated this line
+        verify(fileDownloadService, times(0)).getFileStreamResponse(csvReportId);
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void getReportDownloadByIdRejectsExcelReport() throws Exception {
+        var excelReportId = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
+
+        // Mock the validation to throw InvalidReportFormatException
+        doThrow(new InvalidReportFormatException(excelReportId, "S3STORAGE", "XLSX"))
+                .when(reportManagementServiceMock)
+                .validateReportFormat(excelReportId, FileExtension.S3STORAGE);  // Updated this line
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/reports/{id}/file", excelReportId))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(
+                        "Report " + excelReportId + " is not valid for S3STORAGE retrieval. This report is in XLSX format."));
+
+        verify(reportManagementServiceMock).validateReportFormat(excelReportId, FileExtension.S3STORAGE);  // Updated this line
+        verify(fileDownloadService, times(0)).getFileStreamResponse(excelReportId);
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void getReportDownloadByIdSucceedsForS3StorageReport() throws Exception {
+        var s3ReportId = UUID.fromString("523f38f0-2179-4824-b885-3a38c5e149e8");
+
+        var inputStreamResource = new InputStreamResource(new ByteArrayInputStream("test".getBytes()));
+        var mockResponse = ResponseEntity.ok(inputStreamResource);
+
+        // Validation passes (no exception thrown)
+        doNothing().when(reportManagementServiceMock).validateReportFormat(s3ReportId, FileExtension.S3STORAGE);  // Updated this line
+        when(fileDownloadService.getFileStreamResponse(s3ReportId)).thenReturn(mockResponse);
+
+        var result = mockMvc.perform(MockMvcRequestBuilders.get("/reports/{id}/file", s3ReportId))
+                .andExpect(status().isOk()).andReturn();
+
+        assertEquals("test", result.getResponse().getContentAsString());
+        verify(reportManagementServiceMock).validateReportFormat(s3ReportId, FileExtension.S3STORAGE);  // Updated this line
+        verify(fileDownloadService, times(1)).getFileStreamResponse(s3ReportId);
+    }
+
 }

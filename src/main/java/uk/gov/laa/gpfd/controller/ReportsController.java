@@ -21,8 +21,7 @@ import uk.gov.laa.gpfd.utils.UrlBuilder;
 import java.util.Optional;
 import java.util.UUID;
 
-import static uk.gov.laa.gpfd.model.FileExtension.CSV;
-import static uk.gov.laa.gpfd.model.FileExtension.XLSX;
+import static uk.gov.laa.gpfd.model.FileExtension.*;
 
 @Slf4j
 @RestController
@@ -113,6 +112,10 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
     @Override
     public ResponseEntity<InputStreamResource> getReportDownloadById(UUID id) {
         log.info("Downloading report for id {}", id);
+
+        // Validate that this report is S3STORAGE format
+        reportManagementService.validateReportFormat(id, S3STORAGE);
+
         return fileDownloadService.getFileStreamResponse(id);
     }
 
