@@ -14,7 +14,6 @@ runs:
       uses: actions/checkout@v4
       with:
         repository: ministryofjustice/payforlegalaid-tests
-        ref: LPF-1235-update-ccms-id
         path: testCode
 
     - name: Setup Java
