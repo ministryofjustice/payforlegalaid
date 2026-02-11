@@ -71,12 +71,19 @@ public class ReportsViewController {
             return "";
         }
 
-        return uri.getPath().toLowerCase().contains("/excel/")
-                ? "xlsx"
-                : uri.getPath().toLowerCase().contains("/csv/")
-                ? "csv"
-                : "";
+        String path = uri.getPath().toLowerCase();
+
+        if (path.contains("/excel/")) {
+            return "xlsx";
+        }
+
+        if (path.contains("/csv/")) {
+            return "csv";
+        }
+
+        return "";
     }
+
 
 
 }
