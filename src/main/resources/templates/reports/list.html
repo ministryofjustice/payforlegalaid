@@ -30,7 +30,7 @@
                                 <span class="govuk-visually-hidden"
                                       th:text="'for ' + ${report.reportName}">for report name</span>
                             </a>
-                            <span aria-hidden="true"> (.xlsx file)</span>
+                            <span aria-hidden="true" th:text="' (.' + ${report.fileExtension} + ' file)'"> (.xlsx file)</span>
                         </p>
                         <hr th:unless="${iterStat.last}"
                             class="govuk-section-break govuk-section-break--l govuk-section-break--visible"/>

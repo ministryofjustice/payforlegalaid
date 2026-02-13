@@ -1,14 +1,6 @@
 package uk.gov.laa.gpfd.data;
 
-import uk.gov.laa.gpfd.model.FileExtension;
-import uk.gov.laa.gpfd.model.ImmutableReport;
-import uk.gov.laa.gpfd.model.ImmutableReportCreator;
-import uk.gov.laa.gpfd.model.ImmutableReportOutputType;
-import uk.gov.laa.gpfd.model.ImmutableReportOwner;
-import uk.gov.laa.gpfd.model.ImmutableReportQuery;
-import uk.gov.laa.gpfd.model.Report;
-import uk.gov.laa.gpfd.model.ReportQuery;
-import uk.gov.laa.gpfd.model.ReportQuerySql;
+import uk.gov.laa.gpfd.model.*;
 import uk.gov.laa.gpfd.model.excel.*;
 
 import java.sql.Timestamp;
@@ -163,6 +155,31 @@ public class ReportsTestDataFactory {
                 .outputFileName("test_report")
                 .active(true)
                 .queries(queries)
+                .build();
+    }
+
+    public static Report createTestReportWithOutputType(ReportOutputType outputType) {
+        return ImmutableReport.builder()
+                .id(UUID.randomUUID())
+                .name("Test Report")
+                .templateDocument(ExcelTemplate.fromString("b36f9bbb-1178-432c-8f99-8090e285f2d3"))
+                .creationTime(Timestamp.from(Instant.now()))
+                .lastDatabaseRefreshDate(Timestamp.from(Instant.now()))
+                .description("Test Description")
+                .numDaysToKeep(30)
+                .outputType(outputType)
+                .creator(ImmutableReportCreator.newBuilder()
+                        .withId(UUID.randomUUID())
+                        .withName("Owner Name")
+                        .withEmail("owner@example.com")
+                        .create())
+                .owner(ImmutableReportOwner.newBuilder()
+                        .withName("Creator Name")
+                        .withEmail("creator@example.com")
+                        .create())
+                .outputFileName("test_report")
+                .active(true)
+                .queries(Collections.emptyList())
                 .build();
     }
 
