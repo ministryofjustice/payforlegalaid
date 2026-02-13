@@ -62,6 +62,11 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
      *
      * @param requestedId - id of the requested report
      * @return CSV data stream or reports data
+     *
+     * <p>Example usage:
+     *      <pre>
+     *      GET /csv/f46b4d3d-c100-429a-bf9a-6c3305dbdbf1
+     *      </pre>
      */
     @Override
     public ResponseEntity<StreamingResponseBody> csvIdGet(UUID requestedId) {
