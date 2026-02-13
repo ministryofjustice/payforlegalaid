@@ -2,6 +2,8 @@ package uk.gov.laa.gpfd.controller;
 
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -152,50 +154,64 @@ class ReportsControllerTest {
                 .andExpect(status().isBadRequest()).andReturn();
     }
 
-    @Test
+    @ParameterizedTest(name = "Rejects invalid filetype {1} for Excel download")
+    @CsvSource({
+            "523f38f0-2179-4824-b885-3a38c5e149e8, S3STORAGE",
+            "f46b4d3d-c100-429a-bf9a-6c3305dbdbfa, CSV"
+    })
     @WithMockUser(roles = "ADMIN")
-    void downloadCsvRejectsExcelReport() throws Exception {
-        var excelReportId = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
+    void downloadExcelRejectsInvalidFiletypes(String reportId, String actualFormat) throws Exception {
 
-        // Mock the validation to throw InvalidReportFormatException
-        doThrow(new InvalidReportFormatException(excelReportId, "CSV", "XLSX"))
+        UUID uuid = UUID.fromString(reportId);
+
+        doThrow(new InvalidReportFormatException(uuid, "XLSX", actualFormat))
                 .when(reportManagementServiceMock)
-                .validateReportFormat(excelReportId, FileExtension.CSV);
+                .validateReportFormat(uuid, FileExtension.XLSX);
 
-        // Perform the GET request and expect 400 Bad Request
-        mockMvc.perform(MockMvcRequestBuilders.get("/csv/{id}", excelReportId)
+        mockMvc.perform(MockMvcRequestBuilders.get("/excel/{id}", uuid)
                         .with(oidcLogin())
                         .with(oauth2Client("graph")))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value(
-                        "Report " + excelReportId + " is not valid for CSV retrieval. This report is in XLSX format."));
+                        "Report " + uuid +
+                                " is not valid for XLSX retrieval. This report is in " +
+                                actualFormat + " format."));
 
-        verify(reportManagementServiceMock).validateReportFormat(excelReportId, FileExtension.CSV);
-        // Streaming should NOT be called since validation failed
-        verify(streamingService, times(0)).stream(excelReportId, FileExtension.CSV);
+        verify(reportManagementServiceMock)
+                .validateReportFormat(uuid, FileExtension.XLSX);
+
+        verify(streamingService, never())
+                .stream(uuid, FileExtension.XLSX);
     }
 
-    @Test
+    @ParameterizedTest(name = "Rejects invalid filetype {1} for CSV download")
+    @CsvSource({
+            "0d4da9ec-b0b3-4371-af10-f375330d85d1, XLSX",
+            "523f38f0-2179-4824-b885-3a38c5e149e8, S3STORAGE"
+    })
     @WithMockUser(roles = "ADMIN")
-    void downloadExcelRejectsCsvReport() throws Exception {
-        var csvReportId = UUID.fromString("f46b4d3d-c100-429a-bf9a-6c3305dbdbfa");
+    void downloadCsvRejectsInvalidFiletypes(String reportId, String actualFormat) throws Exception {
 
-        // Mock the validation to throw InvalidReportFormatException
-        doThrow(new InvalidReportFormatException(csvReportId, "XLSX", "CSV"))
+        UUID uuid = UUID.fromString(reportId);
+
+        doThrow(new InvalidReportFormatException(uuid, "CSV", actualFormat))
                 .when(reportManagementServiceMock)
-                .validateReportFormat(csvReportId, FileExtension.XLSX);
+                .validateReportFormat(uuid, FileExtension.CSV);
 
-        // Perform the GET request and expect 400 Bad Request
-        mockMvc.perform(MockMvcRequestBuilders.get("/excel/{id}", csvReportId)
+        mockMvc.perform(MockMvcRequestBuilders.get("/csv/{id}", uuid)
                         .with(oidcLogin())
                         .with(oauth2Client("graph")))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value(
-                        "Report " + csvReportId + " is not valid for XLSX retrieval. This report is in CSV format."));
+                        "Report " + uuid +
+                                " is not valid for CSV retrieval. This report is in " +
+                                actualFormat + " format."));
 
-        verify(reportManagementServiceMock).validateReportFormat(csvReportId, FileExtension.XLSX);
-        // Streaming should NOT be called since validation failed
-        verify(streamingService, times(0)).stream(csvReportId, FileExtension.XLSX);
+        verify(reportManagementServiceMock)
+                .validateReportFormat(uuid, FileExtension.CSV);
+
+        verify(streamingService, never())
+                .stream(uuid, FileExtension.CSV);
     }
 
     @Test
@@ -266,86 +282,32 @@ class ReportsControllerTest {
         verify(streamingService).stream(excelReportId, FileExtension.XLSX);
     }
 
-    @Test
+    @ParameterizedTest(name = "Rejects invalid filetype {1} for S3STORAGE download")
+    @CsvSource({
+            "f46b4d3d-c100-429a-bf9a-6c3305dbdbfa, CSV",
+            "0d4da9ec-b0b3-4371-af10-f375330d85d1, XLSX"
+    })
     @WithMockUser(roles = "ADMIN")
-    void downloadExcelRejectsS3StorageReport() throws Exception {
-        var s3ReportId = UUID.fromString("523f38f0-2179-4824-b885-3a38c5e149e8");
+    void getReportDownloadByIdRejectsInvalidFiletypes(String reportId, String actualFormat) throws Exception {
 
-        // Mock the validation to throw InvalidReportFormatException
-        doThrow(new InvalidReportFormatException(s3ReportId, "XLSX", "S3STORAGE"))
+        UUID uuid = UUID.fromString(reportId);
+
+        doThrow(new InvalidReportFormatException(uuid, "S3STORAGE", actualFormat))
                 .when(reportManagementServiceMock)
-                .validateReportFormat(s3ReportId, FileExtension.XLSX);
+                .validateReportFormat(uuid, FileExtension.S3STORAGE);
 
-        // Perform the GET request and expect 400 Bad Request
-        mockMvc.perform(MockMvcRequestBuilders.get("/excel/{id}", s3ReportId)
-                        .with(oidcLogin())
-                        .with(oauth2Client("graph")))
+        mockMvc.perform(MockMvcRequestBuilders.get("/reports/{id}/file", uuid))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value(
-                        "Report " + s3ReportId + " is not valid for XLSX retrieval. This report is in S3STORAGE format."));
+                        "Report " + uuid +
+                                " is not valid for S3STORAGE retrieval. This report is in " +
+                                actualFormat + " format."));
 
-        verify(reportManagementServiceMock).validateReportFormat(s3ReportId, FileExtension.XLSX);
-        verify(streamingService, times(0)).stream(s3ReportId, FileExtension.XLSX);
-    }
+        verify(reportManagementServiceMock)
+                .validateReportFormat(uuid, FileExtension.S3STORAGE);
 
-    @Test
-    @WithMockUser(roles = "ADMIN")
-    void downloadCsvRejectsS3StorageReport() throws Exception {
-        var s3ReportId = UUID.fromString("523f38f0-2179-4824-b885-3a38c5e149e8");
-
-        // Mock the validation to throw InvalidReportFormatException
-        doThrow(new InvalidReportFormatException(s3ReportId, "CSV", "S3STORAGE"))
-                .when(reportManagementServiceMock)
-                .validateReportFormat(s3ReportId, FileExtension.CSV);
-
-        // Perform the GET request and expect 400 Bad Request
-        mockMvc.perform(MockMvcRequestBuilders.get("/csv/{id}", s3ReportId)
-                        .with(oidcLogin())
-                        .with(oauth2Client("graph")))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value(
-                        "Report " + s3ReportId + " is not valid for CSV retrieval. This report is in S3STORAGE format."));
-
-        verify(reportManagementServiceMock).validateReportFormat(s3ReportId, FileExtension.CSV);
-        verify(streamingService, times(0)).stream(s3ReportId, FileExtension.CSV);
-    }
-
-    @Test
-    @WithMockUser(roles = "ADMIN")
-    void getReportDownloadByIdRejectsCsvReport() throws Exception {
-        var csvReportId = UUID.fromString("f46b4d3d-c100-429a-bf9a-6c3305dbdbfa");
-
-        // Mock the validation to throw InvalidReportFormatException
-        doThrow(new InvalidReportFormatException(csvReportId, "S3STORAGE", "CSV"))
-                .when(reportManagementServiceMock)
-                .validateReportFormat(csvReportId, FileExtension.S3STORAGE);  // Updated this line
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/reports/{id}/file", csvReportId))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value(
-                        "Report " + csvReportId + " is not valid for S3STORAGE retrieval. This report is in CSV format."));
-
-        verify(reportManagementServiceMock).validateReportFormat(csvReportId, FileExtension.S3STORAGE);  // Updated this line
-        verify(fileDownloadService, times(0)).getFileStreamResponse(csvReportId);
-    }
-
-    @Test
-    @WithMockUser(roles = "ADMIN")
-    void getReportDownloadByIdRejectsExcelReport() throws Exception {
-        var excelReportId = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
-
-        // Mock the validation to throw InvalidReportFormatException
-        doThrow(new InvalidReportFormatException(excelReportId, "S3STORAGE", "XLSX"))
-                .when(reportManagementServiceMock)
-                .validateReportFormat(excelReportId, FileExtension.S3STORAGE);  // Updated this line
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/reports/{id}/file", excelReportId))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value(
-                        "Report " + excelReportId + " is not valid for S3STORAGE retrieval. This report is in XLSX format."));
-
-        verify(reportManagementServiceMock).validateReportFormat(excelReportId, FileExtension.S3STORAGE);  // Updated this line
-        verify(fileDownloadService, times(0)).getFileStreamResponse(excelReportId);
+        verify(fileDownloadService, never())
+                .getFileStreamResponse(uuid);
     }
 
     @Test
