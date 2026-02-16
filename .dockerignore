@@ -1,0 +1,60 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# CI/CD
+.github
+.gitlab-ci.yml
+
+# Documentation
+*.md
+docs/
+README.md
+!DOCKER.md
+
+# IDE
+.idea
+.vscode
+*.iml
+*.iws
+*.ipr
+.settings/
+.project
+.classpath
+
+# Build artifacts
+target/
+!target/pay-for-legal-aid-0.0.1-SNAPSHOT-exec.jar
+
+# Docker
+docker-compose*.yml
+Dockerfile*
+.dockerignore
+
+# Build scripts - keep these
+!build-openapi.sh
+!build-tests.sh
+
+# Deployment
+deployments/
+kubernetes/
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+*.swp
+*.swo
+*~
+.tmp/
+temp/
+
+# build directories
+openapi/
+payforlegalaid-tests/
