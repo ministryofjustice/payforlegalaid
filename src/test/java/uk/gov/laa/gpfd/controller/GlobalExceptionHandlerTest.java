@@ -7,17 +7,11 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import software.amazon.awssdk.awscore.exception.AwsErrorDetails;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
+import uk.gov.laa.gpfd.exception.*;
 import uk.gov.laa.gpfd.exception.CsvGenerationException.WritingToCsvException;
 import uk.gov.laa.gpfd.exception.CsvGenerationException.MetadataInvalidException;
-import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.FileDownloadException.InvalidDownloadFormatException;
-import uk.gov.laa.gpfd.exception.OperationNotSupportedException;
-import uk.gov.laa.gpfd.exception.ReportAccessException;
-import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.exception.FileDownloadException.ReportNotSupportedForDownloadException;
-import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
-import uk.gov.laa.gpfd.exception.TemplateResourceException;
-import uk.gov.laa.gpfd.exception.TransferException;
 import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.AuthenticationIsNullException;
 import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.PrincipalIsNullException;
 import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.UnexpectedAuthClassException;
@@ -326,6 +320,18 @@ class GlobalExceptionHandlerTest {
 
         assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertEquals("Failed to download report with id " + reportId + ".", response.getBody().getError());
+    }
+
+    @Test
+    void shouldHandleInvalidReportFormatException() {
+        var reportId = UUID.randomUUID();
+        var exception = new InvalidReportFormatException(reportId, "XLSX", "CSV");
+
+        var response = globalExceptionHandler.handleInvalidReportFormatException(exception);
+
+        assertEquals(BAD_REQUEST, response.getStatusCode());
+        assertEquals("Report " + reportId + " is not valid for XLSX retrieval. This report is in CSV format.",
+                response.getBody().getError());
     }
 
 }
