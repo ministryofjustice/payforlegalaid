@@ -21,8 +21,7 @@ import uk.gov.laa.gpfd.utils.UrlBuilder;
 import java.util.Optional;
 import java.util.UUID;
 
-import static uk.gov.laa.gpfd.model.FileExtension.CSV;
-import static uk.gov.laa.gpfd.model.FileExtension.XLSX;
+import static uk.gov.laa.gpfd.model.FileExtension.*;
 
 @Slf4j
 @RestController
@@ -63,10 +62,19 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
      *
      * @param requestedId - id of the requested report
      * @return CSV data stream or reports data
+     *
+     * <p>Example usage:
+     *      <pre>
+     *      GET /csv/f46b4d3d-c100-429a-bf9a-6c3305dbdbf1
+     *      </pre>
      */
     @Override
     public ResponseEntity<StreamingResponseBody> csvIdGet(UUID requestedId) {
         log.info("Returning a CSV report for id {} to user", requestedId);
+
+        // Validate that this report is actually a CSV report
+        reportManagementService.validateReportFormat(requestedId, CSV);
+
         reportsTrackingService.saveReportsTracking(requestedId, urlBuilder.getServiceUrl());
         return streamingService.stream(requestedId, CSV);
     }
@@ -98,6 +106,10 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
     @Override
     public ResponseEntity<StreamingResponseBody> getExcelById(UUID id) {
         log.info("Returning an Excel report for id {} to user", id);
+
+        // Validate format before attempting to stream
+        reportManagementService.validateReportFormat(id, XLSX);
+
         reportsTrackingService.saveReportsTracking(id, urlBuilder.getServiceUrl());
         return streamingService.stream(id, XLSX);
     }
@@ -105,6 +117,10 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
     @Override
     public ResponseEntity<InputStreamResource> getReportDownloadById(UUID id) {
         log.info("Downloading report for id {}", id);
+
+        // Validate that this report is S3STORAGE format
+        reportManagementService.validateReportFormat(id, S3STORAGE);
+
         return fileDownloadService.getFileStreamResponse(id);
     }
 
