@@ -32,7 +32,7 @@
     <insert tableName="REPORTS" schemaName="GPFD">
       <column name="ID" value="b36f9bbb-1178-432c-8f99-8090e285f2d3"/>
       <column name="NAME" value="CCMS Invoice Analysis (CIS to CCMS)"/>
-      <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="00000000-0000-0000-0000-000000000000"/>
+      <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="7c2b9f4e-3a6d-4b8a-9f12-6e5d0c8a1b34"/>
       <column name="REPORT_CREATION_DATE" value="2025-02-15 00:00:00"/>
       <column name="DESCRIPTION" value="Summary of invoices in CIS and CCMS by original source IT system"/>
       <column name="NUM_DAYS_TO_KEEP" value="30"/>

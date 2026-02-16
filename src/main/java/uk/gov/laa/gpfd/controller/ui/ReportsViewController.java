@@ -27,27 +27,58 @@ public class ReportsViewController {
 
     @GetMapping({"/", "/ui/reports"})
     public String getAllReports(Model model) {
-        record Dto(
+
+        record ReportDto(
                 UUID id,
                 String reportName,
                 String description,
-                URI reportDownloadUrl
-        ) {
-        }
-        var reportList = Objects.requireNonNull(api.reportsGet().getBody()).getReportList().stream()
-                .map(reportItem ->
-                        new Dto(
-                                reportItem.getId(),
-                                reportItem.getReportName(),
-                                reportItem.getDescription(),
-                                api.getReportById(reportItem.getId()).getBody().getReportDownloadUrl()
-                        )
-                )
+                URI reportDownloadUrl,
+                String fileExtension
+        ) {}
+
+        var response = Objects.requireNonNull(api.reportsGet().getBody());
+
+        var reportList = response.getReportList().stream()
+                .map(reportItem -> {
+                    var reportResponse =
+                            Objects.requireNonNull(api.getReportById(reportItem.getId()).getBody());
+
+                    var downloadUrl = reportResponse.getReportDownloadUrl();
+
+                    return new ReportDto(
+                            reportItem.getId(),
+                            reportItem.getReportName(),
+                            reportItem.getDescription(),
+                            downloadUrl,
+                            extractExtension(downloadUrl)
+                    );
+                })
                 .toList();
 
         model.addAttribute("reportListResponse", reportList);
         model.addAttribute("gpfdUrl", urlBuilder.getServiceUrl());
+
         return "reports/list";
+    }
+
+    /**
+     * Extracts the file extension from the download URL path.
+     * e.g. /excel/{id}          -> xlsx
+     * e.g. /csv/{id}            -> csv
+     * e.g. /reports/{id}/file   -> csv
+     */
+    private String extractExtension(URI uri) {
+        if (uri == null || uri.getPath() == null) {
+            return "";
+        }
+
+        String path = uri.getPath().toLowerCase();
+
+        if (path.contains("/excel/")) {
+            return "xlsx";
+        }
+
+        return "csv";
     }
 
 }

@@ -2,6 +2,8 @@ package uk.gov.laa.gpfd.controller;
 
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,6 +19,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
 import uk.gov.laa.gpfd.data.ReportListEntryTestDataFactory;
+import uk.gov.laa.gpfd.exception.InvalidReportFormatException;
 import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
@@ -32,9 +35,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Client;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -151,6 +152,182 @@ class ReportsControllerTest {
 
        /* mockMvc.perform(MockMvcRequestBuilders.get("/reports/{id}/file", reportId))
                 .andExpect(status().isBadRequest()).andReturn();*/
+    }
+
+    @ParameterizedTest(name = "Rejects invalid filetype {1} for Excel download")
+    @CsvSource({
+            "523f38f0-2179-4824-b885-3a38c5e149e8, S3STORAGE",
+            "f46b4d3d-c100-429a-bf9a-6c3305dbdbfa, CSV"
+    })
+    @WithMockUser(roles = "ADMIN")
+    void downloadExcelRejectsInvalidFiletypes(String reportId, String actualFormat) throws Exception {
+
+        UUID uuid = UUID.fromString(reportId);
+
+        doThrow(new InvalidReportFormatException(uuid, "XLSX", actualFormat))
+                .when(reportManagementServiceMock)
+                .validateReportFormat(uuid, FileExtension.XLSX);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/excel/{id}", uuid)
+                        .with(oidcLogin())
+                        .with(oauth2Client("graph")))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(
+                        "Report " + uuid +
+                                " is not valid for XLSX retrieval. This report is in " +
+                                actualFormat + " format."));
+
+        verify(reportManagementServiceMock)
+                .validateReportFormat(uuid, FileExtension.XLSX);
+
+        verify(streamingService, never())
+                .stream(uuid, FileExtension.XLSX);
+    }
+
+    @ParameterizedTest(name = "Rejects invalid filetype {1} for CSV download")
+    @CsvSource({
+            "0d4da9ec-b0b3-4371-af10-f375330d85d1, XLSX",
+            "523f38f0-2179-4824-b885-3a38c5e149e8, S3STORAGE"
+    })
+    @WithMockUser(roles = "ADMIN")
+    void downloadCsvRejectsInvalidFiletypes(String reportId, String actualFormat) throws Exception {
+
+        UUID uuid = UUID.fromString(reportId);
+
+        doThrow(new InvalidReportFormatException(uuid, "CSV", actualFormat))
+                .when(reportManagementServiceMock)
+                .validateReportFormat(uuid, FileExtension.CSV);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/csv/{id}", uuid)
+                        .with(oidcLogin())
+                        .with(oauth2Client("graph")))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(
+                        "Report " + uuid +
+                                " is not valid for CSV retrieval. This report is in " +
+                                actualFormat + " format."));
+
+        verify(reportManagementServiceMock)
+                .validateReportFormat(uuid, FileExtension.CSV);
+
+        verify(streamingService, never())
+                .stream(uuid, FileExtension.CSV);
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void downloadCsvSucceedsForCsvReport() throws Exception {
+        var csvReportId = DEFAULT_ID;
+
+        // Mock CSV data
+        ByteArrayOutputStream csvDataOutputStream = new ByteArrayOutputStream();
+        csvDataOutputStream.write("1,John,Doe\n".getBytes());
+
+        StreamingResponseBody responseBody = outputStream -> {
+            csvDataOutputStream.writeTo(outputStream);
+            outputStream.flush();
+        };
+
+        ResponseEntity<StreamingResponseBody> mockResponseEntity = ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=data.csv")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(responseBody);
+
+        // Validation passes (no exception thrown)
+        doNothing().when(reportManagementServiceMock).validateReportFormat(csvReportId, FileExtension.CSV);
+        when(streamingService.stream(csvReportId, FileExtension.CSV)).thenReturn(mockResponseEntity);
+
+        // Perform the GET request
+        mockMvc.perform(MockMvcRequestBuilders.get("/csv/{id}", csvReportId)
+                        .with(oidcLogin())
+                        .with(oauth2Client("graph")))
+                .andExpect(status().isOk())
+                .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=data.csv"));
+
+        verify(reportManagementServiceMock).validateReportFormat(csvReportId, FileExtension.CSV);
+        verify(streamingService).stream(csvReportId, FileExtension.CSV);
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void downloadExcelSucceedsForExcelReport() throws Exception {
+        var excelReportId = DEFAULT_ID;
+
+        // Mock Excel data
+        ByteArrayOutputStream excelDataOutputStream = new ByteArrayOutputStream();
+        excelDataOutputStream.write("mock-excel-data".getBytes());
+
+        StreamingResponseBody responseBody = outputStream -> {
+            excelDataOutputStream.writeTo(outputStream);
+            outputStream.flush();
+        };
+
+        ResponseEntity<StreamingResponseBody> mockResponseEntity = ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=report.xlsx")
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .body(responseBody);
+
+        // Validation passes (no exception thrown)
+        doNothing().when(reportManagementServiceMock).validateReportFormat(excelReportId, FileExtension.XLSX);
+        when(streamingService.stream(excelReportId, FileExtension.XLSX)).thenReturn(mockResponseEntity);
+
+        // Perform the GET request
+        mockMvc.perform(MockMvcRequestBuilders.get("/excel/{id}", excelReportId)
+                        .with(oidcLogin())
+                        .with(oauth2Client("graph")))
+                .andExpect(status().isOk())
+                .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report.xlsx"));
+
+        verify(reportManagementServiceMock).validateReportFormat(excelReportId, FileExtension.XLSX);
+        verify(streamingService).stream(excelReportId, FileExtension.XLSX);
+    }
+
+    @ParameterizedTest(name = "Rejects invalid filetype {1} for S3STORAGE download")
+    @CsvSource({
+            "f46b4d3d-c100-429a-bf9a-6c3305dbdbfa, CSV",
+            "0d4da9ec-b0b3-4371-af10-f375330d85d1, XLSX"
+    })
+    @WithMockUser(roles = "ADMIN")
+    void getReportDownloadByIdRejectsInvalidFiletypes(String reportId, String actualFormat) throws Exception {
+
+        UUID uuid = UUID.fromString(reportId);
+
+        doThrow(new InvalidReportFormatException(uuid, "S3STORAGE", actualFormat))
+                .when(reportManagementServiceMock)
+                .validateReportFormat(uuid, FileExtension.S3STORAGE);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/reports/{id}/file", uuid))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(
+                        "Report " + uuid +
+                                " is not valid for S3STORAGE retrieval. This report is in " +
+                                actualFormat + " format."));
+
+        verify(reportManagementServiceMock)
+                .validateReportFormat(uuid, FileExtension.S3STORAGE);
+
+        verify(fileDownloadService, never())
+                .getFileStreamResponse(uuid);
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void getReportDownloadByIdSucceedsForS3StorageReport() throws Exception {
+        var s3ReportId = UUID.fromString("523f38f0-2179-4824-b885-3a38c5e149e8");
+
+        var inputStreamResource = new InputStreamResource(new ByteArrayInputStream("test".getBytes()));
+        var mockResponse = ResponseEntity.ok(inputStreamResource);
+
+        // Validation passes (no exception thrown)
+        doNothing().when(reportManagementServiceMock).validateReportFormat(s3ReportId, FileExtension.S3STORAGE);  // Updated this line
+        when(fileDownloadService.getFileStreamResponse(s3ReportId)).thenReturn(mockResponse);
+
+        var result = mockMvc.perform(MockMvcRequestBuilders.get("/reports/{id}/file", s3ReportId))
+                .andExpect(status().isOk()).andReturn();
+
+        assertEquals("test", result.getResponse().getContentAsString());
+        verify(reportManagementServiceMock).validateReportFormat(s3ReportId, FileExtension.S3STORAGE);  // Updated this line
+        verify(fileDownloadService, times(1)).getFileStreamResponse(s3ReportId);
     }
 
 }

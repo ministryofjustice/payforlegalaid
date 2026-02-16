@@ -28,7 +28,7 @@ public record ReportDao(
             r.TEMPLATE_SECURE_DOCUMENT_ID, 
             r.REPORT_CREATION_DATE, 
             r.LAST_DATABASE_REFRESH_DATETIME, 
-            r.DESCRIPTION, 
+            r.DESCRIPTION AS REPORT_DESCRIPTION,
             r.NUM_DAYS_TO_KEEP, 
             r.REPORT_OUTPUT_TYPE, 
             r.REPORT_OWNER_ID, 
@@ -45,8 +45,9 @@ public record ReportDao(
             fa.FORMAT,
             fa.FORMAT_TYPE,
             fa.COLUMN_WIDTH,
+            rot.ID AS OUTPUT_TYPE_ID,
             rot.EXTENSION,
-            rot.DESCRIPTION
+            rot.DESCRIPTION AS OUTPUT_TYPE_DESCRIPTION
         FROM GPFD.REPORTS r
         LEFT JOIN GPFD.REPORT_QUERIES q ON r.ID = q.REPORT_ID
         LEFT JOIN GPFD.FIELD_ATTRIBUTES fa ON q.ID = fa.REPORT_QUERY_ID
@@ -63,7 +64,7 @@ public record ReportDao(
             r.TEMPLATE_SECURE_DOCUMENT_ID, 
             r.REPORT_CREATION_DATE, 
             r.LAST_DATABASE_REFRESH_DATETIME, 
-            r.DESCRIPTION, 
+            r.DESCRIPTION AS REPORT_DESCRIPTION,
             r.NUM_DAYS_TO_KEEP, 
             r.REPORT_OUTPUT_TYPE, 
             r.REPORT_OWNER_ID, 
@@ -80,8 +81,9 @@ public record ReportDao(
             fa.FORMAT,
             fa.FORMAT_TYPE,
             fa.COLUMN_WIDTH,
+            rot.ID AS OUTPUT_TYPE_ID,
             rot.EXTENSION,
-            rot.DESCRIPTION
+            rot.DESCRIPTION AS OUTPUT_TYPE_DESCRIPTION
         FROM GPFD.REPORTS r
         LEFT JOIN GPFD.REPORT_QUERIES q ON r.ID = q.REPORT_ID
         LEFT JOIN GPFD.FIELD_ATTRIBUTES fa ON q.ID = fa.REPORT_QUERY_ID

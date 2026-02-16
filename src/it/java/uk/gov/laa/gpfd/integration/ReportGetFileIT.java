@@ -116,7 +116,7 @@ final class ReportGetFileIT extends BaseIT {
     @Test
     @SneakyThrows
     void shouldErrorIfIdNotSupportedByEndpoint() {
-        performGetRequestWithUserHavingGroup("/reports/dd55e276-97b0-4dd8-a919-26d4aa373277/file", "")
+        performGetRequestWithUserHavingGroup("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d3/file", "")
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_JSON));
     }
