@@ -177,7 +177,7 @@ public record ReportDao(
     public Collection<Report> fetchReportsByRole() throws DatabaseFetchException {
         try {
             List<String> roles = extractRoles();
-            log.debug("Fetching reports from database for RBAC roles: {}", roles);
+            log.info("Fetching reports from database for RBAC roles: {}", roles);
             Map<String, Object> params = Map.of("roles", roles);
 
             return namedReadOnlyJdbcTemplate.query(SELECT_REPORTS_BY_ROLE_SQL, params, extractor);
