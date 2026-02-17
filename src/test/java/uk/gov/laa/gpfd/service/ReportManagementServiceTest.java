@@ -47,7 +47,7 @@ class ReportManagementServiceTest {
         var report2 = ReportsTestDataFactory.createTestReport();
         var reports = List.of(report1, report2);
 
-        when(reportDetailsDao.fetchReports()).thenReturn(reports);
+        when(reportDetailsDao.fetchReportsByRole()).thenReturn(reports);
 
         List<ReportsGet200ResponseReportListInner> result = reportManagementService.fetchReportListEntries();
 
@@ -56,7 +56,7 @@ class ReportManagementServiceTest {
 
     @Test
     void shouldThrowDatabaseReadExceptionWhenDaoThrowsException() {
-        when(reportDetailsDao.fetchReports()).thenThrow(new DatabaseFetchException("DB error"));
+        when(reportDetailsDao.fetchReportsByRole()).thenThrow(new DatabaseFetchException("DB error"));
 
         assertThrows(DatabaseFetchException.class, () -> reportManagementService.fetchReportListEntries());
     }

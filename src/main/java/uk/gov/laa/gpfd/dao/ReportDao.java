@@ -190,12 +190,32 @@ public record ReportDao(
 
     private static List<String> extractRoles() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        OidcUser oidcUser = (OidcUser) auth.getPrincipal();
+        if (auth == null || !(auth.getPrincipal() instanceof OidcUser oidcUser)) {
+            return List.of();
+        }
 
-        return oidcUser.getAuthorities()
-            .stream()
-            .map(GrantedAuthority::getAuthority)
-            .toList();
+        Object roles = oidcUser.getAttributes().get("LAA_APP_ROLES");
+        return parseRoles(roles);
     }
+
+    private static List<String> parseRoles(Object roles) {
+        if (roles == null) {
+            return List.of();
+        }
+        if (roles instanceof List<?> list) {
+            return list.stream()
+                    .map(Object::toString)
+                    .toList();
+        }
+
+        if (roles instanceof String str) {
+            return Arrays.stream(str.split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .toList();
+        }
+        return List.of();
+    }
+
 
 }
