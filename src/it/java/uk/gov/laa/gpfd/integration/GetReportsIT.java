@@ -27,7 +27,7 @@ import uk.gov.laa.gpfd.integration.verifier.DatabaseVerifier.Table;
 @TestPropertySource(locations = "classpath:application-test.yml")
 final class GetReportsIT extends BaseIT {
 
-   /* @Autowired
+    @Autowired
     private JdbcTemplate jdbc;
 
     @Test
