@@ -128,10 +128,8 @@ public record ReportDao(
         LEFT JOIN GPFD.REPORT_QUERIES q ON r.ID = q.REPORT_ID 
         LEFT JOIN GPFD.FIELD_ATTRIBUTES fa ON q.ID = fa.REPORT_QUERY_ID 
         LEFT JOIN GPFD.REPORT_OUTPUT_TYPES rot ON r.REPORT_OUTPUT_TYPE = rot.ID 
-        -- Added RBAC joins (non‑disruptive) 
         INNER JOIN GPFD.REPORT_ROLES rr ON r.ID = rr.REPORT_ID 
         INNER JOIN GPFD.ROLES ro ON rr.ROLE_ID = ro.ROLE_ID 
-        WHERE r.ACTIVE = 'Y' 
         AND ro.ROLE_NAME IN (:roles)
     """;
 
@@ -179,6 +177,9 @@ public record ReportDao(
             List<String> roles = extractRoles();
             log.info("Fetching reports from database for RBAC roles: {}", roles);
             Map<String, Object> params = Map.of("roles", roles);
+
+            log.info("SQL: {}", SELECT_REPORTS_BY_ROLE_SQL);
+            log.info("Params: {}", params);
 
             return namedReadOnlyJdbcTemplate.query(SELECT_REPORTS_BY_ROLE_SQL, params, extractor);
         } catch (DataAccessException e) {
