@@ -4,6 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
@@ -18,8 +22,7 @@ import uk.gov.laa.gpfd.services.StreamingService;
 import uk.gov.laa.gpfd.services.s3.FileDownloadService;
 import uk.gov.laa.gpfd.utils.UrlBuilder;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static uk.gov.laa.gpfd.model.FileExtension.*;
 
@@ -47,7 +50,7 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
 
     @Override
     public ResponseEntity<ReportsGet200Response> reportsGet() {
-        log.info("Requesting report list from service");
+          log.info("Requesting report list from service");
         var reportListEntries = reportManagementService.fetchReportListEntries();
 
         var response = new ReportsGet200Response();
@@ -123,5 +126,4 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
 
         return fileDownloadService.getFileStreamResponse(id);
     }
-
 }
