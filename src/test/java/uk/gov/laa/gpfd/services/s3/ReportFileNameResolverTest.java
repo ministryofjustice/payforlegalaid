@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP000;
 import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP012;
 import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP013;
+import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP014;
 
 class ReportFileNameResolverTest {
 
@@ -28,6 +29,11 @@ class ReportFileNameResolverTest {
     @Test
     void shouldReturnS3PrefixForRep013() {
         assertEquals("reports/daily/report_013", reportFileNameResolver.getS3PrefixFromId(ID_REP013));
+    }
+
+    @Test
+    void shouldReturnS3PrefixForRep014() {
+        assertEquals("reports/daily/report_014", reportFileNameResolver.getS3PrefixFromId(ID_REP014));
     }
 
     @Test

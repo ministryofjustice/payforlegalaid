@@ -25,6 +25,7 @@ import static org.mockito.Mockito.when;
 import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP000;
 import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP012;
 import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP013;
+import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP014;
 
 @ExtendWith(MockitoExtension.class)
 class ReportAccessCheckerServiceTest {
@@ -147,7 +148,8 @@ class ReportAccessCheckerServiceTest {
     private static Stream<Arguments> submissionReconciliationReports() {
         return Stream.of(
                 Arguments.of(ID_REP012),
-                Arguments.of(ID_REP013)
+                Arguments.of(ID_REP013),
+                Arguments.of(ID_REP014)
         );
     }
 
@@ -155,7 +157,8 @@ class ReportAccessCheckerServiceTest {
         return Stream.of(
                 Arguments.of(ID_REP000),
                 Arguments.of(ID_REP012),
-                Arguments.of(ID_REP013)
+                Arguments.of(ID_REP013),
+                Arguments.of(ID_REP014)
         );
     }
 
