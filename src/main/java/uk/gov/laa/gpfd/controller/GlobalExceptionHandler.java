@@ -14,6 +14,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import uk.gov.laa.gpfd.exception.CsvGenerationException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
+import uk.gov.laa.gpfd.exception.InvalidReportFormatException;
 import uk.gov.laa.gpfd.exception.FileDownloadException.InvalidDownloadFormatException;
 import uk.gov.laa.gpfd.exception.FileDownloadException.ReportNotSupportedForDownloadException;
 import uk.gov.laa.gpfd.exception.FileDownloadException.S3BucketHasNoCopiesOfReportException;
@@ -388,6 +389,25 @@ public class GlobalExceptionHandler {
                 e.getReportId(), e.getPrefix());
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(errorResponse);
+    }
+
+    /**
+     * Handles {@link InvalidReportFormatException} and responds with an HTTP 400 Bad Request.
+     *
+     * @param e the exception thrown when a report is requested in an unsupported format
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet400Response} with error details.
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidReportFormatException.class)
+    public ResponseEntity<ReportsGet400Response> handleInvalidReportFormatException(InvalidReportFormatException e) {
+        var errorResponse = new ReportsGet400Response();
+        errorResponse.setError(e.getMessage());
+
+        log.error("InvalidReportFormatException Thrown: Report {} requested as {} but is actually {}",
+                e.getReportId(), e.getRequestedFormat(), e.getActualFormat());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(errorResponse);
     }
 
