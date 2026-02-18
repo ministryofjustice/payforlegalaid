@@ -7,6 +7,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -133,7 +134,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = {
             DatabaseReadException.class,
             DataAccessException.class,
-            SQLSyntaxErrorException.class
+            SQLSyntaxErrorException.class,
+            AccessDeniedException.class
     }, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ReportsGet500Response> handleDatabaseReadException(Exception e) {
         var response = new ReportsGet500Response() {{

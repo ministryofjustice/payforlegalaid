@@ -5,12 +5,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import uk.gov.laa.gpfd.dao.support.ReportWithQueriesAndFieldAttributesExtractor;
 import uk.gov.laa.gpfd.data.ReportsTestDataFactory;
 import uk.gov.laa.gpfd.model.Report;
+import uk.gov.laa.gpfd.utils.SecurityUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,9 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static uk.gov.laa.gpfd.exception.DatabaseReadException.DatabaseFetchException;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,8 +37,12 @@ class ReportDaoTest {
     @Mock
     private ReportWithQueriesAndFieldAttributesExtractor extractor;
 
+    @Spy
     @InjectMocks
     private ReportDao reportDao;
+
+    @Mock
+    SecurityUtils securityUtils;
 
     private UUID testReportId;
     private Report testReport;
@@ -51,6 +55,7 @@ class ReportDaoTest {
 
     @Test
     void fetchReportById_shouldReturnReportWhenFound() {
+        doNothing().when(reportDao).authorizeReportAccess(testReportId);
         when(readOnlyJdbcTemplate.query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class), any()))
                 .thenReturn(Collections.singletonList(testReport));
 
@@ -63,6 +68,7 @@ class ReportDaoTest {
 
     @Test
     void fetchReportById_shouldReturnEmptyOptionalWhenReportNotFound() {
+        doNothing().when(reportDao).authorizeReportAccess(testReportId);
         when(readOnlyJdbcTemplate.query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class), any()))
                 .thenReturn(Collections.emptyList());
 
@@ -73,9 +79,9 @@ class ReportDaoTest {
 
     @Test
     void fetchReportById_shouldThrowDatabaseReadExceptionOnDataAccessError() {
+        doNothing().when(reportDao).authorizeReportAccess(testReportId);
         when(readOnlyJdbcTemplate.query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class), any()))
                 .thenThrow(new DataAccessException("Database error") {});
-
         assertThrows(DatabaseFetchException.class, () -> reportDao.fetchReportById(testReportId));
     }
 

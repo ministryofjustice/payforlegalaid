@@ -6,12 +6,14 @@ import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import uk.gov.laa.gpfd.model.Report;
+import uk.gov.laa.gpfd.utils.SecurityUtils;
 
 import java.util.*;
 
@@ -22,9 +24,16 @@ import static uk.gov.laa.gpfd.exception.DatabaseReadException.DatabaseFetchExcep
 public record ReportDao(
         ResultSetExtractor<Collection<Report>> extractor,
         JdbcOperations readOnlyJdbcTemplate,
-        NamedParameterJdbcOperations namedReadOnlyJdbcTemplate
+        NamedParameterJdbcOperations namedReadOnlyJdbcTemplate,
+        SecurityUtils securityUtils
 ) {
 
+    private static final String SELECT_REPORT_ROLES = """
+        SELECT r.ROLE_NAME
+        FROM GPFD.ROLES r
+        JOIN GPFD.REPORT_ROLES rr ON rr.ROLE_ID = r.ROLE_ID
+        WHERE rr.REPORT_ID = ?
+        """;
     private static final String SELECT_REPORT_BY_ID = """
         SELECT 
             r.ID, 
@@ -130,7 +139,7 @@ public record ReportDao(
         LEFT JOIN GPFD.REPORT_OUTPUT_TYPES rot ON r.REPORT_OUTPUT_TYPE = rot.ID 
         INNER JOIN GPFD.REPORT_ROLES rr ON r.ID = rr.REPORT_ID 
         INNER JOIN GPFD.ROLES ro ON rr.ROLE_ID = ro.ROLE_ID 
-        WHERE ro.ROLE_NAME IN (:roles)
+        WHERE  r.ACTIVE = 'Y' AND ro.ROLE_NAME IN (:roles)
     """;
 
 
@@ -144,13 +153,21 @@ public record ReportDao(
      * @throws RuntimeException if an error occurs while fetching the report
      */
     public Optional<Report> fetchReportById(UUID reportId) {
-        log.debug("Executing SQL query to fetch report by ID: {}", reportId);
+        log.debug("Fetching report by ID: {}", reportId);
+
         try {
-            return readOnlyJdbcTemplate.query(SELECT_REPORT_BY_ID, extractor, reportId.toString())
-                    .stream()
-                    .findFirst();
+            //authorize report access
+            authorizeReportAccess(reportId);
+
+            // 4. Fetch the report
+            return readOnlyJdbcTemplate.query(
+                    SELECT_REPORT_BY_ID,
+                    extractor,
+                    reportId.toString()
+            ).stream().findFirst();
+
         } catch (DataAccessException e) {
-            log.error("Error fetching report by ID: {}", reportId, e);
+            log.error("Error fetching report {}", reportId, e);
             throw new DatabaseFetchException("Error fetching report by ID: " + reportId);
         }
     }
@@ -174,7 +191,7 @@ public record ReportDao(
 
     public Collection<Report> fetchReportsByRole() throws DatabaseFetchException {
         try {
-            List<String> roles = extractRoles();
+            List<String> roles = securityUtils.extractRoles();
             log.info("Fetching reports from database for RBAC roles: {}", roles);
             Map<String, Object> params = Map.of("roles", roles);
 
@@ -189,34 +206,20 @@ public record ReportDao(
         }
     }
 
-    private static List<String> extractRoles() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !(auth.getPrincipal() instanceof OidcUser oidcUser)) {
-            return List.of();
-        }
+    public void authorizeReportAccess(UUID reportId) {
+        List<String> userRoles = securityUtils.extractRoles();
 
-        Object roles = oidcUser.getAttributes().get("LAA_APP_ROLES");
-        return parseRoles(roles);
+        List<String> reportRoles = readOnlyJdbcTemplate.query(
+                SELECT_REPORT_ROLES,
+                (rs, rowNum) -> rs.getString("ROLE_NAME"),
+                reportId
+        );
+
+        log.info("Report {} requires roles: {}", reportId, reportRoles);
+
+        if (!securityUtils.isAuthorized(userRoles, reportRoles)) {
+            throw new AccessDeniedException("You are not authorized to view this report.");
+        }
     }
-
-    private static List<String> parseRoles(Object roles) {
-        if (roles == null) {
-            return List.of();
-        }
-        if (roles instanceof List<?> list) {
-            return list.stream()
-                    .map(Object::toString)
-                    .toList();
-        }
-
-        if (roles instanceof String str) {
-            return Arrays.stream(str.split(","))
-                    .map(String::trim)
-                    .filter(s -> !s.isEmpty())
-                    .toList();
-        }
-        return List.of();
-    }
-
 
 }
