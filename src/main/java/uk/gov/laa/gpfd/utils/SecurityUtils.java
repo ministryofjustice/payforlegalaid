@@ -17,7 +17,7 @@ public class SecurityUtils {
             return List.of();
         }
 
-        Object roles = oidcUser.getAttributes().get("ROLES");
+        Object roles = oidcUser.getAttributes().get("LAA_APP_ROLES");
         return parseRoles(roles);
     }
 
