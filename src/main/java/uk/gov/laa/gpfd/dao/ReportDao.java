@@ -140,7 +140,7 @@ public record ReportDao(
         LEFT JOIN GPFD.REPORT_OUTPUT_TYPES rot ON r.REPORT_OUTPUT_TYPE = rot.ID 
         INNER JOIN GPFD.REPORT_ROLES rr ON r.ID = rr.REPORT_ID 
         INNER JOIN GPFD.ROLES ro ON rr.ROLE_ID = ro.ROLE_ID 
-        WHERE  r.ACTIVE = 'Y' AND ro.ROLE_NAME IN (:roles)
+        WHERE ro.ROLE_NAME IN (:roles)
     """;
 
 
@@ -216,7 +216,7 @@ public record ReportDao(
                 reportId.toString()
         );
 
-        log.info("Report {} requires roles: {}", reportId, reportRoles);
+        log.info("Report {} requires roles: {} whereas you have: {}", reportId, reportRoles, userRoles);
 
         if (!securityUtils.isAuthorized(userRoles, reportRoles)) {
             throw new AccessDeniedException("You are not authorized to view this report.");
