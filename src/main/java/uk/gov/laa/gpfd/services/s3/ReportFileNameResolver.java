@@ -10,6 +10,7 @@ import java.util.UUID;
 import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP000;
 import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP012;
 import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP013;
+import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP014;
 
 /*
  Class for activities related to finding the report name for tactical solution reports
@@ -28,7 +29,8 @@ public class ReportFileNameResolver {
     private static final Map<UUID, FileDetails> fileMap = Map.of(
             ID_REP000, new FileDetails(MONTHLY_FOLDER, "report_000"),
             ID_REP012, new FileDetails(DAILY_FOLDER, "report_012"),
-            ID_REP013, new FileDetails(DAILY_FOLDER, "report_013")
+            ID_REP013, new FileDetails(DAILY_FOLDER, "report_013"),
+            ID_REP014, new FileDetails(DAILY_FOLDER, "report_014")
     );
 
     /**

@@ -12,6 +12,7 @@ import java.util.UUID;
 import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP000;
 import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP012;
 import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP013;
+import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP014;
 
 /**
  * This is to cover us not having full RBAC implementation right now.
@@ -55,6 +56,9 @@ public class ReportAccessCheckerService {
             return false;
         }
         if (reportId.equals(ID_REP013) && !groups.contains(submissionReconciliationGroupId)) {
+            return false;
+        }
+        if (reportId.equals(ID_REP014) && !groups.contains(submissionReconciliationGroupId)){
             return false;
         }
         return true;
