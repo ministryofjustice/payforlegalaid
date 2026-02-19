@@ -41,8 +41,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP012;
+import uk.gov.laa.gpfd.config.TestSecurityConfig;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT, classes = {TestS3Config.class})
+@SpringBootTest(webEnvironment = RANDOM_PORT, classes = {TestS3Config.class, TestSecurityConfig.class})
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @TestPropertySource(properties = {"gpfd.s3.has-s3-access=true", "AWS_REGION=eu-west-1",
