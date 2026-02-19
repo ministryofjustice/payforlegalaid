@@ -34,6 +34,7 @@ public record ReportDao(
         JOIN GPFD.REPORT_ROLES rr ON rr.ROLE_ID = r.ROLE_ID
         WHERE rr.REPORT_ID = ?
         """;
+
     private static final String SELECT_REPORT_BY_ID = """
         SELECT 
             r.ID, 
@@ -159,7 +160,7 @@ public record ReportDao(
             //authorize report access
             authorizeReportAccess(reportId);
 
-            // 4. Fetch the report
+            // Fetch the report
             return readOnlyJdbcTemplate.query(
                     SELECT_REPORT_BY_ID,
                     extractor,
@@ -212,7 +213,7 @@ public record ReportDao(
         List<String> reportRoles = readOnlyJdbcTemplate.query(
                 SELECT_REPORT_ROLES,
                 (rs, rowNum) -> rs.getString("ROLE_NAME"),
-                reportId
+                reportId.toString()
         );
 
         log.info("Report {} requires roles: {}", reportId, reportRoles);
