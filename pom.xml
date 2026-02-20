@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.10</version>
+        <version>3.5.11</version>
     </parent>
 
     <properties>
@@ -24,6 +24,7 @@
         <maven-surefire-junit5-tree-reporter.version>1.5.1</maven-surefire-junit5-tree-reporter.version>
         <poi.version>5.5.1</poi.version>
         <immutables.version>2.12.1</immutables.version>
+        <!--        todo upgrade to 7 when spring-->
         <spring-cloud-azure-dependencies.version>6.1.0</spring-cloud-azure-dependencies.version>
         <spring-security.version>6.4.11</spring-security.version>
         <govuk-frontend.version>5.14.0</govuk-frontend.version>
@@ -31,7 +32,7 @@
 
         <payforlegalaid-openapi.version>0.0.23</payforlegalaid-openapi.version>
         <common-lang3.version>3.20.0</common-lang3.version>
-        <aws.java.sdk.version>2.41.28</aws.java.sdk.version>
+        <aws.java.sdk.version>2.41.32</aws.java.sdk.version>
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
     </properties>
 
@@ -104,13 +105,6 @@
                             </artifactItems>
                         </configuration>
                     </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.10.0</version>
-                <executions>
                     <execution>
                         <id>unpack-govuk</id>
                         <phase>generate-resources</phase>
@@ -243,11 +237,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <dependency>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven-surefire-plugin.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -274,6 +263,7 @@
             <artifactId>payforlegalaid-openapi</artifactId>
             <version>${payforlegalaid-openapi.version}</version>
         </dependency>
+        <!--- todo upgrade after spring -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -335,10 +325,10 @@
             <artifactId>spring-security-oauth2-jose</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-crypto</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.security</groupId>-->
+<!--            <artifactId>spring-security-crypto</artifactId>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
@@ -363,6 +353,7 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>${h2.version}</version>
+            <!-- also used locally until dockerising -->
         </dependency>
         <dependency>
             <groupId>org.liquibase</groupId>
@@ -394,6 +385,7 @@
         <!--- dependencies added to resolve snyk issues -->
         <!--- Commons lang3 could be removed if liquibase-core, poi-ooxml
         and springdoc-openapi-starter-webmvc get higher version of it than 3.17-->
+        <!-- double check after spring 4 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
