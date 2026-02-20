@@ -10,8 +10,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.10</version>
-<!--        todo -->
+        <version>3.5.11</version>
     </parent>
 
     <properties>
@@ -264,6 +263,7 @@
             <artifactId>payforlegalaid-openapi</artifactId>
             <version>${payforlegalaid-openapi.version}</version>
         </dependency>
+        <!--- todo upgrade after spring -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -325,10 +325,10 @@
             <artifactId>spring-security-oauth2-jose</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-crypto</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.security</groupId>-->
+<!--            <artifactId>spring-security-crypto</artifactId>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
@@ -353,6 +353,7 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>${h2.version}</version>
+            <!-- also used locally until dockerising -->
         </dependency>
         <dependency>
             <groupId>org.liquibase</groupId>
@@ -384,6 +385,7 @@
         <!--- dependencies added to resolve snyk issues -->
         <!--- Commons lang3 could be removed if liquibase-core, poi-ooxml
         and springdoc-openapi-starter-webmvc get higher version of it than 3.17-->
+        <!-- double check after spring 4 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
