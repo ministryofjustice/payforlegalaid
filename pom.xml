@@ -11,6 +11,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.5.10</version>
+<!--        todo -->
     </parent>
 
     <properties>
@@ -24,6 +25,7 @@
         <maven-surefire-junit5-tree-reporter.version>1.5.1</maven-surefire-junit5-tree-reporter.version>
         <poi.version>5.5.1</poi.version>
         <immutables.version>2.12.1</immutables.version>
+        <!--        todo upgrade to 7 when spring-->
         <spring-cloud-azure-dependencies.version>6.1.0</spring-cloud-azure-dependencies.version>
         <spring-security.version>6.4.11</spring-security.version>
         <govuk-frontend.version>5.14.0</govuk-frontend.version>
@@ -31,7 +33,7 @@
 
         <payforlegalaid-openapi.version>0.0.23</payforlegalaid-openapi.version>
         <common-lang3.version>3.20.0</common-lang3.version>
-        <aws.java.sdk.version>2.41.28</aws.java.sdk.version>
+        <aws.java.sdk.version>2.41.32</aws.java.sdk.version>
         <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
     </properties>
 
