@@ -11,7 +11,6 @@ import org.springframework.security.oauth2.client.registration.InMemoryClientReg
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
 
 import java.util.List;
@@ -21,8 +20,8 @@ import java.util.List;
  * <p>
  * This class configures the core security settings for HTTP requests, including
  * authorization, session management, and HTTP basic authentication. The configuration
- * is modularized into different components, such as {@link AuthorizeHttpRequestsBuilder}
- * and {@link SessionManagementConfigurerBuilder}, which are injected into this class
+ * is modularized into different components, such as @link SessionManagementConfigurerBuilder},
+ * which are injected into this class
  * to manage specific security aspects.
  * </p>
  */

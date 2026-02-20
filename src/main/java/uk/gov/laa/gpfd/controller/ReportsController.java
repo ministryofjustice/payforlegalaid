@@ -4,22 +4,24 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.api.CsvApi;
 import uk.gov.laa.gpfd.api.ExcelApi;
 import uk.gov.laa.gpfd.api.ReportsApi;
+import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200Response;
 import uk.gov.laa.gpfd.services.ReportManagementService;
 import uk.gov.laa.gpfd.services.ReportsTrackingService;
 import uk.gov.laa.gpfd.services.StreamingService;
 import uk.gov.laa.gpfd.services.s3.FileDownloadService;
+import uk.gov.laa.gpfd.utils.SecurityUtils;
 import uk.gov.laa.gpfd.utils.UrlBuilder;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static uk.gov.laa.gpfd.model.FileExtension.*;
 
@@ -33,7 +35,7 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
     private final StreamingService streamingService;
     private final FileDownloadService fileDownloadService;
     private final UrlBuilder urlBuilder;
-
+    private final ReportDao reportDao;
     @Override
     public Optional<NativeWebRequest> getRequest() {
         return Optional.empty();
@@ -47,7 +49,7 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
 
     @Override
     public ResponseEntity<ReportsGet200Response> reportsGet() {
-        log.info("Requesting report list from service");
+          log.info("Requesting report list from service");
         var reportListEntries = reportManagementService.fetchReportListEntries();
 
         var response = new ReportsGet200Response();
@@ -71,6 +73,9 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
     @Override
     public ResponseEntity<StreamingResponseBody> csvIdGet(UUID requestedId) {
         log.info("Returning a CSV report for id {} to user", requestedId);
+
+        // authorize report access
+        reportDao.authorizeReportAccess(requestedId);
 
         // Validate that this report is actually a CSV report
         reportManagementService.validateReportFormat(requestedId, CSV);
@@ -107,6 +112,9 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
     public ResponseEntity<StreamingResponseBody> getExcelById(UUID id) {
         log.info("Returning an Excel report for id {} to user", id);
 
+        // authorize report access
+        reportDao.authorizeReportAccess(id);
+
         // Validate format before attempting to stream
         reportManagementService.validateReportFormat(id, XLSX);
 
@@ -123,5 +131,4 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
 
         return fileDownloadService.getFileStreamResponse(id);
     }
-
 }

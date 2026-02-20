@@ -3,13 +3,19 @@ package uk.gov.laa.gpfd.dao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import uk.gov.laa.gpfd.model.Report;
+import uk.gov.laa.gpfd.utils.SecurityUtils;
 
-import java.util.Collection;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static uk.gov.laa.gpfd.exception.DatabaseReadException.DatabaseFetchException;
 
@@ -17,8 +23,17 @@ import static uk.gov.laa.gpfd.exception.DatabaseReadException.DatabaseFetchExcep
 @Service
 public record ReportDao(
         ResultSetExtractor<Collection<Report>> extractor,
-        JdbcOperations readOnlyJdbcTemplate
+        JdbcOperations readOnlyJdbcTemplate,
+        NamedParameterJdbcOperations namedReadOnlyJdbcTemplate,
+        SecurityUtils securityUtils
 ) {
+
+    private static final String SELECT_REPORT_ROLES = """
+        SELECT r.ROLE_NAME
+        FROM GPFD.ROLES r
+        JOIN GPFD.REPORT_ROLES rr ON rr.ROLE_ID = r.ROLE_ID
+        WHERE rr.REPORT_ID = ?
+        """;
 
     private static final String SELECT_REPORT_BY_ID = """
         SELECT 
@@ -91,6 +106,43 @@ public record ReportDao(
         WHERE r.ACTIVE = 'Y'
     """;
 
+    private static final String SELECT_REPORTS_BY_ROLE_SQL = """
+      SELECT 
+            r.ID, 
+            r.NAME, 
+            r.FILE_NAME,
+            r.TEMPLATE_SECURE_DOCUMENT_ID, 
+            r.REPORT_CREATION_DATE, 
+            r.LAST_DATABASE_REFRESH_DATETIME, 
+            r.DESCRIPTION AS REPORT_DESCRIPTION,
+            r.NUM_DAYS_TO_KEEP, 
+            r.REPORT_OUTPUT_TYPE, 
+            r.REPORT_OWNER_ID, 
+            r.REPORT_OWNER_NAME,
+            r.ACTIVE,
+            r.REPORT_OWNER_EMAIL,
+            q.ID AS QUERY_ID,
+            q.QUERY,
+            q."INDEX",
+            q.TAB_NAME,
+            fa.ID AS FIELD_ATTRIBUTE_ID,
+            fa.SOURCE_NAME,
+            fa.MAPPED_NAME,
+            fa.FORMAT,
+            fa.FORMAT_TYPE,
+            fa.COLUMN_WIDTH,
+            rot.ID AS OUTPUT_TYPE_ID,
+            rot.EXTENSION,
+            rot.DESCRIPTION AS OUTPUT_TYPE_DESCRIPTION
+        FROM GPFD.REPORTS r
+        LEFT JOIN GPFD.REPORT_QUERIES q ON r.ID = q.REPORT_ID 
+        LEFT JOIN GPFD.FIELD_ATTRIBUTES fa ON q.ID = fa.REPORT_QUERY_ID 
+        LEFT JOIN GPFD.REPORT_OUTPUT_TYPES rot ON r.REPORT_OUTPUT_TYPE = rot.ID 
+        INNER JOIN GPFD.REPORT_ROLES rr ON r.ID = rr.REPORT_ID 
+        INNER JOIN GPFD.ROLES ro ON rr.ROLE_ID = ro.ROLE_ID 
+        WHERE ro.ROLE_NAME IN (:roles)
+    """;
+
 
     /**
      * Fetches a {@link Report} by its unique identifier (UUID) from the database.
@@ -102,13 +154,21 @@ public record ReportDao(
      * @throws RuntimeException if an error occurs while fetching the report
      */
     public Optional<Report> fetchReportById(UUID reportId) {
-        log.debug("Executing SQL query to fetch report by ID: {}", reportId);
+        log.debug("Fetching report by ID: {}", reportId);
+
         try {
-            return readOnlyJdbcTemplate.query(SELECT_REPORT_BY_ID, extractor, reportId.toString())
-                    .stream()
-                    .findFirst();
+            //authorize report access
+            authorizeReportAccess(reportId);
+
+            // Fetch the report
+            return readOnlyJdbcTemplate.query(
+                    SELECT_REPORT_BY_ID,
+                    extractor,
+                    reportId.toString()
+            ).stream().findFirst();
+
         } catch (DataAccessException e) {
-            log.error("Error fetching report by ID: {}", reportId, e);
+            log.error("Error fetching report {}", reportId, e);
             throw new DatabaseFetchException("Error fetching report by ID: " + reportId);
         }
     }
@@ -127,6 +187,39 @@ public record ReportDao(
             String errorMessage = "Failed to fetch reports from database";
             log.error("{}: {}", errorMessage, e.getMessage(), e);
             throw new DatabaseFetchException("Failed to fetch reports from database");
+        }
+    }
+
+    public Collection<Report> fetchReportsByRole() throws DatabaseFetchException {
+        try {
+            List<String> roles = securityUtils.extractRoles();
+            log.info("Fetching reports from database for RBAC roles: {}", roles);
+            Map<String, Object> params = Map.of("roles", roles);
+
+            log.info("SQL: {}", SELECT_REPORTS_BY_ROLE_SQL);
+            log.info("Params: {}", params);
+
+            return namedReadOnlyJdbcTemplate.query(SELECT_REPORTS_BY_ROLE_SQL, params, extractor);
+        } catch (DataAccessException e) {
+            String errorMessage = "Failed to fetch reports from database";
+            log.error("{}: {}", errorMessage, e.getMessage(), e);
+            throw new DatabaseFetchException("Failed to fetch reports from database");
+        }
+    }
+
+    public void authorizeReportAccess(UUID reportId) {
+        List<String> userRoles = securityUtils.extractRoles();
+
+        List<String> reportRoles = readOnlyJdbcTemplate.query(
+                SELECT_REPORT_ROLES,
+                (rs, rowNum) -> rs.getString("ROLE_NAME"),
+                reportId.toString()
+        );
+
+        log.info("Report {} requires roles: {} whereas you have: {}", reportId, reportRoles, userRoles);
+
+        if (!securityUtils.isAuthorized(userRoles, reportRoles)) {
+            throw new AccessDeniedException("You are not authorized to view this report.");
         }
     }
 

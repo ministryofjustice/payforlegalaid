@@ -4,6 +4,7 @@ package uk.gov.laa.gpfd.controller;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
+import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.data.ReportListEntryTestDataFactory;
 import uk.gov.laa.gpfd.exception.InvalidReportFormatException;
 import uk.gov.laa.gpfd.model.FileExtension;
@@ -64,6 +66,9 @@ class ReportsControllerTest {
 
     @Autowired
     MockMvc mockMvc;
+
+    @MockitoBean
+    ReportDao reportDao;
 
     @Test
     @WithMockUser(roles = "ADMIN")
@@ -193,6 +198,7 @@ class ReportsControllerTest {
     void downloadCsvRejectsInvalidFiletypes(String reportId, String actualFormat) throws Exception {
 
         UUID uuid = UUID.fromString(reportId);
+        doNothing().when(reportDao).authorizeReportAccess(UUID.fromString(reportId));
 
         doThrow(new InvalidReportFormatException(uuid, "CSV", actualFormat))
                 .when(reportManagementServiceMock)

@@ -1,5 +1,6 @@
 package uk.gov.laa.gpfd.services;
 
+import java.util.Set;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -47,7 +48,7 @@ public record ReportManagementService(
      * @throws DatabaseReadException if there is an error fetching data from the database
      */
     public List<ReportsGet200ResponseReportListInner> fetchReportListEntries() {
-        return reportDetailsDao.fetchReports().stream()
+        return reportDetailsDao.fetchReportsByRole().stream()
                 .map(innerResponseMapper::map)
                 .toList();
     }

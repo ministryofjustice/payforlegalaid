@@ -15,7 +15,6 @@ import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.SecurityFilterChain;
-import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
 
 import java.util.List;
@@ -28,8 +27,8 @@ import java.util.stream.Collectors;
  * <p>
  * This class configures the core security settings for HTTP requests, including
  * authorization, session management, and HTTP basic authentication. The configuration
- * is modularized into different components, such as {@link AuthorizeHttpRequestsBuilder}
- * and {@link SessionManagementConfigurerBuilder}, which are injected into this class
+ * is modularized into different components, such as {@link SessionManagementConfigurerBuilder},
+ * which are injected into this class
  * to manage specific security aspects.
  * </p>
  */
@@ -40,15 +39,6 @@ import java.util.stream.Collectors;
 public class SecurityConfig {
 
     /**
-     * The custom {@link AuthorizeHttpRequestsBuilder} responsible for configuring
-     * the authorization rules for HTTP requests, such as which endpoints are publicly
-     * accessible and which require authentication.
-     * This dependency is injected via constructor injection due to the
-     * {@link RequiredArgsConstructor} annotation.
-     */
-    private final AuthorizeHttpRequestsBuilder authorizeHttpRequestsBuilder;
-
-    /**
      * The custom {@link SessionManagementConfigurerBuilder} responsible for configuring
      * session management, including session concurrency control and session expiration.
      * This dependency is injected via constructor injection due to the
@@ -56,10 +46,21 @@ public class SecurityConfig {
      */
     private final SessionManagementConfigurerBuilder sessionManagementConfigurerBuilder;
 
+    public static final String[] PUBLIC_PATHS = {
+            "/actuator/**",
+            "/actuator/health",
+            "/swagger-ui/**",
+            "/swagger.yml",
+            "/v3/**",
+            "/login"
+    };
+
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .authorizeHttpRequests(authorizeHttpRequestsBuilder)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(PUBLIC_PATHS).permitAll()
+                        .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo.oidcUserService(oidcUserService()))
                         .successHandler((request, response, authentication) -> {
