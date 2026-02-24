@@ -6,12 +6,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.services.s3.S3Client;
+import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.services.excel.template.S3TemplateClient;
 import uk.gov.laa.gpfd.services.excel.template.TemplateClient;
 import uk.gov.laa.gpfd.services.excel.template.TemplateFileNameResolver;
 import uk.gov.laa.gpfd.services.s3.FileDownloadFromS3Service;
 import uk.gov.laa.gpfd.services.s3.FileDownloadService;
-import uk.gov.laa.gpfd.services.s3.ReportAccessCheckerService;
 import uk.gov.laa.gpfd.services.s3.ReportFileNameResolver;
 import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
 
@@ -21,14 +21,6 @@ import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
 @Configuration
 @ConditionalOnProperty(name = "gpfd.s3.has-s3-access", havingValue = "true")
 public class S3Config {
-
-    // When SILAS RBAC is introduced we can replace these with storing permissions in database.
-    @Value("${gpfd.s3.permissions.rep000}")
-    private String rep000GroupId;
-
-    @Value("${gpfd.s3.permissions.submission-reconciliation}")
-    private String submissionReconciliationGroupId;
-
     /**
      * Creates a {@link TemplateClient} which returns templates from S3.
      *
@@ -72,8 +64,8 @@ public class S3Config {
      * @return an object that determines how file download should behave for this system
      */
     @Bean
-    public FileDownloadService createFileDownloadService(@Qualifier("createS3ReportClient") S3ClientWrapper s3ClientWrapper) {
-        return new FileDownloadFromS3Service(s3ClientWrapper, new ReportFileNameResolver(), new ReportAccessCheckerService(rep000GroupId, submissionReconciliationGroupId));
+    public FileDownloadService createFileDownloadService(@Qualifier("createS3ReportClient") S3ClientWrapper s3ClientWrapper, ReportDao reportDao) {
+        return new FileDownloadFromS3Service(s3ClientWrapper, new ReportFileNameResolver(), reportDao);
     }
 
 }

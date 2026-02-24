@@ -7,7 +7,9 @@ import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.exception.FileDownloadException.S3BucketHasNoCopiesOfReportException;
+import uk.gov.laa.gpfd.utils.SecurityUtils;
 
 import java.util.UUID;
 
@@ -19,12 +21,12 @@ public class FileDownloadFromS3Service implements FileDownloadService {
 
     private final S3ClientWrapper s3ClientWrapper;
     private final ReportFileNameResolver fileNameResolver;
-    private final ReportAccessCheckerService reportAccessCheckerService;
+    private final ReportDao reportDao;
 
-    public FileDownloadFromS3Service(S3ClientWrapper s3ClientWrapper, ReportFileNameResolver fileNameResolver, ReportAccessCheckerService reportAccessCheckerService) {
+    public FileDownloadFromS3Service(S3ClientWrapper s3ClientWrapper, ReportFileNameResolver fileNameResolver, ReportDao reportDao) {
         this.s3ClientWrapper = s3ClientWrapper;
         this.fileNameResolver = fileNameResolver;
-        this.reportAccessCheckerService = reportAccessCheckerService;
+        this.reportDao = reportDao;
     }
 
     /**
@@ -37,7 +39,7 @@ public class FileDownloadFromS3Service implements FileDownloadService {
     @Override
     public ResponseEntity<InputStreamResource> getFileStreamResponse(UUID id) {
 
-        reportAccessCheckerService.checkUserCanAccessReport(id);
+        reportDao.authorizeReportAccess(id);
 
         var s3Prefix = fileNameResolver.getS3PrefixFromId(id);
 
