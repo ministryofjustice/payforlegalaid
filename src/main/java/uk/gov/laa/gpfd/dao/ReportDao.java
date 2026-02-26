@@ -97,7 +97,7 @@ public record ReportDao(
        LEFT JOIN GPFD.REPORT_OUTPUT_TYPES rot ON r.REPORT_OUTPUT_TYPE = rot.ID
        INNER JOIN GPFD.REPORT_ROLES rr ON r.ID = rr.REPORT_ID
        INNER JOIN GPFD.ROLES ro ON rr.ROLE_ID = ro.ROLE_ID
-       WHERE r.ACTIVE = 'Y' and ro.ROLE_NAME IN (:roles)
+       WHERE ro.ROLE_NAME IN (:roles)
     """;
 
     public static final String SELECT_REPORT_ROLES = """
