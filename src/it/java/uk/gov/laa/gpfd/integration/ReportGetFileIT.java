@@ -27,12 +27,14 @@ import java.io.ByteArrayInputStream;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import org.springframework.jdbc.core.RowMapper;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -42,13 +44,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP012;
 import uk.gov.laa.gpfd.config.TestSecurityConfig;
+import uk.gov.laa.gpfd.config.TestDatabaseConfig;
+import uk.gov.laa.gpfd.utils.SecurityUtils;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.mockito.Mock;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
+import uk.gov.laa.gpfd.dao.ReportDao;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT, classes = {TestS3Config.class, TestSecurityConfig.class})
+@SpringBootTest(webEnvironment = RANDOM_PORT, classes = {TestS3Config.class, TestSecurityConfig.class, TestDatabaseConfig.class})
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @TestPropertySource(properties = {"gpfd.s3.has-s3-access=true", "AWS_REGION=eu-west-1",
-        "S3_TEMPLATE_STORE=test2", "S3_REPORT_STORE=test",
-        "gpfd.s3.permissions.rep000=fjfh34-fdsff33-fdfj444", "gpfd.s3.permissions.submission-reconciliation=jfdsf234-32434fd-34234"
+        "S3_TEMPLATE_STORE=test2", "S3_REPORT_STORE=test"
 })
 @TestInstance(PER_CLASS)
 final class ReportGetFileIT extends BaseIT {
@@ -56,34 +65,65 @@ final class ReportGetFileIT extends BaseIT {
     @Autowired
     private S3Client s3Client;
 
-    @Test
-    @SneakyThrows
-    void shouldSuccessfullyPassStreamReturnedFromAWSToUserWithPermission() {
+    @Mock
+    private JdbcTemplate readOnlyJdbcTemplate;
 
-        var responseMetadata = GetObjectResponse.builder().contentLength(25L).build();
-        var inputStream = new ByteArrayInputStream("csv,data,here,123,4.3,cat".getBytes());
+    @Mock
+    private SecurityUtils securityUtils;
 
-        var responseList = List.of(
-                S3Object.builder().key("reports/daily/report_2025-12-14.csv").lastModified(Instant.parse("2025-12-14T05:00:00Z")).build(),
-                S3Object.builder().key("reports/daily/report_2025-12-15.csv").lastModified(Instant.parse("2025-12-15T05:00:00Z")).build()
-        );
-        var mockListResponse = ListObjectsV2Response.builder().contents(new ArrayList<>(responseList)).build();
-        when(s3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenReturn(mockListResponse);
+    @Mock
+    private ReportDao reportDao;
 
-        var mockS3Response = new ResponseInputStream<>(responseMetadata, inputStream);
-        when(s3Client.getObject(any(GetObjectRequest.class))).thenReturn(mockS3Response);
+        @Test
+        @SneakyThrows
+        void shouldSuccessfullyPassStreamReturnedFromAWSToUserWithPermission() {
 
-        performGetRequestWithUserHavingGroup("/reports/" + ID_REP012 + "/file", "jfdsf234-32434fd-34234")
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_OCTET_STREAM))
-                .andExpect(header().longValue("Content-Length", 25L))
-                .andExpect(header().string("Content-Disposition", "attachment; filename=\"report_2025-12-15.csv\""))
-                .andExpect(content().string("csv,data,here,123,4.3,cat"));
-    }
+            UUID reportId = ID_REP012;
+            when(readOnlyJdbcTemplate.query(
+                    eq(reportDao.SELECT_REPORT_ROLES),
+                    any(RowMapper.class),
+                    eq(reportId.toString())
+            )).thenReturn(List.of("REP000"));
+            when(securityUtils.extractRoles()).thenReturn(List.of("Financial"));
+            when(securityUtils.isAuthorized(List.of("REP000"), List.of("REP000")))
+                    .thenReturn(true);
+
+            var responseMetadata = GetObjectResponse.builder().contentLength(25L).build();
+            var inputStream = new ByteArrayInputStream("csv,data,here,123,4.3,cat".getBytes());
+
+            var responseList = List.of(
+                    S3Object.builder().key("reports/daily/report_2025-12-14.csv").lastModified(Instant.parse("2025-12-14T05:00:00Z")).build(),
+                    S3Object.builder().key("reports/daily/report_2025-12-15.csv").lastModified(Instant.parse("2025-12-15T05:00:00Z")).build()
+            );
+            var mockListResponse = ListObjectsV2Response.builder().contents(new ArrayList<>(responseList)).build();
+            when(s3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenReturn(mockListResponse);
+
+            var mockS3Response = new ResponseInputStream<>(responseMetadata, inputStream);
+            when(s3Client.getObject(any(GetObjectRequest.class))).thenReturn(mockS3Response);
+
+            mockMvc.perform(get("/reports/" + reportId + "/file")
+                    .with(oidcLogin()
+                            .idToken(token -> token.claim("LAA_APP_ROLES", List.of("REP000")))))
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentType(APPLICATION_OCTET_STREAM))
+                    .andExpect(header().longValue("Content-Length", 25L))
+                    .andExpect(header().string("Content-Disposition", "attachment; filename=\"report_2025-12-15.csv\""))
+                    .andExpect(content().string("csv,data,here,123,4.3,cat"));
+        }
 
     @Test
     @SneakyThrows
     void shouldCloseStreamWhenSuccessful() {
+
+        UUID reportId = ID_REP012;
+        when(readOnlyJdbcTemplate.query(
+                eq(reportDao.SELECT_REPORT_ROLES),
+                any(RowMapper.class),
+                eq(reportId.toString())
+        )).thenReturn(List.of("REP000"));
+        when(securityUtils.extractRoles()).thenReturn(List.of("Financial", "REP000"));
+        when(securityUtils.isAuthorized(List.of("REP000"), List.of("Financial", "REP000")))
+                .thenReturn(true);
 
         var responseList = List.of(
                 S3Object.builder().key("reports/daily/report_2025-12-14.csv").lastModified(Instant.parse("2025-12-14T05:00:00Z")).build(),
@@ -99,7 +139,8 @@ final class ReportGetFileIT extends BaseIT {
         when(mockS3ResponseInternal.contentLength()).thenReturn(32L);
 
 
-        performGetRequestWithUserHavingGroup("/reports/" + ID_REP012 + "/file", "jfdsf234-32434fd-34234")
+        mockMvc.perform(get("/reports/" + ID_REP012 + "/file").with(oidcLogin()
+                .idToken(token -> token.claim("LAA_APP_ROLES", List.of("REP000")))))
                 .andExpect(status().isOk());
         verify(mockS3Response).close();
     }
@@ -108,7 +149,8 @@ final class ReportGetFileIT extends BaseIT {
     @SneakyThrows
     void shouldRejectUserIfNoPermissionForReport() {
 
-        performGetRequestWithUserHavingGroup("/reports/" + ID_REP012 + "/file", "fjfh34-fdsff33-fdfj444")
+        mockMvc.perform(get("/reports/" + ID_REP012 + "/file").with(oidcLogin()
+                        .idToken(token -> token.claim("LAA_APP_ROLES", List.of("ABC")))))
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentType(APPLICATION_JSON));
     }
@@ -116,8 +158,9 @@ final class ReportGetFileIT extends BaseIT {
     @Test
     @SneakyThrows
     void shouldErrorIfIdNotSupportedByEndpoint() {
-        performGetRequestWithUserHavingGroup("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d3/file", "")
-                .andExpect(status().isBadRequest())
+        mockMvc.perform(get("/reports/" + ID_REP012 + "/file").with(oidcLogin()
+                        .idToken(token -> token.claim("FOOO", List.of("REP000")))))
+                .andExpect(status().isForbidden())
                 .andExpect(content().contentType(APPLICATION_JSON));
     }
 
@@ -138,7 +181,8 @@ final class ReportGetFileIT extends BaseIT {
 
         when(s3Client.getObject(any(GetObjectRequest.class))).thenThrow(exception);
 
-        var result = performGetRequestWithUserHavingGroup("/reports/" + ID_REP012 + "/file", "jfdsf234-32434fd-34234")
+        var result =  mockMvc.perform(get("/reports/" + ID_REP012 + "/file").with(oidcLogin()
+                        .idToken(token -> token.claim("LAA_APP_ROLES", List.of("REP000")))))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andReturn();
@@ -154,22 +198,10 @@ final class ReportGetFileIT extends BaseIT {
         var mockListResponse = ListObjectsV2Response.builder().contents(new ArrayList<>()).build();
         when(s3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenReturn(mockListResponse);
 
-        performGetRequestWithUserHavingGroup("/reports/" + ID_REP012 + "/file", "jfdsf234-32434fd-34234")
+        mockMvc.perform(get("/reports/" + ID_REP012 + "/file").with(oidcLogin()
+                        .idToken(token -> token.claim("LAA_APP_ROLES", List.of("REP000")))))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andReturn();
-    }
-
-    @SneakyThrows
-    private ResultActions performGetRequestWithUserHavingGroup(String url, String group) {
-        var auth = mock(Authentication.class);
-        var principal = mock(DefaultOidcUser.class);
-
-        when(auth.getPrincipal()).thenReturn(principal);
-        when(principal.getClaimAsStringList("groups")).thenReturn(List.of(group));
-        var mockSecurityContext = mock(SecurityContext.class);
-        when(mockSecurityContext.getAuthentication()).thenReturn(auth);
-
-        return performGetRequest(url, mockSecurityContext);
     }
 }

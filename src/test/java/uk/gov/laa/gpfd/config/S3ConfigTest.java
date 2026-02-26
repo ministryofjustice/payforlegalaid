@@ -15,15 +15,14 @@ import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@SpringBootTest(properties = "spring.liquibase.enabled=false")
+@SpringBootTest(properties = "spring.liquibase.enabled=false",
+        classes = uk.gov.laa.gpfd.config.TestDatabaseConfig .class)
 @ActiveProfiles("test")
 @TestPropertySource(properties = {
         "gpfd.s3.has-s3-access=true",
         "AWS_REGION=eu-west-1",
         "S3_TEMPLATE_STORE=test",
-        "S3_REPORT_STORE=test2",
-        "gpfd.s3.permissions.rep000=fjfh34-fdsff33-fdfj444",
-        "gpfd.s3.permissions.submission-reconciliation=jfdsf234-32434fd-34234"
+        "S3_REPORT_STORE=test2"
 })
 class S3ConfigTest {
 

@@ -11,6 +11,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
 import uk.gov.laa.gpfd.services.ReportManagementService;
 import uk.gov.laa.gpfd.config.TestSecurityConfig;
+import uk.gov.laa.gpfd.config.TestDatabaseConfig;
 
 import java.util.UUID;
 
@@ -23,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CSV_REPORT;
 import static org.hamcrest.Matchers.containsString;
 
-@SpringBootTest(classes = {TestSecurityConfig.class})
+@SpringBootTest(classes = {TestSecurityConfig.class, TestDatabaseConfig.class})
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -47,7 +48,6 @@ class SecurityConfigLocalIT extends BaseIT {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
     void shouldLoadPageIfValidSession() throws Exception {
         var reportId = UUID.fromString(CSV_REPORT.getReportData().id());
         var reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();

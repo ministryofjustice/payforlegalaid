@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.15.xsd">
+
+    <!-- 1. Create ROLES table -->
+    <changeSet id="test-create-roles-table" author="neeta">
+        <createTable tableName="ROLES" schemaName="GPFD">
+            <column name="ROLE_ID" type="NUMBER" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="ROLE_NAME" type="VARCHAR2(200)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- 2. Create REPORT_ROLES table -->
+    <changeSet id="test-create-report-roles-table" author="neeta">
+        <createTable tableName="REPORT_ROLES" schemaName="GPFD">
+            <column name="REPORT_ID" type="CHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ROLE_ID" type="NUMBER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- 3. Insert roles -->
+    <changeSet id="test-insert-roles" author="neeta">
+        <insert tableName="ROLES" schemaName="GPFD">
+            <column name="ROLE_ID" valueNumeric="1"/>
+            <column name="ROLE_NAME" value="REP000"/>
+        </insert>
+
+        <insert tableName="ROLES" schemaName="GPFD">
+            <column name="ROLE_ID" valueNumeric="2"/>
+            <column name="ROLE_NAME" value="Reconciliation"/>
+        </insert>
+
+        <insert tableName="ROLES" schemaName="GPFD">
+            <column name="ROLE_ID" valueNumeric="3"/>
+            <column name="ROLE_NAME" value="Financial"/>
+        </insert>
+    </changeSet>
+
+    <!-- 4. Insert REPORT_ROLES mappings -->
+    <changeSet id="test-insert-report-roles" author="neeta">
+        <insert tableName="REPORT_ROLES" schemaName="GPFD">
+            <column name="REPORT_ID" value="cc55e276-97b0-4dd8-a919-26d4aa373266"/>
+            <column name="ROLE_ID" valueNumeric="1"/>
+        </insert>
+
+        <insert tableName="REPORT_ROLES" schemaName="GPFD">
+            <column name="REPORT_ID" value="b36f9bbb-1178-432c-8f99-8090e285f2d3"/>
+            <column name="ROLE_ID" valueNumeric="2"/>
+        </insert>
+
+        <insert tableName="REPORT_ROLES" schemaName="GPFD">
+            <column name="REPORT_ID" value="0d4da9ec-b0b3-4371-af10-f375330d85d3"/>
+            <column name="ROLE_ID" valueNumeric="3"/>
+        </insert>
+        <insert tableName="REPORT_ROLES" schemaName="GPFD">
+            <column name="REPORT_ID" value="f46b4d3d-c100-429a-bf9a-223305dbdbfb"/>
+            <column name="ROLE_ID" valueNumeric="3"/>
+        </insert>
+        <insert tableName="REPORT_ROLES" schemaName="GPFD">
+            <column name="REPORT_ID" value="eee30b23-2c8d-4b4b-bb11-8cd67d07915c"/>
+            <column name="ROLE_ID" valueNumeric="3"/>
+        </insert>
+        <insert tableName="REPORT_ROLES" schemaName="GPFD">
+            <column name="REPORT_ID" value="7073dd13-e325-4863-a05c-a049a815d1f7"/>
+            <column name="ROLE_ID" valueNumeric="3"/>
+        </insert>
+        <insert tableName="REPORT_ROLES" schemaName="GPFD">
+            <column name="REPORT_ID" value="7bda9aa4-6129-4c71-bd12-7d4e46fdd882"/>
+            <column name="ROLE_ID" valueNumeric="3"/>
+        </insert>
+        <insert tableName="REPORT_ROLES" schemaName="GPFD">
+            <column name="REPORT_ID" value="8b9f0484-819f-4e0f-b60a-0b3f9d30d9ba"/>
+            <column name="ROLE_ID" valueNumeric="3"/>
+        </insert>
+        <insert tableName="REPORT_ROLES" schemaName="GPFD">
+            <column name="REPORT_ID" value="b36f9bbb-1178-432c-8f99-8090e285f2d4"/>
+            <column name="ROLE_ID" valueNumeric="3"/>
+        </insert>
+        <insert tableName="REPORT_ROLES" schemaName="GPFD">
+            <column name="REPORT_ID" value="00000000-0000-0000-0001-000000000001"/>
+            <column name="ROLE_ID" valueNumeric="3"/>
+        </insert>
+        <insert tableName="REPORT_ROLES" schemaName="GPFD">
+            <column name="REPORT_ID" value="f46b4d3d-c100-429a-bf9a-6c3305dbdbf5"/>
+            <column name="ROLE_ID" valueNumeric="3"/>
+        </insert>
+        <insert tableName="REPORT_ROLES" schemaName="GPFD">
+            <column name="REPORT_ID" value="0fbec75b-2d72-44f5-a0e3-2dcb29d92f79"/>
+            <column name="ROLE_ID" valueNumeric="3"/>
+        </insert>
+        <insert tableName="REPORT_ROLES" schemaName="GPFD">
+            <column name="REPORT_ID" value="f46b4d3d-c100-429a-bf9a-6c3305dbdbf1"/>
+            <column name="ROLE_ID" valueNumeric="3"/>
+        </insert>
+     </changeSet>
+
+    <!-- 5. Map ALL reports to a role -->
+    <changeSet id="test-map-all-reports" author="neeta">
+        <sql>
+            INSERT INTO GPFD.REPORT_ROLES (REPORT_ID, ROLE_ID)
+            SELECT ID, 3 FROM GPFD.REPORT_TRACKING;
+        </sql>
+    </changeSet>
+
+    <!-- 6. Map specific reports to specific roles -->
+    <changeSet id="test-map-specific-reports" author="neeta" runOnChange="true">
+        <sql>
+            INSERT INTO GPFD.REPORT_ROLES (REPORT_ID, ROLE_ID)
+            SELECT ID, 1
+            FROM GPFD.CSV_TO_SQL_MAPPING_TABLE
+            WHERE REPORT_NAME = 'CMS_and_CIS_Bank_Account_Report_w_Category_Code_(MNTH)-MAIN-12';
+        </sql>
+
+        <sql>
+            INSERT INTO GPFD.REPORT_ROLES (REPORT_ID, ROLE_ID)
+            SELECT ID, 2
+            FROM GPFD.CSV_TO_SQL_MAPPING_TABLE
+            WHERE REPORT_NAME = 'CIS-to-CCMS-import-analysis-2';
+        </sql>
+    </changeSet>
+
+
+</databaseChangeLog>
