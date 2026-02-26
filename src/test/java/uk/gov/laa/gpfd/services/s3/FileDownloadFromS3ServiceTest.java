@@ -54,7 +54,7 @@ class FileDownloadFromS3ServiceTest {
 
     @BeforeEach
     void beforeEach() {
-        reset(fileNameResolver, s3ClientWrapper);
+        reset(fileNameResolver, s3ClientWrapper, reportDao);
     }
 
     @SneakyThrows

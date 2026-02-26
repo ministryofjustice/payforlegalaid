@@ -1,6 +1,5 @@
 package uk.gov.laa.gpfd.config;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -128,7 +127,6 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authorizeHttpRequestsBuilder)
                 .oauth2Login(oauth2 -> oauth2
-                        .userInfoEndpoint(userInfo -> userInfo.oidcUserService(oidcUserService()))
                         .successHandler((request, response, authentication) -> {
                             response.sendRedirect("/");
                         }))
@@ -164,16 +162,6 @@ public class SecurityConfig {
                                 .map(SimpleGrantedAuthority::new)
                                 .collect(Collectors.toList())
                 );
-    }
-
-    private List<String> parseRawRoles(Object rawRoles) {
-        if (rawRoles instanceof List<?> list) {
-            return list.stream().map(Object::toString).toList();
-        } else if (rawRoles instanceof String str) {
-            return List.of(str.split(","));
-        } else {
-            return List.of();
-        }
     }
 
     @Bean

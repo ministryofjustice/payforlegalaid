@@ -11,7 +11,10 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import uk.gov.laa.gpfd.utils.DatabaseUtils;
 
+import java.util.List;
+
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.securityContext;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class BaseIT {
@@ -46,4 +49,14 @@ public abstract class BaseIT {
                     .contentType(MediaType.APPLICATION_JSON)
     );
   }
+
+    protected ResultActions performGetRequestWithRoles(String uri, List<String> roles) throws Exception {
+        return mockMvc.perform(
+                MockMvcRequestBuilders.get(uri)
+                        .with(oidcLogin()
+                                .idToken(token -> token.claim("LAA_APP_ROLES", roles)))
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+    }
+
 }

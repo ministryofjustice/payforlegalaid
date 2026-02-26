@@ -22,7 +22,7 @@ public class FileDownloadFromS3Service implements FileDownloadService {
     private final ReportFileNameResolver fileNameResolver;
     private final ReportDao reportDao;
 
-    public FileDownloadFromS3Service(S3ClientWrapper s3ClientWrapper, ReportFileNameResolver fileNameResolver, uk.gov.laa.gpfd.dao.ReportDao reportDao) {
+    public FileDownloadFromS3Service(S3ClientWrapper s3ClientWrapper, ReportFileNameResolver fileNameResolver, ReportDao reportDao) {
         this.s3ClientWrapper = s3ClientWrapper;
         this.fileNameResolver = fileNameResolver;
         this.reportDao = reportDao;
