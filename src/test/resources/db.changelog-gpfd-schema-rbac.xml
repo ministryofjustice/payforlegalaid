@@ -84,6 +84,26 @@
             <column name="REPORT_ID" value="8b9f0484-819f-4e0f-b60a-0b3f9d30d9ba"/>
             <column name="ROLE_ID" valueNumeric="3"/>
         </insert>
+        <insert tableName="REPORT_ROLES" schemaName="GPFD">
+            <column name="REPORT_ID" value="b36f9bbb-1178-432c-8f99-8090e285f2d4"/>
+            <column name="ROLE_ID" valueNumeric="3"/>
+        </insert>
+        <insert tableName="REPORT_ROLES" schemaName="GPFD">
+            <column name="REPORT_ID" value="00000000-0000-0000-0001-000000000001"/>
+            <column name="ROLE_ID" valueNumeric="3"/>
+        </insert>
+        <insert tableName="REPORT_ROLES" schemaName="GPFD">
+            <column name="REPORT_ID" value="f46b4d3d-c100-429a-bf9a-6c3305dbdbf5"/>
+            <column name="ROLE_ID" valueNumeric="3"/>
+        </insert>
+        <insert tableName="REPORT_ROLES" schemaName="GPFD">
+            <column name="REPORT_ID" value="0fbec75b-2d72-44f5-a0e3-2dcb29d92f79"/>
+            <column name="ROLE_ID" valueNumeric="3"/>
+        </insert>
+        <insert tableName="REPORT_ROLES" schemaName="GPFD">
+            <column name="REPORT_ID" value="f46b4d3d-c100-429a-bf9a-6c3305dbdbf1"/>
+            <column name="ROLE_ID" valueNumeric="3"/>
+        </insert>
      </changeSet>
 
     <!-- 5. Map ALL reports to a role -->

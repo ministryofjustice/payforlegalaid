@@ -19,15 +19,19 @@ import org.springframework.test.context.TestPropertySource;
 import uk.gov.laa.gpfd.config.TestDatabaseConfig;
 import uk.gov.laa.gpfd.integration.verifier.DatabaseVerifier;
 import uk.gov.laa.gpfd.integration.verifier.DatabaseVerifier.Table;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
+import java.util.List;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = {TestDatabaseConfig.class})
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
+@ActiveProfiles("testauth")
 @TestInstance(PER_CLASS)
 @TestPropertySource(locations = "classpath:application-test.yml")
 final class GetReportsIT extends BaseIT {
 
-   /* @Autowired
+   @Autowired
     private JdbcTemplate jdbc;
 
     @Test
@@ -35,7 +39,8 @@ final class GetReportsIT extends BaseIT {
     void shouldSuccessfullyReturnAllAvailableReports() {
         var reportsLen = DatabaseVerifier.rowCountFor(Table.REPORTS).apply(jdbc);
 
-        performGetRequest("/reports")
+        mockMvc.perform(get("/reports").with(oidcLogin()
+                        .idToken(token -> token.claim("LAA_APP_ROLES", List.of("REP000", "Financial", "Reconciliation")))))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.reportList").isArray())
@@ -52,9 +57,11 @@ final class GetReportsIT extends BaseIT {
         jdbc.update("ALTER TABLE GPFD.REPORTS_TRACKING DROP CONSTRAINT fk_reports_tracking_reports_id");
         jdbc.update("TRUNCATE TABLE GPFD.REPORTS");
 
-        performGetRequest("/reports")
+        mockMvc.perform(get("/reports").with(oidcLogin()
+                        .idToken(token -> token.claim("LAA_APP_ROLES", List.of("ABC")))))
+                .andExpect(status().isOk())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.reportList").isEmpty());
-    }*/
+    }
 }
