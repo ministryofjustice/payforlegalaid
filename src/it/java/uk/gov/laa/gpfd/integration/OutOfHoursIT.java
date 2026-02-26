@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import uk.gov.laa.gpfd.config.TestDatabaseConfig;
+import uk.gov.laa.gpfd.config.TestSecurityConfig;
 import uk.gov.laa.gpfd.integration.config.OAuth2TestConfig;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -19,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(
         webEnvironment = RANDOM_PORT,
-        classes = {TestDatabaseConfig.class, OAuth2TestConfig.class, TestTimeConfig.class}
+        classes = {TestDatabaseConfig.class, OAuth2TestConfig.class, TestTimeConfig.class, TestSecurityConfig.class}
 )
 @AutoConfigureMockMvc
 @ActiveProfiles("test")

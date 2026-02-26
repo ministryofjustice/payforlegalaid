@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.createTestReport;
 
-@SpringBootTest
+@SpringBootTest(properties = "spring.liquibase.enabled=false")
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ReportsTrackingDaoTest {
