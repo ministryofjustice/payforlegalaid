@@ -11,7 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@SpringBootTest(properties = "spring.liquibase.enabled=false")
+@SpringBootTest(classes = uk.gov.laa.gpfd.config.TestDatabaseConfig .class)
 @ActiveProfiles("test")
 class SpringDocConfigTest {
 

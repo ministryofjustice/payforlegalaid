@@ -4,10 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Service;
+import uk.gov.laa.gpfd.exception.ReportAccessException;
 import uk.gov.laa.gpfd.model.Report;
+import uk.gov.laa.gpfd.utils.SecurityUtils;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,7 +22,9 @@ import static uk.gov.laa.gpfd.exception.DatabaseReadException.DatabaseFetchExcep
 @Service
 public record ReportDao(
         ResultSetExtractor<Collection<Report>> extractor,
-        JdbcOperations readOnlyJdbcTemplate
+        JdbcOperations readOnlyJdbcTemplate,
+        NamedParameterJdbcOperations namedReadOnlyJdbcTemplate,
+        SecurityUtils securityUtils
 ) {
 
     private static final String SELECT_REPORT_BY_ID = """
@@ -56,7 +63,7 @@ public record ReportDao(
         ORDER BY q."INDEX" ASC, fa.COLUMN_ORDER ASC
     """;
 
-    private static final String SELECT_ALL_REPORTS_SQL = """
+      public static final String SELECT_ALL_REPORTS_SQL = """
       SELECT 
             r.ID, 
             r.NAME, 
@@ -85,11 +92,20 @@ public record ReportDao(
             rot.EXTENSION,
             rot.DESCRIPTION AS OUTPUT_TYPE_DESCRIPTION
         FROM GPFD.REPORTS r
-        LEFT JOIN GPFD.REPORT_QUERIES q ON r.ID = q.REPORT_ID
-        LEFT JOIN GPFD.FIELD_ATTRIBUTES fa ON q.ID = fa.REPORT_QUERY_ID
-        LEFT JOIN GPFD.REPORT_OUTPUT_TYPES rot ON r.REPORT_OUTPUT_TYPE = rot.ID
-        WHERE r.ACTIVE = 'Y'
+       LEFT JOIN GPFD.REPORT_QUERIES q ON r.ID = q.REPORT_ID
+       LEFT JOIN GPFD.FIELD_ATTRIBUTES fa ON q.ID = fa.REPORT_QUERY_ID
+       LEFT JOIN GPFD.REPORT_OUTPUT_TYPES rot ON r.REPORT_OUTPUT_TYPE = rot.ID
+       INNER JOIN GPFD.REPORT_ROLES rr ON r.ID = rr.REPORT_ID
+       INNER JOIN GPFD.ROLES ro ON rr.ROLE_ID = ro.ROLE_ID
+       WHERE ro.ROLE_NAME IN (:roles)
     """;
+
+    public static final String SELECT_REPORT_ROLES = """
+        SELECT r.ROLE_NAME
+        FROM GPFD.ROLES r
+        JOIN GPFD.REPORT_ROLES rr ON rr.ROLE_ID = r.ROLE_ID
+        WHERE rr.REPORT_ID = ?
+        """;
 
 
     /**
@@ -104,6 +120,9 @@ public record ReportDao(
     public Optional<Report> fetchReportById(UUID reportId) {
         log.debug("Executing SQL query to fetch report by ID: {}", reportId);
         try {
+            // Enforce role-based access control for this report
+            verifyUserCanAccessReport(reportId);
+
             return readOnlyJdbcTemplate.query(SELECT_REPORT_BY_ID, extractor, reportId.toString())
                     .stream()
                     .findFirst();
@@ -122,12 +141,38 @@ public record ReportDao(
     public Collection<Report> fetchReports() throws DatabaseFetchException {
         log.debug("Fetching all reports from database");
         try {
-            return readOnlyJdbcTemplate.query(SELECT_ALL_REPORTS_SQL, extractor);
+            List<String> roles = securityUtils.extractRoles();
+            log.info("Fetching reports from database for RBAC roles: {}", roles);
+            Map<String, Object> params = Map.of("roles", roles);
+
+            return namedReadOnlyJdbcTemplate.query(SELECT_ALL_REPORTS_SQL, params, extractor);
         } catch (DataAccessException e) {
             String errorMessage = "Failed to fetch reports from database";
             log.error("{}: {}", errorMessage, e.getMessage(), e);
             throw new DatabaseFetchException("Failed to fetch reports from database");
         }
+    }
+
+    public void verifyUserCanAccessReport(UUID reportId) {
+        List<String> userRoles = securityUtils.extractRoles();
+        List<String> requiredRoles = loadRequiredRoles(reportId);
+
+        log.info(
+                "Report {} requires roles: {} whereas user has: {}",
+                reportId, requiredRoles, userRoles
+        );
+
+        if (securityUtils.isAuthorized(userRoles, requiredRoles)) {
+            return;
+        }
+
+        throw new ReportAccessException(reportId);
+    }
+
+    private List<String> loadRequiredRoles(UUID reportId) {
+        return readOnlyJdbcTemplate.query( SELECT_REPORT_ROLES,
+                (rs, rowNum) -> rs.getString("ROLE_NAME"),
+                reportId.toString() );
     }
 
 }

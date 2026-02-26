@@ -4,18 +4,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
-import uk.gov.laa.gpfd.config.SecurityConfig;
 import uk.gov.laa.gpfd.services.ReportManagementService;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -23,7 +22,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ActiveProfiles("testauth")
 @AutoConfigureMockMvc
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        classes = uk.gov.laa.gpfd.config.TestDatabaseConfig.class)
 class HttpSecuritySessionManagementConfigurerBuilderTest {
 
     @MockitoBean
@@ -46,14 +46,15 @@ class HttpSecuritySessionManagementConfigurerBuilderTest {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
     void shouldValidSessionDoesNotRedirect() throws Exception {
         var reportId = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
         var reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();
 
         when(reportServiceMock.createReportResponse(reportId)).thenReturn(reportResponseMock);
 
-        mockMvc.perform(get("/reports/{id}", reportId))
+        mockMvc.perform(get("/reports/{id}", reportId).with(oidcLogin()
+                .idToken(token -> token.claim("LAA_APP_ROLES", List.of("REP000")))
+        ))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(reportId.toString()));
     }
 }
