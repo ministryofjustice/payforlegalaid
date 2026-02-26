@@ -33,6 +33,7 @@ public class DatabaseUtils {
       applyLiquibaseXml("db.changelog-gpfd-reports-data.xml", database);
       applyLiquibaseXml("db.changelog-any-report-schema.xml", database);
       applyLiquibaseXml("db.changelog-any-report-data.xml", database);
+      applyLiquibaseXml("db.changelog-gpfd-schema-rbac.xml", database);
     } catch (Exception e) {
       throw new RuntimeException("Exception when setting up test database:" + e.getMessage());
     }
