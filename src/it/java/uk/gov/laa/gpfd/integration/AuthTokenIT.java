@@ -15,13 +15,28 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.jdbc.core.JdbcTemplate;
+import javax.sql.DataSource;
+
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.laa.gpfd.config.TestDatabaseConfig;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Objects;
 import java.util.stream.Stream;
+import java.util.List;
+
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
 
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = {TestDatabaseConfig.class})
 @AutoConfigureMockMvc
@@ -40,24 +55,34 @@ final class AuthTokenIT extends BaseIT {
         );
     }
 
-    /* @ParameterizedTest(name = "[{index}] {0} should redirect when unauthenticated")
+    @ParameterizedTest(name = "[{index}] {0} should redirect when unauthenticated")
     @MethodSource("securedReportEndpoints")
     @SneakyThrows
     void unauthenticatedAccess_shouldRedirectToLogin(String description, String endpoint) {
-        performGetRequest(endpoint)
-                .andExpect(status().is2xxSuccessful());
-    }*/
+        if (endpoint.equals("/reports")) {
+            mockMvc.perform(get(endpoint).with(oidcLogin()
+                            .idToken(token -> token.claim("LAA_APP_ROLES", List.of("ABC")))))
+                    .andExpect(status().is2xxSuccessful());
+        } else {
+            mockMvc.perform(get(endpoint).with(oidcLogin()
+                            .idToken(token -> token.claim("LAA_APP_ROLES", List.of("ABC")))))
+                    .andExpect(status().isForbidden());
+        }
+    }
 
     @ParameterizedTest(name = "[{index}] {0} should return 200 when authenticated")
     @MethodSource("securedReportEndpoints")
-    @WithMockUser(username = "Mock User")
     @SneakyThrows
     void authenticatedAccess_shouldReturnOk(String description, String endpoint) {
         if (Objects.equals(description, "File download endpoint")) {
             // This will not 200 locally as it's not supported
-            performGetRequest(endpoint).andExpect(status().isNotImplemented());
+            mockMvc.perform(get(endpoint).with(oidcLogin()
+                    .idToken(token -> token.claim("LAA_APP_ROLES", List.of("REP000", "Financial", "Reconciliation")))))
+                    .andExpect(status().isNotImplemented());
         } else {
-            performGetRequest(endpoint).andExpect(status().isOk());
+            mockMvc.perform(get(endpoint).with(oidcLogin()
+                            .idToken(token -> token.claim("LAA_APP_ROLES", List.of("REP000", "Financial", "Reconciliation")))))
+                    .andExpect(status().isOk());
         }
     }
 

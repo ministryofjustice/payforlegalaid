@@ -17,6 +17,7 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.SecurityFilterChain;
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
+import uk.gov.laa.gpfd.utils.SecurityUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,7 @@ public class SecurityConfig {
      * {@link RequiredArgsConstructor} annotation.
      */
     private final SessionManagementConfigurerBuilder sessionManagementConfigurerBuilder;
+    private final SecurityUtils securityUtils;
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -83,7 +85,7 @@ public class SecurityConfig {
 
     public Set<GrantedAuthority> getAuthorities(Map<String, Object> attributes) {
         log.info("OIDC attributes: {}", attributes);
-        List<String> roles = parseRawRoles(attributes.get("LAA_APP_ROLES"));
+        List<String> roles = securityUtils.extractRoles();
         log.info("Parsed roles: {}", roles);
         return new SimpleAuthorityMapper()
                 .mapAuthorities(
@@ -92,15 +94,4 @@ public class SecurityConfig {
                                 .collect(Collectors.toList())
                 );
     }
-
-    private List<String> parseRawRoles(Object rawRoles) {
-        if (rawRoles instanceof List<?> list) {
-            return list.stream().map(Object::toString).toList();
-        } else if (rawRoles instanceof String str) {
-            return List.of(str.split(","));
-        } else {
-            return List.of();
-        }
-    }
-
 }
