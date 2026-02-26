@@ -38,8 +38,7 @@ final class GetReportsByIdIT extends BaseIT {
     void shouldReturnOkGivenValidExistedReport(ReportTestData testData) {
         var uri = "/reports/%s".formatted(testData.id());
 
-        mockMvc.perform(get(uri).with(oidcLogin()
-                        .idToken(token -> token.claim("LAA_APP_ROLES", List.of("REP000", "Financial", "Reconciliation")))))
+        performGetRequestWithRoles(uri, List.of("REP000", "Financial", "Reconciliation"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(testData.id()))
                 .andExpect(jsonPath("$.reportName").value(testData.name()))
@@ -52,8 +51,7 @@ final class GetReportsByIdIT extends BaseIT {
     void shouldReturn400WhenGivenInvalidId(String type) {
         var uri = "/reports/%s321/%s".formatted(CSV_REPORT.getReportData().id(), type);
 
-        mockMvc.perform(get(uri).with(oidcLogin()
-                .idToken(token -> token.claim("LAA_APP_ROLES", List.of("REP000", "Financial", "Reconciliation")))))
+        performGetRequestWithRoles(uri, List.of("REP000", "Financial", "Reconciliation"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.error")
@@ -67,8 +65,7 @@ final class GetReportsByIdIT extends BaseIT {
         var nonExistentReportId = "0d4da9ec-b0b3-4371-af10-321";
         var uri = "/reports/%s/%s".formatted(nonExistentReportId, type);
 
-        mockMvc.perform(get(uri).with(oidcLogin()
-                        .idToken(token -> token.claim("LAA_APP_ROLES", List.of("REP000", "Financial", "Reconciliation")))))
+        performGetRequestWithRoles(uri, List.of("REP000", "Financial", "Reconciliation"))
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.error")
