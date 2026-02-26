@@ -34,6 +34,7 @@ import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.anyString;
 import org.springframework.jdbc.core.RowMapper;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -79,15 +80,6 @@ final class ReportGetFileIT extends BaseIT {
         void shouldSuccessfullyPassStreamReturnedFromAWSToUserWithPermission() {
 
             UUID reportId = ID_REP012;
-            when(readOnlyJdbcTemplate.query(
-                    eq(reportDao.SELECT_REPORT_ROLES),
-                    any(RowMapper.class),
-                    eq(reportId.toString())
-            )).thenReturn(List.of("REP000"));
-            when(securityUtils.extractRoles()).thenReturn(List.of("Financial"));
-            when(securityUtils.isAuthorized(List.of("REP000"), List.of("REP000")))
-                    .thenReturn(true);
-
             var responseMetadata = GetObjectResponse.builder().contentLength(25L).build();
             var inputStream = new ByteArrayInputStream("csv,data,here,123,4.3,cat".getBytes());
 
@@ -101,9 +93,7 @@ final class ReportGetFileIT extends BaseIT {
             var mockS3Response = new ResponseInputStream<>(responseMetadata, inputStream);
             when(s3Client.getObject(any(GetObjectRequest.class))).thenReturn(mockS3Response);
 
-            mockMvc.perform(get("/reports/" + reportId + "/file")
-                    .with(oidcLogin()
-                            .idToken(token -> token.claim("LAA_APP_ROLES", List.of("REP000")))))
+            performGetRequestWithRoles("/reports/" + reportId + "/file", List.of("Reconciliation"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(APPLICATION_OCTET_STREAM))
                     .andExpect(header().longValue("Content-Length", 25L))
@@ -116,15 +106,6 @@ final class ReportGetFileIT extends BaseIT {
     void shouldCloseStreamWhenSuccessful() {
 
         UUID reportId = ID_REP012;
-        when(readOnlyJdbcTemplate.query(
-                eq(reportDao.SELECT_REPORT_ROLES),
-                any(RowMapper.class),
-                eq(reportId.toString())
-        )).thenReturn(List.of("REP000"));
-        when(securityUtils.extractRoles()).thenReturn(List.of("Financial", "REP000"));
-        when(securityUtils.isAuthorized(List.of("REP000"), List.of("Financial", "REP000")))
-                .thenReturn(true);
-
         var responseList = List.of(
                 S3Object.builder().key("reports/daily/report_2025-12-14.csv").lastModified(Instant.parse("2025-12-14T05:00:00Z")).build(),
                 S3Object.builder().key("reports/daily/report_2025-12-15.csv").lastModified(Instant.parse("2025-12-15T05:00:00Z")).build()
@@ -139,8 +120,7 @@ final class ReportGetFileIT extends BaseIT {
         when(mockS3ResponseInternal.contentLength()).thenReturn(32L);
 
 
-        mockMvc.perform(get("/reports/" + ID_REP012 + "/file").with(oidcLogin()
-                .idToken(token -> token.claim("LAA_APP_ROLES", List.of("REP000")))))
+        performGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of("Reconciliation"))
                 .andExpect(status().isOk());
         verify(mockS3Response).close();
     }
@@ -148,9 +128,7 @@ final class ReportGetFileIT extends BaseIT {
     @Test
     @SneakyThrows
     void shouldRejectUserIfNoPermissionForReport() {
-
-        mockMvc.perform(get("/reports/" + ID_REP012 + "/file").with(oidcLogin()
-                        .idToken(token -> token.claim("LAA_APP_ROLES", List.of("ABC")))))
+        performGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of("ABC"))
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentType(APPLICATION_JSON));
     }
@@ -158,9 +136,8 @@ final class ReportGetFileIT extends BaseIT {
     @Test
     @SneakyThrows
     void shouldErrorIfIdNotSupportedByEndpoint() {
-        mockMvc.perform(get("/reports/" + ID_REP012 + "/file").with(oidcLogin()
-                        .idToken(token -> token.claim("FOOO", List.of("REP000")))))
-                .andExpect(status().isForbidden())
+        performGetRequestWithRoles("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d3/file", List.of("Financial"))
+                .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_JSON));
     }
 
@@ -181,8 +158,7 @@ final class ReportGetFileIT extends BaseIT {
 
         when(s3Client.getObject(any(GetObjectRequest.class))).thenThrow(exception);
 
-        var result =  mockMvc.perform(get("/reports/" + ID_REP012 + "/file").with(oidcLogin()
-                        .idToken(token -> token.claim("LAA_APP_ROLES", List.of("REP000")))))
+        var result =  performGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of("Reconciliation"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andReturn();
@@ -198,8 +174,7 @@ final class ReportGetFileIT extends BaseIT {
         var mockListResponse = ListObjectsV2Response.builder().contents(new ArrayList<>()).build();
         when(s3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenReturn(mockListResponse);
 
-        mockMvc.perform(get("/reports/" + ID_REP012 + "/file").with(oidcLogin()
-                        .idToken(token -> token.claim("LAA_APP_ROLES", List.of("REP000")))))
+        performGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of("Reconciliation"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andReturn();

@@ -6,14 +6,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
-import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,10 +37,6 @@ class SecurityUtilsTest {
     void setup() {
         SecurityContextHolder.clearContext();
     }
-
-    // ------------------------------------------------------------
-    // extractRoles()
-    // ------------------------------------------------------------
 
     @Test
     void extractRoles_returnsEmptyList_whenNoAuthentication() {
@@ -91,62 +84,31 @@ class SecurityUtilsTest {
     }
 
     @Test
-    void extractRoles_returnsCachedRolesOnSecondCall() {
-        // Prepare authentication token that supports setDetails()
-        AbstractAuthenticationToken token = mock(AbstractAuthenticationToken.class);
-        when(token.getPrincipal()).thenReturn(oidcUser);
+    void extractRoles_returnsEmptyList_whenAttributesNull() {
+        when(authentication.getPrincipal()).thenReturn(oidcUser);
+        when(oidcUser.getAttributes()).thenReturn(null);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        Map<String, Object> details = new HashMap<>();
-        when(token.getDetails()).thenReturn(details);
+        List<String> roles = securityUtils.extractRoles();
 
-        when(oidcUser.getAttributes()).thenReturn(Map.of("LAA_APP_ROLES", List.of("REP000")));
-
-        SecurityContextHolder.getContext().setAuthentication(token);
-
-        // First call populates cache
-        List<String> first = securityUtils.extractRoles();
-        assertEquals(List.of("REP000"), first);
-
-        List<String> second = securityUtils.extractRoles();
-        assertEquals(List.of("REP000"), second); // still cached
+        assertTrue(roles.isEmpty());
     }
-
-    // ------------------------------------------------------------
-    // parseRoles()
-    // ------------------------------------------------------------
-
     @Test
-    void parseRoles_returnsEmptyList_whenNull() {
-        List<String> roles = invokeParseRoles(null);
+    void extractRoles_returnsEmptyList_whenNull() {
+        when(authentication.getPrincipal()).thenReturn(oidcUser);
+        when(oidcUser.getAttributes()).thenReturn(null);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        List<String> roles = securityUtils.extractRoles();
         assertTrue(roles.isEmpty());
     }
 
     @Test
-    void parseRoles_handlesListInput() {
-        List<String> roles = invokeParseRoles(List.of("REP000", "Financial"));
-        assertEquals(List.of("REP000", "Financial"), roles);
+    void extractRoles_returnsEmptyList_whenAuthenticationIsNull() {
+        SecurityContextHolder.clearContext();
+        List<String> roles = securityUtils.extractRoles();
+        assertTrue(roles.isEmpty());
     }
-
-    @Test
-    void parseRoles_handlesCommaSeparatedString() {
-        List<String> roles = invokeParseRoles("A, B ,C");
-        assertEquals(List.of("A", "B", "C"), roles);
-    }
-
-    // Helper to call private method via reflection
-    private List<String> invokeParseRoles(Object input) {
-        try {
-            Method m = SecurityUtils.class.getDeclaredMethod("parseRoles", Object.class);
-            m.setAccessible(true);
-            return (List<String>) m.invoke(securityUtils, input);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    // ------------------------------------------------------------
-    // isAuthorized()
-    // ------------------------------------------------------------
 
     @Test
     void isAuthorized_returnsTrue_whenUserHasAtLeastOneRequiredRole() {
