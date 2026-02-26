@@ -30,6 +30,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.HttpSecuritySessionManagementConfigurerBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
+import uk.gov.laa.gpfd.utils.SecurityUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -101,6 +102,9 @@ public class SecurityConfig {
      * @return a configured {@link SecurityFilterChain} object.
      * @throws Exception if any error occurs during the configuration of HTTP security.
      */
+    private final SessionManagementConfigurerBuilder sessionManagementConfigurerBuilder;
+    private final SecurityUtils securityUtils;
+
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         var authorizeHttpRequestsBuilder = new AuthorizeHttpRequestsBuilder(authManager);
@@ -168,7 +172,7 @@ public class SecurityConfig {
 
     public Set<GrantedAuthority> getAuthorities(Map<String, Object> attributes) {
         log.info("OIDC attributes: {}", attributes);
-        List<String> roles = parseRawRoles(attributes.get("LAA_APP_ROLES"));
+        List<String> roles = securityUtils.extractRoles();
         log.info("Parsed roles: {}", roles);
         return new SimpleAuthorityMapper()
                 .mapAuthorities(

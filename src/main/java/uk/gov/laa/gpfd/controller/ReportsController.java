@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.api.ReportsApi;
+import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200Response;
 import uk.gov.laa.gpfd.services.ReportManagementService;
@@ -29,6 +30,7 @@ public class ReportsController implements ReportsApi {
     private final StreamingService streamingService;
     private final FileDownloadService fileDownloadService;
     private final UrlBuilder urlBuilder;
+    private final ReportDao reportDao;
 
     @Override
     public Optional<NativeWebRequest> getRequest() {
@@ -68,6 +70,9 @@ public class ReportsController implements ReportsApi {
     public ResponseEntity<StreamingResponseBody> getCsvById(UUID requestedId) {
         log.info("Returning a CSV report for id {} to user", requestedId);
 
+        // Enforce role-based access control for this report
+        reportDao.verifyUserCanAccessReport(requestedId);
+
         // Validate that this report is actually a CSV report
         reportManagementService.validateReportFormat(requestedId, CSV);
 
@@ -101,6 +106,9 @@ public class ReportsController implements ReportsApi {
     @Override
     public ResponseEntity<StreamingResponseBody> getExcelById(UUID id) {
         log.info("Returning an Excel report for id {} to user", id);
+
+        // Enforce role-based access control for this report
+        reportDao.verifyUserCanAccessReport(id);
 
         // Validate format before attempting to stream
         reportManagementService.validateReportFormat(id, XLSX);
