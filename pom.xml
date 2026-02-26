@@ -24,8 +24,7 @@
         <maven-surefire-junit5-tree-reporter.version>1.5.1</maven-surefire-junit5-tree-reporter.version>
         <poi.version>5.5.1</poi.version>
         <immutables.version>2.12.1</immutables.version>
-        <!--        todo upgrade to 7 when spring-->
-        <spring-cloud-azure-dependencies.version>6.1.0</spring-cloud-azure-dependencies.version>
+        <spring-cloud-azure-dependencies.version>7.0.0</spring-cloud-azure-dependencies.version>
         <spring-security.version>6.4.11</spring-security.version>
         <govuk-frontend.version>5.14.0</govuk-frontend.version>
         <moj-frontend.version>6.0.0</moj-frontend.version>
