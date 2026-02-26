@@ -25,7 +25,7 @@
         <poi.version>5.5.1</poi.version>
         <immutables.version>2.12.1</immutables.version>
         <spring-cloud-azure-dependencies.version>7.0.0</spring-cloud-azure-dependencies.version>
-        <spring-security.version>6.4.11</spring-security.version>
+        <spring-security.version>7.0.3</spring-security.version>
         <govuk-frontend.version>5.14.0</govuk-frontend.version>
         <moj-frontend.version>6.0.0</moj-frontend.version>
 
