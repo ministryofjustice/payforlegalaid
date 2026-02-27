@@ -83,6 +83,23 @@ spec:
                 exit 1
               }
               
+              echo "⚠️ Clearing Liquibase checksums..."
+              liquibase \
+              --url="$MOJFIN_DB_URL" \
+              --username="$MOJFIN_DEV_WRITE_USERNAME" \
+              --password="$MOJFIN_DEV_WRITE_PASSWORD" \
+              --log-level=INFO \
+              --changelog-file=${CHANGELOG_FILENAME} \
+              --searchPath=${BASE_FOLDER} \
+              clearCheckSums
+              
+              if [ $? -ne 0 ]; then
+              echo "❌ Failed to clear checksums"
+              exit 1
+              fi
+              
+              echo "✅ Checksums cleared"
+              
               run_update() {
                   liquibase \
                       --url="$MOJFIN_DB_URL" \
