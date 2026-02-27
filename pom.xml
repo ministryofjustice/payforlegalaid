@@ -29,10 +29,8 @@
         <moj-frontend.version>6.0.0</moj-frontend.version>
 
         <payforlegalaid-openapi.version>0.0.25</payforlegalaid-openapi.version>
-        <common-lang3.version>3.20.0</common-lang3.version>
         <aws.java.sdk.version>2.42.3</aws.java.sdk.version>
         <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
-        <jackson.version>3.0.4</jackson.version>
         <maven-dependency-plugin.version>3.10.0</maven-dependency-plugin.version>
         <maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
         <maven-war-plugin.version>3.5.1</maven-war-plugin.version>
