@@ -83,22 +83,16 @@ spec:
                 exit 1
               }
               
-              echo "⚠️ Clearing Liquibase checksums..."
-              liquibase \
-              --url="$MOJFIN_DB_URL" \
-              --username="$MOJFIN_DEV_WRITE_USERNAME" \
-              --password="$MOJFIN_DEV_WRITE_PASSWORD" \
-              --log-level=INFO \
-              --changelog-file=${CHANGELOG_FILENAME} \
-              --searchPath=${BASE_FOLDER} \
-              clearCheckSums
-              
-              if [ $? -ne 0 ]; then
-              echo "❌ Failed to clear checksums"
-              exit 1
-              fi
-              
-              echo "✅ Checksums cleared"
+              run_clear_checksums() {
+                liquibase \
+                --url="$MOJFIN_DB_URL" \
+                --username="$MOJFIN_DEV_WRITE_USERNAME" \
+                --password="$MOJFIN_DEV_WRITE_PASSWORD" \
+                --log-level=INFO \
+                --changelog-file=${CHANGELOG_FILENAME} \
+                --searchPath=${BASE_FOLDER} \
+                clearCheckSums
+              }
               
               run_update() {
                   liquibase \
@@ -124,6 +118,16 @@ spec:
                            
               echo "Checking database connectivity..."
               db_healthcheck
+                
+              # TEMP: Clear checksums after Liquibase version upgrade
+              # Remove this after first successful deployment
+              echo "⚠️ Clearing Liquibase checksums..."
+              if run_clear_checksums; then
+                echo "✅ Checksums cleared"
+              else
+                echo "❌ Failed to clear checksums"
+                exit 1
+              fi
 
               echo "Validating changelog..."
               if run_validate; then
