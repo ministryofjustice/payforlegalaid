@@ -64,15 +64,13 @@ public class AuthorizeHttpRequestsBuilder
      * </ul>
      * </p>
      *
-     * @param authorizationManagerRequestMatcherRegistry the {@link AuthorizeHttpRequestsConfigurer.HttpSecurity.AuthorizationManagerRequestMatcherRegistry} object
+     * @param authorizationManagerRequestMatcherRegistry the {@link AuthorizeHttpRequestsConfigurer.AuthorizationManagerRequestMatcherRegistry} object
      *                                                   used to configure the authorization rules for various HTTP request patterns.
      */
     @SneakyThrows
     @Override
     public void customize(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorizationManagerRequestMatcherRegistry) {
-        authorizationManagerRequestMatcherRegistry.and()
-                .apply(aadWebApplication()).and()
-                .authorizeHttpRequests()
+        authorizationManagerRequestMatcherRegistry
                 .requestMatchers(API_DOCS_ROOT, SWAGGER_UI, SWAGGER_FILE).permitAll()  // Allow unrestricted access to API docs and Swagger UI
                 .requestMatchers(ACTUATOR_ENDPOINT, HEALTH_ENDPOINT).permitAll()         // Allow unrestricted access to actuator and health endpoints
                 .requestMatchers("/login").permitAll()
