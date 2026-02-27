@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.10</version>
+        <version>4.0.3</version>
     </parent>
 
     <properties>
@@ -18,21 +18,22 @@
         <oracle-jdbc.version>23.26.1.0.0</oracle-jdbc.version>
         <h2.version>2.4.240</h2.version>
 
-        <springdoc-oas.version>2.8.15</springdoc-oas.version>
+        <springdoc-oas.version>3.0.1</springdoc-oas.version>
 
         <!-- Downgraded due to a known issue: https://github.com/fabriciorby/maven-surefire-junit5-tree-reporter  (until the 2.0.x release becomes available) -->
         <maven-surefire-junit5-tree-reporter.version>1.5.1</maven-surefire-junit5-tree-reporter.version>
         <poi.version>5.5.1</poi.version>
         <immutables.version>2.12.1</immutables.version>
-        <spring-cloud-azure-dependencies.version>6.1.0</spring-cloud-azure-dependencies.version>
-        <spring-security.version>6.4.11</spring-security.version>
+        <spring-cloud-azure-dependencies.version>7.0.0</spring-cloud-azure-dependencies.version>
         <govuk-frontend.version>5.14.0</govuk-frontend.version>
         <moj-frontend.version>6.0.0</moj-frontend.version>
 
-        <payforlegalaid-openapi.version>0.0.23</payforlegalaid-openapi.version>
-        <common-lang3.version>3.20.0</common-lang3.version>
-        <aws.java.sdk.version>2.41.28</aws.java.sdk.version>
-        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
+        <payforlegalaid-openapi.version>0.0.25</payforlegalaid-openapi.version>
+        <aws.java.sdk.version>2.42.3</aws.java.sdk.version>
+        <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
+        <maven-dependency-plugin.version>3.10.0</maven-dependency-plugin.version>
+        <maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
+        <maven-war-plugin.version>3.5.1</maven-war-plugin.version>
     </properties>
 
     <build>
@@ -83,7 +84,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.10.0</version>
+                <version>${maven-dependency-plugin.version}</version>
                 <executions>
                     <execution>
                         <phase>generate-resources</phase>
@@ -104,13 +105,6 @@
                             </artifactItems>
                         </configuration>
                     </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.10.0</version>
-                <executions>
                     <execution>
                         <id>unpack-govuk</id>
                         <phase>generate-resources</phase>
@@ -136,7 +130,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>${maven-antrun-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>copy-govuk-assets</id>
@@ -218,7 +212,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>3.5.1</version>
+                <version>${maven-war-plugin.version}</version>
                 <configuration>
                     <attachClasses>true</attachClasses>
                     <classesClassifier>classes</classesClassifier>
@@ -242,11 +236,6 @@
                 <version>${aws.java.sdk.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven-surefire-plugin.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -294,7 +283,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <artifactId>spring-boot-starter-webmvc</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -308,7 +297,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jackson</artifactId>
+        </dependency>
 
+        <!-- this next section all has version controlled by Spring Boot -->
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>webjars-locator-core</artifactId>
@@ -321,11 +315,16 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+        <dependency>
+            <groupId>tools.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-csv</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.azure.spring</groupId>
             <artifactId>spring-cloud-azure-starter-active-directory</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-oauth2-client</artifactId>
@@ -334,12 +333,6 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-oauth2-jose</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-crypto</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
             <artifactId>ojdbc11</artifactId>
@@ -362,11 +355,12 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>${h2.version}</version>
+            <!-- version controlled by spring -->
+            <!-- also used locally until dockerising -->
         </dependency>
         <dependency>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-core</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-liquibase-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -381,31 +375,39 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <!--- dependencies added to resolve snyk issues -->
-        <!--- Commons lang3 could be removed if liquibase-core, poi-ooxml
-        and springdoc-openapi-starter-webmvc get higher version of it than 3.17-->
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${common-lang3.version}</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf-test</artifactId>
+            <scope>test</scope>
         </dependency>
-        <!-- Spring Boot 3 generates code with Jackson 2 in OpenAPI
-           So for consistency sticking to v2.
-           When we move to Spring Boot 4 we can upgrade to Jackson 3 -->
         <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-csv</artifactId>
-            <version>2.21.0</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc-test</artifactId>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
