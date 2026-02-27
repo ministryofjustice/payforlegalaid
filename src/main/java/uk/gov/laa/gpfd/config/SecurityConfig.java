@@ -4,9 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
+import uk.gov.laa.gpfd.config.builders.HttpSecuritySessionManagementConfigurerBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
 
 import static com.azure.spring.cloud.autoconfigure.implementation.aad.security.AadWebApplicationHttpSecurityConfigurer.aadWebApplication;
@@ -26,22 +29,8 @@ import static com.azure.spring.cloud.autoconfigure.implementation.aad.security.A
 @ConditionalOnProperty(name = "spring.cloud.azure.active-directory.enabled", havingValue = "true")
 public class SecurityConfig {
 
-    /**
-     * The custom {@link AuthorizeHttpRequestsBuilder} responsible for configuring
-     * the authorization rules for HTTP requests, such as which endpoints are publicly
-     * accessible and which require authentication.
-     * This dependency is injected via constructor injection due to the
-     * {@link RequiredArgsConstructor} annotation.
-     */
-    private final AuthorizeHttpRequestsBuilder authorizeHttpRequestsBuilder;
-
-    /**
-     * The custom {@link SessionManagementConfigurerBuilder} responsible for configuring
-     * session management, including session concurrency control and session expiration.
-     * This dependency is injected via constructor injection due to the
-     * {@link RequiredArgsConstructor} annotation.
-     */
-    private final SessionManagementConfigurerBuilder sessionManagementConfigurerBuilder;
+    private final AuthorizationManager<RequestAuthorizationContext> authManager;
+    private final HttpSecuritySessionManagementConfigurerBuilder concurrencyControlConfigurerCustomizer;
 
     /**
      * Configures the {@link SecurityFilterChain} for the HTTP security settings.
@@ -49,6 +38,8 @@ public class SecurityConfig {
      * This method customizes the security filter chain by applying the authorization
      * rules, enabling HTTP basic authentication, and applying the session management
      * configuration to control session concurrency and expiration.
+     * We create the customisers in the function as Bean customisers are automatically implemented by Spring Security 7,
+     * and running each customiser twice can cause issues.
      * </p>
      *
      * @param httpSecurity the {@link HttpSecurity} object used to configure HTTP security.
@@ -57,6 +48,8 @@ public class SecurityConfig {
      */
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+        var authorizeHttpRequestsBuilder = new AuthorizeHttpRequestsBuilder(authManager);
+        var sessionManagementConfigurerBuilder = new SessionManagementConfigurerBuilder(concurrencyControlConfigurerCustomizer);
         return httpSecurity
                 .with(aadWebApplication())
                 .authorizeHttpRequests(authorizeHttpRequestsBuilder)    // Apply authorization rules

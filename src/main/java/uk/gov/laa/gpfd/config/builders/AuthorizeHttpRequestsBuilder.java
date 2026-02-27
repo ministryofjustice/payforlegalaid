@@ -6,7 +6,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
-import org.springframework.stereotype.Component;
 
 import static com.azure.spring.cloud.autoconfigure.implementation.aad.security.AadWebApplicationHttpSecurityConfigurer.aadWebApplication;
 
@@ -15,9 +14,10 @@ import static com.azure.spring.cloud.autoconfigure.implementation.aad.security.A
  * <p>
  * This class customizes the authorization settings for various HTTP request patterns,
  * allowing specific endpoints to be publicly accessible and securing others with authentication.
+ *
+ * Spring Security 7 automatically implements any Customizer Beans so do not make this a Bean or there will be errors
  * </p>
  */
-@Component
 public class AuthorizeHttpRequestsBuilder
         implements Customizer<AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry> {
 

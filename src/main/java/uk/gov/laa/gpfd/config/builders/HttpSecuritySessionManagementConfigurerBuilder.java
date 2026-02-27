@@ -31,7 +31,7 @@ public class HttpSecuritySessionManagementConfigurerBuilder
      * </ul>
      * </p>
      *
-     * @param sessionConcurrency the {@link SessionManagementConfigurer.HttpSecurity.ConcurrencyControlConfigurer} object
+     * @param sessionConcurrency the {@link SessionManagementConfigurer.ConcurrencyControlConfigurer} object
      *                           used to configure session concurrency settings.
      */
     @Override
