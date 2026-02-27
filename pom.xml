@@ -360,7 +360,6 @@
             <!-- version controlled by spring -->
             <!-- also used locally until dockerising -->
         </dependency>
-        <!-- todo spring-liquibase-start? or liquibase-test start?-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-liquibase-test</artifactId>
