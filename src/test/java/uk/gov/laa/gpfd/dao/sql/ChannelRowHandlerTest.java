@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectWriter;
 import tools.jackson.databind.SequenceWriter;
 import tools.jackson.dataformat.csv.CsvMapper;
@@ -179,7 +180,7 @@ class ChannelRowHandlerTest {
 
         when(csvMapper.writer(any(CsvSchema.class))).thenReturn(objectWriter);
         when(objectWriter.writeValues(stream)).thenReturn(sequenceWriter);
-        when(sequenceWriter.write(any())).thenThrow(IOException.class);
+        when(sequenceWriter.write(any())).thenThrow(JacksonException.class);
         assertThrows(CsvGenerationException.WritingToCsvException.class, () -> handler.processRow(resultSet));
     }
 

@@ -46,7 +46,7 @@ final class AuthTokenIT extends BaseIT {
     void unauthenticatedAccess_shouldRedirectToLogin(String description, String endpoint) {
         performGetRequest(endpoint)
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrlPattern("http://localhost/oauth2/authorization/azure*"));
+                .andExpect(redirectedUrlPattern("/oauth2/authorization/azure*"));
     }
 
     @ParameterizedTest(name = "[{index}] {0} should return 200 when authenticated")

@@ -1,5 +1,6 @@
 package uk.gov.laa.gpfd.dao.sql;
 
+import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectWriter;
 import tools.jackson.databind.SequenceWriter;
 import tools.jackson.dataformat.csv.CsvMapper;
@@ -188,12 +189,12 @@ public sealed interface ChannelRowHandler extends
                     sequenceWriter.flush();
                 }
 
-            } catch (IOException e) {
+            } catch (JacksonException e) {
                 throw new WritingToCsvException("Error writing to output stream", e);
             }
         }
 
-        private void writeHeaderIfNeeded(ResultSetMetaData metaData, int columnCount) throws IOException, SQLException {
+        private void writeHeaderIfNeeded(ResultSetMetaData metaData, int columnCount) throws JacksonException, SQLException {
             if (headerWritten.compareAndSet(false, true)) {
 
                 CsvSchema.Builder schemaBuilder = CsvSchema.builder().setUseHeader(true);
