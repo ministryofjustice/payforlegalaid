@@ -57,6 +57,15 @@ spec:
               cat ${CHANGELOG}
               echo "=========="
               
+              echo "Installing Oracle driver..."
+              liquibase lpm add oracle --global
+              if [ $? -ne 0 ]; then
+              echo "❌ Failed to install Oracle driver"
+              exit 1
+              fi
+              liquibase lpm list
+              echo "✅ Oracle driver installation complete"
+              
               db_healthcheck() {
               
                 local max_retries=5
@@ -128,11 +137,6 @@ spec:
 #                echo "❌ Failed to clear checksums"
 #                exit 1
 #              fi
-
-              echo "Installing Oracle driver"
-              liquibase lpm add oracle --global
-              liquibase lpm list
-              echo "Installation complete"
 
               echo "Validating changelog..."
               if run_validate; then
