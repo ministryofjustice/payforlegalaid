@@ -130,13 +130,13 @@ spec:
                 
               # TEMP: Clear checksums after Liquibase version upgrade
               # Remove this after first successful deployment
-#              echo "⚠️ Clearing Liquibase checksums..."
-#              if run_clear_checksums; then
-#                echo "✅ Checksums cleared"
-#              else
-#                echo "❌ Failed to clear checksums"
-#                exit 1
-#              fi
+              #              echo "⚠️ Clearing Liquibase checksums..."
+              #              if run_clear_checksums; then
+              #                echo "✅ Checksums cleared"
+              #              else
+              #                echo "❌ Failed to clear checksums"
+              #                exit 1
+              #              fi
 
               echo "Validating changelog..."
               if run_validate; then
