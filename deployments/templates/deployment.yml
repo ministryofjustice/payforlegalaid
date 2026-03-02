@@ -58,10 +58,11 @@ spec:
               echo "=========="
               
               echo "Installing Oracle driver..."
+              liquibase lpm
               liquibase lpm list
               liquibase lpm search oracle
               liquibase lpm search jdbc
-              liquibase lpm add oracle-ojdbc11 --global
+              # liquibase lpm add oracle-ojdbc11 --global
               if [ $? -ne 0 ]; then
               echo "❌ Failed to install Oracle driver"
               exit 1
