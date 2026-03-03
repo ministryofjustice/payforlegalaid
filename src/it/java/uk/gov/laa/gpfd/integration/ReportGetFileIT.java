@@ -102,9 +102,7 @@ final class ReportGetFileIT extends BaseIT {
             var mockS3Response = new ResponseInputStream<>(responseMetadata, inputStream);
             when(s3Client.getObject(any(GetObjectRequest.class))).thenReturn(mockS3Response);
 
-            mockMvc.perform(get("/reports/" + reportId + "/file")
-                    .with(oidcLogin()
-                            .idToken(token -> token.claim("LAA_APP_ROLES", List.of("REP000")))))
+            performGetRequestWithRoles("/reports/" + reportId + "/file", List.of("Reconciliation"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(APPLICATION_OCTET_STREAM))
                     .andExpect(header().longValue("Content-Length", 25L))
@@ -140,8 +138,7 @@ final class ReportGetFileIT extends BaseIT {
         when(mockS3ResponseInternal.contentLength()).thenReturn(32L);
 
 
-        mockMvc.perform(get("/reports/" + ID_REP012 + "/file").with(oidcLogin()
-                .idToken(token -> token.claim("LAA_APP_ROLES", List.of("REP000")))))
+        performGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of("Reconciliation"))
                 .andExpect(status().isOk());
         verify(mockS3Response).close();
     }
@@ -150,8 +147,7 @@ final class ReportGetFileIT extends BaseIT {
     @SneakyThrows
     void shouldRejectUserIfNoPermissionForReport() {
 
-        mockMvc.perform(get("/reports/" + ID_REP012 + "/file").with(oidcLogin()
-                        .idToken(token -> token.claim("LAA_APP_ROLES", List.of("ABC")))))
+        performGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of("ABC"))
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentType(APPLICATION_JSON));
     }
@@ -159,9 +155,8 @@ final class ReportGetFileIT extends BaseIT {
     @Test
     @SneakyThrows
     void shouldErrorIfIdNotSupportedByEndpoint() {
-        mockMvc.perform(get("/reports/" + ID_REP012 + "/file").with(oidcLogin()
-                        .idToken(token -> token.claim("FOOO", List.of("REP000")))))
-                .andExpect(status().isForbidden())
+        performGetRequestWithRoles("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d3/file", List.of("Financial"))
+                .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_JSON));
     }
 
@@ -182,8 +177,7 @@ final class ReportGetFileIT extends BaseIT {
 
         when(s3Client.getObject(any(GetObjectRequest.class))).thenThrow(exception);
 
-        var result =  mockMvc.perform(get("/reports/" + ID_REP012 + "/file").with(oidcLogin()
-                        .idToken(token -> token.claim("LAA_APP_ROLES", List.of("REP000")))))
+        var result =  performGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of("Reconciliation"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andReturn();
@@ -199,8 +193,7 @@ final class ReportGetFileIT extends BaseIT {
         var mockListResponse = ListObjectsV2Response.builder().contents(new ArrayList<>()).build();
         when(s3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenReturn(mockListResponse);
 
-        mockMvc.perform(get("/reports/" + ID_REP012 + "/file").with(oidcLogin()
-                        .idToken(token -> token.claim("LAA_APP_ROLES", List.of("REP000")))))
+        performGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of("Reconciliation"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andReturn();

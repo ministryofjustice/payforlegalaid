@@ -9,13 +9,12 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
 import uk.gov.laa.gpfd.services.ReportManagementService;
+import uk.gov.laa.gpfd.utils.BaseMvcTest;
 
 import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -24,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         classes = uk.gov.laa.gpfd.config.TestDatabaseConfig.class)
-class HttpSecuritySessionManagementConfigurerBuilderTest {
+class HttpSecuritySessionManagementConfigurerBuilderTest extends BaseMvcTest {
 
     @MockitoBean
     ReportManagementService reportServiceMock;
@@ -39,8 +38,7 @@ class HttpSecuritySessionManagementConfigurerBuilderTest {
 
         when(reportServiceMock.createReportResponse(reportId)).thenReturn(reportResponseMock);
 
-        mockMvc.perform(get("/reports/{id}", reportId)
-                        .sessionAttr("SPRING_SECURITY_CONTEXT", "null"))
+        performGetRequest("/reports/"+ reportId)
                 .andExpect(status().is3xxRedirection())// Should redirect after session expires
                 .andExpect(header().string("Location", "http://localhost/oauth2/authorization/gpfd-azure-dev"));  // Check that redirection goes to /login?expired
     }
@@ -52,9 +50,7 @@ class HttpSecuritySessionManagementConfigurerBuilderTest {
 
         when(reportServiceMock.createReportResponse(reportId)).thenReturn(reportResponseMock);
 
-        mockMvc.perform(get("/reports/{id}", reportId).with(oidcLogin()
-                .idToken(token -> token.claim("LAA_APP_ROLES", List.of("REP000")))
-        ))
+        performAuthenticatedGet("/reports/" + reportId, List.of("REP000"))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(reportId.toString()));
     }
 }

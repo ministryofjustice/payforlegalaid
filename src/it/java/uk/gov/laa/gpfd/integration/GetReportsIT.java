@@ -39,8 +39,7 @@ final class GetReportsIT extends BaseIT {
     void shouldSuccessfullyReturnAllAvailableReports() {
         var reportsLen = DatabaseVerifier.rowCountFor(Table.REPORTS).apply(jdbc);
 
-        mockMvc.perform(get("/reports").with(oidcLogin()
-                        .idToken(token -> token.claim("LAA_APP_ROLES", List.of("REP000", "Financial", "Reconciliation")))))
+        performGetRequestWithRoles("/reports", List.of("REP000", "Financial", "Reconciliation"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.reportList").isArray())
@@ -57,11 +56,11 @@ final class GetReportsIT extends BaseIT {
         jdbc.update("ALTER TABLE GPFD.REPORTS_TRACKING DROP CONSTRAINT fk_reports_tracking_reports_id");
         jdbc.update("TRUNCATE TABLE GPFD.REPORTS");
 
-        mockMvc.perform(get("/reports").with(oidcLogin()
-                        .idToken(token -> token.claim("LAA_APP_ROLES", List.of("ABC")))))
+        performGetRequestWithRoles("/reports", List.of("REP000", "Reconciliation", "Financial"))
                 .andExpect(status().isOk())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.reportList").isEmpty());
     }
+
 }

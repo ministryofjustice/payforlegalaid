@@ -57,15 +57,21 @@ final class AuthTokenIT extends BaseIT {
 
     @ParameterizedTest(name = "[{index}] {0} should redirect when unauthenticated")
     @MethodSource("securedReportEndpoints")
-    @SneakyThrows
-    void unauthenticatedAccess_shouldRedirectToLogin(String description, String endpoint) {
-        if (endpoint.equals("/reports")) {
-            mockMvc.perform(get(endpoint).with(oidcLogin()
-                            .idToken(token -> token.claim("LAA_APP_ROLES", List.of("ABC")))))
+    void unauthenticatedAccess_shouldRedirectToLogin(String description, String endpoint) throws Exception {
+        performGetRequest(endpoint)
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("**/oauth2/authorization/gpfd-azure-dev"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("securedReportEndpoints")
+    void authenticatedAccess_withNoValidRole(String description, String endpoint) throws Exception {
+        if (Objects.equals(description, "Root api endpoint")) {
+        // return 200 with empty list
+        performGetRequestWithRoles(endpoint, List.of("ABC"))
                     .andExpect(status().is2xxSuccessful());
         } else {
-            mockMvc.perform(get(endpoint).with(oidcLogin()
-                            .idToken(token -> token.claim("LAA_APP_ROLES", List.of("ABC")))))
+            performGetRequestWithRoles(endpoint, List.of("ABC"))
                     .andExpect(status().isForbidden());
         }
     }
@@ -73,15 +79,13 @@ final class AuthTokenIT extends BaseIT {
     @ParameterizedTest(name = "[{index}] {0} should return 200 when authenticated")
     @MethodSource("securedReportEndpoints")
     @SneakyThrows
-    void authenticatedAccess_shouldReturnOk(String description, String endpoint) {
+    void authenticatedAccess_withValidRolesshouldReturnOk(String description, String endpoint) {
         if (Objects.equals(description, "File download endpoint")) {
             // This will not 200 locally as it's not supported
-            mockMvc.perform(get(endpoint).with(oidcLogin()
-                    .idToken(token -> token.claim("LAA_APP_ROLES", List.of("REP000", "Financial", "Reconciliation")))))
+            performGetRequestWithRoles(endpoint, List.of("REP000", "Reconciliation"))
                     .andExpect(status().isNotImplemented());
         } else {
-            mockMvc.perform(get(endpoint).with(oidcLogin()
-                            .idToken(token -> token.claim("LAA_APP_ROLES", List.of("REP000", "Financial", "Reconciliation")))))
+            performGetRequestWithRoles(endpoint, List.of("REP000", "Financial", "Reconciliation"))
                     .andExpect(status().isOk());
         }
     }

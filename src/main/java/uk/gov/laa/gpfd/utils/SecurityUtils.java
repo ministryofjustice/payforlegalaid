@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class SecurityUtils {
@@ -29,9 +30,12 @@ public class SecurityUtils {
             return List.of();
         }
 
-        // Extract from OIDC attributes
-        Object rawRoles = oidcUser.getAttributes().get(ROLE_CLAIM);
+        Map<String, Object> attributes = oidcUser.getAttributes();
+        if (attributes == null) {
+            return List.of();
+        }
 
+        Object rawRoles = attributes.get(ROLE_CLAIM);
         return parseRoles(rawRoles);
     }
 

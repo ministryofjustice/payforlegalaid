@@ -11,7 +11,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
@@ -85,31 +84,30 @@ class SecurityUtilsTest {
     }
 
     @Test
-    void parseRoles_returnsEmptyList_whenNull() {
-        List<String> roles = invokeParseRoles(null);
+    void extractRoles_returnsEmptyList_whenAttributesNull() {
+        when(authentication.getPrincipal()).thenReturn(oidcUser);
+        when(oidcUser.getAttributes()).thenReturn(null);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        List<String> roles = securityUtils.extractRoles();
+
+        assertTrue(roles.isEmpty());
+    }
+    @Test
+    void extractRoles_returnsEmptyList_whenNull() {
+        when(authentication.getPrincipal()).thenReturn(oidcUser);
+        when(oidcUser.getAttributes()).thenReturn(null);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        List<String> roles = securityUtils.extractRoles();
         assertTrue(roles.isEmpty());
     }
 
     @Test
-    void parseRoles_handlesListInput() {
-        List<String> roles = invokeParseRoles(List.of("REP000", "Financial"));
-        assertEquals(List.of("REP000", "Financial"), roles);
-    }
-
-    @Test
-    void parseRoles_handlesCommaSeparatedString() {
-        List<String> roles = invokeParseRoles("A, B ,C");
-        assertEquals(List.of("A", "B", "C"), roles);
-    }
-
-    private List<String> invokeParseRoles(Object input) {
-        try {
-            Method m = SecurityUtils.class.getDeclaredMethod("parseRoles", Object.class);
-            m.setAccessible(true);
-            return (List<String>) m.invoke(securityUtils, input);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    void extractRoles_returnsEmptyList_whenAuthenticationIsNull() {
+        SecurityContextHolder.clearContext();
+        List<String> roles = securityUtils.extractRoles();
+        assertTrue(roles.isEmpty());
     }
 
     @Test

@@ -52,12 +52,12 @@
     <changeSet id="test-insert-report-roles" author="neeta">
         <insert tableName="REPORT_ROLES" schemaName="GPFD">
             <column name="REPORT_ID" value="cc55e276-97b0-4dd8-a919-26d4aa373266"/>
-            <column name="ROLE_ID" valueNumeric="1"/>
+            <column name="ROLE_ID" valueNumeric="2"/>
         </insert>
 
         <insert tableName="REPORT_ROLES" schemaName="GPFD">
             <column name="REPORT_ID" value="b36f9bbb-1178-432c-8f99-8090e285f2d3"/>
-            <column name="ROLE_ID" valueNumeric="2"/>
+            <column name="ROLE_ID" valueNumeric="3"/>
         </insert>
 
         <insert tableName="REPORT_ROLES" schemaName="GPFD">
@@ -105,31 +105,4 @@
             <column name="ROLE_ID" valueNumeric="3"/>
         </insert>
      </changeSet>
-
-    <!-- 5. Map ALL reports to a role -->
-    <changeSet id="test-map-all-reports" author="neeta">
-        <sql>
-            INSERT INTO GPFD.REPORT_ROLES (REPORT_ID, ROLE_ID)
-            SELECT ID, 3 FROM GPFD.REPORT_TRACKING;
-        </sql>
-    </changeSet>
-
-    <!-- 6. Map specific reports to specific roles -->
-    <changeSet id="test-map-specific-reports" author="neeta" runOnChange="true">
-        <sql>
-            INSERT INTO GPFD.REPORT_ROLES (REPORT_ID, ROLE_ID)
-            SELECT ID, 1
-            FROM GPFD.CSV_TO_SQL_MAPPING_TABLE
-            WHERE REPORT_NAME = 'CMS_and_CIS_Bank_Account_Report_w_Category_Code_(MNTH)-MAIN-12';
-        </sql>
-
-        <sql>
-            INSERT INTO GPFD.REPORT_ROLES (REPORT_ID, ROLE_ID)
-            SELECT ID, 2
-            FROM GPFD.CSV_TO_SQL_MAPPING_TABLE
-            WHERE REPORT_NAME = 'CIS-to-CCMS-import-analysis-2';
-        </sql>
-    </changeSet>
-
-
 </databaseChangeLog>
