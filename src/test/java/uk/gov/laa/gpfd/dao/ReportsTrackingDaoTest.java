@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
+import uk.gov.laa.gpfd.config.TestDatabaseConfig;
 import uk.gov.laa.gpfd.data.ReportsTrackingTestDataFactory;
 import uk.gov.laa.gpfd.utils.DatabaseUtils;
 
@@ -21,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.createTestReport;
 
-@SpringBootTest(properties = "spring.liquibase.enabled=false")
+@SpringBootTest (classes = TestDatabaseConfig.class)
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ReportsTrackingDaoTest {

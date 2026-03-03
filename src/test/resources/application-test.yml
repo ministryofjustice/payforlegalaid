@@ -30,9 +30,3 @@ spring:
 
   main:
     allow-bean-definition-overriding: true
-
-springdoc:
- api-docs:
-  enabled: false
- swagger-ui:
-  enabled: false

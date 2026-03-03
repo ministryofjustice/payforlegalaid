@@ -1,6 +1,7 @@
 package uk.gov.laa.gpfd.config;
 
 import lombok.SneakyThrows;
+import org.immutables.value.internal.$generator$.$Generator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@SpringBootTest(classes = TestDatabaseConfig.class)
 @AutoConfigureMockMvc
 @ActiveProfiles("testauth")
 class AppConfigTest {
@@ -82,10 +83,12 @@ class AppConfigTest {
         // When
         var readOnlyJdbcTemplate = applicationContext.getBean("readOnlyJdbcTemplate", JdbcTemplate.class);
         var writeJdbcTemplate = applicationContext.getBean("writeJdbcTemplate", JdbcTemplate.class);
+        var namedJdbcTemplate = applicationContext.getBean("namedReadOnlyJdbcTemplate",JdbcTemplate.class);
 
         // Then
         assertNotNull(readOnlyJdbcTemplate, "Read-only JdbcTemplate bean should be created.");
         assertNotNull(writeJdbcTemplate, "Write-enabled JdbcTemplate bean should be created.");
+        assertNotNull(namedJdbcTemplate, "Named JdbcTemplate bean should be created.");
     }
 
     @Test
