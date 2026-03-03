@@ -57,6 +57,9 @@ public record JdbcDataStreamer(JdbcOperations jdbc, int csvBufferFlushFrequency)
         Map<String, String> row = new LinkedHashMap<>();
         var csvMapper = new CsvMapper();
 
+        int count = jdbc.queryForObject("SELECT COUNT(*) FROM (" + sql + ")", Integer.class);
+        System.out.println("Row count = " + count);
+
         log.debug("Initiating streaming for query: [{}]", sql.replace(END_OF_LINE_SEPARATOR, EMPTY));
         jdbc.query(sql, rs -> {
             System.out.println("rs version rs size col count " + rs.getMetaData().getColumnCount());
