@@ -80,15 +80,6 @@ final class ReportGetFileIT extends BaseIT {
         void shouldSuccessfullyPassStreamReturnedFromAWSToUserWithPermission() {
 
             UUID reportId = ID_REP012;
-            when(readOnlyJdbcTemplate.query(
-                    anyString(),
-                    any(RowMapper.class),
-                    eq(reportId.toString())
-            )).thenReturn(List.of("REP000"));
-            when(securityUtils.extractRoles()).thenReturn(List.of("Financial"));
-            when(securityUtils.isAuthorized(List.of("REP000"), List.of("REP000")))
-                    .thenReturn(true);
-
             var responseMetadata = GetObjectResponse.builder().contentLength(25L).build();
             var inputStream = new ByteArrayInputStream("csv,data,here,123,4.3,cat".getBytes());
 
@@ -115,15 +106,6 @@ final class ReportGetFileIT extends BaseIT {
     void shouldCloseStreamWhenSuccessful() {
 
         UUID reportId = ID_REP012;
-        when(readOnlyJdbcTemplate.query(
-                anyString(),
-                any(RowMapper.class),
-                eq(reportId.toString())
-        )).thenReturn(List.of("REP000"));
-        when(securityUtils.extractRoles()).thenReturn(List.of("Financial", "REP000"));
-        when(securityUtils.isAuthorized(List.of("REP000"), List.of("Financial", "REP000")))
-                .thenReturn(true);
-
         var responseList = List.of(
                 S3Object.builder().key("reports/daily/report_2025-12-14.csv").lastModified(Instant.parse("2025-12-14T05:00:00Z")).build(),
                 S3Object.builder().key("reports/daily/report_2025-12-15.csv").lastModified(Instant.parse("2025-12-15T05:00:00Z")).build()
@@ -146,7 +128,6 @@ final class ReportGetFileIT extends BaseIT {
     @Test
     @SneakyThrows
     void shouldRejectUserIfNoPermissionForReport() {
-
         performGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of("ABC"))
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentType(APPLICATION_JSON));
