@@ -1,5 +1,6 @@
 package uk.gov.laa.gpfd.dao;
 
+import org.springframework.jdbc.core.JdbcTemplate;
 import tools.jackson.dataformat.csv.CsvMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcOperations;
@@ -23,7 +24,7 @@ import static uk.gov.laa.gpfd.dao.sql.ChannelRowHandler.forStream;
  *           row-by-row callback mechanism for streaming.
  */
 @Slf4j
-public record JdbcDataStreamer(JdbcOperations jdbc, int csvBufferFlushFrequency) implements DataStreamer {
+public record JdbcDataStreamer(JdbcTemplate jdbc, int csvBufferFlushFrequency) implements DataStreamer {
     private static final char END_OF_LINE_SEPARATOR = '\n', EMPTY = ' ';
 
     /**
@@ -57,6 +58,7 @@ public record JdbcDataStreamer(JdbcOperations jdbc, int csvBufferFlushFrequency)
         var csvMapper = new CsvMapper();
 
         log.info("Initiating streaming for query: [{}]", sql.replace(END_OF_LINE_SEPARATOR, EMPTY));
+        jdbc.setFetchSize(1000); // todo test
         jdbc.query(sql, forStream(stream, csvMapper, row, csvBufferFlushFrequency));
         stream.flush();
         log.info("Finished streaming for query: [{}]", sql.replace(END_OF_LINE_SEPARATOR, EMPTY));

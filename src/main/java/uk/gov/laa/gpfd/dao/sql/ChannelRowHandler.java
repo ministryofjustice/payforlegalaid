@@ -185,7 +185,7 @@ public sealed interface ChannelRowHandler extends
                 row.clear();
 
                 for (int i = 1; i <= columnCount; i++) {
-                    row.put(metaData.getColumnName(i), rs.getString(i));
+                    row.put(metaData.getColumnLabel(i), rs.getString(i));
                 }
                 sequenceWriter.write(row);
 
@@ -206,7 +206,7 @@ public sealed interface ChannelRowHandler extends
 
                 CsvSchema.Builder schemaBuilder = CsvSchema.builder().setUseHeader(true);
                 for (int i = 1; i <= columnCount; i++) {
-                    schemaBuilder.addColumn(metaData.getColumnName(i));
+                    schemaBuilder.addColumn(metaData.getColumnLabel(i));
                 }
                 CsvSchema schema = schemaBuilder.build();
                 // Knows what schema and format to use

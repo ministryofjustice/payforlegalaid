@@ -2,6 +2,7 @@ package uk.gov.laa.gpfd.services;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.JdbcTemplate;
 import uk.gov.laa.gpfd.dao.JdbcDataStreamer;
 import uk.gov.laa.gpfd.dao.JdbcWorkbookDataStreamer;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
@@ -39,7 +40,7 @@ public interface DataStreamer {
      * @throws IllegalArgumentException if jdbcTemplate is null
      * @see JdbcDataStreamer
      */
-    static DataStreamer createJdbcStreamer(JdbcOperations jdbcOperations, int csvBufferFlushFrequency) {
+    static DataStreamer createJdbcStreamer(JdbcTemplate jdbcOperations, int csvBufferFlushFrequency) {
         return new JdbcDataStreamer(jdbcOperations, csvBufferFlushFrequency);
     }
 
