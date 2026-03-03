@@ -58,6 +58,16 @@ public record JdbcDataStreamer(JdbcOperations jdbc, int csvBufferFlushFrequency)
         var csvMapper = new CsvMapper();
 
         log.debug("Initiating streaming for query: [{}]", sql.replace(END_OF_LINE_SEPARATOR, EMPTY));
+        jdbc.query(sql, rs -> {
+            System.out.println("rs version rs size col count " + rs.getMetaData().getColumnCount());
+        });
+
+        jdbc.query(sql, (rs, rownum) -> {
+            System.out.println("rownum version rs size col count " + rs.getMetaData().getColumnCount());
+            return null;
+        });
+
+
         jdbc.query(sql, forStream(stream, csvMapper, row, csvBufferFlushFrequency));
         stream.flush();
         log.debug("Finished streaming for query: [{}]", sql.replace(END_OF_LINE_SEPARATOR, EMPTY));
