@@ -1,12 +1,9 @@
 package uk.gov.laa.gpfd.config;
 
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.jspecify.annotations.Nullable;
 import org.springframework.security.authorization.AuthenticatedAuthorizationManager;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.AuthorizationManager;
-import org.springframework.security.authorization.AuthorizationResult;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 
@@ -16,8 +13,8 @@ import java.util.function.Supplier;
 public class ContextBasedAuthorizationManager implements AuthorizationManager<RequestAuthorizationContext> {
 
     @Override
-    public AuthorizationResult authorize(@NonNull Supplier<? extends @Nullable Authentication> authenticationSupplier, RequestAuthorizationContext context) {
-        if (context == null) {
+    public AuthorizationDecision check(Supplier<Authentication> authenticationSupplier, RequestAuthorizationContext context) {
+        if (authenticationSupplier == null || context == null) {
             throw new IllegalArgumentException("Authentication supplier and context must not be null");
         }
 
@@ -28,8 +25,8 @@ public class ContextBasedAuthorizationManager implements AuthorizationManager<Re
         }
 
         // Delegate to the authenticated authorization manager
-        AuthorizationResult decision = AuthenticatedAuthorizationManager.authenticated()
-                .authorize(authenticationSupplier, context);
+        AuthorizationDecision decision = AuthenticatedAuthorizationManager.authenticated()
+                .check(authenticationSupplier, context);
 
         log.info("Authorization decision: " + decision.isGranted());
         return decision;
