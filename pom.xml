@@ -340,8 +340,8 @@
         </dependency>
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
-            <artifactId>ucp17</artifactId>
-            <version>${oracle-jdbc.version}</version>
+            <artifactId>ucp</artifactId>
+            <version>19.30.0.0</version>
         </dependency>
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
