@@ -1,9 +1,10 @@
 package uk.gov.laa.gpfd.dao.sql;
 
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SequenceWriter;
-import com.fasterxml.jackson.dataformat.csv.CsvMapper;
-import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectWriter;
+import tools.jackson.databind.SequenceWriter;
+import tools.jackson.dataformat.csv.CsvMapper;
+import tools.jackson.dataformat.csv.CsvSchema;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -188,12 +189,12 @@ public sealed interface ChannelRowHandler extends
                     sequenceWriter.flush();
                 }
 
-            } catch (IOException e) {
+            } catch (JacksonException e) {
                 throw new WritingToCsvException("Error writing to output stream", e);
             }
         }
 
-        private void writeHeaderIfNeeded(ResultSetMetaData metaData, int columnCount) throws IOException, SQLException {
+        private void writeHeaderIfNeeded(ResultSetMetaData metaData, int columnCount) throws JacksonException, SQLException {
             if (headerWritten.compareAndSet(false, true)) {
 
                 CsvSchema.Builder schemaBuilder = CsvSchema.builder().setUseHeader(true);
