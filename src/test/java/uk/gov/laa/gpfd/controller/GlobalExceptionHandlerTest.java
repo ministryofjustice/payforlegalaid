@@ -7,7 +7,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import software.amazon.awssdk.awscore.exception.AwsErrorDetails;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
-import tools.jackson.core.exc.JacksonIOException;
 import uk.gov.laa.gpfd.exception.*;
 import uk.gov.laa.gpfd.exception.CsvGenerationException.WritingToCsvException;
 import uk.gov.laa.gpfd.exception.CsvGenerationException.MetadataInvalidException;
@@ -302,7 +301,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void shouldHandleWritingToCsvException() {
-        var source = JacksonIOException.construct(new IOException("Can't write to file"));
+        var source = new IOException("Can't write to file");
         var exception = new WritingToCsvException("File creation error", source);
         var response = globalExceptionHandler.handleCsvGenerationException(exception);
 

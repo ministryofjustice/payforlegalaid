@@ -35,7 +35,7 @@ class WebJarControllerTest {
         var response = webJarController.serveWebJar(request);
 
         assertNotNull(response);
-        assertEquals(200, response.getStatusCode().value());
+        assertEquals(200, response.getStatusCodeValue());
         assertInstanceOf(ClassPathResource.class, response.getBody());
 
         ClassPathResource resource = (ClassPathResource) response.getBody();
