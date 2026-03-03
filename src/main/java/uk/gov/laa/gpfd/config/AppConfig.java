@@ -124,7 +124,7 @@ public class AppConfig {
         pds.setValidateConnectionOnBorrow(false);
         pds.setConnectionProperty("oracle.jdbc.defaultRowPrefetch", "1000");
         pds.setConnectionProperty("oracle.jdbc.useFetchSizeWithLongColumn", "true");
-        pds.setConnectionProperty("oracle.jdbc.JdbcConnectionFlags", "0x8000");
+//        pds.setConnectionProperty("oracle.jdbc.JdbcConnectionFlags", "0x8000");
         pds.setConnectionProperty("oracle.net.CONNECT_TIMEOUT", "10000");
         pds.setConnectionProperty("oracle.jdbc.ReadTimeout", "30000");
 
