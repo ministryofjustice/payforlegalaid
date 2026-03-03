@@ -45,6 +45,7 @@ import uk.gov.laa.gpfd.utils.StrategyFactory;
 import uk.gov.laa.gpfd.utils.WorkbookFactory;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -126,6 +127,12 @@ public class AppConfig {
         pds.setConnectionProperty("oracle.jdbc.JdbcConnectionFlags", "0x8000");
         pds.setConnectionProperty("oracle.net.CONNECT_TIMEOUT", "10000");
         pds.setConnectionProperty("oracle.jdbc.ReadTimeout", "30000");
+
+
+        Connection c = pds.getConnection();
+        System.out.println("Got connection: " + c);
+
+        System.out.println(c.getMetaData().getDatabaseProductVersion());
 
         return pds;
     }
