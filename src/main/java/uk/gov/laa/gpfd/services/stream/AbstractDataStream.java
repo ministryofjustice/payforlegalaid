@@ -1,6 +1,7 @@
 package uk.gov.laa.gpfd.services.stream;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.dao.ReportDao;
@@ -33,6 +34,7 @@ import static uk.gov.laa.gpfd.exception.TransferException.StreamException.ExcelS
  * </ul>
  * </p>
  */
+@Slf4j
 public abstract class AbstractDataStream implements DataStream {
 
     /**
@@ -110,7 +112,7 @@ public abstract class AbstractDataStream implements DataStream {
         public ResponseEntity<StreamingResponseBody> stream(UUID uuid) {
             var report = reportDao.fetchReportById(uuid)
                     .orElseThrow(() -> new ReportIdNotFoundException(uuid));
-
+            log.info("Got report DAO");
             return buildResponse(report, output -> dataStreamer.stream(report, output));
         }
 

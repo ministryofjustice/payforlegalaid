@@ -1,5 +1,6 @@
 package uk.gov.laa.gpfd.dao.sql;
 
+import lombok.extern.slf4j.Slf4j;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectWriter;
 import tools.jackson.databind.SequenceWriter;
@@ -171,6 +172,7 @@ public sealed interface ChannelRowHandler extends
                     throw new MetadataInvalidException("Result set metadata is null");
                 }
                 int columnCount = metaData.getColumnCount();
+                System.out.println("Column count is " +  columnCount);
 
                 writeHeaderIfNeeded(metaData, columnCount);
 
@@ -196,6 +198,7 @@ public sealed interface ChannelRowHandler extends
 
         private void writeHeaderIfNeeded(ResultSetMetaData metaData, int columnCount) throws JacksonException, SQLException {
             if (headerWritten.compareAndSet(false, true)) {
+                System.out.println("Header writing");
 
                 CsvSchema.Builder schemaBuilder = CsvSchema.builder().setUseHeader(true);
                 for (int i = 1; i <= columnCount; i++) {

@@ -48,7 +48,6 @@ public record JdbcDataStreamer(JdbcOperations jdbc, int csvBufferFlushFrequency)
         }
 
         var sql = report.extractFirstQuery().value();
-
         if (null == sql || sql.isBlank()) {
             log.error("Attempted to execute null/empty SQL query");
             throw new IllegalArgumentException("SQL query must not be null or empty");
@@ -57,9 +56,9 @@ public record JdbcDataStreamer(JdbcOperations jdbc, int csvBufferFlushFrequency)
         Map<String, String> row = new LinkedHashMap<>();
         var csvMapper = new CsvMapper();
 
-        log.debug("Initiating streaming for query: [{}]", sql.replace(END_OF_LINE_SEPARATOR, EMPTY));
+        log.info("Initiating streaming for query: [{}]", sql.replace(END_OF_LINE_SEPARATOR, EMPTY));
         jdbc.query(sql, forStream(stream, csvMapper, row, csvBufferFlushFrequency));
         stream.flush();
-        log.debug("Finished streaming for query: [{}]", sql.replace(END_OF_LINE_SEPARATOR, EMPTY));
+        log.info("Finished streaming for query: [{}]", sql.replace(END_OF_LINE_SEPARATOR, EMPTY));
     }
 }
