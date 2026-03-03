@@ -101,7 +101,7 @@ public record ReportDao(
        WHERE r.ACTIVE = 'Y' AND ro.ROLE_NAME IN (:roles)
     """;
 
-   public static final String SELECT_REPORT_ROLES = """
+   static final String SELECT_REPORT_ROLES = """
        SELECT r.ROLE_NAME
        FROM GPFD.ROLES r
        JOIN GPFD.REPORT_ROLES rr ON rr.ROLE_ID = r.ROLE_ID

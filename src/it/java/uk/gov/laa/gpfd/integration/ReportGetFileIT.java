@@ -34,6 +34,7 @@ import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.anyString;
 import org.springframework.jdbc.core.RowMapper;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -80,7 +81,7 @@ final class ReportGetFileIT extends BaseIT {
 
             UUID reportId = ID_REP012;
             when(readOnlyJdbcTemplate.query(
-                    eq(reportDao.SELECT_REPORT_ROLES),
+                    anyString(),
                     any(RowMapper.class),
                     eq(reportId.toString())
             )).thenReturn(List.of("REP000"));
@@ -117,7 +118,7 @@ final class ReportGetFileIT extends BaseIT {
 
         UUID reportId = ID_REP012;
         when(readOnlyJdbcTemplate.query(
-                eq(reportDao.SELECT_REPORT_ROLES),
+                anyString(),
                 any(RowMapper.class),
                 eq(reportId.toString())
         )).thenReturn(List.of("REP000"));
