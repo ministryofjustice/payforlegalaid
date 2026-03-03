@@ -49,6 +49,10 @@ public sealed interface ChannelRowHandler extends
      */
     static ChannelRowHandler forStream(OutputStream stream, CsvMapper csvMapper, Map<String, String> row, int bufferFlushFrequency) {
         Objects.requireNonNull(stream, "OutputStream cannot be null");
+        System.out.println("In the forStream");
+        System.out.println("row is " + row.size() + " ");
+        row.keySet().forEach(System.out::println);
+
         return new StreamChannelRowHandler(stream, csvMapper, row, bufferFlushFrequency);
     }
 
