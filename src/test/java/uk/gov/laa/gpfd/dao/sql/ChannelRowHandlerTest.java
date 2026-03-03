@@ -202,7 +202,7 @@ class ChannelRowHandlerTest {
         when(resultSet.getString(anyInt())).thenReturn(data);
         when(metaData.getColumnCount()).thenReturn(10);
         for (int i = 1; i <= 10; i++) {
-            when(metaData.getColumnName(i)).thenReturn("column_" + i);
+            when(metaData.getColumnLabel(i)).thenReturn("column_" + i);
         }
     }
 

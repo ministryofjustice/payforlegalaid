@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
 import java.io.ByteArrayOutputStream;
@@ -25,7 +26,7 @@ import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.createTestReportWithQu
 class JdbcDataStreamerTest {
 
     @Mock
-    private JdbcOperations jdbcOperations;
+    private JdbcTemplate jdbcOperations;
 
     private JdbcDataStreamer jdbcDataStreamer;
 
