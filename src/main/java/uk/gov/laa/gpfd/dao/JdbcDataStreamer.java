@@ -62,10 +62,11 @@ public record JdbcDataStreamer(JdbcTemplate jdbc, int csvBufferFlushFrequency) i
         log.info("Initiating streaming for query: [{}]", sql.replace(END_OF_LINE_SEPARATOR, EMPTY));
 //        jdbc.setFetchSize(1000); // todo test
 
-        jdbc.query(sql, rs -> {
+        jdbc.query(sql, (rs, rowNum) -> {
             System.out.println("Column count BEFORE next(): " + rs.getMetaData().getColumnCount());
             rs.next();
             System.out.println("Column count AFTER next(): " + rs.getMetaData().getColumnCount());
+            return null;
         });
 
                 jdbc.query(sql, forStream(stream, csvMapper, row, csvBufferFlushFrequency));
