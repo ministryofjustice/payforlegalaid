@@ -17,6 +17,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.createTestReport;
 import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.createTestReportWithQuery;
@@ -56,7 +57,7 @@ class JdbcDataStreamerTest {
 
         jdbcDataStreamer.stream(testReport, outputStream);
 
-        verify(jdbcOperations).query(eq("SELECT * FROM ANY_REPORT.DATA"), any(RowCallbackHandler.class));
+        verify(jdbcOperations, times(2)).query(eq("SELECT * FROM ANY_REPORT.DATA"), any(RowCallbackHandler.class));
     }
 
     @SneakyThrows
