@@ -104,3 +104,7 @@ https://dsdmoj.atlassian.net/wiki/spaces/LPF/pages/4500652730/Azure+Active+Direc
 
 And the official docs:
 https://learn.microsoft.com/en-us/azure/developer/java/spring-framework/spring-boot-starter-for-azure-active-directory-developer-guide?tabs=SpringCloudAzure4x
+
+# Pre commit hooks
+
+Pre commit hooks have been set up on this repository to ensure no accidental commits of secrets, keys etc. Provided by DevSecOps https://github.com/ministryofjustice/devsecops-hooks
