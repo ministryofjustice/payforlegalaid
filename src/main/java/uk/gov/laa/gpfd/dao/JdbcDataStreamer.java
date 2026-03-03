@@ -60,15 +60,18 @@ public record JdbcDataStreamer(JdbcTemplate jdbc, int csvBufferFlushFrequency) i
         var csvMapper = new CsvMapper();
 
         log.info("Initiating streaming for query: [{}]", sql.replace(END_OF_LINE_SEPARATOR, EMPTY));
-        jdbc.setFetchSize(1000); // todo test
-        jdbc.query((con -> {
-            var ps = con.prepareStatement(
-                    sql,
-                    ResultSet.TYPE_FORWARD_ONLY,
-                    ResultSet.CONCUR_READ_ONLY
-            );
-            return ps;
-        }), forStream(stream, csvMapper, row, csvBufferFlushFrequency));
+//        jdbc.setFetchSize(1000); // todo test
+        jdbc.query(sql, rs -> {
+            System.out.println("ResultSet metadata columns: " + rs.getMetaData().getColumnCount());
+        });
+//        jdbc.query((con -> {
+//            var ps = con.prepareStatement(
+//                    sql,
+//                    ResultSet.TYPE_FORWARD_ONLY,
+//                    ResultSet.CONCUR_READ_ONLY
+//            );
+//            return ps;
+//        }), forStream(stream, csvMapper, row, csvBufferFlushFrequency));
         stream.flush();
         log.info("Finished streaming for query: [{}]", sql.replace(END_OF_LINE_SEPARATOR, EMPTY));
     }

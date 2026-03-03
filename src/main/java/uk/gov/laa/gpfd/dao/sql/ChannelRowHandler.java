@@ -170,6 +170,7 @@ public sealed interface ChannelRowHandler extends
         @Override
         public void processRow(ResultSet rs) throws SQLException {
 
+            System.out.println("IN PROCESS ROW");
             try {
                 var metaData = rs.getMetaData();
                 if (metaData == null) {
