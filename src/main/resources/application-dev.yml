@@ -25,6 +25,8 @@ gpfd:
 
 # Azure AD and Graph config
 spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
   cloud:
     azure:
       active-directory:
