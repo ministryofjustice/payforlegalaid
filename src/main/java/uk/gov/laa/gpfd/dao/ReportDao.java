@@ -5,6 +5,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
 import uk.gov.laa.gpfd.exception.ReportAccessException;
 import uk.gov.laa.gpfd.model.Report;
@@ -63,7 +64,7 @@ public record ReportDao(
         ORDER BY q."INDEX" ASC, fa.COLUMN_ORDER ASC
     """;
 
-      public static final String SELECT_ALL_REPORTS_SQL = """
+    static final String SELECT_ALL_REPORTS_SQL = """
       SELECT 
             r.ID, 
             r.NAME, 
@@ -100,12 +101,12 @@ public record ReportDao(
        WHERE r.ACTIVE = 'Y' AND ro.ROLE_NAME IN (:roles)
     """;
 
-    public static final String SELECT_REPORT_ROLES = """
-        SELECT r.ROLE_NAME
-        FROM GPFD.ROLES r
-        JOIN GPFD.REPORT_ROLES rr ON rr.ROLE_ID = r.ROLE_ID
-        WHERE rr.REPORT_ID = ?
-        """;
+   public static final String SELECT_REPORT_ROLES = """
+       SELECT r.ROLE_NAME
+       FROM GPFD.ROLES r
+       JOIN GPFD.REPORT_ROLES rr ON rr.ROLE_ID = r.ROLE_ID
+       WHERE rr.REPORT_ID = ?
+       """;
 
 
     /**
@@ -162,11 +163,9 @@ public record ReportDao(
                 reportId, requiredRoles, userRoles
         );
 
-        if (securityUtils.isAuthorized(userRoles, requiredRoles)) {
-            return;
+        if (!securityUtils.isAuthorized(userRoles, requiredRoles)) {
+            throw new ReportAccessException(reportId);
         }
-
-        throw new ReportAccessException(reportId);
     }
 
     private List<String> loadRequiredRoles(UUID reportId) {
