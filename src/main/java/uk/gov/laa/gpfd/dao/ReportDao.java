@@ -104,6 +104,13 @@ public record ReportDao(
     public Optional<Report> fetchReportById(UUID reportId) {
         log.debug("Executing SQL query to fetch report by ID: {}", reportId);
         try {
+            int count = readOnlyJdbcTemplate.queryForObject(SELECT_REPORT_BY_ID, Integer.class);
+            System.out.println("Row count = " + count);
+
+            int count2 = readOnlyJdbcTemplate.queryForObject("SELECT * FROM ANY_REPORT.V_BANK_MONTH", Integer.class);
+            System.out.println("Row count2 = " + count2);
+
+            System.out.println();
             return readOnlyJdbcTemplate.query(SELECT_REPORT_BY_ID, extractor, reportId.toString())
                     .stream()
                     .findFirst();
