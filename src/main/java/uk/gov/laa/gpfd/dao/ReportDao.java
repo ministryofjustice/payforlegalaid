@@ -109,7 +109,8 @@ public record ReportDao(
             System.out.println("trying db query here");
 
             readOnlyJdbcTemplate.query(SELECT_REPORT_BY_ID, (rs -> {
-                System.out.println("Row count2 = " + rs.getString(0));
+                if (rs.next()) System.out.println("Row count2 = " + rs.getString(1));
+                else System.out.println("NO ROWS");
             }), reportId.toString());
 
             System.out.println();
