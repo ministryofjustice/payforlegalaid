@@ -110,7 +110,7 @@ public record ReportDao(
 //            System.out.println("Row count = " + count);
             System.out.println("trying db query here");
             readOnlyJdbcTemplate.query(
-                    SELECT_REPORT_BY_ID,
+                    "SELECT r.id FROM GPFD.REPORTS r",
                     (ResultSet rs) -> {
                         if (rs.next()) {
                             System.out.println("ROW = " + rs.getString(1));
@@ -118,9 +118,8 @@ public record ReportDao(
                             System.out.println("NO ROWS");
                         }
                         return null;
-                    },
-                    reportId.toString()
-            );
+                    }
+                    );
 
             System.out.println();
             return readOnlyJdbcTemplate.query(SELECT_REPORT_BY_ID, extractor, reportId.toString())
