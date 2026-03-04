@@ -57,8 +57,8 @@ public record JdbcDataStreamer(JdbcOperations jdbc, int csvBufferFlushFrequency)
         Map<String, String> row = new LinkedHashMap<>();
         var csvMapper = new CsvMapper();
 
-//        int count = jdbc.queryForObject("SELECT COUNT(*) FROM (" + sql + ")", Integer.class);
-//        System.out.println("Row count = " + count);
+        int count = jdbc.queryForObject("SELECT COUNT(*) FROM (" + sql + ")", Integer.class);
+        System.out.println("Row count = " + count);
 //
         log.debug("Initiating streaming for query: [{}]", sql.replace(END_OF_LINE_SEPARATOR, EMPTY));
         jdbc.query(sql, forStream(stream, csvMapper, row, csvBufferFlushFrequency));
