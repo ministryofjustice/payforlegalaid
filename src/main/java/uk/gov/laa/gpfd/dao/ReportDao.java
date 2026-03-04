@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.stereotype.Service;
 import uk.gov.laa.gpfd.model.Report;
 
+import java.sql.ResultSet;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
@@ -108,11 +109,18 @@ public record ReportDao(
 //            int count = readOnlyJdbcTemplate.queryForObject(SELECT_REPORT_BY_ID, Integer.class,reportId.toString());
 //            System.out.println("Row count = " + count);
             System.out.println("trying db query here");
-
-            readOnlyJdbcTemplate.query(SELECT_REPORT_BY_ID, ps -> ps.setString(1, reportId.toString()), (rs -> {
-                if (rs.next()) System.out.println("Row count2 = " + rs.getString(1));
-                else System.out.println("NO ROWS");
-            }));
+            readOnlyJdbcTemplate.query(
+                    SELECT_REPORT_BY_ID,
+                    (ResultSet rs) -> {
+                        if (rs.next()) {
+                            System.out.println("ROW = " + rs.getString(1));
+                        } else {
+                            System.out.println("NO ROWS");
+                        }
+                        return null;
+                    },
+                    reportId.toString()
+            );
 
             System.out.println();
             return readOnlyJdbcTemplate.query(SELECT_REPORT_BY_ID, extractor, reportId.toString())
