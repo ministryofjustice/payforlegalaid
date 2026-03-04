@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.stereotype.Service;
 import uk.gov.laa.gpfd.model.Report;
 
@@ -108,7 +109,7 @@ public record ReportDao(
 //            System.out.println("Row count = " + count);
             System.out.println("trying db query here");
 
-            readOnlyJdbcTemplate.query(SELECT_REPORT_BY_ID, (rs -> {
+            readOnlyJdbcTemplate.query(SELECT_REPORT_BY_ID, (RowCallbackHandler) (rs -> {
                 if (rs.next()) System.out.println("Row count2 = " + rs.getString(1));
                 else System.out.println("NO ROWS");
             }), reportId.toString());
