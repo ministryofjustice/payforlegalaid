@@ -109,10 +109,10 @@ public record ReportDao(
 //            System.out.println("Row count = " + count);
             System.out.println("trying db query here");
 
-            readOnlyJdbcTemplate.query(SELECT_REPORT_BY_ID, (RowCallbackHandler) (rs -> {
+            readOnlyJdbcTemplate.query(SELECT_REPORT_BY_ID, ps -> ps.setString(1, reportId.toString()), (rs -> {
                 if (rs.next()) System.out.println("Row count2 = " + rs.getString(1));
                 else System.out.println("NO ROWS");
-            }), reportId.toString());
+            }));
 
             System.out.println();
             return readOnlyJdbcTemplate.query(SELECT_REPORT_BY_ID, extractor, reportId.toString())
