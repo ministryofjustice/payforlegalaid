@@ -109,13 +109,13 @@ public record ReportDao(
 //            int count = readOnlyJdbcTemplate.queryForObject(SELECT_REPORT_BY_ID, Integer.class,reportId.toString());
 //            System.out.println("Row count = " + count);
             System.out.println("trying db query here");
+            var count = 0;
             readOnlyJdbcTemplate.query(
                     "SELECT r.id FROM GPFD.REPORTS r",
                     (ResultSet rs) -> {
-                        if (rs.next()) {
+                        if (count == 0) System.out.println("Startin'");
+                        while (rs.next()) {
                             System.out.println("ROW = " + rs.getString(1));
-                        } else {
-                            System.out.println("NO ROWS");
                         }
                         return null;
                     }
