@@ -111,7 +111,7 @@ public record ReportDao(
             System.out.println("trying db query here");
             var count = 0;
             readOnlyJdbcTemplate.query(
-                    "SELECT r.id FROM GPFD.REPORTS r",
+                    "SELECT r.SOURCE FROM ANY_REPORT.V_BANK_MONTH r",
                     (ResultSet rs) -> {
                         if (count == 0) System.out.println("Startin'");
                         while (rs.next()) {
