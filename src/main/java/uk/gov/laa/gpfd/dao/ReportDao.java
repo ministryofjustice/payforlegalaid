@@ -108,9 +108,9 @@ public record ReportDao(
 //            System.out.println("Row count = " + count);
             System.out.println("trying db query here");
 
-            readOnlyJdbcTemplate.query("SELECT * FROM ANY_REPORT.V_BANK_MONTH", (rs -> {
+            readOnlyJdbcTemplate.query(SELECT_REPORT_BY_ID, (rs -> {
                 System.out.println("Row count2 = " + rs.getString(0));
-            }));
+            }), reportId.toString());
 
             System.out.println();
             return readOnlyJdbcTemplate.query(SELECT_REPORT_BY_ID, extractor, reportId.toString())
