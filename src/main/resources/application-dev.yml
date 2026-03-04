@@ -48,3 +48,8 @@ server:
     session:
       cookie:
         secure: true
+
+logging:
+  level:
+    org.springframework: TRACE
+    uk.gov.justice: TRACE
