@@ -126,20 +126,21 @@ public record ReportDao(
 
             System.out.println("row callback handler");
             AtomicInteger count2 = new AtomicInteger();
+            RowCallbackHandler rch =  new RowCallbackHandler() {
+                @Override
+                public void processRow(ResultSet rs) throws SQLException {
+
+                    if (count2.get() == 0) {
+                        System.out.println("Startin'");
+                    }
+                    count2.getAndIncrement();
+                    System.out.println("ROW = " + rs.getString(1));
+
+                }
+            };
             readOnlyJdbcTemplate.query(
                     "SELECT r.SOURCE FROM ANY_REPORT.V_BANK_MONTH r",
-                    new RowCallbackHandler() {
-                        @Override
-                        public void processRow(ResultSet rs) throws SQLException {
-
-                            if (count2.get() == 0) {
-                                System.out.println("Startin'");
-                            }
-                            count2.getAndIncrement();
-                            System.out.println("ROW = " + rs.getString(1));
-
-                        }
-                    }
+                   rch
             );
             return readOnlyJdbcTemplate.query(SELECT_REPORT_BY_ID, extractor, reportId.toString())
                     .stream()
