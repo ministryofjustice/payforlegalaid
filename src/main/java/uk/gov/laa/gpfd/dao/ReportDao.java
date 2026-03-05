@@ -139,7 +139,7 @@ public record ReportDao(
                 }
             };
             readOnlyJdbcTemplate.query(
-                    "SELECT r.SOURCE FROM ANY_REPORT.V_BANK_MONTH r",
+                    con -> con.prepareStatement("SELECT r.SOURCE FROM ANY_REPORT.V_BANK_MONTH r"),
                    rch
             );
             return readOnlyJdbcTemplate.query(SELECT_REPORT_BY_ID, extractor, reportId.toString())
