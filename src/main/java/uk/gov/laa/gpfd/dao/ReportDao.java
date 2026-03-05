@@ -124,7 +124,7 @@ public record ReportDao(
                     }
                     );
 
-            System.out.println();
+            System.out.println("row callback handler");
             AtomicInteger count2 = new AtomicInteger();
             readOnlyJdbcTemplate.query(
                     "SELECT r.SOURCE FROM ANY_REPORT.V_BANK_MONTH r",
