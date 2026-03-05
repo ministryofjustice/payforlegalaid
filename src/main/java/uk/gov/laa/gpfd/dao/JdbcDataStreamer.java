@@ -49,7 +49,7 @@ public record JdbcDataStreamer(JdbcOperations jdbc, int csvBufferFlushFrequency)
         }
 
         var sql = report.extractFirstQuery().value();
-        sql = "SELECT r.ID FROM GPFD.REPORTS r";
+//        sql = "SELECT r.ID FROM GPFD.REPORTS r";
         if (null == sql || sql.isBlank()) {
             log.error("Attempted to execute null/empty SQL query");
             throw new IllegalArgumentException("SQL query must not be null or empty");
