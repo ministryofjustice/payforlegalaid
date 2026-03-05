@@ -109,39 +109,39 @@ public record ReportDao(
         log.debug("Executing SQL query to fetch report by ID: {}", reportId);
         try {
 //            int count = readOnlyJdbcTemplate.queryForObject(SELECT_REPORT_BY_ID, Integer.class,reportId.toString());
-//            System.out.println("Row count = " + count);
-            System.out.println("trying db query here");
-            AtomicInteger count = new AtomicInteger();
-            readOnlyJdbcTemplate.query(
-                    "SELECT r.SOURCE FROM ANY_REPORT.V_BANK_MONTH r",
-                    (ResultSet rs) -> {
-                        if (count.get() == 0) System.out.println("Startin'");
-                        while (rs.next()) {
-                            count.getAndIncrement();
-                            System.out.println("ROW = " + rs.getString(1));
-                        }
-                        return null;
-                    }
-                    );
-
-            System.out.println("row callback handler");
-            AtomicInteger count2 = new AtomicInteger();
-            RowCallbackHandler rch =  new RowCallbackHandler() {
-                @Override
-                public void processRow(ResultSet rs) throws SQLException {
-
-                    if (count2.get() == 0) {
-                        System.out.println("Startin'");
-                    }
-                    count2.getAndIncrement();
-                    System.out.println("ROW = " + rs.getString(1));
-
-                }
-            };
-            readOnlyJdbcTemplate.query(
-                    con -> con.prepareStatement("SELECT r.SOURCE FROM ANY_REPORT.V_BANK_MONTH r"),
-                   rch
-            );
+////            System.out.println("Row count = " + count);
+//            System.out.println("trying db query here");
+//            AtomicInteger count = new AtomicInteger();
+//            readOnlyJdbcTemplate.query(
+//                    "SELECT r.SOURCE FROM ANY_REPORT.V_BANK_MONTH r",
+//                    (ResultSet rs) -> {
+//                        if (count.get() == 0) System.out.println("Startin'");
+//                        while (rs.next()) {
+//                            count.getAndIncrement();
+//                            System.out.println("ROW = " + rs.getString(1));
+//                        }
+//                        return null;
+//                    }
+//                    );
+//
+//            System.out.println("row callback handler");
+//            AtomicInteger count2 = new AtomicInteger();
+//            RowCallbackHandler rch =  new RowCallbackHandler() {
+//                @Override
+//                public void processRow(ResultSet rs) throws SQLException {
+//
+//                    if (count2.get() == 0) {
+//                        System.out.println("Startin'");
+//                    }
+//                    count2.getAndIncrement();
+//                    System.out.println("ROW = " + rs.getString(1));
+//
+//                }
+////            };
+//            readOnlyJdbcTemplate.query(
+//                    con -> con.prepareStatement("SELECT r.SOURCE FROM ANY_REPORT.V_BANK_MONTH r"),
+//                   rch
+//            );
             return readOnlyJdbcTemplate.query(SELECT_REPORT_BY_ID, extractor, reportId.toString())
                     .stream()
                     .findFirst();

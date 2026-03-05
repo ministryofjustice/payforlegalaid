@@ -8,6 +8,7 @@ import uk.gov.laa.gpfd.services.DataStreamer;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.ResultSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -57,9 +58,23 @@ public record JdbcDataStreamer(JdbcOperations jdbc, int csvBufferFlushFrequency)
         Map<String, String> row = new LinkedHashMap<>();
         var csvMapper = new CsvMapper();
 
-        int count = jdbc.queryForObject("SELECT COUNT(*) FROM (" + sql + ")", Integer.class);
-        System.out.println("Row count = " + count);
+//        int count = jdbc.queryForObject("SELECT COUNT(*) FROM (" + sql + ")", Integer.class);
+//        System.out.println("Row count = " + count);
 //
+        log.debug("Doing a test");
+        jdbc.query(
+                    sql,
+                    (ResultSet rs) -> {
+                        System.out.println("Startin'");
+                        while (rs.next()) {
+                            System.out.println("ROW = " + rs.getString(1));
+                        }
+                        return null;
+                    }
+                    );
+
+        log.debug("Ending the test");
+
         log.debug("Initiating streaming for query: [{}]", sql.replace(END_OF_LINE_SEPARATOR, EMPTY));
         jdbc.query(sql, forStream(stream, csvMapper, row, csvBufferFlushFrequency));
         stream.flush();
