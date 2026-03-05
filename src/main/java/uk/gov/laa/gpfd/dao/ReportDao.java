@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 import uk.gov.laa.gpfd.model.Report;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static uk.gov.laa.gpfd.exception.DatabaseReadException.DatabaseFetchException;
 
@@ -109,12 +111,13 @@ public record ReportDao(
 //            int count = readOnlyJdbcTemplate.queryForObject(SELECT_REPORT_BY_ID, Integer.class,reportId.toString());
 //            System.out.println("Row count = " + count);
             System.out.println("trying db query here");
-            var count = 0;
+            AtomicInteger count = new AtomicInteger();
             readOnlyJdbcTemplate.query(
                     "SELECT r.SOURCE FROM ANY_REPORT.V_BANK_MONTH r",
                     (ResultSet rs) -> {
-                        if (count == 0) System.out.println("Startin'");
+                        if (count.get() == 0) System.out.println("Startin'");
                         while (rs.next()) {
+                            count.getAndIncrement();
                             System.out.println("ROW = " + rs.getString(1));
                         }
                         return null;
@@ -122,6 +125,22 @@ public record ReportDao(
                     );
 
             System.out.println();
+            AtomicInteger count2 = new AtomicInteger();
+            readOnlyJdbcTemplate.query(
+                    "SELECT r.SOURCE FROM ANY_REPORT.V_BANK_MONTH r",
+                    new RowCallbackHandler() {
+                        @Override
+                        public void processRow(ResultSet rs) throws SQLException {
+
+                            if (count2.get() == 0) {
+                                System.out.println("Startin'");
+                            }
+                            count2.getAndIncrement();
+                            System.out.println("ROW = " + rs.getString(1));
+
+                        }
+                    }
+            );
             return readOnlyJdbcTemplate.query(SELECT_REPORT_BY_ID, extractor, reportId.toString())
                     .stream()
                     .findFirst();
