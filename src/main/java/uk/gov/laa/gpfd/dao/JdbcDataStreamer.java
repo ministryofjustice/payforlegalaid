@@ -2,7 +2,10 @@ package uk.gov.laa.gpfd.dao;
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.Nullable;
 import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.ResultSetExtractor;
+import uk.gov.laa.gpfd.dao.sql.ResultSetExtractorHelper;
 import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.services.DataStreamer;
 
@@ -49,7 +52,6 @@ public record JdbcDataStreamer(JdbcOperations jdbc, int csvBufferFlushFrequency)
         }
 
         var sql = report.extractFirstQuery().value();
-//        sql = "SELECT r.ID FROM GPFD.REPORTS r";
         if (null == sql || sql.isBlank()) {
             log.error("Attempted to execute null/empty SQL query");
             throw new IllegalArgumentException("SQL query must not be null or empty");
@@ -58,26 +60,27 @@ public record JdbcDataStreamer(JdbcOperations jdbc, int csvBufferFlushFrequency)
         Map<String, String> row = new LinkedHashMap<>();
         var csvMapper = new CsvMapper();
 
-//        int count = jdbc.queryForObject("SELECT COUNT(*) FROM (" + sql + ")", Integer.class);
-//        System.out.println("Row count = " + count);
-//
         log.debug("Doing a test");
         jdbc.query(
                     sql,
-                    (ResultSet rs) -> {
-                        System.out.println("Startin'");
-                        while (rs.next()) {
-                            System.out.println("ROW = " + rs.getString(1));
-                        }
-                        return null;
-                    }
+                getObjectResultSetExtractor()
                     );
 
         log.debug("Ending the test");
 
         log.debug("Initiating streaming for query: [{}]", sql.replace(END_OF_LINE_SEPARATOR, EMPTY));
-        jdbc.query(sql, forStream(stream, csvMapper, row, csvBufferFlushFrequency));
+        jdbc.query(sql, new ResultSetExtractorHelper<>(forStream(stream, csvMapper, row, csvBufferFlushFrequency)));
         stream.flush();
         log.debug("Finished streaming for query: [{}]", sql.replace(END_OF_LINE_SEPARATOR, EMPTY));
+    }
+
+    private static ResultSetExtractor<@Nullable Object> getObjectResultSetExtractor() {
+        return (ResultSet rs) -> {
+            System.out.println("Startin'");
+            while (rs.next()) {
+                System.out.println("ROW = " + rs.getString(1));
+            }
+            return null;
+        };
     }
 }
