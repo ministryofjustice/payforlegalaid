@@ -104,7 +104,7 @@ public sealed interface ChannelRowHandler extends
          */
         @Override
         public void processRow(ResultSet rs) throws SQLException {
-            log.warn("new row in resultset");
+//            log.warn("new row in resultset");
             var row = sheet.createRow(rowNum++);
             var metaData = rs.getMetaData();
             var columnCount = metaData.getColumnCount();
@@ -167,7 +167,7 @@ public sealed interface ChannelRowHandler extends
          */
         @Override
         public void processRow(ResultSet rs) throws SQLException {
-            log.warn("new row in resultset");
+//            log.warn("new row in resultset");
             try {
                 var metaData = rs.getMetaData();
                 if (metaData == null) {
@@ -189,7 +189,7 @@ public sealed interface ChannelRowHandler extends
                 // Regular flush of buffer reduces memory usage when
                 // processing large files.
                 if (rs.getRow() % bufferFlushFrequency == 0) {
-                    log.debug("Flushed CSV buffer at row {}", rs.getRow());
+                    log.warn("Flushed CSV buffer at row {}", rs.getRow());
                     sequenceWriter.flush();
                 }
 
