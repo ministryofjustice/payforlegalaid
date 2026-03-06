@@ -3,6 +3,7 @@ package uk.gov.laa.gpfd.dao;
 import tools.jackson.dataformat.csv.CsvMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcOperations;
+import uk.gov.laa.gpfd.dao.sql.ResultSetExtractorHelper;
 import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.services.DataStreamer;
 
@@ -58,7 +59,7 @@ public record JdbcDataStreamer(JdbcOperations jdbc, int csvBufferFlushFrequency)
         var csvMapper = new CsvMapper();
 
         log.debug("Initiating streaming for query: [{}]", sql.replace(END_OF_LINE_SEPARATOR, EMPTY));
-        jdbc.query(sql, forStream(stream, csvMapper, row, csvBufferFlushFrequency));
+        jdbc.query(sql, new ResultSetExtractorHelper<>(forStream(stream, csvMapper, row, csvBufferFlushFrequency)));
         stream.flush();
         log.debug("Finished streaming for query: [{}]", sql.replace(END_OF_LINE_SEPARATOR, EMPTY));
     }

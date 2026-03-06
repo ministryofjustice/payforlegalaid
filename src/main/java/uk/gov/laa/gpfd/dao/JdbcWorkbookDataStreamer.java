@@ -4,6 +4,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowCallbackHandler;
+import uk.gov.laa.gpfd.dao.sql.ResultSetExtractorHelper;
 import uk.gov.laa.gpfd.model.Mapping;
 
 /**
@@ -40,7 +41,7 @@ public abstract class JdbcWorkbookDataStreamer {
         var psc = createStatementCreator(getSql(mapping));
         var rch = createRowCallbackHandler(sheet, mapping);
 
-        jdbcOperations.query(psc, rch);
+        jdbcOperations.query(psc, new ResultSetExtractorHelper<>(rch));
     }
 
     /**
