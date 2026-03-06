@@ -52,4 +52,5 @@ server:
 logging:
   level:
     org.springframework: TRACE
+    oracle.jdbc: TRACE
     uk.gov.justice: TRACE

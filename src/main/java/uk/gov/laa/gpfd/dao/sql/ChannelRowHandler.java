@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SequenceWriter;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -129,6 +130,7 @@ public sealed interface ChannelRowHandler extends
     /**
      * Stream-based implementation of {@link ChannelRowHandler} that writes to an {@link OutputStream}.
      */
+    @Slf4j
     final class StreamChannelRowHandler implements ChannelRowHandler {
         private final AtomicBoolean headerWritten = new AtomicBoolean(false);
         private final OutputStream stream;
@@ -185,6 +187,7 @@ public sealed interface ChannelRowHandler extends
                 // Regular flush of buffer reduces memory usage when
                 // processing large files.
                 if (rs.getRow() % bufferFlushFrequency == 0) {
+                    log.debug("Flushed CSV buffer at row {}", rs.getRow());
                     sequenceWriter.flush();
                 }
 
