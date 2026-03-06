@@ -104,7 +104,7 @@ public sealed interface ChannelRowHandler extends
          */
         @Override
         public void processRow(ResultSet rs) throws SQLException {
-            log.debug("new row in resultset");
+            log.warn("new row in resultset");
             var row = sheet.createRow(rowNum++);
             var metaData = rs.getMetaData();
             var columnCount = metaData.getColumnCount();
@@ -167,7 +167,7 @@ public sealed interface ChannelRowHandler extends
          */
         @Override
         public void processRow(ResultSet rs) throws SQLException {
-            log.debug("new row in resultset");
+            log.warn("new row in resultset");
             try {
                 var metaData = rs.getMetaData();
                 if (metaData == null) {
