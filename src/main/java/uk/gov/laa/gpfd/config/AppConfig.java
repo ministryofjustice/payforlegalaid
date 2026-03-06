@@ -121,7 +121,7 @@ public class AppConfig {
         pds.setConnectionHarvestMaxCount(5);
 
         pds.setValidateConnectionOnBorrow(false);
-        pds.setConnectionProperty("oracle.jdbc.defaultRowPrefetch", "1000");
+        pds.setConnectionProperty("oracle.jdbc.defaultRowPrefetch", "10");
         pds.setConnectionProperty("oracle.jdbc.useFetchSizeWithLongColumn", "true");
         pds.setConnectionProperty("oracle.jdbc.JdbcConnectionFlags", "0x8000");
         pds.setConnectionProperty("oracle.net.CONNECT_TIMEOUT", "10000");
@@ -132,7 +132,7 @@ public class AppConfig {
 
     @Bean
     public StatementPolicy statementPolicy(
-            @Value("${jdbc.fetch-size:1000}") int fetchSize,
+            @Value("${jdbc.fetch-size:10}") int fetchSize,
             @Value("${jdbc.query-timeout:30}") int timeout
     ) {
         return new StatementPolicy(fetchSize, timeout);

@@ -61,7 +61,7 @@ public record JdbcDataStreamer(JdbcOperations jdbc, int csvBufferFlushFrequency)
         var csvMapper = new CsvMapper();
 
         log.debug("Initiating streaming for query: [{}]", sql.replace(END_OF_LINE_SEPARATOR, EMPTY));
-        jdbc.query(sql, new ResultSetExtractorHelper<>(forStream(stream, csvMapper, row, csvBufferFlushFrequency)));
+        jdbc.query(sql, new ResultSetExtractorHelper<>(forStream(stream, csvMapper, row, 10)));
         stream.flush();
         log.debug("Finished streaming for query: [{}]", sql.replace(END_OF_LINE_SEPARATOR, EMPTY));
     }

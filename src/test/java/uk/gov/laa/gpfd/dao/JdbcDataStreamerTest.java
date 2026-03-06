@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
 import java.io.ByteArrayOutputStream;
@@ -56,7 +57,7 @@ class JdbcDataStreamerTest {
 
         jdbcDataStreamer.stream(testReport, outputStream);
 
-        verify(jdbcOperations).query(eq("SELECT * FROM ANY_REPORT.DATA"), any(RowCallbackHandler.class));
+        verify(jdbcOperations).query(eq("SELECT * FROM ANY_REPORT.DATA"), any(ResultSetExtractor.class));
     }
 
     @SneakyThrows
