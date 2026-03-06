@@ -53,10 +53,10 @@ jobs:
         env:
           SOCKET_KEY: ${{ secrets.api_socket_key }}
 
-#      - name: Run Snyk security suite
-#        uses: './.github/snyk-scan'
-#        env:
-#          SNYK_TOKEN: ${{ secrets.snyk_token }}
+      - name: Run Snyk security suite
+        uses: './.github/snyk-scan'
+        env:
+          SNYK_TOKEN: ${{ secrets.snyk_token }}
 
       - name: Set Spring profile
         env:
