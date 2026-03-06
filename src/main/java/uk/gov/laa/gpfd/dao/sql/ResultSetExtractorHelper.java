@@ -19,9 +19,12 @@ public class ResultSetExtractorHelper<T> implements ResultSetExtractor<T> {
 
     @Override
     public T extractData(ResultSet rs) throws SQLException, DataAccessException {
+        long last = System.nanoTime();
         while (rs.next()){
-            log.warn("GETTING NEXT ROW");
-            rowCallbackHandler.processRow(rs);
+            long now = System.nanoTime();
+            long deltaMicros = (now - last) / 1000;
+            log.warn("Calling next row been {} microseconds since last", deltaMicros);
+            last = System.nanoTime();
         }
         return null;
     }
