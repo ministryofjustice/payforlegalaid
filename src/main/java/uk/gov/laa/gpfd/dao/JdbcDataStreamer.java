@@ -60,27 +60,10 @@ public record JdbcDataStreamer(JdbcOperations jdbc, int csvBufferFlushFrequency)
         Map<String, String> row = new LinkedHashMap<>();
         var csvMapper = new CsvMapper();
 
-        log.debug("Doing a test");
-        jdbc.query(
-                    sql,
-                getObjectResultSetExtractor()
-                    );
-
-        log.debug("Ending the test");
-
         log.debug("Initiating streaming for query: [{}]", sql.replace(END_OF_LINE_SEPARATOR, EMPTY));
         jdbc.query(sql, new ResultSetExtractorHelper<>(forStream(stream, csvMapper, row, csvBufferFlushFrequency)));
         stream.flush();
         log.debug("Finished streaming for query: [{}]", sql.replace(END_OF_LINE_SEPARATOR, EMPTY));
     }
 
-    private static ResultSetExtractor<@Nullable Object> getObjectResultSetExtractor() {
-        return (ResultSet rs) -> {
-            System.out.println("Startin'");
-            while (rs.next()) {
-                System.out.println("ROW = " + rs.getString(1));
-            }
-            return null;
-        };
-    }
 }
