@@ -24,6 +24,7 @@ public class ResultSetExtractorHelper<T> implements ResultSetExtractor<T> {
             long now = System.nanoTime();
             long deltaMicros = (now - last) / 1000;
             log.warn("Calling next row been {} microseconds since last", deltaMicros);
+            rowCallbackHandler.processRow(rs);
             last = System.nanoTime();
         }
         return null;
