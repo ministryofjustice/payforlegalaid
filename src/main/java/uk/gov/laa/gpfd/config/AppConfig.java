@@ -72,7 +72,7 @@ public class AppConfig {
     @Value("${excel.steam.window.size:1000}")
     private int rowAccessWindowSize;
 
-    @Value("${excel.jdbc.streamer.default-fetch-size:10}")
+    @Value("${excel.jdbc.streamer.default-fetch-size:100}")
     private int defaultFetchSize;
 
     @Getter
