@@ -1,6 +1,6 @@
 package uk.gov.laa.gpfd.exception;
 
-import java.io.IOException;
+import tools.jackson.core.JacksonException;
 
 /**
  * Base sealed exception class for CSV generation related errors.
@@ -61,7 +61,7 @@ public abstract sealed class CsvGenerationException extends RuntimeException {
          * @param message the detail message
          * @param e the IOException that caused the error
          */
-        public WritingToCsvException(String message, IOException e) {
+        public WritingToCsvException(String message, JacksonException e) {
             super(message, e);
         }
     }

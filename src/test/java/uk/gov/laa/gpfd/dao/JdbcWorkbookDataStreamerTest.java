@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import uk.gov.laa.gpfd.model.Mapping;
 
@@ -54,7 +55,7 @@ class JdbcWorkbookDataStreamerTest {
         var streamer = new TestStreamer(jdbcOperations);
         streamer.queryToSheet(mockSheet, mockMapping);
 
-        verify(jdbcOperations).query(any(PreparedStatementCreator.class), any(RowCallbackHandler.class));
+        verify(jdbcOperations).query(any(PreparedStatementCreator.class), any(ResultSetExtractor.class));
     }
 
     @Test
