@@ -80,6 +80,15 @@
                         </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.immutables</groupId>
+                            <artifactId>value</artifactId>
+                            <version>${immutables.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -244,7 +253,7 @@
     <dependencies>
         <dependency>
             <groupId>org.immutables</groupId>
-            <artifactId>value</artifactId>
+            <artifactId>value-annotations</artifactId>
             <version>${immutables.version}</version>
             <scope>provided</scope>
         </dependency>
