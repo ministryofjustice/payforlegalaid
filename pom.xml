@@ -14,7 +14,7 @@
     </parent>
 
     <properties>
-        <java.version>17</java.version>
+        <java.version>25</java.version>
         <oracle-jdbc.version>23.26.1.0.0</oracle-jdbc.version>
         <h2.version>2.4.240</h2.version>
 
@@ -28,7 +28,7 @@
         <govuk-frontend.version>5.14.0</govuk-frontend.version>
         <moj-frontend.version>6.0.0</moj-frontend.version>
 
-        <payforlegalaid-openapi.version>0.0.26</payforlegalaid-openapi.version>
+        <payforlegalaid-openapi.version>0.0.27</payforlegalaid-openapi.version>
         <aws.java.sdk.version>2.42.9</aws.java.sdk.version>
         <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
         <maven-dependency-plugin.version>3.10.0</maven-dependency-plugin.version>
