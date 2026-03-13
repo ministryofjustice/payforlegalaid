@@ -14,10 +14,10 @@ runs:
   steps:
 
     - name: Setup Java
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       with:
         distribution: 'corretto'
-        java-version: '17'
+        java-version: '25'
         cache: 'maven'
 
     - name: Get openapi version from pom
@@ -34,7 +34,7 @@ runs:
         bash
 
     - name: Checkout openapi spec
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       env:
         OPENAPI_VERSION: ${{ steps.get_openapi_version.outputs.version }}
       with:
