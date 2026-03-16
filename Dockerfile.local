@@ -1,0 +1,58 @@
+# Multi-stage Dockerfile for local development
+# Stage 1: Build the application and run tests
+FROM maven:3.9-amazoncorretto-17 AS builder
+
+WORKDIR /build
+
+RUN yum install -y git && yum clean all
+
+COPY pom.xml .
+COPY build-openapi.sh .
+COPY build-tests.sh .
+
+RUN chmod +x build-openapi.sh
+RUN chmod +x build-tests.sh
+
+RUN ./build-openapi.sh
+
+RUN mvn dependency:go-offline -B
+
+COPY src ./src
+
+RUN mvn package
+
+RUN ./build-tests.sh
+
+# Stage 2: Runtime
+FROM amazoncorretto:17-alpine
+
+RUN apk update && apk add --no-cache curl
+
+WORKDIR /app
+
+RUN addgroup -S appgroup && adduser -u 1001 -S appuser -G appgroup
+
+# Create directory for H2 database with proper permissions
+RUN mkdir -p /home/appuser && chown -R appuser:appgroup /home/appuser
+
+COPY --from=builder /build/target/pay-for-legal-aid-0.0.1-SNAPSHOT-exec.jar ./app.jar
+
+# Copy the H2 database files created by the tests (if they exist)
+RUN --mount=type=bind,from=builder,source=/root,target=/tmp/root \
+    cp /tmp/root/localGpfdDb.* /home/appuser/ 2>/dev/null || \
+    echo "No database files found from tests, will be created at runtime"
+
+RUN chown -R appuser:appgroup /home/appuser
+
+USER 1001
+
+EXPOSE 8080
+
+ENV SPRING_PROFILES_ACTIVE=local
+
+# Run with local-friendly JVM settings
+ENTRYPOINT ["java", \
+    "-Xms512m", \
+    "-Xmx1g", \
+    "-Dspring.profiles.active=local", \
+    "-jar", "app.jar"]
