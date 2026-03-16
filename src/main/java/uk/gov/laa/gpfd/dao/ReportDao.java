@@ -155,8 +155,11 @@ public record ReportDao(
     }
 
     public void verifyUserCanAccessReport(UUID reportId) {
+        log.debug("Verifying user access to database for report: {}", reportId);
         List<String> userRoles = securityUtils.extractRoles();
         List<String> requiredRoles = loadRequiredRoles(reportId);
+        log.info("Getting required roles from database for report: {}", requiredRoles);
+
 
         log.info(
                 "Report {} requires roles: {} whereas user has: {}",
