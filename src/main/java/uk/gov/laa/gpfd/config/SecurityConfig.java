@@ -49,7 +49,7 @@ import static com.azure.spring.cloud.autoconfigure.implementation.aad.security.A
  * </p>
  */
 @Slf4j
-@Profile("!local & !test")
+@Profile("!test")
 @SuppressWarnings("java:S4502") // CSRF disabled only for CSP report POST endpoint
 @Configuration
 @RequiredArgsConstructor
