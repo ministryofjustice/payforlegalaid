@@ -2,11 +2,14 @@ package uk.gov.laa.gpfd.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.laa.gpfd.config.OAuth2TestConfig;
+import uk.gov.laa.gpfd.config.TestDatabaseConfig;
 import uk.gov.laa.gpfd.data.ReportListEntryTestDataFactory;
 import uk.gov.laa.gpfd.services.ReportManagementService;
 import uk.gov.laa.gpfd.utils.BaseMvcTest;
@@ -19,8 +22,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc
 @ActiveProfiles("testauth")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = uk.gov.laa.gpfd.config.TestDatabaseConfig .class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Import({ TestDatabaseConfig.class, OAuth2TestConfig.class })
 class OAuth2LoginTest extends BaseMvcTest {
 
     @MockitoBean

@@ -1,11 +1,10 @@
 package uk.gov.laa.gpfd.config;
 
 import lombok.SneakyThrows;
-import org.immutables.value.internal.$generator$.$Generator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -33,7 +32,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = TestDatabaseConfig.class)
+@SpringBootTest(classes = {TestDatabaseConfig.class,  OAuth2TestConfig.class})
 @AutoConfigureMockMvc
 @ActiveProfiles("testauth")
 class AppConfigTest {

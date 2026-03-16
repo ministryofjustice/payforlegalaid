@@ -4,7 +4,7 @@ package uk.gov.laa.gpfd.controller;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -14,6 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
+import uk.gov.laa.gpfd.config.OAuth2TestConfig;
 import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.data.ReportListEntryTestDataFactory;
 import uk.gov.laa.gpfd.exception.InvalidReportFormatException;
@@ -41,7 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT ,
-        classes = uk.gov.laa.gpfd.config.TestDatabaseConfig .class)
+        classes = { uk.gov.laa.gpfd.config.TestDatabaseConfig .class, OAuth2TestConfig.class })
 @AutoConfigureMockMvc
 @ActiveProfiles("testauth")
 class ReportsControllerTest extends BaseMvcTest {

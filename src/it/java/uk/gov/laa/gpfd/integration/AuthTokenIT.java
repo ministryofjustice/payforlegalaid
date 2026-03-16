@@ -2,7 +2,7 @@ package uk.gov.laa.gpfd.integration;
 
 import static org.junit.jupiter.params.provider.Arguments.of;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CCMS_REPORT;
 import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.REP012ID;
@@ -13,8 +13,9 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import uk.gov.laa.gpfd.integration.config.OAuth2TestConfig;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -38,11 +39,11 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 
-@SpringBootTest(webEnvironment = RANDOM_PORT, classes = {TestDatabaseConfig.class})
+@SpringBootTest(webEnvironment = RANDOM_PORT,
+        classes = { TestDatabaseConfig.class, OAuth2TestConfig.class})
 @AutoConfigureMockMvc
 @ActiveProfiles("testauth")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@TestPropertySource(locations = "classpath:application-testauth.yml")
 final class AuthTokenIT extends BaseIT {
 
     private static Stream<Arguments> securedReportEndpoints() {
@@ -60,7 +61,7 @@ final class AuthTokenIT extends BaseIT {
     void unauthenticatedAccess_shouldRedirectToLogin(String description, String endpoint) throws Exception {
         performGetRequest(endpoint)
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrlPattern("**/oauth2/authorization/gpfd-azure-dev"));
+                .andExpect(redirectedUrl("/oauth2/authorization/gpfd-azure-dev"));
     }
 
     @ParameterizedTest
@@ -79,7 +80,7 @@ final class AuthTokenIT extends BaseIT {
     @ParameterizedTest(name = "[{index}] {0} should return 200 when authenticated")
     @MethodSource("securedReportEndpoints")
     @SneakyThrows
-    void authenticatedAccess_withValidRolesshouldReturnOk(String description, String endpoint) {
+    void authenticatedAccess_withValidRolesShouldReturnOk(String description, String endpoint) {
         if (Objects.equals(description, "File download endpoint")) {
             // This will not 200 locally as it's not supported
             performGetRequestWithRoles(endpoint, List.of("REP000", "Reconciliation"))

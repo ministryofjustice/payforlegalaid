@@ -2,12 +2,15 @@ package uk.gov.laa.gpfd.config.builders;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
+import uk.gov.laa.gpfd.config.OAuth2TestConfig;
+import uk.gov.laa.gpfd.config.TestDatabaseConfig;
 import uk.gov.laa.gpfd.services.ReportManagementService;
 import uk.gov.laa.gpfd.utils.BaseMvcTest;
 
@@ -21,8 +24,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ActiveProfiles("testauth")
 @AutoConfigureMockMvc
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = uk.gov.laa.gpfd.config.TestDatabaseConfig.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Import({ TestDatabaseConfig.class, OAuth2TestConfig.class })
 class HttpSecuritySessionManagementConfigurerBuilderTest extends BaseMvcTest {
 
     @MockitoBean
@@ -40,7 +43,7 @@ class HttpSecuritySessionManagementConfigurerBuilderTest extends BaseMvcTest {
 
         performGetRequest("/reports/"+ reportId)
                 .andExpect(status().is3xxRedirection())// Should redirect after session expires
-                .andExpect(header().string("Location", "http://localhost/oauth2/authorization/gpfd-azure-dev"));  // Check that redirection goes to /login?expired
+                .andExpect(header().string("Location", "/oauth2/authorization/gpfd-azure-dev"));  // Check that redirection goes to /login?expired
     }
 
     @Test

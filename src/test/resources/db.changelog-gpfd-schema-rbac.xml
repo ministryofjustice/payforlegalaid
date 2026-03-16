@@ -9,7 +9,7 @@
     <!-- 1. Create ROLES table -->
     <changeSet id="test-create-roles-table" author="neeta">
         <createTable tableName="ROLES" schemaName="GPFD">
-            <column name="ROLE_ID" type="NUMBER" autoIncrement="true">
+            <column name="ROLE_ID" type="NUMBER">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="ROLE_NAME" type="VARCHAR2(200)">

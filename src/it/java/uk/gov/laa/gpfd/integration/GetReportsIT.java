@@ -11,12 +11,13 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import uk.gov.laa.gpfd.config.TestDatabaseConfig;
+import uk.gov.laa.gpfd.integration.config.OAuth2TestConfig;
 import uk.gov.laa.gpfd.integration.verifier.DatabaseVerifier;
 import uk.gov.laa.gpfd.integration.verifier.DatabaseVerifier.Table;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
@@ -24,7 +25,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import java.util.List;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT, classes = {TestDatabaseConfig.class})
+@SpringBootTest(webEnvironment = RANDOM_PORT,
+        classes = {TestDatabaseConfig.class, OAuth2TestConfig.class})
 @AutoConfigureMockMvc
 @ActiveProfiles("testauth")
 @TestInstance(PER_CLASS)

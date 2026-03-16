@@ -5,10 +5,10 @@ runs:
 
   steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Checkout GitHub repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: ministryofjustice/payforlegalaid-swagger
         path: spec
