@@ -22,7 +22,7 @@ import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
  * to manage specific security aspects.
  * </p>
  */
-@Profile("!local & !test")
+@Profile("!test")
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
