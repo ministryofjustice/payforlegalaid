@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import uk.gov.laa.gpfd.dao.support.ReportWithQueriesAndFieldAttributesExtractor;
@@ -162,8 +163,10 @@ class ReportDaoTest {
         List<String> requiredRoles = List.of("REP000");
         when(securityUtils.extractRoles()).thenReturn(userRoles);
         when(readOnlyJdbcTemplate.query(
-                anyString(), any(RowMapper.class),
-                eq(testReportId.toString()) )).thenReturn(requiredRoles);
+                anyString(),
+                any(PreparedStatementSetter.class),
+                any(RowMapper.class)
+        )).thenReturn(requiredRoles);
         when(securityUtils.isAuthorized(userRoles, requiredRoles))
                 .thenReturn(true);
         assertDoesNotThrow(() -> reportDao.verifyUserCanAccessReport(testReportId));
@@ -174,10 +177,11 @@ class ReportDaoTest {
         List<String> userRoles = List.of("REP000");
         List<String> requiredRoles = List.of("Reconciliation");
         when(securityUtils.extractRoles()).thenReturn(userRoles);
-        when(readOnlyJdbcTemplate.query( anyString(),
-                any(RowMapper.class),
-                eq(testReportId.toString()) ))
-                .thenReturn(requiredRoles);
+        when(readOnlyJdbcTemplate.query(
+                anyString(),
+                any(PreparedStatementSetter.class),
+                any(RowMapper.class)
+        )).thenReturn(requiredRoles);
         when(securityUtils.isAuthorized(userRoles,
                 requiredRoles))
                 .thenReturn(false);
