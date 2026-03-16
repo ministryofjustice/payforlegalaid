@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import uk.gov.laa.gpfd.dao.support.ReportWithQueriesAndFieldAttributesExtractor;
 import uk.gov.laa.gpfd.data.ReportsTestDataFactory;
@@ -16,6 +16,7 @@ import uk.gov.laa.gpfd.exception.ReportAccessException;
 import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.utils.SecurityUtils;
 
+import java.sql.ResultSet;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -162,8 +164,17 @@ class ReportDaoTest {
         List<String> requiredRoles = List.of("REP000");
         when(securityUtils.extractRoles()).thenReturn(userRoles);
         when(readOnlyJdbcTemplate.query(
-                anyString(), any(RowMapper.class),
-                eq(testReportId.toString()) )).thenReturn(requiredRoles);
+                anyString(),
+                any(ResultSetExtractor.class),
+                anyString()
+        )).thenAnswer(invocation -> {
+            ResultSetExtractor<?> extractor = invocation.getArgument(1);
+            ResultSet rs = mock(ResultSet.class);
+            when(rs.next()).thenReturn(true, false);
+            when(rs.getString("ROLE_NAME")).thenReturn(requiredRoles.get(0));
+            extractor.extractData(rs);
+            return null;
+        });
         when(securityUtils.isAuthorized(userRoles, requiredRoles))
                 .thenReturn(true);
         assertDoesNotThrow(() -> reportDao.verifyUserCanAccessReport(testReportId));
@@ -174,10 +185,18 @@ class ReportDaoTest {
         List<String> userRoles = List.of("REP000");
         List<String> requiredRoles = List.of("Reconciliation");
         when(securityUtils.extractRoles()).thenReturn(userRoles);
-        when(readOnlyJdbcTemplate.query( anyString(),
-                any(RowMapper.class),
-                eq(testReportId.toString()) ))
-                .thenReturn(requiredRoles);
+        when(readOnlyJdbcTemplate.query(
+                anyString(),
+                any(ResultSetExtractor.class),
+                anyString()
+        )).thenAnswer(invocation -> {
+            ResultSetExtractor<?> extractor = invocation.getArgument(1);
+            ResultSet rs = mock(ResultSet.class);
+            when(rs.next()).thenReturn(true, false);
+            when(rs.getString("ROLE_NAME")).thenReturn(requiredRoles.get(0));
+            extractor.extractData(rs);
+            return null;
+        });
         when(securityUtils.isAuthorized(userRoles,
                 requiredRoles))
                 .thenReturn(false);
