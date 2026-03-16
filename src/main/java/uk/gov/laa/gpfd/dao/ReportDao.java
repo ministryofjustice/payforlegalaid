@@ -5,12 +5,13 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
-import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
+import uk.gov.laa.gpfd.dao.sql.ResultSetExtractorHelper;
 import uk.gov.laa.gpfd.exception.ReportAccessException;
 import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.utils.SecurityUtils;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -155,12 +156,8 @@ public record ReportDao(
     }
 
     public void verifyUserCanAccessReport(UUID reportId) {
-        log.debug("Verifying user access to database for report: {}", reportId);
         List<String> userRoles = securityUtils.extractRoles();
         List<String> requiredRoles = loadRequiredRoles(reportId);
-        log.info("Getting required roles from database for report: {}", requiredRoles);
-
-
         log.info(
                 "Report {} requires roles: {} whereas user has: {}",
                 reportId, requiredRoles, userRoles
@@ -172,9 +169,14 @@ public record ReportDao(
     }
 
     private List<String> loadRequiredRoles(UUID reportId) {
-        return readOnlyJdbcTemplate.query( SELECT_REPORT_ROLES,
-                (rs, rowNum) -> rs.getString("ROLE_NAME"),
-                reportId.toString() );
+        List<String> roles = new ArrayList<>();
+        readOnlyJdbcTemplate.query(
+                SELECT_REPORT_ROLES,
+                new ResultSetExtractorHelper<>(rs ->
+                        roles.add(rs.getString("ROLE_NAME"))),
+                reportId.toString()
+        );
+        return roles;
     }
 
 }
