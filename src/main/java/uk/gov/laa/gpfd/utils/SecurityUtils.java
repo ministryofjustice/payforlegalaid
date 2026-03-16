@@ -1,6 +1,5 @@
 package uk.gov.laa.gpfd.utils;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -10,7 +9,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
 @Component
 public class SecurityUtils {
 
@@ -33,13 +31,11 @@ public class SecurityUtils {
         }
 
         Map<String, Object> attributes = oidcUser.getAttributes();
-        log.info("Found OidcUser attributes: {}", attributes);
         if (attributes == null) {
             return List.of();
         }
 
         Object rawRoles = attributes.get(ROLE_CLAIM);
-        log.info("Found roles for user: {}", rawRoles);
         return parseRoles(rawRoles);
     }
 
