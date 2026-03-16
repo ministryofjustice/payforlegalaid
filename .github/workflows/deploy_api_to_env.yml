@@ -137,25 +137,6 @@ jobs:
               DOLLAR='$' envsubst < "$input" > "$output"
             fi
           done
-                    
-          if [[ "${ENV_NAME}" == "prod" ]]; then
-            yq -i '
-                .spec.tls |= (. // []) + [{
-                  "hosts": ["get-legal-aid-data.service.justice.gov.uk"], 
-                  "secretName": "tls-certificate"
-                }]
-                | .spec.rules += [{
-                    "host": "get-legal-aid-data.service.justice.gov.uk",
-                    "http": {
-                      "paths": [{
-                        "path": "/", 
-                        "pathType": "ImplementationSpecific", 
-                        "backend": .spec.rules[0].http.paths[0].backend
-                      }]
-                  }
-                }]
-                ' deployments/ingress.yml
-          fi
 
       - name: Authenticate with Cloud Platform and Deploy
         env:
