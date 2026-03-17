@@ -173,8 +173,8 @@ public record ReportDao(
     private List<String> loadRequiredRoles(UUID reportId) {
         return readOnlyJdbcTemplate.query(
                 SELECT_REPORT_ROLES,
-                (rs, rowNum) -> rs.getString("ROLE_NAME"),
-                new Object[]{ reportId.toString() }
+                new Object[]{ reportId.toString() },
+                (rs, rowNum) -> rs.getString("ROLE_NAME")
         );
     }
 
