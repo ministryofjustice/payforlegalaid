@@ -88,7 +88,7 @@ jobs:
           if [[ "${ENV_NAME}" == "prod" ]]; then
             echo "ingress_class=modsec" >> $GITHUB_OUTPUT
           else
-            echo "ingress_class=modsec-non-prod" >> $GITHUB_OUTPUT
+            echo "ingress_class=beta" >> $GITHUB_OUTPUT
           fi
 
       - name: Fetch IP list
