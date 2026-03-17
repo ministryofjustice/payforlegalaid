@@ -4,17 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
-import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
-import uk.gov.laa.gpfd.dao.sql.ResultSetExtractorHelper;
 import uk.gov.laa.gpfd.exception.ReportAccessException;
 import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.utils.SecurityUtils;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -178,8 +173,9 @@ public record ReportDao(
     private List<String> loadRequiredRoles(UUID reportId) {
         return readOnlyJdbcTemplate.query(
                 SELECT_REPORT_ROLES,
-                ps -> ps.setString(1, reportId.toString()),
-                (rs, rowNum) -> rs.getString("ROLE_NAME")
+                (rs, rowNum) -> rs.getString("ROLE_NAME"),
+                new Object[]{ reportId.toString() }
         );
     }
+
 }

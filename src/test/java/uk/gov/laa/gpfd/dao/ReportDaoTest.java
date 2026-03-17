@@ -8,7 +8,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import uk.gov.laa.gpfd.dao.support.ReportWithQueriesAndFieldAttributesExtractor;
@@ -164,8 +163,8 @@ class ReportDaoTest {
         when(securityUtils.extractRoles()).thenReturn(userRoles);
         when(readOnlyJdbcTemplate.query(
                 anyString(),
-                any(PreparedStatementSetter.class),
-                any(RowMapper.class)
+                any(RowMapper.class),
+                any(Object[].class)
         )).thenReturn(requiredRoles);
         when(securityUtils.isAuthorized(userRoles, requiredRoles))
                 .thenReturn(true);
@@ -179,8 +178,8 @@ class ReportDaoTest {
         when(securityUtils.extractRoles()).thenReturn(userRoles);
         when(readOnlyJdbcTemplate.query(
                 anyString(),
-                any(PreparedStatementSetter.class),
-                any(RowMapper.class)
+                any(RowMapper.class),
+                any(Object[].class)
         )).thenReturn(requiredRoles);
         when(securityUtils.isAuthorized(userRoles,
                 requiredRoles))
