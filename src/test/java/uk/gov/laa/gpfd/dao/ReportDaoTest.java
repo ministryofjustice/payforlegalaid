@@ -163,8 +163,8 @@ class ReportDaoTest {
         when(securityUtils.extractRoles()).thenReturn(userRoles);
         when(readOnlyJdbcTemplate.query(
                 anyString(),
-                any(RowMapper.class),
-                any(Object[].class)
+                any(Object[].class),
+                any(RowMapper.class)
         )).thenReturn(requiredRoles);
         when(securityUtils.isAuthorized(userRoles, requiredRoles))
                 .thenReturn(true);
@@ -178,8 +178,8 @@ class ReportDaoTest {
         when(securityUtils.extractRoles()).thenReturn(userRoles);
         when(readOnlyJdbcTemplate.query(
                 anyString(),
-                any(RowMapper.class),
-                any(Object[].class)
+                any(Object[].class),
+                any(RowMapper.class)
         )).thenReturn(requiredRoles);
         when(securityUtils.isAuthorized(userRoles,
                 requiredRoles))
