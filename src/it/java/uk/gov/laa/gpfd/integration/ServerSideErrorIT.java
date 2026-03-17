@@ -38,7 +38,6 @@ class ServerSideErrorIT extends BaseIT {
     @AfterAll
     @Override
     void cleanUpDatabase() {
-        writeJdbcTemplate.execute("DROP TABLE IF EXISTS GPFD.REPORTS_TRACKING");
         writeJdbcTemplate.execute("DROP TABLE IF EXISTS GPFD.CSV_TO_SQL_MAPPING_TABLE");
     }
 

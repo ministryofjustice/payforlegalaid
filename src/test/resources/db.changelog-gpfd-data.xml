@@ -5,15 +5,6 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
   <changeSet id="3001" author="user">
-    <insert tableName="REPORT_TRACKING" schemaName="GPFD">
-      <column name="ID" value="0d4da9ec-b0b3-4371-af10-f375330d85d3"/>
-      <column name="REPORT_NAME" value="Initial Test Report Name"/>
-      <column name="REPORT_URL" value="https://www.example.com"/>
-      <column name="CREATION_TIME" value="2024-03-18T12:10:11.814596"/>
-      <column name="MAPPING_ID" value="0d4da9ec-b0b3-4371-af10-f375330d85d3"/>
-      <column name="REPORT_GENERATED_BY" value="Bill Evans"/>
-    </insert>
-
     <insert tableName="CSV_TO_SQL_MAPPING_TABLE" schemaName="GPFD">
       <column name="ID" value="0d4da9ec-b0b3-4371-af10-f375330d85d3"/>
       <column name="REPORT_NAME" value="CIS to CCMS payment value Defined"/>
