@@ -11,6 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import uk.gov.laa.gpfd.config.TestDatabaseConfig;
 import uk.gov.laa.gpfd.integration.config.OAuth2TestConfig;
+import uk.gov.laa.gpfd.config.TestSecurityConfig;
 import uk.gov.laa.gpfd.integration.data.ReportTestData;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -20,12 +21,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CSV_REPORT;
 
-@SpringBootTest(
-        webEnvironment = RANDOM_PORT,
-        classes = {TestDatabaseConfig.class, OAuth2TestConfig.class}
-)
+import java.util.List;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
+@SpringBootTest(classes = {TestDatabaseConfig.class, OAuth2TestConfig.class})
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
+@ActiveProfiles("testauth")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestPropertySource(locations = "classpath:application-test.yml")
 final class GetReportsByIdIT extends BaseIT {
@@ -36,7 +38,7 @@ final class GetReportsByIdIT extends BaseIT {
     void shouldReturnOkGivenValidExistedReport(ReportTestData testData) {
         var uri = "/reports/%s".formatted(testData.id());
 
-        performGetRequest(uri)
+        performGetRequestWithRoles(uri, List.of("REP000", "Financial", "Reconciliation"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(testData.id()))
                 .andExpect(jsonPath("$.reportName").value(testData.name()))
@@ -49,7 +51,7 @@ final class GetReportsByIdIT extends BaseIT {
     void shouldReturn400WhenGivenInvalidId(String type) {
         var uri = "/%s/%s321".formatted(type, CSV_REPORT.getReportData().id());
 
-        performGetRequest(uri)
+        performGetRequestWithRoles(uri, List.of("REP000", "Financial", "Reconciliation"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.error")
@@ -63,13 +65,11 @@ final class GetReportsByIdIT extends BaseIT {
         var nonExistentReportId = "0d4da9ec-b0b3-4371-af10-321";
         var uri = "/%s/%s".formatted(type, nonExistentReportId);
 
-        performGetRequest(uri)
-                .andExpect(status().isNotFound())
+        performGetRequestWithRoles(uri, List.of("REP000", "Financial", "Reconciliation"))
+                .andExpect(status().isForbidden())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.error")
-                        .value("Report not found for ID 0d4da9ec-b0b3-4371-af10-000000000321"));
+                        .value("You cannot access report with ID: 0d4da9ec-b0b3-4371-af10-000000000321"));
     }
 
 }
-
-

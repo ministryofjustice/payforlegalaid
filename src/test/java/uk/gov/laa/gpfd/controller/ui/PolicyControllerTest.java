@@ -1,49 +1,46 @@
 package uk.gov.laa.gpfd.controller.ui;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
+import uk.gov.laa.gpfd.config.OAuth2TestConfig;
+import uk.gov.laa.gpfd.config.TestDatabaseConfig;
+import uk.gov.laa.gpfd.utils.BaseMvcTest;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import java.util.List;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT ,
+        classes = {TestDatabaseConfig.class , OAuth2TestConfig.class })
 @AutoConfigureMockMvc
 @ActiveProfiles("testauth")
-class PolicyControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
+class PolicyControllerTest extends BaseMvcTest {
 
     @Test
-    @WithMockUser(roles = "ADMIN")
     void cookiesPageResolvesToCookiesHtml() throws Exception {
-        mockMvc.perform(get("/cookies"))
+       performAuthenticatedGet("/cookies", List.of("Financial"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("cookies"))
                 .andExpect(model().attribute("gpfdUrl", "http://localhost"));
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
     void privacyPageResolvesToPrivacyHtml() throws Exception {
-        mockMvc.perform(get("/privacy"))
+        performAuthenticatedGet("/privacy", List.of("Financial"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("privacy"))
                 .andExpect(model().attribute("gpfdUrl", "http://localhost"));
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
     void accessibilityPageResolvesToAccessibilityHtml() throws Exception {
-        mockMvc.perform(get("/accessibility"))
+        performAuthenticatedGet("/accessibility", List.of("Financial"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("accessibility"))
                 .andExpect(model().attribute("gpfdUrl", "http://localhost"));
     }
+
 }

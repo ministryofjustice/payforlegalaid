@@ -74,15 +74,6 @@ public class AppConfig {
 
     @Value("${excel.jdbc.streamer.default-fetch-size:1000}")
     private int defaultFetchSize;
-
-    @Getter
-    @Value("${spring.cloud.azure.active-directory.credential.client-id}")
-    private String entraIdClientId;
-
-    @Getter
-    @Value("${spring.cloud.azure.active-directory.profile.tenant-id}")
-    private String entraIdTenantId;
-
     @Getter
     @Value("${gpfd.csv-generation.buffer-flush-frequency:1000}")
     private int csvBufferFlushFrequency;
@@ -244,6 +235,15 @@ public class AppConfig {
         );
 
         return restTemplate;
+    }
+
+    @Bean
+    JdbcTemplate namedReadOnlyJdbcTemplate(@Qualifier("readOnlyDataSource") DataSource dataSource) {
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+        template.setFetchSize(defaultFetchSize);
+        template.setMaxRows(0);
+        template.setQueryTimeout(0);
+        return template;
     }
 
     /**

@@ -1,18 +1,21 @@
 package uk.gov.laa.gpfd.config;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizedClientRepository;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.HttpSecuritySessionManagementConfigurerBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
-
-import static com.azure.spring.cloud.autoconfigure.implementation.aad.security.AadWebApplicationHttpSecurityConfigurer.aadWebApplication;
 
 /**
  * Configuration class to set up Spring Security for the application.
@@ -24,37 +27,52 @@ import static com.azure.spring.cloud.autoconfigure.implementation.aad.security.A
  * to manage specific security aspects.
  * </p>
  */
+@Profile("!test")
 @Configuration
 @RequiredArgsConstructor
-@ConditionalOnProperty(name = "spring.cloud.azure.active-directory.enabled", havingValue = "true")
 public class SecurityConfig {
 
     private final AuthorizationManager<RequestAuthorizationContext> authManager;
     private final HttpSecuritySessionManagementConfigurerBuilder concurrencyControlConfigurerCustomizer;
 
     /**
-     * Configures the {@link SecurityFilterChain} for the HTTP security settings.
-     * <p>
-     * This method customizes the security filter chain by applying the authorization
-     * rules, enabling HTTP basic authentication, and applying the session management
-     * configuration to control session concurrency and expiration.
-     * We create the customisers in the function as Bean customisers are automatically implemented by Spring Security 7,
-     * and running each customiser twice can cause issues.
-     * </p>
+     * Builds and configures the Spring Security filter chain.
      *
-     * @param httpSecurity the {@link HttpSecurity} object used to configure HTTP security.
-     * @return a configured {@link SecurityFilterChain} object.
-     * @throws Exception if any error occurs during the configuration of HTTP security.
+     * <p>This method:
+     * <ul>
+     *     <li>Applies custom authorization rules</li>
+     *     <li>Enables OAuth2 login and redirects to "/" on successful authentication</li>
+     *     <li>Configures session management using the provided builder</li>
+     * </ul>
+     *
+     * @param httpSecurity the {@link HttpSecurity} to configure
+     * @return the configured {@link SecurityFilterChain}
+     * @throws Exception if the security configuration fails
      */
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         var authorizeHttpRequestsBuilder = new AuthorizeHttpRequestsBuilder(authManager);
         var sessionManagementConfigurerBuilder = new SessionManagementConfigurerBuilder(concurrencyControlConfigurerCustomizer);
         return httpSecurity
-                .with(aadWebApplication())
-                .authorizeHttpRequests(authorizeHttpRequestsBuilder)    // Apply authorization rules
-                .sessionManagement(sessionManagementConfigurerBuilder)  // Apply session management configuration
+                .authorizeHttpRequests(authorizeHttpRequestsBuilder)
+                .oauth2Login(oauth2 -> oauth2
+                        .successHandler((request, response, authentication) -> {
+                            response.sendRedirect("/");
+                        }))
+                .sessionManagement(sessionManagementConfigurerBuilder)
                 .build();
     }
 
+    @Bean
+    public OAuth2AuthorizedClientRepository authorizedClientRepository() {
+        // Stores authorized clients in the HTTP session
+        return new HttpSessionOAuth2AuthorizedClientRepository();
+    }
+
+    @Bean
+    public OAuth2AuthorizedClientManager authorizedClientManager(
+            ClientRegistrationRepository clientRegistrationRepository,
+            OAuth2AuthorizedClientRepository authorizedClientRepository) {
+        return new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository, authorizedClientRepository);
+    }
 }
