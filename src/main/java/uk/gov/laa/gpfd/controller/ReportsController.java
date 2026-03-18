@@ -13,7 +13,6 @@ import uk.gov.laa.gpfd.api.ReportsApi;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200Response;
 import uk.gov.laa.gpfd.services.ReportManagementService;
-import uk.gov.laa.gpfd.services.ReportsTrackingService;
 import uk.gov.laa.gpfd.services.StreamingService;
 import uk.gov.laa.gpfd.services.s3.FileDownloadService;
 import uk.gov.laa.gpfd.utils.UrlBuilder;
@@ -28,7 +27,6 @@ import static uk.gov.laa.gpfd.model.FileExtension.*;
 @RequiredArgsConstructor
 public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
 
-    private final ReportsTrackingService reportsTrackingService;
     private final ReportManagementService reportManagementService;
     private final StreamingService streamingService;
     private final FileDownloadService fileDownloadService;
@@ -75,7 +73,6 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
         // Validate that this report is actually a CSV report
         reportManagementService.validateReportFormat(requestedId, CSV);
 
-        reportsTrackingService.saveReportsTracking(requestedId, urlBuilder.getServiceUrl());
         return streamingService.stream(requestedId, CSV);
     }
 
@@ -110,7 +107,6 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
         // Validate format before attempting to stream
         reportManagementService.validateReportFormat(id, XLSX);
 
-        reportsTrackingService.saveReportsTracking(id, urlBuilder.getServiceUrl());
         return streamingService.stream(id, XLSX);
     }
 

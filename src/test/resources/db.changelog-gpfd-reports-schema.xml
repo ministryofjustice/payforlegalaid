@@ -117,40 +117,4 @@
       constraintName="fk_field_attributes_report_query_id"/>
   </changeSet>
 
-  <changeSet id="2011" author="liquibase">
-      <createTable tableName="REPORTS_TRACKING" schemaName="GPFD">
-          <column name="ID" type="UUID">
-              <constraints primaryKey="true" nullable="false" primaryKeyName="pk_reports_tracking_id"/>
-          </column>
-          <column name="NAME" type="VARCHAR(150)">
-              <constraints nullable="false"/>
-          </column>
-          <column name="REPORT_ID" type="UUID">
-              <constraints nullable="false"/>
-          </column>
-          <column name="CREATION_DATE" type="DATE"/>
-          <column name="REPORT_DOWNLOADED_BY" type="VARCHAR(150)"/>
-          <column name="REPORT_CREATOR" type="VARCHAR(150)">
-              <constraints nullable="false"/>
-          </column>
-          <column name="REPORT_OWNER" type="VARCHAR(150)">
-              <constraints nullable="false"/>
-          </column>
-          <column name="REPORT_OUTPUT_TYPE" type="VARCHAR(150)">
-              <constraints nullable="false"/>
-          </column>
-          <column name="TEMPLATE_URL" type="VARCHAR(300)">
-              <constraints nullable="false"/>
-          </column>
-          <column name="REPORT_URL" type="VARCHAR(300)">
-              <constraints nullable="false"/>
-          </column>
-      </createTable>
-      <sql>ALTER TABLE GPFD.REPORTS_TRACKING ALTER COLUMN ID SET DEFAULT sys_guid();</sql>
-      <addForeignKeyConstraint baseTableName="REPORTS_TRACKING" baseColumnNames="REPORT_ID"
-                               referencedTableName="REPORTS" referencedColumnNames="ID"
-                               baseTableSchemaName="GPFD" referencedTableSchemaName="GPFD"
-                               constraintName="fk_reports_tracking_reports_id"/>
-  </changeSet>
-
 </databaseChangeLog>
