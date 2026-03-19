@@ -323,7 +323,7 @@ data:
               "refId": "A"
             }
           ],
-          "title": "Report Access History by UnAuthorized User",
+          "title": "Security Alert: Unauthorized Report Access",
           "type": "heatmap"
         },
         {
