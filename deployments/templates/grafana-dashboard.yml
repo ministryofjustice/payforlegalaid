@@ -316,7 +316,7 @@ data:
           "targets": [
             {
               "editorMode": "code",
-              "expr": "sum by(type)(label_replace(label_replace(increase(http_server_requests_seconds_count{namespace=\"${NAMESPACE}\",status=\"403\",uri=~\"/(csv|reports|excel)/.*\"}[$__rate_interval]),\n    \"type\", \"$1\", \"uri\", \"/(csv|reports|excel)/.*\",\"type\", \"S3\", \"type\", \"reports\"))", 
+              "expr": "sum by(type)(label_replace(label_replace(increase(http_server_requests_seconds_count{namespace=\"${NAMESPACE}\",status=\"403\",uri=~\"/(csv|reports|excel)/.*\"}[$__rate_interval]), \"type\", \"$1\", \"uri\", \"/(csv|reports|excel)/.*\"),\"type\", \"S3\", \"type\", \"reports\"))\n",
               "format": "time_series",
               "legendFormat": "__auto",
               "range": true,
