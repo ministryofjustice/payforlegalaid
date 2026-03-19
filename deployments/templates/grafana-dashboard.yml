@@ -239,7 +239,7 @@ data:
           "targets": [
             {
               "editorMode": "code",
-              "expr": "sum by (endpoint) (\n  label_replace(\n    label_replace(\n      increase(\n        http_server_requests_seconds_count{\n          namespace=\"laa-get-payments-finance-data-dev\",\n          uri=~\"/(csv|excel|report).*\",\n          status=\"200\"\n        }[$__rate_interval]\n      ),\n      \"endpoint\", \"$1\", \"uri\", \".*/(csv|excel|report).*\"\n    ),\n    \"endpoint\", \"S3\", \"endpoint\", \"report\"\n  )\n)",
+              "expr": "sum by(endpoint)(label_replace(label_replace(increase(http_server_requests_seconds_count{namespace=\"${NAMESPACE}\",uri=~\"/(csv|excel|report).*\",status=\"200\"}[$__rate_interval]),\"endpoint\", \"$1\", \"uri\", \".*/(csv|excel|report).*\"),\"endpoint\", \"S3\", \"endpoint\", \"report\"))",
               "legendFormat": "__auto",
               "range": true,
               "refId": "A"
@@ -316,7 +316,7 @@ data:
           "targets": [
             {
               "editorMode": "code",
-              "expr": "sum by(type)(label_replace(increase(http_server_requests_seconds_count{namespace=\"${NAMESPACE}\",status=\"403\",uri=~\"/(csv|reports|excel)/.*\"}[$__rate_interval]),\n    \"type\", \"$1\", \"uri\", \"/(csv|reports|excel)/.*\"))",
+              "expr": "sum by(type)(label_replace(label_replace(increase(http_server_requests_seconds_count{namespace=\"${NAMESPACE}\",status=\"403\",uri=~\"/(csv|reports|excel)/.*\"}[$__rate_interval]),\n    \"type\", \"$1\", \"uri\", \"/(csv|reports|excel)/.*\",\"type\", \"S3\", \"type\", \"reports\"))", 
               "format": "time_series",
               "legendFormat": "__auto",
               "range": true,
