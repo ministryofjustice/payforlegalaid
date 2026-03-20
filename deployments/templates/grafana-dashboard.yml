@@ -89,7 +89,7 @@ data:
                 "spanNulls": false,
                 "stacking": {
                   "group": "A",
-                  "mode": "normal"
+                  "mode": "none"
                 },
                 "thresholdsStyle": {
                   "mode": "off"
@@ -2769,7 +2769,6 @@ data:
       "timezone": "browser",
       "title": "LAA GPFD Get Payment & Finance Data ${ENV_NAME} dashboard",
       "uid": "laa-gpfd-${ENV_NAME}",
-      "version": 7q,
-      
+      "version": 7,      
       "weekStart": ""
-    }
+      }
