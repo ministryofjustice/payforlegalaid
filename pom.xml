@@ -317,6 +317,11 @@
             <artifactId>spring-boot-starter-jackson</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
+
         <!-- this next section all has version controlled by Spring Boot -->
         <dependency>
             <groupId>org.webjars</groupId>
