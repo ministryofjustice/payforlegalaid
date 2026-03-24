@@ -57,7 +57,7 @@ import java.util.Objects;
 import static uk.gov.laa.gpfd.dao.sql.ChannelRowHandler.forSheet;
 import static uk.gov.laa.gpfd.services.DataStreamer.createJdbcStreamer;
 
-import liquibase.integration.spring.SpringLiquibase;  // Add this import
+import liquibase.integration.spring.SpringLiquibase;
 
 /**
  * Configuration class for application-level beans and settings.
