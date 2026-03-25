@@ -1,5 +1,6 @@
 package uk.gov.laa.gpfd.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,8 +19,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
 
-import java.util.List;
-
 /**
  * Configuration class to set up Spring Security for the application.
  * <p>
@@ -30,6 +29,7 @@ import java.util.List;
  * to manage specific security aspects.
  * </p>
  */
+@Slf4j
 @SuppressWarnings("java:S4502") // CSRF disabled only for H2 console — local/test profiles only, never active in prod
 @Profile({"local", "test"})
 @Configuration
@@ -94,7 +94,9 @@ public class SecurityConfigLocal {
                 )
                 .addFilterAfter(SecurityConfigSupport.csrfCookieFilter(), CsrfFilter.class)
                 .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+                .oauth2Login(oauth ->
+                        oauth.loginPage("/oauth2/authorization/gpfd-azure-dev"));
 
         return SecurityConfigSupport.applyCommonHeaders(http, true, true)
                 .build();
@@ -130,5 +132,15 @@ public class SecurityConfigLocal {
         return new InMemoryClientRegistrationRepository(
                 List.of(localRegistration)
         );
+        ClientRegistration localRegistration = ClientRegistration.withRegistrationId("graph")
+                .clientId("mockClientId")
+                .clientSecret("mockClientSecret")
+                .scope("read")
+                .authorizationUri("test")
+                .redirectUri("test2")
+                .tokenUri("test3")
+                .authorizationGrantType(AuthorizationGrantType.JWT_BEARER)
+                .build();
     }
+
 }

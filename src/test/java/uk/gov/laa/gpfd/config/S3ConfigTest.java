@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(properties = "spring.liquibase.enabled=false",
         classes = uk.gov.laa.gpfd.config.TestDatabaseConfig .class)
-@ActiveProfiles("test")
+@ActiveProfiles("testauth")
 @TestPropertySource(properties = {
         "gpfd.s3.has-s3-access=true",
         "AWS_REGION=eu-west-1",
