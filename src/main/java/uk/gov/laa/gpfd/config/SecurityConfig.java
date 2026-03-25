@@ -63,7 +63,7 @@ public class SecurityConfig {
                 .build();
     }
 
-    @Bean
+    /*@Bean
     public OAuth2AuthorizedClientRepository authorizedClientRepository() {
         // Stores authorized clients in the HTTP session
         return new HttpSessionOAuth2AuthorizedClientRepository();
@@ -74,5 +74,5 @@ public class SecurityConfig {
             ClientRegistrationRepository clientRegistrationRepository,
             OAuth2AuthorizedClientRepository authorizedClientRepository) {
         return new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository, authorizedClientRepository);
-    }
+    }*/
 }
