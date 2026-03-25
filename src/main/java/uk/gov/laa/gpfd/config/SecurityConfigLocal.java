@@ -1,5 +1,6 @@
 package uk.gov.laa.gpfd.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,8 +23,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
 
-import java.util.List;
-
 /**
  * Configuration class to set up Spring Security for the application.
  * <p>
@@ -34,6 +33,7 @@ import java.util.List;
  * to manage specific security aspects.
  * </p>
  */
+@Slf4j
 @SuppressWarnings("java:S4502") // CSRF disabled only for H2 console — local/test profiles only, never active in prod
 @Profile({"local", "test"})
 @Configuration
@@ -80,10 +80,9 @@ public class SecurityConfigLocal {
      *
      * @param httpSecurity the {@link HttpSecurity} object used to configure HTTP security.
      * @return a configured {@link SecurityFilterChain} object.
-     * @throws Exception if any error occurs during the configuration of HTTP security.
      */
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity httpSecurity) {
         return httpSecurity
                 // Allow h2-console to ignore CSRF or it won't load
                 .csrf(csrf -> csrf.ignoringRequestMatchers(
@@ -126,7 +125,9 @@ public class SecurityConfigLocal {
                                         .reportOnly() // Included in local config for debugging purposes
                                 )
                 )
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+                .oauth2Login(oauth ->
+                        oauth.loginPage("/oauth2/authorization/gpfd-azure-dev"))
                 .build();
     }
 
@@ -153,11 +154,6 @@ public class SecurityConfigLocal {
                 .tokenUri("test3")
                 .authorizationGrantType(AuthorizationGrantType.JWT_BEARER)
                 .build();
-
-        List<ClientRegistration> registrationList = List.of(localRegistration);
-
-        return new InMemoryClientRegistrationRepository(registrationList);
     }
-
 
 }

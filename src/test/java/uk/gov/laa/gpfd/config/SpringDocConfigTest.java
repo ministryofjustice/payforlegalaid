@@ -12,7 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(classes = uk.gov.laa.gpfd.config.TestDatabaseConfig .class)
-@ActiveProfiles("test")
+@ActiveProfiles("testauth")
 class SpringDocConfigTest {
 
     @Autowired
