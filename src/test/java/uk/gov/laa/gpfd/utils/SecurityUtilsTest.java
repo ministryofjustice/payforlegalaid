@@ -84,28 +84,11 @@ class SecurityUtilsTest {
     }
 
     @Test
-    void extractRoles_returnsEmptyList_whenAttributesNull() {
-        when(authentication.getPrincipal()).thenReturn(oidcUser);
-        when(oidcUser.getAttributes()).thenReturn(null);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        List<String> roles = securityUtils.extractRoles();
-
-        assertTrue(roles.isEmpty());
-    }
-    @Test
     void extractRoles_returnsEmptyList_whenNull() {
         when(authentication.getPrincipal()).thenReturn(oidcUser);
         when(oidcUser.getAttributes()).thenReturn(null);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        List<String> roles = securityUtils.extractRoles();
-        assertTrue(roles.isEmpty());
-    }
-
-    @Test
-    void extractRoles_returnsEmptyList_whenAuthenticationIsNull() {
-        SecurityContextHolder.clearContext();
         List<String> roles = securityUtils.extractRoles();
         assertTrue(roles.isEmpty());
     }

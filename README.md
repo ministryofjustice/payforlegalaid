@@ -146,6 +146,13 @@ Example SQL query once connected
 SELECT table_name FROM all_tables WHERE owner = 'GPFD';
 ```
 
+#### SILAS config
+To run locally you need to have set up local SILAS parameters. 
+
+Before running your application, make sure to import the Entra configuration (tenant ID, client ID, and client secret - these can be found in 1Password). 
+Add this configuration to your Application Config in IntelliJ or a local environment variable setup. Do not commit these files or secrets.
+After everything is configured, start the application. When prompted, use your internal SILAS credentials to log in.
+
 #### Troubleshooting
 
 **Build fails with `invalid target release` error**
@@ -165,6 +172,14 @@ export COMPOSE_DOCKER_CLI_BUILD=1
 ```
 
 Then reload your shell with `source ~/.zshrc` (or `~/.bashrc`).
+
+**Bean creation error for `filterchain`**:
+Ensure you have set up SILAS config as documented above.
+
+**Bean creation error for `liquibase` or `Table "DATABSECHANGELOG" already exists`**:
+Two possible reasons:
+1. Need to cleanup the last run. Do a `docker-compose down` and then delete the `payforlegalaid_gpfd-data` volume
+2. The app is crashing and restarting itself. If you scroll back to the top of the logs you should find the original error causing the restart, which you'll need to solve before doing step 1 above.
 
 ### Scanning Snyk tools
 - `snyk test --policy-path=.snyk`
