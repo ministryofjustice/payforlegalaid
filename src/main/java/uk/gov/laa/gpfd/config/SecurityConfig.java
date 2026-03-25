@@ -62,17 +62,4 @@ public class SecurityConfig {
                 .sessionManagement(sessionManagementConfigurerBuilder)
                 .build();
     }
-
-    /*@Bean
-    public OAuth2AuthorizedClientRepository authorizedClientRepository() {
-        // Stores authorized clients in the HTTP session
-        return new HttpSessionOAuth2AuthorizedClientRepository();
-    }
-
-    @Bean
-    public OAuth2AuthorizedClientManager authorizedClientManager(
-            ClientRegistrationRepository clientRegistrationRepository,
-            OAuth2AuthorizedClientRepository authorizedClientRepository) {
-        return new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository, authorizedClientRepository);
-    }*/
 }
