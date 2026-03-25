@@ -23,7 +23,6 @@ import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 import uk.gov.laa.gpfd.services.ReportManagementService;
-import uk.gov.laa.gpfd.services.ReportsTrackingService;
 import uk.gov.laa.gpfd.services.StreamingService;
 import uk.gov.laa.gpfd.services.s3.FileDownloadService;
 import uk.gov.laa.gpfd.utils.BaseMvcTest;
@@ -51,9 +50,6 @@ class ReportsControllerTest extends BaseMvcTest {
 
     @MockitoBean
     ReportManagementService reportManagementServiceMock;
-
-    @MockitoBean
-    ReportsTrackingService reportsTrackingService; // This is required, despite the sonarlint suggestions
 
     @MockitoBean
     StreamingService streamingService;

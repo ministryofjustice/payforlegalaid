@@ -196,18 +196,6 @@
       <column name="REPORT_OWNER_EMAIL" value="dr.frankenstein@example.com"/>
     </insert>
 
-    <insert tableName="REPORTS_TRACKING" schemaName="GPFD">
-      <column name="ID" value="00000000-0000-0000-0001-000000000001"/>
-      <column name="NAME" value="Test Report Name"/>
-      <column name="REPORT_ID" value="b36f9bbb-1178-432c-8f99-8090e285f2d3"/>
-      <column name="CREATION_DATE" value="2025-02-15 00:00:00"/>
-      <column name="REPORT_DOWNLOADED_BY" value="00000000-0000-0000-0003-000000000001"/>
-      <column name="REPORT_CREATOR" value="00000000-0000-0000-0004-000000000001"/>
-      <column name="REPORT_OWNER" value="00000000-0000-0000-0005-000000000001"/>
-      <column name="REPORT_OUTPUT_TYPE" value="00000000-0000-0000-0006-000000000001"/>
-      <column name="TEMPLATE_URL" value="www.example.org/template"/>
-      <column name="REPORT_URL" value="www.example.org/report"/>
-    </insert>
     <insert tableName="REPORTS" schemaName="GPFD">
       <column name="ID" value="cc55e276-97b0-4dd8-a919-26d4aa373266"/>
       <column name="NAME" value="REP012 - Original Submissions Value Report"/>
