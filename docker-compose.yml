@@ -31,6 +31,9 @@ services:
       - "8080:8080"
     environment:
       SPRING_PROFILES_ACTIVE: local
+      CLIENT_ID: ${CLIENT_ID}
+      TENANT_ID: ${TENANT_ID}
+      CLIENT_SECRET: ${CLIENT_SECRET}
       ORACLE_DB_PASSWORD: ${ORACLE_DB_PASSWORD}
     depends_on:
       oracle:
