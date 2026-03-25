@@ -1,6 +1,33 @@
+# ---------- Ignore everything except pom.xml ----------
+**/*
+!pom.xml
+
+# ---------- Ignore IDE / editor files ----------
+*.iml
+*.ipr
+*.iws
+.idea/
+*.vscode/
+*.classpath
+*.project
+.settings/
+
+# ---------- Ignore Git ----------
 .git
 .gitignore
-node_modules
+
+# ---------- Ignore OS / temp files ----------
+.DS_Store
+Thumbs.db
 *.log
-target/*
-!target/*-exec.jar
+tmp/
+*.tmp
+
+# ---------- Ignore Docker / environment files ----------
+Dockerfile
+docker-compose.yml
+.env
+
+# ---------- Ignore build artifacts ----------
+target/
+build/
