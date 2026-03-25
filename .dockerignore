@@ -1,33 +1,32 @@
-# ---------- Ignore everything except pom.xml ----------
-**/*
-!pom.xml
+# Build artifacts
+target/
 
-# ---------- Ignore IDE / editor files ----------
+# IDE files
+.idea/
 *.iml
 *.ipr
 *.iws
-.idea/
-*.vscode/
-*.classpath
-*.project
+.vscode/
+.classpath
+.project
 .settings/
 
-# ---------- Ignore Git ----------
-.git
-.gitignore
-
-# ---------- Ignore OS / temp files ----------
+# OS files
 .DS_Store
 Thumbs.db
 *.log
 tmp/
 *.tmp
 
-# ---------- Ignore Docker / environment files ----------
-Dockerfile
-docker-compose.yml
-.env
+# Git
+.git/
+.gitignore
 
-# ---------- Ignore build artifacts ----------
-target/
-build/
+# Docker files (no need to send these to the build context)
+local/
+docker-compose*.yml
+.env
+.dockerignore
+
+# Docs
+*.md

@@ -6,7 +6,7 @@ WORKDIR /build
 # Install git (needed for cloning openapi)
 RUN apt-get update && apt-get install -y --no-install-recommends git && rm -rf /var/lib/apt/lists/*
 
-# Copy pom.xml first — version extraction + dependency cache invalidates only when pom changes
+# Copy pom.xml first - version extraction + dependency cache invalidates only when pom changes
 COPY pom.xml .
 
 # Build OpenAPI dependency (cached unless pom.xml changes)
