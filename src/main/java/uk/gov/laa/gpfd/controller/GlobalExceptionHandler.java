@@ -25,7 +25,7 @@ import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.exception.ServiceUnavailableException;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
-import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException;
 import uk.gov.laa.gpfd.model.GetReportDownloadById403Response;
 import uk.gov.laa.gpfd.model.GetReportDownloadById501Response;
 import uk.gov.laa.gpfd.model.ReportsGet400Response;
@@ -314,14 +314,14 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles {@link UnableToGetAuthGroupException} and responds with an HTTP 500 Internal Server Error.
+     * Handles {@link UnableToParseAuthDetailsException} and responds with an HTTP 500 Internal Server Error.
      *
      * @param e the exception thrown when we can't extract a group from the user's auth token
      * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(UnableToGetAuthGroupException.class)
-    public ResponseEntity<ReportsGet500Response> handleUnexpectedAuthTypeException(UnableToGetAuthGroupException e) {
+    @ExceptionHandler(UnableToParseAuthDetailsException.class)
+    public ResponseEntity<ReportsGet500Response> handleUnexpectedAuthTypeException(UnableToParseAuthDetailsException e) {
         var errorResponse = new ReportsGet500Response();
         errorResponse.setError("Authentication response error.");
 

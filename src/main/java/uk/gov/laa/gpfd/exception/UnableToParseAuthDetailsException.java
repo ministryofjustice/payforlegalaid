@@ -6,14 +6,14 @@ import lombok.Getter;
  * Abstract exception class to indicate that the necessary tokens cannot be obtained from the authentication Spring has returned
  */
 @Getter
-public abstract sealed class UnableToGetAuthGroupException extends RuntimeException {
+public abstract sealed class UnableToParseAuthDetailsException extends RuntimeException {
 
     /**
      * Constructs a new {@code UnexpectedAuthTypeException} with the specified error message.
      *
      * @param message the detail message describing the exception.
      */
-    protected UnableToGetAuthGroupException(String message) {
+    protected UnableToParseAuthDetailsException(String message) {
         super(message);
     }
 
@@ -21,7 +21,7 @@ public abstract sealed class UnableToGetAuthGroupException extends RuntimeExcept
     /**
      * Exception thrown when we can't get an authentication context from Spring
      */
-    public static final class AuthenticationIsNullException extends UnableToGetAuthGroupException {
+    public static final class AuthenticationIsNullException extends UnableToParseAuthDetailsException {
 
         /**
          * Constructs a new {@code AuthenticationIsNullException} with the specified error message.
@@ -34,7 +34,7 @@ public abstract sealed class UnableToGetAuthGroupException extends RuntimeExcept
     /**
      * Exception thrown when we can't get a principal from the authentication context in Spring
      */
-    public static final class PrincipalIsNullException extends UnableToGetAuthGroupException {
+    public static final class PrincipalIsNullException extends UnableToParseAuthDetailsException {
 
         /**
          * Constructs a new {@code PrincipalIsNullException} with the specified error message.
@@ -47,7 +47,7 @@ public abstract sealed class UnableToGetAuthGroupException extends RuntimeExcept
     /**
      * Exception throw when we get an authentication class that we haven't setup to parse a group from / doesn't support groups.
      */
-    public static final class UnexpectedAuthClassException extends UnableToGetAuthGroupException {
+    public static final class UnexpectedAuthClassException extends UnableToParseAuthDetailsException {
 
         /**
          * Constructs a new {@code UnexpectedAuthClassException} with the specified error message.
