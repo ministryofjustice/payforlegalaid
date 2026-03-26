@@ -8,8 +8,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.jwt.Jwt;
-import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException;
-import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.UnexpectedAuthClassException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.UnexpectedAuthClassException;
 
 import java.util.List;
 
@@ -75,7 +75,7 @@ class TokenUtilsTest {
         var auth = mock(Authentication.class);
         when(auth.getPrincipal()).thenReturn(null);
 
-        assertThrows(UnableToGetAuthGroupException.class, () -> TokenUtils.getGroupsFromToken(auth));
+        assertThrows(UnableToParseAuthDetailsException.class, () -> TokenUtils.getGroupsFromToken(auth));
     }
 
 }

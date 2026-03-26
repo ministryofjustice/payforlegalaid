@@ -4,6 +4,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Component;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.AuthenticationIsNullException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.PrincipalIsNullException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.UnexpectedAuthClassException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,11 +21,12 @@ public class SecurityUtils {
      * Extracts the current user's application roles from the OIDC authentication token.
      * <p>
      * This method first checks the Spring SecurityContext for an authenticated
-     * {@link org.springframework.security.oauth2.core.oidc.user.OidcUser}. It then attempts
+     * {@link OidcUser}. It then attempts
      * to retrieve the "LAA_APP_ROLES" claim from the user's OIDC attributes.
      * <p>
+     *
      * @return a list of role names assigned to the current user, or an empty list if
-     *         the user is not authenticated or no roles are present.
+     * the user is not authenticated or no roles are present.
      */
     public List<String> extractRoles() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -39,12 +43,27 @@ public class SecurityUtils {
         return parseRoles(rawRoles);
     }
 
+    public String extractUserId() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null) {
+            throw new AuthenticationIsNullException();
+        }
+
+        return switch (auth.getPrincipal()) {
+            case OidcUser user -> user.getAttribute("oid");
+            case null -> throw new PrincipalIsNullException();
+            default -> throw new UnexpectedAuthClassException("Unexpected Auth Type: " + auth.getClass().getName());
+        };
+
+    }
+
     /**
      * Parses a raw roles object extracted from OIDC attributes into a list of role names.
      * <p>
      * Supported formats:
      * <ul>
-     *     <li>A {@link java.util.List} of values (converted via {@code toString()})</li>
+     *     <li>A {@link List} of values (converted via {@code toString()})</li>
      *     <li>A comma-separated {@link String}</li>
      * </ul>
      * Any other type results in an empty list.
