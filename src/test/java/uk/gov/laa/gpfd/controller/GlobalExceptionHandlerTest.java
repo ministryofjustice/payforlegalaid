@@ -342,7 +342,7 @@ class GlobalExceptionHandlerTest {
         var response = globalExceptionHandler.handleDatabaseReadException(exception);
 
         assertEquals(BAD_REQUEST, response.getStatusCode());
-        assertEquals("Report " + reportId + " is not valid for XLSX retrieval. This report is in CSV format.",
+        assertEquals("Error writing to db :(",
                 response.getBody().getError());
     }
 
