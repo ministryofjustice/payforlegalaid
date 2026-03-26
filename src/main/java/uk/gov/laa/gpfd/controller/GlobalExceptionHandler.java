@@ -14,6 +14,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import uk.gov.laa.gpfd.exception.CsvGenerationException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
+import uk.gov.laa.gpfd.exception.DatabaseWriteException;
 import uk.gov.laa.gpfd.exception.InvalidReportFormatException;
 import uk.gov.laa.gpfd.exception.FileDownloadException.InvalidDownloadFormatException;
 import uk.gov.laa.gpfd.exception.FileDownloadException.ReportNotSupportedForDownloadException;
@@ -409,6 +410,30 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(errorResponse);
+    }
+
+
+    /**
+     * Handles DatabaseWriteException and responds with an HTTP 500 Internal Server Error.
+     *
+     * @param e the DatabaseWriteException thrown when there is a database read failure.
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
+     */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(value = {
+            DatabaseWriteException.class,
+    }, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ReportsGet500Response> handleDatabaseWriteException(Exception e) {
+        var response = new ReportsGet500Response() {{
+            setError(e.getMessage());
+        }};
+
+        log.error("DatabaseWriteException Thrown: %s".formatted(response));
+        log.error("DatabaseWriteException stacktrace: %s".formatted((Object) e.getStackTrace()));
+
+        return internalServerError()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(response);
     }
 
 

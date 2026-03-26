@@ -335,4 +335,15 @@ class GlobalExceptionHandlerTest {
                 response.getBody().getError());
     }
 
+    @Test
+    void shouldHandleDatabaseWriteException() {
+        var exception = new DatabaseWriteException("Error writing to db :(");
+
+        var response = globalExceptionHandler.handleDatabaseReadException(exception);
+
+        assertEquals(BAD_REQUEST, response.getStatusCode());
+        assertEquals("Error writing to db :(",
+                response.getBody().getError());
+    }
+
 }
