@@ -22,35 +22,4 @@ public abstract class TokenUtils {
     public static final UUID ID_REP013 = UUID.fromString("aca2120c-8f82-45a8-a682-8dedfb7997a7");
     public static final UUID ID_REP014 = UUID.fromString("55daf3c1-28f0-4260-9396-2ee6d537abab");
 
-    private static final String GROUPS_CLAIM = "groups";
-
-    /**
-     * Get the user's group memberships from the auth token.
-     * @param authentication - auth details from Spring context
-     * @return - list of groups user is in
-     */
-    public static List<String> getGroupsFromToken(Authentication authentication){
-
-        if (authentication == null){
-            throw new AuthenticationIsNullException();
-        }
-        var principal = authentication.getPrincipal();
-
-        if (principal == null){
-            throw new PrincipalIsNullException();
-        }
-
-        if (principal instanceof DefaultOidcUser defaultOidcUser){
-            return defaultOidcUser.getClaimAsStringList(GROUPS_CLAIM);
-        }
-        if (principal instanceof OAuth2User oAuth2User) {
-            return oAuth2User.getAttribute(GROUPS_CLAIM);
-        }
-        if (principal instanceof Jwt jwt){
-            return jwt.getClaimAsStringList(GROUPS_CLAIM);
-        }
-
-        throw new UnexpectedAuthClassException(principal.getClass().getName());
-    }
-
 }
