@@ -31,6 +31,13 @@ spring:
   mvc:
     async:
       request-timeout: 3600000
+  flyway:
+    schemas: glad
+    create-schemas: true
+    locations: classpath:flyway/migration/schema
+    url: ${gpfd.datasource.tracking.jdbcUrl}
+    user: ${gpfd.datasource.tracking.username}
+    password: ${gpfd.datasource.tracking.password}
 
 gpfd:
   s3:
