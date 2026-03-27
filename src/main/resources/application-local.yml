@@ -26,6 +26,12 @@ gpfd:
       username: GPFD
       password: ${ORACLE_DB_PASSWORD}
       driver-class-name: oracle.jdbc.OracleDriver
+    tracking:
+      # Using Hikari pool as Postgres, so need jdbcUrl rather than plain url like in the above cases.
+      jdbcUrl: jdbc:postgresql://localhost:5432/postgres
+      username: postgres
+      password: postgres
+      driver-class-name: org.postgresql.Driver
 
 spring:
   config:
