@@ -11,12 +11,12 @@ import uk.gov.laa.gpfd.api.CsvApi;
 import uk.gov.laa.gpfd.api.ExcelApi;
 import uk.gov.laa.gpfd.api.ReportsApi;
 import uk.gov.laa.gpfd.dao.ReportDao;
+import uk.gov.laa.gpfd.dao.ReportTrackingDao;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200Response;
 import uk.gov.laa.gpfd.services.ReportManagementService;
 import uk.gov.laa.gpfd.services.StreamingService;
 import uk.gov.laa.gpfd.services.s3.FileDownloadService;
-import uk.gov.laa.gpfd.utils.UrlBuilder;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -31,8 +31,8 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
     private final ReportManagementService reportManagementService;
     private final StreamingService streamingService;
     private final FileDownloadService fileDownloadService;
-    private final UrlBuilder urlBuilder;
     private final ReportDao reportDao;
+    private final ReportTrackingDao reportTrackingDao;
 
     @Override
     public Optional<NativeWebRequest> getRequest() {
@@ -77,8 +77,9 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
 
         // Validate that this report is actually a CSV report
         reportManagementService.validateReportFormat(requestedId, CSV);
-
-        return streamingService.stream(requestedId, CSV);
+        var response = streamingService.stream(requestedId, CSV);
+        reportTrackingDao.insertTrackingRow(requestedId);
+        return response;
     }
 
     /**
@@ -115,7 +116,9 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
         // Validate format before attempting to stream
         reportManagementService.validateReportFormat(id, XLSX);
 
-        return streamingService.stream(id, XLSX);
+        var response = streamingService.stream(id, XLSX);
+        reportTrackingDao.insertTrackingRow(id);
+        return response;
     }
 
     @Override
@@ -125,7 +128,9 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
         // Validate that this report is S3STORAGE format
         reportManagementService.validateReportFormat(id, S3STORAGE);
 
-        return fileDownloadService.getFileStreamResponse(id);
+        var response = fileDownloadService.getFileStreamResponse(id);
+        reportTrackingDao.insertTrackingRow(id);
+        return response;
     }
 
 }
