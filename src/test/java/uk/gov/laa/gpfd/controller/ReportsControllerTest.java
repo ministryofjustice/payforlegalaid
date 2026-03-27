@@ -1,6 +1,8 @@
 package uk.gov.laa.gpfd.controller;
 
 
+import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -16,6 +18,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
 import uk.gov.laa.gpfd.config.OAuth2TestConfig;
 import uk.gov.laa.gpfd.dao.ReportDao;
+import uk.gov.laa.gpfd.dao.ReportTrackingDao;
 import uk.gov.laa.gpfd.data.ReportListEntryTestDataFactory;
 import uk.gov.laa.gpfd.exception.InvalidReportFormatException;
 import uk.gov.laa.gpfd.exception.ReportAccessException;
@@ -60,6 +63,14 @@ class ReportsControllerTest extends BaseMvcTest {
     @MockitoBean
     ReportDao reportDao;
 
+    @MockitoBean
+    ReportTrackingDao reportTrackingDao;
+
+    @BeforeEach
+    void beforeEach() {
+        reset(reportManagementServiceMock, streamingService, fileDownloadService, reportDao, reportTrackingDao);
+    }
+
     @Test
     void downloadCsvReturnsCorrectResponse() throws Exception {
         // Mock CSV data
@@ -87,6 +98,7 @@ class ReportsControllerTest extends BaseMvcTest {
                 .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=data.csv"));
 
         verify(streamingService).stream(DEFAULT_ID, FileExtension.CSV);
+        verify(reportTrackingDao).insertTrackingRow(DEFAULT_ID);
     }
 
 
@@ -108,7 +120,7 @@ class ReportsControllerTest extends BaseMvcTest {
                 .andExpect(jsonPath("$.reportList[1].id").value(reportListEntryMock2.getId().toString()));
 
         verify(reportManagementServiceMock, times(1)).fetchReportListEntries();
-
+        verify(reportTrackingDao, times(0)).insertTrackingRow(any());
     }
 
     @Test
@@ -128,6 +140,7 @@ class ReportsControllerTest extends BaseMvcTest {
                 .andExpect(jsonPath("$.reportName").value(reportResponseMock.getReportName()));
 
         verify(reportManagementServiceMock, times(1)).createReportResponse(reportId);
+        verify(reportTrackingDao, times(0)).insertTrackingRow(any());
     }
 
     @Test
@@ -144,6 +157,8 @@ class ReportsControllerTest extends BaseMvcTest {
 
         assertEquals("test", result.getResponse().getContentAsString());
         verify(fileDownloadService, times(1)).getFileStreamResponse(reportId);
+        verify(reportTrackingDao).insertTrackingRow(DEFAULT_ID);
+
     }
 
     @Test
@@ -238,6 +253,7 @@ class ReportsControllerTest extends BaseMvcTest {
 
         verify(reportManagementServiceMock).validateReportFormat(csvReportId, FileExtension.CSV);
         verify(streamingService).stream(csvReportId, FileExtension.CSV);
+        verify(reportTrackingDao).insertTrackingRow(csvReportId);
     }
 
     @Test
@@ -269,6 +285,7 @@ class ReportsControllerTest extends BaseMvcTest {
 
         verify(reportManagementServiceMock).validateReportFormat(excelReportId, FileExtension.XLSX);
         verify(streamingService).stream(excelReportId, FileExtension.XLSX);
+        verify(reportTrackingDao).insertTrackingRow(DEFAULT_ID);
     }
 
     @ParameterizedTest(name = "Rejects invalid filetype {1} for S3STORAGE download")
@@ -315,6 +332,7 @@ class ReportsControllerTest extends BaseMvcTest {
         assertEquals("test", result.getResponse().getContentAsString());
         verify(reportManagementServiceMock).validateReportFormat(s3ReportId, FileExtension.S3STORAGE);  // Updated this line
         verify(fileDownloadService, times(1)).getFileStreamResponse(s3ReportId);
+        verify(reportTrackingDao).insertTrackingRow(s3ReportId);
     }
 
     @Test
@@ -324,6 +342,7 @@ class ReportsControllerTest extends BaseMvcTest {
                 .when(reportDao).verifyUserCanAccessReport(id);
         performAuthenticatedGet("/csv/" + id, List.of("Financial"))
                 .andExpect(status().isForbidden());
+        verify(reportTrackingDao, times(0)).insertTrackingRow(any());
     }
 
     @Test
@@ -333,6 +352,7 @@ class ReportsControllerTest extends BaseMvcTest {
                 .when(reportDao).verifyUserCanAccessReport(id);
         performAuthenticatedGet("/excel/" + id, List.of("Financial"))
                 .andExpect(status().isForbidden());
+        verify(reportTrackingDao, times(0)).insertTrackingRow(any());
     }
 
 }

@@ -341,7 +341,7 @@ class GlobalExceptionHandlerTest {
 
         var response = globalExceptionHandler.handleDatabaseReadException(exception);
 
-        assertEquals(BAD_REQUEST, response.getStatusCode());
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertEquals("Error writing to db :(",
                 response.getBody().getError());
     }
