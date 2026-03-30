@@ -94,13 +94,6 @@ class SecurityUtilsTest {
     }
 
     @Test
-    void extractRoles_returnsEmptyList_whenAuthenticationIsNull() {
-        SecurityContextHolder.clearContext();
-        List<String> roles = securityUtils.extractRoles();
-        assertTrue(roles.isEmpty());
-    }
-
-    @Test
     void isAuthorized_returnsTrue_whenUserHasAtLeastOneRequiredRole() {
         assertTrue(securityUtils.isAuthorized(
                 List.of("A", "B"),

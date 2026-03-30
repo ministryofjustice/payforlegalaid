@@ -168,11 +168,11 @@ class ReportDaoTest {
                 any(ResultSetExtractor.class),
                 anyString()
         )).thenAnswer(invocation -> {
-            ResultSetExtractor<?> extractor = invocation.getArgument(1);
+            ResultSetExtractor<?> extractor1 = invocation.getArgument(1);
             ResultSet rs = mock(ResultSet.class);
             when(rs.next()).thenReturn(true, false);
             when(rs.getString("ROLE_NAME")).thenReturn(requiredRoles.get(0));
-            extractor.extractData(rs);
+            extractor1.extractData(rs);
             return null;
         });
         when(securityUtils.isAuthorized(userRoles, requiredRoles))
