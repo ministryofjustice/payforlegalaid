@@ -17,15 +17,15 @@ gpfd:
 
   datasource:
     read-only:
-      url: jdbc:h2:file:~/localGpfdDb;MODE=Oracle
-      username: sa
-      password:
-      driver-class-name: org.h2.Driver
+      url: jdbc:oracle:thin:@oracle-local:1521/FREEPDB1
+      username: GPFD
+      password: ${ORACLE_DB_PASSWORD}
+      driver-class-name: oracle.jdbc.OracleDriver
     write:
-      url: jdbc:h2:file:~/localGpfdDb;MODE=Oracle
-      username: sa
-      password:
-      driver-class-name: org.h2.Driver
+      url: jdbc:oracle:thin:@oracle-local:1521/FREEPDB1
+      username: GPFD
+      password: ${ORACLE_DB_PASSWORD}
+      driver-class-name: oracle.jdbc.OracleDriver
 
 spring:
   config:
@@ -50,14 +50,22 @@ spring:
   main:
     allow-bean-definition-overriding: true
 
-  h2:
-    console:
-      enabled:
-        true
+  datasource:
+    url: jdbc:oracle:thin:@oracle-local:1521/FREEPDB1
+    username: GPFD
+    password: ${ORACLE_DB_PASSWORD}
+    driver-class-name: oracle.jdbc.OracleDriver
+
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    default-schema: GPFD
+    url: jdbc:oracle:thin:@oracle-local:1521/FREEPDB1
+    user: GPFD
+    password: ${ORACLE_DB_PASSWORD}
+
   jpa:
-    database-platform:
-      org.hibernate.dialect.Oracle12cDialect
+    database-platform: org.hibernate.dialect.Oracle12cDialect
     hibernate:
-      ddl-auto:
-        none
+      ddl-auto: none
     generate-ddl: false

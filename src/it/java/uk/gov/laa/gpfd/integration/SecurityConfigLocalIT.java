@@ -17,10 +17,12 @@ import java.util.UUID;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CSV_REPORT;
+import static org.hamcrest.Matchers.containsString;
 
 @SpringBootTest(classes = {TestSecurityConfig.class, TestDatabaseConfig.class})
 @AutoConfigureMockMvc
@@ -69,4 +71,52 @@ class SecurityConfigLocalIT extends BaseIT {
                 .andExpect(header().string("X-Frame-Options", "SAMEORIGIN"));
     }
 
+    @Test
+    void shouldReturnCspReportOnlyHeader() throws Exception {
+        var reportId = UUID.fromString(CSV_REPORT.getReportData().id());
+        var reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();
+
+        when(reportManagementService.createReportResponse(reportId)).thenReturn(reportResponseMock);
+
+        mockMvc.perform(get("/reports/{id}", reportId))
+                .andExpect(status().isOk())
+                .andExpect(header().string(
+                        "Content-Security-Policy-Report-Only",
+                        containsString("script-src 'self'")
+                ))
+                .andExpect(header().string(
+                        "Content-Security-Policy-Report-Only",
+                        containsString("report-uri /csp-report")
+                ));
+    }
+
+    @Test
+    void shouldAcceptCspViolationReport() throws Exception {
+        mockMvc.perform(post("/csp-report")
+                        .contentType("application/csp-report")
+                        .content("""
+                {
+                  "csp-report": {
+                    "document-uri": "http://localhost:8080",
+                    "violated-directive": "script-src",
+                    "blocked-uri": "eval"
+                  }
+                }
+                """))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void shouldRejectCspReportWithWrongContentType() throws Exception {
+        mockMvc.perform(post("/csp-report")
+                        .contentType("text/plain")
+                        .content("{}"))
+                .andExpect(status().isUnsupportedMediaType());
+    }
+
+    @Test
+    void shouldRejectGetRequestToCspEndpoint() throws Exception {
+        mockMvc.perform(get("/csp-report"))
+                .andExpect(status().isMethodNotAllowed());
+    }
 }

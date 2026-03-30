@@ -39,13 +39,13 @@ public record ReportTestData(
     /**
      * Generates the expected download URL for this report.
      *
-     * @return formatted URL string following the pattern: <a href="http://localhost/">...</a>{type-subpath}/{id}
+     * @return formatted URL string following the pattern: http://localhost/reports/{id}/{subpath}
      */
     public String expectedUrl() {
         if (fileType.equals(FileExtension.S3STORAGE)) {
-            return "http://localhost/%s/%s/%s".formatted("reports", id, "file");
+            return "http://localhost/reports/%s/file".formatted(id);
         }
-        return "http://localhost/%s/%s".formatted(fileType.getSubPath(), id);
+        return "http://localhost/reports/%s/%s".formatted(id, fileType.getSubPath());
     }
 
     /**

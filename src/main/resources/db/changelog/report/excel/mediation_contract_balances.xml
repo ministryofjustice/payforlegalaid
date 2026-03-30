@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="        http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.29.xsd">
+    <changeSet id="0003003-insert-seed-for-mediation-contract-balances" author="robert buczek">
+        <comment>Insert initial data for: Mediation contract balances</comment>
+
+        <insert tableName="REPORTS" schemaName="GPFD">
+            <column name="ID" value="56328b13-254d-435d-813a-5863f94b996d"/>
+            <column name="NAME" value="Mediation contract balances"/>
+            <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="b380e788-2096-46dc-b58a-21bf771669dc"/>
+            <column name="REPORT_CREATION_DATE" valueDate="SYSDATE"/>
+            <column name="DESCRIPTION" value="Mediation contract balances"/>
+            <column name="NUM_DAYS_TO_KEEP" value="30"/>
+            <column name="FILE_NAME" value="MEDIATION_CONTRACT_BALANCES_TEMPLATE"/>
+            <column name="ACTIVE" value="Y"/>
+            <column name="REPORT_OUTPUT_TYPE" value="bd098666-94e4-4b0e-822c-8e5dfb04c908"/>
+            <column name="REPORT_OWNER_ID" value="00000000-0000-0000-0000-000000000003"/>
+            <column name="REPORT_OWNER_NAME" value="Steve Bloggs"/>
+            <column name="REPORT_OWNER_EMAIL" value="steve.bloggs@example.org"/>
+        </insert>
+
+        <insert tableName="REPORT_QUERIES" schemaName="GPFD">
+            <column name="ID" value="09aab7ff-416b-4fdc-a26b-a5118a0bb418"/>
+            <column name="REPORT_ID" value="56328b13-254d-435d-813a-5863f94b996d"/>
+            <column name="TAB_NAME" value="MAIN"/>
+            <column name="INDEX" value="0"/>
+        </insert>
+
+        <!-- Set up DATA tab-->
+        <insert tableName="REPORT_QUERIES" schemaName="GPFD">
+            <column name="ID" value="56328b13-254d-435d-813a-5863f94b996d"/>
+            <column name="REPORT_ID" value="56328b13-254d-435d-813a-5863f94b996d"/>
+            <column name="QUERY" value="SELECT * FROM ANY_REPORT.PIZZA_ACCOUNT_MEDIATION"/>
+            <column name="TAB_NAME" value="DATA"/>
+            <column name="INDEX" value="1"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="2c03a423-885d-431b-9539-6ba35ce57b3d"/>
+            <column name="REPORT_QUERY_ID" value="56328b13-254d-435d-813a-5863f94b996d"/>
+            <column name="SOURCE_NAME" value="STORE_CODE"/>
+            <column name="MAPPED_NAME" value="OFFICE_CODE"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="12.33"/>
+            <column name="COLUMN_ORDER" value="1"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="4418c554-1e1e-4c56-aab1-252c5e7d695a"/>
+            <column name="REPORT_QUERY_ID" value="56328b13-254d-435d-813a-5863f94b996d"/>
+            <column name="SOURCE_NAME" value="OLD_SALES"/>
+            <column name="MAPPED_NAME" value="OLD_CLAIMS"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="11.50"/>
+            <column name="COLUMN_ORDER" value="2"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="4e37d5df-0a43-4d16-a0ff-2eaefb921378"/>
+            <column name="REPORT_QUERY_ID" value="56328b13-254d-435d-813a-5863f94b996d"/>
+            <column name="SOURCE_NAME" value="NEW_SALES"/>
+            <column name="MAPPED_NAME" value="NEW_CLAIMS"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="12.50"/>
+            <column name="COLUMN_ORDER" value="3"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="2ef5910e-ec95-4900-89f9-d09a293f8e27"/>
+            <column name="REPORT_QUERY_ID" value="56328b13-254d-435d-813a-5863f94b996d"/>
+            <column name="SOURCE_NAME" value="TOTAL_SALES"/>
+            <column name="MAPPED_NAME" value="TOTAL_CLAIMS"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="13.67"/>
+            <column name="COLUMN_ORDER" value="4"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="2087bc97-7c5a-431d-9d6c-bda729c8f206"/>
+            <column name="REPORT_QUERY_ID" value="56328b13-254d-435d-813a-5863f94b996d"/>
+            <column name="SOURCE_NAME" value="OLD_COSTS"/>
+            <column name="MAPPED_NAME" value="OLD_EXPEND"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="11.67"/>
+            <column name="COLUMN_ORDER" value="5"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="fced6f77-cf57-4c57-bf1b-76eef0e7a5a9"/>
+            <column name="REPORT_QUERY_ID" value="56328b13-254d-435d-813a-5863f94b996d"/>
+            <column name="SOURCE_NAME" value="NEW_COSTS"/>
+            <column name="MAPPED_NAME" value="NEW_EXPEND"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="12.67"/>
+            <column name="COLUMN_ORDER" value="6"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="769c1b58-ddc5-40b3-b241-8c196b8a8fb1"/>
+            <column name="REPORT_QUERY_ID" value="56328b13-254d-435d-813a-5863f94b996d"/>
+            <column name="SOURCE_NAME" value="TOTAL_COSTS"/>
+            <column name="MAPPED_NAME" value="TOTAL_EXPEND"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="13.83"/>
+            <column name="COLUMN_ORDER" value="7"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="325bade9-6283-4866-98a3-9c89ba1dea7e"/>
+            <column name="REPORT_QUERY_ID" value="56328b13-254d-435d-813a-5863f94b996d"/>
+            <column name="SOURCE_NAME" value="BALANCE"/>
+            <column name="MAPPED_NAME" value="BAL_OF_CLAIMS_N_PAYS"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="23"/>
+            <column name="COLUMN_ORDER" value="8"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="eadad560-85f4-4ad4-b72a-dd0ee2149b09"/>
+            <column name="REPORT_QUERY_ID" value="56328b13-254d-435d-813a-5863f94b996d"/>
+            <column name="SOURCE_NAME" value="TOPPING_ADJUSTMENTS"/>
+            <column name="MAPPED_NAME" value="CONTRACT_ADJUSTMENTS"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="24.29"/>
+            <column name="COLUMN_ORDER" value="9"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="c7749447-d47c-492b-8db4-2cbc277be1b9"/>
+            <column name="REPORT_QUERY_ID" value="56328b13-254d-435d-813a-5863f94b996d"/>
+            <column name="SOURCE_NAME" value="TOPPING_BALANCE"/>
+            <column name="MAPPED_NAME" value="CONTRACT_BALANCE"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="19.17"/>
+            <column name="COLUMN_ORDER" value="10"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="9522d40f-6d39-4b19-a20b-5fa7efb81404"/>
+            <column name="REPORT_QUERY_ID" value="56328b13-254d-435d-813a-5863f94b996d"/>
+            <column name="SOURCE_NAME" value="YEARLY_SALES"/>
+            <column name="MAPPED_NAME" value="IN_YEAR_CLAIMS"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="15.67"/>
+            <column name="COLUMN_ORDER" value="11"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="d8b382c7-4d53-40f7-960c-3adcfa1fda6c"/>
+            <column name="REPORT_QUERY_ID" value="56328b13-254d-435d-813a-5863f94b996d"/>
+            <column name="SOURCE_NAME" value="YEARLY_COSTS"/>
+            <column name="MAPPED_NAME" value="IN_YEAR_PAYMENTS"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="18.83"/>
+            <column name="COLUMN_ORDER" value="12"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="7d988ab6-e800-4964-a8f4-4306f117f80b"/>
+            <column name="REPORT_QUERY_ID" value="56328b13-254d-435d-813a-5863f94b996d"/>
+            <column name="SOURCE_NAME" value="ADJUSTMENTS"/>
+            <column name="MAPPED_NAME" value="PAYMENT_RUN_ADJUSTMENT"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="27.67"/>
+            <column name="COLUMN_ORDER" value="13"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="ea3cb880-9e49-451f-b823-eebfc771c162"/>
+            <column name="REPORT_QUERY_ID" value="56328b13-254d-435d-813a-5863f94b996d"/>
+            <column name="SOURCE_NAME" value="FINAL_BALANCE"/>
+            <column name="MAPPED_NAME" value="FINAL_CONTRACT_BALANCE"/>
+            <column name="FORMAT" value="#.00"/>
+            <column name="FORMAT_TYPE" value="double"/>
+            <column name="COLUMN_WIDTH" value="25.67"/>
+            <column name="COLUMN_ORDER" value="14"/>
+        </insert>
+
+        <!-- Create PIZZA_ACCOUNT_MEDIATION to populate the DATA tab-->
+        <createTable tableName="PIZZA_ACCOUNT_MEDIATION" schemaName="ANY_REPORT">
+            <column name="STORE_CODE" type="VARCHAR(50)"/>
+            <column name="OLD_SALES" type="NUMBER"/>
+            <column name="NEW_SALES" type="NUMBER"/>
+            <column name="TOTAL_SALES" type="NUMBER"/>
+            <column name="OLD_COSTS" type="NUMBER"/>
+            <column name="NEW_COSTS" type="NUMBER"/>
+            <column name="TOTAL_COSTS" type="NUMBER"/>
+            <column name="BALANCE" type="NUMBER"/>
+            <column name="TOPPING_ADJUSTMENTS" type="NUMBER"/>
+            <column name="TOPPING_BALANCE" type="NUMBER"/>
+            <column name="YEARLY_SALES" type="NUMBER"/>
+            <column name="YEARLY_COSTS" type="NUMBER"/>
+            <column name="ADJUSTMENTS" type="NUMBER"/>
+            <column name="FINAL_BALANCE" type="NUMBER"/>
+        </createTable>
+
+        <insert tableName="PIZZA_ACCOUNT_MEDIATION" schemaName="ANY_REPORT">
+            <column name="STORE_CODE" value="Store001"/>
+            <column name="OLD_SALES" valueNumeric="1200.50"/>
+            <column name="NEW_SALES" valueNumeric="1300.75"/>
+            <column name="TOTAL_SALES" valueNumeric="2501.25"/>
+            <column name="OLD_COSTS" valueNumeric="700.00"/>
+            <column name="NEW_COSTS" valueNumeric="750.25"/>
+            <column name="TOTAL_COSTS" valueNumeric="1450.25"/>
+            <column name="BALANCE" valueNumeric="1051.00"/>
+            <column name="TOPPING_ADJUSTMENTS" valueNumeric="15.75"/>
+            <column name="TOPPING_BALANCE" valueNumeric="1066.75"/>
+            <column name="YEARLY_SALES" valueNumeric="15000.00"/>
+            <column name="YEARLY_COSTS" valueNumeric="9000.00"/>
+            <column name="ADJUSTMENTS" valueNumeric="25.00"/>
+            <column name="FINAL_BALANCE" valueNumeric="1100.75"/>
+        </insert>
+        <insert tableName="PIZZA_ACCOUNT_MEDIATION" schemaName="ANY_REPORT">
+            <column name="STORE_CODE" value="Store002"/>
+            <column name="OLD_SALES" valueNumeric="900.00"/>
+            <column name="NEW_SALES" valueNumeric="1100.00"/>
+            <column name="TOTAL_SALES" valueNumeric="2000.00"/>
+            <column name="OLD_COSTS" valueNumeric="600.00"/>
+            <column name="NEW_COSTS" valueNumeric="650.00"/>
+            <column name="TOTAL_COSTS" valueNumeric="1250.00"/>
+            <column name="BALANCE" valueNumeric="750.00"/>
+            <column name="TOPPING_ADJUSTMENTS" valueNumeric="10.50"/>
+            <column name="TOPPING_BALANCE" valueNumeric="760.50"/>
+            <column name="YEARLY_SALES" valueNumeric="12000.00"/>
+            <column name="YEARLY_COSTS" valueNumeric="8000.00"/>
+            <column name="ADJUSTMENTS" valueNumeric="30.00"/>
+            <column name="FINAL_BALANCE" valueNumeric="780.50"/>
+        </insert>
+        <insert tableName="PIZZA_ACCOUNT_MEDIATION" schemaName="ANY_REPORT">
+            <column name="STORE_CODE" value="Store003"/>
+            <column name="OLD_SALES" valueNumeric="1500.00"/>
+            <column name="NEW_SALES" valueNumeric="1400.00"/>
+            <column name="TOTAL_SALES" valueNumeric="2900.00"/>
+            <column name="OLD_COSTS" valueNumeric="850.00"/>
+            <column name="NEW_COSTS" valueNumeric="900.00"/>
+            <column name="TOTAL_COSTS" valueNumeric="1750.00"/>
+            <column name="BALANCE" valueNumeric="1150.00"/>
+            <column name="TOPPING_ADJUSTMENTS" valueNumeric="20.00"/>
+            <column name="TOPPING_BALANCE" valueNumeric="1170.00"/>
+            <column name="YEARLY_SALES" valueNumeric="16000.00"/>
+            <column name="YEARLY_COSTS" valueNumeric="9500.00"/>
+            <column name="ADJUSTMENTS" valueNumeric="50.00"/>
+            <column name="FINAL_BALANCE" valueNumeric="1220.00"/>
+        </insert>
+        <insert tableName="PIZZA_ACCOUNT_MEDIATION" schemaName="ANY_REPORT">
+            <column name="STORE_CODE" value="Store004"/>
+            <column name="OLD_SALES" valueNumeric="1100.25"/>
+            <column name="NEW_SALES" valueNumeric="1000.75"/>
+            <column name="TOTAL_SALES" valueNumeric="2101.00"/>
+            <column name="OLD_COSTS" valueNumeric="650.00"/>
+            <column name="NEW_COSTS" valueNumeric="600.00"/>
+            <column name="TOTAL_COSTS" valueNumeric="1250.00"/>
+            <column name="BALANCE" valueNumeric="851.00"/>
+            <column name="TOPPING_ADJUSTMENTS" valueNumeric="12.00"/>
+            <column name="TOPPING_BALANCE" valueNumeric="863.00"/>
+            <column name="YEARLY_SALES" valueNumeric="13000.00"/>
+            <column name="YEARLY_COSTS" valueNumeric="8500.00"/>
+            <column name="ADJUSTMENTS" valueNumeric="40.00"/>
+            <column name="FINAL_BALANCE" valueNumeric="903.00"/>
+        </insert>
+        <insert tableName="PIZZA_ACCOUNT_MEDIATION" schemaName="ANY_REPORT">
+            <column name="STORE_CODE" value="Store005"/>
+            <column name="OLD_SALES" valueNumeric="1000.00"/>
+            <column name="NEW_SALES" valueNumeric="900.00"/>
+            <column name="TOTAL_SALES" valueNumeric="1900.00"/>
+            <column name="OLD_COSTS" valueNumeric="580.00"/>
+            <column name="NEW_COSTS" valueNumeric="620.00"/>
+            <column name="TOTAL_COSTS" valueNumeric="1200.00"/>
+            <column name="BALANCE" valueNumeric="700.00"/>
+            <column name="TOPPING_ADJUSTMENTS" valueNumeric="18.00"/>
+            <column name="TOPPING_BALANCE" valueNumeric="718.00"/>
+            <column name="YEARLY_SALES" valueNumeric="11500.00"/>
+            <column name="YEARLY_COSTS" valueNumeric="7800.00"/>
+            <column name="ADJUSTMENTS" valueNumeric="35.00"/>
+            <column name="FINAL_BALANCE" valueNumeric="753.00"/>
+        </insert>
+
+        <!-- Set up Adjusted Expenditure tab-->
+        <insert tableName="REPORT_QUERIES" schemaName="GPFD">
+            <column name="ID" value="70847839-5103-4971-b163-f71832893f70"/>
+            <column name="REPORT_ID" value="56328b13-254d-435d-813a-5863f94b996d"/>
+            <column name="QUERY" value="SELECT * FROM ANY_REPORT.PIZZA_CHEF_BONUSES"/>
+            <column name="TAB_NAME" value="Adjusted Expenditure"/>
+            <column name="INDEX" value="2"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="544aab18-bd73-44cf-952a-309dca366521"/>
+            <column name="REPORT_QUERY_ID" value="70847839-5103-4971-b163-f71832893f70"/>
+            <column name="SOURCE_NAME" value="CHEF_NAME"/>
+            <column name="MAPPED_NAME" value="PARTY_SITE_NAME"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="17.33"/>
+            <column name="COLUMN_ORDER" value="1"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="2c596952-1996-4434-a618-e2cce5326af2"/>
+            <column name="REPORT_QUERY_ID" value="70847839-5103-4971-b163-f71832893f70"/>
+            <column name="SOURCE_NAME" value="CHEF_ID"/>
+            <column name="MAPPED_NAME" value="PARTY_SITE_ID"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="13.5"/>
+            <column name="COLUMN_ORDER" value="2"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="9e76ec6c-f07c-4572-aa85-9086d2471491"/>
+            <column name="REPORT_QUERY_ID" value="70847839-5103-4971-b163-f71832893f70"/>
+            <column name="SOURCE_NAME" value="BONUS_REF"/>
+            <column name="MAPPED_NAME" value="INVOICE_NUM"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="42.83"/>
+            <column name="COLUMN_ORDER" value="3"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="0252fe3c-1438-4234-910c-94364af1d006"/>
+            <column name="REPORT_QUERY_ID" value="70847839-5103-4971-b163-f71832893f70"/>
+            <column name="SOURCE_NAME" value="PAY_DATE"/>
+            <column name="MAPPED_NAME" value="PAY_DATE"/>
+            <column name="FORMAT" value="dd-MMM-yy"/>
+            <column name="FORMAT_TYPE" value="date"/>
+            <column name="COLUMN_WIDTH" value="9.33"/>
+            <column name="COLUMN_ORDER" value="4"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="20fbb13d-0350-4100-8441-b509e4f7effe"/>
+            <column name="REPORT_QUERY_ID" value="70847839-5103-4971-b163-f71832893f70"/>
+            <column name="SOURCE_NAME" value="BONUS_SCHEME"/>
+            <column name="MAPPED_NAME" value="SUB_SCHEME"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="11"/>
+            <column name="COLUMN_ORDER" value="5"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="9cc6dbec-02cf-4736-8535-28c9282d7225"/>
+            <column name="REPORT_QUERY_ID" value="70847839-5103-4971-b163-f71832893f70"/>
+            <column name="SOURCE_NAME" value="BONUS_PAID_TOTAL"/>
+            <column name="MAPPED_NAME" value="PAID_TOTAL"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="number"/>
+            <column name="COLUMN_WIDTH" value="15.33"/>
+            <column name="COLUMN_ORDER" value="6"/>
+        </insert>
+
+        <!-- Create PIZZA_CHEF_BONUSES to populate the Adjusted Expenditure tab-->
+        <createTable tableName="PIZZA_CHEF_BONUSES" schemaName="ANY_REPORT">
+            <column name="CHEF_NAME" type="VARCHAR(240)"/>
+            <column name="CHEF_ID" type="NUMBER"/>
+            <column name="BONUS_REF" type="VARCHAR(50)"/>
+            <column name="PAY_DATE" type="DATE"/>
+            <column name="BONUS_SCHEME" type="VARCHAR(20)"/>
+            <column name="BONUS_PAID_TOTAL" type="NUMBER"/>
+        </createTable>
+
+        <insert tableName="PIZZA_CHEF_BONUSES" schemaName="ANY_REPORT">
+            <column name="CHEF_NAME" value="Bruce"/>
+            <column name="CHEF_ID" valueNumeric="323"/>
+            <column name="BONUS_REF" value="GreatToppings"/>
+            <column name="PAY_DATE" valueDate="2025-08-03"/>
+            <column name="BONUS_SCHEME" value="CUST_TIPS"/>
+            <column name="BONUS_PAID_TOTAL" valueNumeric="12.32"/>
+        </insert>
+        <insert tableName="PIZZA_CHEF_BONUSES" schemaName="ANY_REPORT">
+            <column name="CHEF_NAME" value="Bruce"/>
+            <column name="CHEF_ID" valueNumeric="323"/>
+            <column name="BONUS_REF" value="CleanedUp"/>
+            <column name="PAY_DATE" valueDate="2025-08-04"/>
+            <column name="BONUS_SCHEME" value="CLEANING"/>
+            <column name="BONUS_PAID_TOTAL" valueNumeric="5.00"/>
+        </insert>
+        <insert tableName="PIZZA_CHEF_BONUSES" schemaName="ANY_REPORT">
+            <column name="CHEF_NAME" value="Lucy"/>
+            <column name="CHEF_ID" valueNumeric="9"/>
+            <column name="BONUS_REF" value="GreatToppings"/>
+            <column name="PAY_DATE" valueDate="2025-08-03"/>
+            <column name="BONUS_SCHEME" value="CUST_TIPS"/>
+            <column name="BONUS_PAID_TOTAL" valueNumeric="18.33"/>
+        </insert>
+
+    </changeSet>
+</databaseChangeLog>

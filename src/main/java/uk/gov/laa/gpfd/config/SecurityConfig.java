@@ -13,6 +13,7 @@ import org.springframework.security.oauth2.client.web.HttpSessionOAuth2Authorize
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.HttpSecuritySessionManagementConfigurerBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
@@ -27,6 +28,7 @@ import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
  * to manage specific security aspects.
  * </p>
  */
+@SuppressWarnings("java:S4502") // CSRF disabled only for CSP report POST endpoint
 @Profile("!test")
 @Configuration
 @RequiredArgsConstructor
@@ -54,12 +56,34 @@ public class SecurityConfig {
         var authorizeHttpRequestsBuilder = new AuthorizeHttpRequestsBuilder(authManager);
         var sessionManagementConfigurerBuilder = new SessionManagementConfigurerBuilder(concurrencyControlConfigurerCustomizer);
         return httpSecurity
+                // Allow csp-report to ignore CSRF or else POST requests will be blocked
+                .csrf(csrf -> csrf.ignoringRequestMatchers(
+                        PathPatternRequestMatcher.withDefaults().matcher("/csp-report")
+                ))
                 .authorizeHttpRequests(authorizeHttpRequestsBuilder)
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler((request, response, authentication) -> {
                             response.sendRedirect("/");
                         }))
                 .sessionManagement(sessionManagementConfigurerBuilder)
+                .headers(headers -> headers
+                        .contentSecurityPolicy(csp -> csp
+                                .policyDirectives(
+                                        "default-src 'none'; " +
+                                                "base-uri 'self'; " +
+                                                "object-src 'none'; " +
+                                                "frame-ancestors 'none'; " +
+                                                "form-action 'self'; " +
+                                                "script-src 'self'; " +
+                                                "style-src 'self'; " +
+                                                "img-src 'self' data:; " +
+                                                "font-src 'self'; " +
+                                                "connect-src 'self'; " +
+                                                "upgrade-insecure-requests; " +
+                                                "report-uri /csp-report"
+                                )
+                        )
+                )
                 .build();
     }
 }
