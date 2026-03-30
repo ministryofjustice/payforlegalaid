@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(classes = TestDatabaseConfig .class)
-@ActiveProfiles("test")
+@ActiveProfiles("testauth")
 @TestPropertySource(properties = {
         "gpfd.s3.has-s3-access=false"
 })

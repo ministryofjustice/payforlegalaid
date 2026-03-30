@@ -22,6 +22,7 @@ spring:
       on-profile: testauth
   liquibase:
     enabled: false
+    change-log: classpath:db/changelog/db.changelog-master.xml
   security:
     oauth2:
       client:

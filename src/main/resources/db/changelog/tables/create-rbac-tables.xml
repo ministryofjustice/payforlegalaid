@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+    <changeSet id="create-rbac-tables" author="neeta shinde">
+        <comment>Create ROLES </comment>
+        <createTable tableName="ROLES" schemaName="GPFD">
+            <column name="ROLE_ID" type="NUMBER">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="ROLE_NAME" type="VARCHAR2(200)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="REPORT_ROLES" schemaName="GPFD">
+            <column name="REPORT_ID" type="CHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ROLE_ID" type="NUMBER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

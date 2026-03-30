@@ -82,10 +82,9 @@ class ReportsControllerTest extends BaseMvcTest {
         when(streamingService.stream(DEFAULT_ID, FileExtension.CSV))
                 .thenReturn(mockResponseEntity);
 
-        performAuthenticatedGet("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d1", List.of("Financial"))
+        performAuthenticatedGet("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d1/csv", List.of("Financial"))
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=data.csv"));
-
         verify(streamingService).stream(DEFAULT_ID, FileExtension.CSV);
     }
 
@@ -168,7 +167,7 @@ class ReportsControllerTest extends BaseMvcTest {
                 .when(reportManagementServiceMock)
                 .validateReportFormat(uuid, FileExtension.XLSX);
 
-        performAuthenticatedGet("/excel/"+ uuid, List.of("Financial"))
+        performAuthenticatedGet("/reports/"+ uuid + "/excel", List.of("Financial"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value(
                         "Report " + uuid +
@@ -195,7 +194,7 @@ class ReportsControllerTest extends BaseMvcTest {
                 .when(reportManagementServiceMock)
                 .validateReportFormat(uuid, FileExtension.CSV);
 
-        performAuthenticatedGet("/csv/"+ uuid, List.of("Financial"))
+        performAuthenticatedGet("/reports/" + uuid + "/csv", List.of("Financial"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value(
                         "Report " + uuid +
@@ -232,7 +231,7 @@ class ReportsControllerTest extends BaseMvcTest {
         when(streamingService.stream(csvReportId, FileExtension.CSV)).thenReturn(mockResponseEntity);
 
         // Perform the GET request
-        performAuthenticatedGet("/csv/"+ csvReportId, List.of("Financial"))
+        performAuthenticatedGet("/reports/" + csvReportId + "/csv", List.of("Financial"))
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=data.csv"));
 
@@ -263,7 +262,7 @@ class ReportsControllerTest extends BaseMvcTest {
         when(streamingService.stream(excelReportId, FileExtension.XLSX)).thenReturn(mockResponseEntity);
 
         // Perform the GET request
-        performAuthenticatedGet("/excel/"+ excelReportId, List.of("Financial"))
+        performAuthenticatedGet("/reports/" + excelReportId + "/excel", List.of("Financial"))
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report.xlsx"));
 
@@ -322,7 +321,7 @@ class ReportsControllerTest extends BaseMvcTest {
         UUID id = DEFAULT_ID;
         doThrow(new ReportAccessException(id))
                 .when(reportDao).verifyUserCanAccessReport(id);
-        performAuthenticatedGet("/csv/" + id, List.of("Financial"))
+        performAuthenticatedGet("/reports/" + id + "/csv", List.of("Financial"))
                 .andExpect(status().isForbidden());
     }
 
@@ -331,7 +330,7 @@ class ReportsControllerTest extends BaseMvcTest {
         UUID id = DEFAULT_ID;
         doThrow(new ReportAccessException(id))
                 .when(reportDao).verifyUserCanAccessReport(id);
-        performAuthenticatedGet("/excel/" + id, List.of("Financial"))
+        performAuthenticatedGet("/reports/" + id + "/excel", List.of("Financial"))
                 .andExpect(status().isForbidden());
     }
 
