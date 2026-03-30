@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="001-create-schemas" author="buczek_robert">
+        <sql>CREATE SCHEMA GPFD;</sql>
+        <sql>CREATE SCHEMA ANY_REPORT;</sql>
+    </changeSet>
+
+    <changeSet id="002-create-tracking-tables" author="robert_buczek">
+        <createTable tableName="REPORT_TRACKING" schemaName="GPFD">
+            <column name="ID" type="CHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="REPORT_NAME" type="VARCHAR(80)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_URL" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATION_TIME" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MAPPING_ID" type="CHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_GENERATED_BY" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="003-create-reporting-tables" author="jason_smallman">
+        <createTable tableName="REPORT_OUTPUT_TYPES" schemaName="GPFD">
+            <column name="ID" type="CHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="EXTENSION" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="REPORTS" schemaName="GPFD">
+            <column name="ID" type="CHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TEMPLATE_SECURE_DOCUMENT_ID" type="VARCHAR(300)"/>
+            <column name="REPORT_CREATION_DATE" type="DATE"/>
+            <column name="LAST_DATABASE_REFRESH_DATETIME" type="TIMESTAMP"/>
+            <column name="DESCRIPTION" type="VARCHAR(4000)"/>
+            <column name="NUM_DAYS_TO_KEEP" type="INT"/>
+            <column name="REPORT_OUTPUT_TYPE" type="CHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_OWNER_ID" type="CHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_OWNER_NAME" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_OWNER_EMAIL" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FILE_NAME" type="VARCHAR(150)"/>
+            <column name="ACTIVE" type="VARCHAR(1)"/>
+        </createTable>
+
+        <createTable tableName="REPORT_GROUPS" schemaName="GPFD">
+            <column name="REPORT_ID" type="CHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="GROUP_ID" type="CHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="REPORT_QUERIES" schemaName="GPFD">
+            <column name="ID" type="CHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="REPORT_ID" type="CHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="QUERY" type="VARCHAR(4000)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="TAB_NAME" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="INDEX" type="VARCHAR(100)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" type="CHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="REPORT_QUERY_ID" type="CHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SOURCE_NAME" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MAPPED_NAME" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FORMAT" type="VARCHAR(100)"/>
+            <column name="FORMAT_TYPE" type="VARCHAR(100)"/>
+            <column name="COLUMN_WIDTH" type="NUMBER(6,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="COLUMN_ORDER" type="NUMBER(6)"/>
+        </createTable>
+
+        <createTable tableName="REPORTS_TRACKING" schemaName="GPFD">
+            <column name="ID" type="CHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_ID" type="CHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATION_DATE" type="DATE"/>
+            <column name="REPORT_DOWNLOADED_BY" type="VARCHAR(150)"/>
+            <column name="REPORT_GENERATED_BY" type="VARCHAR(150)"/>
+            <column name="REPORT_CREATOR" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_OWNER" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_OUTPUT_TYPE" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TEMPLATE_URL" type="VARCHAR(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REPORT_URL" type="VARCHAR(300)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

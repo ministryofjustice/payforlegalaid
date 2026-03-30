@@ -22,7 +22,8 @@ import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
  * </p>
  */
 @Slf4j
-@Profile("local")
+@SuppressWarnings("java:S4502") // CSRF disabled only for H2 console — local/test profiles only, never active in prod
+@Profile({"local", "test"})
 @Configuration
 public class SecurityConfigLocal {
 
