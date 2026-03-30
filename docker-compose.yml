@@ -6,14 +6,10 @@ services:
       args:
         BUILDKIT_INLINE_CACHE: "1"
     container_name: payforlegalaid-local
-
     ports:
       - "8080:8080"
-
     environment:
       SPRING_PROFILES_ACTIVE: local
-      SPRING_CLOUD_AZURE_ACTIVE_DIRECTORY_ENABLED: "false"
-
     volumes:
       - gpfd-data:/data
 

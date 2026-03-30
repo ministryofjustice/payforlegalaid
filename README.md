@@ -79,8 +79,7 @@ For more details on how to get this template visit the [Confluence](https://dsdm
 ### Locally (Docker)
 
 The application can be run locally using Docker and Docker Compose, which handles building the app and spinning up all required services.
-Uses the DB changelog files that were initially stored in the [payforlegalaid-tests repo](https://github.com/ministryofjustice/payforlegalaid-tests)
-to build out the test database via Liquibase.
+Uses the DB changelog files that were initially stored in the payforlegalaid-tests repo to build out the test database via Liquibase.
 
 #### Prerequisites
 
