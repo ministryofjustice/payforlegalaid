@@ -45,3 +45,11 @@ gpfd:
     has-s3-access: false
   csv-generation:
     buffer-flush-frequency: 5000
+
+  datasource:
+    tracking:
+    # Default connection details for local dev, overridden in other envs
+    driver-class-name: org.postgresql.Driver
+    jdbcUrl: jdbc:postgresql://${RDS_DB_HOST:localhost}:5432/laa_claims_reporting_service_dev
+    username: user
+    password: dev

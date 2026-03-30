@@ -203,6 +203,21 @@ spec:
               value: ${PERMISSION_REP000_GROUP_ID}
             - name: PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID
               value: ${PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID}
+            - name: RDS_DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: rds-postgresql-instance-output
+                  key: rds_instance_address
+            - name: GPFD_DATASOURCE_TRACKING_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: rds-postgresql-instance-output
+                  key: database_username
+            - name: GPFD_DATASOURCE_TRACKING_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rds-postgresql-instance-output
+                  key: database_password
           securityContext:
             capabilities:
               drop:

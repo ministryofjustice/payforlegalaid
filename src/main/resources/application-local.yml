@@ -27,12 +27,6 @@ gpfd:
       username: sa
       password:
       driver-class-name: org.h2.Driver
-    tracking:
-      # Using Hikari pool as Postgres, so need jdbcUrl rather than plain url like in the above cases.
-      jdbcUrl: jdbc:postgresql://localhost:5432/postgres
-      username: postgres
-      password: postgres
-      driver-class-name: org.postgresql.Driver
 
 spring:
   config:
