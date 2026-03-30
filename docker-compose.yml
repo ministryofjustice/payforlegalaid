@@ -1,0 +1,50 @@
+services:
+  oracle:
+    image: gvenzl/oracle-free:23-slim
+    container_name: oracle-local
+    environment:
+      ORACLE_PASSWORD: ${ORACLE_DB_PASSWORD}
+      ORACLE_DB_PASSWORD: ${ORACLE_DB_PASSWORD}
+      ORACLE_CHARACTERSET: AL32UTF8
+    ports:
+      - "1521:1521"
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+      - ./local/oracle-init:/container-entrypoint-initdb.d
+    mem_limit: 2g
+    shm_size: 1g
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/1521"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 120s
+
+  payforlegalaid:
+    build:
+      context: .
+      dockerfile: ./local/Dockerfile
+      args:
+        BUILDKIT_INLINE_CACHE: "1"
+    container_name: payforlegalaid-local
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+      CLIENT_ID: ${CLIENT_ID}
+      TENANT_ID: ${TENANT_ID}
+      CLIENT_SECRET: ${CLIENT_SECRET}
+      ORACLE_DB_PASSWORD: ${ORACLE_DB_PASSWORD}
+    depends_on:
+      oracle:
+        condition: service_healthy        # wait for Oracle to be ready
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+
+volumes:
+  oracle-data:

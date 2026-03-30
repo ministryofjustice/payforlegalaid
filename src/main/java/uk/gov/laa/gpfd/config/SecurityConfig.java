@@ -60,6 +60,23 @@ public class SecurityConfig {
                             response.sendRedirect("/");
                         }))
                 .sessionManagement(sessionManagementConfigurerBuilder)
+                .headers(headers -> headers
+                        .contentSecurityPolicy(csp -> csp
+                                .policyDirectives(
+                                        "default-src 'none'; " +
+                                                "base-uri 'self'; " +
+                                                "object-src 'none'; " +
+                                                "frame-ancestors 'none'; " +
+                                                "form-action 'self'; " +
+                                                "script-src 'self'; " +
+                                                "style-src 'self'; " +
+                                                "img-src 'self' data:; " +
+                                                "font-src 'self'; " +
+                                                "connect-src 'self'; " +
+                                                "upgrade-insecure-requests"
+                                )
+                        )
+                )
                 .build();
     }
 }
