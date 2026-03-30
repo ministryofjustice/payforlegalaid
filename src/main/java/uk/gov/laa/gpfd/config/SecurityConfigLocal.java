@@ -22,7 +22,8 @@ import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
  * </p>
  */
 @Slf4j
-@Profile("local")
+@SuppressWarnings("java:S4502") // CSRF disabled only for H2 console — local/test profiles only, never active in prod
+@Profile({"local", "test"})
 @Configuration
 public class SecurityConfigLocal {
 
@@ -43,7 +44,25 @@ public class SecurityConfigLocal {
                 // Allow h2-console to ignore CSRF or it won't load
                 .csrf(csrf -> csrf.ignoringRequestMatchers(PathPatternRequestMatcher.withDefaults().matcher("/h2-console/**")))
                 // Allow h2-console to display in web-frames
-                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+                .headers(headers -> headers
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
+                        .contentSecurityPolicy(csp -> csp
+                                .policyDirectives(
+                                        "default-src 'none'; " +
+                                        "base-uri 'self'; " +
+                                        "object-src 'none'; " +
+                                        "frame-ancestors 'none'; " +
+                                        "form-action 'self'; " +
+                                        "script-src 'self'; " +
+                                        "style-src 'self'; " +
+                                        "img-src 'self' data:; " +
+                                        "font-src 'self'; " +
+                                        "connect-src 'self'; " +
+                                        "upgrade-insecure-requests"
+                                )
+                                        .reportOnly() // Included in local config for debugging purposes
+                                )
+                )
                 .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
                 .oauth2Login(oauth ->
                         oauth.loginPage("/oauth2/authorization/gpfd-azure-dev"))
