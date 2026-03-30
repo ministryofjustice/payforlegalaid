@@ -1,4 +1,4 @@
-package uk.gov.laa.gpfd.integration.config;
+package uk.gov.laa.gpfd.config;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -19,15 +19,16 @@ public class OAuth2TestConfig {
 
     @Bean
     public ClientRegistrationRepository clientRegistrationRepository() {
+
         ClientRegistration testRegistration = ClientRegistration
-                .withRegistrationId("gpfd-azure-dev")
-                .clientId("test-client-id")
-                .authorizationUri("authorizationUri")
-                .tokenUri("tokenUri")
-                .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
-                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .scope("openid")
-                .build();
+            .withRegistrationId("gpfd-azure-dev")
+            .clientId("test-client-id")
+            .authorizationUri("authorizationUri")
+            .tokenUri("tokenUri")
+            .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
+            .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+            .scope("openid")
+            .build();
 
         return new InMemoryClientRegistrationRepository(testRegistration);
     }

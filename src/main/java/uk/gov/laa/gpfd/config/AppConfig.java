@@ -74,15 +74,6 @@ public class AppConfig {
 
     @Value("${excel.jdbc.streamer.default-fetch-size:1000}")
     private int defaultFetchSize;
-
-    @Getter
-    @Value("${spring.cloud.azure.active-directory.credential.client-id}")
-    private String entraIdClientId;
-
-    @Getter
-    @Value("${spring.cloud.azure.active-directory.profile.tenant-id}")
-    private String entraIdTenantId;
-
     @Getter
     @Value("${gpfd.csv-generation.buffer-flush-frequency:1000}")
     private int csvBufferFlushFrequency;

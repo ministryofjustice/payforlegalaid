@@ -13,11 +13,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import uk.gov.laa.gpfd.config.TestDatabaseConfig;
+import uk.gov.laa.gpfd.config.TestSecurityConfig;
 
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         classes = {
-                TestDatabaseConfig.class
+                TestDatabaseConfig.class, TestSecurityConfig.class
         }
 )
 @AutoConfigureMockMvc
