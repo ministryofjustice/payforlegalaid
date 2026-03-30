@@ -1,5 +1,6 @@
 package uk.gov.laa.gpfd.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -20,7 +21,9 @@ import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
  * to manage specific security aspects.
  * </p>
  */
-@Profile("local")
+@Slf4j
+@SuppressWarnings("java:S4502") // CSRF disabled only for H2 console — local/test profiles only, never active in prod
+@Profile({"local", "test"})
 @Configuration
 public class SecurityConfigLocal {
 
