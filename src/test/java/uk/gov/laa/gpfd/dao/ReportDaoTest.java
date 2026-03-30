@@ -104,9 +104,9 @@ class ReportDaoTest {
         List<String> roles = List.of("REP000", "Reconciliation");
         when(securityUtils.extractRoles()).thenReturn(roles);
         var expectedReports = Arrays.asList(testReport,  ReportsTestDataFactory.createTestReport());
-        when(namedParameterJdbcTemplate.query(eq(ReportDao.SELECT_ALL_REPORTS_SQL),
-                eq(Map.of("roles", roles)),
-                eq(extractor)))
+        when(namedParameterJdbcTemplate.query(ReportDao.SELECT_ALL_REPORTS_SQL,
+                Map.of("roles", roles),
+                extractor))
                 .thenReturn(expectedReports);
 
         var result = reportDao.fetchReports();
@@ -190,11 +190,11 @@ class ReportDaoTest {
                 any(ResultSetExtractor.class),
                 anyString()
         )).thenAnswer(invocation -> {
-            ResultSetExtractor<?> extractor = invocation.getArgument(1);
+            ResultSetExtractor<?> extractor1 = invocation.getArgument(1);
             ResultSet rs = mock(ResultSet.class);
             when(rs.next()).thenReturn(true, false);
             when(rs.getString("ROLE_NAME")).thenReturn(requiredRoles.get(0));
-            extractor.extractData(rs);
+            extractor1.extractData(rs);
             return null;
         });
         when(securityUtils.isAuthorized(userRoles,

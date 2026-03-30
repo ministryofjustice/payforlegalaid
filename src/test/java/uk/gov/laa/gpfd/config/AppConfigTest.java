@@ -82,12 +82,10 @@ class AppConfigTest {
         // When
         var readOnlyJdbcTemplate = applicationContext.getBean("readOnlyJdbcTemplate", JdbcTemplate.class);
         var writeJdbcTemplate = applicationContext.getBean("writeJdbcTemplate", JdbcTemplate.class);
-        var namedJdbcTemplate = applicationContext.getBean("namedReadOnlyJdbcTemplate",JdbcTemplate.class);
 
         // Then
         assertNotNull(readOnlyJdbcTemplate, "Read-only JdbcTemplate bean should be created.");
         assertNotNull(writeJdbcTemplate, "Write-enabled JdbcTemplate bean should be created.");
-        assertNotNull(namedJdbcTemplate, "Named JdbcTemplate bean should be created.");
     }
 
     @Test

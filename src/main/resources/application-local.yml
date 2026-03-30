@@ -11,7 +11,6 @@ logging:
         transaction: INFO
         web.client.RestTemplate: INFO
 
-
 gpfd:
   url: http://localhost:8080
   redirect-uri-template: ${gpfd.url}/login/oauth2/code/gpfd-azure-dev
@@ -37,8 +36,8 @@ spring:
       client:
         registration:
           gpfd-azure-dev:
-            client-id: test
-            client-secret: test
+            client-id: ${CLIENT_ID}
+            client-secret: ${CLIENT_SECRET}
             scope: openid, profile, email
             redirect-uri:  ${gpfd.redirect-uri-template}
             authorization-grant-type: authorization_code
@@ -46,7 +45,7 @@ spring:
 
         provider:
           gpfd-azure-dev:
-            issuer-uri: https://login.microsoftonline.com/${AZURE_TENANT_ID}/v2.0
+            issuer-uri: https://login.microsoftonline.com/${TENANT_ID}/v2.0
 
   main:
     allow-bean-definition-overriding: true

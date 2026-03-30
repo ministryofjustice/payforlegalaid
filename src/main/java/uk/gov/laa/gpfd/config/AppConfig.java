@@ -237,15 +237,6 @@ public class AppConfig {
         return restTemplate;
     }
 
-    @Bean
-    JdbcTemplate namedReadOnlyJdbcTemplate(@Qualifier("readOnlyDataSource") DataSource dataSource) {
-        JdbcTemplate template = new JdbcTemplate(dataSource);
-        template.setFetchSize(defaultFetchSize);
-        template.setMaxRows(0);
-        template.setQueryTimeout(0);
-        return template;
-    }
-
     /**
      * Creates an {@link AuthorizationManager} bean to allow customization of the Authorization flow.
      * This allows the Authorization flow to be tailed to specific run profile, as needed

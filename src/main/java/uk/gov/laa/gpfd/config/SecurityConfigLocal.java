@@ -1,20 +1,15 @@
 package uk.gov.laa.gpfd.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
-
-import java.util.List;
 
 /**
  * Configuration class to set up Spring Security for the application.
@@ -26,6 +21,7 @@ import java.util.List;
  * to manage specific security aspects.
  * </p>
  */
+@Slf4j
 @Profile("local")
 @Configuration
 public class SecurityConfigLocal {
@@ -40,36 +36,18 @@ public class SecurityConfigLocal {
      *
      * @param httpSecurity the {@link HttpSecurity} object used to configure HTTP security.
      * @return a configured {@link SecurityFilterChain} object.
-     * @throws Exception if any error occurs during the configuration of HTTP security.
      */
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity httpSecurity) {
         return httpSecurity
                 // Allow h2-console to ignore CSRF or it won't load
                 .csrf(csrf -> csrf.ignoringRequestMatchers(PathPatternRequestMatcher.withDefaults().matcher("/h2-console/**")))
                 // Allow h2-console to display in web-frames
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+                .oauth2Login(oauth ->
+                        oauth.loginPage("/oauth2/authorization/gpfd-azure-dev"))
                 .build();
     }
-
-    @Bean
-    public ClientRegistrationRepository emptyClientRegistrationRepository() {
-
-        ClientRegistration localRegistration = ClientRegistration.withRegistrationId("graph")
-                .clientId("mockClientId")
-                .clientSecret("mockClientSecret")
-                .scope("read")
-                .authorizationUri("test")
-                .redirectUri("test2")
-                .tokenUri("test3")
-                .authorizationGrantType(AuthorizationGrantType.JWT_BEARER)
-                .build();
-
-        List<ClientRegistration> registrationList = List.of(localRegistration);
-
-        return new InMemoryClientRegistrationRepository(registrationList);
-    }
-
 
 }
