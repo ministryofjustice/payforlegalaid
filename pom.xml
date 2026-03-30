@@ -10,26 +10,26 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.4</version>
+        <version>4.0.5</version>
     </parent>
 
     <properties>
         <java.version>25</java.version>
         <oracle-jdbc.version>23.26.1.0.0</oracle-jdbc.version>
         <h2.version>2.4.240</h2.version>
-
-        <springdoc-oas.version>3.0.2</springdoc-oas.version>
+        <spring-security.version>7.0.5</spring-security.version>
+        <springdoc-oas.version>3.0.3</springdoc-oas.version>
 
         <!-- Downgraded due to a known issue: https://github.com/fabriciorby/maven-surefire-junit5-tree-reporter  (until the 2.0.x release becomes available) -->
         <maven-surefire-junit5-tree-reporter.version>1.5.1</maven-surefire-junit5-tree-reporter.version>
         <poi.version>5.5.1</poi.version>
         <immutables.version>2.12.1</immutables.version>
-        <spring-cloud-azure-dependencies.version>7.1.0</spring-cloud-azure-dependencies.version>
-        <govuk-frontend.version>5.14.0</govuk-frontend.version>
+        <spring-cloud-azure-dependencies.version>7.2.0</spring-cloud-azure-dependencies.version>
+        <govuk-frontend.version>6.1.0</govuk-frontend.version>
         <moj-frontend.version>6.0.0</moj-frontend.version>
 
-        <payforlegalaid-openapi.version>0.0.28</payforlegalaid-openapi.version>
-        <aws.java.sdk.version>2.42.17</aws.java.sdk.version>
+        <payforlegalaid-openapi.version>0.0.32</payforlegalaid-openapi.version>
+        <aws.java.sdk.version>2.42.37</aws.java.sdk.version>
         <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
         <maven-dependency-plugin.version>3.10.0</maven-dependency-plugin.version>
         <maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
@@ -252,6 +252,16 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>org.thymeleaf</groupId>
+                <artifactId>thymeleaf</artifactId>
+                <version>3.1.4.RELEASE</version>
+            </dependency>
+            <dependency>
+                <groupId>org.thymeleaf</groupId>
+                <artifactId>thymeleaf-spring6</artifactId>
+                <version>3.1.4.RELEASE</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -317,6 +327,16 @@
             <artifactId>spring-boot-starter-jackson</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <!-- version controlled by spring -->
+        </dependency>
+
         <!-- this next section all has version controlled by Spring Boot -->
         <dependency>
             <groupId>org.webjars</groupId>
@@ -372,22 +392,16 @@
             <!-- Spring currently sitting at 3.0.4 -->
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>3.1.0</version>
+            <version>3.1.2</version>
         </dependency>
         <dependency>
             <!-- SpringDoc Openapi currently sitting at 2.20.2 -->
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>2.21.1</version>
+            <version>2.21.2</version>
         </dependency>
 
         <!-- Test Dependencies-->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <!-- version controlled by spring -->
-            <!-- also used locally until dockerising -->
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-liquibase-test</artifactId>

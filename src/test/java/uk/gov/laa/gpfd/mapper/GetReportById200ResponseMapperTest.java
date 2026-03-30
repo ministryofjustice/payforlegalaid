@@ -39,7 +39,7 @@ class GetReportById200ResponseMapperTest {
         assertNotNull(response);
         assertEquals(reportId, response.getId());
         assertEquals("Test Report", response.getReportName());
-        assertEquals(URI.create("https://api.example.com/excel/" + reportId), response.getReportDownloadUrl());
+        assertEquals(URI.create("https://api.example.com/reports/" + reportId + "/excel"), response.getReportDownloadUrl());
     }
 
     @Test

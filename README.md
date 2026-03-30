@@ -2,6 +2,10 @@
 
 (Formerly known as 'Pay For Legal Aid' (PFLA))
 
+[![Ministry of Justice Repository Compliance Badge](https://github-community.service.justice.gov.uk/repository-standards/api/payforlegalaid/badge)](https://github-community.service.justice.gov.uk/repository-standards/payforlegalaid)
+
+[![.github/workflows/codeql-analysis.yml](https://github.com/ministryofjustice/payforlegalaid/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/ministryofjustice/payforlegalaid/actions/workflows/codeql-analysis.yml)
+
 ## About this repository
 
 This is an API that gets financial reports data from the MOJFIN database in the modernisation platform,
@@ -10,10 +14,10 @@ and returns it to the user in the form of a CSV or Excel data stream. The curren
 1. A user clicks on a URL hyperlink inside a Sharepoint site
 2. This will send a request to the GPFD API with a request parameter
    The five endpoints are:
-   /csv/{id} (returns the CSV data stream for the requested report),
-   /excel/{id} (returns the Excel data stream for the requested report),
    /reports/ (returns a list of the available reports and some information about them).
    /reports/{id} (returns metadata about the requested report)
+   /reports/{id}/csv (returns the CSV data stream for the requested report),
+   /reports/{id}/excel (returns the Excel data stream for the requested report),
    /reports/{id}/file (returns a pre-generated CSV, for specific reports only)
 3. The API will authenticate the user against MOJ Microsoft Entra, and if the user has an account
    within the MOJ 'tenant' they will be authenticated and allowed to interact with the API. 
@@ -75,6 +79,92 @@ This makes use of a local h2 database. You can create one via running the accept
 You will need to populate the `src/main/resources` folder with any template files you need. These are the `.xlsx` files that
 hold a skeleton of the report in. E.g. if you want to test the Third Party Report you should place a copy of the Third Party Report template in the folder.
 For more details on how to get this template visit the [Confluence](https://dsdmoj.atlassian.net/wiki/spaces/LPF/pages/5803409516/How+to+create+a+template#How-do-I-get-a-template-to-use-on-my-local-system)
+
+### Locally (Docker)
+
+The application can be run locally using Docker and Docker Compose, which handles building the app and spinning up all required services.
+Uses the DB changelog files that were initially stored in the payforlegalaid-tests repo to build out the test database via Liquibase.
+
+#### Prerequisites
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (or Docker Engine 23+)
+- Git
+- .env created and populated with Oracle DB password (can be anything)
+
+#### Building the Image
+
+Using the .env.example file as a template, create your own .env file on your machine at the same level as the example file
+and populate with your own password for the Oracle DB. This should help set up credentials for the DB itself and assist with
+Liquibase migrations. Gitignore has been updated to include .env, if accidentally pushed to git, PR will complain about password
+and automatically block.
+
+Once set up, build the images:
+
+```bash
+docker compose build
+```
+
+On first build this will take a few minutes as Maven downloads dependencies and builds the OpenAPI library. Subsequent builds are significantly faster due to layer and dependency caching — as long as `pom.xml` hasn't changed, the dependency resolution step is skipped entirely.
+
+To force a clean rebuild from scratch:
+```bash
+docker volume rm payforlegalaid_oracle-data   
+docker compose build --no-cache
+```
+
+> **Note:** Avoid using `--no-cache` routinely as it discards the Maven dependency cache and will significantly slow down the build.
+
+#### Running the Application
+```bash
+docker compose up
+```
+
+The application will be available at `http://localhost:8080` once healthy. You can check the status with:
+```bash
+docker compose ps
+```
+
+To run in detached mode:
+```bash
+docker compose up -d
+```
+
+To stop the application:
+```bash
+docker compose down
+```
+
+Connecting to the Oracle container
+```bash
+docker exec -it oracle-local bash
+sqlplus / as sysdba
+ALTER SESSION SET CONTAINER = FREEPDB1;
+```
+
+Example SQL query once connected
+```sql
+SELECT table_name FROM all_tables WHERE owner = 'GPFD';
+```
+
+#### Troubleshooting
+
+**Build fails with `invalid target release` error**
+Ensure you are using the correct base image in the Dockerfile (`maven:3.9.14-eclipse-temurin-25`). The OpenAPI dependency requires Java 25 to compile.
+
+**Application exits immediately with `UnsupportedClassVersionError`**
+The runtime image must match the Java version used to compile the app. Ensure the runtime stage uses `eclipse-temurin:25-jre-jammy` or equivalent.
+
+**Application fails to start with `Could not resolve placeholder` error**
+A required property is missing from the active Spring profile's configuration. Check `src/main/resources/application-local.yml` and ensure all required properties are defined. Azure AD properties must be present even when `enabled: false`.
+
+**`dependency:go-offline` is slow**
+This is expected on a cold cache (e.g. first build or after `--no-cache`). Once the Maven cache is warm it will be near-instant. If it is slow on every build, verify BuildKit is enabled by adding the following to your shell profile:
+```bash
+export DOCKER_BUILDKIT=1
+export COMPOSE_DOCKER_CLI_BUILD=1
+```
+
+Then reload your shell with `source ~/.zshrc` (or `~/.bashrc`).
 
 ### Scanning Snyk tools
 - `snyk test --policy-path=.snyk`

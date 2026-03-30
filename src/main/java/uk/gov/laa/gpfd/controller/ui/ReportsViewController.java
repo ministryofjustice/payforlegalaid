@@ -63,8 +63,8 @@ public class ReportsViewController {
 
     /**
      * Extracts the file extension from the download URL path.
-     * e.g. /excel/{id}          -> xlsx
-     * e.g. /csv/{id}            -> csv
+     * e.g. /reports/{id}/excel          -> xlsx
+     * e.g. /reports/{id}/csv            -> csv
      * e.g. /reports/{id}/file   -> csv
      */
     private String extractExtension(URI uri) {
@@ -74,7 +74,7 @@ public class ReportsViewController {
 
         String path = uri.getPath().toLowerCase();
 
-        if (path.contains("/excel/")) {
+        if (path.contains("/excel")) {
             return "xlsx";
         }
 
