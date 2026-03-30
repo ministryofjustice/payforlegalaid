@@ -20,7 +20,9 @@ import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
  * to manage specific security aspects.
  * </p>
  */
-@Profile("local")
+@SuppressWarnings("java:S4502") // CSRF disabled only for H2 console — local/test profiles only, never active in prod
+@Profile({"local", "test"})
+@Slf4j
 @Configuration
 public class SecurityConfigLocal {
 
@@ -39,9 +41,31 @@ public class SecurityConfigLocal {
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) {
         return httpSecurity
                 // Allow h2-console to ignore CSRF or it won't load
-                .csrf(csrf -> csrf.ignoringRequestMatchers(PathPatternRequestMatcher.withDefaults().matcher("/h2-console/**")))
+                .csrf(csrf -> csrf.ignoringRequestMatchers(
+                        PathPatternRequestMatcher.withDefaults().matcher("/h2-console/**"),
+                        PathPatternRequestMatcher.withDefaults().matcher("/csp-report")
+                ))
                 // Allow h2-console to display in web-frames
-                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+                .headers(headers -> headers
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
+                        .contentSecurityPolicy(csp -> csp
+                                .policyDirectives(
+                                        "default-src 'none'; " +
+                                        "base-uri 'self'; " +
+                                        "object-src 'none'; " +
+                                        "frame-ancestors 'none'; " +
+                                        "form-action 'self'; " +
+                                        "script-src 'self'; " +
+                                        "style-src 'self'; " +
+                                        "img-src 'self' data:; " +
+                                        "font-src 'self'; " +
+                                        "connect-src 'self'; " +
+                                        "upgrade-insecure-requests; " +
+                                        "report-uri /csp-report"
+                                )
+                                        .reportOnly() // Included in local config for debugging purposes
+                                )
+                )
                 .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
                 .oauth2Login(oauth ->
                         oauth.loginPage("/oauth2/authorization/gpfd-azure-dev"))

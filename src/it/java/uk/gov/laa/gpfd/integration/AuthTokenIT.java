@@ -1,6 +1,7 @@
 package uk.gov.laa.gpfd.integration;
 
 import static org.junit.jupiter.params.provider.Arguments.of;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -50,8 +51,8 @@ final class AuthTokenIT extends BaseIT {
         return Stream.of(
                 of("Root api endpoint", "/reports"),
                 of("Specific report endpoint", "/reports/%s".formatted(CSV_REPORT.getReportData().id())),
-                of("Excel download endpoint", "/excel/%s".formatted(CCMS_REPORT.getReportData().id())),
-                of("CSV download endpoint", "/csv/%s".formatted(CSV_REPORT.getReportData().id())),
+                of("Excel download endpoint", "/reports/%s/excel".formatted(CCMS_REPORT.getReportData().id())),
+                of("CSV download endpoint", "/reports/%s/csv".formatted(CSV_REPORT.getReportData().id())),
                 of("File download endpoint", "/reports/%s/file".formatted(REP012ID.getReportData().id()))
         );
     }
@@ -59,6 +60,7 @@ final class AuthTokenIT extends BaseIT {
     @ParameterizedTest(name = "[{index}] {0} should redirect when unauthenticated")
     @MethodSource("securedReportEndpoints")
     void unauthenticatedAccess_shouldRedirectToLogin(String description, String endpoint) throws Exception {
+        assertNotNull(description);
         performGetRequest(endpoint)
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/oauth2/authorization/gpfd-azure-dev"));

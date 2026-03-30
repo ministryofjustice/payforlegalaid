@@ -18,6 +18,7 @@ import java.util.Objects;
 public abstract class AbstractReportMapper {
 
     protected final UrlBuilder urlBuilder;
+    private static final String REPORTS = "reports";
 
     protected AbstractReportMapper(UrlBuilder urlBuilder) {
         this.urlBuilder = urlBuilder;
@@ -35,10 +36,10 @@ public abstract class AbstractReportMapper {
             var baseUrl = urlBuilder.getServiceUrl();
             var reportId = report.getIdAsString();
             if (Objects.equals(report.getOutputType().getExtension(), FileExtension.S3STORAGE.getExtension())) {
-                return URI.create("%s/%s/%s/%s".formatted(baseUrl,"reports", reportId, "file"));
+                return URI.create("%s/%s/%s/%s".formatted(baseUrl,REPORTS, reportId, "file"));
             }
             var extensionPath = report.getOutputType().getSubPath();
-            return URI.create("%s/%s/%s".formatted(baseUrl, extensionPath, reportId));
+            return URI.create("%s/%s/%s/%s".formatted(baseUrl, REPORTS, reportId, extensionPath));
         } catch (Exception e) {
             throw new IllegalStateException("Failed to construct report URL", e);
         }

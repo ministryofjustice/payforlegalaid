@@ -47,9 +47,9 @@ final class GetReportsByIdIT extends BaseIT {
 
     @SneakyThrows
     @ParameterizedTest
-    @ValueSource(strings = {"excel", "csv"})
+    @ValueSource(strings = {"csv", "excel"})
     void shouldReturn400WhenGivenInvalidId(String type) {
-        var uri = "/%s/%s321".formatted(type, CSV_REPORT.getReportData().id());
+        var uri = "/reports/%s321/%s".formatted(CSV_REPORT.getReportData().id(), type);
 
         performGetRequestWithRoles(uri, List.of("REP000", "Financial", "Reconciliation"))
                 .andExpect(status().isBadRequest())
@@ -60,10 +60,10 @@ final class GetReportsByIdIT extends BaseIT {
 
     @SneakyThrows
     @ParameterizedTest
-    @ValueSource(strings = {"excel", "csv"})
+    @ValueSource(strings = {"csv", "excel"})
     void shouldReturn404WhenNoReportsFound(String type) {
         var nonExistentReportId = "0d4da9ec-b0b3-4371-af10-321";
-        var uri = "/%s/%s".formatted(type, nonExistentReportId);
+        var uri = "/reports/%s/%s".formatted(nonExistentReportId, type);
 
         performGetRequestWithRoles(uri, List.of("REP000", "Financial", "Reconciliation"))
                 .andExpect(status().isForbidden())
