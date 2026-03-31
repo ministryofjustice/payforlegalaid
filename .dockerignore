@@ -1,6 +1,3 @@
-# Build artifacts
-target/
-
 # IDE files
 .idea/
 *.iml
