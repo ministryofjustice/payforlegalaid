@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -57,11 +58,6 @@ class ReportsControllerTest extends BaseMvcTest {
 
     @MockitoBean
     ReportTrackingDao reportTrackingDao;
-
-    @BeforeEach
-    void beforeEach() {
-        reset(reportManagementServiceMock, streamingService, fileDownloadService, reportDao, reportTrackingDao);
-    }
 
     @Test
     void downloadCsvReturnsCorrectResponse() throws Exception {
