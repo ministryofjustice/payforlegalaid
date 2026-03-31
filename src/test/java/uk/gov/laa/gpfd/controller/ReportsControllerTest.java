@@ -4,17 +4,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
-import uk.gov.laa.gpfd.config.OAuth2TestConfig;
+import uk.gov.laa.gpfd.config.TimeBasedAccessInterceptor;
 import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.dao.ReportTrackingDao;
 import uk.gov.laa.gpfd.data.ReportListEntryTestDataFactory;
@@ -35,16 +33,13 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT ,
-        classes = { uk.gov.laa.gpfd.config.TestDatabaseConfig .class, OAuth2TestConfig.class })
-@AutoConfigureMockMvc
-@ActiveProfiles("testauth")
+@WebMvcTest(ReportsController.class)
 class ReportsControllerTest extends BaseMvcTest {
 
     public static final UUID DEFAULT_ID = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
@@ -64,9 +59,13 @@ class ReportsControllerTest extends BaseMvcTest {
     @MockitoBean
     ReportTrackingDao reportTrackingDao;
 
+    @MockitoBean
+    TimeBasedAccessInterceptor timeBasedAccessInterceptor;
+
     @BeforeEach
     void beforeEach() {
         reset(reportManagementServiceMock, streamingService, fileDownloadService, reportDao, reportTrackingDao);
+        when(timeBasedAccessInterceptor.preHandle(any(), any(), any())).thenReturn(true);
     }
 
     @Test
