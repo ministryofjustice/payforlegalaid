@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
-import uk.gov.laa.gpfd.config.TimeBasedAccessInterceptor;
 import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.dao.ReportTrackingDao;
 import uk.gov.laa.gpfd.data.ReportListEntryTestDataFactory;
@@ -59,13 +58,9 @@ class ReportsControllerTest extends BaseMvcTest {
     @MockitoBean
     ReportTrackingDao reportTrackingDao;
 
-    @MockitoBean
-    TimeBasedAccessInterceptor timeBasedAccessInterceptor;
-
     @BeforeEach
     void beforeEach() {
         reset(reportManagementServiceMock, streamingService, fileDownloadService, reportDao, reportTrackingDao);
-        when(timeBasedAccessInterceptor.preHandle(any(), any(), any())).thenReturn(true);
     }
 
     @Test
