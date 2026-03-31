@@ -5,7 +5,7 @@ runs:
 
   steps:
     - name: Setup Snyk CLI
-      uses: snyk/actions/setup@master
+      uses: snyk/actions/setup@aa6e70d07856828c0902d53c649eb82dea5e04be
 
     - name: Run Snyk scan
       run: snyk test -d --all-projects --severity-threshold=high --sarif-file-output=snyk.sarif --policy-path=./.snyk

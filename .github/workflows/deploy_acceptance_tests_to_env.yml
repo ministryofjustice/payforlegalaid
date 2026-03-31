@@ -34,14 +34,14 @@ jobs:
       contents: read
     steps:
       - name: Checkout GitHub repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           repository: $TEST_REPO
           ref: main
           path: testCode
 
       - name: Checkout GitHub repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         env:
           DEV_SOCKET_KEY: ${{ secrets.DEV_SOCKET_KEY }}
         with:
@@ -56,13 +56,13 @@ jobs:
           sudo apt-get update && sudo apt-get install -y libxml2-utils
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
         with:
           role-to-assume: $ECR_ROLE
           aws-region: $ECR_REGION
 
       - name: Login to ECR
-        uses: aws-actions/amazon-ecr-login@v2
+        uses: aws-actions/amazon-ecr-login@183a1442edf41672e66566b7fc560e297a290896 # v2.1.1
         id: login-ecr
         with:
           role-to-assume: $ECR_ROLE
