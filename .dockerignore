@@ -1,0 +1,32 @@
+# Build artifacts
+target/
+
+# IDE files
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.classpath
+.project
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+*.log
+tmp/
+*.tmp
+
+# Git
+.git/
+.gitignore
+
+# Docker files (no need to send these to the build context)
+local/
+docker-compose*.yml
+.env
+.dockerignore
+
+# Docs
+*.md

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="insert=seed-for-report-output-types" author="jason_smallman">
+        <comment>Insert initial data into REPORT_OUTPUT_TYPES</comment>
+        <insert tableName="REPORT_OUTPUT_TYPES" schemaName="GPFD">
+            <column name="ID" value="6ebd27ac-4d83-485d-a4fd-3e45f9a53484"/>
+            <column name="EXTENSION" value="csv"/>
+            <column name="DESCRIPTION" value="Comma Separated Text"/>
+        </insert>
+        <insert tableName="REPORT_OUTPUT_TYPES" schemaName="GPFD">
+            <column name="ID" value="bd098666-94e4-4b0e-822c-8e5dfb04c908"/>
+            <column name="EXTENSION" value="xlsx"/>
+            <column name="DESCRIPTION" value="Excel Document"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
