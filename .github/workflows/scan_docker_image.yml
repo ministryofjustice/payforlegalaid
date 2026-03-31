@@ -40,7 +40,7 @@ jobs:
 
         - name: Scan docker image using Snyk
           continue-on-error: true
-          uses: snyk/actions/docker@ff5c02a0e3adc5c52e2c9e7558edf2b46d69ac1f
+          uses: snyk/actions/docker@9adf32b1121593767fc3c057af55b55db032dc04 # v1.0.0
           env:
             SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
           with:
@@ -48,7 +48,7 @@ jobs:
             args: --file=Dockerfile --sarif-file-output=snyk.sarif
 
         - name: Monitor docker image using Snyk
-          uses: snyk/actions/docker@ff5c02a0e3adc5c52e2c9e7558edf2b46d69ac1f
+          uses: snyk/actions/docker@9adf32b1121593767fc3c057af55b55db032dc04 # v1.0.0
           env:
             SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
           with:
