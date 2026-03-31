@@ -11,6 +11,7 @@ import uk.gov.laa.gpfd.controller.ReportsController;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
+import uk.gov.laa.gpfd.utils.UrlBuilder;
 
 import java.net.URI;
 import java.util.List;
@@ -37,15 +38,20 @@ class ReportsViewControllerTest {
     @InjectMocks
     ReportsViewController reportsViewController;
 
+    @Mock
+    UrlBuilder urlBuilder;
+
     @Test
-    void index_shouldRedirectToReportsPage() {
+    void index_shouldRedirectToRoot() {
         var result = reportsViewController.index();
-        assertEquals("redirect:/ui/reports", result);
+        assertEquals("redirect:/", result);
     }
 
     @Test
     @SneakyThrows
     void getAllReports_shouldReturnCorrectViewName() {
+        when(urlBuilder.getServiceUrl()).thenReturn("http://example.com/");
+
         var reportId1 = randomUUID();
         var reportId2 = randomUUID();
 
@@ -83,6 +89,8 @@ class ReportsViewControllerTest {
 
     @Test
     void getAllReports_shouldHandleEmptyReportList() {
+        when(urlBuilder.getServiceUrl()).thenReturn("http://example.com/");
+
         when(reportsApiController.reportsGet()).thenReturn(ok(new ReportsGet200Response() {{
             setReportList(List.of());
         }}));

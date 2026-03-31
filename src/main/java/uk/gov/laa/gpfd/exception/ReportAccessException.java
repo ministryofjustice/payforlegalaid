@@ -13,7 +13,7 @@ public class ReportAccessException extends RuntimeException {
     private final UUID reportId;
 
     public ReportAccessException(UUID reportId) {
-        super();
+        super("You cannot access report with ID: " + reportId);
         this.reportId = reportId;
     }
 }

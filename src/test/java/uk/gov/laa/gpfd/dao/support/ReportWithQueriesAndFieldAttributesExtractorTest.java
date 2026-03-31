@@ -41,14 +41,17 @@ class ReportWithQueriesAndFieldAttributesExtractorTest {
         when(resultSet.getString("TEMPLATE_SECURE_DOCUMENT_ID")).thenReturn("0d4da9ec-b0b3-4371-af10-f375330d85d3");
         when(resultSet.getTimestamp("REPORT_CREATION_DATE")).thenReturn(new Timestamp(System.currentTimeMillis()));
         when(resultSet.getTimestamp("LAST_DATABASE_REFRESH_DATETIME")).thenReturn(new Timestamp(System.currentTimeMillis()));
-        when(resultSet.getString("DESCRIPTION")).thenReturn("Test Description");
+        when(resultSet.getString("REPORT_DESCRIPTION")).thenReturn("Test Report Description");
+        when(resultSet.getString("OUTPUT_TYPE_DESCRIPTION")).thenReturn("Excel Document");
         when(resultSet.getInt("NUM_DAYS_TO_KEEP")).thenReturn(30);
+        when(resultSet.getInt("INDEX")).thenReturn(0);
         when(resultSet.getString("REPORT_CREATOR_EMAIL")).thenReturn("creator@example.com");
         when(resultSet.getString("REPORT_OWNER_ID")).thenReturn(UUID.randomUUID().toString());
         when(resultSet.getString("REPORT_OWNER_NAME")).thenReturn("Owner Name");
         when(resultSet.getString("ACTIVE")).thenReturn("Y");
         when(resultSet.getString("REPORT_OWNER_EMAIL")).thenReturn("owner@example.com");
         when(resultSet.getString("FILE_NAME")).thenReturn("report.pdf");
+        when(resultSet.getString("OUTPUT_TYPE_ID")).thenReturn(UUID.randomUUID().toString());
         when(resultSet.getString("QUERY_ID")).thenReturn(queryId.toString());
         when(resultSet.getString("QUERY")).thenReturn("SELECT * FROM ANY_REPORT.V_TABLE");
         when(resultSet.getString("TAB_NAME")).thenReturn("Sheet1");
@@ -71,7 +74,7 @@ class ReportWithQueriesAndFieldAttributesExtractorTest {
         assertEquals(reportId, report.getId());
         assertEquals("Test Report", report.getName());
         assertEquals(ExcelTemplate.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d3"), report.getTemplateDocument());
-        assertEquals("Test Description", report.getDescription());
+        assertEquals("Test Report Description", report.getDescription());
         assertEquals(30, report.getNumDaysToKeep());
         ImmutableReportOwner ownerName = ImmutableReportOwner.newBuilder()
                 .withName("Owner Name")
@@ -111,7 +114,8 @@ class ReportWithQueriesAndFieldAttributesExtractorTest {
         when(resultSet.getString("TEMPLATE_SECURE_DOCUMENT_ID")).thenReturn("0d4da9ec-b0b3-4371-af10-f375330d85d3");
         when(resultSet.getTimestamp("REPORT_CREATION_DATE")).thenReturn(new Timestamp(System.currentTimeMillis()));
         when(resultSet.getTimestamp("LAST_DATABASE_REFRESH_DATETIME")).thenReturn(new Timestamp(System.currentTimeMillis()));
-        when(resultSet.getString("DESCRIPTION")).thenReturn("Test Description");
+        when(resultSet.getString("REPORT_DESCRIPTION")).thenReturn("Test Report Description");
+        when(resultSet.getString("OUTPUT_TYPE_DESCRIPTION")).thenReturn("Excel Document");
         when(resultSet.getInt("NUM_DAYS_TO_KEEP")).thenReturn(30);
         when(resultSet.getString("REPORT_CREATOR_NAME")).thenReturn("Creator Name");
         when(resultSet.getString("REPORT_CREATOR_EMAIL")).thenReturn("creator@example.com");
@@ -121,6 +125,7 @@ class ReportWithQueriesAndFieldAttributesExtractorTest {
         when(resultSet.getString("REPORT_OWNER_EMAIL")).thenReturn("owner@example.com");
         when(resultSet.getString("FILE_NAME")).thenReturn("report.pdf");
         when(resultSet.getString("EXTENSION")).thenReturn("xlsx");
+        when(resultSet.getString("OUTPUT_TYPE_ID")).thenReturn(UUID.randomUUID().toString());
         when(resultSet.getString("QUERY_ID")).thenReturn(null); // Null query ID
 
         // When
@@ -147,9 +152,11 @@ class ReportWithQueriesAndFieldAttributesExtractorTest {
         when(resultSet.getString("TEMPLATE_SECURE_DOCUMENT_ID")).thenReturn("0d4da9ec-b0b3-4371-af10-f375330d85d3");
         when(resultSet.getTimestamp("REPORT_CREATION_DATE")).thenReturn(new Timestamp(System.currentTimeMillis()));
         when(resultSet.getTimestamp("LAST_DATABASE_REFRESH_DATETIME")).thenReturn(new Timestamp(System.currentTimeMillis()));
-        when(resultSet.getString("DESCRIPTION")).thenReturn("Test Description");
+        when(resultSet.getString("REPORT_DESCRIPTION")).thenReturn("Test Report Description");
+        when(resultSet.getString("OUTPUT_TYPE_DESCRIPTION")).thenReturn("Excel Document");
         when(resultSet.getString("EXTENSION")).thenReturn("xlsx");
         when(resultSet.getInt("NUM_DAYS_TO_KEEP")).thenReturn(30);
+        when(resultSet.getInt("INDEX")).thenReturn(0);
         when(resultSet.getString("REPORT_CREATOR_NAME")).thenReturn("Creator Name");
         when(resultSet.getString("REPORT_CREATOR_EMAIL")).thenReturn("creator@example.com");
         when(resultSet.getString("REPORT_OWNER_ID")).thenReturn(UUID.randomUUID().toString());
@@ -157,6 +164,7 @@ class ReportWithQueriesAndFieldAttributesExtractorTest {
         when(resultSet.getString("ACTIVE")).thenReturn("Y");
         when(resultSet.getString("REPORT_OWNER_EMAIL")).thenReturn("owner@example.com");
         when(resultSet.getString("FILE_NAME")).thenReturn("report.pdf");
+        when(resultSet.getString("OUTPUT_TYPE_ID")).thenReturn(UUID.randomUUID().toString());
         when(resultSet.getString("QUERY_ID")).thenReturn(queryId.toString());
         when(resultSet.getString("QUERY")).thenReturn("SELECT * FROM ANY_REPORT.V_TABLE");
         when(resultSet.getString("TAB_NAME")).thenReturn("Sheet1");

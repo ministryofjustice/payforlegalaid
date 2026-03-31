@@ -35,3 +35,6 @@ modules.xml
 
 # Generated swagger - not to be committed in this repo
 **/resources/static/swagger.yml
+
+### Ignore generated static assets ###
+src/main/resources/static/

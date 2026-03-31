@@ -60,14 +60,14 @@ public class ReportWithQueriesAndFieldAttributesExtractor implements ResultSetEx
             var report = reportMap.computeIfAbsent(reportId, id -> {
                 try {
                     log.debug("Mapping data for report with ID: {}", id);
-                    var description = rs.getString("DESCRIPTION");
+                    var reportDescription = rs.getString("REPORT_DESCRIPTION");
                     return ImmutableReport.builder()
                             .id(id)
                             .name(rs.getString("NAME"))
                             .templateDocument(ExcelTemplate.fromString(rs.getString("TEMPLATE_SECURE_DOCUMENT_ID")))
                             .creationTime(rs.getTimestamp("REPORT_CREATION_DATE"))
                             .lastDatabaseRefreshDate(rs.getTimestamp("LAST_DATABASE_REFRESH_DATETIME"))
-                            .description(description)
+                            .description(reportDescription)
                             .numDaysToKeep(rs.getInt("NUM_DAYS_TO_KEEP"))
                             .owner(ImmutableReportOwner.newBuilder()
                                     .withId(UUID.fromString(rs.getString("REPORT_OWNER_ID")))
@@ -77,8 +77,9 @@ public class ReportWithQueriesAndFieldAttributesExtractor implements ResultSetEx
                             .active(rs.getString("ACTIVE").equals("Y"))
                             .outputFileName(rs.getString("FILE_NAME"))
                             .outputType(ImmutableReportOutputType.builder()
+                                    .id(UUID.fromString(rs.getString("OUTPUT_TYPE_ID")))
                                     .fileExtension(FileExtension.fromString(rs.getString("EXTENSION")))
-                                    .description(description)
+                                    .description(rs.getString("OUTPUT_TYPE_DESCRIPTION"))
                                     .build())
                             .queries(new ArrayList<>())
                             .build();

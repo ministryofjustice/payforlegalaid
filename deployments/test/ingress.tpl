@@ -13,9 +13,9 @@ spec:
   ingressClassName: default
   tls:
     - hosts:
-        - test-gpfd.apps.live.cloud-platform.service.justice.gov.uk
+        - test-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk
   rules:
-    - host: test-gpfd.apps.live.cloud-platform.service.justice.gov.uk
+    - host: test-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk
       http:
         paths:
           - path: /

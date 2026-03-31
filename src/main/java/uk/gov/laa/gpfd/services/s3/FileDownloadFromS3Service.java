@@ -7,12 +7,12 @@ import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import uk.gov.laa.gpfd.exception.InvalidDownloadFormatException;
+import uk.gov.laa.gpfd.exception.FileDownloadException.S3BucketHasNoCopiesOfReportException;
 
 import java.util.UUID;
 
 /**
- Implements how to download files when we have S3 access.
+ * Implements how to download files when we have S3 access.
  */
 @Slf4j
 public class FileDownloadFromS3Service implements FileDownloadService {
@@ -39,21 +39,21 @@ public class FileDownloadFromS3Service implements FileDownloadService {
 
         reportAccessCheckerService.checkUserCanAccessReport(id);
 
-        var fileName = fileNameResolver.getFileNameFromId(id);
+        var s3Prefix = fileNameResolver.getS3PrefixFromId(id);
 
-        if (!fileName.endsWith(".csv")) {
-            throw new InvalidDownloadFormatException(fileName, id);
-        }
+        var fileStreamOptional = s3ClientWrapper.getResultCsv(s3Prefix);
+        var fileStream = fileStreamOptional
+                .orElseThrow(() -> new S3BucketHasNoCopiesOfReportException(id, s3Prefix));
 
-        var fileStream = s3ClientWrapper.getResultCsv(fileName);
-        var contentDisposition = ContentDisposition.attachment().filename(fileName).build();
+            var contentDisposition = ContentDisposition.attachment().filename(fileStream.getFileName()).build();
 
-        log.info("About to stream report with ID {} to user", id);
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString())
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .contentLength(fileStream.response().contentLength())
-                .body(new InputStreamResource(fileStream));
+            log.info("About to stream report with ID {} to user", id);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString())
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .contentLength(fileStream.stream().response().contentLength())
+                    .body(new InputStreamResource(fileStream.stream()));
+
     }
 
 }

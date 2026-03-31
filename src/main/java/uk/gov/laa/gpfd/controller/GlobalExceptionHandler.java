@@ -1,6 +1,8 @@
 package uk.gov.laa.gpfd.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -10,13 +12,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
+import uk.gov.laa.gpfd.exception.CsvGenerationException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
-import uk.gov.laa.gpfd.exception.InvalidDownloadFormatException;
+import uk.gov.laa.gpfd.exception.InvalidReportFormatException;
+import uk.gov.laa.gpfd.exception.FileDownloadException.InvalidDownloadFormatException;
+import uk.gov.laa.gpfd.exception.FileDownloadException.ReportNotSupportedForDownloadException;
+import uk.gov.laa.gpfd.exception.FileDownloadException.S3BucketHasNoCopiesOfReportException;
 import uk.gov.laa.gpfd.exception.OperationNotSupportedException;
 import uk.gov.laa.gpfd.exception.ReportAccessException;
 import uk.gov.laa.gpfd.exception.ReportGenerationException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
-import uk.gov.laa.gpfd.exception.ReportNotSupportedForDownloadException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.exception.ServiceUnavailableException;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
@@ -34,11 +39,14 @@ import static org.springframework.http.ResponseEntity.internalServerError;
 import static uk.gov.laa.gpfd.exception.TransferException.StreamException.ExcelStreamWriteException;
 
 /**
- * Global exception handler for managing exceptions thrown by controllers.
+ * Global exception handler for API controllers.
+ * Catches unhandled exceptions, logs them, and returns
+ * appropriate HTTP responses to the client.
  */
 @Slf4j
 @ControllerAdvice
 @SuppressWarnings({"java:S1171", "java:S3599"}) //Disabling due to generated code
+@Order(Ordered.LOWEST_PRECEDENCE)
 public class GlobalExceptionHandler {
 
     private static final String ERROR_STRING = "Error: ";
@@ -149,6 +157,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(ReportOutputTypeNotFoundException.class)
     public ResponseEntity<ReportsGet500Response> handleReportOutputTypeNotFoundException(ReportOutputTypeNotFoundException e) {
+
         var response = new ReportsGet500Response() {{
             setError(e.getMessage());
         }};
@@ -278,7 +287,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidDownloadFormatException.class)
     public ResponseEntity<ReportsGet400Response> handleInvalidDownloadFormatException(InvalidDownloadFormatException e) {
         var errorResponse = new ReportsGet400Response();
-        errorResponse.setError("Unable to download file for report with ID " + e.getReportId());
+        errorResponse.setError(e.getMessage());
 
         log.error("InvalidDownloadFormatException Thrown: Report {} has file {} which is not a csv file", e.getReportId(), e.getFileName());
 
@@ -296,7 +305,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ReportNotSupportedForDownloadException.class)
     public ResponseEntity<ReportsGet400Response> handleReportNotSupportedForDownloadException(ReportNotSupportedForDownloadException e) {
         var errorResponse = new ReportsGet400Response();
-        errorResponse.setError("Report " + e.getReportId() + " is not valid for file retrieval");
+        errorResponse.setError(e.getMessage());
 
         log.error("ReportNotSupportedForDownloadException Thrown: Report {} is not supported on the '/report/{id}/file' endpoint", e.getReportId());
 
@@ -332,11 +341,75 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ReportAccessException.class)
     public ResponseEntity<GetReportDownloadById403Response> handleReportAccessException(ReportAccessException e) {
         var errorResponse = new GetReportDownloadById403Response();
-        errorResponse.setError("You cannot access report with ID " + e.getReportId());
+        errorResponse.setError(e.getMessage());
 
         log.error("ReportAccessException Thrown: User tried to access report {} but lacks the relevant permission(s)", e.getReportId());
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(errorResponse);
     }
+
+    /**
+     * Handles CsvGenerationException and responds with an HTTP 500 Internal Server Error.
+     *
+     * @param e the CsvGenerationException thrown when there is an issue while creating xls report
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
+     */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler({
+            CsvGenerationException.WritingToCsvException.class,
+            CsvGenerationException.MetadataInvalidException.class,
+    })
+    public ResponseEntity<ReportsGet500Response> handleCsvGenerationException(CsvGenerationException e) {
+        var response = new ReportsGet500Response() {{
+            setError(e.getMessage());
+        }};
+
+        log.error("CsvGenerationException Thrown: {}", response.getError());
+        if (e.getCause() != null) {
+            log.error("Caused by: {}", e.getCause().getMessage());
+        }
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
+    /**
+     * Handles {@link S3BucketHasNoCopiesOfReportException} and responds with an HTTP 500 Internal Server Error.
+     *
+     * @param e the exception thrown when the S3 doesn't contain any copies of the report
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
+     */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(S3BucketHasNoCopiesOfReportException.class)
+    public ResponseEntity<ReportsGet500Response> handleS3BucketHasNoCopiesOfReportException(S3BucketHasNoCopiesOfReportException e) {
+        var errorResponse = new ReportsGet500Response();
+        errorResponse.setError(e.getMessage());
+
+        log.error("S3BucketHasNoCopiesOfReportException Thrown: No matching entries in the S3 bucket were found for report with ID {} using prefix {}.",
+                e.getReportId(), e.getPrefix());
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(errorResponse);
+    }
+
+    /**
+     * Handles {@link InvalidReportFormatException} and responds with an HTTP 400 Bad Request.
+     *
+     * @param e the exception thrown when a report is requested in an unsupported format
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet400Response} with error details.
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(InvalidReportFormatException.class)
+    public ResponseEntity<ReportsGet400Response> handleInvalidReportFormatException(InvalidReportFormatException e) {
+        var errorResponse = new ReportsGet400Response();
+        errorResponse.setError(e.getMessage());
+
+        log.error("InvalidReportFormatException Thrown: Report {} requested as {} but is actually {}",
+                e.getReportId(), e.getRequestedFormat(), e.getActualFormat());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(errorResponse);
+    }
+
+
 }

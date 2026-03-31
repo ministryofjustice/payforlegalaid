@@ -7,9 +7,11 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,13 +23,7 @@ import org.springframework.security.web.access.intercept.RequestAuthorizationCon
 import org.springframework.web.client.RestTemplate;
 import uk.gov.laa.gpfd.dao.JdbcWorkbookDataStreamer;
 import uk.gov.laa.gpfd.dao.ReportDao;
-import uk.gov.laa.gpfd.dao.sql.core.FetchSizePolicy;
-import uk.gov.laa.gpfd.dao.sql.core.ForwardOnlyReadOnlyPolicy;
-import uk.gov.laa.gpfd.dao.sql.core.QueryTimeoutPolicy;
-import uk.gov.laa.gpfd.dao.sql.core.StatementConfigurationPolicy;
-import uk.gov.laa.gpfd.dao.sql.core.StatementCreationPolicy;
 import uk.gov.laa.gpfd.dao.sql.core.StatementPolicy;
-import uk.gov.laa.gpfd.dao.sql.core.StatementPolicyBuilder;
 import uk.gov.laa.gpfd.model.FieldProjection;
 import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.model.Mapping;
@@ -61,6 +57,8 @@ import java.util.Objects;
 import static uk.gov.laa.gpfd.dao.sql.ChannelRowHandler.forSheet;
 import static uk.gov.laa.gpfd.services.DataStreamer.createJdbcStreamer;
 
+import liquibase.integration.spring.SpringLiquibase;
+
 /**
  * Configuration class for application-level beans and settings.
  * <p>
@@ -71,10 +69,8 @@ import static uk.gov.laa.gpfd.services.DataStreamer.createJdbcStreamer;
  */
 @Configuration
 public class AppConfig {
-
-    @Getter
-    @Value("${gpfd.url}")
-    private String serviceUrl;
+    @Value("${spring.liquibase.changelog}")
+    private String liquibaseChangeLog;
 
     @Value("${excel.security.compression-ratio:0.001}")
     private double allowedCompressionRatio;
@@ -92,6 +88,10 @@ public class AppConfig {
     @Getter
     @Value("${spring.cloud.azure.active-directory.profile.tenant-id}")
     private String entraIdTenantId;
+
+    @Getter
+    @Value("${gpfd.csv-generation.buffer-flush-frequency:1000}")
+    private int csvBufferFlushFrequency;
 
     /**
      * Configures a read-only {@link DataSource}.
@@ -137,33 +137,11 @@ public class AppConfig {
     }
 
     @Bean
-    public StatementCreationPolicy defaultCreationPolicy() {
-        return new ForwardOnlyReadOnlyPolicy();
-    }
-
-    @Bean
-    public StatementConfigurationPolicy fetchSizePolicy(
-            @Value("${jdbc.fetch-size:1000}") int fetchSize) {
-        return new FetchSizePolicy(fetchSize);
-    }
-
-    @Bean
-    public StatementConfigurationPolicy queryTimeoutPolicy(
-            @Value("${jdbc.query-timeout:30}") int timeout) {
-        return new QueryTimeoutPolicy(timeout);
-    }
-
-    @Bean
     public StatementPolicy statementPolicy(
-            StatementCreationPolicy creationPolicy,
-            List<StatementConfigurationPolicy> configurationPolicies
+            @Value("${jdbc.fetch-size:1000}") int fetchSize,
+            @Value("${jdbc.query-timeout:30}") int timeout
     ) {
-        var builder = new StatementPolicyBuilder()
-                .withCreationPolicy(creationPolicy);
-
-        configurationPolicies.forEach(builder::addConfigurationPolicy);
-
-        return builder.build();
+        return new StatementPolicy(fetchSize, timeout);
     }
 
     @Bean
@@ -254,6 +232,9 @@ public class AppConfig {
      * </ul>
      * These converters enable the application to handle various content types when interacting
      * with external APIs.
+     * </p>
+     * <p>
+     * Although it appears to have no usages in this repo, this is needed by the acceptance tests currently.
      * </p>
      *
      * @return a configured {@link RestTemplate} instance with custom message converters.
@@ -402,7 +383,7 @@ public class AppConfig {
      */
     @Bean
     DataStreamer dataStreamer(JdbcTemplate readOnlyJdbcTemplate) {
-        return createJdbcStreamer(readOnlyJdbcTemplate);
+        return createJdbcStreamer(readOnlyJdbcTemplate, getCsvBufferFlushFrequency());
     }
 
     @Bean
@@ -430,5 +411,30 @@ public class AppConfig {
     @Bean
     public StrategyFactory<FileExtension, DataStream> streamStrategyFactory(Collection<DataStream> strategies) {
         return StrategyFactory.createGenericStrategyFactory(strategies, DataStream::getFormat);
+    }
+
+    /**
+     * Creates and configures a {@link SpringLiquibase} bean to be used for database,
+     * if the property `spring.liquibase.enabled` is set to `true` in the application properties.
+     *
+     * This method will set the data source to the specified {@link DataSource} bean, configure the
+     * change log file to be used by Liquibase, and ensure that the migrations are executed by
+     * setting {@code setShouldRun(true)}.
+     *
+     * @param dataSource The {@link DataSource} bean to be used by Liquibase for database connectivity.
+     * @return A configured {@link SpringLiquibase} instance ready for migration.
+     *
+     * @see SpringLiquibase
+     * @see DataSource
+     */
+    @Bean
+    @Primary
+    @ConditionalOnProperty(name = "spring.liquibase.enabled", havingValue = "true")
+    public SpringLiquibase liquibase(@Qualifier("writeDataSource") DataSource dataSource) {
+        SpringLiquibase liquibase = new SpringLiquibase();
+        liquibase.setDataSource(dataSource);
+        liquibase.setChangeLog(liquibaseChangeLog);
+        liquibase.setShouldRun(true);
+        return liquibase;
     }
 }

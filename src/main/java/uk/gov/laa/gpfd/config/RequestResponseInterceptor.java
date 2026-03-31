@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Slf4j
@@ -12,15 +13,34 @@ public class RequestResponseInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        log.info("Request received: {} {}", request.getMethod(), request.getRequestURI());
+        if (handler instanceof HandlerMethod handlerMethod) {
+            log.info("Request received: {} {} ({})",
+                    request.getMethod(),
+                    request.getRequestURI(),
+                    handlerMethod.getMethod().getName());
+        } else {
+            log.info("Request received: {} {}",
+                    request.getMethod(),
+                    request.getRequestURI());
+        }
         return true;
     }
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        log.info("Completed request: {} with status {}", request.getRequestURI(), response.getStatus());
+        if (handler instanceof HandlerMethod handlerMethod) {
+            log.info("Completed request: {} with status {} ({})",
+                    request.getRequestURI(),
+                    response.getStatus(),
+                    handlerMethod.getMethod().getName());
+        } else {
+            log.info("Completed request: {} with status {}",
+                    request.getRequestURI(),
+                    response.getStatus());
+        }
+
         if (ex != null) {
-            log.error("Exception occurred: {}", ex.getMessage());
+            log.error("Exception occurred", ex);
         }
     }
 }

@@ -2,30 +2,18 @@
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
-  SNYK-JAVA-IONETTY-12485149:
+  SNYK-JAVA-ORGAPACHETOMCATEMBED-15307822:
     - '*':
         reason: >-
-          Neither Azure nor S3 have upgraded yet. We don't actively use netty as
-          a server or use async s3 calls so we do not run any netty processes at
-          present
-        expires: 2025-09-11T00:00:00.000Z
-        created: 2025-09-04T13:42:15.862Z
-  SNYK-JAVA-IONETTY-12485150:
+          Working on Spring 4 upgrade now, want to keep this silent while we do it
+        expires: 2026-02-25T11:40:00.000Z
+        created: 2026-02-19T11:40:00.002Z
+  https://security.snyk.io/vuln/SNYK-JAVA-ORGAPACHETOMCATEMBED-15307781:
     - '*':
         reason: >-
-          Neither Azure nor S3 have upgraded yet. We don't actively use netty as
-          a server or use async s3 calls so we do not run any netty processes at
-          present
-        expires: 2025-09-11T00:00:00.000Z
-        created: 2025-09-09T12:42:15.862Z
-  SNYK-JAVA-IONETTY-12485151:
-    - '*':
-        reason: >-
-          Neither Azure nor S3 have upgraded yet. We don't actively use netty as
-          a server or use async s3 calls so we do not run any netty processes at
-          present
-        expires: 2025-09-11T00:00:00.000Z
-        created: 2025-09-09T12:42:15.862Z
+          Working on Spring 4 upgrade now, want to keep this silent while we do it
+        expires: 2026-02-25T11:40:00.000Z
+        created: 2026-02-19T11:40:00.002Z
   "snyk:lic:maven:ch.qos.logback:logback-classic:(EPL-1.0_OR_LGPL-2.1)":
       - '*':
           reason: >

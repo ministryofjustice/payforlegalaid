@@ -76,6 +76,70 @@ You will need to populate the `src/main/resources` folder with any template file
 hold a skeleton of the report in. E.g. if you want to test the Third Party Report you should place a copy of the Third Party Report template in the folder.
 For more details on how to get this template visit the [Confluence](https://dsdmoj.atlassian.net/wiki/spaces/LPF/pages/5803409516/How+to+create+a+template#How-do-I-get-a-template-to-use-on-my-local-system)
 
+### Locally (Docker)
+
+The application can be run locally using Docker and Docker Compose, which handles building the app and spinning up all required services.
+Uses the DB changelog files that were initially stored in the payforlegalaid-tests repo to build out the test database via Liquibase.
+
+#### Prerequisites
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (or Docker Engine 23+)
+- Git
+
+#### Building the Image
+```bash
+docker compose build
+```
+
+On first build this will take a few minutes as Maven downloads dependencies and builds the OpenAPI library. Subsequent builds are significantly faster due to layer and dependency caching — as long as `pom.xml` hasn't changed, the dependency resolution step is skipped entirely.
+
+To force a clean rebuild from scratch:
+```bash
+docker compose build --no-cache
+```
+
+> **Note:** Avoid using `--no-cache` routinely as it discards the Maven dependency cache and will significantly slow down the build.
+
+#### Running the Application
+```bash
+docker compose up
+```
+
+The application will be available at `http://localhost:8080` once healthy. You can check the status with:
+```bash
+docker compose ps
+```
+
+To run in detached mode:
+```bash
+docker compose up -d
+```
+
+To stop the application:
+```bash
+docker compose down
+```
+
+#### Troubleshooting
+
+**Build fails with `invalid target release` error**
+Ensure you are using the correct base image in the Dockerfile (`maven:3.9.14-eclipse-temurin-25`). The OpenAPI dependency requires Java 25 to compile.
+
+**Application exits immediately with `UnsupportedClassVersionError`**
+The runtime image must match the Java version used to compile the app. Ensure the runtime stage uses `eclipse-temurin:25-jre-jammy` or equivalent.
+
+**Application fails to start with `Could not resolve placeholder` error**
+A required property is missing from the active Spring profile's configuration. Check `src/main/resources/application-local.yml` and ensure all required properties are defined. Azure AD properties must be present even when `enabled: false`.
+
+**`dependency:go-offline` is slow**
+This is expected on a cold cache (e.g. first build or after `--no-cache`). Once the Maven cache is warm it will be near-instant. If it is slow on every build, verify BuildKit is enabled by adding the following to your shell profile:
+```bash
+export DOCKER_BUILDKIT=1
+export COMPOSE_DOCKER_CLI_BUILD=1
+```
+
+Then reload your shell with `source ~/.zshrc` (or `~/.bashrc`).
+
 ### Scanning Snyk tools
 - `snyk test --policy-path=.snyk`
 
@@ -104,3 +168,7 @@ https://dsdmoj.atlassian.net/wiki/spaces/LPF/pages/4500652730/Azure+Active+Direc
 
 And the official docs:
 https://learn.microsoft.com/en-us/azure/developer/java/spring-framework/spring-boot-starter-for-azure-active-directory-developer-guide?tabs=SpringCloudAzure4x
+
+# Pre commit hooks
+
+Pre commit hooks have been set up on this repository to ensure no accidental commits of secrets, keys etc. Provided by DevSecOps https://github.com/ministryofjustice/devsecops-hooks

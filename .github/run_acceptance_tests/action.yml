@@ -11,16 +11,17 @@ runs:
         AWS_REGION: ${{ env.AWS_REGION }}
 
     - name: Checkout GitHub repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       with:
         repository: ministryofjustice/payforlegalaid-tests
         path: testCode
+        ref: LPF-1222-dockerize-app
 
     - name: Setup Java
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
       with:
         distribution: 'corretto'
-        java-version: '17'
+        java-version: '25'
         cache: 'maven'
 
     - name: Checkout and build openapi
@@ -30,14 +31,16 @@ runs:
         subfolder: 'testCode'
 
     - name: Checkout source code repo
-      uses: actions/checkout@v4
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       with:
         path: sourceCode
 
     - name: Get necessary templates from S3
+      env:
+        S3_BUCKET: ${{ env.S3_BUCKET }}
 #      If in future we add reports without adding an AT, we could filter this to just ones needed in a test
       run: |
-        aws s3 sync s3://${{ env.S3_BUCKET }}/templates sourceCode/src/main/resources
+        aws s3 sync s3://${S3_BUCKET}/templates sourceCode/src/main/resources
       shell:
         bash
 

@@ -7,19 +7,18 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import software.amazon.awssdk.awscore.exception.AwsErrorDetails;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
-import uk.gov.laa.gpfd.exception.DatabaseReadException;
-import uk.gov.laa.gpfd.exception.InvalidDownloadFormatException;
-import uk.gov.laa.gpfd.exception.OperationNotSupportedException;
-import uk.gov.laa.gpfd.exception.ReportAccessException;
-import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
-import uk.gov.laa.gpfd.exception.ReportNotSupportedForDownloadException;
-import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
-import uk.gov.laa.gpfd.exception.TemplateResourceException;
-import uk.gov.laa.gpfd.exception.TransferException;
+import tools.jackson.core.exc.JacksonIOException;
+import uk.gov.laa.gpfd.exception.*;
+import uk.gov.laa.gpfd.exception.CsvGenerationException.WritingToCsvException;
+import uk.gov.laa.gpfd.exception.CsvGenerationException.MetadataInvalidException;
+import uk.gov.laa.gpfd.exception.FileDownloadException.InvalidDownloadFormatException;
+import uk.gov.laa.gpfd.exception.FileDownloadException.ReportNotSupportedForDownloadException;
 import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.AuthenticationIsNullException;
 import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.PrincipalIsNullException;
 import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.UnexpectedAuthClassException;
+import uk.gov.laa.gpfd.exception.FileDownloadException.S3BucketHasNoCopiesOfReportException;
 
+import java.io.IOException;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -234,7 +233,7 @@ class GlobalExceptionHandlerTest {
         var response = globalExceptionHandler.handleInvalidDownloadFormatException(exception);
 
         assertEquals(BAD_REQUEST, response.getStatusCode());
-        assertEquals("Unable to download file for report with ID " + reportId, response.getBody().getError());
+        assertEquals("Unable to download file for report with ID: " + reportId, response.getBody().getError());
     }
 
     @Test
@@ -245,7 +244,7 @@ class GlobalExceptionHandlerTest {
         var response = globalExceptionHandler.handleReportNotSupportedForDownloadException(exception);
 
         assertEquals(BAD_REQUEST, response.getStatusCode());
-        assertEquals("Report " + reportId + " is not valid for file retrieval", response.getBody().getError());
+        assertEquals("Report " + reportId + " is not valid for file retrieval.", response.getBody().getError());
     }
 
     @Test
@@ -286,7 +285,54 @@ class GlobalExceptionHandlerTest {
         var response = globalExceptionHandler.handleReportAccessException(exception);
 
         assertEquals(FORBIDDEN, response.getStatusCode());
-        assertEquals("You cannot access report with ID " + reportId, response.getBody().getError());
+        assertEquals("You cannot access report with ID: " + reportId,
+                response.getBody().getError());
+    }
+
+    @Test
+    void shouldHandleMetadataInvalidException() {
+        var exception = new MetadataInvalidException("Metadata is null");
+        var response = globalExceptionHandler.handleCsvGenerationException(exception);
+
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Metadata is null",
+                response.getBody().getError());
+
+    }
+
+    @Test
+    void shouldHandleWritingToCsvException() {
+        var source = JacksonIOException.construct(new IOException("Can't write to file"));
+        var exception = new WritingToCsvException("File creation error", source);
+        var response = globalExceptionHandler.handleCsvGenerationException(exception);
+
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("File creation error",
+                response.getBody().getError());
+
+    }
+
+    @Test
+    void shouldHandleS3BucketHasNoCopiesOfReportException() {
+        var reportId = UUID.randomUUID();
+        var exception = new S3BucketHasNoCopiesOfReportException(reportId, "reports/folder/filename");
+
+        var response = globalExceptionHandler.handleS3BucketHasNoCopiesOfReportException(exception);
+
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Failed to download report with id " + reportId + ".", response.getBody().getError());
+    }
+
+    @Test
+    void shouldHandleInvalidReportFormatException() {
+        var reportId = UUID.randomUUID();
+        var exception = new InvalidReportFormatException(reportId, "XLSX", "CSV");
+
+        var response = globalExceptionHandler.handleInvalidReportFormatException(exception);
+
+        assertEquals(BAD_REQUEST, response.getStatusCode());
+        assertEquals("Report " + reportId + " is not valid for XLSX retrieval. This report is in CSV format.",
+                response.getBody().getError());
     }
 
 }

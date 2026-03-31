@@ -40,8 +40,9 @@ public class UserService {
             } else if (principal instanceof org.springframework.security.oauth2.jwt.Jwt jwt){
                 username = jwt.getClaimAsString("preferred_username");
             } else {
-                username = principal.toString()
-                    .substring(0, USERNAME_MAX_LENGTH_IN_DB); // Fallback in case it's none of the above
+                String principalStr = principal.toString();
+                username = principalStr.substring(0,
+                        Math.min(USERNAME_MAX_LENGTH_IN_DB, principalStr.length()));
             }
         }
         return username;

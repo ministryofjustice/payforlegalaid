@@ -2,9 +2,9 @@ package uk.gov.laa.gpfd.mapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.laa.gpfd.config.AppConfig;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.Report;
+import uk.gov.laa.gpfd.utils.UrlBuilder;
 
 
 /**
@@ -18,8 +18,8 @@ import uk.gov.laa.gpfd.model.Report;
 public final class GetReportById200ResponseMapper extends AbstractReportMapper implements ResourceResponseMapper<Report, GetReportById200Response> {
 
     @Autowired
-    private GetReportById200ResponseMapper(AppConfig appConfig) {
-        super(appConfig);
+    private GetReportById200ResponseMapper(UrlBuilder urlBuilder) {
+        super(urlBuilder);
     }
 
     /**

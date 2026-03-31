@@ -9,7 +9,7 @@ on:
       environment_name:
         type: string
         required: true
-      gpfd_url:
+      ingress_url:
         type: string
         required: true
       alert_severity:
@@ -46,7 +46,7 @@ jobs:
 
     steps:
       - name: Checkout Github Repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
       - name: Build and test the code
         uses: './.github/build-and-test'
@@ -59,7 +59,9 @@ jobs:
           SNYK_TOKEN: ${{ secrets.snyk_token }}
 
       - name: Set Spring profile
-        run: echo "SPRING_PROFILES_ACTIVE=${{ inputs.environment_name }}" >> $GITHUB_ENV
+        env:
+          ENV_NAME: ${{ inputs.environment_name }}
+        run: echo "SPRING_PROFILES_ACTIVE=${ENV_NAME}" >> $GITHUB_ENV
 
       - uses: './.github/login-to-aws'
         env:
@@ -67,7 +69,7 @@ jobs:
           AWS_REGION: ${{ vars.ECR_REGION }}
 
       - name: Login to container repository
-        uses: aws-actions/amazon-ecr-login@v2
+        uses: aws-actions/amazon-ecr-login@183a1442edf41672e66566b7fc560e297a290896 # v2.1.1
         id: login-ecr
 
       - name: Build the docker image and push it to the repository
@@ -77,6 +79,25 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           SOCKET_KEY: ${{ secrets.api_socket_key }}
+        
+      - name: Set ingress class based on environment
+        id: ingress_class
+        env:
+          ENV_NAME: ${{ inputs.environment_name }}
+        run: |
+          if [[ "${ENV_NAME}" == "prod" ]]; then
+            echo "ingress_class=modsec" >> $GITHUB_OUTPUT
+          else
+            echo "ingress_class=modsec-non-prod" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Fetch IP list
+        id: fetch_ip
+        run: |
+          WHITELISTED_IP=$(curl -s https://raw.githubusercontent.com/ministryofjustice/laa-ip-allowlist/main/cidrs.txt | tr -d ' ' | awk 'ORS=","' | sed 's/,$//')
+          PINGDOM_IP_LIST=$(curl -s https://my.pingdom.com/probes/ipv4 | tr -d ' ' | awk '{print $0 "/32"}' ORS=',' | sed 's/,$//')
+          IP_LIST="${WHITELISTED_IP},${PINGDOM_IP_LIST}"
+          echo "ip_list=$IP_LIST" >> "$GITHUB_OUTPUT"
 
       - name: Generate Kubernetes files from templates
         env:
@@ -86,11 +107,14 @@ jobs:
           NAMESPACE: ${{ secrets.kube_namespace }}
           ALERT_SEVERITY: ${{ inputs.alert_severity }}
           ENV_NAME: ${{ inputs.environment_name }}
-          GPFD_URL: ${{ inputs.gpfd_url }}
+          INGRESS_URL: ${{ inputs.ingress_url }}
           SECRET_NAME: ${{ inputs.secret_name }}
           DATA_REPOSITORY: ${{ vars.DATA_ECR_REPOSITORY }}
           PERMISSION_REP000_GROUP_ID: ${{ vars.PERMISSION_REP000_GROUP_ID }}
           PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID: ${{ vars.PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID }}
+          INGRESS_CLASS_NAME: ${{ steps.ingress_class.outputs.ingress_class }}
+          IP_LIST: ${{ steps.fetch_ip.outputs.ip_list }}
+
         run: |
           template_processing=(
             "ingress:ingress"
@@ -99,7 +123,7 @@ jobs:
             "network-policy:network-policy"
             "prometheus-rules:prometheus-rules"
             "grafana-dashboard:grafana-dashboard:\$ENV_NAME,\$NAMESPACE"
-            "deployment:deployment:\$ENV_NAME,\$SECRET_NAME,\$GPFD_URL,\$REGISTRY,\$REPOSITORY,\$IMAGE_TAG,\$DATA_REPOSITORY,\$PERMISSION_REP000_GROUP_ID,\$PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID"
+            "deployment:deployment:\$ENV_NAME,\$SECRET_NAME,\$INGRESS_URL,\$REGISTRY,\$REPOSITORY,\$IMAGE_TAG,\$DATA_REPOSITORY,\$PERMISSION_REP000_GROUP_ID,\$PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID,\$INGRESS_CLASS_NAME,\$IP_LIST"
           )
           
           for item in "${template_processing[@]}"; do
@@ -113,15 +137,23 @@ jobs:
               DOLLAR='$' envsubst < "$input" > "$output"
             fi
           done
+          
+          if [[ "${ENV_NAME}" == "prod" ]]; then
+            yq -i '
+              .spec.tls[0].secretName = "tls-certificate"
+            ' deployments/ingress.yml
+          fi
 
       - name: Authenticate with Cloud Platform and Deploy
         env:
           KUBE_NAMESPACE: ${{ secrets.kube_namespace }}
           KUBE_CLUSTER: ${{ secrets.kube_cluster }}
+          KUBE_CERT: ${{ secrets.kube_cert }}
+          KUBE_TOKEN: ${{ secrets.kube_token }}
         run: |
-          echo "${{ secrets.kube_cert }}" > ca.crt
+          echo "${KUBE_CERT}" > ca.crt
           kubectl config set-cluster ${KUBE_CLUSTER} --certificate-authority=./ca.crt --server=https://${KUBE_CLUSTER}
-          kubectl config set-credentials deploy-user --token=${{ secrets.kube_token }}
+          kubectl config set-credentials deploy-user --token=${KUBE_TOKEN}
           kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
           kubectl config use-context ${KUBE_CLUSTER}
 

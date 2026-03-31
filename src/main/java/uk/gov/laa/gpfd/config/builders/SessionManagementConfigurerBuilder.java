@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer;
-import org.springframework.stereotype.Component;
-
 
 /**
  * Custom builder for configuring session management in Spring Security, delegating the
@@ -17,7 +15,6 @@ import org.springframework.stereotype.Component;
  * configuration.
  * </p>
  */
-@Component
 @RequiredArgsConstructor
 public class SessionManagementConfigurerBuilder
         implements Customizer<SessionManagementConfigurer<HttpSecurity>> {
