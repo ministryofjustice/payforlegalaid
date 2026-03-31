@@ -49,6 +49,8 @@ spring:
       enabled: false # TODO Can't run tests when console is enabled as it conflicts with paths in Azure Security setup
       path: /h2-console
 
+  flyway:
+    enabled: false
 
   main:
     allow-bean-definition-overriding: true
