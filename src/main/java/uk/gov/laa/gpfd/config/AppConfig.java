@@ -7,9 +7,11 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -55,6 +57,8 @@ import java.util.Objects;
 import static uk.gov.laa.gpfd.dao.sql.ChannelRowHandler.forSheet;
 import static uk.gov.laa.gpfd.services.DataStreamer.createJdbcStreamer;
 
+import liquibase.integration.spring.SpringLiquibase;
+
 /**
  * Configuration class for application-level beans and settings.
  * <p>
@@ -65,6 +69,8 @@ import static uk.gov.laa.gpfd.services.DataStreamer.createJdbcStreamer;
  */
 @Configuration
 public class AppConfig {
+    @Value("${spring.liquibase.changelog}")
+    private String liquibaseChangeLog;
 
     @Value("${excel.security.compression-ratio:0.001}")
     private double allowedCompressionRatio;
@@ -405,5 +411,30 @@ public class AppConfig {
     @Bean
     public StrategyFactory<FileExtension, DataStream> streamStrategyFactory(Collection<DataStream> strategies) {
         return StrategyFactory.createGenericStrategyFactory(strategies, DataStream::getFormat);
+    }
+
+    /**
+     * Creates and configures a {@link SpringLiquibase} bean to be used for database,
+     * if the property `spring.liquibase.enabled` is set to `true` in the application properties.
+     *
+     * This method will set the data source to the specified {@link DataSource} bean, configure the
+     * change log file to be used by Liquibase, and ensure that the migrations are executed by
+     * setting {@code setShouldRun(true)}.
+     *
+     * @param dataSource The {@link DataSource} bean to be used by Liquibase for database connectivity.
+     * @return A configured {@link SpringLiquibase} instance ready for migration.
+     *
+     * @see SpringLiquibase
+     * @see DataSource
+     */
+    @Bean
+    @Primary
+    @ConditionalOnProperty(name = "spring.liquibase.enabled", havingValue = "true")
+    public SpringLiquibase liquibase(@Qualifier("writeDataSource") DataSource dataSource) {
+        SpringLiquibase liquibase = new SpringLiquibase();
+        liquibase.setDataSource(dataSource);
+        liquibase.setChangeLog(liquibaseChangeLog);
+        liquibase.setShouldRun(true);
+        return liquibase;
     }
 }

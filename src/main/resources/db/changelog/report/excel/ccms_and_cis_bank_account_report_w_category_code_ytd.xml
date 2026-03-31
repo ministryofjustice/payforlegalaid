@@ -1,0 +1,623 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="insert-seed-for-ccms-and-cis-account-report-w-category-code-ytd" author="robert buczek">
+        <comment>Insert initial data for: CCMS and CIS account report w category code YTD</comment>
+
+        <insert tableName="REPORTS" schemaName="GPFD">
+            <column name="ID" value="eee30b23-2c8d-4b4b-bb11-8cd67d07915c"/>
+            <column name="NAME" value="CCMS and CIS Bank Account Report w Category Code (YTD)"/>
+            <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="eee30b23-2c8d-4b4b-bb11-8cd67d07915c"/>
+            <column name="REPORT_CREATION_DATE" valueDate="SYSDATE"/>
+            <column name="DESCRIPTION" value="CCMS and CIS Bank Account Report w Category Code (YTD)"/>
+            <column name="NUM_DAYS_TO_KEEP" value="30"/>
+            <column name="FILE_NAME" value="CCMS_AND_CIS_BANK_ACCOUNT_REPORT_W_CATEGORY_CODE_YTD" />
+            <column name="ACTIVE" value="Y" />
+            <column name="REPORT_OUTPUT_TYPE" value="bd098666-94e4-4b0e-822c-8e5dfb04c908"/>
+            <column name="REPORT_OWNER_ID" value="00000000-0000-0000-0000-000000000003"/>
+            <column name="REPORT_OWNER_NAME" value="Teresa Green"/>
+            <column name="REPORT_OWNER_EMAIL" value="teresagreen@example.org"/>
+        </insert>
+        <insert tableName="REPORT_QUERIES" schemaName="GPFD">
+            <column name="ID" value="eee30b23-2c8d-4b4b-bb11-8cd67d07915c"/>
+            <column name="REPORT_ID" value="eee30b23-2c8d-4b4b-bb11-8cd67d07915c"/>
+            <column name="QUERY" value="SELECT * FROM ANY_REPORT.NACHO_AVERAGE_TABLE"/>
+            <column name="TAB_NAME" value="MAIN"/>
+            <column name="INDEX" value="0"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="ca98e379-ee0e-41d3-bc2e-3bd5808ebdfe"/>
+            <column name="REPORT_QUERY_ID" value="eee30b23-2c8d-4b4b-bb11-8cd67d07915c"/>
+            <column name="SOURCE_NAME" value="SOURCE"/>
+            <column name="MAPPED_NAME" value="SOURCE"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="7.33"/>
+            <column name="COLUMN_ORDER" value="1"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="62a9ba72-07c7-4ed1-8d19-35212869b93a"/>
+            <column name="REPORT_QUERY_ID" value="eee30b23-2c8d-4b4b-bb11-8cd67d07915c"/>
+            <column name="SOURCE_NAME" value="SALSA_SPICE_TRAUMA_LEVEL"/>
+            <column name="MAPPED_NAME" value="INV_SOURCE"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="11.67"/>
+            <column name="COLUMN_ORDER" value="2"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="6ff6a6d3-2621-472c-bd43-9ca57eacbf5b"/>
+            <column name="REPORT_QUERY_ID" value="eee30b23-2c8d-4b4b-bb11-8cd67d07915c"/>
+            <column name="SOURCE_NAME" value="CHIP_BREAKAGE_RATE"/>
+            <column name="MAPPED_NAME" value="SUB_SOURCE"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="15.33"/>
+            <column name="COLUMN_ORDER" value="3"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="36d590f9-959b-4ae1-9c73-cbbfa25ec7b1"/>
+            <column name="REPORT_QUERY_ID" value="eee30b23-2c8d-4b4b-bb11-8cd67d07915c"/>
+            <column name="SOURCE_NAME" value="THE_ONE_PERFECT_CHIP_ID"/>
+            <column name="MAPPED_NAME" value="PAYMENT_DATE"/>
+            <column name="FORMAT" value="dd-MMM-yy"/>
+            <column name="FORMAT_TYPE" value="date"/>
+            <column name="COLUMN_WIDTH" value="14.67"/>
+            <column name="COLUMN_ORDER" value="4"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="34b694ec-a54c-4e44-b1ac-35f4a7834129"/>
+            <column name="REPORT_QUERY_ID" value="eee30b23-2c8d-4b4b-bb11-8cd67d07915c"/>
+            <column name="SOURCE_NAME" value="SECRET_INGREDIENT_SUSPICION"/>
+            <column name="MAPPED_NAME" value="PAYMENT_MONTH"/>
+            <column name="FORMAT" value="dd-MMM-yy"/>
+            <column name="FORMAT_TYPE" value="date"/>
+            <column name="COLUMN_WIDTH" value="17.33"/>
+            <column name="COLUMN_ORDER" value="5"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="f44e2540-0ff1-4e81-a236-426b6e9c3a68"/>
+            <column name="REPORT_QUERY_ID" value="eee30b23-2c8d-4b4b-bb11-8cd67d07915c"/>
+            <column name="SOURCE_NAME" value="LAST_DORITO_DILEMMA"/>
+            <column name="MAPPED_NAME" value="SETTLEMENT_TYPE"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="16.83"/>
+            <column name="COLUMN_ORDER" value="6"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="7772b325-d612-48b9-8f8c-037a9a99a6a5"/>
+            <column name="REPORT_QUERY_ID" value="eee30b23-2c8d-4b4b-bb11-8cd67d07915c"/>
+            <column name="SOURCE_NAME" value="SCHEME"/>
+            <column name="MAPPED_NAME" value="SCHEME"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="7.5"/>
+            <column name="COLUMN_ORDER" value="7"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="b8e03e3d-8597-492b-91c8-5fb0d735c99d"/>
+            <column name="REPORT_QUERY_ID" value="eee30b23-2c8d-4b4b-bb11-8cd67d07915c"/>
+            <column name="SOURCE_NAME" value="JALAPENO_ROULETTE_RESULT"/>
+            <column name="MAPPED_NAME" value="SUB_SCHEME"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="18.5"/>
+            <column name="COLUMN_ORDER" value="8"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="a98add1e-3e83-45cb-b30f-66cda623b1c0"/>
+            <column name="REPORT_QUERY_ID" value="eee30b23-2c8d-4b4b-bb11-8cd67d07915c"/>
+            <column name="SOURCE_NAME" value="QUESO_ADDICTION_SEVERITY"/>
+            <column name="MAPPED_NAME" value="DETAIL_DESC"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="35.67"/>
+            <column name="COLUMN_ORDER" value="9"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="83d659f8-90c0-4e1e-b299-aa35aa8fa5b9"/>
+            <column name="REPORT_QUERY_ID" value="eee30b23-2c8d-4b4b-bb11-8cd67d07915c"/>
+            <column name="SOURCE_NAME" value="NACHO_REMNANT_GRIEF"/>
+            <column name="MAPPED_NAME" value="CAT_CODE"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="9.5"/>
+            <column name="COLUMN_ORDER" value="10"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="bd3d438c-10ea-409e-85e3-d8380c24aa4f"/>
+            <column name="REPORT_QUERY_ID" value="eee30b23-2c8d-4b4b-bb11-8cd67d07915c"/>
+            <column name="SOURCE_NAME" value="TABLE_CLOTH_STAIN_SEVERITY"/>
+            <column name="MAPPED_NAME" value="AP_AR_MOVEMENT"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="18.17"/>
+            <column name="COLUMN_ORDER" value="11"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="f0dd86ad-7b53-4f8b-92d7-094268069f67"/>
+            <column name="REPORT_QUERY_ID" value="eee30b23-2c8d-4b4b-bb11-8cd67d07915c"/>
+            <column name="SOURCE_NAME" value="FINAL_REGRET_RATING"/>
+            <column name="MAPPED_NAME" value="TOTAL"/>
+            <column name="FORMAT" value="#.00"/>
+            <column name="FORMAT_TYPE" value="double"/>
+            <column name="COLUMN_WIDTH" value="11.83"/>
+            <column name="COLUMN_ORDER" value="12"/>
+        </insert>
+        <insert tableName="REPORT_QUERIES" schemaName="GPFD">
+            <column name="ID" value="dd3d11dd-b7da-4494-a01a-c064ea8d82ff"/>
+            <column name="REPORT_ID" value="eee30b23-2c8d-4b4b-bb11-8cd67d07915c"/>
+            <column name="QUERY" value="SELECT * FROM ANY_REPORT.LETTUCE_TURNIP_THE_BEET"/>
+            <column name="TAB_NAME" value="Provider Contigency"/>
+            <column name="INDEX" value="1"/>
+        </insert>
+        <insert tableName="REPORT_QUERIES" schemaName="GPFD">
+            <column name="ID" value="d7755d5e-5f08-45bd-b7fa-bbf7c12cee64"/>
+            <column name="REPORT_ID" value="eee30b23-2c8d-4b4b-bb11-8cd67d07915c"/>
+            <column name="TAB_NAME" value="Summary"/>
+            <column name="INDEX" value="2"/>
+        </insert>
+        <insert tableName="REPORT_QUERIES" schemaName="GPFD">
+            <column name="ID" value="7d71a145-a4e1-4bb9-ba50-d0d2c2e2fd47"/>
+            <column name="REPORT_ID" value="eee30b23-2c8d-4b4b-bb11-8cd67d07915c"/>
+            <column name="TAB_NAME" value="Transparency Rec"/>
+            <column name="INDEX" value="3"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="030eeff8-9d2e-4d97-b244-7e5b6f1af205"/>
+            <column name="REPORT_QUERY_ID" value="dd3d11dd-b7da-4494-a01a-c064ea8d82ff"/>
+            <column name="SOURCE_NAME" value="PRIMARY_SUSPECT"/>
+            <column name="MAPPED_NAME" value="OFFICE_NUMBER"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="15.5"/>
+            <column name="COLUMN_ORDER" value="1"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="b62176a3-ab80-4c8c-90e5-c0ebd5826266"/>
+            <column name="REPORT_QUERY_ID" value="dd3d11dd-b7da-4494-a01a-c064ea8d82ff"/>
+            <column name="SOURCE_NAME" value="INDEX_OUT_OF_JOY"/>
+            <column name="MAPPED_NAME" value="OFFICE_NAME"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="67.5"/>
+            <column name="COLUMN_ORDER" value="2"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="194f4357-0bb9-4fd5-a67c-0918312be852"/>
+            <column name="REPORT_QUERY_ID" value="dd3d11dd-b7da-4494-a01a-c064ea8d82ff"/>
+            <column name="SOURCE_NAME" value="TRUNCATE_YOUR_LOSSES"/>
+            <column name="MAPPED_NAME" value="BANK_NUM"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="10.83"/>
+            <column name="COLUMN_ORDER" value="3"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="7e10640e-7692-4115-99f8-42fe4c07f38f"/>
+            <column name="REPORT_QUERY_ID" value="dd3d11dd-b7da-4494-a01a-c064ea8d82ff"/>
+            <column name="SOURCE_NAME" value="VIEW_WITH_A_GRIN"/>
+            <column name="MAPPED_NAME" value="BANK_ACCOUNT_NUM"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="21.17"/>
+            <column name="COLUMN_ORDER" value="4"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="014afd7f-6465-429d-9af1-3227ab9dcc0d"/>
+            <column name="REPORT_QUERY_ID" value="dd3d11dd-b7da-4494-a01a-c064ea8d82ff"/>
+            <column name="SOURCE_NAME" value="NULL_AND_VOID"/>
+            <column name="MAPPED_NAME" value="BANK_ACCOUNT_NAME"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="66.67"/>
+            <column name="COLUMN_ORDER" value="5"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="b27871da-1cf6-43ac-a7b9-9ba257dbb35f"/>
+            <column name="REPORT_QUERY_ID" value="dd3d11dd-b7da-4494-a01a-c064ea8d82ff"/>
+            <column name="SOURCE_NAME" value="SELECTIVE_AMNESIA"/>
+            <column name="MAPPED_NAME" value="VENDOR_SITE_ID"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="number"/>
+            <column name="COLUMN_WIDTH" value="15.33"/>
+            <column name="COLUMN_ORDER" value="6"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="458f9360-bcf9-49e0-97a7-e355d5b76728"/>
+            <column name="REPORT_QUERY_ID" value="dd3d11dd-b7da-4494-a01a-c064ea8d82ff"/>
+            <column name="SOURCE_NAME" value="COMMITMENT_ISSUES"/>
+            <column name="MAPPED_NAME" value="HOLD_ALL_PAYMENTS_FLAG"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="26"/>
+            <column name="COLUMN_ORDER" value="7"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="44bef17d-fa51-4470-969c-154182f62f87"/>
+            <column name="REPORT_QUERY_ID" value="dd3d11dd-b7da-4494-a01a-c064ea8d82ff"/>
+            <column name="SOURCE_NAME" value="VARCHAR_DAD_JOKE"/>
+            <column name="MAPPED_NAME" value="PAYMENTS_CHECKSUM"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="number"/>
+            <column name="COLUMN_WIDTH" value="21.5"/>
+            <column name="COLUMN_ORDER" value="8"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="0b70bd4e-493a-4633-af14-6a65283761ae"/>
+            <column name="REPORT_QUERY_ID" value="dd3d11dd-b7da-4494-a01a-c064ea8d82ff"/>
+            <column name="SOURCE_NAME" value="SEQUEL_SEQUENCE"/>
+            <column name="MAPPED_NAME" value="PAYMENTS_LAST_SIX"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="number"/>
+            <column name="COLUMN_WIDTH" value="19.17"/>
+            <column name="COLUMN_ORDER" value="9"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="015809ca-9c1b-4a3c-a9c8-f8bb10b3eb37"/>
+            <column name="REPORT_QUERY_ID" value="dd3d11dd-b7da-4494-a01a-c064ea8d82ff"/>
+            <column name="SOURCE_NAME" value="JOIN_US_FOR_ERRORS"/>
+            <column name="MAPPED_NAME" value="PAYMENTS_LAST_TWELVE"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="number"/>
+            <column name="COLUMN_WIDTH" value="23.67"/>
+            <column name="COLUMN_ORDER" value="10"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="2d950cde-f416-4541-b8a2-8744d782454e"/>
+            <column name="REPORT_QUERY_ID" value="dd3d11dd-b7da-4494-a01a-c064ea8d82ff"/>
+            <column name="SOURCE_NAME" value="TO_DATE_OR_NOT_TO_DATE"/>
+            <column name="MAPPED_NAME" value="AVG_SIX"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="number"/>
+            <column name="COLUMN_WIDTH" value="8.17"/>
+            <column name="COLUMN_ORDER" value="11"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="7a79d9d0-585a-437d-ba6d-22cb3b517010"/>
+            <column name="REPORT_QUERY_ID" value="dd3d11dd-b7da-4494-a01a-c064ea8d82ff"/>
+            <column name="SOURCE_NAME" value="DEFAULT_TO_CHAOS"/>
+            <column name="MAPPED_NAME" value="AVG_TWELVE"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="number"/>
+            <column name="COLUMN_WIDTH" value="12.50"/>
+            <column name="COLUMN_ORDER" value="12"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="d35b6b7e-fc98-4517-84d8-fa938043db18"/>
+            <column name="REPORT_QUERY_ID" value="dd3d11dd-b7da-4494-a01a-c064ea8d82ff"/>
+            <column name="SOURCE_NAME" value="AR_DEBT"/>
+            <column name="MAPPED_NAME" value="AR_DEBT"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="number"/>
+            <column name="COLUMN_WIDTH" value="9.83"/>
+            <column name="COLUMN_ORDER" value="13"/>
+        </insert>
+        <createTable tableName="LETTUCE_TURNIP_THE_BEET" schemaName="ANY_REPORT">
+            <column name="PRIMARY_SUSPECT" type="VARCHAR2(15)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="INDEX_OUT_OF_JOY" type="VARCHAR2(320)"/>
+            <column name="TRUNCATE_YOUR_LOSSES" type="VARCHAR2(30)"/>
+            <column name="VIEW_WITH_A_GRIN" type="VARCHAR2(9)"/>
+            <column name="NULL_AND_VOID" type="VARCHAR2(80)"/>
+            <column name="SELECTIVE_AMNESIA" type="NUMBER(22)"/>
+            <column name="COMMITMENT_ISSUES" type="VARCHAR2(1)"/>
+            <column name="VARCHAR_DAD_JOKE" type="NUMBER(22)"/>
+            <column name="SEQUEL_SEQUENCE" type="NUMBER(22)"/>
+            <column name="JOIN_US_FOR_ERRORS" type="NUMBER(22)"/>
+            <column name="TO_DATE_OR_NOT_TO_DATE" type="NUMBER(22)"/>
+            <column name="DEFAULT_TO_CHAOS" type="NUMBER(22)"/>
+            <column name="AR_DEBT" type="NUMBER(22)"/>
+        </createTable>
+        <insert tableName="LETTUCE_TURNIP_THE_BEET" schemaName="ANY_REPORT">
+            <column name="PRIMARY_SUSPECT" value="OFF001"/>
+            <column name="INDEX_OUT_OF_JOY" value="Main Headquarters"/>
+            <column name="TRUNCATE_YOUR_LOSSES" value="BANK12345"/>
+            <column name="VIEW_WITH_A_GRIN" value="ACC987654"/>
+            <column name="NULL_AND_VOID" value="Corporate Account"/>
+            <column name="SELECTIVE_AMNESIA" valueNumeric="1001"/>
+            <column name="COMMITMENT_ISSUES" value="N"/>
+            <column name="VARCHAR_DAD_JOKE" valueNumeric="15000"/>
+            <column name="SEQUEL_SEQUENCE" valueNumeric="12000"/>
+            <column name="JOIN_US_FOR_ERRORS" valueNumeric="25000"/>
+            <column name="TO_DATE_OR_NOT_TO_DATE" valueNumeric="2000"/>
+            <column name="DEFAULT_TO_CHAOS" valueNumeric="2083"/>
+            <column name="AR_DEBT" valueNumeric="5000"/>
+        </insert>
+        <insert tableName="LETTUCE_TURNIP_THE_BEET" schemaName="ANY_REPORT">
+            <column name="PRIMARY_SUSPECT" value="OFF002"/>
+            <column name="INDEX_OUT_OF_JOY" value="North Regional Office"/>
+            <column name="TRUNCATE_YOUR_LOSSES" value="BANK54321"/>
+            <column name="VIEW_WITH_A_GRIN" value="ACC123456"/>
+            <column name="NULL_AND_VOID" value="North Operations"/>
+            <column name="SELECTIVE_AMNESIA" valueNumeric="1002"/>
+            <column name="COMMITMENT_ISSUES" value="Y"/>
+            <column name="VARCHAR_DAD_JOKE" valueNumeric="8000"/>
+            <column name="SEQUEL_SEQUENCE" valueNumeric="6000"/>
+            <column name="JOIN_US_FOR_ERRORS" valueNumeric="15000"/>
+            <column name="TO_DATE_OR_NOT_TO_DATE" valueNumeric="1000"/>
+            <column name="DEFAULT_TO_CHAOS" valueNumeric="1250"/>
+            <column name="AR_DEBT" valueNumeric="3000"/>
+        </insert>
+        <insert tableName="LETTUCE_TURNIP_THE_BEET" schemaName="ANY_REPORT">
+            <column name="PRIMARY_SUSPECT" value="OFF003"/>
+            <column name="INDEX_OUT_OF_JOY" value="South Regional Office"/>
+            <column name="TRUNCATE_YOUR_LOSSES" value="BANK67890"/>
+            <column name="VIEW_WITH_A_GRIN" value="ACC456789"/>
+            <column name="NULL_AND_VOID" value="South Operations"/>
+            <column name="SELECTIVE_AMNESIA" valueNumeric="1003"/>
+            <column name="COMMITMENT_ISSUES" value="N"/>
+            <column name="VARCHAR_DAD_JOKE" valueNumeric="12000"/>
+            <column name="SEQUEL_SEQUENCE" valueNumeric="9000"/>
+            <column name="JOIN_US_FOR_ERRORS" valueNumeric="18000"/>
+            <column name="TO_DATE_OR_NOT_TO_DATE" valueNumeric="1500"/>
+            <column name="DEFAULT_TO_CHAOS" valueNumeric="1500"/>
+            <column name="AR_DEBT" valueNumeric="2000"/>
+        </insert>
+        <insert tableName="LETTUCE_TURNIP_THE_BEET" schemaName="ANY_REPORT">
+            <column name="PRIMARY_SUSPECT" value="OFF004"/>
+            <column name="INDEX_OUT_OF_JOY" value="East Regional Office"/>
+            <column name="TRUNCATE_YOUR_LOSSES" value="BANK09876"/>
+            <column name="VIEW_WITH_A_GRIN" value="ACC321654"/>
+            <column name="NULL_AND_VOID" value="East Operations"/>
+            <column name="SELECTIVE_AMNESIA" valueNumeric="1004"/>
+            <column name="COMMITMENT_ISSUES" value="N"/>
+            <column name="VARCHAR_DAD_JOKE" valueNumeric="9000"/>
+            <column name="SEQUEL_SEQUENCE" valueNumeric="7500"/>
+            <column name="JOIN_US_FOR_ERRORS" valueNumeric="16000"/>
+            <column name="TO_DATE_OR_NOT_TO_DATE" valueNumeric="1250"/>
+            <column name="DEFAULT_TO_CHAOS" valueNumeric="1333"/>
+            <column name="AR_DEBT" valueNumeric="1500"/>
+        </insert>
+        <insert tableName="LETTUCE_TURNIP_THE_BEET" schemaName="ANY_REPORT">
+            <column name="PRIMARY_SUSPECT" value="OFF005"/>
+            <column name="INDEX_OUT_OF_JOY" value="West Regional Office"/>
+            <column name="TRUNCATE_YOUR_LOSSES" value="BANK13579"/>
+            <column name="VIEW_WITH_A_GRIN" value="ACC753159"/>
+            <column name="NULL_AND_VOID" value="West Operations"/>
+            <column name="SELECTIVE_AMNESIA" valueNumeric="1005"/>
+            <column name="COMMITMENT_ISSUES" value="Y"/>
+            <column name="VARCHAR_DAD_JOKE" valueNumeric="5000"/>
+            <column name="SEQUEL_SEQUENCE" valueNumeric="3000"/>
+            <column name="JOIN_US_FOR_ERRORS" valueNumeric="8000"/>
+            <column name="TO_DATE_OR_NOT_TO_DATE" valueNumeric="500"/>
+            <column name="DEFAULT_TO_CHAOS" valueNumeric="666"/>
+            <column name="AR_DEBT" valueNumeric="1000"/>
+        </insert>
+        <insert tableName="LETTUCE_TURNIP_THE_BEET" schemaName="ANY_REPORT">
+            <column name="PRIMARY_SUSPECT" value="OFF006"/>
+            <column name="INDEX_OUT_OF_JOY" value="Central Regional Office"/>
+            <column name="TRUNCATE_YOUR_LOSSES" value="BANK24680"/>
+            <column name="VIEW_WITH_A_GRIN" value="ACC864209"/>
+            <column name="NULL_AND_VOID" value="Central Operations"/>
+            <column name="SELECTIVE_AMNESIA" valueNumeric="1006"/>
+            <column name="COMMITMENT_ISSUES" value="N"/>
+            <column name="VARCHAR_DAD_JOKE" valueNumeric="11000"/>
+            <column name="SEQUEL_SEQUENCE" valueNumeric="8000"/>
+            <column name="JOIN_US_FOR_ERRORS" valueNumeric="19000"/>
+            <column name="TO_DATE_OR_NOT_TO_DATE" valueNumeric="1333"/>
+            <column name="DEFAULT_TO_CHAOS" valueNumeric="1583"/>
+            <column name="AR_DEBT" valueNumeric="2500"/>
+        </insert>
+        <insert tableName="LETTUCE_TURNIP_THE_BEET" schemaName="ANY_REPORT">
+            <column name="PRIMARY_SUSPECT" value="OFF007"/>
+            <column name="INDEX_OUT_OF_JOY" value="Northeast Regional Office"/>
+            <column name="TRUNCATE_YOUR_LOSSES" value="BANK11223"/>
+            <column name="VIEW_WITH_A_GRIN" value="ACC334455"/>
+            <column name="NULL_AND_VOID" value="NE Operations"/>
+            <column name="SELECTIVE_AMNESIA" valueNumeric="1007"/>
+            <column name="COMMITMENT_ISSUES" value="N"/>
+            <column name="VARCHAR_DAD_JOKE" valueNumeric="7000"/>
+            <column name="SEQUEL_SEQUENCE" valueNumeric="5000"/>
+            <column name="JOIN_US_FOR_ERRORS" valueNumeric="12000"/>
+            <column name="TO_DATE_OR_NOT_TO_DATE" valueNumeric="833"/>
+            <column name="DEFAULT_TO_CHAOS" valueNumeric="1000"/>
+            <column name="AR_DEBT" valueNumeric="1800"/>
+        </insert>
+        <insert tableName="LETTUCE_TURNIP_THE_BEET" schemaName="ANY_REPORT">
+            <column name="PRIMARY_SUSPECT" value="OFF008"/>
+            <column name="INDEX_OUT_OF_JOY" value="Northwest Regional Office"/>
+            <column name="TRUNCATE_YOUR_LOSSES" value="BANK44556"/>
+            <column name="VIEW_WITH_A_GRIN" value="ACC667788"/>
+            <column name="NULL_AND_VOID" value="NW Operations"/>
+            <column name="SELECTIVE_AMNESIA" valueNumeric="1008"/>
+            <column name="COMMITMENT_ISSUES" value="N"/>
+            <column name="VARCHAR_DAD_JOKE" valueNumeric="6000"/>
+            <column name="SEQUEL_SEQUENCE" valueNumeric="4500"/>
+            <column name="JOIN_US_FOR_ERRORS" valueNumeric="11000"/>
+            <column name="TO_DATE_OR_NOT_TO_DATE" valueNumeric="750"/>
+            <column name="DEFAULT_TO_CHAOS" valueNumeric="916"/>
+            <column name="AR_DEBT" valueNumeric="1200"/>
+        </insert>
+        <insert tableName="LETTUCE_TURNIP_THE_BEET" schemaName="ANY_REPORT">
+            <column name="PRIMARY_SUSPECT" value="OFF009"/>
+            <column name="INDEX_OUT_OF_JOY" value="Southeast Regional Office"/>
+            <column name="TRUNCATE_YOUR_LOSSES" value="BANK77889"/>
+            <column name="VIEW_WITH_A_GRIN" value="ACC990011"/>
+            <column name="NULL_AND_VOID" value="SE Operations"/>
+            <column name="SELECTIVE_AMNESIA" valueNumeric="1009"/>
+            <column name="COMMITMENT_ISSUES" value="Y"/>
+            <column name="VARCHAR_DAD_JOKE" valueNumeric="4000"/>
+            <column name="SEQUEL_SEQUENCE" valueNumeric="2000"/>
+            <column name="JOIN_US_FOR_ERRORS" valueNumeric="6000"/>
+            <column name="TO_DATE_OR_NOT_TO_DATE" valueNumeric="333"/>
+            <column name="DEFAULT_TO_CHAOS" valueNumeric="500"/>
+            <column name="AR_DEBT" valueNumeric="800"/>
+        </insert>
+        <insert tableName="LETTUCE_TURNIP_THE_BEET" schemaName="ANY_REPORT">
+            <column name="PRIMARY_SUSPECT" value="OFF010"/>
+            <column name="INDEX_OUT_OF_JOY" value="Southwest Regional Office"/>
+            <column name="TRUNCATE_YOUR_LOSSES" value="BANK00112"/>
+            <column name="VIEW_WITH_A_GRIN" value="ACC223344"/>
+            <column name="NULL_AND_VOID" value="SW Operations"/>
+            <column name="SELECTIVE_AMNESIA" valueNumeric="1010"/>
+            <column name="COMMITMENT_ISSUES" value="N"/>
+            <column name="VARCHAR_DAD_JOKE" valueNumeric="8500"/>
+            <column name="SEQUEL_SEQUENCE" valueNumeric="7000"/>
+            <column name="JOIN_US_FOR_ERRORS" valueNumeric="14000"/>
+            <column name="TO_DATE_OR_NOT_TO_DATE" valueNumeric="1166"/>
+            <column name="DEFAULT_TO_CHAOS" valueNumeric="1166"/>
+            <column name="AR_DEBT" valueNumeric="1600"/>
+        </insert>
+        <createTable tableName="NACHO_AVERAGE_TABLE" schemaName="ANY_REPORT">
+            <column name="SOURCE" type="VARCHAR2(50)"/>
+            <column name="SALSA_SPICE_TRAUMA_LEVEL" type="VARCHAR2(50)"/>
+            <column name="CHIP_BREAKAGE_RATE" type="VARCHAR2(50)"/>
+            <column name="THE_ONE_PERFECT_CHIP_ID" type="DATE"/>
+            <column name="SECRET_INGREDIENT_SUSPICION" type="DATE"/>
+            <column name="LAST_DORITO_DILEMMA" type="VARCHAR2(30)"/>
+            <column name="SCHEME" type="VARCHAR2(50)"/>
+            <column name="JALAPENO_ROULETTE_RESULT" type="VARCHAR2(50)"/>
+            <column name="QUESO_ADDICTION_SEVERITY" type="VARCHAR2(200)"/>
+            <column name="NACHO_REMNANT_GRIEF" type="VARCHAR2(20)"/>
+            <column name="TABLE_CLOTH_STAIN_SEVERITY" type="VARCHAR2(10)"/>
+            <column name="FINAL_REGRET_RATING" type="NUMBER(22,2)"/>
+        </createTable>
+        <insert tableName="NACHO_AVERAGE_TABLE" schemaName="ANY_REPORT">
+            <column name="SOURCE" value="SYSTEM_A"/>
+            <column name="SALSA_SPICE_TRAUMA_LEVEL" value="INVOICE"/>
+            <column name="CHIP_BREAKAGE_RATE" value="REGULAR"/>
+            <column name="THE_ONE_PERFECT_CHIP_ID" valueDate="2023-01-15"/>
+            <column name="SECRET_INGREDIENT_SUSPICION" valueDate="2023-01-01"/>
+            <column name="LAST_DORITO_DILEMMA" value="CASH"/>
+            <column name="SCHEME" value="GENERAL"/>
+            <column name="JALAPENO_ROULETTE_RESULT" value="STANDARD"/>
+            <column name="QUESO_ADDICTION_SEVERITY" value="Monthly vendor payment"/>
+            <column name="NACHO_REMNANT_GRIEF" value="CAT1"/>
+            <column name="TABLE_CLOTH_STAIN_SEVERITY" value="AP"/>
+            <column name="FINAL_REGRET_RATING" valueNumeric="1250.50"/>
+        </insert>
+        <insert tableName="NACHO_AVERAGE_TABLE" schemaName="ANY_REPORT">
+            <column name="SOURCE" value="SYSTEM_B"/>
+            <column name="SALSA_SPICE_TRAUMA_LEVEL" value="CREDIT"/>
+            <column name="CHIP_BREAKAGE_RATE" value="SPECIAL"/>
+            <column name="THE_ONE_PERFECT_CHIP_ID" valueDate="2023-01-18"/>
+            <column name="SECRET_INGREDIENT_SUSPICION" valueDate="2023-01-01"/>
+            <column name="LAST_DORITO_DILEMMA" value="CHECK"/>
+            <column name="SCHEME" value="SPECIAL"/>
+            <column name="JALAPENO_ROULETTE_RESULT" value="DISCOUNT"/>
+            <column name="QUESO_ADDICTION_SEVERITY" value="Customer refund"/>
+            <column name="NACHO_REMNANT_GRIEF" value="CAT2"/>
+            <column name="TABLE_CLOTH_STAIN_SEVERITY" value="AR"/>
+            <column name="FINAL_REGRET_RATING" valueNumeric="-750.25"/>
+        </insert>
+        <insert tableName="NACHO_AVERAGE_TABLE" schemaName="ANY_REPORT">
+            <column name="SOURCE" value="SYSTEM_C"/>
+            <column name="SALSA_SPICE_TRAUMA_LEVEL" value="INVOICE"/>
+            <column name="CHIP_BREAKAGE_RATE" value="URGENT"/>
+            <column name="THE_ONE_PERFECT_CHIP_ID" valueDate="2023-02-05"/>
+            <column name="SECRET_INGREDIENT_SUSPICION" valueDate="2023-02-01"/>
+            <column name="LAST_DORITO_DILEMMA" value="WIRE"/>
+            <column name="SCHEME" value="GENERAL"/>
+            <column name="JALAPENO_ROULETTE_RESULT" value="EXPRESS"/>
+            <column name="QUESO_ADDICTION_SEVERITY" value="Emergency service payment"/>
+            <column name="NACHO_REMNANT_GRIEF" value="CAT3"/>
+            <column name="TABLE_CLOTH_STAIN_SEVERITY" value="AP"/>
+            <column name="FINAL_REGRET_RATING" valueNumeric="3200.00"/>
+        </insert>
+        <insert tableName="NACHO_AVERAGE_TABLE" schemaName="ANY_REPORT">
+            <column name="SOURCE" value="SYSTEM_A"/>
+            <column name="SALSA_SPICE_TRAUMA_LEVEL" value="INVOICE"/>
+            <column name="CHIP_BREAKAGE_RATE" value="REGULAR"/>
+            <column name="THE_ONE_PERFECT_CHIP_ID" valueDate="2023-02-15"/>
+            <column name="SECRET_INGREDIENT_SUSPICION" valueDate="2023-02-01"/>
+            <column name="LAST_DORITO_DILEMMA" value="CASH"/>
+            <column name="SCHEME" value="GENERAL"/>
+            <column name="JALAPENO_ROULETTE_RESULT" value="STANDARD"/>
+            <column name="QUESO_ADDICTION_SEVERITY" value="Monthly vendor payment"/>
+            <column name="NACHO_REMNANT_GRIEF" value="CAT1"/>
+            <column name="TABLE_CLOTH_STAIN_SEVERITY" value="AP"/>
+            <column name="FINAL_REGRET_RATING" valueNumeric="1300.75"/>
+        </insert>
+        <insert tableName="NACHO_AVERAGE_TABLE" schemaName="ANY_REPORT">
+            <column name="SOURCE" value="SYSTEM_B"/>
+            <column name="SALSA_SPICE_TRAUMA_LEVEL" value="ADJUSTMENT"/>
+            <column name="CHIP_BREAKAGE_RATE" value="CORRECTION"/>
+            <column name="THE_ONE_PERFECT_CHIP_ID" valueDate="2023-03-02"/>
+            <column name="SECRET_INGREDIENT_SUSPICION" valueDate="2023-03-01"/>
+            <column name="LAST_DORITO_DILEMMA" value="CHECK"/>
+            <column name="SCHEME" value="ADMIN"/>
+            <column name="JALAPENO_ROULETTE_RESULT" value="CORRECTION"/>
+            <column name="QUESO_ADDICTION_SEVERITY" value="Invoice correction"/>
+            <column name="NACHO_REMNANT_GRIEF" value="CAT4"/>
+            <column name="TABLE_CLOTH_STAIN_SEVERITY" value="AP"/>
+            <column name="FINAL_REGRET_RATING" valueNumeric="150.00"/>
+        </insert>
+        <insert tableName="NACHO_AVERAGE_TABLE" schemaName="ANY_REPORT">
+            <column name="SOURCE" value="SYSTEM_C"/>
+            <column name="SALSA_SPICE_TRAUMA_LEVEL" value="CREDIT"/>
+            <column name="CHIP_BREAKAGE_RATE" value="SPECIAL"/>
+            <column name="THE_ONE_PERFECT_CHIP_ID" valueDate="2023-03-10"/>
+            <column name="SECRET_INGREDIENT_SUSPICION" valueDate="2023-03-01"/>
+            <column name="LAST_DORITO_DILEMMA" value="WIRE"/>
+            <column name="SCHEME" value="SPECIAL"/>
+            <column name="JALAPENO_ROULETTE_RESULT" value="DISCOUNT"/>
+            <column name="QUESO_ADDICTION_SEVERITY" value="Bulk order refund"/>
+            <column name="NACHO_REMNANT_GRIEF" value="CAT2"/>
+            <column name="TABLE_CLOTH_STAIN_SEVERITY" value="AR"/>
+            <column name="FINAL_REGRET_RATING" valueNumeric="-2250.40"/>
+        </insert>
+        <insert tableName="NACHO_AVERAGE_TABLE" schemaName="ANY_REPORT">
+            <column name="SOURCE" value="SYSTEM_A"/>
+            <column name="SALSA_SPICE_TRAUMA_LEVEL" value="INVOICE"/>
+            <column name="CHIP_BREAKAGE_RATE" value="URGENT"/>
+            <column name="THE_ONE_PERFECT_CHIP_ID" valueDate="2023-04-01"/>
+            <column name="SECRET_INGREDIENT_SUSPICION" valueDate="2023-04-01"/>
+            <column name="LAST_DORITO_DILEMMA" value="CASH"/>
+            <column name="SCHEME" value="GENERAL"/>
+            <column name="JALAPENO_ROULETTE_RESULT" value="EXPRESS"/>
+            <column name="QUESO_ADDICTION_SEVERITY" value="Quarterly bonus payment"/>
+            <column name="NACHO_REMNANT_GRIEF" value="CAT5"/>
+            <column name="TABLE_CLOTH_STAIN_SEVERITY" value="AP"/>
+            <column name="FINAL_REGRET_RATING" valueNumeric="5000.00"/>
+        </insert>
+        <insert tableName="NACHO_AVERAGE_TABLE" schemaName="ANY_REPORT">
+            <column name="SOURCE" value="SYSTEM_B"/>
+            <column name="SALSA_SPICE_TRAUMA_LEVEL" value="INVOICE"/>
+            <column name="CHIP_BREAKAGE_RATE" value="REGULAR"/>
+            <column name="THE_ONE_PERFECT_CHIP_ID" valueDate="2023-04-15"/>
+            <column name="SECRET_INGREDIENT_SUSPICION" valueDate="2023-04-01"/>
+            <column name="LAST_DORITO_DILEMMA" value="CHECK"/>
+            <column name="SCHEME" value="GENERAL"/>
+            <column name="JALAPENO_ROULETTE_RESULT" value="STANDARD"/>
+            <column name="QUESO_ADDICTION_SEVERITY" value="Monthly service fee"/>
+            <column name="NACHO_REMNANT_GRIEF" value="CAT1"/>
+            <column name="TABLE_CLOTH_STAIN_SEVERITY" value="AP"/>
+            <column name="FINAL_REGRET_RATING" valueNumeric="875.30"/>
+        </insert>
+        <insert tableName="NACHO_AVERAGE_TABLE" schemaName="ANY_REPORT">
+            <column name="SOURCE" value="SYSTEM_C"/>
+            <column name="SALSA_SPICE_TRAUMA_LEVEL" value="ADJUSTMENT"/>
+            <column name="CHIP_BREAKAGE_RATE" value="CORRECTION"/>
+            <column name="THE_ONE_PERFECT_CHIP_ID" valueDate="2023-05-05"/>
+            <column name="SECRET_INGREDIENT_SUSPICION" valueDate="2023-05-01"/>
+            <column name="LAST_DORITO_DILEMMA" value="WIRE"/>
+            <column name="SCHEME" value="ADMIN"/>
+            <column name="JALAPENO_ROULETTE_RESULT" value="CORRECTION"/>
+            <column name="QUESO_ADDICTION_SEVERITY" value="Tax adjustment"/>
+            <column name="NACHO_REMNANT_GRIEF" value="CAT4"/>
+            <column name="TABLE_CLOTH_STAIN_SEVERITY" value="AP"/>
+            <column name="FINAL_REGRET_RATING" valueNumeric="320.15"/>
+        </insert>
+        <insert tableName="NACHO_AVERAGE_TABLE" schemaName="ANY_REPORT">
+            <column name="SOURCE" value="SYSTEM_A"/>
+            <column name="SALSA_SPICE_TRAUMA_LEVEL" value="CREDIT"/>
+            <column name="CHIP_BREAKAGE_RATE" value="SPECIAL"/>
+            <column name="THE_ONE_PERFECT_CHIP_ID" valueDate="2023-05-20"/>
+            <column name="SECRET_INGREDIENT_SUSPICION" valueDate="2023-05-01"/>
+            <column name="LAST_DORITO_DILEMMA" value="CASH"/>
+            <column name="SCHEME" value="SPECIAL"/>
+            <column name="JALAPENO_ROULETTE_RESULT" value="DISCOUNT"/>
+            <column name="QUESO_ADDICTION_SEVERITY" value="Loyalty program refund"/>
+            <column name="NACHO_REMNANT_GRIEF" value="CAT2"/>
+            <column name="TABLE_CLOTH_STAIN_SEVERITY" value="AR"/>
+            <column name="FINAL_REGRET_RATING" valueNumeric="-150.75"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

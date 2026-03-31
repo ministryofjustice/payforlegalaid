@@ -1,0 +1,623 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="insert-seed-for-ccms-and-cis-account-report-w-category-code-mnth" author="robert buczek">
+        <comment>Insert initial data for: CCMS and CIS account report w category code MNTH</comment>
+
+        <insert tableName="REPORTS" schemaName="GPFD">
+            <column name="ID" value="a017241a-359f-4fdb-a0cd-7f28f1946ef1"/>
+            <column name="NAME" value="CCMS and CIS Bank Account Report w Category Code (MNTH)"/>
+            <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="eee30b23-2c8d-4b4b-bb11-8cd67d07915c"/>
+            <column name="REPORT_CREATION_DATE" valueDate="SYSDATE"/>
+            <column name="DESCRIPTION" value="CCMS and CIS Bank Account Report w Category Code (MNTH)"/>
+            <column name="NUM_DAYS_TO_KEEP" value="30"/>
+            <column name="FILE_NAME" value="CCMS_AND_CIS_BANK_ACCOUNT_REPORT_W_CATEGORY_CODE_YTD" />
+            <column name="ACTIVE" value="Y" />
+            <column name="REPORT_OUTPUT_TYPE" value="bd098666-94e4-4b0e-822c-8e5dfb04c908"/>
+            <column name="REPORT_OWNER_ID" value="00000000-0000-0000-0000-000000000003"/>
+            <column name="REPORT_OWNER_NAME" value="Teresa Green"/>
+            <column name="REPORT_OWNER_EMAIL" value="teresagreen@example.org"/>
+        </insert>
+        <insert tableName="REPORT_QUERIES" schemaName="GPFD">
+            <column name="ID" value="e7ede5f3-b0d8-4ad9-95a2-160cfa22dfc5"/>
+            <column name="REPORT_ID" value="a017241a-359f-4fdb-a0cd-7f28f1946ef1"/>
+            <column name="TAB_NAME" value="Summary"/>
+            <column name="INDEX" value="2"/>
+        </insert>
+        <insert tableName="REPORT_QUERIES" schemaName="GPFD">
+            <column name="ID" value="4214ce83-52c0-4570-a533-eb58ed9bd65f"/>
+            <column name="REPORT_ID" value="a017241a-359f-4fdb-a0cd-7f28f1946ef1"/>
+            <column name="TAB_NAME" value="Transparency Rec"/>
+            <column name="INDEX" value="3"/>
+        </insert>
+        <insert tableName="REPORT_QUERIES" schemaName="GPFD">
+            <column name="ID" value="273b08af-147c-4de8-bebe-8033c09b6b8b"/>
+            <column name="REPORT_ID" value="a017241a-359f-4fdb-a0cd-7f28f1946ef1"/>
+            <column name="QUERY" value="SELECT * FROM ANY_REPORT.BREAKING_BREAD"/>
+            <column name="TAB_NAME" value="MAIN"/>
+            <column name="INDEX" value="0"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="b5fa61b8-2e3c-44d0-953d-0e244f64bd91"/>
+            <column name="REPORT_QUERY_ID" value="273b08af-147c-4de8-bebe-8033c09b6b8b"/>
+            <column name="SOURCE_NAME" value="LOAF_OR_LEAVE_IT"/>
+            <column name="MAPPED_NAME" value="SOURCE"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="7.33"/>
+            <column name="COLUMN_ORDER" value="1"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="ccd76a63-9546-4c4d-8a71-2aee2d964dad"/>
+            <column name="REPORT_QUERY_ID" value="273b08af-147c-4de8-bebe-8033c09b6b8b"/>
+            <column name="SOURCE_NAME" value="SOURDOUGH_SUSPECT"/>
+            <column name="MAPPED_NAME" value="INV_SOURCE"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="11.67"/>
+            <column name="COLUMN_ORDER" value="2"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="ff95e462-f9b9-4fcf-b78e-68d4eb19581d"/>
+            <column name="REPORT_QUERY_ID" value="273b08af-147c-4de8-bebe-8033c09b6b8b"/>
+            <column name="SOURCE_NAME" value="CRUMB_CRIME_SCENE"/>
+            <column name="MAPPED_NAME" value="SUB_SOURCE"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="15.33"/>
+            <column name="COLUMN_ORDER" value="3"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="f6d4d8b7-8aeb-4c49-9f8a-a2e5b9c0b169"/>
+            <column name="REPORT_QUERY_ID" value="273b08af-147c-4de8-bebe-8033c09b6b8b"/>
+            <column name="SOURCE_NAME" value="BAKED_AND_CONFUSED"/>
+            <column name="MAPPED_NAME" value="PAYMENT_DATE"/>
+            <column name="FORMAT" value="dd-MMM-yy"/>
+            <column name="FORMAT_TYPE" value="date"/>
+            <column name="COLUMN_WIDTH" value="14.67"/>
+            <column name="COLUMN_ORDER" value="4"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="657ae209-7e1c-4465-a0ce-81010141de22"/>
+            <column name="REPORT_QUERY_ID" value="273b08af-147c-4de8-bebe-8033c09b6b8b"/>
+            <column name="SOURCE_NAME" value="KNEAD_IT_OR_NAH"/>
+            <column name="MAPPED_NAME" value="PAYMENT_MONTH"/>
+            <column name="FORMAT" value="dd-MMM-yy"/>
+            <column name="FORMAT_TYPE" value="date"/>
+            <column name="COLUMN_WIDTH" value="17.33"/>
+            <column name="COLUMN_ORDER" value="5"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="8371e851-3b3c-4b49-bcf1-07adc23ed9d8"/>
+            <column name="REPORT_QUERY_ID" value="273b08af-147c-4de8-bebe-8033c09b6b8b"/>
+            <column name="SOURCE_NAME" value="BUTTER_BETRAYAL"/>
+            <column name="MAPPED_NAME" value="SETTLEMENT_TYPE"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="16.83"/>
+            <column name="COLUMN_ORDER" value="6"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="f2a6c136-8c2d-4b5c-bcea-b839f227cccf"/>
+            <column name="REPORT_QUERY_ID" value="273b08af-147c-4de8-bebe-8033c09b6b8b"/>
+            <column name="SOURCE_NAME" value="GARLIC_BREAD_OR_GTFO"/>
+            <column name="MAPPED_NAME" value="SCHEME"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="7.5"/>
+            <column name="COLUMN_ORDER" value="7"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="183ba268-3324-407e-83a6-6b8b208243db"/>
+            <column name="REPORT_QUERY_ID" value="273b08af-147c-4de8-bebe-8033c09b6b8b"/>
+            <column name="SOURCE_NAME" value="DOUGH_NOT_DISTURB"/>
+            <column name="MAPPED_NAME" value="SUB_SCHEME"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="18.5"/>
+            <column name="COLUMN_ORDER" value="8"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="723c24ec-8f23-43f2-b870-da2751abbbee"/>
+            <column name="REPORT_QUERY_ID" value="273b08af-147c-4de8-bebe-8033c09b6b8b"/>
+            <column name="SOURCE_NAME" value="BAGUETTE_ABOUT_IT"/>
+            <column name="MAPPED_NAME" value="DETAIL_DESC"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="35.67"/>
+            <column name="COLUMN_ORDER" value="9"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="d29b8d0e-548e-4059-8a83-16fb1f516895"/>
+            <column name="REPORT_QUERY_ID" value="273b08af-147c-4de8-bebe-8033c09b6b8b"/>
+            <column name="SOURCE_NAME" value="TOASTED_OR_ROASTED"/>
+            <column name="MAPPED_NAME" value="CAT_CODE"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="9.5"/>
+            <column name="COLUMN_ORDER" value="10"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="0f42d013-8183-4e49-8e47-9ca84b1e4650"/>
+            <column name="REPORT_QUERY_ID" value="273b08af-147c-4de8-bebe-8033c09b6b8b"/>
+            <column name="SOURCE_NAME" value="GLUTEN_FOR_PUNISHMENT"/>
+            <column name="MAPPED_NAME" value="AP_AR_MOVEMENT"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="18.17"/>
+            <column name="COLUMN_ORDER" value="11"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="bf64418a-1925-4517-9e11-2c338bcd60d1"/>
+            <column name="REPORT_QUERY_ID" value="273b08af-147c-4de8-bebe-8033c09b6b8b"/>
+            <column name="SOURCE_NAME" value="THE_WHOLE_GRAIN_TRUTH"/>
+            <column name="MAPPED_NAME" value="TOTAL"/>
+            <column name="FORMAT" value="#.00"/>
+            <column name="FORMAT_TYPE" value="double"/>
+            <column name="COLUMN_WIDTH" value="11.83"/>
+            <column name="COLUMN_ORDER" value="12"/>
+        </insert>
+        <insert tableName="REPORT_QUERIES" schemaName="GPFD">
+            <column name="ID" value="5ca287d7-83d3-436b-96d6-826e88fe831f"/>
+            <column name="REPORT_ID" value="a017241a-359f-4fdb-a0cd-7f28f1946ef1"/>
+            <column name="QUERY" value="SELECT * FROM ANY_REPORT.WOK_THIS_WAY"/>
+            <column name="TAB_NAME" value="Provider Contigency"/>
+            <column name="INDEX" value="1"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="bc71d65e-89ee-4b3e-bd36-b7a65409b7af"/>
+            <column name="REPORT_QUERY_ID" value="5ca287d7-83d3-436b-96d6-826e88fe831f"/>
+            <column name="SOURCE_NAME" value="CHOPSTICK_CHAOS"/>
+            <column name="MAPPED_NAME" value="OFFICE_NUMBER"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="15.5"/>
+            <column name="COLUMN_ORDER" value="1"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="03ecd617-aad5-4eaf-a29e-981a7703a324"/>
+            <column name="REPORT_QUERY_ID" value="5ca287d7-83d3-436b-96d6-826e88fe831f"/>
+            <column name="SOURCE_NAME" value="TERIYAKI_TROUBLE"/>
+            <column name="MAPPED_NAME" value="OFFICE_NAME"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="67.5"/>
+            <column name="COLUMN_ORDER" value="2"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="fafdbc25-2c6f-48b9-a9c5-8fa5c1b595e0"/>
+            <column name="REPORT_QUERY_ID" value="5ca287d7-83d3-436b-96d6-826e88fe831f"/>
+            <column name="SOURCE_NAME" value="GINGER_SNAP_DECISION"/>
+            <column name="MAPPED_NAME" value="BANK_NUM"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="10.83"/>
+            <column name="COLUMN_ORDER" value="3"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="33fd2557-b23c-4eda-96d5-8a1bd4b87d7b"/>
+            <column name="REPORT_QUERY_ID" value="5ca287d7-83d3-436b-96d6-826e88fe831f"/>
+            <column name="SOURCE_NAME" value="UNSAVIORY_SQL"/>
+            <column name="MAPPED_NAME" value="BANK_ACCOUNT_NUM"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="21.17"/>
+            <column name="COLUMN_ORDER" value="4"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="e3082e1b-74de-4f9c-b95d-d20d5162b1f8"/>
+            <column name="REPORT_QUERY_ID" value="5ca287d7-83d3-436b-96d6-826e88fe831f"/>
+            <column name="SOURCE_NAME" value="WOK_THE_LINE"/>
+            <column name="MAPPED_NAME" value="BANK_ACCOUNT_NAME"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="66.67"/>
+            <column name="COLUMN_ORDER" value="5"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="b575bb0b-78e9-44a3-8af2-369054c6f9cd"/>
+            <column name="REPORT_QUERY_ID" value="5ca287d7-83d3-436b-96d6-826e88fe831f"/>
+            <column name="SOURCE_NAME" value="NOODLE_INCIDENT"/>
+            <column name="MAPPED_NAME" value="VENDOR_SITE_ID"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="number"/>
+            <column name="COLUMN_WIDTH" value="15.33"/>
+            <column name="COLUMN_ORDER" value="6"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="16e859e5-177a-4025-b9f3-3aa9b5e81d6e"/>
+            <column name="REPORT_QUERY_ID" value="5ca287d7-83d3-436b-96d6-826e88fe831f"/>
+            <column name="SOURCE_NAME" value="SOY_VEY"/>
+            <column name="MAPPED_NAME" value="HOLD_ALL_PAYMENTS_FLAG"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="26"/>
+            <column name="COLUMN_ORDER" value="7"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="2f29ff87-9cc5-4f55-89eb-76d5d60d6ecc"/>
+            <column name="REPORT_QUERY_ID" value="5ca287d7-83d3-436b-96d6-826e88fe831f"/>
+            <column name="SOURCE_NAME" value="STIR_FRY_OR_DIE"/>
+            <column name="MAPPED_NAME" value="PAYMENTS_CHECKSUM"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="number"/>
+            <column name="COLUMN_WIDTH" value="21.5"/>
+            <column name="COLUMN_ORDER" value="8"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="e5c0fdb2-70c5-4dce-aa24-aeca5a558914"/>
+            <column name="REPORT_QUERY_ID" value="5ca287d7-83d3-436b-96d6-826e88fe831f"/>
+            <column name="SOURCE_NAME" value="WOK_AND_ROLL"/>
+            <column name="MAPPED_NAME" value="PAYMENTS_LAST_SIX"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="number"/>
+            <column name="COLUMN_WIDTH" value="19.17"/>
+            <column name="COLUMN_ORDER" value="9"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="b6615149-3a1c-4523-bfd4-95c9e187e149"/>
+            <column name="REPORT_QUERY_ID" value="5ca287d7-83d3-436b-96d6-826e88fe831f"/>
+            <column name="SOURCE_NAME" value="FRIED_RICE_PARADOX"/>
+            <column name="MAPPED_NAME" value="PAYMENTS_LAST_TWELVE"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="number"/>
+            <column name="COLUMN_WIDTH" value="23.67"/>
+            <column name="COLUMN_ORDER" value="10"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="b0cb45f0-a5fb-4d50-9ec3-82a42742783d"/>
+            <column name="REPORT_QUERY_ID" value="5ca287d7-83d3-436b-96d6-826e88fe831f"/>
+            <column name="SOURCE_NAME" value="MSG_ME_LATER"/>
+            <column name="MAPPED_NAME" value="AVG_SIX"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="number"/>
+            <column name="COLUMN_WIDTH" value="8.17"/>
+            <column name="COLUMN_ORDER" value="11"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="1b87b1dd-9b46-4d2c-bf70-1d962c2346e0"/>
+            <column name="REPORT_QUERY_ID" value="5ca287d7-83d3-436b-96d6-826e88fe831f"/>
+            <column name="SOURCE_NAME" value="KUNG_PAO_CONFUSION"/>
+            <column name="MAPPED_NAME" value="AVG_TWELVE"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="number"/>
+            <column name="COLUMN_WIDTH" value="12.50"/>
+            <column name="COLUMN_ORDER" value="12"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="397e2015-0fec-40d2-a9b4-27126923164e"/>
+            <column name="REPORT_QUERY_ID" value="5ca287d7-83d3-436b-96d6-826e88fe831f"/>
+            <column name="SOURCE_NAME" value="WOK_A_MOLE"/>
+            <column name="MAPPED_NAME" value="AR_DEBT"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="number"/>
+            <column name="COLUMN_WIDTH" value="9.83"/>
+            <column name="COLUMN_ORDER" value="13"/>
+        </insert>
+        <createTable tableName="WOK_THIS_WAY" schemaName="ANY_REPORT">
+            <column name="CHOPSTICK_CHAOS" type="VARCHAR2(15)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TERIYAKI_TROUBLE" type="VARCHAR2(320)"/>
+            <column name="GINGER_SNAP_DECISION" type="VARCHAR2(255)"/>
+            <column name="UNSAVIORY_SQL" type="VARCHAR2(255)"/>
+            <column name="WOK_THE_LINE" type="VARCHAR2(255)"/>
+            <column name="NOODLE_INCIDENT" type="NUMBER(255)"/>
+            <column name="SOY_VEY" type="VARCHAR2(255)"/>
+            <column name="STIR_FRY_OR_DIE" type="NUMBER(255)"/>
+            <column name="WOK_AND_ROLL" type="NUMBER(255)"/>
+            <column name="FRIED_RICE_PARADOX" type="NUMBER(255)"/>
+            <column name="MSG_ME_LATER" type="NUMBER(255)"/>
+            <column name="KUNG_PAO_CONFUSION" type="NUMBER(255)"/>
+            <column name="WOK_A_MOLE" type="NUMBER(255)"/>
+        </createTable>
+        <insert tableName="WOK_THIS_WAY" schemaName="ANY_REPORT">
+            <column name="CHOPSTICK_CHAOS" value="WOODEN_PAIR_1"/>
+            <column name="TERIYAKI_TROUBLE" value="Sticky situation in Sector 12"/>
+            <column name="GINGER_SNAP_DECISION" value="QUICK_STIR"/>
+            <column name="UNSAVIORY_SQL" value="DROP_TBL"/>
+            <column name="WOK_THE_LINE" value="Chef's special with extra chaos"/>
+            <column name="NOODLE_INCIDENT" valueNumeric="42"/>
+            <column name="SOY_VEY" value="Y"/>
+            <column name="STIR_FRY_OR_DIE" valueNumeric="99"/>
+            <column name="WOK_AND_ROLL" valueNumeric="360"/>
+            <column name="FRIED_RICE_PARADOX" valueNumeric="65536"/>
+            <column name="MSG_ME_LATER" valueNumeric="404"/>
+            <column name="KUNG_PAO_CONFUSION" valueNumeric="500"/>
+            <column name="WOK_A_MOLE" valueNumeric="7"/>
+        </insert>
+        <insert tableName="WOK_THIS_WAY" schemaName="ANY_REPORT">
+            <column name="CHOPSTICK_CHAOS" value="METAL_PAIR_A"/>
+            <column name="TERIYAKI_TROUBLE" value="Over-marinated disaster"/>
+            <column name="GINGER_SNAP_DECISION" value="SLOW_COOK"/>
+            <column name="UNSAVIORY_SQL" value="ALTER_TBL"/>
+            <column name="WOK_THE_LINE" value="Mystery meat surprise"/>
+            <column name="NOODLE_INCIDENT" valueNumeric="13"/>
+            <column name="SOY_VEY" value="N"/>
+            <column name="STIR_FRY_OR_DIE" valueNumeric="66"/>
+            <column name="WOK_AND_ROLL" valueNumeric="180"/>
+            <column name="FRIED_RICE_PARADOX" valueNumeric="32768"/>
+            <column name="MSG_ME_LATER" valueNumeric="200"/>
+            <column name="KUNG_PAO_CONFUSION" valueNumeric="300"/>
+            <column name="WOK_A_MOLE" valueNumeric="3"/>
+        </insert>
+        <insert tableName="WOK_THIS_WAY" schemaName="ANY_REPORT">
+            <column name="CHOPSTICK_CHAOS" value="PLASTIC_SET1"/>
+            <column name="TERIYAKI_TROUBLE" value="Sauce"/>
+            <column name="GINGER_SNAP_DECISION" value="NO_COOK"/>
+            <column name="UNSAVIORY_SQL" value="SELECT_ALL"/>
+            <column name="WOK_THE_LINE" value="Vegetarian nightmare"/>
+            <column name="NOODLE_INCIDENT" valueNumeric="7"/>
+            <column name="SOY_VEY" value="Y"/>
+            <column name="STIR_FRY_OR_DIE" valueNumeric="33"/>
+            <column name="WOK_AND_ROLL" valueNumeric="90"/>
+            <column name="FRIED_RICE_PARADOX" valueNumeric="16384"/>
+            <column name="MSG_ME_LATER" valueNumeric="100"/>
+            <column name="KUNG_PAO_CONFUSION" valueNumeric="150"/>
+            <column name="WOK_A_MOLE" valueNumeric="1"/>
+        </insert>
+        <insert tableName="WOK_THIS_WAY" schemaName="ANY_REPORT">
+            <column name="CHOPSTICK_CHAOS" value="LUXURY_PAIR"/>
+            <column name="TERIYAKI_TROUBLE" value="Gold-plated mishap"/>
+            <column name="GINGER_SNAP_DECISION" value="OVERCOOK"/>
+            <column name="UNSAVIORY_SQL" value="TRUNCATE_TBL"/>
+            <column name="WOK_THE_LINE" value="Dragon's breath special"/>
+            <column name="NOODLE_INCIDENT" valueNumeric="21"/>
+            <column name="SOY_VEY" value="N"/>
+            <column name="STIR_FRY_OR_DIE" valueNumeric="75"/>
+            <column name="WOK_AND_ROLL" valueNumeric="270"/>
+            <column name="FRIED_RICE_PARADOX" valueNumeric="8192"/>
+            <column name="MSG_ME_LATER" valueNumeric="50"/>
+            <column name="KUNG_PAO_CONFUSION" valueNumeric="75"/>
+            <column name="WOK_A_MOLE" valueNumeric="0"/>
+        </insert>
+        <insert tableName="WOK_THIS_WAY" schemaName="ANY_REPORT">
+            <column name="CHOPSTICK_CHAOS" value="TRAINING_SET"/>
+            <column name="TERIYAKI_TROUBLE" value="Beginner's catastrophe"/>
+            <column name="GINGER_SNAP_DECISION" value="UNDERCOOK"/>
+            <column name="UNSAVIORY_SQL" value="CREATE_TBL"/>
+            <column name="WOK_THE_LINE" value="Apprentice's revenge"/>
+            <column name="NOODLE_INCIDENT" valueNumeric="34"/>
+            <column name="SOY_VEY" value="Y"/>
+            <column name="STIR_FRY_OR_DIE" valueNumeric="88"/>
+            <column name="WOK_AND_ROLL" valueNumeric="45"/>
+            <column name="FRIED_RICE_PARADOX" valueNumeric="4096"/>
+            <column name="MSG_ME_LATER" valueNumeric="25"/>
+            <column name="KUNG_PAO_CONFUSION" valueNumeric="37"/>
+            <column name="WOK_A_MOLE" valueNumeric="2"/>
+        </insert>
+        <insert tableName="WOK_THIS_WAY" schemaName="ANY_REPORT">
+            <column name="CHOPSTICK_CHAOS" value="DISPOSABLE_1"/>
+            <column name="TERIYAKI_TROUBLE" value="One-time disaster"/>
+            <column name="GINGER_SNAP_DECISION" value="BURN_IT"/>
+            <column name="UNSAVIORY_SQL" value="UPDATE_ALL"/>
+            <column name="WOK_THE_LINE" value="Last resort special"/>
+            <column name="NOODLE_INCIDENT" valueNumeric="55"/>
+            <column name="SOY_VEY" value="N"/>
+            <column name="STIR_FRY_OR_DIE" valueNumeric="11"/>
+            <column name="WOK_AND_ROLL" valueNumeric="135"/>
+            <column name="FRIED_RICE_PARADOX" valueNumeric="2048"/>
+            <column name="MSG_ME_LATER" valueNumeric="12"/>
+            <column name="KUNG_PAO_CONFUSION" valueNumeric="18"/>
+            <column name="WOK_A_MOLE" valueNumeric="4"/>
+        </insert>
+        <insert tableName="WOK_THIS_WAY" schemaName="ANY_REPORT">
+            <column name="CHOPSTICK_CHAOS" value="ANTIQUE_SET"/>
+            <column name="TERIYAKI_TROUBLE" value="Heirloom quality mess"/>
+            <column name="GINGER_SNAP_DECISION" value="FRY_FAST"/>
+            <column name="UNSAVIORY_SQL" value="DELETE_ALL"/>
+            <column name="WOK_THE_LINE" value="Grandma's secret recipe"/>
+            <column name="NOODLE_INCIDENT" valueNumeric="89"/>
+            <column name="SOY_VEY" value="Y"/>
+            <column name="STIR_FRY_OR_DIE" valueNumeric="22"/>
+            <column name="WOK_AND_ROLL" valueNumeric="225"/>
+            <column name="FRIED_RICE_PARADOX" valueNumeric="1024"/>
+            <column name="MSG_ME_LATER" valueNumeric="6"/>
+            <column name="KUNG_PAO_CONFUSION" valueNumeric="9"/>
+            <column name="WOK_A_MOLE" valueNumeric="5"/>
+        </insert>
+        <insert tableName="WOK_THIS_WAY" schemaName="ANY_REPORT">
+            <column name="CHOPSTICK_CHAOS" value="BAMBOO_PAIR"/>
+            <column name="TERIYAKI_TROUBLE" value="Sustainable fiasco"/>
+            <column name="GINGER_SNAP_DECISION" value="STEAM_SLOW"/>
+            <column name="UNSAVIORY_SQL" value="JOIN_ALL"/>
+            <column name="WOK_THE_LINE" value="Eco-friendly disaster"/>
+            <column name="NOODLE_INCIDENT" valueNumeric="144"/>
+            <column name="SOY_VEY" value="N"/>
+            <column name="STIR_FRY_OR_DIE" valueNumeric="44"/>
+            <column name="WOK_AND_ROLL" valueNumeric="315"/>
+            <column name="FRIED_RICE_PARADOX" valueNumeric="512"/>
+            <column name="MSG_ME_LATER" valueNumeric="3"/>
+            <column name="KUNG_PAO_CONFUSION" valueNumeric="4"/>
+            <column name="WOK_A_MOLE" valueNumeric="6"/>
+        </insert>
+        <insert tableName="WOK_THIS_WAY" schemaName="ANY_REPORT">
+            <column name="CHOPSTICK_CHAOS" value="CERAMIC_PAIR"/>
+            <column name="TERIYAKI_TROUBLE" value="Fragile failure"/>
+            <column name="GINGER_SNAP_DECISION" value="BOIL_HARD"/>
+            <column name="UNSAVIORY_SQL" value="UNION_ALL"/>
+            <column name="WOK_THE_LINE" value="Breakable banquet"/>
+            <column name="NOODLE_INCIDENT" valueNumeric="233"/>
+            <column name="SOY_VEY" value="Y"/>
+            <column name="STIR_FRY_OR_DIE" valueNumeric="55"/>
+            <column name="WOK_AND_ROLL" valueNumeric="405"/>
+            <column name="FRIED_RICE_PARADOX" valueNumeric="256"/>
+            <column name="MSG_ME_LATER" valueNumeric="1"/>
+            <column name="KUNG_PAO_CONFUSION" valueNumeric="2"/>
+            <column name="WOK_A_MOLE" valueNumeric="8"/>
+        </insert>
+        <insert tableName="WOK_THIS_WAY" schemaName="ANY_REPORT">
+            <column name="CHOPSTICK_CHAOS" value="SPACE_AGE_SET"/>
+            <column name="TERIYAKI_TROUBLE" value="Zero-gravity calamity"/>
+            <column name="GINGER_SNAP_DECISION" value="FREEZE_IT"/>
+            <column name="UNSAVIORY_SQL" value="COMMIT_NOW"/>
+            <column name="WOK_THE_LINE" value="Astronaut's regret"/>
+            <column name="NOODLE_INCIDENT" valueNumeric="377"/>
+            <column name="SOY_VEY" value="N"/>
+            <column name="STIR_FRY_OR_DIE" valueNumeric="77"/>
+            <column name="WOK_AND_ROLL" valueNumeric="495"/>
+            <column name="FRIED_RICE_PARADOX" valueNumeric="128"/>
+            <column name="MSG_ME_LATER" valueNumeric="0"/>
+            <column name="KUNG_PAO_CONFUSION" valueNumeric="1"/>
+            <column name="WOK_A_MOLE" valueNumeric="9"/>
+        </insert>
+        <createTable tableName="BREAKING_BREAD" schemaName="ANY_REPORT">
+            <column name="LOAF_OR_LEAVE_IT" type="VARCHAR2(50)"/>
+            <column name="SOURDOUGH_SUSPECT" type="VARCHAR2(50)"/>
+            <column name="CRUMB_CRIME_SCENE" type="VARCHAR2(50)"/>
+            <column name="BAKED_AND_CONFUSED" type="DATE"/>
+            <column name="KNEAD_IT_OR_NAH" type="DATE"/>
+            <column name="BUTTER_BETRAYAL" type="VARCHAR2(30)"/>
+            <column name="GARLIC_BREAD_OR_GTFO" type="VARCHAR2(50)"/>
+            <column name="DOUGH_NOT_DISTURB" type="VARCHAR2(50)"/>
+            <column name="BAGUETTE_ABOUT_IT" type="VARCHAR2(200)"/>
+            <column name="TOASTED_OR_ROASTED" type="VARCHAR2(20)"/>
+            <column name="GLUTEN_FOR_PUNISHMENT" type="VARCHAR2(10)"/>
+            <column name="THE_WHOLE_GRAIN_TRUTH" type="NUMBER(22,2)"/>
+        </createTable>
+        <insert tableName="BREAKING_BREAD" schemaName="ANY_REPORT">
+            <column name="LOAF_OR_LEAVE_IT" value="WHOLE_WHEAT_WITNESS"/>
+            <column name="SOURDOUGH_SUSPECT" value="OLD_MRS. YEASTWORTHY"/>
+            <column name="CRUMB_CRIME_SCENE" value="KITCHEN_COUNTER_3"/>
+            <column name="BAKED_AND_CONFUSED" valueDate="2023-01-15"/>
+            <column name="KNEAD_IT_OR_NAH" valueDate="2023-01-10"/>
+            <column name="BUTTER_BETRAYAL" value="STOLEN_SPREAD"/>
+            <column name="GARLIC_BREAD_OR_GTFO" value="EXTRA_GARLICKY"/>
+            <column name="DOUGH_NOT_DISTURB" value="RISING_IN_PROGRESS"/>
+            <column name="BAGUETTE_ABOUT_IT" value="Found loafing around the crime scene"/>
+            <column name="TOASTED_OR_ROASTED" value="LIGHTLY_BROWNED"/>
+            <column name="GLUTEN_FOR_PUNISHMENT" value="GUILTY"/>
+            <column name="THE_WHOLE_GRAIN_TRUTH" valueNumeric="12.50"/>
+        </insert>
+        <insert tableName="BREAKING_BREAD" schemaName="ANY_REPORT">
+            <column name="LOAF_OR_LEAVE_IT" value="FRENCH_FELON"/>
+            <column name="SOURDOUGH_SUSPECT" value="PIERRE_LE_CROUTON"/>
+            <column name="CRUMB_CRIME_SCENE" value="BAKERY_ALLEY"/>
+            <column name="BAKED_AND_CONFUSED" valueDate="2023-02-14"/>
+            <column name="KNEAD_IT_OR_NAH" valueDate="2023-02-10"/>
+            <column name="BUTTER_BETRAYAL" value="MELTED_EVIDENCE"/>
+            <column name="GARLIC_BREAD_OR_GTFO" value="NOT_TODAY"/>
+            <column name="DOUGH_NOT_DISTURB" value="PROOFING"/>
+            <column name="BAGUETTE_ABOUT_IT" value="Stolen baguette used as weapon"/>
+            <column name="TOASTED_OR_ROASTED" value="WELL_DONE"/>
+            <column name="GLUTEN_FOR_PUNISHMENT" value="INNOCENT"/>
+            <column name="THE_WHOLE_GRAIN_TRUTH" valueNumeric="24.75"/>
+        </insert>
+        <insert tableName="BREAKING_BREAD" schemaName="ANY_REPORT">
+            <column name="LOAF_OR_LEAVE_IT" value="STARTER_SABOTEUR"/>
+            <column name="SOURDOUGH_SUSPECT" value="WILD_YEAST_WILLY"/>
+            <column name="CRUMB_CRIME_SCENE" value="ARTISAN_LOUNGE"/>
+            <column name="BAKED_AND_CONFUSED" valueDate="2023-03-22"/>
+            <column name="KNEAD_IT_OR_NAH" valueDate="2023-03-18"/>
+            <column name="BUTTER_BETRAYAL" value="COUNTERFEIT"/>
+            <column name="GARLIC_BREAD_OR_GTFO" value="CHEESY_AF"/>
+            <column name="DOUGH_NOT_DISTURB" value="OVERPROOFED"/>
+            <column name="BAGUETTE_ABOUT_IT" value="Starter culture contaminated"/>
+            <column name="TOASTED_OR_ROASTED" value="BURNT"/>
+            <column name="GLUTEN_FOR_PUNISHMENT" value="CONVICTED"/>
+            <column name="THE_WHOLE_GRAIN_TRUTH" valueNumeric="36.90"/>
+        </insert>
+        <insert tableName="BREAKING_BREAD" schemaName="ANY_REPORT">
+            <column name="LOAF_OR_LEAVE_IT" value="HOLEY_CRIMINAL"/>
+            <column name="SOURDOUGH_SUSPECT" value="ITALIAN_JOB"/>
+            <column name="CRUMB_CRIME_SCENE" value="OLIVE_GARDEN"/>
+            <column name="BAKED_AND_CONFUSED" valueDate="2023-04-05"/>
+            <column name="KNEAD_IT_OR_NAH" valueDate="2023-04-01"/>
+            <column name="BUTTER_BETRAYAL" value="MARGARINE_MISDIRECT"/>
+            <column name="GARLIC_BREAD_OR_GTFO" value="SIDE_OF_REDEMPTION"/>
+            <column name="DOUGH_NOT_DISTURB" value="RESTING"/>
+            <column name="BAGUETTE_ABOUT_IT" value="Irregular holes suggest foul play"/>
+            <column name="TOASTED_OR_ROASTED" value="UNTOUCHED"/>
+            <column name="GLUTEN_FOR_PUNISHMENT" value="ACQUITTED"/>
+            <column name="THE_WHOLE_GRAIN_TRUTH" valueNumeric="18.25"/>
+        </insert>
+        <insert tableName="BREAKING_BREAD" schemaName="ANY_REPORT">
+            <column name="LOAF_OR_LEAVE_IT" value="DARK_RYE_DEALER"/>
+            <column name="SOURDOUGH_SUSPECT" value="MR. MOLASSES"/>
+            <column name="CRUMB_CRIME_SCENE" value="MIDNIGHT_BAKERY"/>
+            <column name="BAKED_AND_CONFUSED" valueDate="2023-05-18"/>
+            <column name="KNEAD_IT_OR_NAH" valueDate="2023-05-15"/>
+            <column name="BUTTER_BETRAYAL" value="HONEY_TRAP"/>
+            <column name="GARLIC_BREAD_OR_GTFO" value="HERETICAL"/>
+            <column name="DOUGH_NOT_DISTURB" value="COLD_FERMENT"/>
+            <column name="BAGUETTE_ABOUT_IT" value="Suspiciously dark loaf found"/>
+            <column name="TOASTED_OR_ROASTED" value="CHARCOAL"/>
+            <column name="GLUTEN_FOR_PUNISHMENT" value="SUSPENDED"/>
+            <column name="THE_WHOLE_GRAIN_TRUTH" valueNumeric="42.10"/>
+        </insert>
+        <insert tableName="BREAKING_BREAD" schemaName="ANY_REPORT">
+            <column name="LOAF_OR_LEAVE_IT" value="FLAKY_FELON"/>
+            <column name="SOURDOUGH_SUSPECT" value="PASTRY_PIRATE"/>
+            <column name="CRUMB_CRIME_SCENE" value="PATISSERIE_12"/>
+            <column name="BAKED_AND_CONFUSED" valueDate="2023-06-30"/>
+            <column name="KNEAD_IT_OR_NAH" valueDate="2023-06-28"/>
+            <column name="BUTTER_BETRAYAL" value="LAYERED_DECEIT"/>
+            <column name="GARLIC_BREAD_OR_GTFO" value="CROISSANT_CRIME"/>
+            <column name="DOUGH_NOT_DISTURB" value="LAMINATING"/>
+            <column name="BAGUETTE_ABOUT_IT" value="Butter layers compromised"/>
+            <column name="TOASTED_OR_ROASTED" value="GOLDEN"/>
+            <column name="GLUTEN_FOR_PUNISHMENT" value="EXILED"/>
+            <column name="THE_WHOLE_GRAIN_TRUTH" valueNumeric="55.55"/>
+        </insert>
+        <insert tableName="BREAKING_BREAD" schemaName="ANY_REPORT">
+            <column name="LOAF_OR_LEAVE_IT" value="BRAIDED_BANDIT"/>
+            <column name="SOURDOUGH_SUSPECT" value="RABBI_ROLLINS"/>
+            <column name="CRUMB_CRIME_SCENE" value="SHABBAT_TABLE"/>
+            <column name="BAKED_AND_CONFUSED" valueDate="2023-07-12"/>
+            <column name="KNEAD_IT_OR_NAH" valueDate="2023-07-10"/>
+            <column name="BUTTER_BETRAYAL" value="EGG_WASHED"/>
+            <column name="GARLIC_BREAD_OR_GTFO" value="SACRILEGE"/>
+            <column name="DOUGH_NOT_DISTURB" value="BLESSED"/>
+            <column name="BAGUETTE_ABOUT_IT" value="Sacred braid unraveled"/>
+            <column name="TOASTED_OR_ROASTED" value="SHIMMERING"/>
+            <column name="GLUTEN_FOR_PUNISHMENT" value="FORGIVEN"/>
+            <column name="THE_WHOLE_GRAIN_TRUTH" valueNumeric="33.33"/>
+        </insert>
+        <insert tableName="BREAKING_BREAD" schemaName="ANY_REPORT">
+            <column name="LOAF_OR_LEAVE_IT" value="OLIVE_OIL_OFFENDER"/>
+            <column name="SOURDOUGH_SUSPECT" value="ROSEMARY_RASCAL"/>
+            <column name="CRUMB_CRIME_SCENE" value="TUSCAN_TERRACE"/>
+            <column name="BAKED_AND_CONFUSED" valueDate="2023-08-24"/>
+            <column name="KNEAD_IT_OR_NAH" valueDate="2023-08-20"/>
+            <column name="BUTTER_BETRAYAL" value="EVOO_EMBEZZLED"/>
+            <column name="GARLIC_BREAD_OR_GTFO" value="HERB_INFUSED"/>
+            <column name="DOUGH_NOT_DISTURB" value="DIMPLED"/>
+            <column name="BAGUETTE_ABOUT_IT" value="Herbs missing from crime scene"/>
+            <column name="TOASTED_OR_ROASTED" value="HERBACEOUS"/>
+            <column name="GLUTEN_FOR_PUNISHMENT" value="PAROLED"/>
+            <column name="THE_WHOLE_GRAIN_TRUTH" valueNumeric="27.80"/>
+        </insert>
+        <insert tableName="BREAKING_BREAD" schemaName="ANY_REPORT">
+            <column name="LOAF_OR_LEAVE_IT" value="TWISTED_SUSPECT"/>
+            <column name="SOURDOUGH_SUSPECT" value="SALT_SHAKER_SAM"/>
+            <column name="CRUMB_CRIME_SCENE" value="BEER_GARDEN"/>
+            <column name="BAKED_AND_CONFUSED" valueDate="2023-09-15"/>
+            <column name="KNEAD_IT_OR_NAH" valueDate="2023-09-10"/>
+            <column name="BUTTER_BETRAYAL" value="LYE_ABUSE"/>
+            <column name="GARLIC_BREAD_OR_GTFO" value="UNACCEPTABLE"/>
+            <column name="DOUGH_NOT_DISTURB" value="OVERKNEADED"/>
+            <column name="BAGUETTE_ABOUT_IT" value="Suspiciously symmetrical knots"/>
+            <column name="TOASTED_OR_ROASTED" value="SALTY"/>
+            <column name="GLUTEN_FOR_PUNISHMENT" value="DETAINED"/>
+            <column name="THE_WHOLE_GRAIN_TRUTH" valueNumeric="15.15"/>
+        </insert>
+        <insert tableName="BREAKING_BREAD" schemaName="ANY_REPORT">
+            <column name="LOAF_OR_LEAVE_IT" value="HOLEY_GRAIL"/>
+            <column name="SOURDOUGH_SUSPECT" value="CREAM_CHEESE_CHARLIE"/>
+            <column name="CRUMB_CRIME_SCENE" value="DELI_COUNTER_4"/>
+            <column name="BAKED_AND_CONFUSED" valueDate="2023-10-31"/>
+            <column name="KNEAD_IT_OR_NAH" valueDate="2023-10-28"/>
+            <column name="BUTTER_BETRAYAL" value="SCHMEAR_CAMPAIGN"/>
+            <column name="GARLIC_BREAD_OR_GTFO" value="EVERYTHING_BAGEL"/>
+            <column name="DOUGH_NOT_DISTURB" value="BOILED"/>
+            <column name="BAGUETTE_ABOUT_IT" value="Missing everything but the bagel"/>
+            <column name="TOASTED_OR_ROASTED" value="SEEDED"/>
+            <column name="GLUTEN_FOR_PUNISHMENT" value="WANTED"/>
+            <column name="THE_WHOLE_GRAIN_TRUTH" valueNumeric="9.99"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

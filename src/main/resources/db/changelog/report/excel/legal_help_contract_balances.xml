@@ -1,0 +1,630 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="insert-seed-for-legal-help-contract-balances" author="robert buczek">
+        <comment>Insert initial data for: CCMS and CIS account report w category code YTD</comment>
+
+        <insert tableName="REPORTS" schemaName="GPFD">
+            <column name="ID" value="7073dd13-e325-4863-a05c-a049a815d1f7"/>
+            <column name="NAME" value="Legal Help contract balances"/>
+            <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="7073dd13-e325-4863-a05c-a049a815d1f7"/>
+            <column name="REPORT_CREATION_DATE" valueDate="SYSDATE"/>
+            <column name="DESCRIPTION" value="Legal Help contract balances"/>
+            <column name="NUM_DAYS_TO_KEEP" value="30"/>
+            <column name="FILE_NAME" value="LEGAL_HELP_CONTRACT_BALANCES" />
+            <column name="ACTIVE" value="Y" />
+            <column name="REPORT_OUTPUT_TYPE" value="bd098666-94e4-4b0e-822c-8e5dfb04c908"/>
+            <column name="REPORT_OWNER_ID" value="00000000-0000-0000-0000-000000000003"/>
+            <column name="REPORT_OWNER_NAME" value="Teresa Green"/>
+            <column name="REPORT_OWNER_EMAIL" value="teresagreen@example.org"/>
+        </insert>
+        <insert tableName="REPORT_QUERIES" schemaName="GPFD">
+            <column name="ID" value="7073dd13-e325-4863-a05c-a049a815d1f7"/>
+            <column name="REPORT_ID" value="7073dd13-e325-4863-a05c-a049a815d1f7"/>
+            <column name="QUERY" value="SELECT * FROM ANY_REPORT.SPILL_THE_TEA"/>
+            <column name="TAB_NAME" value="DATA"/>
+            <column name="INDEX" value="0" />
+        </insert>
+        <insert tableName="REPORT_QUERIES" schemaName="GPFD">
+            <column name="ID" value="d9dc14b8-bab5-4ebe-9b8a-47f5f9de1228"/>
+            <column name="REPORT_ID" value="7073dd13-e325-4863-a05c-a049a815d1f7"/>
+            <column name="TAB_NAME" value="MAIN"/>
+            <column name="INDEX" value="2" />
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="1d9cf44d-d02b-437e-bf12-95148a7e812b"/>
+            <column name="REPORT_QUERY_ID" value="7073dd13-e325-4863-a05c-a049a815d1f7"/>
+            <column name="SOURCE_NAME" value="GOSSIP_SOURCE"/>
+            <column name="MAPPED_NAME" value="OFFICE_CODE"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="12.33"/>
+            <column name="COLUMN_ORDER" value="1"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="267ac92b-5e34-45bb-9509-49aaf689f1c4"/>
+            <column name="REPORT_QUERY_ID" value="7073dd13-e325-4863-a05c-a049a815d1f7"/>
+            <column name="SOURCE_NAME" value="TEA_SPICINESS_LEVEL"/>
+            <column name="MAPPED_NAME" value="OLD_CLAIMS"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="11.50"/>
+            <column name="COLUMN_ORDER" value="1"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="ff392ffe-d821-403e-b470-8ddf9627f019"/>
+            <column name="REPORT_QUERY_ID" value="7073dd13-e325-4863-a05c-a049a815d1f7"/>
+            <column name="SOURCE_NAME" value="OLD_DRAMA"/>
+            <column name="MAPPED_NAME" value="NEW_CLAIMS"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="12.50"/>
+            <column name="COLUMN_ORDER" value="1"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="10f1e842-995c-4c18-9fe7-e94276120b95"/>
+            <column name="REPORT_QUERY_ID" value="7073dd13-e325-4863-a05c-a049a815d1f7"/>
+            <column name="SOURCE_NAME" value="NEW_DRAMA"/>
+            <column name="MAPPED_NAME" value="TOTAL_CLAIMS"/>
+            <column name="FORMAT" value="dd-MMM-yy"/>
+            <column name="FORMAT_TYPE" value="date"/>
+            <column name="COLUMN_WIDTH" value="13.67"/>
+            <column name="COLUMN_ORDER" value="1"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="d0c20eb7-5366-45de-b5b6-28ebbddd5097"/>
+            <column name="REPORT_QUERY_ID" value="7073dd13-e325-4863-a05c-a049a815d1f7"/>
+            <column name="SOURCE_NAME" value="TOTAL_DRAMA"/>
+            <column name="MAPPED_NAME" value="OLD_EXPEND"/>
+            <column name="FORMAT" value="dd-MMM-yy"/>
+            <column name="FORMAT_TYPE" value="date"/>
+            <column name="COLUMN_WIDTH" value="11.67"/>
+            <column name="COLUMN_ORDER" value="1"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="94916877-aa91-4cd4-aa60-a18960ef7530"/>
+            <column name="REPORT_QUERY_ID" value="7073dd13-e325-4863-a05c-a049a815d1f7"/>
+            <column name="SOURCE_NAME" value="EYE_WITNESSES"/>
+            <column name="MAPPED_NAME" value="NEW_EXPEND"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="12.67"/>
+            <column name="COLUMN_ORDER" value="1"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="0c726311-5298-429b-ad27-3e18650f8d16"/>
+            <column name="REPORT_QUERY_ID" value="7073dd13-e325-4863-a05c-a049a815d1f7"/>
+            <column name="SOURCE_NAME" value="BACKSTABBERS_INVOLVED"/>
+            <column name="MAPPED_NAME" value="TOTAL_EXPEND"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="13.83"/>
+            <column name="COLUMN_ORDER" value="1"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="edfb487e-f0bc-4627-a7b3-4fbd7647e997"/>
+            <column name="REPORT_QUERY_ID" value="7073dd13-e325-4863-a05c-a049a815d1f7"/>
+            <column name="SOURCE_NAME" value="HR_COMPLAINTS_FILED"/>
+            <column name="MAPPED_NAME" value="BAL_OF_CLAIMS_N_PAYS"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="23"/>
+            <column name="COLUMN_ORDER" value="1"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="2ddad314-0d86-4541-b3ba-01a9333715ce"/>
+            <column name="REPORT_QUERY_ID" value="7073dd13-e325-4863-a05c-a049a815d1f7"/>
+            <column name="SOURCE_NAME" value="SUSPICIOUS_SLACK_DMS"/>
+            <column name="MAPPED_NAME" value="CONTRACT_ADJUSTMENTS"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="24.17"/>
+            <column name="COLUMN_ORDER" value="1"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="6889b363-f28f-4260-877d-105da58ea090"/>
+            <column name="REPORT_QUERY_ID" value="7073dd13-e325-4863-a05c-a049a815d1f7"/>
+            <column name="SOURCE_NAME" value="COFFEE_BREAK_WHISPER_SESSIONS"/>
+            <column name="MAPPED_NAME" value="CONTRACT_BALANCE"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="19.17"/>
+            <column name="COLUMN_ORDER" value="1"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="4a6ec3f1-9f90-4f8b-9b7c-f3c2dd61a7e0"/>
+            <column name="REPORT_QUERY_ID" value="7073dd13-e325-4863-a05c-a049a815d1f7"/>
+            <column name="SOURCE_NAME" value="RUMOR_ACCURACY_PERCENTAGE"/>
+            <column name="MAPPED_NAME" value="IN_YEAR_CLAIMS"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="15.67"/>
+            <column name="COLUMN_ORDER" value="1"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="d5252b76-4930-4a97-86a3-eee59441e549"/>
+            <column name="REPORT_QUERY_ID" value="7073dd13-e325-4863-a05c-a049a815d1f7"/>
+            <column name="SOURCE_NAME" value="OFFICE_CHAOS_IMPACT"/>
+            <column name="MAPPED_NAME" value="IN_YEAR_PAYMENTS"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="18.83"/>
+            <column name="COLUMN_ORDER" value="1"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="6dc9f61f-da16-49d6-b5e9-699d7544fad6"/>
+            <column name="REPORT_QUERY_ID" value="7073dd13-e325-4863-a05c-a049a815d1f7"/>
+            <column name="SOURCE_NAME" value="TEA_SPILLED_LEVEL"/>
+            <column name="MAPPED_NAME" value="PAYMENT_RUN_ADJUSTMENT"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="27.67"/>
+            <column name="COLUMN_ORDER" value="1"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="dd8f28f0-0e14-45be-9f00-6b4348cda2e5"/>
+            <column name="REPORT_QUERY_ID" value="7073dd13-e325-4863-a05c-a049a815d1f7"/>
+            <column name="SOURCE_NAME" value="FINAL_VERDICT"/>
+            <column name="MAPPED_NAME" value="FINAL_CONTRACT_BALANCE"/>
+            <column name="FORMAT" value="#.00"/>
+            <column name="FORMAT_TYPE" value="double"/>
+            <column name="COLUMN_WIDTH" value="25.67"/>
+            <column name="COLUMN_ORDER" value="1"/>
+        </insert>
+        <insert tableName="REPORT_QUERIES" schemaName="GPFD">
+            <column name="ID" value="1c8f8d55-aaf3-4ab1-a07b-63f85ef2f2ea"/>
+            <column name="REPORT_ID" value="7073dd13-e325-4863-a05c-a049a815d1f7"/>
+            <column name="QUERY" value="SELECT * FROM ANY_REPORT.TEQUILA_MOCKINGBIRD"/>
+            <column name="TAB_NAME" value="Adjusted Expenditure"/>
+            <column name="INDEX" value="1"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="9c4f18cd-2260-4035-91f7-91ae5368b921"/>
+            <column name="REPORT_QUERY_ID" value="1c8f8d55-aaf3-4ab1-a07b-63f85ef2f2ea"/>
+            <column name="SOURCE_NAME" value="MARGARITAVILLE_LOCATION"/>
+            <column name="MAPPED_NAME" value="PARTY_SITE_NAME"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="17.33"/>
+            <column name="COLUMN_ORDER" value="1"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="bcc94bbf-4481-42d3-a2e8-fe8e49337fff"/>
+            <column name="REPORT_QUERY_ID" value="1c8f8d55-aaf3-4ab1-a07b-63f85ef2f2ea"/>
+            <column name="SOURCE_NAME" value="SHOT_ID"/>
+            <column name="MAPPED_NAME" value="PARTY_SITE_ID"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="13.5"/>
+            <column name="COLUMN_ORDER" value="1"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="7b029e62-ae42-4718-b363-f4b4b46dbf48"/>
+            <column name="REPORT_QUERY_ID" value="1c8f8d55-aaf3-4ab1-a07b-63f85ef2f2ea"/>
+            <column name="SOURCE_NAME" value="LIME_WEDGE_COUNT"/>
+            <column name="MAPPED_NAME" value="INVOICE_NUM"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="42.83"/>
+            <column name="COLUMN_ORDER" value="1"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="839fc96e-8b6b-4638-9059-5108d3bd01ff"/>
+            <column name="REPORT_QUERY_ID" value="1c8f8d55-aaf3-4ab1-a07b-63f85ef2f2ea"/>
+            <column name="SOURCE_NAME" value="LAST_CALL_TIME"/>
+            <column name="MAPPED_NAME" value="PAY_DATE"/>
+            <column name="FORMAT" value="dd-MMM-yy"/>
+            <column name="FORMAT_TYPE" value="date"/>
+            <column name="COLUMN_WIDTH" value="9.33"/>
+            <column name="COLUMN_ORDER" value="1"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="00dd5d17-6efa-40b9-845b-1cade1704b00"/>
+            <column name="REPORT_QUERY_ID" value="1c8f8d55-aaf3-4ab1-a07b-63f85ef2f2ea"/>
+            <column name="SOURCE_NAME" value="SALT_RIM_STATUS"/>
+            <column name="MAPPED_NAME" value="SUB_SCHEME"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="string"/>
+            <column name="COLUMN_WIDTH" value="11"/>
+            <column name="COLUMN_ORDER" value="1"/>
+        </insert>
+        <insert tableName="FIELD_ATTRIBUTES" schemaName="GPFD">
+            <column name="ID" value="afe06dac-91f5-46e1-8a69-1c26de6e6cea"/>
+            <column name="REPORT_QUERY_ID" value="1c8f8d55-aaf3-4ab1-a07b-63f85ef2f2ea"/>
+            <column name="SOURCE_NAME" value="HANGOVER_SEVERITY"/>
+            <column name="MAPPED_NAME" value="PAID_TOTAL"/>
+            <column name="FORMAT" value=""/>
+            <column name="FORMAT_TYPE" value="number"/>
+            <column name="COLUMN_WIDTH" value="15.33"/>
+            <column name="COLUMN_ORDER" value="1"/>
+        </insert>
+        <createTable tableName="TEQUILA_MOCKINGBIRD" schemaName="ANY_REPORT">
+            <column name="MARGARITAVILLE_LOCATION" type="VARCHAR2 (255)"/>
+            <column name="SHOT_ID" type="NUMBER"/>
+            <column name="LIME_WEDGE_COUNT" type="VARCHAR (255)"/>
+            <column name="LAST_CALL_TIME" type="DATE"/>
+            <column name="SALT_RIM_STATUS" type="VARCHAR(255)"/>
+            <column name="HANGOVER_SEVERITY" type="NUMBER"/>
+        </createTable>
+        <insert tableName="TEQUILA_MOCKINGBIRD" schemaName="ANY_REPORT">
+            <column name="MARGARITAVILLE_LOCATION" value="Beachside Tiki Bar"/>
+            <column name="SHOT_ID" value="1"/>
+            <column name="LIME_WEDGE_COUNT" value="2"/>
+            <column name="LAST_CALL_TIME" value="2023-11-15 23:59:59"/>
+            <column name="SALT_RIM_STATUS" value="Salted"/>
+            <column name="HANGOVER_SEVERITY" value="3"/>
+        </insert>
+        <insert tableName="TEQUILA_MOCKINGBIRD" schemaName="ANY_REPORT">
+            <column name="MARGARITAVILLE_LOCATION" value="Dave's Basement"/>
+            <column name="SHOT_ID" value="2"/>
+            <column name="LIME_WEDGE_COUNT" value="0"/>
+            <column name="LAST_CALL_TIME" value="2023-11-16 00:30:00"/>
+            <column name="SALT_RIM_STATUS" value="Regrettable"/>
+            <column name="HANGOVER_SEVERITY" value="9"/>
+        </insert>
+        <insert tableName="TEQUILA_MOCKINGBIRD" schemaName="ANY_REPORT">
+            <column name="MARGARITAVILLE_LOCATION" value="The Bad Decision Saloon"/>
+            <column name="SHOT_ID" value="3"/>
+            <column name="LIME_WEDGE_COUNT" value="1"/>
+            <column name="LAST_CALL_TIME" value="2023-11-16 01:15:00"/>
+            <column name="SALT_RIM_STATUS" value="Unsalted (Too Drunk to Notice)"/>
+            <column name="HANGOVER_SEVERITY" value="10"/>
+        </insert>
+        <insert tableName="TEQUILA_MOCKINGBIRD" schemaName="ANY_REPORT">
+            <column name="MARGARITAVILLE_LOCATION" value="Peer Pressure Pub"/>
+            <column name="SHOT_ID" value="4"/>
+            <column name="LIME_WEDGE_COUNT" value="3"/>
+            <column name="LAST_CALL_TIME" value="2023-11-16 00:45:00"/>
+            <column name="SALT_RIM_STATUS" value="Salted (But Regretfully)"/>
+            <column name="HANGOVER_SEVERITY" value="7"/>
+        </insert>
+        <insert tableName="TEQUILA_MOCKINGBIRD" schemaName="ANY_REPORT">
+            <column name="MARGARITAVILLE_LOCATION" value="Famous Last Words Bar"/>
+            <column name="SHOT_ID" value="5"/>
+            <column name="LIME_WEDGE_COUNT" value="1"/>
+            <column name="LAST_CALL_TIME" value="2023-11-16 00:05:00"/>
+            <column name="SALT_RIM_STATUS" value="Salted"/>
+            <column name="HANGOVER_SEVERITY" value="8"/>
+        </insert>
+        <insert tableName="TEQUILA_MOCKINGBIRD" schemaName="ANY_REPORT">
+            <column name="MARGARITAVILLE_LOCATION" value="The 'Trust Me' Lounge"/>
+            <column name="SHOT_ID" value="6"/>
+            <column name="LIME_WEDGE_COUNT" value="0"/>
+            <column name="LAST_CALL_TIME" value="2023-11-16 01:30:00"/>
+            <column name="SALT_RIM_STATUS" value="Regrettable"/>
+            <column name="HANGOVER_SEVERITY" value="11"/>
+        </insert>
+        <insert tableName="TEQUILA_MOCKINGBIRD" schemaName="ANY_REPORT">
+            <column name="MARGARITAVILLE_LOCATION" value="The Misinformation Tavern"/>
+            <column name="SHOT_ID" value="7"/>
+            <column name="LIME_WEDGE_COUNT" value="4"/>
+            <column name="LAST_CALL_TIME" value="2023-11-16 00:20:00"/>
+            <column name="SALT_RIM_STATUS" value="Extra Salted (Mistake)"/>
+            <column name="HANGOVER_SEVERITY" value="6"/>
+        </insert>
+        <insert tableName="TEQUILA_MOCKINGBIRD" schemaName="ANY_REPORT">
+            <column name="MARGARITAVILLE_LOCATION" value="Bad Life Choices Bar and Grill"/>
+            <column name="SHOT_ID" value="8"/>
+            <column name="LIME_WEDGE_COUNT" value="2"/>
+            <column name="LAST_CALL_TIME" value="2023-11-16 01:00:00"/>
+            <column name="SALT_RIM_STATUS" value="Salted"/>
+            <column name="HANGOVER_SEVERITY" value="8"/>
+        </insert>
+        <insert tableName="TEQUILA_MOCKINGBIRD" schemaName="ANY_REPORT">
+            <column name="MARGARITAVILLE_LOCATION" value="The Peer Pressure Pit"/>
+            <column name="SHOT_ID" value="9"/>
+            <column name="LIME_WEDGE_COUNT" value="1"/>
+            <column name="LAST_CALL_TIME" value="2023-11-16 00:10:00"/>
+            <column name="SALT_RIM_STATUS" value="Unsalted"/>
+            <column name="HANGOVER_SEVERITY" value="5"/>
+        </insert>
+        <insert tableName="TEQUILA_MOCKINGBIRD" schemaName="ANY_REPORT">
+            <column name="MARGARITAVILLE_LOCATION" value="The Slippery Slope Saloon"/>
+            <column name="SHOT_ID" value="10"/>
+            <column name="LIME_WEDGE_COUNT" value="0"/>
+            <column name="LAST_CALL_TIME" value="2023-11-16 02:00:00"/>
+            <column name="SALT_RIM_STATUS" value="Who Even Knows"/>
+            <column name="HANGOVER_SEVERITY" value="9"/>
+        </insert>
+        <insert tableName="TEQUILA_MOCKINGBIRD" schemaName="ANY_REPORT">
+            <column name="MARGARITAVILLE_LOCATION" value="The Denial Dive Bar"/>
+            <column name="SHOT_ID" value="11"/>
+            <column name="LIME_WEDGE_COUNT" value="3"/>
+            <column name="LAST_CALL_TIME" value="2023-11-16 01:45:00"/>
+            <column name="SALT_RIM_STATUS" value="Salted (But Not Enough)"/>
+            <column name="HANGOVER_SEVERITY" value="7"/>
+        </insert>
+        <insert tableName="TEQUILA_MOCKINGBIRD" schemaName="ANY_REPORT">
+            <column name="MARGARITAVILLE_LOCATION" value="The False Promises Pub"/>
+            <column name="SHOT_ID" value="12"/>
+            <column name="LIME_WEDGE_COUNT" value="1"/>
+            <column name="LAST_CALL_TIME" value="2023-11-16 00:30:00"/>
+            <column name="SALT_RIM_STATUS" value="Salted"/>
+            <column name="HANGOVER_SEVERITY" value="6"/>
+        </insert>
+        <insert tableName="TEQUILA_MOCKINGBIRD" schemaName="ANY_REPORT">
+            <column name="MARGARITAVILLE_LOCATION" value="The Regret Rendezvous"/>
+            <column name="SHOT_ID" value="13"/>
+            <column name="LIME_WEDGE_COUNT" value="2"/>
+            <column name="LAST_CALL_TIME" value="2023-11-16 01:20:00"/>
+            <column name="SALT_RIM_STATUS" value="Unsalted (Like Their Dignity)"/>
+            <column name="HANGOVER_SEVERITY" value="8"/>
+        </insert>
+        <insert tableName="TEQUILA_MOCKINGBIRD" schemaName="ANY_REPORT">
+            <column name="MARGARITAVILLE_LOCATION" value="The False Hope Bar"/>
+            <column name="SHOT_ID" value="14"/>
+            <column name="LIME_WEDGE_COUNT" value="1"/>
+            <column name="LAST_CALL_TIME" value="2023-11-16 00:50:00"/>
+            <column name="SALT_RIM_STATUS" value="Salted"/>
+            <column name="HANGOVER_SEVERITY" value="7"/>
+        </insert>
+        <insert tableName="TEQUILA_MOCKINGBIRD" schemaName="ANY_REPORT">
+            <column name="MARGARITAVILLE_LOCATION" value="The Delusional Dive"/>
+            <column name="SHOT_ID" value="15"/>
+            <column name="LIME_WEDGE_COUNT" value="0"/> <!-- Limes abandoned -->
+            <column name="LAST_CALL_TIME" value="2023-11-16 02:30:00"/>
+            <column name="SALT_RIM_STATUS" value="Regrettable"/>
+            <column name="HANGOVER_SEVERITY" value="10"/>
+        </insert>
+        <createTable tableName="SPILL_THE_TEA" schemaName="ANY_REPORT">
+            <column name="GOSSIP_SOURCE" type="VARCHAR2(50)"/>
+            <column name="TEA_SPICINESS_LEVEL" type="NUMBER"/>
+            <column name="OLD_DRAMA" type="NUMBER"/>
+            <column name="NEW_DRAMA" type="NUMBER"/>
+            <column name="TOTAL_DRAMA" type="NUMBER"/>
+            <column name="EYE_WITNESSES" type="NUMBER"/>
+            <column name="BACKSTABBERS_INVOLVED" type="NUMBER"/>
+            <column name="HR_COMPLAINTS_FILED" type="NUMBER"/>
+            <column name="SUSPICIOUS_SLACK_DMS" type="NUMBER"/>
+            <column name="COFFEE_BREAK_WHISPER_SESSIONS" type="NUMBER"/>
+            <column name="RUMOR_ACCURACY_PERCENTAGE" type="NUMBER"/>
+            <column name="OFFICE_CHAOS_IMPACT" type="NUMBER"/>
+            <column name="TEA_SPILLED_LEVEL" type="NUMBER"/>
+            <column name="FINAL_VERDICT" type="NUMBER"/>
+        </createTable>
+        <insert tableName="SPILL_THE_TEA" schemaName="ANY_REPORT">
+            <column name="GOSSIP_SOURCE" value="Karen from Accounting"/>
+            <column name="TEA_SPICINESS_LEVEL" value="5"/>
+            <column name="OLD_DRAMA" value="2"/>
+            <column name="NEW_DRAMA" value="7"/>
+            <column name="TOTAL_DRAMA" value="9"/>
+            <column name="EYE_WITNESSES" value="3"/>
+            <column name="BACKSTABBERS_INVOLVED" value="1"/>
+            <column name="HR_COMPLAINTS_FILED" value="0"/>
+            <column name="SUSPICIOUS_SLACK_DMS" value="12"/>
+            <column name="COFFEE_BREAK_WHISPER_SESSIONS" value="5"/>
+            <column name="RUMOR_ACCURACY_PERCENTAGE" value="80"/>
+            <column name="OFFICE_CHAOS_IMPACT" value="6"/>
+            <column name="TEA_SPILLED_LEVEL" value="8"/>
+            <column name="FINAL_VERDICT" value="1"/>
+        </insert>
+        <insert tableName="SPILL_THE_TEA" schemaName="ANY_REPORT">
+            <column name="GOSSIP_SOURCE" value="Bob from Maintenance"/>
+            <column name="TEA_SPICINESS_LEVEL" value="3"/>
+            <column name="OLD_DRAMA" value="1"/>
+            <column name="NEW_DRAMA" value="4"/>
+            <column name="TOTAL_DRAMA" value="5"/>
+            <column name="EYE_WITNESSES" value="0"/>
+            <column name="BACKSTABBERS_INVOLVED" value="0"/>
+            <column name="HR_COMPLAINTS_FILED" value="0"/>
+            <column name="SUSPICIOUS_SLACK_DMS" value="2"/>
+            <column name="COFFEE_BREAK_WHISPER_SESSIONS" value="1"/>
+            <column name="RUMOR_ACCURACY_PERCENTAGE" value="10"/>
+            <column name="OFFICE_CHAOS_IMPACT" value="2"/>
+            <column name="TEA_SPILLED_LEVEL" value="3"/>
+            <column name="FINAL_VERDICT" value="0"/>
+        </insert>
+        <insert tableName="SPILL_THE_TEA" schemaName="ANY_REPORT">
+            <column name="GOSSIP_SOURCE" value="Anonymous Slack Message"/>
+            <column name="TEA_SPICINESS_LEVEL" value="8"/>
+            <column name="OLD_DRAMA" value="0"/>
+            <column name="NEW_DRAMA" value="9"/>
+            <column name="TOTAL_DRAMA" value="9"/>
+            <column name="EYE_WITNESSES" value="2"/>
+            <column name="BACKSTABBERS_INVOLVED" value="3"/>
+            <column name="HR_COMPLAINTS_FILED" value="1"/>
+            <column name="SUSPICIOUS_SLACK_DMS" value="25"/>
+            <column name="COFFEE_BREAK_WHISPER_SESSIONS" value="8"/>
+            <column name="RUMOR_ACCURACY_PERCENTAGE" value="5"/>
+            <column name="OFFICE_CHAOS_IMPACT" value="7"/>
+            <column name="TEA_SPILLED_LEVEL" value="9"/>
+            <column name="FINAL_VERDICT" value="0"/>
+        </insert>
+        <insert tableName="SPILL_THE_TEA" schemaName="ANY_REPORT">
+            <column name="GOSSIP_SOURCE" value="Office Cleanliness Committee"/>
+            <column name="TEA_SPICINESS_LEVEL" value="4"/>
+            <column name="OLD_DRAMA" value="3"/>
+            <column name="NEW_DRAMA" value="6"/>
+            <column name="TOTAL_DRAMA" value="9"/>
+            <column name="EYE_WITNESSES" value="0"/>
+            <column name="BACKSTABBERS_INVOLVED" value="2"/>
+            <column name="HR_COMPLAINTS_FILED" value="0"/>
+            <column name="SUSPICIOUS_SLACK_DMS" value="5"/>
+            <column name="COFFEE_BREAK_WHISPER_SESSIONS" value="3"/>
+            <column name="RUMOR_ACCURACY_PERCENTAGE" value="50"/>
+            <column name="OFFICE_CHAOS_IMPACT" value="4"/>
+            <column name="TEA_SPILLED_LEVEL" value="5"/>
+            <column name="FINAL_VERDICT" value="1"/>
+        </insert>
+        <insert tableName="SPILL_THE_TEA" schemaName="ANY_REPORT">
+            <column name="GOSSIP_SOURCE" value="Facilities Manager"/>
+            <column name="TEA_SPICINESS_LEVEL" value="6"/>
+            <column name="OLD_DRAMA" value="5"/>
+            <column name="NEW_DRAMA" value="7"/>
+            <column name="TOTAL_DRAMA" value="12"/>
+            <column name="EYE_WITNESSES" value="0"/>
+            <column name="BACKSTABBERS_INVOLVED" value="4"/>
+            <column name="HR_COMPLAINTS_FILED" value="2"/>
+            <column name="SUSPICIOUS_SLACK_DMS" value="15"/>
+            <column name="COFFEE_BREAK_WHISPER_SESSIONS" value="6"/>
+            <column name="RUMOR_ACCURACY_PERCENTAGE" value="30"/>
+            <column name="OFFICE_CHAOS_IMPACT" value="8"/>
+            <column name="TEA_SPILLED_LEVEL" value="7"/>
+            <column name="FINAL_VERDICT" value="0"/>
+        </insert>
+        <insert tableName="SPILL_THE_TEA" schemaName="ANY_REPORT">
+            <column name="GOSSIP_SOURCE" value="Anonymous Complainant"/>
+            <column name="TEA_SPICINESS_LEVEL" value="9"/>
+            <column name="OLD_DRAMA" value="2"/>
+            <column name="NEW_DRAMA" value="10"/>
+            <column name="TOTAL_DRAMA" value="12"/>
+            <column name="EYE_WITNESSES" value="0"/>
+            <column name="BACKSTABBERS_INVOLVED" value="5"/>
+            <column name="HR_COMPLAINTS_FILED" value="3"/>
+            <column name="SUSPICIOUS_SLACK_DMS" value="20"/>
+            <column name="COFFEE_BREAK_WHISPER_SESSIONS" value="7"/>
+            <column name="RUMOR_ACCURACY_PERCENTAGE" value="90"/>
+            <column name="OFFICE_CHAOS_IMPACT" value="9"/>
+            <column name="TEA_SPILLED_LEVEL" value="10"/>
+            <column name="FINAL_VERDICT" value="1"/>
+        </insert>
+        <insert tableName="SPILL_THE_TEA" schemaName="ANY_REPORT">
+            <column name="GOSSIP_SOURCE" value="Temperature Task Force"/>
+            <column name="TEA_SPICINESS_LEVEL" value="7"/>
+            <column name="OLD_DRAMA" value="8"/>
+            <column name="NEW_DRAMA" value="6"/>
+            <column name="TOTAL_DRAMA" value="14"/>
+            <column name="EYE_WITNESSES" value="0"/>
+            <column name="BACKSTABBERS_INVOLVED" value="6"/>
+            <column name="HR_COMPLAINTS_FILED" value="4"/>
+            <column name="SUSPICIOUS_SLACK_DMS" value="30"/>
+            <column name="COFFEE_BREAK_WHISPER_SESSIONS" value="10"/>
+            <column name="RUMOR_ACCURACY_PERCENTAGE" value="40"/>
+            <column name="OFFICE_CHAOS_IMPACT" value="9"/>
+            <column name="TEA_SPILLED_LEVEL" value="8"/>
+            <column name="FINAL_VERDICT" value="0"/>
+        </insert>
+        <insert tableName="SPILL_THE_TEA" schemaName="ANY_REPORT">
+            <column name="GOSSIP_SOURCE" value="Holiday Party Planning Committee"/>
+            <column name="TEA_SPICINESS_LEVEL" value="8"/>
+            <column name="OLD_DRAMA" value="0"/>
+            <column name="NEW_DRAMA" value="10"/>
+            <column name="TOTAL_DRAMA" value="10"/>
+            <column name="EYE_WITNESSES" value="15"/>
+            <column name="BACKSTABBERS_INVOLVED" value="2"/>
+            <column name="HR_COMPLAINTS_FILED" value="1"/>
+            <column name="SUSPICIOUS_SLACK_DMS" value="50"/>
+            <column name="COFFEE_BREAK_WHISPER_SESSIONS" value="12"/>
+            <column name="RUMOR_ACCURACY_PERCENTAGE" value="95"/>
+            <column name="OFFICE_CHAOS_IMPACT" value="10"/>
+            <column name="TEA_SPILLED_LEVEL" value="9"/>
+            <column name="FINAL_VERDICT" value="1"/>
+        </insert>
+        <insert tableName="SPILL_THE_TEA" schemaName="ANY_REPORT">
+            <column name="GOSSIP_SOURCE" value="Office Supplies Auditor"/>
+            <column name="TEA_SPICINESS_LEVEL" value="4"/>
+            <column name="OLD_DRAMA" value="3"/>
+            <column name="NEW_DRAMA" value="5"/>
+            <column name="TOTAL_DRAMA" value="8"/>
+            <column name="EYE_WITNESSES" value="0"/>
+            <column name="BACKSTABBERS_INVOLVED" value="3"/>
+            <column name="HR_COMPLAINTS_FILED" value="0"/>
+            <column name="SUSPICIOUS_SLACK_DMS" value="8"/>
+            <column name="COFFEE_BREAK_WHISPER_SESSIONS" value="4"/>
+            <column name="RUMOR_ACCURACY_PERCENTAGE" value="20"/>
+            <column name="OFFICE_CHAOS_IMPACT" value="5"/>
+            <column name="TEA_SPILLED_LEVEL" value="4"/>
+            <column name="FINAL_VERDICT" value="0"/>
+        </insert>
+        <insert tableName="SPILL_THE_TEA" schemaName="ANY_REPORT">
+            <column name="GOSSIP_SOURCE" value="IT Department"/>
+            <column name="TEA_SPICINESS_LEVEL" value="3"/>
+            <column name="OLD_DRAMA" value="2"/>
+            <column name="NEW_DRAMA" value="4"/>
+            <column name="TOTAL_DRAMA" value="6"/>
+            <column name="EYE_WITNESSES" value="0"/>
+            <column name="BACKSTABBERS_INVOLVED" value="1"/>
+            <column name="HR_COMPLAINTS_FILED" value="0"/>
+            <column name="SUSPICIOUS_SLACK_DMS" value="5"/>
+            <column name="COFFEE_BREAK_WHISPER_SESSIONS" value="2"/>
+            <column name="RUMOR_ACCURACY_PERCENTAGE" value="100"/>
+            <column name="OFFICE_CHAOS_IMPACT" value="3"/>
+            <column name="TEA_SPILLED_LEVEL" value="3"/>
+            <column name="FINAL_VERDICT" value="1"/>
+        </insert>
+        <insert tableName="SPILL_THE_TEA" schemaName="ANY_REPORT">
+            <column name="GOSSIP_SOURCE" value="Security Desk"/>
+            <column name="TEA_SPICINESS_LEVEL" value="7"/>
+            <column name="OLD_DRAMA" value="1"/>
+            <column name="NEW_DRAMA" value="8"/>
+            <column name="TOTAL_DRAMA" value="9"/>
+            <column name="EYE_WITNESSES" value="2"/>
+            <column name="BACKSTABBERS_INVOLVED" value="0"/>
+            <column name="HR_COMPLAINTS_FILED" value="1"/>
+            <column name="SUSPICIOUS_SLACK_DMS" value="10"/>
+            <column name="COFFEE_BREAK_WHISPER_SESSIONS" value="5"/>
+            <column name="RUMOR_ACCURACY_PERCENTAGE" value="85"/>
+            <column name="OFFICE_CHAOS_IMPACT" value="7"/>
+            <column name="TEA_SPILLED_LEVEL" value="6"/>
+            <column name="FINAL_VERDICT" value="1"/>
+        </insert>
+        <insert tableName="SPILL_THE_TEA" schemaName="ANY_REPORT">
+            <column name="GOSSIP_SOURCE" value="Entire Company"/>
+            <column name="TEA_SPICINESS_LEVEL" value="6"/>
+            <column name="OLD_DRAMA" value="5"/>
+            <column name="NEW_DRAMA" value="7"/>
+            <column name="TOTAL_DRAMA" value="12"/>
+            <column name="EYE_WITNESSES" value="20"/>
+            <column name="BACKSTABBERS_INVOLVED" value="0"/>
+            <column name="HR_COMPLAINTS_FILED" value="0"/>
+            <column name="SUSPICIOUS_SLACK_DMS" value="15"/>
+            <column name="COFFEE_BREAK_WHISPER_SESSIONS" value="8"/>
+            <column name="RUMOR_ACCURACY_PERCENTAGE" value="100"/>
+            <column name="OFFICE_CHAOS_IMPACT" value="8"/>
+            <column name="TEA_SPILLED_LEVEL" value="7"/>
+            <column name="FINAL_VERDICT" value="1"/>
+        </insert>
+        <insert tableName="SPILL_THE_TEA" schemaName="ANY_REPORT">
+            <column name="GOSSIP_SOURCE" value="IT Helpdesk"/>
+            <column name="TEA_SPICINESS_LEVEL" value="5"/>
+            <column name="OLD_DRAMA" value="4"/>
+            <column name="NEW_DRAMA" value="6"/>
+            <column name="TOTAL_DRAMA" value="10"/>
+            <column name="EYE_WITNESSES" value="0"/>
+            <column name="BACKSTABBERS_INVOLVED" value="0"/>
+            <column name="HR_COMPLAINTS_FILED" value="0"/>
+            <column name="SUSPICIOUS_SLACK_DMS" value="5"/>
+            <column name="COFFEE_BREAK_WHISPER_SESSIONS" value="3"/>
+            <column name="RUMOR_ACCURACY_PERCENTAGE" value="100"/>
+            <column name="OFFICE_CHAOS_IMPACT" value="6"/>
+            <column name="TEA_SPILLED_LEVEL" value="5"/>
+            <column name="FINAL_VERDICT" value="1"/>
+        </insert>
+        <insert tableName="SPILL_THE_TEA" schemaName="ANY_REPORT">
+            <column name="GOSSIP_SOURCE" value="IT Security"/>
+            <column name="TEA_SPICINESS_LEVEL" value="8"/>
+            <column name="OLD_DRAMA" value="3"/>
+            <column name="NEW_DRAMA" value="9"/>
+            <column name="TOTAL_DRAMA" value="12"/>
+            <column name="EYE_WITNESSES" value="0"/>
+            <column name="BACKSTABBERS_INVOLVED" value="2"/>
+            <column name="HR_COMPLAINTS_FILED" value="1"/>
+            <column name="SUSPICIOUS_SLACK_DMS" value="20"/>
+            <column name="COFFEE_BREAK_WHISPER_SESSIONS" value="7"/>
+            <column name="RUMOR_ACCURACY_PERCENTAGE" value="70"/>
+            <column name="OFFICE_CHAOS_IMPACT" value="9"/>
+            <column name="TEA_SPILLED_LEVEL" value="8"/>
+            <column name="FINAL_VERDICT" value="0"/>
+        </insert>
+        <insert tableName="SPILL_THE_TEA" schemaName="ANY_REPORT">
+            <column name="GOSSIP_SOURCE" value="Office Supplies Detective"/>
+            <column name="TEA_SPICINESS_LEVEL" value="4"/>
+            <column name="OLD_DRAMA" value="5"/>
+            <column name="NEW_DRAMA" value="5"/>
+            <column name="TOTAL_DRAMA" value="10"/>
+            <column name="EYE_WITNESSES" value="0"/>
+            <column name="BACKSTABBERS_INVOLVED" value="3"/>
+            <column name="HR_COMPLAINTS_FILED" value="0"/>
+            <column name="SUSPICIOUS_SLACK_DMS" value="10"/>
+            <column name="COFFEE_BREAK_WHISPER_SESSIONS" value="4"/>
+            <column name="RUMOR_ACCURACY_PERCENTAGE" value="30"/>
+            <column name="OFFICE_CHAOS_IMPACT" value="5"/>
+            <column name="TEA_SPILLED_LEVEL" value="4"/>
+            <column name="FINAL_VERDICT" value="0"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

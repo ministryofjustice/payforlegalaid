@@ -317,6 +317,16 @@
             <artifactId>spring-boot-starter-jackson</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <!-- version controlled by spring -->
+        </dependency>
+
         <!-- this next section all has version controlled by Spring Boot -->
         <dependency>
             <groupId>org.webjars</groupId>
@@ -382,12 +392,6 @@
         </dependency>
 
         <!-- Test Dependencies-->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <!-- version controlled by spring -->
-            <!-- also used locally until dockerising -->
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-liquibase-test</artifactId>
