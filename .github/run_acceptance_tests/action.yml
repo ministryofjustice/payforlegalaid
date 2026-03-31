@@ -11,14 +11,14 @@ runs:
         AWS_REGION: ${{ env.AWS_REGION }}
 
     - name: Checkout GitHub repository
-      uses: actions/checkout@v6
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       with:
         repository: ministryofjustice/payforlegalaid-tests
         path: testCode
         ref: LPF-1222-dockerize-app
 
     - name: Setup Java
-      uses: actions/setup-java@v5
+      uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
       with:
         distribution: 'corretto'
         java-version: '25'
@@ -31,7 +31,7 @@ runs:
         subfolder: 'testCode'
 
     - name: Checkout source code repo
-      uses: actions/checkout@v6
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       with:
         path: sourceCode
 
