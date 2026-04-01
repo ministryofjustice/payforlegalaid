@@ -50,6 +50,6 @@ gpfd:
     tracking:
       # Default connection details for local dev, overridden in other envs
       driver-class-name: org.postgresql.Driver
-      jdbcUrl: jdbc:postgresql://${RDS_DB_HOST:localhost}:5432/glad
+      jdbcUrl: jdbc:postgresql://${RDS_DB_HOST:localhost}:5432/${RDS_DB_NAME:glad}
       username: user
       password: dev
