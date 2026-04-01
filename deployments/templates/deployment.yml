@@ -208,6 +208,11 @@ spec:
                 secretKeyRef:
                   name: rds-postgresql-instance-output
                   key: rds_instance_address
+            - name: RDS_DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: rds-postgresql-instance-output
+                  key: database_name
             - name: GPFD_DATASOURCE_TRACKING_USERNAME
               valueFrom:
                 secretKeyRef:
