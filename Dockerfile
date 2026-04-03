@@ -1,4 +1,4 @@
-FROM amazoncorretto:25-alpine
+FROM amazoncorretto:26-alpine
 RUN apk update && apk add --no-cache curl
 
 WORKDIR /app
