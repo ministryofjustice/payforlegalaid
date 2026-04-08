@@ -69,7 +69,7 @@ import liquibase.integration.spring.SpringLiquibase;
  */
 @Configuration
 public class AppConfig {
-    @Value("${spring.liquibase.changelog}")
+    @Value("${spring.liquibase.changelog:}")
     private String liquibaseChangeLog;
 
     @Value("${excel.security.compression-ratio:0.001}")
