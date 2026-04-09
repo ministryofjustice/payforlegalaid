@@ -27,6 +27,7 @@ import java.util.List;
  * to manage specific security aspects.
  * </p>
  */
+@SuppressWarnings("java:S4502") // CSRF disabled only for H2 console — local/test profiles only, never active in prod
 @Profile({"local", "test"})
 @Configuration
 @ConditionalOnProperty(name = "spring.cloud.azure.active-directory.enabled", havingValue = "false")
