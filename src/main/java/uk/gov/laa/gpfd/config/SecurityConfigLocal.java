@@ -27,7 +27,7 @@ import java.util.List;
  * to manage specific security aspects.
  * </p>
  */
-@Profile("local")
+@Profile({"local", "test"})
 @Configuration
 @ConditionalOnProperty(name = "spring.cloud.azure.active-directory.enabled", havingValue = "false")
 public class SecurityConfigLocal {
