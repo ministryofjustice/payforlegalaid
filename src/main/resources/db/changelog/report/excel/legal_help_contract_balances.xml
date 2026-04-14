@@ -254,7 +254,7 @@
             <column name="MARGARITAVILLE_LOCATION" value="Beachside Tiki Bar"/>
             <column name="SHOT_ID" value="1"/>
             <column name="LIME_WEDGE_COUNT" value="2"/>
-            <column name="LAST_CALL_TIME" value="2023-11-15 23:59:59"/>
+            <column name="LAST_CALL_TIME" valueDate="2023-11-15T23:59:59"/>
             <column name="SALT_RIM_STATUS" value="Salted"/>
             <column name="HANGOVER_SEVERITY" value="3"/>
         </insert>
@@ -262,7 +262,7 @@
             <column name="MARGARITAVILLE_LOCATION" value="Dave's Basement"/>
             <column name="SHOT_ID" value="2"/>
             <column name="LIME_WEDGE_COUNT" value="0"/>
-            <column name="LAST_CALL_TIME" value="2023-11-16 00:30:00"/>
+            <column name="LAST_CALL_TIME" valueDate="2023-11-16T00:30:00"/>
             <column name="SALT_RIM_STATUS" value="Regrettable"/>
             <column name="HANGOVER_SEVERITY" value="9"/>
         </insert>
@@ -270,7 +270,7 @@
             <column name="MARGARITAVILLE_LOCATION" value="The Bad Decision Saloon"/>
             <column name="SHOT_ID" value="3"/>
             <column name="LIME_WEDGE_COUNT" value="1"/>
-            <column name="LAST_CALL_TIME" value="2023-11-16 01:15:00"/>
+            <column name="LAST_CALL_TIME" valueDate="2023-11-16T01:15:00"/>
             <column name="SALT_RIM_STATUS" value="Unsalted (Too Drunk to Notice)"/>
             <column name="HANGOVER_SEVERITY" value="10"/>
         </insert>
@@ -278,7 +278,7 @@
             <column name="MARGARITAVILLE_LOCATION" value="Peer Pressure Pub"/>
             <column name="SHOT_ID" value="4"/>
             <column name="LIME_WEDGE_COUNT" value="3"/>
-            <column name="LAST_CALL_TIME" value="2023-11-16 00:45:00"/>
+            <column name="LAST_CALL_TIME" valueDate="2023-11-16T00:45:00"/>
             <column name="SALT_RIM_STATUS" value="Salted (But Regretfully)"/>
             <column name="HANGOVER_SEVERITY" value="7"/>
         </insert>
@@ -286,7 +286,7 @@
             <column name="MARGARITAVILLE_LOCATION" value="Famous Last Words Bar"/>
             <column name="SHOT_ID" value="5"/>
             <column name="LIME_WEDGE_COUNT" value="1"/>
-            <column name="LAST_CALL_TIME" value="2023-11-16 00:05:00"/>
+            <column name="LAST_CALL_TIME" valueDate="2023-11-16T00:05:00"/>
             <column name="SALT_RIM_STATUS" value="Salted"/>
             <column name="HANGOVER_SEVERITY" value="8"/>
         </insert>
@@ -294,7 +294,7 @@
             <column name="MARGARITAVILLE_LOCATION" value="The 'Trust Me' Lounge"/>
             <column name="SHOT_ID" value="6"/>
             <column name="LIME_WEDGE_COUNT" value="0"/>
-            <column name="LAST_CALL_TIME" value="2023-11-16 01:30:00"/>
+            <column name="LAST_CALL_TIME" valueDate="2023-11-16T01:30:00"/>
             <column name="SALT_RIM_STATUS" value="Regrettable"/>
             <column name="HANGOVER_SEVERITY" value="11"/>
         </insert>
@@ -302,7 +302,7 @@
             <column name="MARGARITAVILLE_LOCATION" value="The Misinformation Tavern"/>
             <column name="SHOT_ID" value="7"/>
             <column name="LIME_WEDGE_COUNT" value="4"/>
-            <column name="LAST_CALL_TIME" value="2023-11-16 00:20:00"/>
+            <column name="LAST_CALL_TIME" valueDate="2023-11-16T00:20:00"/>
             <column name="SALT_RIM_STATUS" value="Extra Salted (Mistake)"/>
             <column name="HANGOVER_SEVERITY" value="6"/>
         </insert>
@@ -310,7 +310,7 @@
             <column name="MARGARITAVILLE_LOCATION" value="Bad Life Choices Bar and Grill"/>
             <column name="SHOT_ID" value="8"/>
             <column name="LIME_WEDGE_COUNT" value="2"/>
-            <column name="LAST_CALL_TIME" value="2023-11-16 01:00:00"/>
+            <column name="LAST_CALL_TIME" valueDate="2023-11-16T01:00:00"/>
             <column name="SALT_RIM_STATUS" value="Salted"/>
             <column name="HANGOVER_SEVERITY" value="8"/>
         </insert>
@@ -318,7 +318,7 @@
             <column name="MARGARITAVILLE_LOCATION" value="The Peer Pressure Pit"/>
             <column name="SHOT_ID" value="9"/>
             <column name="LIME_WEDGE_COUNT" value="1"/>
-            <column name="LAST_CALL_TIME" value="2023-11-16 00:10:00"/>
+            <column name="LAST_CALL_TIME" valueDate="2023-11-16T00:10:00"/>
             <column name="SALT_RIM_STATUS" value="Unsalted"/>
             <column name="HANGOVER_SEVERITY" value="5"/>
         </insert>
@@ -326,7 +326,7 @@
             <column name="MARGARITAVILLE_LOCATION" value="The Slippery Slope Saloon"/>
             <column name="SHOT_ID" value="10"/>
             <column name="LIME_WEDGE_COUNT" value="0"/>
-            <column name="LAST_CALL_TIME" value="2023-11-16 02:00:00"/>
+            <column name="LAST_CALL_TIME" valueDate="2023-11-16T02:00:00"/>
             <column name="SALT_RIM_STATUS" value="Who Even Knows"/>
             <column name="HANGOVER_SEVERITY" value="9"/>
         </insert>
@@ -334,7 +334,7 @@
             <column name="MARGARITAVILLE_LOCATION" value="The Denial Dive Bar"/>
             <column name="SHOT_ID" value="11"/>
             <column name="LIME_WEDGE_COUNT" value="3"/>
-            <column name="LAST_CALL_TIME" value="2023-11-16 01:45:00"/>
+            <column name="LAST_CALL_TIME" valueDate="2023-11-16T01:45:00"/>
             <column name="SALT_RIM_STATUS" value="Salted (But Not Enough)"/>
             <column name="HANGOVER_SEVERITY" value="7"/>
         </insert>
@@ -342,7 +342,7 @@
             <column name="MARGARITAVILLE_LOCATION" value="The False Promises Pub"/>
             <column name="SHOT_ID" value="12"/>
             <column name="LIME_WEDGE_COUNT" value="1"/>
-            <column name="LAST_CALL_TIME" value="2023-11-16 00:30:00"/>
+            <column name="LAST_CALL_TIME" valueDate="2023-11-16T00:30:00"/>
             <column name="SALT_RIM_STATUS" value="Salted"/>
             <column name="HANGOVER_SEVERITY" value="6"/>
         </insert>
@@ -350,7 +350,7 @@
             <column name="MARGARITAVILLE_LOCATION" value="The Regret Rendezvous"/>
             <column name="SHOT_ID" value="13"/>
             <column name="LIME_WEDGE_COUNT" value="2"/>
-            <column name="LAST_CALL_TIME" value="2023-11-16 01:20:00"/>
+            <column name="LAST_CALL_TIME" valueDate="2023-11-16T01:20:00"/>
             <column name="SALT_RIM_STATUS" value="Unsalted (Like Their Dignity)"/>
             <column name="HANGOVER_SEVERITY" value="8"/>
         </insert>
@@ -358,7 +358,7 @@
             <column name="MARGARITAVILLE_LOCATION" value="The False Hope Bar"/>
             <column name="SHOT_ID" value="14"/>
             <column name="LIME_WEDGE_COUNT" value="1"/>
-            <column name="LAST_CALL_TIME" value="2023-11-16 00:50:00"/>
+            <column name="LAST_CALL_TIME" valueDate="2023-11-16T00:50:00"/>
             <column name="SALT_RIM_STATUS" value="Salted"/>
             <column name="HANGOVER_SEVERITY" value="7"/>
         </insert>
@@ -366,7 +366,7 @@
             <column name="MARGARITAVILLE_LOCATION" value="The Delusional Dive"/>
             <column name="SHOT_ID" value="15"/>
             <column name="LIME_WEDGE_COUNT" value="0"/> <!-- Limes abandoned -->
-            <column name="LAST_CALL_TIME" value="2023-11-16 02:30:00"/>
+            <column name="LAST_CALL_TIME" valueDate="2023-11-16T02:30:00"/>
             <column name="SALT_RIM_STATUS" value="Regrettable"/>
             <column name="HANGOVER_SEVERITY" value="10"/>
         </insert>

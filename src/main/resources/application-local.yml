@@ -18,22 +18,21 @@ gpfd:
 
   datasource:
     read-only:
-      url: jdbc:h2:file:/data/localGpfdDb;MODE=Oracle;DATABASE_TO_UPPER=FALSE
-      username: sa
-      password:
-      driver-class-name: org.h2.Driver
+      url: jdbc:oracle:thin:@oracle-local:1521/FREEPDB1
+      username: GPFD
+      password: password123
+      driver-class-name: oracle.jdbc.OracleDriver
     write:
-      url: jdbc:h2:file:/data/localGpfdDb;MODE=Oracle;DATABASE_TO_UPPER=FALSE
-      username: sa
-      password:
-      driver-class-name: org.h2.Driver
+      url: jdbc:oracle:thin:@oracle-local:1521/FREEPDB1
+      username: GPFD
+      password: password123
+      driver-class-name: oracle.jdbc.OracleDriver
 
 spring:
   cloud:
     azure:
       active-directory:
         enabled: false
-        # Stubbed azure content is not used but needed for it to compile right now
         profile:
           tenant-id: AZURE_TENANT_ID
         credential:
@@ -46,25 +45,18 @@ spring:
               - https://graph.microsoft.com/User.Read
 
   datasource:
-    url: jdbc:h2:file:/data/localGpfdDb;MODE=Oracle;DATABASE_TO_UPPER=FALSE
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+    url: jdbc:oracle:thin:@oracle-local:1521/FREEPDB1
+    username: GPFD
+    password: password123
+    driver-class-name: oracle.jdbc.OracleDriver
 
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.xml
     default-schema: GPFD
-    url: jdbc:h2:file:/data/localGpfdDb;MODE=Oracle;DATABASE_TO_UPPER=FALSE;INIT=CREATE SCHEMA IF NOT EXISTS GPFD
-    user: sa
-    password:
-
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-      settings:
-        web-allow-others: true
+    url: jdbc:oracle:thin:@oracle-local:1521/FREEPDB1
+    user: GPFD
+    password: password123
 
   jpa:
     database-platform: org.hibernate.dialect.Oracle12cDialect

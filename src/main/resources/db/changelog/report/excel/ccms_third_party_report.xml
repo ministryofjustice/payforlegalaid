@@ -3247,12 +3247,12 @@
             <column name="SPECIES" value="Genius (Self-Proclaimed)"/>
             <column name="CATCHPHRASE" value="Meep meep? Wait, that's his..."/>
             <column name="ANVIL_DROPPED_COUNT" value="127"/>
-            <column name="LAST_EXPLOSION_TIME" value="2023-11-15 14:32:00"/>
-            <column name="PAINT_SWALLOWED" value="true"/>
+            <column name="LAST_EXPLOSION_TIME" valueDate="2023-11-15T14:32:00"/>
+            <column name="PAINT_SWALLOWED" valueNumeric="1"/>
             <column name="GRAVITY_DEFIANCE_LEVEL" value="Wile E. Coyote"/>
-            <column name="TUNNEL_PAINTED_ON_WALL" value="true"/>
+            <column name="TUNNEL_PAINTED_ON_WALL" valueNumeric="1"/>
             <column name="ACME_PRODUCT_FAILURES" value="999"/>
-            <column name="IS_CURRENTLY_SUSPENDED_IN_AIR" value="true"/>
+            <column name="IS_CURRENTLY_SUSPENDED_IN_AIR" valueNumeric="1"/>
             <column name="ENEMY_RIVAL" value="Road Runner"/>
             <column name="CARTOON_PHYSICS_RATING" value="11"/> <!-- He broke the scale -->
         </insert>
@@ -3273,7 +3273,7 @@
             <column name="CATCHPHRASE" value="What's up, Doc?"/>
             <column name="ANVIL_DROPPED_COUNT" value="3"/>
             <column name="GRAVITY_DEFIANCE_LEVEL" value="High"/>
-            <column name="TUNNEL_PAINTED_ON_WALL" value="true"/>
+            <column name="TUNNEL_PAINTED_ON_WALL" valueNumeric="1"/>
             <column name="ENEMY_RIVAL" value="Elmer Fudd"/>
             <column name="CARTOON_PHYSICS_RATING" value="9"/>
         </insert>
@@ -3282,9 +3282,9 @@
         <insert tableName="CARTOON_CHAOS" schemaName="ANY_REPORT">
             <column name="CHARACTER_NAME" value="Daffy Duck"/>
             <column name="CATCHPHRASE" value="You're despicable!"/>
-            <column name="LAST_EXPLOSION_TIME" value="2023-11-15 15:00:00"/>
-            <column name="PAINT_SWALLOWED" value="true"/>
-            <column name="IS_CURRENTLY_SUSPENDED_IN_AIR" value="true"/>
+            <column name="LAST_EXPLOSION_TIME" valueDate="2023-11-15T15:00:00"/>
+            <column name="PAINT_SWALLOWED" valueNumeric="1"/>
+            <column name="IS_CURRENTLY_SUSPENDED_IN_AIR" valueNumeric="1"/>
             <column name="ENEMY_RIVAL" value="Bugs Bunny"/>
         </insert>
 
@@ -3293,7 +3293,7 @@
             <column name="CHARACTER_NAME" value="Tasmanian Devil"/>
             <column name="SPECIES" value="Tornado With Fur"/>
             <column name="SPEED_EFFECT_LINES" value="100"/>
-            <column name="LAST_EXPLOSION_TIME" value="2023-11-15 00:01:00"/>
+            <column name="LAST_EXPLOSION_TIME" valueDate="2023-11-15T00:01:00"/>
             <column name="CARTOON_PHYSICS_RATING" value="8"/>
         </insert>
 
@@ -3310,7 +3310,7 @@
             <column name="CHARACTER_NAME" value="Marvin the Martian"/>
             <column name="SPECIES" value="Martian"/>
             <column name="CATCHPHRASE" value="Where's the kaboom?"/>
-            <column name="LAST_EXPLOSION_TIME" value="2023-11-15 16:20:00"/>
+            <column name="LAST_EXPLOSION_TIME" valueDate="2023-11-15T16:20:00"/>
             <column name="GRAVITY_DEFIANCE_LEVEL" value="Medium"/>
         </insert>
 
@@ -3333,7 +3333,7 @@
         <insert tableName="CARTOON_CHAOS" schemaName="ANY_REPORT">
             <column name="CHARACTER_NAME" value="Elmer Fudd"/>
             <column name="CATCHPHRASE" value="Be vewy vewy quiet..."/>
-            <column name="PAINT_SWALLOWED" value="true"/>
+            <column name="PAINT_SWALLOWED" valueNumeric="1"/>
             <column name="ENEMY_RIVAL" value="Bugs Bunny"/>
             <column name="CARTOON_PHYSICS_RATING" value="5"/>
         </insert>
@@ -3589,10 +3589,10 @@
             <column name="NESTED_IF_DEPTH" value="23"/>
             <column name="CALLBACK_HELL_LEVEL" value="11"/>
             <column name="TIMEZONE_CONFUSION_HOURS" value="26.5"/>
-            <column name="LEFT_PAD_DEPENDENCY" value="true"/>
+            <column name="LEFT_PAD_DEPENDENCY" valueNumeric="1"/>
             <column name="VERSION_PINNING_STRATEGY" value="Whatever NPM installs"/>
             <column name="HOTFIXES_IN_PRODUCTION" value="42"/>
-            <column name="SECRETS_IN_VERSION_CONTROL" value="true"/>
+            <column name="SECRETS_IN_VERSION_CONTROL" valueNumeric="1"/>
             <column name="MONOLITH_WEIGHT_KG" value="9000.01"/>
             <column name="COBOL_LEGACY_LINES" value="1984"/>
             <column name="GOTO_STATEMENTS" value="66"/>
@@ -3609,7 +3609,7 @@
             <column name="CHEESE_COVERAGE_PERCENT" value="99.99"/>
             <column name="NESTED_IF_DEPTH" value="8"/>
             <column name="CALLBACK_HELL_LEVEL" value="7"/>
-            <column name="Y2K38_READY" value="false"/>
+            <column name="Y2K38_READY" valueNumeric="0"/>
             <column name="LEAP_SECOND_HANDLING" value="CRASH"/>
             <column name="DLL_HELL_RATING" value="9"/>
             <column name="MICROSERVICE_OVERKILL" value="142"/>
@@ -3633,7 +3633,7 @@
             <column name="LAMBDA_LASAGNA_LAYERS" value="11"/>
             <column name="PERL_ONE_LINERS" value="13"/>
             <column name="IF_ELSE_PYRAMID_HEIGHT" value="21"/>
-            <column name="NEXT_REWRITE_PROMISE_DATE" value="2038-01-19"/>
+            <column name="NEXT_REWRITE_PROMISE_DATE" valueDate="2038-01-19"/>
             <column name="MONITOR_PUNCHES" value="1"/>
             <column name="UNUSED_DEPENDENCIES" value="47"/>
             <column name="ZOMBIE_CODE" value="33"/>
@@ -3645,11 +3645,11 @@
             <column name="SAUCE_CONSISTENCY" value="Burned"/>
             <column name="CHEESE_COVERAGE_PERCENT" value="0.01"/>
             <column name="NESTED_IF_DEPTH" value="17"/>
-            <column name="LAST_CLEAN_CODE_DATE" value="2000-01-01"/>
+            <column name="LAST_CLEAN_CODE_DATE" valueDate="2000-01-01"/>
             <column name="LEAP_SECOND_HANDLING" value="IGNORE"/>
             <column name="HOTFIXES_IN_PRODUCTION" value="99"/>
             <column name="KUBERNETES_YAML_LINES" value="42069"/>
-            <column name="JQUERY_EVERYWHERE" value="true"/>
+            <column name="JQUERY_EVERYWHERE" valueNumeric="1"/>
             <column name="MEATBALL_COUNT" value="7"/>
             <column name="NESTED_LOOPS" value="9"/>
             <column name="GIT_BLAME_GAMES" value="12"/>
@@ -3663,16 +3663,16 @@
             <column name="SAUCE_CONSISTENCY" value="Congealed"/>
             <column name="GLOBAL_VARIABLES" value="65535"/>
             <column name="CALLBACK_HELL_LEVEL" value="5"/>
-            <column name="Y2K38_READY" value="false"/>
+            <column name="Y2K38_READY" valueNumeric="0"/>
             <column name="VERSION_PINNING_STRATEGY" value="Copy-paste"/>
-            <column name="EVERGREEN_IT_WORKS" value="false"/>
+            <column name="EVERGREEN_IT_WORKS" valueNumeric="0"/>
             <column name="TERRAFORM_DRIFT_SCORE" value="87"/>
             <column name="WEBPACK_CONFIG_SIZE_MB" value="6.66"/>
             <column name="CHEESE_LAYERS" value="4"/>
             <column name="MAGIC_NUMBERS" value="13"/>
-            <column name="ACTUAL_REWRITE_DATE" value="9999-12-31"/>
+            <column name="ACTUAL_REWRITE_DATE" valueDate="9999-12-31"/>
             <column name="STACKOVERFLOW_TABS_OPEN" value="42"/>
-            <column name="LEFT_PAD_COMPATIBILITY" value="true"/>
+            <column name="LEFT_PAD_COMPATIBILITY" valueNumeric="1"/>
             <column name="COMMENTED_OUT_CODE" value="203"/>
         </insert>
 
@@ -3683,10 +3683,10 @@
             <column name="NESTED_IF_DEPTH" value="11"/>
             <column name="TIMEZONE_CONFUSION_HOURS" value="25"/>
             <column name="DLL_HELL_RATING" value="7"/>
-            <column name="SECRETS_IN_VERSION_CONTROL" value="true"/>
+            <column name="SECRETS_IN_VERSION_CONTROL" valueNumeric="1"/>
             <column name="MICROSERVICE_OVERKILL" value="87"/>
             <column name="COBOL_LEGACY_LINES" value="2001"/>
-            <column name="GARLIC_BREAD_CRUMBS" value="false"/>
+            <column name="GARLIC_BREAD_CRUMBS" valueNumeric="0"/>
             <column name="IF_ELSE_PYRAMID_HEIGHT" value="8"/>
             <column name="TEMPORARY_FIX_AGE_YEARS" value="3.5"/>
             <column name="DEVELOPER_SCREAMS" value="89"/>
@@ -3717,13 +3717,13 @@
             <column name="SAUCE_CONSISTENCY" value="Missing"/>
             <column name="CHEESE_COVERAGE_PERCENT" value="0.00"/>
             <column name="NESTED_IF_DEPTH" value="5"/>
-            <column name="LAST_CLEAN_CODE_DATE" value="1970-01-01"/>
+            <column name="LAST_CLEAN_CODE_DATE" valueDate="1970-01-01"/>
             <column name="LEAP_SECOND_HANDLING" value="SEGFAULT"/>
             <column name="HOTFIXES_IN_PRODUCTION" value="13"/>
             <column name="LAMBDA_LASAGNA_LAYERS" value="7"/>
             <column name="PERL_ONE_LINERS" value="5"/>
             <column name="NESTED_LOOPS" value="3"/>
-            <column name="NEXT_REWRITE_PROMISE_DATE" value="2025-01-01"/>
+            <column name="NEXT_REWRITE_PROMISE_DATE" valueDate="2025-01-01"/>
             <column name="MONITOR_PUNCHES" value="0"/>
             <column name="UNUSED_DEPENDENCIES" value="23"/>
             <column name="ZOMBIE_CODE" value="17"/>
@@ -3735,16 +3735,16 @@
             <column name="SAUCE_CONSISTENCY" value="Fossilized"/>
             <column name="GLOBAL_VARIABLES" value="1048576"/>
             <column name="CALLBACK_HELL_LEVEL" value="6"/>
-            <column name="Y2K38_READY" value="false"/>
+            <column name="Y2K38_READY" valueNumeric="0"/>
             <column name="VERSION_PINNING_STRATEGY" value="Ancient Scrolls"/>
-            <column name="EVERGREEN_IT_WORKS" value="true"/>
+            <column name="EVERGREEN_IT_WORKS" valueNumeric="1"/>
             <column name="TERRAFORM_DRIFT_SCORE" value="65"/>
             <column name="WEBPACK_CONFIG_SIZE_MB" value="8.88"/>
             <column name="CHEESE_LAYERS" value="9"/>
             <column name="MAGIC_NUMBERS" value="7"/>
-            <column name="ACTUAL_REWRITE_DATE" value="3000-01-01"/>
+            <column name="ACTUAL_REWRITE_DATE" valueDate="3000-01-01"/>
             <column name="STACKOVERFLOW_TABS_OPEN" value="19"/>
-            <column name="LEFT_PAD_COMPATIBILITY" value="false"/>
+            <column name="LEFT_PAD_COMPATIBILITY" valueNumeric="0"/>
             <column name="COMMENTED_OUT_CODE" value="89"/>
         </insert>
         <insert tableName="SPAGHETTI_CODE_LOG" schemaName="ANY_REPORT">
@@ -3754,10 +3754,10 @@
             <column name="NESTED_IF_DEPTH" value="19"/>
             <column name="TIMEZONE_CONFUSION_HOURS" value="-13.5"/>
             <column name="DLL_HELL_RATING" value="8"/>
-            <column name="SECRETS_IN_VERSION_CONTROL" value="false"/>
+            <column name="SECRETS_IN_VERSION_CONTROL" valueNumeric="0"/>
             <column name="MICROSERVICE_OVERKILL" value="64"/>
             <column name="COBOL_LEGACY_LINES" value="1986"/>
-            <column name="GARLIC_BREAD_CRUMBS" value="true"/>
+            <column name="GARLIC_BREAD_CRUMBS" valueNumeric="1"/>
             <column name="IF_ELSE_PYRAMID_HEIGHT" value="17"/>
             <column name="TEMPORARY_FIX_AGE_YEARS" value="5.25"/>
             <column name="DEVELOPER_SCREAMS" value="42"/>
@@ -3835,7 +3835,7 @@
             <column name="BALLOON_ANIMALS_PER_HOUR" value="666"/>
             <column name="HIDDEN_KNIVES_COUNT" value="13"/>
             <column name="FEAR_LEVEL" value="9999"/>
-            <column name="UNDER_BED_PRESENCE" value="true"/>
+            <column name="UNDER_BED_PRESENCE" valueNumeric="1"/>
             <column name="SHADOW_BEHAVIOR" value="Waves with too many fingers"/>
             <column name="SEWER_ACCESS_POINTS" value="27"/>
         </insert>
@@ -3847,7 +3847,7 @@
             <column name="NORMAL_FORM_VIOLATIONS" value="9999"/>
             <column name="CURSOR_ABUSE_COUNT" value="321"/>
             <column name="CIRCUS_OF_ORIGIN" value="Production Server"/>
-            <column name="NEXT_APPEARANCE_TIMESTAMP" value="2023-10-31 03:00:00"/>
+            <column name="NEXT_APPEARANCE_TIMESTAMP" valueDate="2023-10-31T03:00:00"/>
         </insert>
         <insert tableName="CLOWNS_IN_A_DATABASE" schemaName="ANY_REPORT">
             <column name="CLOWN_NAME" value="Dr. Giggles"/>
@@ -3858,7 +3858,7 @@
             <column name="CHILDHOOD_TRAUMA_CAUSED" value="999999"/>
             <column name="SOULS_COLLECTED" value="666"/>
             <column name="PHOTOGRAPH_SMILE" value="Rusty Scalpel Grin"/>
-            <column name="PAGE_133_BOOKMARK" value="true"/>
+            <column name="PAGE_133_BOOKMARK" valueNumeric="1"/>
         </insert>
         <insert tableName="CLOWNS_IN_A_DATABASE" schemaName="ANY_REPORT">
             <column name="CLOWN_NAME" value="Pennywise"/>
@@ -3883,7 +3883,7 @@
             <column name="PANTS_PATTERN" value="Hypnotic Spirals"/>
             <column name="BALLOON_ANIMALS_PER_HOUR" value="666"/>
             <column name="HIDDEN_KNIVES_COUNT" value="13"/>
-            <column name="UNDER_BED_PRESENCE" value="true"/>
+            <column name="UNDER_BED_PRESENCE" valueNumeric="1"/>
             <column name="SHADOW_BEHAVIOR" value="Waves with extra arms"/>
             <column name="SEWER_ACCESS_POINTS" value="27"/>
         </insert>
@@ -3896,7 +3896,7 @@
             <column name="CURSOR_ABUSE_COUNT" value="321"/>
             <column name="PIE_THROW_ACCURACY" value="100.00"/>
             <column name="CAR_ENTRY_SUCCESS_RATE" value="0.01"/>
-            <column name="NEXT_APPEARANCE_TIMESTAMP" value="2023-10-31 23:59:59"/>
+            <column name="NEXT_APPEARANCE_TIMESTAMP" valueDate="2023-10-31T23:59:59"/>
         </insert>
         <insert tableName="CLOWNS_IN_A_DATABASE" schemaName="ANY_REPORT">
             <column name="CLOWN_NAME" value="Captain Carnival"/>
@@ -3914,17 +3914,17 @@
             <column name="CLOWN_TYPE" value="Unspeakable Horror"/>
             <column name="NOSE_HONK_DECIBELS" value="0"/>
             <column name="CREEPINESS_FACTOR" value="12"/>
-            <column name="FEAR_OF_CHILDREN" value="false"/>
+            <column name="FEAR_OF_CHILDREN" valueNumeric="0"/>
             <column name="HIDDEN_KNIVES_COUNT" value="5"/>
-            <column name="CLOSET_OCCUPANCY" value="true"/>
+            <column name="CLOSET_OCCUPANCY" valueNumeric="1"/>
             <column name="PHOTOGRAPH_SMILE" value="Nonexistent"/>
-            <column name="PAGE_133_BOOKMARK" value="true"/>
-            <column name="VICTIM_SCREAM_RECORDING" value="[binary silence]"/>
+            <column name="PAGE_133_BOOKMARK" valueNumeric="1"/>
+            <column name="VICTIM_SCREAM_RECORDING" valueComputed="EMPTY_BLOB()"/>
         </insert>
 
         <createTable tableName="RECORDS_WE_IGNORE" schemaName="ANY_REPORT">
             <column name="CREATION_DATE" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
-            <column name="LAST_ACKNOWLEDGED" type="DATE" defaultValue="1970-01-01"/>
+            <column name="LAST_ACKNOWLEDGED" type="DATE" defaultValueComputed="DATE '1970-01-01'"/>
             <column name="IGNORED_BY" type="VARCHAR(100)" defaultValue="The Intern"/>
             <column name="EXCUSE" type="VARCHAR(255)" defaultValue="Legacy data"/>
             <column name="IS_NULL_BUT_SHOULDNT_BE" type="BOOLEAN" defaultValue="true"/>
@@ -3963,34 +3963,34 @@
         </createTable>
         <insert tableName="RECORDS_WE_IGNORE" schemaName="ANY_REPORT">
             <column name="CREATION_DATE" valueComputed="CURRENT_TIMESTAMP"/>
-            <column name="LAST_ACKNOWLEDGED" value="1999-12-31"/>
+            <column name="LAST_ACKNOWLEDGED" valueDate="1999-12-31"/>
             <column name="IGNORED_BY" value="Old Team"/>
             <column name="EXCUSE" value="Legacy system migration"/>
-            <column name="IS_NULL_BUT_SHOULDNT_BE" value="true"/>
-            <column name="IS_NOT_NULL_BUT_SHOULD_BE" value="false"/>
-            <column name="WRONG_DATA_TYPE" value="true"/>
-            <column name="MISSPELLED_COLUMN" value="true"/>
-            <column name="FOREIGN_KEY_VIOLATION" value="true"/>
-            <column name="BIRTHDATE_IN_FUTURE" value="false"/>
-            <column name="EXPIRATION_DATE_IN_PAST" value="true"/>
-            <column name="TIMESTAMP_BEFORE_COMPUTERS" value="true"/>
-            <column name="TIMEZONE_CONFUSION" value="true"/>
-            <column name="DAYLIGHT_SAVINGS_PROBLEM" value="true"/>
+            <column name="IS_NULL_BUT_SHOULDNT_BE" valueNumeric="1"/>
+            <column name="IS_NOT_NULL_BUT_SHOULD_BE" valueNumeric="0"/>
+            <column name="WRONG_DATA_TYPE" valueNumeric="1"/>
+            <column name="MISSPELLED_COLUMN" valueNumeric="1"/>
+            <column name="FOREIGN_KEY_VIOLATION" valueNumeric="1"/>
+            <column name="BIRTHDATE_IN_FUTURE" valueNumeric="0"/>
+            <column name="EXPIRATION_DATE_IN_PAST" valueNumeric="1"/>
+            <column name="TIMESTAMP_BEFORE_COMPUTERS" valueNumeric="1"/>
+            <column name="TIMEZONE_CONFUSION" valueNumeric="1"/>
+            <column name="DAYLIGHT_SAVINGS_PROBLEM" valueNumeric="1"/>
             <column name="MAGIC_NUMBER_1" value="42"/>
             <column name="MAGIC_NUMBER_2" value="666"/>
             <column name="HARDCODED_VALUE" value="LEGACY_VALUE"/>
-            <column name="TEMPORARY_FLAG" value="true"/>
-            <column name="PLACEHOLDER_DATA" value="true"/>
-            <column name="TEST_DATA_IN_PROD" value="false"/>
-            <column name="PROD_DATA_IN_TEST" value="true"/>
-            <column name="DUPLICATE_RECORD" value="true"/>
-            <column name="INCOMPLETE_RECORD" value="true"/>
-            <column name="NEVER_USED" value="true"/>
-            <column name="WHO_CARES" value="true"/>
-            <column name="WILL_FIX_LATER" value="false"/>
+            <column name="TEMPORARY_FLAG" valueNumeric="1"/>
+            <column name="PLACEHOLDER_DATA" valueNumeric="1"/>
+            <column name="TEST_DATA_IN_PROD" valueNumeric="0"/>
+            <column name="PROD_DATA_IN_TEST" valueNumeric="1"/>
+            <column name="DUPLICATE_RECORD" valueNumeric="1"/>
+            <column name="INCOMPLETE_RECORD" valueNumeric="1"/>
+            <column name="NEVER_USED" valueNumeric="1"/>
+            <column name="WHO_CARES" valueNumeric="1"/>
+            <column name="WILL_FIX_LATER" valueNumeric="0"/>
             <column name="TECHNICAL_DEBT_SCORE" value="8500"/>
             <column name="DOCUMENTATION_LIES" value="This was carefully migrated"/>
-            <column name="LAST_MAINTENANCE_DATE" value="2005-06-15"/>
+            <column name="LAST_MAINTENANCE_DATE" valueDate="2005-06-15"/>
             <column name="WHY_THIS_EXISTS" value="The old system needed it"/>
             <column name="DOCUMENTATION_STATUS" value="Outdated"/>
             <column name="NULL_PERCENTAGE" value="95.50"/>
@@ -4001,35 +4001,35 @@
             <column name="TEMPORARY_FIX_AGE" value="6570"/>
         </insert>
         <insert tableName="RECORDS_WE_IGNORE" schemaName="ANY_REPORT">
-            <column name="CREATION_DATE" value="2020-03-15 14:30:00"/>
-            <column name="LAST_ACKNOWLEDGED" value="2020-03-16"/>
+            <column name="CREATION_DATE" valueDate="2020-03-15T14:30:00"/>
+            <column name="LAST_ACKNOWLEDGED" valueDate="2020-03-16"/>
             <column name="IGNORED_BY" value="QA Team"/>
             <column name="EXCUSE" value="Test data migration"/>
-            <column name="IS_NULL_BUT_SHOULDNT_BE" value="false"/>
-            <column name="IS_NOT_NULL_BUT_SHOULD_BE" value="true"/>
-            <column name="WRONG_DATA_TYPE" value="true"/>
-            <column name="MISSPELLED_COLUMN" value="false"/>
-            <column name="FOREIGN_KEY_VIOLATION" value="false"/>
-            <column name="BIRTHDATE_IN_FUTURE" value="true"/>
-            <column name="EXPIRATION_DATE_IN_PAST" value="false"/>
-            <column name="TIMESTAMP_BEFORE_COMPUTERS" value="false"/>
-            <column name="TIMEZONE_CONFUSION" value="true"/>
-            <column name="DAYLIGHT_SAVINGS_PROBLEM" value="true"/>
+            <column name="IS_NULL_BUT_SHOULDNT_BE" valueNumeric="0"/>
+            <column name="IS_NOT_NULL_BUT_SHOULD_BE" valueNumeric="1"/>
+            <column name="WRONG_DATA_TYPE" valueNumeric="1"/>
+            <column name="MISSPELLED_COLUMN" valueNumeric="0"/>
+            <column name="FOREIGN_KEY_VIOLATION" valueNumeric="0"/>
+            <column name="BIRTHDATE_IN_FUTURE" valueNumeric="1"/>
+            <column name="EXPIRATION_DATE_IN_PAST" valueNumeric="0"/>
+            <column name="TIMESTAMP_BEFORE_COMPUTERS" valueNumeric="0"/>
+            <column name="TIMEZONE_CONFUSION" valueNumeric="1"/>
+            <column name="DAYLIGHT_SAVINGS_PROBLEM" valueNumeric="1"/>
             <column name="MAGIC_NUMBER_1" value="123"/>
             <column name="MAGIC_NUMBER_2" value="456"/>
             <column name="HARDCODED_VALUE" value="TEST_USER_1"/>
-            <column name="TEMPORARY_FLAG" value="true"/>
-            <column name="PLACEHOLDER_DATA" value="true"/>
-            <column name="TEST_DATA_IN_PROD" value="true"/>
-            <column name="PROD_DATA_IN_TEST" value="false"/>
-            <column name="DUPLICATE_RECORD" value="true"/>
-            <column name="INCOMPLETE_RECORD" value="false"/>
-            <column name="NEVER_USED" value="false"/>
-            <column name="WHO_CARES" value="true"/>
-            <column name="WILL_FIX_LATER" value="true"/>
+            <column name="TEMPORARY_FLAG" valueNumeric="1"/>
+            <column name="PLACEHOLDER_DATA" valueNumeric="1"/>
+            <column name="TEST_DATA_IN_PROD" valueNumeric="1"/>
+            <column name="PROD_DATA_IN_TEST" valueNumeric="0"/>
+            <column name="DUPLICATE_RECORD" valueNumeric="1"/>
+            <column name="INCOMPLETE_RECORD" valueNumeric="0"/>
+            <column name="NEVER_USED" valueNumeric="0"/>
+            <column name="WHO_CARES" valueNumeric="1"/>
+            <column name="WILL_FIX_LATER" valueNumeric="1"/>
             <column name="TECHNICAL_DEBT_SCORE" value="7500"/>
             <column name="DOCUMENTATION_LIES" value="This is real production data"/>
-            <column name="LAST_MAINTENANCE_DATE" value="2020-04-01"/>
+            <column name="LAST_MAINTENANCE_DATE" valueDate="2020-04-01"/>
             <column name="WHY_THIS_EXISTS" value="Test environment refresh"/>
             <column name="DOCUMENTATION_STATUS" value="Misleading"/>
             <column name="NULL_PERCENTAGE" value="5.00"/>
@@ -4040,35 +4040,35 @@
             <column name="TEMPORARY_FIX_AGE" value="1460"/>
         </insert>
         <insert tableName="RECORDS_WE_IGNORE" schemaName="ANY_REPORT">
-            <column name="CREATION_DATE" value="2018-11-01 09:15:00"/>
-            <column name="LAST_ACKNOWLEDGED" value="2018-11-02"/>
+            <column name="CREATION_DATE" valueDate="2018-11-01T09:15:00"/>
+            <column name="LAST_ACKNOWLEDGED" valueDate="2018-11-02"/>
             <column name="IGNORED_BY" value="Firefighter Dev"/>
             <column name="EXCUSE" value="Production emergency fix"/>
-            <column name="IS_NULL_BUT_SHOULDNT_BE" value="true"/>
-            <column name="IS_NOT_NULL_BUT_SHOULD_BE" value="false"/>
-            <column name="WRONG_DATA_TYPE" value="false"/>
-            <column name="MISSPELLED_COLUMN" value="false"/>
-            <column name="FOREIGN_KEY_VIOLATION" value="false"/>
-            <column name="BIRTHDATE_IN_FUTURE" value="false"/>
-            <column name="EXPIRATION_DATE_IN_PAST" value="false"/>
-            <column name="TIMESTAMP_BEFORE_COMPUTERS" value="false"/>
-            <column name="TIMEZONE_CONFUSION" value="false"/>
-            <column name="DAYLIGHT_SAVINGS_PROBLEM" value="false"/>
+            <column name="IS_NULL_BUT_SHOULDNT_BE" valueNumeric="1"/>
+            <column name="IS_NOT_NULL_BUT_SHOULD_BE" valueNumeric="0"/>
+            <column name="WRONG_DATA_TYPE" valueNumeric="0"/>
+            <column name="MISSPELLED_COLUMN" valueNumeric="0"/>
+            <column name="FOREIGN_KEY_VIOLATION" valueNumeric="0"/>
+            <column name="BIRTHDATE_IN_FUTURE" valueNumeric="0"/>
+            <column name="EXPIRATION_DATE_IN_PAST" valueNumeric="0"/>
+            <column name="TIMESTAMP_BEFORE_COMPUTERS" valueNumeric="0"/>
+            <column name="TIMEZONE_CONFUSION" valueNumeric="0"/>
+            <column name="DAYLIGHT_SAVINGS_PROBLEM" valueNumeric="0"/>
             <column name="MAGIC_NUMBER_1" value="0"/>
             <column name="MAGIC_NUMBER_2" value="1"/>
             <column name="HARDCODED_VALUE" value="TEMPORARY_FIX"/>
-            <column name="TEMPORARY_FLAG" value="true"/>
-            <column name="PLACEHOLDER_DATA" value="true"/>
-            <column name="TEST_DATA_IN_PROD" value="false"/>
-            <column name="PROD_DATA_IN_TEST" value="false"/>
-            <column name="DUPLICATE_RECORD" value="false"/>
-            <column name="INCOMPLETE_RECORD" value="false"/>
-            <column name="NEVER_USED" value="false"/>
-            <column name="WHO_CARES" value="false"/>
-            <column name="WILL_FIX_LATER" value="true"/>
+            <column name="TEMPORARY_FLAG" valueNumeric="1"/>
+            <column name="PLACEHOLDER_DATA" valueNumeric="1"/>
+            <column name="TEST_DATA_IN_PROD" valueNumeric="0"/>
+            <column name="PROD_DATA_IN_TEST" valueNumeric="0"/>
+            <column name="DUPLICATE_RECORD" valueNumeric="0"/>
+            <column name="INCOMPLETE_RECORD" valueNumeric="0"/>
+            <column name="NEVER_USED" valueNumeric="0"/>
+            <column name="WHO_CARES" valueNumeric="0"/>
+            <column name="WILL_FIX_LATER" valueNumeric="1"/>
             <column name="TECHNICAL_DEBT_SCORE" value="5000"/>
             <column name="DOCUMENTATION_LIES" value="This is just a temporary workaround"/>
-            <column name="LAST_MAINTENANCE_DATE" value="2018-11-03"/>
+            <column name="LAST_MAINTENANCE_DATE" valueDate="2018-11-03"/>
             <column name="WHY_THIS_EXISTS" value="Black Friday outage"/>
             <column name="DOCUMENTATION_STATUS" value="Nonexistent"/>
             <column name="NULL_PERCENTAGE" value="0.00"/>
@@ -4079,35 +4079,35 @@
             <column name="TEMPORARY_FIX_AGE" value="2190"/>
         </insert>
         <insert tableName="RECORDS_WE_IGNORE" schemaName="ANY_REPORT">
-            <column name="CREATION_DATE" value="2015-07-20 11:45:00"/>
-            <column name="LAST_ACKNOWLEDGED" value="2016-01-01"/>
+            <column name="CREATION_DATE" valueDate="2015-07-20T11:45:00"/>
+            <column name="LAST_ACKNOWLEDGED" valueDate="2016-01-01"/>
             <column name="IGNORED_BY" value="System Migration"/>
             <column name="EXCUSE" value="Orphaned from parent system"/>
-            <column name="IS_NULL_BUT_SHOULDNT_BE" value="true"/>
-            <column name="IS_NOT_NULL_BUT_SHOULD_BE" value="false"/>
-            <column name="WRONG_DATA_TYPE" value="true"/>
-            <column name="MISSPELLED_COLUMN" value="true"/>
-            <column name="FOREIGN_KEY_VIOLATION" value="true"/>
-            <column name="BIRTHDATE_IN_FUTURE" value="false"/>
-            <column name="EXPIRATION_DATE_IN_PAST" value="true"/>
-            <column name="TIMESTAMP_BEFORE_COMPUTERS" value="false"/>
-            <column name="TIMEZONE_CONFUSION" value="true"/>
-            <column name="DAYLIGHT_SAVINGS_PROBLEM" value="true"/>
+            <column name="IS_NULL_BUT_SHOULDNT_BE" valueNumeric="1"/>
+            <column name="IS_NOT_NULL_BUT_SHOULD_BE" valueNumeric="0"/>
+            <column name="WRONG_DATA_TYPE" valueNumeric="1"/>
+            <column name="MISSPELLED_COLUMN" valueNumeric="1"/>
+            <column name="FOREIGN_KEY_VIOLATION" valueNumeric="1"/>
+            <column name="BIRTHDATE_IN_FUTURE" valueNumeric="0"/>
+            <column name="EXPIRATION_DATE_IN_PAST" valueNumeric="1"/>
+            <column name="TIMESTAMP_BEFORE_COMPUTERS" valueNumeric="0"/>
+            <column name="TIMEZONE_CONFUSION" valueNumeric="1"/>
+            <column name="DAYLIGHT_SAVINGS_PROBLEM" valueNumeric="1"/>
             <column name="MAGIC_NUMBER_1" value="999"/>
             <column name="MAGIC_NUMBER_2" value="-1"/>
             <column name="HARDCODED_VALUE" value="ORPHANED"/>
-            <column name="TEMPORARY_FLAG" value="false"/>
-            <column name="PLACEHOLDER_DATA" value="false"/>
-            <column name="TEST_DATA_IN_PROD" value="false"/>
-            <column name="PROD_DATA_IN_TEST" value="false"/>
-            <column name="DUPLICATE_RECORD" value="false"/>
-            <column name="INCOMPLETE_RECORD" value="true"/>
-            <column name="NEVER_USED" value="true"/>
-            <column name="WHO_CARES" value="true"/>
-            <column name="WILL_FIX_LATER" value="false"/>
+            <column name="TEMPORARY_FLAG" valueNumeric="0"/>
+            <column name="PLACEHOLDER_DATA" valueNumeric="0"/>
+            <column name="TEST_DATA_IN_PROD" valueNumeric="0"/>
+            <column name="PROD_DATA_IN_TEST" valueNumeric="0"/>
+            <column name="DUPLICATE_RECORD" valueNumeric="0"/>
+            <column name="INCOMPLETE_RECORD" valueNumeric="1"/>
+            <column name="NEVER_USED" valueNumeric="1"/>
+            <column name="WHO_CARES" valueNumeric="1"/>
+            <column name="WILL_FIX_LATER" valueNumeric="0"/>
             <column name="TECHNICAL_DEBT_SCORE" value="9500"/>
             <column name="DOCUMENTATION_LIES" value="These records are properly linked"/>
-            <column name="LAST_MAINTENANCE_DATE" value="2015-12-31"/>
+            <column name="LAST_MAINTENANCE_DATE" valueDate="2015-12-31"/>
             <column name="WHY_THIS_EXISTS" value="Failed system integration"/>
             <column name="DOCUMENTATION_STATUS" value="Fictional"/>
             <column name="NULL_PERCENTAGE" value="80.25"/>
@@ -4119,35 +4119,35 @@
         </insert>
 
         <insert tableName="RECORDS_WE_IGNORE" schemaName="ANY_REPORT">
-            <column name="CREATION_DATE" value="2019-05-10 16:20:00"/>
-            <column name="LAST_ACKNOWLEDGED" value="2019-05-11"/>
+            <column name="CREATION_DATE" valueDate="2019-05-10T16:20:00"/>
+            <column name="LAST_ACKNOWLEDGED" valueDate="2019-05-11"/>
             <column name="IGNORED_BY" value="Documentation Team"/>
             <column name="EXCUSE" value="Business requirement"/>
-            <column name="IS_NULL_BUT_SHOULDNT_BE" value="false"/>
-            <column name="IS_NOT_NULL_BUT_SHOULD_BE" value="false"/>
-            <column name="WRONG_DATA_TYPE" value="false"/>
-            <column name="MISSPELLED_COLUMN" value="true"/>
-            <column name="FOREIGN_KEY_VIOLATION" value="false"/>
-            <column name="BIRTHDATE_IN_FUTURE" value="false"/>
-            <column name="EXPIRATION_DATE_IN_PAST" value="false"/>
-            <column name="TIMESTAMP_BEFORE_COMPUTERS" value="false"/>
-            <column name="TIMEZONE_CONFUSION" value="false"/>
-            <column name="DAYLIGHT_SAVINGS_PROBLEM" value="false"/>
+            <column name="IS_NULL_BUT_SHOULDNT_BE" valueNumeric="0"/>
+            <column name="IS_NOT_NULL_BUT_SHOULD_BE" valueNumeric="0"/>
+            <column name="WRONG_DATA_TYPE" valueNumeric="0"/>
+            <column name="MISSPELLED_COLUMN" valueNumeric="1"/>
+            <column name="FOREIGN_KEY_VIOLATION" valueNumeric="0"/>
+            <column name="BIRTHDATE_IN_FUTURE" valueNumeric="0"/>
+            <column name="EXPIRATION_DATE_IN_PAST" valueNumeric="0"/>
+            <column name="TIMESTAMP_BEFORE_COMPUTERS" valueNumeric="0"/>
+            <column name="TIMEZONE_CONFUSION" valueNumeric="0"/>
+            <column name="DAYLIGHT_SAVINGS_PROBLEM" valueNumeric="0"/>
             <column name="MAGIC_NUMBER_1" value="1"/>
             <column name="MAGIC_NUMBER_2" value="0"/>
             <column name="HARDCODED_VALUE" value="DOCS_ARE_CORRECT"/>
-            <column name="TEMPORARY_FLAG" value="false"/>
-            <column name="PLACEHOLDER_DATA" value="false"/>
-            <column name="TEST_DATA_IN_PROD" value="false"/>
-            <column name="PROD_DATA_IN_TEST" value="false"/>
-            <column name="DUPLICATE_RECORD" value="false"/>
-            <column name="INCOMPLETE_RECORD" value="false"/>
-            <column name="NEVER_USED" value="false"/>
-            <column name="WHO_CARES" value="true"/>
-            <column name="WILL_FIX_LATER" value="false"/>
+            <column name="TEMPORARY_FLAG" valueNumeric="0"/>
+            <column name="PLACEHOLDER_DATA" valueNumeric="0"/>
+            <column name="TEST_DATA_IN_PROD" valueNumeric="0"/>
+            <column name="PROD_DATA_IN_TEST" valueNumeric="0"/>
+            <column name="DUPLICATE_RECORD" valueNumeric="0"/>
+            <column name="INCOMPLETE_RECORD" valueNumeric="0"/>
+            <column name="NEVER_USED" valueNumeric="0"/>
+            <column name="WHO_CARES" valueNumeric="1"/>
+            <column name="WILL_FIX_LATER" valueNumeric="0"/>
             <column name="TECHNICAL_DEBT_SCORE" value="3000"/>
             <column name="DOCUMENTATION_LIES" value="This documentation is 100% accurate"/>
-            <column name="LAST_MAINTENANCE_DATE" value="2019-06-01"/>
+            <column name="LAST_MAINTENANCE_DATE" valueDate="2019-06-01"/>
             <column name="WHY_THIS_EXISTS" value="Compliance requirement"/>
             <column name="DOCUMENTATION_STATUS" value="Lies"/>
             <column name="NULL_PERCENTAGE" value="0.00"/>
@@ -4159,34 +4159,34 @@
         </insert>
         <insert tableName="RECORDS_WE_IGNORE" schemaName="ANY_REPORT">
             <column name="CREATION_DATE" valueComputed="CURRENT_TIMESTAMP"/>
-            <column name="LAST_ACKNOWLEDGED" value="1999-12-31"/>
+            <column name="LAST_ACKNOWLEDGED" valueDate="1999-12-31"/>
             <column name="IGNORED_BY" value="Old Team"/>
             <column name="EXCUSE" value="Legacy system migration"/>
-            <column name="IS_NULL_BUT_SHOULDNT_BE" value="true"/>
-            <column name="IS_NOT_NULL_BUT_SHOULD_BE" value="false"/>
-            <column name="WRONG_DATA_TYPE" value="true"/>
-            <column name="MISSPELLED_COLUMN" value="true"/>
-            <column name="FOREIGN_KEY_VIOLATION" value="true"/>
-            <column name="BIRTHDATE_IN_FUTURE" value="false"/>
-            <column name="EXPIRATION_DATE_IN_PAST" value="true"/>
-            <column name="TIMESTAMP_BEFORE_COMPUTERS" value="true"/>
-            <column name="TIMEZONE_CONFUSION" value="true"/>
-            <column name="DAYLIGHT_SAVINGS_PROBLEM" value="true"/>
+            <column name="IS_NULL_BUT_SHOULDNT_BE" valueNumeric="1"/>
+            <column name="IS_NOT_NULL_BUT_SHOULD_BE" valueNumeric="0"/>
+            <column name="WRONG_DATA_TYPE" valueNumeric="1"/>
+            <column name="MISSPELLED_COLUMN" valueNumeric="1"/>
+            <column name="FOREIGN_KEY_VIOLATION" valueNumeric="1"/>
+            <column name="BIRTHDATE_IN_FUTURE" valueNumeric="0"/>
+            <column name="EXPIRATION_DATE_IN_PAST" valueNumeric="1"/>
+            <column name="TIMESTAMP_BEFORE_COMPUTERS" valueNumeric="1"/>
+            <column name="TIMEZONE_CONFUSION" valueNumeric="1"/>
+            <column name="DAYLIGHT_SAVINGS_PROBLEM" valueNumeric="1"/>
             <column name="MAGIC_NUMBER_1" value="42"/>
             <column name="MAGIC_NUMBER_2" value="666"/>
             <column name="HARDCODED_VALUE" value="LEGACY_VALUE"/>
-            <column name="TEMPORARY_FLAG" value="true"/>
-            <column name="PLACEHOLDER_DATA" value="true"/>
-            <column name="TEST_DATA_IN_PROD" value="false"/>
-            <column name="PROD_DATA_IN_TEST" value="true"/>
-            <column name="DUPLICATE_RECORD" value="true"/>
-            <column name="INCOMPLETE_RECORD" value="true"/>
-            <column name="NEVER_USED" value="true"/>
-            <column name="WHO_CARES" value="true"/>
-            <column name="WILL_FIX_LATER" value="false"/>
+            <column name="TEMPORARY_FLAG" valueNumeric="1"/>
+            <column name="PLACEHOLDER_DATA" valueNumeric="1"/>
+            <column name="TEST_DATA_IN_PROD" valueNumeric="0"/>
+            <column name="PROD_DATA_IN_TEST" valueNumeric="1"/>
+            <column name="DUPLICATE_RECORD" valueNumeric="1"/>
+            <column name="INCOMPLETE_RECORD" valueNumeric="1"/>
+            <column name="NEVER_USED" valueNumeric="1"/>
+            <column name="WHO_CARES" valueNumeric="1"/>
+            <column name="WILL_FIX_LATER" valueNumeric="0"/>
             <column name="TECHNICAL_DEBT_SCORE" value="8500"/>
             <column name="DOCUMENTATION_LIES" value="This was carefully migrated"/>
-            <column name="LAST_MAINTENANCE_DATE" value="2005-06-15"/>
+            <column name="LAST_MAINTENANCE_DATE" valueDate="2005-06-15"/>
             <column name="WHY_THIS_EXISTS" value="The old system needed it"/>
             <column name="DOCUMENTATION_STATUS" value="Outdated"/>
             <column name="NULL_PERCENTAGE" value="95.50"/>
@@ -4197,35 +4197,35 @@
             <column name="TEMPORARY_FIX_AGE" value="6570"/>
         </insert>
         <insert tableName="RECORDS_WE_IGNORE" schemaName="ANY_REPORT">
-            <column name="CREATION_DATE" value="2020-03-15 14:30:00"/>
-            <column name="LAST_ACKNOWLEDGED" value="2020-03-16"/>
+            <column name="CREATION_DATE" valueDate="2020-03-15T14:30:00"/>
+            <column name="LAST_ACKNOWLEDGED" valueDate="2020-03-16"/>
             <column name="IGNORED_BY" value="QA Team"/>
             <column name="EXCUSE" value="Test data migration"/>
-            <column name="IS_NULL_BUT_SHOULDNT_BE" value="false"/>
-            <column name="IS_NOT_NULL_BUT_SHOULD_BE" value="true"/>
-            <column name="WRONG_DATA_TYPE" value="true"/>
-            <column name="MISSPELLED_COLUMN" value="false"/>
-            <column name="FOREIGN_KEY_VIOLATION" value="false"/>
-            <column name="BIRTHDATE_IN_FUTURE" value="true"/>
-            <column name="EXPIRATION_DATE_IN_PAST" value="false"/>
-            <column name="TIMESTAMP_BEFORE_COMPUTERS" value="false"/>
-            <column name="TIMEZONE_CONFUSION" value="true"/>
-            <column name="DAYLIGHT_SAVINGS_PROBLEM" value="true"/>
+            <column name="IS_NULL_BUT_SHOULDNT_BE" valueNumeric="0"/>
+            <column name="IS_NOT_NULL_BUT_SHOULD_BE" valueNumeric="1"/>
+            <column name="WRONG_DATA_TYPE" valueNumeric="1"/>
+            <column name="MISSPELLED_COLUMN" valueNumeric="0"/>
+            <column name="FOREIGN_KEY_VIOLATION" valueNumeric="0"/>
+            <column name="BIRTHDATE_IN_FUTURE" valueNumeric="1"/>
+            <column name="EXPIRATION_DATE_IN_PAST" valueNumeric="0"/>
+            <column name="TIMESTAMP_BEFORE_COMPUTERS" valueNumeric="0"/>
+            <column name="TIMEZONE_CONFUSION" valueNumeric="1"/>
+            <column name="DAYLIGHT_SAVINGS_PROBLEM" valueNumeric="1"/>
             <column name="MAGIC_NUMBER_1" value="123"/>
             <column name="MAGIC_NUMBER_2" value="456"/>
             <column name="HARDCODED_VALUE" value="TEST_USER_1"/>
-            <column name="TEMPORARY_FLAG" value="true"/>
-            <column name="PLACEHOLDER_DATA" value="true"/>
-            <column name="TEST_DATA_IN_PROD" value="true"/>
-            <column name="PROD_DATA_IN_TEST" value="false"/>
-            <column name="DUPLICATE_RECORD" value="true"/>
-            <column name="INCOMPLETE_RECORD" value="false"/>
-            <column name="NEVER_USED" value="false"/>
-            <column name="WHO_CARES" value="true"/>
-            <column name="WILL_FIX_LATER" value="true"/>
+            <column name="TEMPORARY_FLAG" valueNumeric="1"/>
+            <column name="PLACEHOLDER_DATA" valueNumeric="1"/>
+            <column name="TEST_DATA_IN_PROD" valueNumeric="1"/>
+            <column name="PROD_DATA_IN_TEST" valueNumeric="0"/>
+            <column name="DUPLICATE_RECORD" valueNumeric="1"/>
+            <column name="INCOMPLETE_RECORD" valueNumeric="0"/>
+            <column name="NEVER_USED" valueNumeric="0"/>
+            <column name="WHO_CARES" valueNumeric="1"/>
+            <column name="WILL_FIX_LATER" valueNumeric="1"/>
             <column name="TECHNICAL_DEBT_SCORE" value="7500"/>
             <column name="DOCUMENTATION_LIES" value="This is real production data"/>
-            <column name="LAST_MAINTENANCE_DATE" value="2020-04-01"/>
+            <column name="LAST_MAINTENANCE_DATE" valueDate="2020-04-01"/>
             <column name="WHY_THIS_EXISTS" value="Test environment refresh"/>
             <column name="DOCUMENTATION_STATUS" value="Misleading"/>
             <column name="NULL_PERCENTAGE" value="5.00"/>
@@ -4236,35 +4236,35 @@
             <column name="TEMPORARY_FIX_AGE" value="1460"/>
         </insert>
         <insert tableName="RECORDS_WE_IGNORE" schemaName="ANY_REPORT">
-            <column name="CREATION_DATE" value="2018-11-01 09:15:00"/>
-            <column name="LAST_ACKNOWLEDGED" value="2018-11-02"/>
+            <column name="CREATION_DATE" valueDate="2018-11-01T09:15:00"/>
+            <column name="LAST_ACKNOWLEDGED" valueDate="2018-11-02"/>
             <column name="IGNORED_BY" value="Firefighter Dev"/>
             <column name="EXCUSE" value="Production emergency fix"/>
-            <column name="IS_NULL_BUT_SHOULDNT_BE" value="true"/>
-            <column name="IS_NOT_NULL_BUT_SHOULD_BE" value="false"/>
-            <column name="WRONG_DATA_TYPE" value="false"/>
-            <column name="MISSPELLED_COLUMN" value="false"/>
-            <column name="FOREIGN_KEY_VIOLATION" value="false"/>
-            <column name="BIRTHDATE_IN_FUTURE" value="false"/>
-            <column name="EXPIRATION_DATE_IN_PAST" value="false"/>
-            <column name="TIMESTAMP_BEFORE_COMPUTERS" value="false"/>
-            <column name="TIMEZONE_CONFUSION" value="false"/>
-            <column name="DAYLIGHT_SAVINGS_PROBLEM" value="false"/>
+            <column name="IS_NULL_BUT_SHOULDNT_BE" valueNumeric="1"/>
+            <column name="IS_NOT_NULL_BUT_SHOULD_BE" valueNumeric="0"/>
+            <column name="WRONG_DATA_TYPE" valueNumeric="0"/>
+            <column name="MISSPELLED_COLUMN" valueNumeric="0"/>
+            <column name="FOREIGN_KEY_VIOLATION" valueNumeric="0"/>
+            <column name="BIRTHDATE_IN_FUTURE" valueNumeric="0"/>
+            <column name="EXPIRATION_DATE_IN_PAST" valueNumeric="0"/>
+            <column name="TIMESTAMP_BEFORE_COMPUTERS" valueNumeric="0"/>
+            <column name="TIMEZONE_CONFUSION" valueNumeric="0"/>
+            <column name="DAYLIGHT_SAVINGS_PROBLEM" valueNumeric="0"/>
             <column name="MAGIC_NUMBER_1" value="0"/>
             <column name="MAGIC_NUMBER_2" value="1"/>
             <column name="HARDCODED_VALUE" value="TEMPORARY_FIX"/>
-            <column name="TEMPORARY_FLAG" value="true"/>
-            <column name="PLACEHOLDER_DATA" value="true"/>
-            <column name="TEST_DATA_IN_PROD" value="false"/>
-            <column name="PROD_DATA_IN_TEST" value="false"/>
-            <column name="DUPLICATE_RECORD" value="false"/>
-            <column name="INCOMPLETE_RECORD" value="false"/>
-            <column name="NEVER_USED" value="false"/>
-            <column name="WHO_CARES" value="false"/>
-            <column name="WILL_FIX_LATER" value="true"/>
+            <column name="TEMPORARY_FLAG" valueNumeric="1"/>
+            <column name="PLACEHOLDER_DATA" valueNumeric="1"/>
+            <column name="TEST_DATA_IN_PROD" valueNumeric="0"/>
+            <column name="PROD_DATA_IN_TEST" valueNumeric="0"/>
+            <column name="DUPLICATE_RECORD" valueNumeric="0"/>
+            <column name="INCOMPLETE_RECORD" valueNumeric="0"/>
+            <column name="NEVER_USED" valueNumeric="0"/>
+            <column name="WHO_CARES" valueNumeric="0"/>
+            <column name="WILL_FIX_LATER" valueNumeric="1"/>
             <column name="TECHNICAL_DEBT_SCORE" value="5000"/>
             <column name="DOCUMENTATION_LIES" value="This is just a temporary workaround"/>
-            <column name="LAST_MAINTENANCE_DATE" value="2018-11-03"/>
+            <column name="LAST_MAINTENANCE_DATE" valueDate="2018-11-03"/>
             <column name="WHY_THIS_EXISTS" value="Black Friday outage"/>
             <column name="DOCUMENTATION_STATUS" value="Nonexistent"/>
             <column name="NULL_PERCENTAGE" value="0.00"/>
@@ -4275,35 +4275,35 @@
             <column name="TEMPORARY_FIX_AGE" value="2190"/>
         </insert>
         <insert tableName="RECORDS_WE_IGNORE" schemaName="ANY_REPORT">
-            <column name="CREATION_DATE" value="2015-07-20 11:45:00"/>
-            <column name="LAST_ACKNOWLEDGED" value="2016-01-01"/>
+            <column name="CREATION_DATE" valueDate="2015-07-20T11:45:00"/>
+            <column name="LAST_ACKNOWLEDGED" valueDate="2016-01-01"/>
             <column name="IGNORED_BY" value="System Migration"/>
             <column name="EXCUSE" value="Orphaned from parent system"/>
-            <column name="IS_NULL_BUT_SHOULDNT_BE" value="true"/>
-            <column name="IS_NOT_NULL_BUT_SHOULD_BE" value="false"/>
-            <column name="WRONG_DATA_TYPE" value="true"/>
-            <column name="MISSPELLED_COLUMN" value="true"/>
-            <column name="FOREIGN_KEY_VIOLATION" value="true"/>
-            <column name="BIRTHDATE_IN_FUTURE" value="false"/>
-            <column name="EXPIRATION_DATE_IN_PAST" value="true"/>
-            <column name="TIMESTAMP_BEFORE_COMPUTERS" value="false"/>
-            <column name="TIMEZONE_CONFUSION" value="true"/>
-            <column name="DAYLIGHT_SAVINGS_PROBLEM" value="true"/>
+            <column name="IS_NULL_BUT_SHOULDNT_BE" valueNumeric="1"/>
+            <column name="IS_NOT_NULL_BUT_SHOULD_BE" valueNumeric="0"/>
+            <column name="WRONG_DATA_TYPE" valueNumeric="1"/>
+            <column name="MISSPELLED_COLUMN" valueNumeric="1"/>
+            <column name="FOREIGN_KEY_VIOLATION" valueNumeric="1"/>
+            <column name="BIRTHDATE_IN_FUTURE" valueNumeric="0"/>
+            <column name="EXPIRATION_DATE_IN_PAST" valueNumeric="1"/>
+            <column name="TIMESTAMP_BEFORE_COMPUTERS" valueNumeric="0"/>
+            <column name="TIMEZONE_CONFUSION" valueNumeric="1"/>
+            <column name="DAYLIGHT_SAVINGS_PROBLEM" valueNumeric="1"/>
             <column name="MAGIC_NUMBER_1" value="999"/>
             <column name="MAGIC_NUMBER_2" value="-1"/>
             <column name="HARDCODED_VALUE" value="ORPHANED"/>
-            <column name="TEMPORARY_FLAG" value="false"/>
-            <column name="PLACEHOLDER_DATA" value="false"/>
-            <column name="TEST_DATA_IN_PROD" value="false"/>
-            <column name="PROD_DATA_IN_TEST" value="false"/>
-            <column name="DUPLICATE_RECORD" value="false"/>
-            <column name="INCOMPLETE_RECORD" value="true"/>
-            <column name="NEVER_USED" value="true"/>
-            <column name="WHO_CARES" value="true"/>
-            <column name="WILL_FIX_LATER" value="false"/>
+            <column name="TEMPORARY_FLAG" valueNumeric="0"/>
+            <column name="PLACEHOLDER_DATA" valueNumeric="0"/>
+            <column name="TEST_DATA_IN_PROD" valueNumeric="0"/>
+            <column name="PROD_DATA_IN_TEST" valueNumeric="0"/>
+            <column name="DUPLICATE_RECORD" valueNumeric="0"/>
+            <column name="INCOMPLETE_RECORD" valueNumeric="1"/>
+            <column name="NEVER_USED" valueNumeric="1"/>
+            <column name="WHO_CARES" valueNumeric="1"/>
+            <column name="WILL_FIX_LATER" valueNumeric="0"/>
             <column name="TECHNICAL_DEBT_SCORE" value="9500"/>
             <column name="DOCUMENTATION_LIES" value="These records are properly linked"/>
-            <column name="LAST_MAINTENANCE_DATE" value="2015-12-31"/>
+            <column name="LAST_MAINTENANCE_DATE" valueDate="2015-12-31"/>
             <column name="WHY_THIS_EXISTS" value="Failed system integration"/>
             <column name="DOCUMENTATION_STATUS" value="Fictional"/>
             <column name="NULL_PERCENTAGE" value="80.25"/>
@@ -4314,35 +4314,35 @@
             <column name="TEMPORARY_FIX_AGE" value="2920"/>
         </insert>
         <insert tableName="RECORDS_WE_IGNORE" schemaName="ANY_REPORT">
-            <column name="CREATION_DATE" value="2019-05-10 16:20:00"/>
-            <column name="LAST_ACKNOWLEDGED" value="2019-05-11"/>
+            <column name="CREATION_DATE" valueDate="2019-05-10T16:20:00"/>
+            <column name="LAST_ACKNOWLEDGED" valueDate="2019-05-11"/>
             <column name="IGNORED_BY" value="Documentation Team"/>
             <column name="EXCUSE" value="Business requirement"/>
-            <column name="IS_NULL_BUT_SHOULDNT_BE" value="false"/>
-            <column name="IS_NOT_NULL_BUT_SHOULD_BE" value="false"/>
-            <column name="WRONG_DATA_TYPE" value="false"/>
-            <column name="MISSPELLED_COLUMN" value="true"/>
-            <column name="FOREIGN_KEY_VIOLATION" value="false"/>
-            <column name="BIRTHDATE_IN_FUTURE" value="false"/>
-            <column name="EXPIRATION_DATE_IN_PAST" value="false"/>
-            <column name="TIMESTAMP_BEFORE_COMPUTERS" value="false"/>
-            <column name="TIMEZONE_CONFUSION" value="false"/>
-            <column name="DAYLIGHT_SAVINGS_PROBLEM" value="false"/>
+            <column name="IS_NULL_BUT_SHOULDNT_BE" valueNumeric="0"/>
+            <column name="IS_NOT_NULL_BUT_SHOULD_BE" valueNumeric="0"/>
+            <column name="WRONG_DATA_TYPE" valueNumeric="0"/>
+            <column name="MISSPELLED_COLUMN" valueNumeric="1"/>
+            <column name="FOREIGN_KEY_VIOLATION" valueNumeric="0"/>
+            <column name="BIRTHDATE_IN_FUTURE" valueNumeric="0"/>
+            <column name="EXPIRATION_DATE_IN_PAST" valueNumeric="0"/>
+            <column name="TIMESTAMP_BEFORE_COMPUTERS" valueNumeric="0"/>
+            <column name="TIMEZONE_CONFUSION" valueNumeric="0"/>
+            <column name="DAYLIGHT_SAVINGS_PROBLEM" valueNumeric="0"/>
             <column name="MAGIC_NUMBER_1" value="1"/>
             <column name="MAGIC_NUMBER_2" value="0"/>
             <column name="HARDCODED_VALUE" value="DOCS_ARE_CORRECT"/>
-            <column name="TEMPORARY_FLAG" value="false"/>
-            <column name="PLACEHOLDER_DATA" value="false"/>
-            <column name="TEST_DATA_IN_PROD" value="false"/>
-            <column name="PROD_DATA_IN_TEST" value="false"/>
-            <column name="DUPLICATE_RECORD" value="false"/>
-            <column name="INCOMPLETE_RECORD" value="false"/>
-            <column name="NEVER_USED" value="false"/>
-            <column name="WHO_CARES" value="true"/>
-            <column name="WILL_FIX_LATER" value="false"/>
+            <column name="TEMPORARY_FLAG" valueNumeric="0"/>
+            <column name="PLACEHOLDER_DATA" valueNumeric="0"/>
+            <column name="TEST_DATA_IN_PROD" valueNumeric="0"/>
+            <column name="PROD_DATA_IN_TEST" valueNumeric="0"/>
+            <column name="DUPLICATE_RECORD" valueNumeric="0"/>
+            <column name="INCOMPLETE_RECORD" valueNumeric="0"/>
+            <column name="NEVER_USED" valueNumeric="0"/>
+            <column name="WHO_CARES" valueNumeric="1"/>
+            <column name="WILL_FIX_LATER" valueNumeric="0"/>
             <column name="TECHNICAL_DEBT_SCORE" value="3000"/>
             <column name="DOCUMENTATION_LIES" value="This documentation is 100% accurate"/>
-            <column name="LAST_MAINTENANCE_DATE" value="2019-06-01"/>
+            <column name="LAST_MAINTENANCE_DATE" valueDate="2019-06-01"/>
             <column name="WHY_THIS_EXISTS" value="Compliance requirement"/>
             <column name="DOCUMENTATION_STATUS" value="Lies"/>
             <column name="NULL_PERCENTAGE" value="0.00"/>

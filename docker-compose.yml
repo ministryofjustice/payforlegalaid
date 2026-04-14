@@ -1,4 +1,24 @@
 services:
+  oracle:
+    image: container-registry.oracle.com/database/free:latest
+    container_name: oracle-local
+    environment:
+      ORACLE_PWD: password123
+      ORACLE_CHARACTERSET: AL32UTF8
+    ports:
+      - "1521:1521"
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+      - ./local/oracle-init:/opt/oracle/scripts/startup
+    mem_limit: 2g
+    shm_size: 1g
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/1521"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 120s
+
   payforlegalaid:
     build:
       context: .
@@ -12,15 +32,17 @@ services:
       SPRING_PROFILES_ACTIVE: local
     volumes:
       - gpfd-data:/data
-
+    depends_on:
+      oracle:
+        condition: service_healthy        # wait for Oracle to be ready
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 40s
-
+      start_period: 60s
     restart: unless-stopped
 
 volumes:
+  oracle-data:
   gpfd-data:
