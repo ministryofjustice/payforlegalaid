@@ -38,3 +38,6 @@ modules.xml
 
 ### Ignore generated static assets ###
 src/main/resources/static/
+
+# Local Docker app env vars
+.env

@@ -3230,16 +3230,16 @@
             <column name="SPECIES" type="VARCHAR(30)" defaultValue="Toon"/>
             <column name="CATCHPHRASE" type="VARCHAR(100)" defaultValue="That's all, folks!"/>
             <column name="ANVIL_DROPPED_COUNT" type="INT" defaultValue="0"/>
-            <column name="LAST_EXPLOSION_TIME" type="DATETIME"/>
-            <column name="PAINT_SWALLOWED" type="BOOLEAN" defaultValue="false"/>
+            <column name="LAST_EXPLOSION_TIME" type="TIMESTAMP"/>
+            <column name="PAINT_SWALLOWED" type="NUMBER(1)" defaultValueNumeric="0"/>
             <column name="GRAVITY_DEFIANCE_LEVEL" type="VARCHAR(20)" defaultValue="High"/>
-            <column name="TUNNEL_PAINTED_ON_WALL" type="BOOLEAN" defaultValue="false"/>
+            <column name="TUNNEL_PAINTED_ON_WALL" type="NUMBER(1)" defaultValueNumeric="0"/>
             <column name="SPEED_EFFECT_LINES" type="INT" defaultValue="0"/>
             <column name="ACME_PRODUCT_FAILURES" type="INT" defaultValue="0"/>
-            <column name="IS_CURRENTLY_SUSPENDED_IN_AIR" type="BOOLEAN" defaultValue="false"/>
+            <column name="IS_CURRENTLY_SUSPENDED_IN_AIR" type="NUMBER(1)" defaultValueNumeric="0"/>
             <column name="ENEMY_RIVAL" type="VARCHAR(50)"/>
-            <column name="LAST_SEEN_LOCATION" type="GEOMETRY" />
-            <column name="CARTOON_PHYSICS_RATING" type="TINYINT" defaultValue="10"/>
+            <column name="LAST_SEEN_LOCATION" type="VARCHAR2(200)"/>
+            <column name="CARTOON_PHYSICS_RATING" type="NUMBER(3)" defaultValueNumeric="10"/>
         </createTable>
 
         <insert tableName="CARTOON_CHAOS" schemaName="ANY_REPORT">
@@ -3340,11 +3340,11 @@
 
         <createTable tableName="WHY_DID_I_CREATE_THIS" schemaName="ANY_REPORT">
             <column name="REGRET_LEVEL" type="INT" defaultValue="11"/>
-            <column name="CREATION_TIMESTAMP_OF_DOOM" type="DATETIME" defaultValueComputed="CURRENT_TIMESTAMP"/>
-            <column name="LAST_TIME_I_CARED" type="DATETIME"/>
+            <column name="CREATION_TIMESTAMP_OF_DOOM" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="LAST_TIME_I_CARED" type="TIMESTAMP"/>
             <column name="THERAPIST_APPROVAL_RATING" type="DECIMAL(5,2)"/>
             <column name="SQL_GODS_CURSING_ME" type="VARCHAR(20)"/>
-            <column name="WHY_IS_THIS_NULL" type="BOOLEAN" defaultValue="true"/>
+            <column name="WHY_IS_THIS_NULL" type="NUMBER(1)" defaultValueNumeric="1"/>
             <column name="DEVELOPER_TEARS_ML" type="DECIMAL(10,2)" defaultValue="0.0"/>
             <column name="TIMES_CTRL_Z_DIDNT_WORK" type="INT" defaultValue="0"/>
             <column name="COFFEE_STAINS_ON_CODE" type="INT" defaultValue="3"/>
@@ -3353,7 +3353,7 @@
             <column name="MARKETING_DEPARTMENT_NONSENSE" type="VARCHAR(100)"/>
             <column name="SALES_GUARANTEE_PERCENTAGE" type="DECIMAL(5,2)" defaultValue="110.00"/>
             <column name="PROJECT_MANAGER_DREAMS" type="VARCHAR(100)" />
-            <column name="AGILE_BUT_ACTUALLY_CHAOS" type="BOOLEAN" defaultValue="true"/>
+            <column name="AGILE_BUT_ACTUALLY_CHAOS" type="NUMBER(1)" defaultValueNumeric="1"/>
             <column name="UNREAD_ERROR_LOGS" type="INT" defaultValue="2147483647"/>
             <column name="FICTIONAL_DEADLINE" type="DATE"/>
             <column name="ACTUAL_DEADLINE" type="DATE" />
@@ -3514,7 +3514,7 @@
             <column name="TIMES_SAID_ITS_A_COMMUNICATION_PROBLEM" type="VARCHAR(20)"/>
             <column name="TIMES_SAID_ITS_A_PROCESS_PROBLEM" type="VARCHAR(20)"/>
             <column name="TIMES_SAID_ITS_A_CULTURE_PROBLEM" type="VARCHAR(20)"/>
-            <column name="APOLOGY_LETTER_TO_NEXT_DEV" type="TEXT" />
+            <column name="APOLOGY_LETTER_TO_NEXT_DEV" type="CLOB" />
             <column name="FUTURE_MAINTENANCE_DEVELOPER_CURSES" type="INT" defaultValue="0"/>
         </createTable>
 
@@ -3527,17 +3527,17 @@
             <column name="CALLBACK_HELL_LEVEL" type="INT" defaultValue="9"/>
             <column name="LAST_CLEAN_CODE_DATE" type="DATE" />
             <column name="TIMEZONE_CONFUSION_HOURS" type="DECIMAL(10,2)"/>
-            <column name="Y2K38_READY" type="BOOLEAN" defaultValue="false"/>
+            <column name="Y2K38_READY" type="NUMBER(1)" defaultValueNumeric="0"/>
             <column name="LEAP_SECOND_HANDLING" type="VARCHAR(10)" defaultValue="PANIC"/>
             <column name="DAYLIGHT_SAVINGS_BUGS" type="INT" defaultValue="2"/>
-            <column name="LEFT_PAD_DEPENDENCY" type="BOOLEAN" defaultValue="true"/>
+            <column name="LEFT_PAD_DEPENDENCY" type="NUMBER(1)" defaultValueNumeric="1"/>
             <column name="VERSION_PINNING_STRATEGY" type="VARCHAR(50)" defaultValue="Wild Guessing"/>
             <column name="DLL_HELL_RATING" type="INT" defaultValue="11"/>
             <column name="JAR_FILE_WARS" type="INT" defaultValue="3"/>
             <column name="HOTFIXES_IN_PRODUCTION" type="INT" defaultValue="17"/>
-            <column name="SECRETS_IN_VERSION_CONTROL" type="BOOLEAN" defaultValue="true"/>
+            <column name="SECRETS_IN_VERSION_CONTROL" type="NUMBER(1)" defaultValueNumeric="1"/>
             <column name="HARDCODED_PASSWORDS" type="INT" defaultValue="5"/>
-            <column name="EVERGREEN_IT_WORKS" type="BOOLEAN" defaultValue="true"/>
+            <column name="EVERGREEN_IT_WORKS" type="NUMBER(1)" defaultValueNumeric="1"/>
             <column name="MONOLITH_WEIGHT_KG" type="DECIMAL(10,2)" defaultValue="420.69"/>
             <column name="MICROSERVICE_OVERKILL" type="INT" defaultValue="142"/>
             <column name="LAMBDA_LASAGNA_LAYERS" type="INT" defaultValue="8"/>
@@ -3546,11 +3546,11 @@
             <column name="COBOL_LEGACY_LINES" type="INT" defaultValue="0" />
             <column name="PERL_ONE_LINERS" type="INT" defaultValue="7"/>
             <column name="PHP_FRAMEWORK_VERSION" type="VARCHAR(50)" defaultValue="4.1.2" />
-            <column name="JQUERY_EVERYWHERE" type="BOOLEAN" defaultValue="true"/>
+            <column name="JQUERY_EVERYWHERE" type="NUMBER(1)" defaultValueNumeric="1"/>
             <column name="WEBPACK_CONFIG_SIZE_MB" type="DECIMAL(10,2)" defaultValue="4.20"/>
             <column name="MEATBALL_COUNT" type="INT" defaultValue="0"/>
             <column name="CHEESE_LAYERS" type="INT" defaultValue="3"/>
-            <column name="GARLIC_BREAD_CRUMBS" type="BOOLEAN" defaultValue="true"/>
+            <column name="GARLIC_BREAD_CRUMBS" type="NUMBER(1)" defaultValueNumeric="1"/>
             <column name="GOTO_STATEMENTS" type="INT" defaultValue="42"/>
             <column name="MAGIC_NUMBERS" type="INT" defaultValue="666"/>
             <column name="NESTED_LOOPS" type="INT" defaultValue="7"/>
@@ -3568,7 +3568,7 @@
             <column name="CONFLICTING_VERSIONS" type="INT" defaultValue="23"/>
             <column name="UNUSED_DEPENDENCIES" type="INT" defaultValue="89"/>
             <column name="SECURITY_VULNERABILITIES" type="INT" defaultValue="17"/>
-            <column name="LEFT_PAD_COMPATIBILITY" type="BOOLEAN" defaultValue="false"/>
+            <column name="LEFT_PAD_COMPATIBILITY" type="NUMBER(1)" defaultValueNumeric="0"/>
             <column name="CIRCULAR_IMPORTS" type="INT" defaultValue="12"/>
             <column name="GOD_OBJECTS" type="INT" defaultValue="3"/>
             <column name="ZOMBIE_CODE" type="INT" defaultValue="47"/>
@@ -3779,7 +3779,7 @@
             <column name="PIE_THROW_ACCURACY" type="DECIMAL(5,2)" defaultValue="33.33"/>
             <column name="CAR_ENTRY_SUCCESS_RATE" type="DECIMAL(5,2)" defaultValue="5.55"/>
             <column name="CREEPINESS_FACTOR" type="INT" defaultValue="9"/>
-            <column name="FEAR_OF_CHILDREN" type="BOOLEAN" defaultValue="true"/>
+            <column name="FEAR_OF_CHILDREN" type="NUMBER(1)" defaultValueNumeric="1"/>
             <column name="SINISTER_LAUGH_FREQUENCY" type="INT" defaultValue="666"/>
             <column name="HIDDEN_KNIVES_COUNT" type="INT" defaultValue="0"/>
             <column name="PENNYWISE_SIMILARITY" type="DECIMAL(5,2)" defaultValue="99.99"/>
@@ -3793,20 +3793,20 @@
             <column name="CARNIE_FRIENDS" type="INT" defaultValue="0"/>
             <column name="TENT_DIMENSIONS" type="VARCHAR(50)" defaultValue="Non-Euclidean"/>
             <column name="COTTON_CANDY_CONSUMPTION" type="DECIMAL(10,2)" defaultValue="3.14"/>
-            <column name="PARENTAL_ADVISORY" type="BOOLEAN" defaultValue="true"/>
+            <column name="PARENTAL_ADVISORY" type="NUMBER(1)" defaultValueNumeric="1"/>
             <column name="CHILDHOOD_TRAUMA_CAUSED" type="INT" defaultValue="0"/>
             <column name="SOULS_COLLECTED" type="INT" defaultValue="0"/>
             <column name="MIRROR_REFLECTION_BEHAVIOR" type="VARCHAR(100)" defaultValue="Waves back"/>
-            <column name="UNDER_BED_PRESENCE" type="BOOLEAN" defaultValue="true"/>
-            <column name="CLOSET_OCCUPANCY" type="BOOLEAN" defaultValue="true"/>
+            <column name="UNDER_BED_PRESENCE" type="NUMBER(1)" defaultValueNumeric="1"/>
+            <column name="CLOSET_OCCUPANCY" type="NUMBER(1)" defaultValueNumeric="1"/>
             <column name="SHADOW_BEHAVIOR" type="VARCHAR(100)" defaultValue="Moves independently"/>
             <column name="PHOTOGRAPH_SMILE" type="VARCHAR(100)" defaultValue="Too many teeth"/>
-            <column name="PAGE_133_BOOKMARK" type="BOOLEAN" defaultValue="true"/>
+            <column name="PAGE_133_BOOKMARK" type="NUMBER(1)" defaultValueNumeric="1"/>
             <column name="SEWER_ACCESS_POINTS" type="INT" defaultValue="13"/>
             <column name="LAST_APPEARANCE" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
             <column name="NEXT_VICTIM" type="VARCHAR(100)" defaultValue="You"/>
             <column name="FUNHOUSE_DOOR_SLAMS" type="INT" defaultValue="2147483647"/>
-            <column name="NEXT_APPEARANCE_TIMESTAMP" type="DATETIME" />
+            <column name="NEXT_APPEARANCE_TIMESTAMP" type="TIMESTAMP" />
             <column name="VICTIM_SCREAM_RECORDING" type="BLOB"/>
             <column name="CLOWN_CONTRACT_DURATION" type="VARCHAR(50)" defaultValue="ETERNITY"/>
         </createTable>
@@ -3927,28 +3927,28 @@
             <column name="LAST_ACKNOWLEDGED" type="DATE" defaultValueComputed="DATE '1970-01-01'"/>
             <column name="IGNORED_BY" type="VARCHAR(100)" defaultValue="The Intern"/>
             <column name="EXCUSE" type="VARCHAR(255)" defaultValue="Legacy data"/>
-            <column name="IS_NULL_BUT_SHOULDNT_BE" type="BOOLEAN" defaultValue="true"/>
-            <column name="IS_NOT_NULL_BUT_SHOULD_BE" type="BOOLEAN" defaultValue="false"/>
-            <column name="WRONG_DATA_TYPE" type="BOOLEAN" defaultValue="true"/>
-            <column name="MISSPELLED_COLUMN" type="BOOLEAN" defaultValue="true"/>
-            <column name="FOREIGN_KEY_VIOLATION" type="BOOLEAN" defaultValue="true"/>
-            <column name="BIRTHDATE_IN_FUTURE" type="BOOLEAN" defaultValue="false"/>
-            <column name="EXPIRATION_DATE_IN_PAST" type="BOOLEAN" defaultValue="true"/>
-            <column name="TIMESTAMP_BEFORE_COMPUTERS" type="BOOLEAN" defaultValue="true"/>
-            <column name="TIMEZONE_CONFUSION" type="BOOLEAN" defaultValue="true"/>
-            <column name="DAYLIGHT_SAVINGS_PROBLEM" type="BOOLEAN" defaultValue="true"/>
+            <column name="IS_NULL_BUT_SHOULDNT_BE" type="NUMBER(1)" defaultValueNumeric="1"/>
+            <column name="IS_NOT_NULL_BUT_SHOULD_BE" type="NUMBER(1)" defaultValueNumeric="0"/>
+            <column name="WRONG_DATA_TYPE" type="NUMBER(1)" defaultValueNumeric="1"/>
+            <column name="MISSPELLED_COLUMN" type="NUMBER(1)" defaultValueNumeric="1"/>
+            <column name="FOREIGN_KEY_VIOLATION" type="NUMBER(1)" defaultValueNumeric="1"/>
+            <column name="BIRTHDATE_IN_FUTURE" type="NUMBER(1)" defaultValueNumeric="0"/>
+            <column name="EXPIRATION_DATE_IN_PAST" type="NUMBER(1)" defaultValueNumeric="1"/>
+            <column name="TIMESTAMP_BEFORE_COMPUTERS" type="NUMBER(1)" defaultValueNumeric="1"/>
+            <column name="TIMEZONE_CONFUSION" type="NUMBER(1)" defaultValueNumeric="1"/>
+            <column name="DAYLIGHT_SAVINGS_PROBLEM" type="NUMBER(1)" defaultValueNumeric="1"/>
             <column name="MAGIC_NUMBER_1" type="INT" defaultValue="42"/>
             <column name="MAGIC_NUMBER_2" type="INT" defaultValue="666"/>
             <column name="HARDCODED_VALUE" type="VARCHAR(100)" defaultValue="TODO"/>
-            <column name="TEMPORARY_FLAG" type="BOOLEAN" defaultValue="true"/>
-            <column name="PLACEHOLDER_DATA" type="BOOLEAN" defaultValue="true"/>
-            <column name="TEST_DATA_IN_PROD" type="BOOLEAN" defaultValue="true"/>
-            <column name="PROD_DATA_IN_TEST" type="BOOLEAN" defaultValue="false"/>
-            <column name="DUPLICATE_RECORD" type="BOOLEAN" defaultValue="true"/>
-            <column name="INCOMPLETE_RECORD" type="BOOLEAN" defaultValue="true"/>
-            <column name="NEVER_USED" type="BOOLEAN" defaultValue="true"/>
-            <column name="WHO_CARES" type="BOOLEAN" defaultValue="true"/>
-            <column name="WILL_FIX_LATER" type="BOOLEAN" defaultValue="false"/>
+            <column name="TEMPORARY_FLAG" type="NUMBER(1)" defaultValueNumeric="1"/>
+            <column name="PLACEHOLDER_DATA" type="NUMBER(1)" defaultValueNumeric="1"/>
+            <column name="TEST_DATA_IN_PROD" type="NUMBER(1)" defaultValueNumeric="1"/>
+            <column name="PROD_DATA_IN_TEST" type="NUMBER(1)" defaultValueNumeric="0"/>
+            <column name="DUPLICATE_RECORD" type="NUMBER(1)" defaultValueNumeric="1"/>
+            <column name="INCOMPLETE_RECORD" type="NUMBER(1)" defaultValueNumeric="1"/>
+            <column name="NEVER_USED" type="NUMBER(1)" defaultValueNumeric="1"/>
+            <column name="WHO_CARES" type="NUMBER(1)" defaultValueNumeric="1"/>
+            <column name="WILL_FIX_LATER" type="NUMBER(1)" defaultValueNumeric="0"/>
             <column name="TECHNICAL_DEBT_SCORE" type="INT" defaultValue="9001"/>
             <column name="DOCUMENTATION_LIES" type="VARCHAR(100)" defaultValue="This field is very important"/>
             <column name="LAST_MAINTENANCE_DATE" type="DATE" />

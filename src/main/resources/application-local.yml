@@ -20,12 +20,12 @@ gpfd:
     read-only:
       url: jdbc:oracle:thin:@oracle-local:1521/FREEPDB1
       username: GPFD
-      password: password123
+      password: ${ORACLE_DB_PASSWORD}
       driver-class-name: oracle.jdbc.OracleDriver
     write:
       url: jdbc:oracle:thin:@oracle-local:1521/FREEPDB1
       username: GPFD
-      password: password123
+      password: ${ORACLE_DB_PASSWORD}
       driver-class-name: oracle.jdbc.OracleDriver
 
 spring:
@@ -47,7 +47,7 @@ spring:
   datasource:
     url: jdbc:oracle:thin:@oracle-local:1521/FREEPDB1
     username: GPFD
-    password: password123
+    password: ${ORACLE_DB_PASSWORD}
     driver-class-name: oracle.jdbc.OracleDriver
 
   liquibase:
@@ -56,7 +56,7 @@ spring:
     default-schema: GPFD
     url: jdbc:oracle:thin:@oracle-local:1521/FREEPDB1
     user: GPFD
-    password: password123
+    password: ${ORACLE_DB_PASSWORD}
 
   jpa:
     database-platform: org.hibernate.dialect.Oracle12cDialect
