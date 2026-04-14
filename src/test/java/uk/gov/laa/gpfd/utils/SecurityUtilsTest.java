@@ -144,10 +144,10 @@ class SecurityUtilsTest {
 
     @Test
     void extractUserId_throwsExceptionIfAuthTypeIsUnexpected() {
-        var authentication = mock(Authentication.class);
+        var authenticationWrongType = mock(Authentication.class);
         var principal = mock(User.class);
-        when(authentication.getPrincipal()).thenReturn(principal);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        when(authenticationWrongType.getPrincipal()).thenReturn(principal);
+        SecurityContextHolder.getContext().setAuthentication(authenticationWrongType);
 
         assertThrows(UnableToParseAuthDetailsException.UnexpectedAuthClassException.class, securityUtils::extractUserId);
     }
