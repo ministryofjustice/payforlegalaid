@@ -130,6 +130,18 @@ To stop the application:
 docker compose down
 ```
 
+Connecting to the Oracle container
+```bash
+docker exec -it oracle-local bash
+sqlplus / as sysdba
+ALTER SESSION SET CONTAINER = FREEPDB1;
+```
+
+Example SQL query once connected
+```sql
+SELECT table_name FROM all_tables WHERE owner = 'GPFD';
+```
+
 #### Troubleshooting
 
 **Build fails with `invalid target release` error**
