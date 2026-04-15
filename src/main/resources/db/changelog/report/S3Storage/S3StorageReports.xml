@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.17.xsd">
+
+    <changeSet id="insert-data-claims-reports" author="neeta shinde">
+        <comment>Insert initial data into REPORTS for CCMS Excel report</comment>
+        <insert tableName="REPORTS" schemaName="GPFD">
+            <column name="ID" value="cc55e276-97b0-4dd8-a919-26d4aa373266"/>
+            <column name="NAME" value="REP012 - Original Submissions Value Report"/>
+            <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="00000000-0000-0000-0000-000000000000"/>
+            <column name="REPORT_CREATION_DATE" valueDate="SYSDATE"/>
+            <column name="DESCRIPTION" value="Original Submissions Value Report"/>
+            <column name="NUM_DAYS_TO_KEEP" value="30"/>
+            <column name="FILE_NAME" value="Original Submissions Value Report"/>
+            <column name="ACTIVE" value="N"/>
+            <column name="REPORT_OUTPUT_TYPE" value="523ed024-74f9-4288-9624-bbfeb04f45d0"/>
+            <column name="REPORT_OWNER_ID" value="00000000-0000-0000-0000-000000000003"/>
+            <column name="REPORT_OWNER_NAME" value="Blah blah"/>
+            <column name="REPORT_OWNER_EMAIL" value="email@email.com"/>
+        </insert>
+
+        <insert tableName="REPORTS" schemaName="GPFD">
+            <column name="ID" value="523f38f0-2179-4824-b885-3a38c5e149e8"/>
+            <column name="NAME" value="REP000 - Combined Data Extract for Submit a Bulk Claim Data"/>
+            <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="00000000-0000-0000-0000-000000000000"/>
+            <column name="REPORT_CREATION_DATE" valueDate="SYSDATE"/>
+            <column name="DESCRIPTION" value="Combined Data Extract for Submit a Bulk Claim Data"/>
+            <column name="NUM_DAYS_TO_KEEP" value="30"/>
+            <column name="FILE_NAME" value="Bulk Claim Data"/>
+            <column name="ACTIVE" value="Y"/>
+            <column name="REPORT_OUTPUT_TYPE" value="523ed024-74f9-4288-9624-bbfeb04f45d0"/>
+            <column name="REPORT_OWNER_ID" value="00000000-0000-0000-0000-000000000003"/>
+            <column name="REPORT_OWNER_NAME" value="Stevie Steve"/>
+            <column name="REPORT_OWNER_EMAIL" value="email@email.com"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
