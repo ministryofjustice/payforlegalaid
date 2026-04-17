@@ -194,7 +194,7 @@ public class AppConfig {
     }
 
     /**
-     * Allows JDBC operations on the "trackingDataSoure" above.
+     * Allows JDBC operations on the "trackingDataSource" above.
      * @param dataSource - data source for Postgres RDS DB used for tracking
      * @return JDBC template that lets us perform operations on the tracking DB.
      */
