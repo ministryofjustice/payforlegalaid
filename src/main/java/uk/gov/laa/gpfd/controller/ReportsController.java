@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
@@ -63,9 +65,10 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
      *
      * <p>Example usage:
      *      <pre>
-     *      GET /csv/f46b4d3d-c100-429a-bf9a-6c3305dbdbf1
+     *      GET /reports/f46b4d3d-c100-429a-bf9a-6c3305dbdbf1/csv
      *      </pre>
      */
+    @RequestMapping(method = RequestMethod.GET, path = "/reports/{id}/csv")
     @Override
     public ResponseEntity<StreamingResponseBody> csvIdGet(UUID requestedId) {
         log.info("Returning a CSV report for id {} to user", requestedId);
@@ -86,7 +89,7 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
      *
      * <p>Example usage:
      * <pre>
-     * GET /excel/b36f9bbb-1178-432c-8f99-8090e285f2d3
+     * GET /reports/b36f9bbb-1178-432c-8f99-8090e285f2d3/excel
      * </pre>
      *
      * <p>If the Excel file is successfully generated and streamed, the response will include:
@@ -100,6 +103,7 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
      * @param id The unique identifier (UUID) of the report to be generated and streamed as an Excel file.
      * @return A {@link ResponseEntity} containing a {@link StreamingResponseBody} for the Excel file.
      */
+    @RequestMapping(method = RequestMethod.GET, path = "/reports/{id}/excel")
     @Override
     public ResponseEntity<StreamingResponseBody> getExcelById(UUID id) {
         log.info("Returning an Excel report for id {} to user", id);
