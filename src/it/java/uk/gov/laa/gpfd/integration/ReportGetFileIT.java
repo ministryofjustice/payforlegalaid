@@ -43,10 +43,8 @@ import uk.gov.laa.gpfd.config.TestDatabaseConfig;
 import uk.gov.laa.gpfd.utils.SecurityUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.mockito.Mock;
-import static org.mockito.ArgumentMatchers.eq;
 
 import uk.gov.laa.gpfd.dao.ReportDao;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = {TestS3Config.class, TestSecurityConfig.class, TestDatabaseConfig.class})
 @AutoConfigureMockMvc

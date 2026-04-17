@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -24,6 +25,7 @@ import org.springframework.security.web.access.intercept.RequestAuthorizationCon
 import org.springframework.web.client.RestTemplate;
 import uk.gov.laa.gpfd.dao.JdbcWorkbookDataStreamer;
 import uk.gov.laa.gpfd.dao.ReportDao;
+import uk.gov.laa.gpfd.dao.ReportTrackingDao;
 import uk.gov.laa.gpfd.dao.sql.core.StatementPolicy;
 import uk.gov.laa.gpfd.model.FieldProjection;
 import uk.gov.laa.gpfd.model.FileExtension;
@@ -451,5 +453,10 @@ public class AppConfig {
         liquibase.setChangeLog(liquibaseChangeLog);
         liquibase.setShouldRun(true);
         return liquibase;
+    }
+
+    @Bean
+    ReportTrackingDao reportTrackingDao(@Qualifier("trackingJdbcTemplate") JdbcOperations trackingJdbcTemplate) {
+        return new ReportTrackingDao(trackingJdbcTemplate);
     }
 }

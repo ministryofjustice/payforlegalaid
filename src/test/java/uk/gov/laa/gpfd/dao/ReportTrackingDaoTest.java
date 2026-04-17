@@ -15,11 +15,11 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.laa.gpfd.dao.ReportTrackingDao.INSERT_INTO_TRACKING_SQL;
 
 @ExtendWith(MockitoExtension.class)
 class ReportTrackingDaoTest {
@@ -41,7 +41,7 @@ class ReportTrackingDaoTest {
         var userId = UUID.randomUUID();
         reportTrackingDao.insertTrackingRow(reportId, userId);
 
-        verify(trackingJdbcTemplate).update(anyString(), any(UUID.class), eq(reportId), eq(userId), any(Timestamp.class));
+        verify(trackingJdbcTemplate).update(eq(INSERT_INTO_TRACKING_SQL), any(UUID.class), eq(reportId), eq(userId), any(Timestamp.class));
     }
 
     @Test
