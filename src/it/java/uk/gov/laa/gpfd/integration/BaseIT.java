@@ -32,9 +32,12 @@ public abstract class BaseIT {
     @Autowired
     MockMvc mockMvc;
 
+    /*
+        Can't fully take advantage of things like ServiceConnection here because we are connecting to multiple data sources currently
+     */
     @Container
     static final PostgreSQLContainer trackingDb =
-            new PostgreSQLContainer("postgres:16");
+            new PostgreSQLContainer("postgres:18");
 
     @DynamicPropertySource
     static void overrideTracking(DynamicPropertyRegistry r) {
@@ -51,14 +54,14 @@ public abstract class BaseIT {
     }
 
 
-@BeforeAll
-    void setUpDatabase() {
-        databaseUtils.setUpDatabase();
+    @BeforeAll
+    void setUpMojfinDatabase() {
+        databaseUtils.setUpMockMojfinDatabase();
     }
 
     @AfterAll
-    void cleanUpDatabase() {
-        databaseUtils.cleanUpDatabase();
+    void cleanUpMojfinDatabase() {
+        databaseUtils.cleanUpMockMojfinDatabase();
     }
 
     protected ResultActions performGetRequest(String uriTemplate) throws Exception {
