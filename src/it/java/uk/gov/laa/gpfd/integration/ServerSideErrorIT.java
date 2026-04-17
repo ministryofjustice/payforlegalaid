@@ -55,7 +55,7 @@ class ServerSideErrorIT extends BaseIT {
 
     @Test
     void getCsvWithIdShouldReturn500WhenCannotConnectToDbForMappingTable() throws Exception {
-        performGetRequest("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d9")
+        performGetRequest("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d9/csv")
             .andExpect(status().isInternalServerError());
     }
 
