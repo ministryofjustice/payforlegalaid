@@ -57,4 +57,17 @@ public abstract sealed class UnableToParseAuthDetailsException extends RuntimeEx
         }
     }
 
+    /**
+     * Exception throw when we can't get an oid out of the auth token sent via SiLAS.
+     */
+    public static final class NoOidSetOnTokenException extends UnableToParseAuthDetailsException {
+
+        /**
+         * Constructs a new {@code NoOidSetOnTokenException}.
+         */
+        public NoOidSetOnTokenException() {
+            super("No oid token supplied");
+        }
+    }
+
 }

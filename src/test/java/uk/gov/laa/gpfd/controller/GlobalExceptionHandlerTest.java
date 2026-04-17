@@ -14,6 +14,7 @@ import uk.gov.laa.gpfd.exception.CsvGenerationException.MetadataInvalidException
 import uk.gov.laa.gpfd.exception.FileDownloadException.InvalidDownloadFormatException;
 import uk.gov.laa.gpfd.exception.FileDownloadException.ReportNotSupportedForDownloadException;
 import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.AuthenticationIsNullException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.NoOidSetOnTokenException;
 import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.PrincipalIsNullException;
 import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.UnexpectedAuthClassException;
 import uk.gov.laa.gpfd.exception.FileDownloadException.S3BucketHasNoCopiesOfReportException;
@@ -346,4 +347,22 @@ class GlobalExceptionHandlerTest {
                 response.getBody().getError());
     }
 
+
+    @ParameterizedTest
+    @MethodSource("unableToParseAuthDetailsProvider")
+    void shouldHandleUnableToParseAuthDetailsExceptions(UnableToParseAuthDetailsException exception) {
+        var response = globalExceptionHandler.handleUnexpectedAuthTypeException(exception);
+
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Authentication response error.", response.getBody().getError());
+    }
+
+    private static Stream<UnableToParseAuthDetailsException> unableToParseAuthDetailsProvider() {
+        return of(
+                new AuthenticationIsNullException(),
+                new PrincipalIsNullException(),
+                new UnexpectedAuthClassException("UserJwt"),
+                new NoOidSetOnTokenException()
+        );
+    }
 }

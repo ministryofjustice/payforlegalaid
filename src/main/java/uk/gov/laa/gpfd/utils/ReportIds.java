@@ -3,9 +3,9 @@ package uk.gov.laa.gpfd.utils;
 
 import java.util.UUID;
 
-public abstract class TokenUtils {
+public abstract class ReportIds {
 
-    private TokenUtils() {
+    private ReportIds() {
         // Can't instantiate utility class
     }
 

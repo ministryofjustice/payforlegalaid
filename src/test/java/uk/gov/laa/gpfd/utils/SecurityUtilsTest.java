@@ -15,6 +15,7 @@ import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -122,10 +123,10 @@ class SecurityUtilsTest {
     @Test
     void extractUserId_getsUserIdFromToken() {
         when(authentication.getPrincipal()).thenReturn(oidcUser);
-        when(oidcUser.getAttribute("oid")).thenReturn("aaaaaaa-bbbbbbb-ccccccc-111111");
+        when(oidcUser.getAttribute("oid")).thenReturn("b46b6740-685d-4453-9264-ee61d2ecb906");
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        assertEquals("aaaaaaa-bbbbbbb-ccccccc-111111", securityUtils.extractUserId());
+        assertEquals(UUID.fromString("b46b6740-685d-4453-9264-ee61d2ecb906"), securityUtils.extractUserId());
     }
 
     @Test

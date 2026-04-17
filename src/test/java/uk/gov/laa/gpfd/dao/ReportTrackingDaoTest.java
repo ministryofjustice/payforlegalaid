@@ -9,8 +9,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcOperations;
 import uk.gov.laa.gpfd.exception.DatabaseWriteException;
-import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException;
-import uk.gov.laa.gpfd.utils.SecurityUtils;
 
 import java.sql.Timestamp;
 import java.util.UUID;
@@ -29,41 +27,29 @@ class ReportTrackingDaoTest {
     @Mock
     JdbcOperations trackingJdbcTemplate;
 
-    @Mock
-    SecurityUtils securityUtils;
-
     @InjectMocks
     ReportTrackingDao reportTrackingDao;
 
     @BeforeEach
     void beforeEach() {
-        reset(securityUtils, trackingJdbcTemplate);
+        reset(trackingJdbcTemplate);
     }
 
     @Test
     void insertTrackingRow_shouldUpdateDbWithCorrectValues() {
         var reportId = UUID.randomUUID();
         var userId = UUID.randomUUID();
-        when(securityUtils.extractUserId()).thenReturn(userId.toString());
-        reportTrackingDao.insertTrackingRow(reportId);
+        reportTrackingDao.insertTrackingRow(reportId, userId);
 
-        verify(trackingJdbcTemplate).update(anyString(),any(UUID.class), eq(reportId), eq(userId), any(Timestamp.class));
+        verify(trackingJdbcTemplate).update(anyString(), any(UUID.class), eq(reportId), eq(userId), any(Timestamp.class));
     }
 
     @Test
     void insertTrackingRow_shouldRethrowExceptionsFromJdbc() {
         var reportId = UUID.randomUUID();
         var userId = UUID.randomUUID();
-        when(securityUtils.extractUserId()).thenReturn(userId.toString());
         when(trackingJdbcTemplate.update(any(), any(), any(), any(), any())).thenThrow(new DuplicateKeyException("Error :("));
-        assertThrows(DatabaseWriteException.class, () -> reportTrackingDao.insertTrackingRow(reportId));
-    }
-
-    @Test
-    void insertTrackingRow_shouldLetHandlerHandleExceptionsFromSecurityUtils() {
-        var reportId = UUID.randomUUID();
-        when(securityUtils.extractUserId()).thenThrow(new UnableToParseAuthDetailsException.AuthenticationIsNullException());
-        assertThrows(UnableToParseAuthDetailsException.class, () -> reportTrackingDao.insertTrackingRow(reportId));
+        assertThrows(DatabaseWriteException.class, () -> reportTrackingDao.insertTrackingRow(reportId, userId));
     }
 
 }

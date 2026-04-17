@@ -5,12 +5,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Component;
 import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.AuthenticationIsNullException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.NoOidSetOnTokenException;
 import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.PrincipalIsNullException;
 import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.UnexpectedAuthClassException;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Component
 public class SecurityUtils {
@@ -43,7 +45,11 @@ public class SecurityUtils {
         return parseRoles(rawRoles);
     }
 
-    public String extractUserId() {
+    /**
+     * Get Entra Unique User ID from the token supplied by SiLAS (contained in the `oid` field)
+     * @return User ID
+     */
+    public UUID extractUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         if (auth == null) {
@@ -51,7 +57,13 @@ public class SecurityUtils {
         }
 
         return switch (auth.getPrincipal()) {
-            case OidcUser user -> user.getAttribute("oid");
+            case OidcUser user -> {
+                String oid = user.getAttribute("oid");
+                if (oid == null) {
+                    throw new NoOidSetOnTokenException();
+                }
+                yield UUID.fromString(oid);
+            }
             case null -> throw new PrincipalIsNullException();
             default -> throw new UnexpectedAuthClassException("Unexpected Auth Type: " + auth.getClass().getName());
         };

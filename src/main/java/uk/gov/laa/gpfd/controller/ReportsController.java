@@ -15,6 +15,7 @@ import uk.gov.laa.gpfd.model.ReportsGet200Response;
 import uk.gov.laa.gpfd.services.ReportManagementService;
 import uk.gov.laa.gpfd.services.StreamingService;
 import uk.gov.laa.gpfd.services.s3.FileDownloadService;
+import uk.gov.laa.gpfd.utils.SecurityUtils;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -31,6 +32,7 @@ public class ReportsController implements ReportsApi {
     private final FileDownloadService fileDownloadService;
     private final ReportDao reportDao;
     private final ReportTrackingDao reportTrackingDao;
+    private final SecurityUtils securityUtils;
 
     @Override
     public Optional<NativeWebRequest> getRequest() {
@@ -76,7 +78,7 @@ public class ReportsController implements ReportsApi {
         // Validate that this report is actually a CSV report
         reportManagementService.validateReportFormat(requestedId, CSV);
         var response = streamingService.stream(requestedId, CSV);
-        reportTrackingDao.insertTrackingRow(requestedId);
+        reportTrackingDao.insertTrackingRow(requestedId, securityUtils.extractUserId());
         return response;
     }
 
@@ -115,7 +117,7 @@ public class ReportsController implements ReportsApi {
         reportManagementService.validateReportFormat(id, XLSX);
 
         var response = streamingService.stream(id, XLSX);
-        reportTrackingDao.insertTrackingRow(id);
+        reportTrackingDao.insertTrackingRow(id, securityUtils.extractUserId());
         return response;
     }
 
@@ -127,7 +129,7 @@ public class ReportsController implements ReportsApi {
         reportManagementService.validateReportFormat(id, S3STORAGE);
 
         var response = fileDownloadService.getFileStreamResponse(id);
-        reportTrackingDao.insertTrackingRow(id);
+        reportTrackingDao.insertTrackingRow(id, securityUtils.extractUserId());
         return response;
     }
 
