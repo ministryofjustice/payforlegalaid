@@ -8,19 +8,19 @@ ignore:
             Transitive from Spring 4. Will wait for updates to bring in version bump
           expires: 2026-05-14T00:00:00.000Z
           created: 2026-04-14T00:00:00.000Z
-  SNYK-JAVA-ORGTHYMELEAF-16078372
+  SNYK-JAVA-ORGTHYMELEAF-16078372:
       - '*':
           reason: >-
             Transitive from Spring 4. Will wait for updates to bring in version bump
           expires: 2026-05-20T00:00:00.000Z
           created: 2026-04-20T00:00:00.000Z
-  SNYK-JAVA-ORGTHYMELEAF-16078377
+  SNYK-JAVA-ORGTHYMELEAF-16078377:
       - '*':
           reason: >-
             Transitive from Spring 4. Will wait for updates to bring in version bump
           expires: 2026-05-20T00:00:00.000Z
           created: 2026-04-20T00:00:00.000Z
-  SNYK-JAVA-ORGTHYMELEAF-16078379
+  SNYK-JAVA-ORGTHYMELEAF-16078379:
       - '*':
           reason: >-
             Transitive from Spring 4. Will wait for updates to bring in version bump
