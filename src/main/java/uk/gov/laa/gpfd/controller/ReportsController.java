@@ -69,7 +69,6 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
      *      GET /reports/f46b4d3d-c100-429a-bf9a-6c3305dbdbf1/csv
      *      </pre>
      */
-    @GetMapping(path = "/reports/{id}/csv")
     @Override
     public ResponseEntity<StreamingResponseBody> csvIdGet(UUID requestedId) {
         log.info("Returning a CSV report for id {} to user", requestedId);
@@ -104,7 +103,6 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
      * @param id The unique identifier (UUID) of the report to be generated and streamed as an Excel file.
      * @return A {@link ResponseEntity} containing a {@link StreamingResponseBody} for the Excel file.
      */
-    @GetMapping(path = "/reports/{id}/excel")
     @Override
     public ResponseEntity<StreamingResponseBody> getExcelById(UUID id) {
         log.info("Returning an Excel report for id {} to user", id);
