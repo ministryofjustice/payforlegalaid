@@ -32,8 +32,6 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: local
       ORACLE_DB_PASSWORD: ${ORACLE_DB_PASSWORD}
-    volumes:
-      - gpfd-data:/data
     depends_on:
       oracle:
         condition: service_healthy        # wait for Oracle to be ready
@@ -47,4 +45,3 @@ services:
 
 volumes:
   oracle-data:
-  gpfd-data:

@@ -3919,7 +3919,7 @@
             <column name="CLOSET_OCCUPANCY" valueNumeric="1"/>
             <column name="PHOTOGRAPH_SMILE" value="Nonexistent"/>
             <column name="PAGE_133_BOOKMARK" valueNumeric="1"/>
-            <column name="VICTIM_SCREAM_RECORDING" value="X''"/>
+            <column name="VICTIM_SCREAM_RECORDING" valueComputed="HEXTORAW('58')"/>
         </insert>
 
         <createTable tableName="RECORDS_WE_IGNORE" schemaName="ANY_REPORT">
