@@ -34,4 +34,11 @@ ignore:
             production.
           expires: 2026-03-31T00:00:00.000Z
           created: 2025-10-02T09:30:00.000Z
+  SNYK-JAVA-ORGAPACHETOMCATEMBED-15989820:
+      - '*':
+          reason: >
+            org.apache.tomcat.embed:tomcat-embed-core is reporting a vulnerability
+            but there is no current remediation as we are on the latest version of spring-boot.
+          expires: 2026-05-20T12:00:00.000Z
+          created: 2026-04-20T12:10:00.000Z
 patch: {}
