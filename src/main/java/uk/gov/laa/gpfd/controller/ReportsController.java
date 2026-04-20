@@ -7,8 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import uk.gov.laa.gpfd.api.CsvApi;
-import uk.gov.laa.gpfd.api.ExcelApi;
 import uk.gov.laa.gpfd.api.ReportsApi;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200Response;
@@ -25,7 +23,7 @@ import static uk.gov.laa.gpfd.model.FileExtension.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
+public class ReportsController implements ReportsApi {
 
     private final ReportManagementService reportManagementService;
     private final StreamingService streamingService;
@@ -67,7 +65,7 @@ public class ReportsController implements ReportsApi, ExcelApi, CsvApi {
      *      </pre>
      */
     @Override
-    public ResponseEntity<StreamingResponseBody> csvIdGet(UUID requestedId) {
+    public ResponseEntity<StreamingResponseBody> getCsvById(UUID requestedId) {
         log.info("Returning a CSV report for id {} to user", requestedId);
 
         // Validate that this report is actually a CSV report
