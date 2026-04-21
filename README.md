@@ -10,10 +10,10 @@ and returns it to the user in the form of a CSV or Excel data stream. The curren
 1. A user clicks on a URL hyperlink inside a Sharepoint site
 2. This will send a request to the GPFD API with a request parameter
    The five endpoints are:
-   /csv/{id} (returns the CSV data stream for the requested report),
-   /excel/{id} (returns the Excel data stream for the requested report),
    /reports/ (returns a list of the available reports and some information about them).
    /reports/{id} (returns metadata about the requested report)
+   /reports/{id}/csv (returns the CSV data stream for the requested report),
+   /reports/{id}/excel (returns the Excel data stream for the requested report),
    /reports/{id}/file (returns a pre-generated CSV, for specific reports only)
 3. The API will authenticate the user against MOJ Microsoft Entra, and if the user has an account
    within the MOJ 'tenant' they will be authenticated and allowed to interact with the API. 
