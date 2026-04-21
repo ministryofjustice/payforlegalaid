@@ -321,7 +321,7 @@ class ReportsControllerTest extends BaseMvcTest {
         UUID id = DEFAULT_ID;
         doThrow(new ReportAccessException(id))
                 .when(reportDao).verifyUserCanAccessReport(id);
-        performAuthenticatedGet("/csv/" + id, List.of("Financial"))
+        performAuthenticatedGet("/reports/" + id + "/csv", List.of("Financial"))
                 .andExpect(status().isForbidden());
     }
 
@@ -330,7 +330,7 @@ class ReportsControllerTest extends BaseMvcTest {
         UUID id = DEFAULT_ID;
         doThrow(new ReportAccessException(id))
                 .when(reportDao).verifyUserCanAccessReport(id);
-        performAuthenticatedGet("/excel/" + id, List.of("Financial"))
+        performAuthenticatedGet("/reports/" + id + "/excel", List.of("Financial"))
                 .andExpect(status().isForbidden());
     }
 
