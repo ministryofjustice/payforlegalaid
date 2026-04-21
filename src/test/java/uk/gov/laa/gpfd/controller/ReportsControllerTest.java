@@ -82,7 +82,7 @@ class ReportsControllerTest {
         when(streamingService.stream(DEFAULT_ID, FileExtension.CSV)).thenReturn(mockResponseEntity);
 
         // Perform the GET request
-        mockMvc.perform(MockMvcRequestBuilders.get("/csv/0d4da9ec-b0b3-4371-af10-f375330d85d1").with(oidcLogin()).with(oauth2Client("graph"))).andExpect(status().isOk()).andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=data.csv"));
+        mockMvc.perform(MockMvcRequestBuilders.get("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d1/csv").with(oidcLogin()).with(oauth2Client("graph"))).andExpect(status().isOk()).andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=data.csv"));
         verify(streamingService).stream(DEFAULT_ID, FileExtension.CSV);
     }
 
@@ -164,7 +164,7 @@ class ReportsControllerTest {
                 .when(reportManagementServiceMock)
                 .validateReportFormat(uuid, FileExtension.XLSX);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/excel/{id}", uuid)
+        mockMvc.perform(MockMvcRequestBuilders.get("/reports/{id}/excel", uuid)
                         .with(oidcLogin())
                         .with(oauth2Client("graph")))
                 .andExpect(status().isBadRequest())
@@ -194,7 +194,7 @@ class ReportsControllerTest {
                 .when(reportManagementServiceMock)
                 .validateReportFormat(uuid, FileExtension.CSV);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/csv/{id}", uuid)
+        mockMvc.perform(MockMvcRequestBuilders.get("/reports/{id}/csv", uuid)
                         .with(oidcLogin())
                         .with(oauth2Client("graph")))
                 .andExpect(status().isBadRequest())
@@ -234,7 +234,7 @@ class ReportsControllerTest {
         when(streamingService.stream(csvReportId, FileExtension.CSV)).thenReturn(mockResponseEntity);
 
         // Perform the GET request
-        mockMvc.perform(MockMvcRequestBuilders.get("/csv/{id}", csvReportId)
+        mockMvc.perform(MockMvcRequestBuilders.get("/reports/{id}/csv", csvReportId)
                         .with(oidcLogin())
                         .with(oauth2Client("graph")))
                 .andExpect(status().isOk())
@@ -268,7 +268,7 @@ class ReportsControllerTest {
         when(streamingService.stream(excelReportId, FileExtension.XLSX)).thenReturn(mockResponseEntity);
 
         // Perform the GET request
-        mockMvc.perform(MockMvcRequestBuilders.get("/excel/{id}", excelReportId)
+        mockMvc.perform(MockMvcRequestBuilders.get("/reports/{id}/excel", excelReportId)
                         .with(oidcLogin())
                         .with(oauth2Client("graph")))
                 .andExpect(status().isOk())
