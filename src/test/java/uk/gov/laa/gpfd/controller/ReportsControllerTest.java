@@ -353,7 +353,7 @@ class ReportsControllerTest extends BaseMvcTest {
         when(securityUtils.extractUserId()).thenThrow(new AuthenticationIsNullException());
 
         // Perform the GET request
-        performAuthenticatedGet("/csv/" + REPORT_ID, List.of("Financial"))
+        performAuthenticatedGet("/reports/" + REPORT_ID + "/csv", List.of("Financial"))
                 .andExpect(status().isInternalServerError());
     }
 
@@ -363,7 +363,7 @@ class ReportsControllerTest extends BaseMvcTest {
         when(securityUtils.extractUserId()).thenThrow(new AuthenticationIsNullException());
 
         // Perform the GET request
-        performAuthenticatedGet("/excel/" + REPORT_ID, List.of("Financial"))
+        performAuthenticatedGet("/reports/" + REPORT_ID + "/excel", List.of("Financial"))
                 .andExpect(status().isInternalServerError());
     }
 
