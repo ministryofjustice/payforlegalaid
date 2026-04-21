@@ -1,0 +1,41 @@
+on:
+  push:
+    branches: [main, task/lpf1349-codeQL]
+  pull_request:
+    branches: [main]
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - language: actions
+          build-mode: none
+        - language: java-kotlin
+          build-mode: none 
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@7fc6561ed893d15cec696e062df840b21db27eb0 # v4.35.2
+        with:
+          queries: security-and-quality
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@7fc6561ed893d15cec696e062df840b21db27eb0 # v4.35.2
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@7fc6561ed893d15cec696e062df840b21db27eb0 # v4.35.2
+        with:
+          category: "/language:${{matrix.language}}"
