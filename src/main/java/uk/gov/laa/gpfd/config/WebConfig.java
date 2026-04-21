@@ -5,8 +5,22 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.List;
+
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+    private static final List<String> EXCLUDED_PATHS = List.of(
+            "/error",
+            "/govuk/**",
+            "/moj/**",
+            "/css/**",
+            "/js/**",
+            "/images/**",
+            "/webjars/**",
+            "/assets/**",
+            "/favicon.ico",
+            "/favicon.svg"
+    );
     private final TimeBasedAccessInterceptor timeInterceptor;
     private final RequestResponseInterceptor requestResponseInterceptor;
 
@@ -18,7 +32,8 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(timeInterceptor);
+        registry.addInterceptor(timeInterceptor)
+                .excludePathPatterns(EXCLUDED_PATHS);
         registry.addInterceptor(requestResponseInterceptor).addPathPatterns("/reports/**");
     }
 }
