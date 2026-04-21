@@ -34,8 +34,8 @@ final class AuthTokenIT extends BaseIT {
         return Stream.of(
                 of("Root api endpoint", "/reports"),
                 of("Specific report endpoint", "/reports/%s".formatted(CSV_REPORT.getReportData().id())),
-                of("Excel download endpoint", "/excel/%s".formatted(CCMS_REPORT.getReportData().id())),
-                of("CSV download endpoint", "/csv/%s".formatted(CSV_REPORT.getReportData().id())),
+                of("Excel download endpoint", "/reports/%s/excel".formatted(CCMS_REPORT.getReportData().id())),
+                of("CSV download endpoint", "/reports/%s/csv".formatted(CSV_REPORT.getReportData().id())),
                 of("File download endpoint", "/reports/%s/file".formatted(REP012ID.getReportData().id()))
         );
     }

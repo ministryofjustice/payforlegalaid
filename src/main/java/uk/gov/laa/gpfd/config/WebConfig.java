@@ -34,6 +34,6 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(timeInterceptor)
                 .excludePathPatterns(EXCLUDED_PATHS);
-        registry.addInterceptor(requestResponseInterceptor).addPathPatterns("/reports/**", "/excel/**", "/csv/**");
+        registry.addInterceptor(requestResponseInterceptor).addPathPatterns("/reports/**");
     }
 }
