@@ -1,22 +1,36 @@
 package uk.gov.laa.gpfd.controller;
 
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.api.ReportsApi;
 import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.dao.ReportTrackingDao;
+import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
+import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200Response;
 import uk.gov.laa.gpfd.services.ReportManagementService;
+import uk.gov.laa.gpfd.services.ResponseBuilder;
 import uk.gov.laa.gpfd.services.StreamingService;
 import uk.gov.laa.gpfd.services.s3.FileDownloadService;
+import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
 import uk.gov.laa.gpfd.utils.SecurityUtils;
 
+import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,6 +47,7 @@ public class ReportsController implements ReportsApi {
     private final ReportDao reportDao;
     private final ReportTrackingDao reportTrackingDao;
     private final SecurityUtils securityUtils;
+    private final ResponseBuilder responseBuilder;
 
     @Override
     public Optional<NativeWebRequest> getRequest() {
@@ -77,9 +92,9 @@ public class ReportsController implements ReportsApi {
 
         // Validate that this report is actually a CSV report
         reportManagementService.validateReportFormat(requestedId, CSV);
-        var response = streamingService.stream(requestedId, CSV);
-        reportTrackingDao.insertTrackingRow(requestedId, securityUtils.extractUserId());
-        return response;
+        var rawStream = streamingService.stream(requestedId, CSV);
+
+        return buildCsvAndExcelResponse(requestedId, rawStream);
     }
 
     /**
@@ -117,8 +132,23 @@ public class ReportsController implements ReportsApi {
         reportManagementService.validateReportFormat(id, XLSX);
 
         var response = streamingService.stream(id, XLSX);
-        reportTrackingDao.insertTrackingRow(id, securityUtils.extractUserId());
-        return response;
+        return buildCsvAndExcelResponse(id, response);
+    }
+
+    //    @Override
+    @RequestMapping(
+            method = {RequestMethod.GET},
+            value = {"/reports/{id}/file2"},
+            produces = {"application/octet-stream", "application/json"}
+    )
+    public ResponseEntity<StreamingResponseBody> getReportDownloadById2(@Parameter(name = "id",description = "The unique ID of the requested report.",required = true,in = ParameterIn.PATH) @PathVariable("id") UUID id) {
+        log.info("Downloading report for id {}", id);
+
+        // Validate that this report is S3STORAGE format
+        reportManagementService.validateReportFormat(id, S3STORAGE);
+
+        var s3Response = fileDownloadService.getFileStreamResponse(id);
+        return buildS3Response(id, s3Response);
     }
 
     @Override
@@ -130,7 +160,51 @@ public class ReportsController implements ReportsApi {
 
         var response = fileDownloadService.getFileStreamResponse(id);
         reportTrackingDao.insertTrackingRow(id, securityUtils.extractUserId());
-        return response;
+
+        var contentDisposition = ContentDisposition.attachment().filename(response.getFileName()).build();
+
+        log.info("About to stream report with ID {} to user", id);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString())
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentLength(response.stream().response().contentLength())
+                .body(new InputStreamResource(response.stream()));
     }
+
+    private ResponseEntity<StreamingResponseBody> buildCsvAndExcelResponse(UUID reportId, StreamingResponseBody rawStream) {
+        var report = reportDao.fetchReportById(reportId).orElseThrow(() -> new ReportIdNotFoundException(reportId));
+        StreamingResponseBody trackedStream = createTrackedStream(reportId, rawStream);
+        var filename = String.format("%s.%s", report.getName(), report.getOutputType().getExtension());
+        return responseBuilder.buildResponse(trackedStream, filename, FileExtension.fromString(report.getOutputType().getExtension()));
+    }
+
+    private ResponseEntity<StreamingResponseBody> buildS3Response(UUID reportId, S3ClientWrapper.S3CsvDownload s3CsvDownload) {
+        var report = reportDao.fetchReportById(reportId).orElseThrow(() -> new ReportIdNotFoundException(reportId));
+        var s3Stream = s3CsvDownload.stream();
+        StreamingResponseBody rawStream = outputStream -> {
+            try (s3Stream) {
+                s3Stream.transferTo(outputStream);
+            }
+        };
+
+        StreamingResponseBody trackedStream = createTrackedStream(reportId, rawStream);
+        return responseBuilder.buildResponse(trackedStream, s3CsvDownload.getFileName(), FileExtension.fromString(report.getOutputType().getExtension()), s3CsvDownload.stream().response().contentLength());
+    }
+
+    private @NonNull StreamingResponseBody createTrackedStream(UUID reportId, StreamingResponseBody rawStream) {
+        return output -> {
+            try {
+                rawStream.writeTo(output);
+                output.flush();
+                reportTrackingDao.insertTrackingRow(reportId, securityUtils.extractUserId());
+            } catch (IOException e) {
+                //todo log
+                throw new RuntimeException(e);
+            } finally {
+                log.info("Completed server-side response stream for report {}", reportId);
+            }
+        };
+    }
+
 
 }

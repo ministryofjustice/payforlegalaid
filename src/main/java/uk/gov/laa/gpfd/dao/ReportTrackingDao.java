@@ -24,6 +24,8 @@ public class ReportTrackingDao {
 
     /**
      * Insert an entry into our tracking table
+     * Note we track server-side successfully compiled the data & the download has started.
+     * We can't know if the client-side has downloaded or saved all the data due to how HTTP works (e.g. cancelling download in browser mid-way)
      *
      * @param reportId report being downloaded
      * @param userId   user doing the download

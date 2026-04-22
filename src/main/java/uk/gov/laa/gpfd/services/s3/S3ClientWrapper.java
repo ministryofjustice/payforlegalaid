@@ -10,6 +10,7 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import uk.gov.laa.gpfd.controller.GlobalExceptionHandler;
 
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.Optional;
 
@@ -60,6 +61,8 @@ public class S3ClientWrapper {
 
         @Override
         public void close() throws Exception {
+            log.info("Closing S3 download");
+            if (true) throw new IOException("asdsadas");
             stream.close();
         }
 

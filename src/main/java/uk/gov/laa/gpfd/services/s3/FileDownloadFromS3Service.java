@@ -3,12 +3,10 @@ package uk.gov.laa.gpfd.services.s3;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.ContentDisposition;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.exception.FileDownloadException.S3BucketHasNoCopiesOfReportException;
+import uk.gov.laa.gpfd.services.s3.S3ClientWrapper.S3CsvDownload;
 
 import java.util.UUID;
 
@@ -36,7 +34,7 @@ public class FileDownloadFromS3Service implements FileDownloadService {
      */
     @SneakyThrows
     @Override
-    public ResponseEntity<InputStreamResource> getFileStreamResponse(UUID id) {
+    public S3CsvDownload getFileStreamResponse(UUID id) {
 
         // Enforce role-based access control for this report
         reportDao.verifyUserCanAccessReport(id);
@@ -44,17 +42,9 @@ public class FileDownloadFromS3Service implements FileDownloadService {
         var s3Prefix = fileNameResolver.getS3PrefixFromId(id);
 
         var fileStreamOptional = s3ClientWrapper.getResultCsv(s3Prefix);
-        var fileStream = fileStreamOptional
+
+        return fileStreamOptional
                 .orElseThrow(() -> new S3BucketHasNoCopiesOfReportException(id, s3Prefix));
-
-            var contentDisposition = ContentDisposition.attachment().filename(fileStream.getFileName()).build();
-
-            log.info("About to stream report with ID {} to user", id);
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString())
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .contentLength(fileStream.stream().response().contentLength())
-                    .body(new InputStreamResource(fileStream.stream()));
 
     }
 
