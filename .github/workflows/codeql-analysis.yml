@@ -1,3 +1,5 @@
+name: "CodeQL Advanced Analysis"
+
 on:
   push:
     branches: [main, task/lpf1349-codeQL]
@@ -19,7 +21,7 @@ jobs:
         - language: actions
           build-mode: none
         - language: java-kotlin
-          build-mode: none 
+          build-mode: none  # This mode only analyzes Java. Set this to 'autobuild' or 'manual' to analyze Kotlin too.
     
     steps:
       - name: Checkout repository
