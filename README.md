@@ -2,6 +2,10 @@
 
 (Formerly known as 'Pay For Legal Aid' (PFLA))
 
+[![Ministry of Justice Repository Compliance Badge](https://github-community.service.justice.gov.uk/repository-standards/api/payforlegalaid/badge)](https://github-community.service.justice.gov.uk/repository-standards/payforlegalaid)
+
+[![.github/workflows/codeql-analysis.yml](https://github.com/ministryofjustice/payforlegalaid/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/ministryofjustice/payforlegalaid/actions/workflows/codeql-analysis.yml)
+
 ## About this repository
 
 This is an API that gets financial reports data from the MOJFIN database in the modernisation platform,
