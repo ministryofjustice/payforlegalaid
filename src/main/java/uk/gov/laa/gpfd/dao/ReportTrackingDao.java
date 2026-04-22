@@ -3,6 +3,7 @@ package uk.gov.laa.gpfd.dao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import uk.gov.laa.gpfd.exception.DatabaseWriteException;
 
@@ -30,6 +31,7 @@ public class ReportTrackingDao {
      * @param reportId report being downloaded
      * @param userId   user doing the download
      */
+    @Async
     public void insertTrackingRow(UUID reportId, UUID userId) {
         log.info("Inserting report tracking row for {}", reportId);
 

@@ -340,7 +340,7 @@ class GlobalExceptionHandlerTest {
     void shouldHandleDatabaseWriteException() {
         var exception = new DatabaseWriteException("Error writing to db :(");
 
-        var response = globalExceptionHandler.handleDatabaseReadException(exception);
+        var response = globalExceptionHandler.handleDatabaseWriteException(exception);
 
         assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertEquals("Error writing to db :(",
@@ -365,4 +365,17 @@ class GlobalExceptionHandlerTest {
                 new NoOidSetOnTokenException()
         );
     }
+
+    @Test
+    void shouldHandleStreamErrorException() {
+        var reportId = UUID.randomUUID();
+        var exception = new StreamErrorException("Error writing to db :(", reportId);
+
+        var response = globalExceptionHandler.handleStreamErrorException(exception);
+
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Report streaming failure",
+                response.getBody().getError());
+    }
+
 }

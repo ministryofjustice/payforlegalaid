@@ -32,6 +32,29 @@ public class FileDownloadFromS3Service implements FileDownloadService {
      * @param id - UUID of the report
      * @return an {@link ResponseEntity} with status OK and an {@link InputStreamResource} containing the CSV file inside.
      */
+//    @SneakyThrows
+//    @Override
+//    public ResponseEntity<InputStreamResource> getFileStreamResponse(UUID id) {
+//
+//        // Enforce role-based access control for this report
+//        reportDao.verifyUserCanAccessReport(id);
+//
+//        var s3Prefix = fileNameResolver.getS3PrefixFromId(id);
+//
+//        var fileStreamOptional = s3ClientWrapper.getResultCsv(s3Prefix);
+//        var fileStream = fileStreamOptional
+//                .orElseThrow(() -> new S3BucketHasNoCopiesOfReportException(id, s3Prefix));
+//
+//            var contentDisposition = ContentDisposition.attachment().filename(fileStream.getFileName()).build();
+//
+//            log.info("About to stream report with ID {} to user", id);
+//            return ResponseEntity.ok()
+//                    .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString())
+//                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+//                    .contentLength(fileStream.stream().response().contentLength())
+//                    .body(new InputStreamResource(fileStream.stream()));
+//
+//    }
     @SneakyThrows
     @Override
     public S3CsvDownload getFileStreamResponse(UUID id) {

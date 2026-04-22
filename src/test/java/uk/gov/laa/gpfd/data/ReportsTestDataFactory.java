@@ -12,6 +12,24 @@ import java.util.UUID;
 
 public class ReportsTestDataFactory {
 
+    public final static ReportOutputType csvReportOutput = ImmutableReportOutputType.builder()
+            .id(UUID.randomUUID())
+            .fileExtension(FileExtension.CSV)
+            .description("CSV Report")
+            .build();
+
+    public final static ReportOutputType xlsxReportOutput = ImmutableReportOutputType.builder()
+            .id(UUID.randomUUID())
+            .fileExtension(FileExtension.XLSX)
+            .description("Excel Report")
+            .build();
+
+    public final static ReportOutputType s3ReportOutput = ImmutableReportOutputType.builder()
+            .id(UUID.randomUUID())
+            .fileExtension(FileExtension.S3STORAGE)
+            .description("Tactical Solution Report")
+            .build();
+
     public static Report createTestReport() {
         return createTestReport(UUID.randomUUID());
     }
@@ -25,11 +43,7 @@ public class ReportsTestDataFactory {
                 .lastDatabaseRefreshDate(Timestamp.from(Instant.now()))
                 .description("Test Description")
                 .numDaysToKeep(30)
-                .outputType(ImmutableReportOutputType.builder()
-                        .description("foo")
-                        .id(reportId)
-                        .fileExtension(FileExtension.XLSX)
-                        .build())
+                .outputType(xlsxReportOutput)
                 .creator(ImmutableReportCreator.newBuilder()
                         .withId(UUID.randomUUID())
                         .withName("Owner Name")
@@ -54,11 +68,7 @@ public class ReportsTestDataFactory {
                 .lastDatabaseRefreshDate(Timestamp.from(Instant.now()))
                 .description("REP0000 - Test Description")
                 .numDaysToKeep(30)
-                .outputType(ImmutableReportOutputType.builder()
-                        .description("foo")
-                        .id(reportId)
-                        .fileExtension(FileExtension.S3STORAGE)
-                        .build())
+                .outputType(s3ReportOutput)
                 .creator(ImmutableReportCreator.newBuilder()
                         .withId(UUID.randomUUID())
                         .withName("Owner Name")
@@ -138,11 +148,7 @@ public class ReportsTestDataFactory {
                 .lastDatabaseRefreshDate(Timestamp.from(Instant.now()))
                 .description("Test Description")
                 .numDaysToKeep(30)
-                .outputType(ImmutableReportOutputType.builder()
-                        .description("foo")
-                        .id(UUID.randomUUID())
-                        .fileExtension(FileExtension.CSV)
-                        .build())
+                .outputType(csvReportOutput)
                 .creator(ImmutableReportCreator.newBuilder()
                         .withId(UUID.randomUUID())
                         .withName("Owner Name")
