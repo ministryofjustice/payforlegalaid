@@ -66,7 +66,7 @@ public class CspReportController {
             // Increment metric per directive
             counterFor(directive).increment();
 
-        } catch (Exception e) {
+        } catch (Exception _) {
             log.info("CSP Violation (unparseable payload): {}", rawBody);
             counterFor("unparseable").increment();
         }
