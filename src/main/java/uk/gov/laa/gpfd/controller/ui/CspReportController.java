@@ -28,7 +28,7 @@ public class CspReportController {
             Map<String, Object> payload = objectMapper.readValue(rawBody, new TypeReference<>() {});
             Object violation = payload.get("csp-report");
             log.warn("CSP Violation: {}", violation != null ? violation : payload);
-        } catch (Exception e) {
+        } catch (Exception _) {
             log.warn("CSP Violation (unparseable): {}", rawBody);
         }
         cspViolations.increment();
