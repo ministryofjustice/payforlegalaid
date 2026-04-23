@@ -47,7 +47,7 @@ public class CspReportController {
                     directive, blockedUri);
 
         } catch (Exception _) {
-            log.info("CSP Violation (unparseable payload): {}", rawBody);
+            log.info("CSP Violation (unparseable payload)");
         }
 
         cspViolations.increment();
