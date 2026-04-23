@@ -1,11 +1,16 @@
 package uk.gov.laa.gpfd.integration;
 
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import software.amazon.awssdk.awscore.exception.AwsErrorDetails;
@@ -17,7 +22,11 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import software.amazon.awssdk.services.s3.model.S3Object;
+import uk.gov.laa.gpfd.config.TestDatabaseConfig;
+import uk.gov.laa.gpfd.config.TestSecurityConfig;
+import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.integration.config.TestS3Config;
+import uk.gov.laa.gpfd.utils.SecurityUtils;
 
 import java.io.ByteArrayInputStream;
 import java.time.Instant;
@@ -28,8 +37,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -38,13 +46,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.laa.gpfd.utils.ReportIds.ID_REP012;
-import uk.gov.laa.gpfd.config.TestSecurityConfig;
-import uk.gov.laa.gpfd.config.TestDatabaseConfig;
-import uk.gov.laa.gpfd.utils.SecurityUtils;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.mockito.Mock;
-
-import uk.gov.laa.gpfd.dao.ReportDao;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT, classes = {TestS3Config.class, TestSecurityConfig.class, TestDatabaseConfig.class})
 @AutoConfigureMockMvc
@@ -53,6 +54,7 @@ import uk.gov.laa.gpfd.dao.ReportDao;
         "S3_TEMPLATE_STORE=test2", "S3_REPORT_STORE=test"
 })
 @TestInstance(PER_CLASS)
+@ExtendWith(MockitoExtension.class)
 final class ReportGetFileIT extends BaseIT {
 
     @Autowired
@@ -67,37 +69,19 @@ final class ReportGetFileIT extends BaseIT {
     @Mock
     private ReportDao reportDao;
 
-        @Test
-        @SneakyThrows
-        void shouldSuccessfullyPassStreamReturnedFromAWSToUserWithPermission() {
-
-            UUID reportId = ID_REP012;
-            var responseMetadata = GetObjectResponse.builder().contentLength(25L).build();
-            var inputStream = new ByteArrayInputStream("csv,data,here,123,4.3,cat".getBytes());
-
-            var responseList = List.of(
-                    S3Object.builder().key("reports/daily/report_2025-12-14.csv").lastModified(Instant.parse("2025-12-14T05:00:00Z")).build(),
-                    S3Object.builder().key("reports/daily/report_2025-12-15.csv").lastModified(Instant.parse("2025-12-15T05:00:00Z")).build()
-            );
-            var mockListResponse = ListObjectsV2Response.builder().contents(new ArrayList<>(responseList)).build();
-            when(s3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenReturn(mockListResponse);
-
-            var mockS3Response = new ResponseInputStream<>(responseMetadata, inputStream);
-            when(s3Client.getObject(any(GetObjectRequest.class))).thenReturn(mockS3Response);
-
-            performGetRequestWithRoles("/reports/" + reportId + "/file", List.of("Reconciliation"))
-                    .andExpect(status().isOk())
-                    .andExpect(content().contentType(APPLICATION_OCTET_STREAM))
-                    .andExpect(header().longValue("Content-Length", 25L))
-                    .andExpect(header().string("Content-Disposition", "attachment; filename=\"report_2025-12-15.csv\""))
-                    .andExpect(content().string("csv,data,here,123,4.3,cat"));
-        }
+    @BeforeEach
+    public void beforeEach() {
+        reset(readOnlyJdbcTemplate, securityUtils, reportDao);
+    }
 
     @Test
     @SneakyThrows
-    void shouldCloseStreamWhenSuccessful() {
+    void shouldSuccessfullyPassStreamReturnedFromAWSToUserWithPermission() {
 
         UUID reportId = ID_REP012;
+        var responseMetadata = GetObjectResponse.builder().contentLength(25L).build();
+        var inputStream = new ByteArrayInputStream("csv,data,here,123,4.3,cat".getBytes());
+
         var responseList = List.of(
                 S3Object.builder().key("reports/daily/report_2025-12-14.csv").lastModified(Instant.parse("2025-12-14T05:00:00Z")).build(),
                 S3Object.builder().key("reports/daily/report_2025-12-15.csv").lastModified(Instant.parse("2025-12-15T05:00:00Z")).build()
@@ -105,16 +89,15 @@ final class ReportGetFileIT extends BaseIT {
         var mockListResponse = ListObjectsV2Response.builder().contents(new ArrayList<>(responseList)).build();
         when(s3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenReturn(mockListResponse);
 
-        var mockS3Response = mock(ResponseInputStream.class);
-        var mockS3ResponseInternal = mock(GetObjectResponse.class);
+        var mockS3Response = new ResponseInputStream<>(responseMetadata, inputStream);
         when(s3Client.getObject(any(GetObjectRequest.class))).thenReturn(mockS3Response);
-        when(mockS3Response.response()).thenReturn(mockS3ResponseInternal);
-        when(mockS3ResponseInternal.contentLength()).thenReturn(32L);
 
-
-        performGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of("Reconciliation"))
-                .andExpect(status().isOk());
-        verify(mockS3Response).close();
+        performGetRequestWithRoles("/reports/" + reportId + "/file", List.of("Reconciliation"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_OCTET_STREAM))
+                .andExpect(header().longValue("Content-Length", 25L))
+                .andExpect(header().string("Content-Disposition", "attachment; filename=\"report_2025-12-15.csv\""))
+                .andExpect(content().string("csv,data,here,123,4.3,cat"));
     }
 
     @Test
@@ -150,7 +133,7 @@ final class ReportGetFileIT extends BaseIT {
 
         when(s3Client.getObject(any(GetObjectRequest.class))).thenThrow(exception);
 
-        var result =  performGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of("Reconciliation"))
+        var result = performGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of("Reconciliation"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andReturn();
