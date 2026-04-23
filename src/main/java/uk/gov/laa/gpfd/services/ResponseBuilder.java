@@ -16,19 +16,19 @@ public class ResponseBuilder {
 
     public ResponseEntity<StreamingResponseBody> buildResponse(StreamingResponseBody trackedStream,
                                                                String filename, FileExtension fileExtension) {
-        return buildResponse_internal(trackedStream, filename, fileExtension, Optional.empty());
+        return buildResponseInternal(trackedStream, filename, fileExtension, Optional.empty());
     }
 
     public ResponseEntity<StreamingResponseBody> buildResponse(StreamingResponseBody trackedStream,
                                                                String filename, FileExtension fileExtension,
                                                                Long contentLength) {
-        return buildResponse_internal(trackedStream, filename, fileExtension, Optional.of(contentLength));
+        return buildResponseInternal(trackedStream, filename, fileExtension, Optional.of(contentLength));
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private ResponseEntity<StreamingResponseBody> buildResponse_internal(StreamingResponseBody trackedStream,
-                                                                         String filename, FileExtension fileExtension,
-                                                                         Optional<Long> contentLength) {
+    private ResponseEntity<StreamingResponseBody> buildResponseInternal(StreamingResponseBody trackedStream,
+                                                                        String filename, FileExtension fileExtension,
+                                                                        Optional<Long> contentLength) {
         var builder = ResponseEntity.ok()
                 .header("Content-Disposition", createContentDisposition(filename))
                 .contentType(getContentType(fileExtension));

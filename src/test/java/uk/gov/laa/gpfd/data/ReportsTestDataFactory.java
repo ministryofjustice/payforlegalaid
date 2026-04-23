@@ -12,19 +12,19 @@ import java.util.UUID;
 
 public class ReportsTestDataFactory {
 
-    public final static ReportOutputType csvReportOutput = ImmutableReportOutputType.builder()
+    public static final ReportOutputType csvReportOutput = ImmutableReportOutputType.builder()
             .id(UUID.randomUUID())
             .fileExtension(FileExtension.CSV)
             .description("CSV Report")
             .build();
 
-    public final static ReportOutputType xlsxReportOutput = ImmutableReportOutputType.builder()
+    public static final ReportOutputType xlsxReportOutput = ImmutableReportOutputType.builder()
             .id(UUID.randomUUID())
             .fileExtension(FileExtension.XLSX)
             .description("Excel Report")
             .build();
 
-    public final static ReportOutputType s3ReportOutput = ImmutableReportOutputType.builder()
+    public static final ReportOutputType s3ReportOutput = ImmutableReportOutputType.builder()
             .id(UUID.randomUUID())
             .fileExtension(FileExtension.S3STORAGE)
             .description("Tactical Solution Report")

@@ -18,7 +18,6 @@ import java.util.Optional;
 import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -52,8 +51,8 @@ class AbstractDataStreamTest {
 
         body.writeTo(outputStream);
 
-        verify(reportDao).fetchReportById(eq(reportId));
-        verify(dataStreamer).stream(eq(mockReport), eq(outputStream));
+        verify(reportDao).fetchReportById(reportId);
+        verify(dataStreamer).stream(mockReport, outputStream);
     }
 
     @SneakyThrows
@@ -69,8 +68,8 @@ class AbstractDataStreamTest {
 
         body.writeTo(outputStream);
 
-        verify(reportDao).fetchReportById(eq(reportId));
-        verify(dataStreamer).stream(eq(mockReport), eq(outputStream));
+        verify(reportDao).fetchReportById(reportId);
+        verify(dataStreamer).stream(mockReport, outputStream);
     }
 
     @SneakyThrows
@@ -84,7 +83,7 @@ class AbstractDataStreamTest {
 
         testStream.stream(reportId);
 
-        verify(reportDao).fetchReportById(eq(reportId));
+        verify(reportDao).fetchReportById(reportId);
         verifyNoInteractions(dataStreamer);
     }
 

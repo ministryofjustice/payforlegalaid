@@ -33,10 +33,11 @@ public class ReportTrackingDao {
      */
     @Async
     public void insertTrackingRow(UUID reportId, UUID userId) {
-        log.info("Inserting report tracking row for {}", reportId);
+        log.debug("Attempting to insert report tracking row for {}", reportId);
 
         try {
             trackingJdbcTemplate.update(INSERT_INTO_TRACKING_SQL, UUID.randomUUID(), reportId, userId, Timestamp.from(Instant.now()));
+            log.info("Inserted report tracking row for {}", reportId);
         } catch (DataAccessException e) {
             var message = "Failed to insert report tracking row for report " + reportId + " / user " + userId;
             log.error("{} with {} exception: {}", message, e.getClass().getName(), e.getMessage());

@@ -455,6 +455,11 @@ public class AppConfig {
         return liquibase;
     }
 
+    /**
+     * Sets up the report tracking data access to use the Postgres tracking db rather than the MOJFIN ones
+     * @param trackingJdbcTemplate tracking table JDBC template
+     * @return report tracking data access object
+     */
     @Bean
     ReportTrackingDao reportTrackingDao(@Qualifier("trackingJdbcTemplate") JdbcOperations trackingJdbcTemplate) {
         return new ReportTrackingDao(trackingJdbcTemplate);

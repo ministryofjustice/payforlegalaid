@@ -1,12 +1,9 @@
 package uk.gov.laa.gpfd.integration;
 
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -32,12 +29,10 @@ import java.io.ByteArrayInputStream;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -54,7 +49,6 @@ import static uk.gov.laa.gpfd.utils.ReportIds.ID_REP012;
         "S3_TEMPLATE_STORE=test2", "S3_REPORT_STORE=test"
 })
 @TestInstance(PER_CLASS)
-@ExtendWith(MockitoExtension.class)
 final class ReportGetFileIT extends BaseIT {
 
     @Autowired
@@ -69,16 +63,10 @@ final class ReportGetFileIT extends BaseIT {
     @Mock
     private ReportDao reportDao;
 
-    @BeforeEach
-    public void beforeEach() {
-        reset(readOnlyJdbcTemplate, securityUtils, reportDao);
-    }
-
     @Test
     @SneakyThrows
     void shouldSuccessfullyPassStreamReturnedFromAWSToUserWithPermission() {
 
-        UUID reportId = ID_REP012;
         var responseMetadata = GetObjectResponse.builder().contentLength(25L).build();
         var inputStream = new ByteArrayInputStream("csv,data,here,123,4.3,cat".getBytes());
 
@@ -92,7 +80,7 @@ final class ReportGetFileIT extends BaseIT {
         var mockS3Response = new ResponseInputStream<>(responseMetadata, inputStream);
         when(s3Client.getObject(any(GetObjectRequest.class))).thenReturn(mockS3Response);
 
-        performGetRequestWithRoles("/reports/" + reportId + "/file", List.of("Reconciliation"))
+        performGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of("Reconciliation"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_OCTET_STREAM))
                 .andExpect(header().longValue("Content-Length", 25L))
