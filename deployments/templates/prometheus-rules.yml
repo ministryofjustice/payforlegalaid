@@ -153,3 +153,10 @@ spec:
         for: 1m
         labels:
           severity: info
+      - alert: CSPViolationDetected
+        annotations:
+          summary: "CSP violations detected"
+        expr: increase(csp_violations_total[5m]) > 0
+        for: 5m
+        labels:
+          severity: warning

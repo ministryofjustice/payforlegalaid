@@ -67,7 +67,8 @@ public class SecurityConfig {
                                         "img-src 'self' data:; " +
                                         "font-src 'self'; " +
                                         "connect-src 'self'; " +
-                                        "upgrade-insecure-requests"
+                                        "upgrade-insecure-requests; " +
+                                        "report-uri /csp-report"
                                 )
                         )
                 )
