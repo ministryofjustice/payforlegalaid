@@ -25,6 +25,7 @@ import static com.azure.spring.cloud.autoconfigure.implementation.aad.security.A
  * to manage specific security aspects.
  * </p>
  */
+@SuppressWarnings("java:S4502") // CSRF disabled only for CSP report POST endpoint
 @Configuration
 @RequiredArgsConstructor
 @ConditionalOnProperty(name = "spring.cloud.azure.active-directory.enabled", havingValue = "true")
