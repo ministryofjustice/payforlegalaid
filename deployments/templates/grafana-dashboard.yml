@@ -2450,6 +2450,19 @@ data:
           "type": "timeseries"
         },
         {
+          "collapsed": false,
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 17
+          },
+          "id": 67,
+          "panels": [],
+          "title": "Security",
+          "type": "row"
+        },
+        {
           "id": 66,
           "type": "timeseries",
           "title": "Content Security Policy Violations",
