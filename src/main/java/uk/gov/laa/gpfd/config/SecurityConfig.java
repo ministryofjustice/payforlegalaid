@@ -53,9 +53,9 @@ public class SecurityConfig {
         var sessionManagementConfigurerBuilder = new SessionManagementConfigurerBuilder(concurrencyControlConfigurerCustomizer);
         return httpSecurity
                 // Allow csp-report to ignore CSRF or else POST requests will be blocked
-//                .csrf(csrf -> csrf.ignoringRequestMatchers(
-//                        PathPatternRequestMatcher.withDefaults().matcher("/csp-report")
-//                ))
+                .csrf(csrf -> csrf.ignoringRequestMatchers(
+                        PathPatternRequestMatcher.withDefaults().matcher("/csp-report")
+                ))
                 .with(aadWebApplication())
                 .authorizeHttpRequests(authorizeHttpRequestsBuilder)    // Apply authorization rules
                 .sessionManagement(sessionManagementConfigurerBuilder)  // Apply session management configuration
