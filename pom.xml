@@ -34,9 +34,6 @@
         <maven-dependency-plugin.version>3.10.0</maven-dependency-plugin.version>
         <maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
         <maven-war-plugin.version>3.5.1</maven-war-plugin.version>
-
-        <!-- Overriding 7.0.4 coming in via Spring to fix HIGH vuln (temp) -->
-        <spring-security.version>7.0.5</spring-security.version>
     </properties>
 
     <build>
