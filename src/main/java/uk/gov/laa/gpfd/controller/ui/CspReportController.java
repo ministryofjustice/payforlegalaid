@@ -43,10 +43,10 @@ public class CspReportController {
                     report.getOrDefault("blocked-uri", "unknown")
             );
 
-            log.info("CSP Violation detected: directive={}, blockedUri={}, raw={}",
-                    directive, blockedUri, rawBody);
+            log.info("CSP Violation detected: directive={}, blockedUri={}",
+                    directive, blockedUri);
 
-        } catch (Exception e) {
+        } catch (Exception _) {
             log.info("CSP Violation (unparseable payload): {}", rawBody);
         }
 
