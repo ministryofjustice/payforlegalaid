@@ -187,7 +187,7 @@ class ReportsControllerTest extends BaseMvcTest {
         when(securityUtils.extractUserId()).thenReturn(USER_ID);
         when(responseBuilder.buildResponse(any(), any(), any(), any())).thenReturn(ResponseEntity.ok().body(responseStream));
 
-        var result = performAuthenticatedGet("/reports/" + reportId + "/file2", List.of("Financial"))
+        var result = performAuthenticatedGet("/reports/" + reportId + "/file", List.of("Financial"))
                 .andExpect(status().isOk()).andReturn();
         assertEquals("output!", result.getResponse().getContentAsString());
 
@@ -311,7 +311,7 @@ class ReportsControllerTest extends BaseMvcTest {
                 .when(reportManagementServiceMock)
                 .validateReportFormat(uuid, FileExtension.S3STORAGE);
 
-        performAuthenticatedGet("/reports/" + uuid + "/file2", List.of("Financial"))
+        performAuthenticatedGet("/reports/" + uuid + "/file", List.of("Financial"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value(
                         "Report " + uuid +
@@ -367,7 +367,7 @@ class ReportsControllerTest extends BaseMvcTest {
         when(securityUtils.extractUserId()).thenThrow(new AuthenticationIsNullException());
 
         // Perform the GET request
-        performAuthenticatedGet("/reports/" + REPORT_ID + "/file2", List.of("REP000"))
+        performAuthenticatedGet("/reports/" + REPORT_ID + "/file", List.of("REP000"))
                 .andExpect(status().isInternalServerError());
     }
 

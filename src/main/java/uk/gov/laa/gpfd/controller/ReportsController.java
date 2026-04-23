@@ -1,26 +1,14 @@
 package uk.gov.laa.gpfd.controller;
 
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jspecify.annotations.NonNull;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.ContentDisposition;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.api.ReportsApi;
 import uk.gov.laa.gpfd.dao.ReportDao;
-import uk.gov.laa.gpfd.dao.ReportTrackingDao;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
-import uk.gov.laa.gpfd.exception.StreamErrorException;
 import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200Response;
@@ -32,11 +20,12 @@ import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
 import uk.gov.laa.gpfd.services.stream.TrackedStreamService;
 import uk.gov.laa.gpfd.utils.SecurityUtils;
 
-import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
 
-import static uk.gov.laa.gpfd.model.FileExtension.*;
+import static uk.gov.laa.gpfd.model.FileExtension.CSV;
+import static uk.gov.laa.gpfd.model.FileExtension.S3STORAGE;
+import static uk.gov.laa.gpfd.model.FileExtension.XLSX;
 
 @Slf4j
 @RestController
@@ -81,7 +70,7 @@ public class ReportsController implements ReportsApi {
      * @return CSV data stream or reports data
      *
      * <p>Example usage:
-     *      <pre>
+     * <pre>
      *      GET /reports/f46b4d3d-c100-429a-bf9a-6c3305dbdbf1/csv
      *      </pre>
      */
@@ -137,13 +126,8 @@ public class ReportsController implements ReportsApi {
         return fetchCsvExcelDownloadResponse(id, rawStream);
     }
 
-    //    @Override
-    @RequestMapping(
-            method = {RequestMethod.GET},
-            value = {"/reports/{id}/file2"},
-            produces = {"application/octet-stream", "application/json"}
-    )
-    public ResponseEntity<StreamingResponseBody> getReportDownloadById2(@Parameter(name = "id", description = "The unique ID of the requested report.", required = true, in = ParameterIn.PATH) @PathVariable("id") UUID id) {
+    @Override
+    public ResponseEntity<StreamingResponseBody> getReportDownloadById(UUID id) {
         log.info("Downloading report for id {}", id);
 
         // Validate that this report is S3STORAGE format
@@ -152,26 +136,6 @@ public class ReportsController implements ReportsApi {
         var s3Response = fileDownloadService.getFileStreamResponse(id);
         return fetchS3DownloadResponse(id, s3Response);
     }
-
-//    @Override
-//    public ResponseEntity<InputStreamResource> getReportDownloadById(UUID id) {
-//        log.info("Downloading report for id {}", id);
-//
-//        // Validate that this report is S3STORAGE format
-//        reportManagementService.validateReportFormat(id, S3STORAGE);
-//
-//        var response = fileDownloadService.getFileStreamResponse(id);
-//        reportTrackingDao.insertTrackingRow(id, securityUtils.extractUserId());
-//
-//        var contentDisposition = ContentDisposition.attachment().filename(response.getFileName()).build();
-//
-//        log.info("About to stream report with ID {} to user", id);
-//        return ResponseEntity.ok()
-//                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString())
-//                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-//                .contentLength(response.stream().response().contentLength())
-//                .body(new InputStreamResource(response.stream()));
-//    }
 
     private ResponseEntity<StreamingResponseBody> fetchCsvExcelDownloadResponse(UUID reportId, StreamingResponseBody rawStream) {
         var userId = securityUtils.extractUserId();

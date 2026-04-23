@@ -48,7 +48,7 @@ class TrackedStreamServiceTest {
     @SneakyThrows
     @Test
     void catchesAndRethrowsAnyStreamingErrors() {
-        StreamingResponseBody rawStream = output -> {throw new IOException("sad");};
+        StreamingResponseBody rawStream = _ -> {throw new IOException("sad");};
 
         StreamingResponseBody wrappedStream = trackedStreamService.wrapStream(rawStream,REPORT_ID, USER_ID);
 
