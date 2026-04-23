@@ -9,33 +9,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @Slf4j
 public class CspReportController {
 
     private final ObjectMapper objectMapper;
-    private final MeterRegistry registry;
-
-    // Cache counters per directive to avoid recreating them per request
-    private final ConcurrentHashMap<String, Counter> counters = new ConcurrentHashMap<>();
+    private final Counter cspViolations;
 
     public CspReportController(MeterRegistry registry, ObjectMapper objectMapper) {
-        this.registry = registry;
         this.objectMapper = objectMapper;
-    }
 
-    /**
-     * Get or create a counter per CSP directive
-     */
-    private Counter counterFor(String directive) {
-        return counters.computeIfAbsent(directive, d ->
-                Counter.builder("csp_violations_total")
-                        .description("Total number of CSP violation reports received")
-                        .tag("directive", d)
-                        .register(registry)
-        );
+        this.cspViolations = Counter.builder("csp_violations_total")
+                .description("Total number of CSP violation reports received")
+                .register(registry);
     }
 
     @PostMapping(value = "/csp-report", consumes = "application/csp-report")
@@ -45,12 +32,8 @@ public class CspReportController {
             Map<String, Object> payload =
                     objectMapper.readValue(rawBody, new TypeReference<>() {});
 
-            Object reportObj = payload.get("csp-report");
-
-            Map<String, Object> report = objectMapper.convertValue(
-                    reportObj,
-                    new TypeReference<>() {}
-            );
+            Map<String, Object> report =
+                    objectMapper.convertValue(payload.get("csp-report"), new TypeReference<>() {});
 
             String directive = String.valueOf(
                     report.getOrDefault("violated-directive", "unknown")
@@ -60,16 +43,14 @@ public class CspReportController {
                     report.getOrDefault("blocked-uri", "unknown")
             );
 
-            log.info("CSP Violation detected: directive={}, blockedUri={}",
-                    directive, blockedUri);
+            log.info("CSP Violation detected: directive={}, blockedUri={}, raw={}",
+                    directive, blockedUri, rawBody);
 
-            // Increment metric per directive
-            counterFor(directive).increment();
-
-        } catch (Exception _) {
+        } catch (Exception e) {
             log.info("CSP Violation (unparseable payload): {}", rawBody);
-            counterFor("unparseable").increment();
         }
+
+        cspViolations.increment();
 
         return ResponseEntity.noContent().build();
     }
