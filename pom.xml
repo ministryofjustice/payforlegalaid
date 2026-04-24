@@ -28,6 +28,10 @@
         <govuk-frontend.version>6.1.0</govuk-frontend.version>
         <moj-frontend.version>6.0.0</moj-frontend.version>
 
+        <cucumber.version>7.34.3</cucumber.version>
+        <playwright.version>1.58.0</playwright.version>
+        <axe.version>4.11.1</axe.version>
+
         <payforlegalaid-openapi.version>0.0.32</payforlegalaid-openapi.version>
         <aws.java.sdk.version>2.42.35</aws.java.sdk.version>
         <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
@@ -55,6 +59,10 @@
                         <include>**/*Test.java</include>
                         <include>**/*IT.java</include>
                     </includes>
+                    <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+                    <systemPropertyVariables>
+                        <cucumber.publish.quiet>true</cucumber.publish.quiet>
+                    </systemPropertyVariables>
                     <reportFormat>plain</reportFormat>
                     <consoleOutputReporter>
                         <disable>true</disable>
@@ -181,7 +189,7 @@
                                 <!-- Delete old moj folder -->
                                 <delete dir="${project.basedir}/src/main/resources/static/moj"/>
                                 <!-- Unzip -->
-                                <unzip src="${project.build.directory}/moj-frontend.zip"
+                                <unzip src="${project.basedir}/target/moj-frontend.zip"
                                        dest="${project.basedir}/src/main/resources/static/moj"/>
                                 <!-- Copy CSS -->
                                 <copy file="${project.basedir}/src/main/resources/static/moj/moj-frontend-${moj-frontend.version}.min.css"
@@ -239,6 +247,13 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-bom</artifactId>
+                <version>${cucumber.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.azure.spring</groupId>
                 <artifactId>spring-cloud-azure-dependencies</artifactId>
                 <version>${spring-cloud-azure-dependencies.version}</version>
@@ -280,6 +295,11 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml-full</artifactId>
             <version>${poi.version}</version>
         </dependency>
 
@@ -404,6 +424,11 @@
         <!-- Test Dependencies-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-liquibase</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-liquibase-test</artifactId>
             <scope>test</scope>
         </dependency>
@@ -453,10 +478,46 @@
             <artifactId>spring-boot-starter-jdbc-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-spring</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit-platform-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-suite</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.playwright</groupId>
+            <artifactId>playwright</artifactId>
+            <version>${playwright.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.deque.html.axe-core</groupId>
+            <artifactId>playwright</artifactId>
+            <version>${axe.version}</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
     <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
         <repository>
             <id>payforlegalaid-openapi</id>
             <url>https://github.com/ministryofjustice/payforlegalaid-openapi/</url>
