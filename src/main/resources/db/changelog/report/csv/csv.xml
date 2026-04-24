@@ -11,7 +11,7 @@
             <column name="ID" value="0fbec75b-2d72-44f5-a0e3-2dcb29d92f79"/>
             <column name="NAME" value="acceptance_test_table"/>
             <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="00000000-0000-0000-0000-000000000000"/>
-            <column name="REPORT_CREATION_DATE" value="2025-02-15 00:00:00"/>
+            <column name="REPORT_CREATION_DATE" valueDate="2025-02-15"/>
             <column name="DESCRIPTION" value="acceptance_test_table"/>
             <column name="NUM_DAYS_TO_KEEP" value="30"/>
             <column name="FILE_NAME" value="acceptance_test_table"/>
@@ -32,7 +32,7 @@
             <column name="ID" value="f46b4d3d-c100-429a-bf9a-6c3305dbdbf3"/>
             <column name="NAME" value="CIS to CCMS import exceptions"/>
             <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="00000000-0000-0000-0000-000000000000"/>
-            <column name="REPORT_CREATION_DATE" value="2025-02-15 00:00:00"/>
+            <column name="REPORT_CREATION_DATE" valueDate="2025-02-15"/>
             <column name="DESCRIPTION" value="Details of invoices transferred from CIS to CCMS by Legal Aid Scheme"/>
             <column name="NUM_DAYS_TO_KEEP" value="30"/>
             <column name="FILE_NAME" value="CIS_TO_CCMS_IMPORT_EXCEPTIONS"/>
@@ -53,7 +53,7 @@
             <column name="ID" value="f46b4d3d-c100-429a-bf9a-6c3305dbdbf4"/>
             <column name="NAME" value="CIS to CCMS payment value Defined"/>
             <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="00000000-0000-0000-0000-000000000000"/>
-            <column name="REPORT_CREATION_DATE" value="2025-02-15 00:00:00"/>
+            <column name="REPORT_CREATION_DATE" valueDate="2025-02-15"/>
             <column name="DESCRIPTION" value="Details of invoices transferred from CIS to CCMS by Legal Aid Scheme"/>
             <column name="NUM_DAYS_TO_KEEP" value="30"/>
             <column name="FILE_NAME" value="CIS_TO_CCMS_PAYMENT_VALUE_DEFINED"/>
@@ -74,7 +74,7 @@
             <column name="ID" value="f46b4d3d-c100-429a-bf9a-6c3305dbdbf5"/>
             <column name="NAME" value="CIS to CCMS payment value Not Defined"/>
             <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="00000000-0000-0000-0000-000000000000"/>
-            <column name="REPORT_CREATION_DATE" value="2025-02-15 00:00:00"/>
+            <column name="REPORT_CREATION_DATE" valueDate="2025-02-15"/>
             <column name="DESCRIPTION" value="Details of invoices transferred from CIS to CCMS by Legal Aid Scheme"/>
             <column name="NUM_DAYS_TO_KEEP" value="30"/>
             <column name="FILE_NAME" value="CIS_TO_CCMS_PAYMENT_VALUE_NOT_DEFINED"/>
@@ -95,7 +95,7 @@
             <column name="ID" value="f46b4d3d-c100-429a-bf9a-6c3305dbdbf6"/>
             <column name="NAME" value="CCMS Held Payments"/>
             <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="00000000-0000-0000-0000-000000000000"/>
-            <column name="REPORT_CREATION_DATE" value="2025-02-15 00:00:00"/>
+            <column name="REPORT_CREATION_DATE" valueDate="2025-02-15"/>
             <column name="DESCRIPTION" value="Details of invoices transferred from CIS to CCMS by Legal Aid Scheme"/>
             <column name="NUM_DAYS_TO_KEEP" value="30"/>
             <column name="FILE_NAME" value="CCMS_HELD_PAYMENTS"/>
@@ -116,7 +116,7 @@
             <column name="ID" value="f46b4d3d-c100-429a-bf9a-6c3305dbdbf7"/>
             <column name="NAME" value="CCMS AP Debtors"/>
             <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="00000000-0000-0000-0000-000000000000"/>
-            <column name="REPORT_CREATION_DATE" value="2025-02-15 00:00:00"/>
+            <column name="REPORT_CREATION_DATE" valueDate="2025-02-15"/>
             <column name="DESCRIPTION" value="Details of invoices transferred from CIS to CCMS by Legal Aid Scheme"/>
             <column name="NUM_DAYS_TO_KEEP" value="30"/>
             <column name="FILE_NAME" value="CCMS_AP_DEBTORS"/>
@@ -137,7 +137,7 @@
             <column name="ID" value="f46b4d3d-c100-429a-bf9a-6c3305dbdbf8"/>
             <column name="NAME" value="CCMS_and_CIS_Bank_Account_Report_w_Category_Code_YTD"/>
             <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="00000000-0000-0000-0000-000000000000"/>
-            <column name="REPORT_CREATION_DATE" value="2025-02-15 00:00:00"/>
+            <column name="REPORT_CREATION_DATE" valueDate="2025-02-15"/>
             <column name="DESCRIPTION"
                     value="Summary of all payments made by CCMS/CIS and all cash receipts applied to debt YTD"/>
             <column name="NUM_DAYS_TO_KEEP" value="30"/>
@@ -159,7 +159,7 @@
             <column name="ID" value="f46b4d3d-c100-429a-bf9a-6c3305dbdbf9"/>
             <column name="NAME" value="CCMS General Ledger (tiny columns multiple periods)"/>
             <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="00000000-0000-0000-0000-000000000000"/>
-            <column name="REPORT_CREATION_DATE" value="2025-02-15 00:00:00"/>
+            <column name="REPORT_CREATION_DATE" valueDate="2025-02-15"/>
             <column name="DESCRIPTION" value="CCMS General ledger extractor (tiny columns multiple periods)"/>
             <column name="NUM_DAYS_TO_KEEP" value="30"/>
             <column name="FILE_NAME" value="CCMS_GEN_LEDGER_TINYCOL_MULPERIODS"/>
@@ -180,7 +180,7 @@
             <column name="ID" value="f46b4d3d-c100-429a-bf9a-6c3305dbdbfa"/>
             <column name="NAME" value="CCMS General Ledger (tiny columns multiple periods manual)"/>
             <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="00000000-0000-0000-0000-000000000000"/>
-            <column name="REPORT_CREATION_DATE" value="2025-02-15 00:00:00"/>
+            <column name="REPORT_CREATION_DATE" valueDate="2025-02-15"/>
             <column name="DESCRIPTION" value="CCMS General ledger extractor (tiny columns multiple periods manual)"/>
             <column name="NUM_DAYS_TO_KEEP" value="30"/>
             <column name="FILE_NAME" value="CCMS_GEN_LEDGER_TINYCOL_MULPERIODS_MANUAL"/>
@@ -201,7 +201,7 @@
             <column name="ID" value="f46b4d3d-c100-429a-bf9a-6c3305dbdbfb"/>
             <column name="NAME" value="CCMS Authorised expenditure (Contracting live system)"/>
             <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="00000000-0000-0000-0000-000000000000"/>
-            <column name="REPORT_CREATION_DATE" value="2025-02-15 00:00:00"/>
+            <column name="REPORT_CREATION_DATE" valueDate="2025-02-15"/>
             <column name="DESCRIPTION" value="CCMS Authorised expenditure (Contracting live system)"/>
             <column name="NUM_DAYS_TO_KEEP" value="30"/>
             <column name="FILE_NAME" value="CCMS_AUTH_EXPEND_CONTRACTING"/>
@@ -221,7 +221,7 @@
             <column name="ID" value="f12b4d3d-c100-429a-bf9a-6c3305dbdbfb"/>
             <column name="NAME" value="CCMS Authorised expenditure (Contracting live system)"/>
             <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="00000000-0000-0000-0000-000000000000"/>
-            <column name="REPORT_CREATION_DATE" value="2025-02-15 00:00:00"/>
+            <column name="REPORT_CREATION_DATE" valueDate="2025-02-15"/>
             <column name="DESCRIPTION" value="CCMS Authorised expenditure (Contracting live system)"/>
             <column name="NUM_DAYS_TO_KEEP" value="30"/>
             <column name="FILE_NAME" value="CCMS_AUTH_EXPEND_CONTRACTING"/>

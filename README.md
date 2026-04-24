@@ -89,8 +89,17 @@ Uses the DB changelog files that were initially stored in the payforlegalaid-tes
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) (or Docker Engine 23+)
 - Git
+- .env created and populated with Oracle DB password (can be anything)
 
 #### Building the Image
+
+Using the .env.example file as a template, create your own .env file on your machine at the same level as the example file
+and populate with your own password for the Oracle DB. This should help set up credentials for the DB itself and assist with
+Liquibase migrations. Gitignore has been updated to include .env, if accidentally pushed to git, PR will complain about password
+and automatically block.
+
+Once set up, build the images:
+
 ```bash
 docker compose build
 ```
@@ -99,6 +108,7 @@ On first build this will take a few minutes as Maven downloads dependencies and 
 
 To force a clean rebuild from scratch:
 ```bash
+docker volume rm payforlegalaid_oracle-data   
 docker compose build --no-cache
 ```
 
@@ -122,6 +132,18 @@ docker compose up -d
 To stop the application:
 ```bash
 docker compose down
+```
+
+Connecting to the Oracle container
+```bash
+docker exec -it oracle-local bash
+sqlplus / as sysdba
+ALTER SESSION SET CONTAINER = FREEPDB1;
+```
+
+Example SQL query once connected
+```sql
+SELECT table_name FROM all_tables WHERE owner = 'GPFD';
 ```
 
 #### Troubleshooting
