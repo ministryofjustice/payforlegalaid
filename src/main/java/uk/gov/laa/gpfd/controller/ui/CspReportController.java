@@ -17,13 +17,11 @@ public class CspReportController {
     private static final int MAX_URI_LENGTH = 100;
 
     private final ObjectMapper objectMapper;
-    private final Counter cspViolations;
+    private final MeterRegistry meterRegistry;
 
     public CspReportController(MeterRegistry registry, ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
-        this.cspViolations = Counter.builder("csp_violations_total")
-                .description("Total number of CSP violation reports received")
-                .register(registry);
+        this.meterRegistry = registry;
     }
 
     @PostMapping(value = "/csp-report", consumes = "application/csp-report")
@@ -51,7 +49,8 @@ public class CspReportController {
             log.info("CSP Violation (empty body)");
         }
 
-        cspViolations.increment();
+        meterRegistry.counter("csp_violations_total").increment();
+
         return ResponseEntity.noContent().build();
     }
 
