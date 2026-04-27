@@ -167,7 +167,7 @@ class ReportsControllerTest extends BaseMvcTest {
                 .when(reportManagementServiceMock)
                 .validateReportFormat(uuid, FileExtension.XLSX);
 
-        performAuthenticatedGet("/reports/"+ uuid + "/excel/", List.of("Financial"))
+        performAuthenticatedGet("/reports/"+ uuid + "/excel", List.of("Financial"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value(
                         "Report " + uuid +
@@ -194,7 +194,7 @@ class ReportsControllerTest extends BaseMvcTest {
                 .when(reportManagementServiceMock)
                 .validateReportFormat(uuid, FileExtension.CSV);
 
-        performAuthenticatedGet("/reports/" + uuid + "/csv/", List.of("Financial"))
+        performAuthenticatedGet("/reports/" + uuid + "/csv", List.of("Financial"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value(
                         "Report " + uuid +
@@ -231,7 +231,7 @@ class ReportsControllerTest extends BaseMvcTest {
         when(streamingService.stream(csvReportId, FileExtension.CSV)).thenReturn(mockResponseEntity);
 
         // Perform the GET request
-        performAuthenticatedGet("/reports/" + csvReportId + "/csv/", List.of("Financial"))
+        performAuthenticatedGet("/reports/" + csvReportId + "/csv", List.of("Financial"))
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=data.csv"));
 
@@ -262,7 +262,7 @@ class ReportsControllerTest extends BaseMvcTest {
         when(streamingService.stream(excelReportId, FileExtension.XLSX)).thenReturn(mockResponseEntity);
 
         // Perform the GET request
-        performAuthenticatedGet("/reports/" + excelReportId + "/excel/", List.of("Financial"))
+        performAuthenticatedGet("/reports/" + excelReportId + "/excel", List.of("Financial"))
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report.xlsx"));
 
