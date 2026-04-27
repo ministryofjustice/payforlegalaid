@@ -15,6 +15,7 @@ import java.util.Map;
 public class CspReportController {
 
     private static final int MAX_URI_LENGTH = 100;
+    private static final String UNKNOWN = "unknown";
 
     private final ObjectMapper objectMapper;
     private final MeterRegistry meterRegistry;
@@ -34,10 +35,10 @@ public class CspReportController {
                         objectMapper.convertValue(payload.get("csp-report"), new TypeReference<>() {});
 
                 String directive = String.valueOf(
-                        report.getOrDefault("violated-directive", "unknown")
+                        report.getOrDefault("violated-directive", UNKNOWN)
                 );
                 String blockedUri = sanitise(String.valueOf(
-                        report.getOrDefault("blocked-uri", "unknown")
+                        report.getOrDefault("blocked-uri", UNKNOWN)
                 ));
 
                 log.info("CSP Violation detected: directive={}, blockedUri={}",
@@ -55,7 +56,7 @@ public class CspReportController {
     }
 
     private String sanitise(String value) {
-        if (value == null) return "unknown";
+        if (value == null) return UNKNOWN;
         String stripped = value.replaceAll("[\\r\\n\\t]", " ").trim();
         return stripped.length() > MAX_URI_LENGTH
                 ? stripped.substring(0, MAX_URI_LENGTH) + "…"
