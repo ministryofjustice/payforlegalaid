@@ -18,7 +18,6 @@ runs:
       run: |
         cd spec
         mvn clean install
-        mvn dependency:tree -Dincludes=org.springframework.boot:spring-boot-starter-actuator
       shell:
         bash
 
