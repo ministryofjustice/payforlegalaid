@@ -11,7 +11,7 @@ public class ReportListSimulation extends Simulation {
     String sessionCookie = System.getenv("JSESSIONID");
 
     HttpProtocolBuilder httpProtocol = http
-            .baseUrl("https://dev-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk")
+            .baseUrl(GatlingConfig.BASE_URL)
             .header("Cookie", "JSESSIONID=" + sessionCookie)
             .acceptHeader("application/json");
 
@@ -23,18 +23,7 @@ public class ReportListSimulation extends Simulation {
                             .check(jsonPath("$.reportList").exists())
                             .check(bodyString().saveAs("responseBody"))
             )
-            .exec(session -> {
-                String response = session.getString("responseBody");
-                System.out.println("Response preview: " + response.substring(0, Math.min(200, response.length())));
-
-                // Check if JSON contains reportList
-                if (response.contains("reportList")) {
-                    System.out.println("✅ JSON validation passed!");
-                } else {
-                    System.out.println("❌ JSON validation failed - no reportList found");
-                }
-                return session;
-            })
+            .exec(session -> session)
             .pause(1)
             .exec(
                     http("GET /reports/{id}")

@@ -15,16 +15,14 @@ public class ConcurrencySimulation extends Simulation {
     String sessionCookie = System.getenv("JSESSIONID");
 
     HttpProtocolBuilder httpProtocol = http
-//            .baseUrl("https://dev-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk")
-            .baseUrl("http://localhost:8080")
+            .baseUrl(GatlingConfig.BASE_URL)
             .header("Cookie", "JSESSIONID=" + sessionCookie)
             .acceptHeader("application/json");
 
-    // Reuse the same feeder — circular so concurrent users don't exhaust it
     FeederBuilder<String> feeder = csv("report-ids.csv").circular();
 
     ScenarioBuilder userJourney = scenario("Realistic User Journey")
-            .feed(feeder)  // populates #{id}, #{size}, #{format} for this virtual user
+            .feed(feeder)
             .exec(
                     http("List reports")
                             .get("/reports")

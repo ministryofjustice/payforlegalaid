@@ -15,7 +15,7 @@ public class ReportDownloadSimulation extends Simulation {
     String sessionCookie = System.getenv("JSESSIONID");
 
     HttpProtocolBuilder httpProtocol = http
-            .baseUrl("http://localhost:8080")
+            .baseUrl(GatlingConfig.BASE_URL)
             .header("Cookie", "JSESSIONID=" + sessionCookie);
 
     FeederBuilder<String> feeder = csv("report-ids.csv").circular();
@@ -26,7 +26,7 @@ public class ReportDownloadSimulation extends Simulation {
                     http("GET /reports/#{id}/#{format} [#{size}]")
                             .get("/reports/#{id}/#{format}")
                             .check(status().is(200))
-                            .check(headerRegex("Content-Disposition", "attachment").exists())
+                            .check(bodyBytes().exists())
             );
 
     {

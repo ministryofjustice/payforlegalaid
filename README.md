@@ -180,6 +180,25 @@ test/resources folder.
 
 Acceptance tests are located [here](https://github.com/ministryofjustice/payforlegalaid-tests).
 
+### Performance Tests
+
+Performance tests have been set up in payforlegalaid using Gatling to things like retrieving the list of reports, downloading
+the reports and also concurrency.
+
+src/test/java/uk.gov.laa.gpfd/simulations
+
+The base URL that the tests use is set within gatling.properties within /resources. Set to UAT env by default.
+To run the tests, first log in manually into desired environment, then export session cookie `JSESSIONID`:
+
+`export JSESSIONID=<cookie>`
+
+and then run:
+
+`mvn gatling:test -Dgatling.simulationClass=uk.gov.laa.gpfd.simulations.<test-name> -Dmaven.antrun.skip=true -Dmaven.resources.skip=true`
+
+Replace <test-name> with the choice of test. Reports are generated automatically by Gatling and can be accessed at the end of a
+test run within the terminal
+
 ## CI/CD
 
 GitHub Actions is used for CI/CD.
