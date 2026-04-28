@@ -1,11 +1,17 @@
 package uk.gov.laa.gpfd.simulations;
 
-import io.gatling.javaapi.core.*;
-import io.gatling.javaapi.http.*;
 import java.time.Duration;
 
-import static io.gatling.javaapi.core.CoreDsl.*;
-import static io.gatling.javaapi.http.HttpDsl.*;
+import static io.gatling.javaapi.core.CoreDsl.csv;
+import static io.gatling.javaapi.core.CoreDsl.jsonPath;
+import static io.gatling.javaapi.core.CoreDsl.rampUsers;
+import static io.gatling.javaapi.core.CoreDsl.scenario;
+import io.gatling.javaapi.core.FeederBuilder;
+import io.gatling.javaapi.core.ScenarioBuilder;
+import io.gatling.javaapi.core.Simulation;
+import static io.gatling.javaapi.http.HttpDsl.http;
+import static io.gatling.javaapi.http.HttpDsl.status;
+import io.gatling.javaapi.http.HttpProtocolBuilder;
 
 public class ReportListSimulation extends Simulation {
     String sessionCookie = System.getenv("JSESSIONID");
@@ -15,26 +21,27 @@ public class ReportListSimulation extends Simulation {
             .header("Cookie", "JSESSIONID=" + sessionCookie)
             .acceptHeader("application/json");
 
+    FeederBuilder<String> feeder = csv("report-ids.csv").circular();
+
     ScenarioBuilder scn = scenario("Report Listing")
             .exec(
                     http("GET /reports")
                             .get("/reports")
                             .check(status().is(200))
                             .check(jsonPath("$.reportList").exists())
-                            .check(bodyString().saveAs("responseBody"))
             )
-            .exec(session -> session)
             .pause(1)
+            .feed(feeder)
             .exec(
-                    http("GET /reports/{id}")
-                            .get("/reports/f46b4d3d-c100-429a-bf9a-6c3305dbdbfa")
+                    http("GET /reports/#{id}")
+                            .get("/reports/#{id}")
                             .check(status().is(200))
             );
 
     {
         setUp(
                 scn.injectOpen(
-                        rampUsers(5).during(Duration.ofSeconds(30))  // Reduce to 5 users for debugging
+                        rampUsers(5).during(Duration.ofSeconds(30))
                 )
         ).protocols(httpProtocol);
     }
