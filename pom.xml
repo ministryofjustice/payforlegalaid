@@ -17,19 +17,19 @@
         <java.version>25</java.version>
         <oracle-jdbc.version>23.26.1.0.0</oracle-jdbc.version>
         <h2.version>2.4.240</h2.version>
-
+        <spring-security.version>7.0.5</spring-security.version>
         <springdoc-oas.version>3.0.3</springdoc-oas.version>
 
         <!-- Downgraded due to a known issue: https://github.com/fabriciorby/maven-surefire-junit5-tree-reporter  (until the 2.0.x release becomes available) -->
         <maven-surefire-junit5-tree-reporter.version>1.5.1</maven-surefire-junit5-tree-reporter.version>
         <poi.version>5.5.1</poi.version>
         <immutables.version>2.12.1</immutables.version>
-        <spring-cloud-azure-dependencies.version>7.1.0</spring-cloud-azure-dependencies.version>
+        <spring-cloud-azure-dependencies.version>7.2.0</spring-cloud-azure-dependencies.version>
         <govuk-frontend.version>6.1.0</govuk-frontend.version>
         <moj-frontend.version>6.0.0</moj-frontend.version>
 
         <payforlegalaid-openapi.version>0.0.32</payforlegalaid-openapi.version>
-        <aws.java.sdk.version>2.42.35</aws.java.sdk.version>
+        <aws.java.sdk.version>2.42.37</aws.java.sdk.version>
         <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
         <maven-dependency-plugin.version>3.10.0</maven-dependency-plugin.version>
         <maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>

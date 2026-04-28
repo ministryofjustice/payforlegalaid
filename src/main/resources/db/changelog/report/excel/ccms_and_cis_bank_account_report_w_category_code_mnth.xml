@@ -306,14 +306,14 @@
             <column name="GINGER_SNAP_DECISION" type="VARCHAR2(255)"/>
             <column name="UNSAVIORY_SQL" type="VARCHAR2(255)"/>
             <column name="WOK_THE_LINE" type="VARCHAR2(255)"/>
-            <column name="NOODLE_INCIDENT" type="NUMBER(255)"/>
+            <column name="NOODLE_INCIDENT" type="NUMBER(38)"/>
             <column name="SOY_VEY" type="VARCHAR2(255)"/>
-            <column name="STIR_FRY_OR_DIE" type="NUMBER(255)"/>
-            <column name="WOK_AND_ROLL" type="NUMBER(255)"/>
-            <column name="FRIED_RICE_PARADOX" type="NUMBER(255)"/>
-            <column name="MSG_ME_LATER" type="NUMBER(255)"/>
-            <column name="KUNG_PAO_CONFUSION" type="NUMBER(255)"/>
-            <column name="WOK_A_MOLE" type="NUMBER(255)"/>
+            <column name="STIR_FRY_OR_DIE" type="NUMBER(38)"/>
+            <column name="WOK_AND_ROLL" type="NUMBER(38)"/>
+            <column name="FRIED_RICE_PARADOX" type="NUMBER(38)"/>
+            <column name="MSG_ME_LATER" type="NUMBER(38)"/>
+            <column name="KUNG_PAO_CONFUSION" type="NUMBER(38)"/>
+            <column name="WOK_A_MOLE" type="NUMBER(38)"/>
         </createTable>
         <insert tableName="WOK_THIS_WAY" schemaName="ANY_REPORT">
             <column name="CHOPSTICK_CHAOS" value="WOODEN_PAIR_1"/>

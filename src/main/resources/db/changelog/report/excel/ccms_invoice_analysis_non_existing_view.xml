@@ -11,7 +11,7 @@
             <column name="ID" value="abbec75b-2d72-44f5-a0e3-2dcb29d92f79"/>
             <column name="NAME" value="acceptance_test_table"/>
             <column name="TEMPLATE_SECURE_DOCUMENT_ID" value="00000000-0000-0000-0000-000000000000"/>
-            <column name="REPORT_CREATION_DATE" value="2025-02-15 00:00:00"/>
+            <column name="REPORT_CREATION_DATE" valueDate="2025-02-15"/>
             <column name="DESCRIPTION" value="acceptance_test_table"/>
             <column name="NUM_DAYS_TO_KEEP" value="30"/>
             <column name="FILE_NAME" value="acceptance_test_table"/>
