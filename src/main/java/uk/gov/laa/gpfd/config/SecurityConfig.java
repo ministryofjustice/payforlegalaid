@@ -8,6 +8,7 @@ import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.HttpSecuritySessionManagementConfigurerBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
@@ -24,6 +25,7 @@ import static com.azure.spring.cloud.autoconfigure.implementation.aad.security.A
  * to manage specific security aspects.
  * </p>
  */
+@SuppressWarnings("java:S4502") // CSRF disabled only for CSP report POST endpoint
 @Configuration
 @RequiredArgsConstructor
 @ConditionalOnProperty(name = "spring.cloud.azure.active-directory.enabled", havingValue = "true")
@@ -51,6 +53,10 @@ public class SecurityConfig {
         var authorizeHttpRequestsBuilder = new AuthorizeHttpRequestsBuilder(authManager);
         var sessionManagementConfigurerBuilder = new SessionManagementConfigurerBuilder(concurrencyControlConfigurerCustomizer);
         return httpSecurity
+                // Allow csp-report to ignore CSRF or else POST requests will be blocked
+                .csrf(csrf -> csrf.ignoringRequestMatchers(
+                        PathPatternRequestMatcher.withDefaults().matcher("/csp-report")
+                ))
                 .with(aadWebApplication())
                 .authorizeHttpRequests(authorizeHttpRequestsBuilder)    // Apply authorization rules
                 .sessionManagement(sessionManagementConfigurerBuilder)  // Apply session management configuration
@@ -67,7 +73,8 @@ public class SecurityConfig {
                                         "img-src 'self' data:; " +
                                         "font-src 'self'; " +
                                         "connect-src 'self'; " +
-                                        "upgrade-insecure-requests"
+                                        "upgrade-insecure-requests; " +
+                                        "report-uri /csp-report"
                                 )
                         )
                 )

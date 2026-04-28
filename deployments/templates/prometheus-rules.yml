@@ -153,3 +153,11 @@ spec:
         for: 1m
         labels:
           severity: info
+      - alert: CSPViolationDetected
+        annotations:
+          message: "CSP violations detected."
+          dashboard_url: "https://grafana.live.cloud-platform.service.justice.gov.uk/d/laa-gpfd-${ENV_NAME}"
+        expr: increase(csp_violations_total{namespace="${NAMESPACE}"}[5m]) > 0
+        for: 5m
+        labels:
+          severity: ${ALERT_SEVERITY}
