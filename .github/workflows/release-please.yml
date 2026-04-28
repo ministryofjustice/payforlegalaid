@@ -1,0 +1,31 @@
+name: Release Please
+
+on:
+  push:
+    branches:
+      - main
+      - tooling/lpf1343-releaseplease-test
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          target-branch: ${{ github.ref_name }}
+          config-file: release-please-config.json
+          skip-github-release: ${{ github.ref_name != 'main' }}
+
+      - name: Summarise release-please result
+        run: |
+          echo "target_branch=${{ github.ref_name }}"
+          echo "skip_github_release=${{ github.ref_name != 'main' }}"
+          echo "prs_created=${{ steps.release.outputs.prs_created }}"
+          echo "releases_created=${{ steps.release.outputs.releases_created }}"
