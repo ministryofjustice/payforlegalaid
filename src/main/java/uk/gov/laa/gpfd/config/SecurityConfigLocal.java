@@ -49,7 +49,10 @@ public class SecurityConfigLocal {
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 // Allow h2-console to ignore CSRF or it won't load
-                .csrf(csrf -> csrf.ignoringRequestMatchers(PathPatternRequestMatcher.withDefaults().matcher("/h2-console/**")))
+                .csrf(csrf -> csrf.ignoringRequestMatchers(
+                        PathPatternRequestMatcher.withDefaults().matcher("/h2-console/**"),
+                        PathPatternRequestMatcher.withDefaults().matcher("/csp-report")
+                ))
                 // Allow h2-console to display in web-frames
                 .headers(headers -> headers
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
@@ -65,7 +68,8 @@ public class SecurityConfigLocal {
                                         "img-src 'self' data:; " +
                                         "font-src 'self'; " +
                                         "connect-src 'self'; " +
-                                        "upgrade-insecure-requests"
+                                        "upgrade-insecure-requests; " +
+                                        "report-uri /csp-report"
                                 )
                                         .reportOnly() // Included in local config for debugging purposes
                                 )
