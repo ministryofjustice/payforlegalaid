@@ -1,6 +1,7 @@
 package uk.gov.laa.gpfd.config.builders;
 
 import lombok.SneakyThrows;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -71,6 +72,7 @@ public class AuthorizeHttpRequestsBuilder
                 .requestMatchers(API_DOCS_ROOT, SWAGGER_UI, SWAGGER_FILE).permitAll()  // Allow unrestricted access to API docs and Swagger UI
                 .requestMatchers(ACTUATOR_ENDPOINT, HEALTH_ENDPOINT).permitAll()         // Allow unrestricted access to actuator and health endpoints
                 .requestMatchers("/login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/csp-report").permitAll()
                 .anyRequest().access(authManager);  // Require authentication for all other requests
     }
 

@@ -36,7 +36,7 @@ data:
       "editable": true,
       "fiscalYearStartMonth": 0,
       "graphTooltip": 0,
-      "id": 187,
+      "id": 159,
       "links": [],
       "panels": [
         {
@@ -127,11 +127,12 @@ data:
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "single",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0",
+          "pluginVersion": "11.5.6+security-01",
           "targets": [
             {
               "disableTextWrap": false,
@@ -223,11 +224,12 @@ data:
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "single",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0",
+          "pluginVersion": "11.5.6+security-01",
           "targets": [
             {
               "datasource": {
@@ -319,11 +321,12 @@ data:
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "single",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0",
+          "pluginVersion": "11.5.6+security-01",
           "targets": [
             {
               "datasource": {
@@ -428,11 +431,12 @@ data:
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "single",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0",
+          "pluginVersion": "11.5.6+security-01",
           "targets": [
             {
               "disableTextWrap": false,
@@ -524,11 +528,12 @@ data:
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "single",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0",
+          "pluginVersion": "11.5.6+security-01",
           "targets": [
             {
               "disableTextWrap": false,
@@ -623,7 +628,7 @@ data:
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 21
+            "y": 22
           },
           "id": 42,
           "options": {
@@ -634,11 +639,12 @@ data:
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "single",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0",
+          "pluginVersion": "11.5.6+security-01",
           "targets": [
             {
               "datasource": {
@@ -720,7 +726,7 @@ data:
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 21
+            "y": 22
           },
           "id": 44,
           "options": {
@@ -731,11 +737,12 @@ data:
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "single",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0",
+          "pluginVersion": "11.5.6+security-01",
           "targets": [
             {
               "datasource": {
@@ -758,7 +765,7 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 31
+            "y": 32
           },
           "id": 62,
           "panels": [],
@@ -796,7 +803,7 @@ data:
             "h": 10,
             "w": 2,
             "x": 0,
-            "y": 32
+            "y": 33
           },
           "id": 2,
           "options": {
@@ -814,7 +821,7 @@ data:
             "showThresholdMarkers": true,
             "sizing": "auto"
           },
-          "pluginVersion": "11.3.0",
+          "pluginVersion": "11.5.6+security-01",
           "targets": [
             {
               "datasource": {
@@ -931,7 +938,7 @@ data:
             "h": 10,
             "w": 8,
             "x": 2,
-            "y": 32
+            "y": 33
           },
           "id": 55,
           "options": {
@@ -942,11 +949,12 @@ data:
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "single",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0",
+          "pluginVersion": "11.5.6+security-01",
           "targets": [
             {
               "disableTextWrap": false,
@@ -1045,7 +1053,7 @@ data:
             "h": 10,
             "w": 7,
             "x": 10,
-            "y": 32
+            "y": 33
           },
           "id": 56,
           "options": {
@@ -1056,11 +1064,12 @@ data:
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "single",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0",
+          "pluginVersion": "11.5.6+security-01",
           "targets": [
             {
               "disableTextWrap": false,
@@ -1169,7 +1178,7 @@ data:
             "h": 10,
             "w": 7,
             "x": 17,
-            "y": 32
+            "y": 33
           },
           "id": 54,
           "options": {
@@ -1180,11 +1189,12 @@ data:
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "single",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0",
+          "pluginVersion": "11.5.6+security-01",
           "targets": [
             {
               "disableTextWrap": false,
@@ -1207,7 +1217,7 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 42
+            "y": 43
           },
           "id": 53,
           "panels": [],
@@ -1279,7 +1289,7 @@ data:
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 43
+            "y": 44
           },
           "id": 51,
           "options": {
@@ -1290,11 +1300,12 @@ data:
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "single",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0",
+          "pluginVersion": "11.5.6+security-01",
           "targets": [
             {
               "disableTextWrap": false,
@@ -1376,7 +1387,7 @@ data:
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 43
+            "y": 44
           },
           "id": 52,
           "options": {
@@ -1387,11 +1398,12 @@ data:
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "single",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0",
+          "pluginVersion": "11.5.6+security-01",
           "targets": [
             {
               "disableTextWrap": false,
@@ -1472,7 +1484,7 @@ data:
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 43
+            "y": 44
           },
           "id": 50,
           "options": {
@@ -1483,11 +1495,12 @@ data:
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "single",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0",
+          "pluginVersion": "11.5.6+security-01",
           "targets": [
             {
               "disableTextWrap": false,
@@ -1544,7 +1557,7 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 52
+            "y": 53
           },
           "id": 47,
           "panels": [],
@@ -1609,13 +1622,14 @@ data:
                 ]
               },
               "unit": "percent"
-            }
+            },
+            "overrides": []
           },
           "gridPos": {
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 53
+            "y": 54
           },
           "id": 60,
           "options": {
@@ -1626,11 +1640,12 @@ data:
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "single",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0",
+          "pluginVersion": "11.5.6+security-01",
           "targets": [
             {
               "disableTextWrap": false,
@@ -1712,7 +1727,7 @@ data:
             "h": 9,
             "w": 12,
             "x": 12,
-            "y": 53
+            "y": 54
           },
           "id": 49,
           "options": {
@@ -1723,11 +1738,12 @@ data:
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "single",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0",
+          "pluginVersion": "11.5.6+security-01",
           "targets": [
             {
               "datasource": {
@@ -1815,7 +1831,7 @@ data:
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 62
+            "y": 63
           },
           "id": 48,
           "options": {
@@ -1826,11 +1842,12 @@ data:
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "single",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0",
+          "pluginVersion": "11.5.6+security-01",
           "targets": [
             {
               "disableTextWrap": false,
@@ -1912,7 +1929,7 @@ data:
             "h": 9,
             "w": 12,
             "x": 12,
-            "y": 62
+            "y": 63
           },
           "id": 59,
           "options": {
@@ -1923,11 +1940,12 @@ data:
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "single",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0",
+          "pluginVersion": "11.5.6+security-01",
           "targets": [
             {
               "disableTextWrap": false,
@@ -1967,7 +1985,7 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 71
+            "y": 72
           },
           "id": 36,
           "panels": [],
@@ -2001,7 +2019,7 @@ data:
             "h": 10,
             "w": 2,
             "x": 0,
-            "y": 72
+            "y": 73
           },
           "id": 16,
           "options": {
@@ -2020,7 +2038,7 @@ data:
             "sizing": "auto",
             "text": {}
           },
-          "pluginVersion": "11.3.0",
+          "pluginVersion": "11.5.6+security-01",
           "targets": [
             {
               "datasource": {
@@ -2101,7 +2119,7 @@ data:
             "h": 10,
             "w": 6,
             "x": 2,
-            "y": 72
+            "y": 73
           },
           "id": 10,
           "options": {
@@ -2112,11 +2130,12 @@ data:
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "single",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0",
+          "pluginVersion": "11.5.6+security-01",
           "targets": [
             {
               "datasource": {
@@ -2160,7 +2179,7 @@ data:
             "h": 10,
             "w": 2,
             "x": 8,
-            "y": 72
+            "y": 73
           },
           "id": 18,
           "options": {
@@ -2178,7 +2197,7 @@ data:
             "showThresholdMarkers": true,
             "sizing": "auto"
           },
-          "pluginVersion": "11.3.0",
+          "pluginVersion": "11.5.6+security-01",
           "targets": [
             {
               "datasource": {
@@ -2259,7 +2278,7 @@ data:
             "h": 10,
             "w": 6,
             "x": 10,
-            "y": 72
+            "y": 73
           },
           "id": 8,
           "options": {
@@ -2270,11 +2289,12 @@ data:
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "single",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0",
+          "pluginVersion": "11.5.6+security-01",
           "targets": [
             {
               "datasource": {
@@ -2318,7 +2338,7 @@ data:
             "h": 10,
             "w": 2,
             "x": 16,
-            "y": 72
+            "y": 73
           },
           "id": 14,
           "options": {
@@ -2336,7 +2356,7 @@ data:
             "showThresholdMarkers": true,
             "sizing": "auto"
           },
-          "pluginVersion": "11.3.0",
+          "pluginVersion": "11.5.6+security-01",
           "targets": [
             {
               "datasource": {
@@ -2417,7 +2437,7 @@ data:
             "h": 10,
             "w": 6,
             "x": 18,
-            "y": 72
+            "y": 73
           },
           "id": 12,
           "options": {
@@ -2428,11 +2448,12 @@ data:
               "showLegend": true
             },
             "tooltip": {
+              "hideZeros": false,
               "mode": "single",
               "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0",
+          "pluginVersion": "11.5.6+security-01",
           "targets": [
             {
               "datasource": {
@@ -2447,6 +2468,115 @@ data:
             }
           ],
           "title": "Used Tenured Gen (MB)",
+          "type": "timeseries"
+        },
+        {
+          "collapsed": false,
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 82
+          },
+          "id": 66,
+          "panels": [],
+          "title": "Security",
+          "type": "row"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "smooth",
+                "lineStyle": {
+                  "fill": "solid"
+                },
+                "lineWidth": 2,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 83
+          },
+          "id": 67,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "11.5.6+security-01",
+          "targets": [
+            {
+              "editorMode": "code",
+              "expr": "sum(rate(csp_violations_total{namespace='${NAMESPACE}'}[1m]))",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Content Security Policy Violations",
           "type": "timeseries"
         }
       ],
@@ -2484,6 +2614,6 @@ data:
       "timezone": "browser",
       "title": "LAA GPFD Get Payment & Finance Data ${ENV_NAME} dashboard",
       "uid": "laa-gpfd-${ENV_NAME}",
-      "version": 6,
+      "version": 22,
       "weekStart": ""
     }
