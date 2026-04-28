@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>uk.gov.laa</groupId>
     <artifactId>pay-for-legal-aid</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -175,18 +174,13 @@
                         <configuration>
                             <target>
                                 <!-- Download ZIP from GitHub -->
-                                <get src="https://github.com/ministryofjustice/moj-frontend/releases/download/v${moj-frontend.version}/release-v${moj-frontend.version}.zip"
-                                     dest="${project.build.directory}/moj-frontend.zip"
-                                     verbose="true"/>
+                                <get src="https://github.com/ministryofjustice/moj-frontend/releases/download/v${moj-frontend.version}/release-v${moj-frontend.version}.zip" dest="${project.build.directory}/moj-frontend.zip" verbose="true"/>
                                 <!-- Delete old moj folder -->
                                 <delete dir="${project.basedir}/src/main/resources/static/moj"/>
                                 <!-- Unzip -->
-                                <unzip src="${project.build.directory}/moj-frontend.zip"
-                                       dest="${project.basedir}/src/main/resources/static/moj"/>
+                                <unzip src="${project.build.directory}/moj-frontend.zip" dest="${project.basedir}/src/main/resources/static/moj"/>
                                 <!-- Copy CSS -->
-                                <copy file="${project.basedir}/src/main/resources/static/moj/moj-frontend-${moj-frontend.version}.min.css"
-                                      tofile="${project.basedir}/src/main/resources/static/moj/css/moj.css"
-                                      overwrite="true"/>
+                                <copy file="${project.basedir}/src/main/resources/static/moj/moj-frontend-${moj-frontend.version}.min.css" tofile="${project.basedir}/src/main/resources/static/moj/css/moj.css" overwrite="true"/>
                             </target>
                         </configuration>
                         <goals><goal>run</goal></goals>
