@@ -8,7 +8,6 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.streaming.SheetDataWriter;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
-import sun.misc.Unsafe;
 import uk.gov.laa.gpfd.model.ReportQuery;
 
 import java.io.Closeable;
@@ -47,22 +46,15 @@ import java.lang.reflect.Field;
  * for most data-oriented Excel files.</p>
  */
 public final class ReportSheetDataWriter extends SheetDataWriter implements Closeable {
-    /**
-     * Unsafe instance for low-level memory operations.
-     */
-    private static final Unsafe UNSAFE = getUnsafe();
 
-    /**
-     * Memory offset for the row number field.
-     */
-    private static final long ROWNUM_OFFSET;
+    private static final Field ROWNUM_FIELD;
 
     static {
         try {
-            ROWNUM_OFFSET = UNSAFE.objectFieldOffset(SheetDataWriter.class.getDeclaredField("_rownum"));
-
-        } catch (Exception e) {
-            throw new Error("Failed to initialize", e);
+            ROWNUM_FIELD = SheetDataWriter.class.getDeclaredField("_rownum");
+            ROWNUM_FIELD.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw new ExceptionInInitializerError(e);
         }
     }
 
@@ -88,31 +80,18 @@ public final class ReportSheetDataWriter extends SheetDataWriter implements Clos
         this.styleManager = styleManager;
     }
 
-    /**
-     * Gets the Unsafe
-     *
-     * @return the Unsafe instance
-     * @throws Error if Unsafe is not available
-     */
-    private static Unsafe getUnsafe() {
+    private int getRowNum() {
         try {
-            Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
-            theUnsafe.setAccessible(true);
-            return (Unsafe) theUnsafe.get(null);
-        } catch (Exception e) {
-            throw new Error("Unsafe not available", e);
+            return (int) ROWNUM_FIELD.get(this);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException("Failed to read _rownum field", e);
         }
     }
 
     /**
      * Writes a cell to the output stream with optimized formatting.
      *
-     * <p><strong>Performance Note:</strong> This method employs {@code sun.misc.Unsafe} for low-level memory
-     * access to achieve optimal performance in high-volume spreadsheet generation scenarios. The operation:
-     * <pre>
-     *   int rownum = UNSAFE.getInt(this, ROWNUM_OFFSET);
-     * </pre>
-     *
+
      * <p>This approach provides several performance advantages:
      * <ul>
      *   <li><strong>Reduced Overhead:</strong> Eliminates method call overhead that would be incurred by
@@ -131,7 +110,7 @@ public final class ReportSheetDataWriter extends SheetDataWriter implements Clos
         if (cell == null) {
             return;
         }
-        int rownum = UNSAFE.getInt(this, ROWNUM_OFFSET);
+        int rownum = getRowNum();
         String ref = new CellReference(rownum, columnIndex).formatAsString();
         _out.write("<c");
         writeXml("r", ref);
@@ -148,25 +127,17 @@ public final class ReportSheetDataWriter extends SheetDataWriter implements Clos
                 break;
             }
             case FORMULA: {
-                switch(cell.getCachedFormulaResultType()) {
-                    case NUMERIC:
-                        writeXml("t", "n");
-                        break;
-                    case STRING:
-                        writeXml("t", STCellType.STR.toString());
-                        break;
-                    case BOOLEAN:
-                        writeXml("t", "b");
-                        break;
-                    case ERROR:
-                        writeXml("t", "e");
-                        break;
+                switch (cell.getCachedFormulaResultType()) {
+                    case NUMERIC: writeXml("t", "n"); break;
+                    case STRING:  writeXml("t", STCellType.STR.toString()); break;
+                    case BOOLEAN: writeXml("t", "b"); break;
+                    case ERROR:   writeXml("t", "e"); break;
                 }
                 _out.write("><f>");
                 outputEscapedString(cell.getCellFormula());
                 _out.write("</f>");
                 switch (cell.getCachedFormulaResultType()) {
-                    case NUMERIC:
+                    case NUMERIC: {
                         double nval = cell.getNumericCellValue();
                         if (!Double.isNaN(nval)) {
                             _out.write("<v>");
@@ -174,22 +145,24 @@ public final class ReportSheetDataWriter extends SheetDataWriter implements Clos
                             _out.write("</v>");
                         }
                         break;
-                    case STRING:
+                    }
+                    case STRING: {
                         String value = cell.getStringCellValue();
-                        if(value != null && !value.isEmpty()) {
+                        if (value != null && !value.isEmpty()) {
                             _out.write("<v>");
                             outputEscapedString(value);
                             _out.write("</v>");
                         }
                         break;
-                    case BOOLEAN:
+                    }
+                    case BOOLEAN: {
                         _out.write("><v>");
                         _out.write(cell.getBooleanCellValue() ? "1" : "0");
                         _out.write("</v>");
                         break;
+                    }
                     case ERROR: {
                         FormulaError error = FormulaError.forInt(cell.getErrorCellValue());
-
                         _out.write("><v>");
                         outputEscapedString(error.getString());
                         _out.write("</v>");
@@ -242,9 +215,8 @@ public final class ReportSheetDataWriter extends SheetDataWriter implements Clos
                 _out.write("</v>");
                 break;
             }
-            default: {
+            default:
                 throw new IllegalStateException("Invalid cell type: " + cellType);
-            }
         }
         _out.write("</c>");
     }
