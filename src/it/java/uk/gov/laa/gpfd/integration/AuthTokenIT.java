@@ -43,7 +43,7 @@ final class AuthTokenIT extends BaseIT {
     @ParameterizedTest(name = "[{index}] {0} should redirect when unauthenticated")
     @MethodSource("securedReportEndpoints")
     @SneakyThrows
-    void unauthenticatedAccess_shouldRedirectToLogin(String description, String endpoint) {
+    void unauthenticatedAccess_shouldRedirectToLogin(String endpoint) {
         performGetRequest(endpoint)
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrlPattern("/oauth2/authorization/azure*"));
