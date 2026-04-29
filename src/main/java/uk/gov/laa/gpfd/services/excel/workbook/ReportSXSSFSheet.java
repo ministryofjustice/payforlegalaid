@@ -22,26 +22,35 @@ import java.util.TreeMap;
  */
 public class ReportSXSSFSheet extends SXSSFSheet implements Sheet, OoxmlSheetExtensions {
 
+    /**
+     * Cached reflection field for the rows TreeMap field.
+     */
     private static final Field ROWS_FIELD;
+
+    /**
+     * Cached reflection field for the allFlushed boolean field.
+     */
     private static final Field ALL_FLUSHED_FIELD;
+
+    /**
+     * Cached reflection field for the lastFlushedRowNumber field.
+     */
     private static final Field LAST_FLUSHED_ROW_FIELD;
+
+    private final ExcelSheet excelSheet;
 
     static {
         try {
             ROWS_FIELD = SXSSFSheet.class.getDeclaredField("_rows");
             ROWS_FIELD.setAccessible(true);
-
             ALL_FLUSHED_FIELD = SXSSFSheet.class.getDeclaredField("allFlushed");
             ALL_FLUSHED_FIELD.setAccessible(true);
-
             LAST_FLUSHED_ROW_FIELD = SXSSFSheet.class.getDeclaredField("lastFlushedRowNumber");
             LAST_FLUSHED_ROW_FIELD.setAccessible(true);
         } catch (NoSuchFieldException e) {
             throw new ExceptionInInitializerError(e);
         }
     }
-
-    private final ExcelSheet excelSheet;
 
     /**
      * Creates a new ReportSXSSFSheet backed by the specified XSSFSheet.
@@ -55,11 +64,21 @@ public class ReportSXSSFSheet extends SXSSFSheet implements Sheet, OoxmlSheetExt
         this.excelSheet = excelSheet;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SXSSFRow createRow(int rownum) {
         return super.createRow(rownum);
     }
 
+    /**
+     * Flushes rows from memory until only the specified number of rows remain.
+     * If remaining is 0, marks all rows as flushed.
+     *
+     * @param remaining the number of rows to keep in memory
+     * @throws IOException if an error occurs while writing rows
+     */
     @Override
     public void flushRows(int remaining) throws IOException {
         var rows = getRows();
@@ -67,12 +86,16 @@ public class ReportSXSSFSheet extends SXSSFSheet implements Sheet, OoxmlSheetExt
             flushOneRow(rows);
         }
         if (remaining == 0) {
-            setAllFlushed(true);
+            try {
+                ALL_FLUSHED_FIELD.set(this, true);
+            } catch (IllegalAccessException e) {
+                throw new IllegalStateException("Failed to set allFlushed field", e);
+            }
         }
     }
 
     /**
-     * Gets the current rows map using direct memory access.
+     * Gets the current rows map using reflection.
      *
      * @return TreeMap containing the current rows
      */
@@ -82,22 +105,6 @@ public class ReportSXSSFSheet extends SXSSFSheet implements Sheet, OoxmlSheetExt
             return (TreeMap<Integer, SXSSFRow>) ROWS_FIELD.get(this);
         } catch (IllegalAccessException e) {
             throw new IllegalStateException("Failed to read _rows field", e);
-        }
-    }
-
-    private void setAllFlushed(boolean value) {
-        try {
-            ALL_FLUSHED_FIELD.set(this, value);
-        } catch (IllegalAccessException e) {
-            throw new IllegalStateException("Failed to set allFlushed field", e);
-        }
-    }
-
-    private void setLastFlushedRowNumber(int rowNum) {
-        try {
-            LAST_FLUSHED_ROW_FIELD.set(this, rowNum);
-        } catch (IllegalAccessException e) {
-            throw new IllegalStateException("Failed to set lastFlushedRowNumber field", e);
         }
     }
 
@@ -115,6 +122,10 @@ public class ReportSXSSFSheet extends SXSSFSheet implements Sheet, OoxmlSheetExt
 
         _writer.writeRow(firstRowNum, row);
         rows.remove(firstRowNum);
-        setLastFlushedRowNumber(firstRowNum);
+        try {
+            LAST_FLUSHED_ROW_FIELD.set(this, firstRowNum);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException("Failed to set lastFlushedRowNumber field", e);
+        }
     }
 }

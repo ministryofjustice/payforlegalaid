@@ -47,6 +47,9 @@ import java.lang.reflect.Field;
  */
 public final class ReportSheetDataWriter extends SheetDataWriter implements Closeable {
 
+    /**
+     * Cached reflection field for the row number field.
+     */
     private static final Field ROWNUM_FIELD;
 
     static {
@@ -80,26 +83,12 @@ public final class ReportSheetDataWriter extends SheetDataWriter implements Clos
         this.styleManager = styleManager;
     }
 
-    private int getRowNum() {
-        try {
-            return (int) ROWNUM_FIELD.get(this);
-        } catch (IllegalAccessException e) {
-            throw new IllegalStateException("Failed to read _rownum field", e);
-        }
-    }
-
     /**
      * Writes a cell to the output stream with optimized formatting.
      *
-
-     * <p>This approach provides several performance advantages:
-     * <ul>
-     *   <li><strong>Reduced Overhead:</strong> Eliminates method call overhead that would be incurred by
-     *       traditional getter methods, which is significant when processing millions of cells.</li>
-     *
-     *   <li><strong>Memory Efficiency:</strong> Avoids creating temporary objects or boxed primitives that
-     *       trigger garbage collection pressure during large file generation.</li>
-     * </ul>
+     * <p><strong>Performance Note:</strong> This method employs reflection to read the private
+     * {@code _rownum} field from the parent {@link SheetDataWriter} to achieve optimal performance
+     * in high-volume spreadsheet generation scenarios.</p>
      *
      * @param columnIndex the column index (0-based)
      * @param cell        the cell to write
@@ -110,7 +99,12 @@ public final class ReportSheetDataWriter extends SheetDataWriter implements Clos
         if (cell == null) {
             return;
         }
-        int rownum = getRowNum();
+        int rownum;
+        try {
+            rownum = (int) ROWNUM_FIELD.get(this);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException("Failed to read _rownum field", e);
+        }
         String ref = new CellReference(rownum, columnIndex).formatAsString();
         _out.write("<c");
         writeXml("r", ref);
@@ -127,17 +121,25 @@ public final class ReportSheetDataWriter extends SheetDataWriter implements Clos
                 break;
             }
             case FORMULA: {
-                switch (cell.getCachedFormulaResultType()) {
-                    case NUMERIC: writeXml("t", "n"); break;
-                    case STRING:  writeXml("t", STCellType.STR.toString()); break;
-                    case BOOLEAN: writeXml("t", "b"); break;
-                    case ERROR:   writeXml("t", "e"); break;
+                switch(cell.getCachedFormulaResultType()) {
+                    case NUMERIC:
+                        writeXml("t", "n");
+                        break;
+                    case STRING:
+                        writeXml("t", STCellType.STR.toString());
+                        break;
+                    case BOOLEAN:
+                        writeXml("t", "b");
+                        break;
+                    case ERROR:
+                        writeXml("t", "e");
+                        break;
                 }
                 _out.write("><f>");
                 outputEscapedString(cell.getCellFormula());
                 _out.write("</f>");
                 switch (cell.getCachedFormulaResultType()) {
-                    case NUMERIC: {
+                    case NUMERIC:
                         double nval = cell.getNumericCellValue();
                         if (!Double.isNaN(nval)) {
                             _out.write("<v>");
@@ -145,22 +147,19 @@ public final class ReportSheetDataWriter extends SheetDataWriter implements Clos
                             _out.write("</v>");
                         }
                         break;
-                    }
-                    case STRING: {
+                    case STRING:
                         String value = cell.getStringCellValue();
-                        if (value != null && !value.isEmpty()) {
+                        if(value != null && !value.isEmpty()) {
                             _out.write("<v>");
                             outputEscapedString(value);
                             _out.write("</v>");
                         }
                         break;
-                    }
-                    case BOOLEAN: {
+                    case BOOLEAN:
                         _out.write("><v>");
                         _out.write(cell.getBooleanCellValue() ? "1" : "0");
                         _out.write("</v>");
                         break;
-                    }
                     case ERROR: {
                         FormulaError error = FormulaError.forInt(cell.getErrorCellValue());
                         _out.write("><v>");
@@ -215,8 +214,9 @@ public final class ReportSheetDataWriter extends SheetDataWriter implements Clos
                 _out.write("</v>");
                 break;
             }
-            default:
+            default: {
                 throw new IllegalStateException("Invalid cell type: " + cellType);
+            }
         }
         _out.write("</c>");
     }
@@ -241,6 +241,4 @@ public final class ReportSheetDataWriter extends SheetDataWriter implements Clos
         char last = str.charAt(str.length() - 1);
         return first <= ' ' || last <= ' ';
     }
-
-
 }

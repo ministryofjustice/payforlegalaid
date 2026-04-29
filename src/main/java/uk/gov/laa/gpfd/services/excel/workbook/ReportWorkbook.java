@@ -16,21 +16,20 @@ import java.util.Map;
  * A specialized streaming workbook implementation that extends {@link SXSSFWorkbook} with
  * additional functionality for report generation. This class provides optimized sheet creation
  * and maintains bidirectional mappings between streaming sheets (SXSSF) and their backing
- * XSSF sheets using low-level memory operations.
+ * XSSF sheets using low-level memory operations via {@link sun.misc.Unsafe}.
  */
 public class ReportWorkbook extends SXSSFWorkbook implements Workbook {
-
     private static final String SX_FROM_X_FIELD = "_sxFromXHash";
     private static final String X_FROM_SX_FIELD = "_xFromSxHash";
-
     private static final Field SX_FROM_X_FIELD_REF;
     private static final Field X_FROM_SX_FIELD_REF;
+    private final Report report;
+    private final StyleManager styleManager;
 
     static {
         try {
             SX_FROM_X_FIELD_REF = SXSSFWorkbook.class.getDeclaredField(SX_FROM_X_FIELD);
             SX_FROM_X_FIELD_REF.setAccessible(true);
-
             X_FROM_SX_FIELD_REF = SXSSFWorkbook.class.getDeclaredField(X_FROM_SX_FIELD);
             X_FROM_SX_FIELD_REF.setAccessible(true);
         } catch (NoSuchFieldException e) {
@@ -38,15 +37,18 @@ public class ReportWorkbook extends SXSSFWorkbook implements Workbook {
         }
     }
 
-    private final Report report;
-    private final StyleManager styleManager;
-    private ReportQuery reportQuery;
-
     public ReportWorkbook(Report report, StyleManager styleManager) {
         this.report = report;
         this.styleManager = styleManager;
     }
 
+    /**
+     * Creates a new sheet with the specified name and registers it in the internal mappings.
+     *
+     * @param sheetName the name of the sheet
+     * @return the newly created SXSSFSheet
+     * @throws IllegalStateException if sheet creation fails
+     */
     @Override
     public SXSSFSheet createSheet(String sheetName) {
         return createAndRegisterSheet(_wb.createSheet(sheetName));
@@ -63,6 +65,8 @@ public class ReportWorkbook extends SXSSFWorkbook implements Workbook {
         return createAndRegisterSheet(_wb.createSheet());
     }
 
+    ReportQuery reportQuery;
+
     /**
      * Creates and registers a new SXSSFSheet from the specified XSSFSheet.
      *
@@ -72,11 +76,7 @@ public class ReportWorkbook extends SXSSFWorkbook implements Workbook {
      */
     private SXSSFSheet createAndRegisterSheet(XSSFSheet xSheet) {
         try {
-            reportQuery = report.extractAllMappings().stream()
-                    .filter(e -> e.getExcelSheet().getName().equals(xSheet.getSheetName()))
-                    .findFirst()
-                    .orElse(null);
-
+            reportQuery = report.extractAllMappings().stream().filter(e -> e.getExcelSheet().getName().equals(xSheet.getSheetName())).findFirst().orElse(null);
             var sxSheet = new ReportSXSSFSheet(this, xSheet, null);
             registerMapping(sxSheet, xSheet);
             return sxSheet;
@@ -112,7 +112,7 @@ public class ReportWorkbook extends SXSSFWorkbook implements Workbook {
      *
      * @param <K>       the key type
      * @param <V>       the value type
-     * @param field the name of the field containing the mapping
+     * @param field     the field containing the mapping
      * @param key       the mapping key
      * @param value     the mapping value
      */
@@ -121,7 +121,6 @@ public class ReportWorkbook extends SXSSFWorkbook implements Workbook {
         try {
             var map = (Map<K, V>) field.get(this);
             map.put(key, value);
-            // No need to set back — we mutated the map in place
         } catch (IllegalAccessException e) {
             throw new IllegalStateException("Failed to update sheet mapping for field: " + field.getName(), e);
         }
