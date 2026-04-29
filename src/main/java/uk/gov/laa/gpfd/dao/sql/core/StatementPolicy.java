@@ -41,14 +41,19 @@ public class StatementPolicy {
             if (conn == null) {
                 throw new IllegalArgumentException("Connection cannot be null");
             }
+
             PreparedStatement ps = createStatement(conn, sql);
+            boolean success = false;
+
             try {
                 configure(ps);
-            } catch (SQLException e) {
-                ps.close();
-                throw e;
+                success = true;
+                return ps;
+            } finally {
+                if (!success) {
+                    ps.close();
+                }
             }
-            return ps;
         };
     }
 
