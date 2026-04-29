@@ -38,8 +38,16 @@ public class StatementPolicy {
         }
 
         return (Connection conn) -> {
+            if (conn == null) {
+                throw new IllegalArgumentException("Connection cannot be null");
+            }
             PreparedStatement ps = createStatement(conn, sql);
-            configure(ps);
+            try {
+                configure(ps);
+            } catch (SQLException e) {
+                ps.close();
+                throw e;
+            }
             return ps;
         };
     }
