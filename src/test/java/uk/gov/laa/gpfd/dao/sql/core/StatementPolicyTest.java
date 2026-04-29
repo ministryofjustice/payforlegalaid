@@ -17,12 +17,8 @@ import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class StatementPolicyTest {
@@ -42,63 +38,115 @@ class StatementPolicyTest {
     @SneakyThrows
     @Test
     void shouldBuildStatementCreatorWhichCanGenerateCorrectStatements() {
-        // Our requirements currently are that statements are Forward Only/Read Only with a timeout and fetch size set
         var statementPolicy = new StatementPolicy(1000, 30);
-        when(mockConnection.prepareStatement(any(), anyInt(), anyInt())).thenReturn(mockPreparedStatement);
 
-        var statementCreator = statementPolicy.createStatementCreator("SELECT * FROM test");
+        doReturn(mockPreparedStatement)
+                .when(mockConnection)
+                .prepareStatement(
+                        any(),
+                        ResultSet.TYPE_FORWARD_ONLY,
+                        ResultSet.CONCUR_READ_ONLY
+                );
+
+        var statementCreator =
+                statementPolicy.createStatementCreator("SELECT * FROM test");
+
         statementCreator.createPreparedStatement(mockConnection);
 
         verify(mockPreparedStatement).setQueryTimeout(30);
         verify(mockPreparedStatement).setFetchSize(1000);
+
         verify(mockConnection).prepareStatement(
                 "SELECT * FROM test",
                 ResultSet.TYPE_FORWARD_ONLY,
-                ResultSet.CONCUR_READ_ONLY);
-
+                ResultSet.CONCUR_READ_ONLY
+        );
     }
 
     @SneakyThrows
     @Test
     void shouldBuildStatementCreatorWithZeroValues() {
         var statementPolicy = new StatementPolicy(0, 0);
-        when(mockConnection.prepareStatement(any(), anyInt(), anyInt())).thenReturn(mockPreparedStatement);
 
-        var statementCreator = statementPolicy.createStatementCreator("SELECT * FROM test");
+        doReturn(mockPreparedStatement)
+                .when(mockConnection)
+                .prepareStatement(
+                        any(),
+                        ResultSet.TYPE_FORWARD_ONLY,
+                        ResultSet.CONCUR_READ_ONLY
+                );
+
+        var statementCreator =
+                statementPolicy.createStatementCreator("SELECT * FROM test");
+
         statementCreator.createPreparedStatement(mockConnection);
 
         verify(mockPreparedStatement).setQueryTimeout(0);
         verify(mockPreparedStatement).setFetchSize(0);
-
     }
 
     @Test
     void shouldPropagateExceptionIfThrownByFetchSizePolicySetting() throws SQLException {
         var statementPolicy = new StatementPolicy(-4324, 30);
         var statementCreator = statementPolicy.createStatementCreator("SELECT * FROM test");
-        when(mockConnection.prepareStatement(any(), anyInt(), anyInt())).thenReturn(mockPreparedStatement);
 
-        doThrow(new SQLException("DB error")).when(mockPreparedStatement).setFetchSize(anyInt());
-        assertThrows(SQLException.class, () -> statementCreator.createPreparedStatement(mockConnection));
+        doReturn(mockPreparedStatement)
+                .when(mockConnection)
+                .prepareStatement(
+                        any(),
+                        ResultSet.TYPE_FORWARD_ONLY,
+                        ResultSet.CONCUR_READ_ONLY
+                );
+
+        doThrow(new SQLException("DB error"))
+                .when(mockPreparedStatement)
+                .setFetchSize(anyInt());
+
+        assertThrows(
+                SQLException.class,
+                () -> statementCreator.createPreparedStatement(mockConnection)
+        );
     }
 
     @Test
     void shouldPropagateExceptionIfThrownByQuerySetting() throws SQLException {
         var statementPolicy = new StatementPolicy(12, 30);
         var statementCreator = statementPolicy.createStatementCreator("SELECT * FROM test");
-        when(mockConnection.prepareStatement(any(), anyInt(), anyInt())).thenReturn(mockPreparedStatement);
 
-        doThrow(new SQLException("DB error")).when(mockPreparedStatement).setQueryTimeout(anyInt());
-        assertThrows(SQLException.class, () -> statementCreator.createPreparedStatement(mockConnection));
+        doReturn(mockPreparedStatement)
+                .when(mockConnection)
+                .prepareStatement(
+                        any(),
+                        ResultSet.TYPE_FORWARD_ONLY,
+                        ResultSet.CONCUR_READ_ONLY
+                );
+
+        doThrow(new SQLException("DB error"))
+                .when(mockPreparedStatement)
+                .setQueryTimeout(anyInt());
+
+        assertThrows(
+                SQLException.class,
+                () -> statementCreator.createPreparedStatement(mockConnection)
+        );
     }
 
     @Test
     void shouldPropagateExceptionIfThrownByConnection() throws SQLException {
+        // given
         var statementPolicy = new StatementPolicy(-4324, 30);
-        var statementCreator = statementPolicy.createStatementCreator("SELECT * FROM test");
-        when(mockConnection.prepareStatement(any(), anyInt(), anyInt())).thenThrow(new SQLException("DB error"));
+        var statementCreator =
+                statementPolicy.createStatementCreator("SELECT * FROM test");
 
-        assertThrows(SQLException.class, () -> statementCreator.createPreparedStatement(mockConnection));
+        doThrow(new SQLException("DB error"))
+                .when(mockConnection)
+                .prepareStatement(any(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+
+        // when / then
+        assertThrows(
+                SQLException.class,
+                () -> statementCreator.createPreparedStatement(mockConnection)
+        );
     }
 
     @Test
