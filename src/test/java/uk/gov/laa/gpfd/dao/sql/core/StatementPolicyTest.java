@@ -1,6 +1,5 @@
 package uk.gov.laa.gpfd.dao.sql.core;
 
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,10 +17,7 @@ import java.sql.SQLException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class StatementPolicyTest {
@@ -32,15 +28,13 @@ class StatementPolicyTest {
     @Mock
     PreparedStatement mockPreparedStatement;
 
-    @SneakyThrows
     @BeforeEach
     void beforeEach() {
         reset(mockConnection, mockPreparedStatement);
     }
 
-    @SneakyThrows
     @Test
-    void shouldBuildStatementCreatorWhichCanGenerateCorrectStatements() {
+    void shouldBuildStatementCreatorWhichCanGenerateCorrectStatements() throws SQLException {
         // Our requirements currently are that statements are Forward Only/Read Only with a timeout and fetch size set
         var statementPolicy = new StatementPolicy(1000, 30);
         when(mockConnection.prepareStatement(any(), anyInt(), anyInt())).thenReturn(mockPreparedStatement);
@@ -54,12 +48,10 @@ class StatementPolicyTest {
                 "SELECT * FROM test",
                 ResultSet.TYPE_FORWARD_ONLY,
                 ResultSet.CONCUR_READ_ONLY);
-
     }
 
-    @SneakyThrows
     @Test
-    void shouldBuildStatementCreatorWithZeroValues() {
+    void shouldBuildStatementCreatorWithZeroValues() throws SQLException {
         var statementPolicy = new StatementPolicy(0, 0);
         when(mockConnection.prepareStatement(any(), eq(ResultSet.TYPE_FORWARD_ONLY), eq(ResultSet.CONCUR_READ_ONLY))).thenReturn(mockPreparedStatement);
 
@@ -68,7 +60,6 @@ class StatementPolicyTest {
 
         verify(mockPreparedStatement).setQueryTimeout(0);
         verify(mockPreparedStatement).setFetchSize(0);
-
     }
 
     @Test
@@ -78,7 +69,13 @@ class StatementPolicyTest {
         when(mockConnection.prepareStatement(any(), eq(ResultSet.TYPE_FORWARD_ONLY), eq(ResultSet.CONCUR_READ_ONLY))).thenReturn(mockPreparedStatement);
 
         doThrow(new SQLException("DB error")).when(mockPreparedStatement).setFetchSize(anyInt());
-        assertThrows(SQLException.class, () -> statementCreator.createPreparedStatement(mockConnection));
+
+        SQLException thrown = assertThrows(SQLException.class,
+                () -> statementCreator.createPreparedStatement(mockConnection));
+
+        // Verify the statement was closed after configuration failure
+        verify(mockPreparedStatement).close();
+        assertEquals("DB error", thrown.getMessage());
     }
 
     @Test
@@ -88,16 +85,31 @@ class StatementPolicyTest {
         when(mockConnection.prepareStatement(any(), eq(ResultSet.TYPE_FORWARD_ONLY), eq(ResultSet.CONCUR_READ_ONLY))).thenReturn(mockPreparedStatement);
 
         doThrow(new SQLException("DB error")).when(mockPreparedStatement).setQueryTimeout(anyInt());
-        assertThrows(SQLException.class, () -> statementCreator.createPreparedStatement(mockConnection));
+
+        SQLException thrown = assertThrows(SQLException.class,
+                () -> statementCreator.createPreparedStatement(mockConnection));
+
+        // Verify the statement was closed after configuration failure
+        verify(mockPreparedStatement).close();
+        assertEquals("DB error", thrown.getMessage());
     }
 
     @Test
     void shouldPropagateExceptionIfThrownByConnection() throws SQLException {
         var statementPolicy = new StatementPolicy(-4324, 30);
         var statementCreator = statementPolicy.createStatementCreator("SELECT * FROM test");
-        when(mockConnection.prepareStatement(any(), eq(ResultSet.TYPE_FORWARD_ONLY), eq(ResultSet.CONCUR_READ_ONLY))).thenThrow(new SQLException("DB error"));
 
-        assertThrows(SQLException.class, () -> statementCreator.createPreparedStatement(mockConnection));
+        when(mockConnection.prepareStatement(any(), eq(ResultSet.TYPE_FORWARD_ONLY), eq(ResultSet.CONCUR_READ_ONLY)))
+                .thenThrow(new SQLException("DB error"));
+
+        SQLException thrown = assertThrows(SQLException.class,
+                () -> statementCreator.createPreparedStatement(mockConnection));
+
+        // No PreparedStatement is created when prepareStatement throws, so nothing to close
+        verify(mockConnection).prepareStatement(any(), eq(ResultSet.TYPE_FORWARD_ONLY), eq(ResultSet.CONCUR_READ_ONLY));
+        verify(mockPreparedStatement, never()).close();
+
+        assertEquals("DB error", thrown.getMessage());
     }
 
     @Test
@@ -134,7 +146,8 @@ class StatementPolicyTest {
     void shouldThrowExceptionIfInvalidSql(String sql) {
         var statementPolicy = new StatementPolicy(12, 30);
 
-        var exception = assertThrows(IllegalArgumentException.class, () -> statementPolicy.createStatementCreator(sql));
+        var exception = assertThrows(IllegalArgumentException.class,
+                () -> statementPolicy.createStatementCreator(sql));
 
         assertEquals("SQL statement cannot be null or empty", exception.getMessage());
     }
