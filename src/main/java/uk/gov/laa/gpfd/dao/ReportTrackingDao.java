@@ -1,0 +1,48 @@
+package uk.gov.laa.gpfd.dao;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import uk.gov.laa.gpfd.exception.DatabaseWriteException;
+
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.UUID;
+
+@Slf4j
+@Service
+public class ReportTrackingDao {
+
+    private final JdbcOperations trackingJdbcTemplate;
+
+    protected static final String INSERT_INTO_TRACKING_SQL = "INSERT INTO GLAD.REPORT_TRACKING(ID, REPORT_ID, USER_ID, DOWNLOAD_TIME) VALUES (?, ?, ?, ?)";
+
+    public ReportTrackingDao(JdbcOperations trackingJdbcTemplate) {
+        this.trackingJdbcTemplate = trackingJdbcTemplate;
+    }
+
+    /**
+     * Insert an entry into our tracking table
+     * Note we track server-side successfully compiled the data & the download has started.
+     * We can't know if the client-side has downloaded or saved all the data due to how HTTP works (e.g. cancelling download in browser mid-way)
+     *
+     * @param reportId report being downloaded
+     * @param userId   user doing the download
+     */
+    @Async
+    public void insertTrackingRow(UUID reportId, UUID userId) {
+        log.debug("Attempting to insert report tracking row for {}", reportId);
+
+        try {
+            trackingJdbcTemplate.update(INSERT_INTO_TRACKING_SQL, UUID.randomUUID(), reportId, userId, Timestamp.from(Instant.now()));
+            log.info("Inserted report tracking row for {}", reportId);
+        } catch (DataAccessException e) {
+            var message = "Failed to insert report tracking row for report " + reportId + " / user " + userId;
+            log.error("{} with {} exception: {}", message, e.getClass().getName(), e.getMessage());
+            throw new DatabaseWriteException(message);
+        }
+    }
+
+}

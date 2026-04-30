@@ -2,24 +2,30 @@ package uk.gov.laa.gpfd.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.api.ReportsApi;
 import uk.gov.laa.gpfd.dao.ReportDao;
+import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
+import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200Response;
 import uk.gov.laa.gpfd.services.ReportManagementService;
+import uk.gov.laa.gpfd.services.ResponseBuilder;
 import uk.gov.laa.gpfd.services.StreamingService;
 import uk.gov.laa.gpfd.services.s3.FileDownloadService;
-import uk.gov.laa.gpfd.utils.UrlBuilder;
+import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
+import uk.gov.laa.gpfd.services.stream.TrackedStreamService;
+import uk.gov.laa.gpfd.utils.SecurityUtils;
 
 import java.util.Optional;
 import java.util.UUID;
 
-import static uk.gov.laa.gpfd.model.FileExtension.*;
+import static uk.gov.laa.gpfd.model.FileExtension.CSV;
+import static uk.gov.laa.gpfd.model.FileExtension.S3STORAGE;
+import static uk.gov.laa.gpfd.model.FileExtension.XLSX;
 
 @Slf4j
 @RestController
@@ -29,8 +35,10 @@ public class ReportsController implements ReportsApi {
     private final ReportManagementService reportManagementService;
     private final StreamingService streamingService;
     private final FileDownloadService fileDownloadService;
-    private final UrlBuilder urlBuilder;
     private final ReportDao reportDao;
+    private final SecurityUtils securityUtils;
+    private final ResponseBuilder responseBuilder;
+    private final TrackedStreamService trackedStreamService;
 
     @Override
     public Optional<NativeWebRequest> getRequest() {
@@ -62,7 +70,7 @@ public class ReportsController implements ReportsApi {
      * @return CSV data stream or reports data
      *
      * <p>Example usage:
-     *      <pre>
+     * <pre>
      *      GET /reports/f46b4d3d-c100-429a-bf9a-6c3305dbdbf1/csv
      *      </pre>
      */
@@ -75,8 +83,9 @@ public class ReportsController implements ReportsApi {
 
         // Validate that this report is actually a CSV report
         reportManagementService.validateReportFormat(requestedId, CSV);
+        var rawStream = streamingService.stream(requestedId, CSV);
 
-        return streamingService.stream(requestedId, CSV);
+        return fetchCsvExcelDownloadResponse(requestedId, rawStream);
     }
 
     /**
@@ -113,17 +122,49 @@ public class ReportsController implements ReportsApi {
         // Validate format before attempting to stream
         reportManagementService.validateReportFormat(id, XLSX);
 
-        return streamingService.stream(id, XLSX);
+        var rawStream = streamingService.stream(id, XLSX);
+        return fetchCsvExcelDownloadResponse(id, rawStream);
     }
 
     @Override
-    public ResponseEntity<InputStreamResource> getReportDownloadById(UUID id) {
+    public ResponseEntity<StreamingResponseBody> getReportDownloadById(UUID id) {
         log.info("Downloading report for id {}", id);
 
         // Validate that this report is S3STORAGE format
         reportManagementService.validateReportFormat(id, S3STORAGE);
 
-        return fileDownloadService.getFileStreamResponse(id);
+        var s3Response = fileDownloadService.getFileStreamResponse(id);
+        return fetchS3DownloadResponse(id, s3Response);
+    }
+
+    private ResponseEntity<StreamingResponseBody> fetchCsvExcelDownloadResponse(UUID reportId, StreamingResponseBody rawStream) {
+        var userId = securityUtils.extractUserId();
+        var report = reportDao.fetchReportById(reportId).orElseThrow(() -> new ReportIdNotFoundException(reportId));
+
+        StreamingResponseBody trackedStream = trackedStreamService.wrapStream(rawStream, reportId, userId);
+
+        var filename = String.format("%s.%s", report.getName(), report.getOutputType().getExtension());
+        var fileExtension = FileExtension.fromString(report.getOutputType().getExtension());
+        return responseBuilder.buildResponse(trackedStream, filename, fileExtension);
+    }
+
+    private ResponseEntity<StreamingResponseBody> fetchS3DownloadResponse(UUID reportId, S3ClientWrapper.S3CsvDownload s3CsvDownload) {
+        var userId = securityUtils.extractUserId();
+        var report = reportDao.fetchReportById(reportId).orElseThrow(() -> new ReportIdNotFoundException(reportId));
+        var s3Stream = s3CsvDownload.stream();
+        var filename = s3CsvDownload.getFileName();
+        var fileExtension = FileExtension.fromString(report.getOutputType().getExtension());
+        var contentLength = s3CsvDownload.stream().response().contentLength();
+
+        // Massage the stream into the right format for us to track it
+        StreamingResponseBody rawStream = outputStream -> {
+            try (s3Stream) {
+                s3Stream.transferTo(outputStream);
+            }
+        };
+
+        StreamingResponseBody trackedStream = trackedStreamService.wrapStream(rawStream, reportId, userId);
+        return responseBuilder.buildResponse(trackedStream, filename, fileExtension, contentLength);
     }
 
 }
