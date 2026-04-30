@@ -78,6 +78,10 @@ class FileDownloadFromS3ServiceTest {
 
             assertEquals("csv,data,here,123,4.3,cat", content);
         }
+        var content = new BufferedReader(new InputStreamReader(result.stream()))
+                .lines()
+                .collect(Collectors.joining());
+        assertEquals("csv,data,here,123,4.3,cat", content);
 
         verify(reportDao).verifyUserCanAccessReport(testUUID);
         verify(fileNameResolver).getS3PrefixFromId(testUUID);

@@ -21,7 +21,7 @@ class PolicyControllerTest extends BaseMvcTest {
     UrlBuilder urlBuilder;
 
     @BeforeEach
-    void beforeEach() {
+    void beforeEach(){
         when(urlBuilder.getServiceUrl()).thenReturn("http://localhost");
     }
 
