@@ -18,12 +18,12 @@ public abstract class BaseDaoTest {
 
   @BeforeEach
   void setup() {
-    databaseUtils.setUpDatabase();
+    databaseUtils.setUpMockMojfinDatabase();
   }
 
   @AfterEach
   void resetDatabase() {
-    databaseUtils.cleanUpDatabase();
+    databaseUtils.cleanUpMockMojfinDatabase();
   }
 
 }

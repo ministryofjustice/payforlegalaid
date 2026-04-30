@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.services.stream.DataStream;
 
@@ -29,7 +28,7 @@ class StreamingServiceTest {
     private DataStream excelStrategy;
 
     @Mock
-    private ResponseEntity<StreamingResponseBody> mockResponse;
+    private StreamingResponseBody mockStreamingBody;
 
     @Test
     void shouldUseCorrectSteamStrategyForFormat() {
@@ -40,11 +39,11 @@ class StreamingServiceTest {
         );
 
         var service = new DefaultStreamingService(strategies);
-        when(csvStrategy.stream(reportId)).thenReturn(mockResponse);
+        when(csvStrategy.stream(reportId)).thenReturn(mockStreamingBody);
 
         var result = service.stream(reportId, CSV);
 
-        assertEquals(mockResponse, result);
+        assertEquals(mockStreamingBody, result);
         verify(csvStrategy).stream(reportId);
         verifyNoInteractions(excelStrategy);
     }
@@ -87,11 +86,11 @@ class StreamingServiceTest {
         );
         var service = new DefaultStreamingService(strategies);
 
-        when(excelStrategy.stream(reportId)).thenReturn(mockResponse);
+        when(excelStrategy.stream(reportId)).thenReturn(mockStreamingBody);
 
         var result = service.stream(reportId, XLSX);
 
-        assertEquals(mockResponse, result);
+        assertEquals(mockStreamingBody, result);
         verify(excelStrategy).stream(reportId);
     }
 }

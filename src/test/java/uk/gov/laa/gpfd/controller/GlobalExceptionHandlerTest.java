@@ -21,9 +21,10 @@ import uk.gov.laa.gpfd.exception.CsvGenerationException.WritingToCsvException;
 import uk.gov.laa.gpfd.exception.CsvGenerationException.MetadataInvalidException;
 import uk.gov.laa.gpfd.exception.FileDownloadException.InvalidDownloadFormatException;
 import uk.gov.laa.gpfd.exception.FileDownloadException.ReportNotSupportedForDownloadException;
-import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.AuthenticationIsNullException;
-import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.PrincipalIsNullException;
-import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.UnexpectedAuthClassException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.AuthenticationIsNullException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.NoOidSetOnTokenException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.PrincipalIsNullException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.UnexpectedAuthClassException;
 import uk.gov.laa.gpfd.exception.FileDownloadException.S3BucketHasNoCopiesOfReportException;
 import uk.gov.laa.gpfd.utils.RequestLogUtils;
 
@@ -368,6 +369,48 @@ class GlobalExceptionHandlerTest {
 
         assertEquals(BAD_REQUEST, response.getStatusCode());
         assertEquals("Report " + reportId + " is not valid for XLSX retrieval. This report is in CSV format.",
+                response.getBody().getError());
+    }
+
+    @Test
+    void shouldHandleDatabaseWriteException() {
+        var exception = new DatabaseWriteException("Error writing to db :(");
+
+        var response = globalExceptionHandler.handleDatabaseWriteException(exception);
+
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Error writing to db :(",
+                response.getBody().getError());
+    }
+
+
+    @ParameterizedTest
+    @MethodSource("unableToParseAuthDetailsProvider")
+    void shouldHandleUnableToParseAuthDetailsExceptions(UnableToParseAuthDetailsException exception) {
+        var response = globalExceptionHandler.handleUnexpectedAuthTypeException(exception);
+
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Authentication response error.", response.getBody().getError());
+    }
+
+    private static Stream<UnableToParseAuthDetailsException> unableToParseAuthDetailsProvider() {
+        return of(
+                new AuthenticationIsNullException(),
+                new PrincipalIsNullException(),
+                new UnexpectedAuthClassException("UserJwt"),
+                new NoOidSetOnTokenException()
+        );
+    }
+
+    @Test
+    void shouldHandleStreamErrorException() {
+        var reportId = UUID.randomUUID();
+        var exception = new StreamErrorException("Error writing to db :(", reportId);
+
+        var response = globalExceptionHandler.handleStreamErrorException(exception);
+
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Report streaming failure",
                 response.getBody().getError());
     }
 

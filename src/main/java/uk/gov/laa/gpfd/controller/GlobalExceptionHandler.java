@@ -16,18 +16,20 @@ import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import uk.gov.laa.gpfd.utils.RequestLogUtils;
 import uk.gov.laa.gpfd.exception.CsvGenerationException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
-import uk.gov.laa.gpfd.exception.InvalidReportFormatException;
+import uk.gov.laa.gpfd.exception.DatabaseWriteException;
 import uk.gov.laa.gpfd.exception.FileDownloadException.InvalidDownloadFormatException;
 import uk.gov.laa.gpfd.exception.FileDownloadException.ReportNotSupportedForDownloadException;
 import uk.gov.laa.gpfd.exception.FileDownloadException.S3BucketHasNoCopiesOfReportException;
+import uk.gov.laa.gpfd.exception.InvalidReportFormatException;
 import uk.gov.laa.gpfd.exception.OperationNotSupportedException;
 import uk.gov.laa.gpfd.exception.ReportAccessException;
 import uk.gov.laa.gpfd.exception.ReportGenerationException;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.exception.ServiceUnavailableException;
+import uk.gov.laa.gpfd.exception.StreamErrorException;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
-import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException;
 import uk.gov.laa.gpfd.model.GetReportDownloadById403Response;
 import uk.gov.laa.gpfd.model.GetReportDownloadById501Response;
 import uk.gov.laa.gpfd.model.ReportsGet400Response;
@@ -318,14 +320,14 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles {@link UnableToGetAuthGroupException} and responds with an HTTP 500 Internal Server Error.
+     * Handles {@link UnableToParseAuthDetailsException} and responds with an HTTP 500 Internal Server Error.
      *
      * @param e the exception thrown when we can't extract a group from the user's auth token
      * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(UnableToGetAuthGroupException.class)
-    public ResponseEntity<ReportsGet500Response> handleUnexpectedAuthTypeException(UnableToGetAuthGroupException e) {
+    @ExceptionHandler(UnableToParseAuthDetailsException.class)
+    public ResponseEntity<ReportsGet500Response> handleUnexpectedAuthTypeException(UnableToParseAuthDetailsException e) {
         var errorResponse = new ReportsGet500Response();
         errorResponse.setError("Authentication response error.");
 
@@ -415,6 +417,49 @@ public class GlobalExceptionHandler {
                 e.getReportId(), e.getRequestedFormat(), e.getActualFormat());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(errorResponse);
+    }
+
+
+    /**
+     * Handles DatabaseWriteException and responds with an HTTP 500 Internal Server Error.
+     *
+     * @param e the DatabaseWriteException thrown when there is a database read failure.
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
+     */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(value = {
+            DatabaseWriteException.class,
+    }, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ReportsGet500Response> handleDatabaseWriteException(Exception e) {
+        var response = new ReportsGet500Response() {{
+            setError(e.getMessage());
+        }};
+
+        log.error("DatabaseWriteException Thrown: %s".formatted(response));
+        log.error("DatabaseWriteException stacktrace: %s".formatted((Object) e.getStackTrace()));
+
+        return internalServerError()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(response);
+    }
+
+    /**
+     * Handles {@link StreamErrorException} and responds with an HTTP 500 Internal Server Error.
+     *
+     * @param e the exception thrown when the stream fails on the service
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
+     */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(StreamErrorException.class)
+    public ResponseEntity<ReportsGet500Response> handleStreamErrorException(StreamErrorException e) {
+        var errorResponse = new ReportsGet500Response();
+        errorResponse.setError("Report streaming failure");
+
+        log.error("StreamErrorException Thrown: Report {} failed streaming on the server side with exception, caused by {}",
+                e.getReportId(), e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(errorResponse);
     }
 
