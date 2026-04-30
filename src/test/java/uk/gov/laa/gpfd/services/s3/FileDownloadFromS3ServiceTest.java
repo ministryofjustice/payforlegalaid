@@ -7,8 +7,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
@@ -26,7 +24,6 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -59,7 +56,7 @@ class FileDownloadFromS3ServiceTest {
 
     @SneakyThrows
     @Test
-    void shouldReturnFileStreamWrappedInResponseWithAllHeaders() {
+    void shouldReturnFileStream() {
 
         doNothing().when(reportDao).verifyUserCanAccessReport(testUUID);
         var responseMetadata = GetObjectResponse.builder().contentLength(25L).build();
@@ -72,17 +69,7 @@ class FileDownloadFromS3ServiceTest {
 
         var result = fileDownloadFromS3Service.getFileStreamResponse(testUUID);
 
-        assertEquals(HttpStatus.OK, result.getStatusCode());
-        var headers = result.getHeaders();
-
-        assertEquals(MediaType.APPLICATION_OCTET_STREAM, headers.getContentType());
-        assertEquals(25L, headers.getContentLength());
-
-        var contentDisposition = headers.getContentDisposition();
-        assertTrue(contentDisposition.isAttachment());
-        assertEquals("report_numero_uno_2025-12-13.csv", contentDisposition.getFilename());
-
-        var content = new BufferedReader(new InputStreamReader(result.getBody().getInputStream()))
+        var content = new BufferedReader(new InputStreamReader(result.stream()))
                 .lines()
                 .collect(Collectors.joining());
         assertEquals("csv,data,here,123,4.3,cat", content);
@@ -109,7 +96,7 @@ class FileDownloadFromS3ServiceTest {
         doThrow(new AccessDeniedException("nope"))
                 .when(reportDao)
                 .verifyUserCanAccessReport(testUUID);
-        assertThrows( AccessDeniedException.class,
+        assertThrows(AccessDeniedException.class,
                 () -> fileDownloadFromS3Service.getFileStreamResponse(testUUID));
 
         verify(reportDao).verifyUserCanAccessReport(testUUID);
