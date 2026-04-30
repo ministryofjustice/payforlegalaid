@@ -57,7 +57,7 @@ public class ReportSXSSFSheet extends SXSSFSheet implements Sheet, OoxmlSheetExt
      * @param xSheet   the backing XSSFSheet
      * @throws IOException if the sheet cannot be created
      */
-    public ReportSXSSFSheet(SXSSFWorkbook workbook, XSSFSheet xSheet, ExcelSheet excelSheet) throws IOException {
+    public ReportSXSSFSheet(SXSSFWorkbook workbook, XSSFSheet xSheet) throws IOException {
         super(workbook, xSheet);
     }
 

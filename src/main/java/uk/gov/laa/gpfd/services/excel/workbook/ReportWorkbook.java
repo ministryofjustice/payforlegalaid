@@ -77,7 +77,7 @@ public class ReportWorkbook extends SXSSFWorkbook implements Workbook {
     private SXSSFSheet createAndRegisterSheet(XSSFSheet xSheet) {
         try {
             reportQuery = report.extractAllMappings().stream().filter(e -> e.getExcelSheet().getName().equals(xSheet.getSheetName())).findFirst().orElse(null);
-            var sxSheet = new ReportSXSSFSheet(this, xSheet, null);
+            var sxSheet = new ReportSXSSFSheet(this, xSheet);
             registerMapping(sxSheet, xSheet);
             return sxSheet;
         } catch (IOException ioe) {
