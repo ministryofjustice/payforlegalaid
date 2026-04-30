@@ -21,7 +21,7 @@ public class DatabaseUtils {
   private static Liquibase liquibase;
   private static Connection connection;
 
-  public void setUpDatabase() {
+  public void setUpMockMojfinDatabase() {
     try {
       connection = writeDataSource.getConnection();
       Database database = new liquibase.database.core.H2Database(); // or OracleDatabase, PostgresDatabase, etc.
@@ -46,7 +46,7 @@ public class DatabaseUtils {
     liquibase.update("test");
   }
 
-  public void cleanUpDatabase() {
+  public void cleanUpMockMojfinDatabase() {
     try {
       if (liquibase != null) {
         CatalogAndSchema[] schemas = new CatalogAndSchema[] {

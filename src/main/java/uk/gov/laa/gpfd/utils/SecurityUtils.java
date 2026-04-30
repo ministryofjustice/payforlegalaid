@@ -1,15 +1,22 @@
 package uk.gov.laa.gpfd.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Component;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.AuthenticationIsNullException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.NoOidSetOnTokenException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.PrincipalIsNullException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.UnexpectedAuthClassException;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Component
+@Slf4j
 public class SecurityUtils {
 
     private static final String ROLE_CLAIM = "LAA_APP_ROLES";
@@ -18,25 +25,58 @@ public class SecurityUtils {
      * Extracts the current user's application roles from the OIDC authentication token.
      * <p>
      * This method first checks the Spring SecurityContext for an authenticated
-     * {@link org.springframework.security.oauth2.core.oidc.user.OidcUser}. It then attempts
+     * {@link OidcUser}. It then attempts
      * to retrieve the "LAA_APP_ROLES" claim from the user's OIDC attributes.
      * <p>
+     *
      * @return a list of role names assigned to the current user, or an empty list if
-     *         the user is not authenticated or no roles are present.
+     * the user is not authenticated or no roles are present.
      */
     public List<String> extractRoles() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (!(auth != null && auth.getPrincipal() instanceof OidcUser oidcUser)) {
+            log.info("No odicUser");
             return List.of();
         }
+        log.info("Got oidcUser");
 
         Map<String, Object> attributes = oidcUser.getAttributes();
         if (attributes == null) {
+            log.info("No attributes");
             return List.of();
         }
 
+        log.info("Got attributes");
+
+        log.info("Is the role claim in there? " + attributes.containsKey(ROLE_CLAIM));
         Object rawRoles = attributes.get(ROLE_CLAIM);
+        log.info("Raw roles are " + rawRoles);
         return parseRoles(rawRoles);
+    }
+
+    /**
+     * Get Entra Unique User ID from the token supplied by SiLAS (contained in the `oid` field)
+     * @return User ID
+     */
+    public UUID extractUserId() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null) {
+            throw new AuthenticationIsNullException();
+        }
+
+        return switch (auth.getPrincipal()) {
+            case OidcUser user -> {
+                String oid = user.getAttribute("oid");
+                if (oid == null) {
+                    throw new NoOidSetOnTokenException();
+                }
+                yield UUID.fromString(oid);
+            }
+            case null -> throw new PrincipalIsNullException();
+            default -> throw new UnexpectedAuthClassException("Unexpected Auth Type: " + auth.getClass().getName());
+        };
+
     }
 
     /**
@@ -44,7 +84,7 @@ public class SecurityUtils {
      * <p>
      * Supported formats:
      * <ul>
-     *     <li>A {@link java.util.List} of values (converted via {@code toString()})</li>
+     *     <li>A {@link List} of values (converted via {@code toString()})</li>
      *     <li>A comma-separated {@link String}</li>
      * </ul>
      * Any other type results in an empty list.

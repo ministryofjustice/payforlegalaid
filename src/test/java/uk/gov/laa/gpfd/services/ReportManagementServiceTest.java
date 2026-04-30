@@ -12,14 +12,15 @@ import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.mapper.GetReportById200ResponseMapper;
 import uk.gov.laa.gpfd.mapper.ReportsGet200ResponseReportListInnerMapper;
 import uk.gov.laa.gpfd.model.FileExtension;
-import uk.gov.laa.gpfd.model.ImmutableReportOutputType;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -82,12 +83,7 @@ class ReportManagementServiceTest {
     void validateReportFormat_shouldThrowInvalidReportFormatExceptionWhenCsvReportRequestedAsExcel() {
         // Given
         var reportId = UUID.randomUUID();
-        var csvOutputType = ImmutableReportOutputType.builder()
-                .id(UUID.randomUUID())
-                .fileExtension(FileExtension.CSV)
-                .description("CSV Report")
-                .build();
-        var csvReport = ReportsTestDataFactory.createTestReportWithOutputType(csvOutputType);
+        var csvReport = ReportsTestDataFactory.createTestReportWithOutputType(ReportsTestDataFactory.csvReportOutput);
 
         when(reportDetailsDao.fetchReportById(reportId)).thenReturn(Optional.of(csvReport));
 
@@ -106,12 +102,7 @@ class ReportManagementServiceTest {
     void validateReportFormat_shouldThrowInvalidReportFormatExceptionWhenExcelReportRequestedAsCsv() {
         // Given
         var reportId = UUID.randomUUID();
-        var excelOutputType = ImmutableReportOutputType.builder()
-                .id(UUID.randomUUID())
-                .fileExtension(FileExtension.XLSX)
-                .description("Excel Report")
-                .build();
-        var excelReport = ReportsTestDataFactory.createTestReportWithOutputType(excelOutputType);
+        var excelReport = ReportsTestDataFactory.createTestReportWithOutputType(ReportsTestDataFactory.xlsxReportOutput);
 
         when(reportDetailsDao.fetchReportById(reportId)).thenReturn(Optional.of(excelReport));
 
@@ -130,12 +121,7 @@ class ReportManagementServiceTest {
     void validateReportFormat_shouldNotThrowExceptionWhenCsvReportRequestedAsCsv() {
         // Given
         var reportId = UUID.randomUUID();
-        var csvOutputType = ImmutableReportOutputType.builder()
-                .id(UUID.randomUUID())
-                .fileExtension(FileExtension.CSV)
-                .description("CSV Report")
-                .build();
-        var csvReport = ReportsTestDataFactory.createTestReportWithOutputType(csvOutputType);
+        var csvReport = ReportsTestDataFactory.createTestReportWithOutputType(ReportsTestDataFactory.csvReportOutput);
 
         when(reportDetailsDao.fetchReportById(reportId)).thenReturn(Optional.of(csvReport));
 
@@ -151,12 +137,7 @@ class ReportManagementServiceTest {
     void validateReportFormat_shouldNotThrowExceptionWhenExcelReportRequestedAsExcel() {
         // Given
         var reportId = UUID.randomUUID();
-        var excelOutputType = ImmutableReportOutputType.builder()
-                .id(UUID.randomUUID())
-                .fileExtension(FileExtension.XLSX)
-                .description("Excel Report")
-                .build();
-        var excelReport = ReportsTestDataFactory.createTestReportWithOutputType(excelOutputType);
+        var excelReport = ReportsTestDataFactory.createTestReportWithOutputType(ReportsTestDataFactory.xlsxReportOutput);
 
         when(reportDetailsDao.fetchReportById(reportId)).thenReturn(Optional.of(excelReport));
 
@@ -200,12 +181,7 @@ class ReportManagementServiceTest {
     void validateReportFormat_shouldThrowInvalidReportFormatExceptionWhenS3StorageReportRequestedAsExcel() {
         // Given
         var reportId = UUID.randomUUID();
-        var s3OutputType = ImmutableReportOutputType.builder()
-                .id(UUID.randomUUID())
-                .fileExtension(FileExtension.S3STORAGE)
-                .description("Tactical Solution Report")
-                .build();
-        var s3Report = ReportsTestDataFactory.createTestReportWithOutputType(s3OutputType);
+        var s3Report = ReportsTestDataFactory.createTestReportWithOutputType(ReportsTestDataFactory.s3ReportOutput);
 
         when(reportDetailsDao.fetchReportById(reportId)).thenReturn(Optional.of(s3Report));
 
@@ -224,12 +200,7 @@ class ReportManagementServiceTest {
     void validateReportFormat_shouldThrowInvalidReportFormatExceptionWhenS3StorageReportRequestedAsCsv() {
         // Given
         var reportId = UUID.randomUUID();
-        var s3OutputType = ImmutableReportOutputType.builder()
-                .id(UUID.randomUUID())
-                .fileExtension(FileExtension.S3STORAGE)
-                .description("Tactical Solution Report")
-                .build();
-        var s3Report = ReportsTestDataFactory.createTestReportWithOutputType(s3OutputType);
+        var s3Report = ReportsTestDataFactory.createTestReportWithOutputType(ReportsTestDataFactory.s3ReportOutput);
 
         when(reportDetailsDao.fetchReportById(reportId)).thenReturn(Optional.of(s3Report));
 
