@@ -134,6 +134,8 @@ public final class ReportSheetDataWriter extends SheetDataWriter implements Clos
                     case ERROR:
                         writeXml("t", "e");
                         break;
+                    default:
+                        break;
                 }
                 _out.write("><f>");
                 outputEscapedString(cell.getCellFormula());
@@ -167,6 +169,8 @@ public final class ReportSheetDataWriter extends SheetDataWriter implements Clos
                         _out.write("</v>");
                         break;
                     }
+                    default:
+                        break;
                 }
                 break;
             }

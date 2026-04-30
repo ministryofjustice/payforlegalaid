@@ -37,8 +37,6 @@ public class ReportSXSSFSheet extends SXSSFSheet implements Sheet, OoxmlSheetExt
      */
     private static final Field LAST_FLUSHED_ROW_FIELD;
 
-    private final ExcelSheet excelSheet;
-
     static {
         try {
             ROWS_FIELD = SXSSFSheet.class.getDeclaredField("_rows");
@@ -61,15 +59,6 @@ public class ReportSXSSFSheet extends SXSSFSheet implements Sheet, OoxmlSheetExt
      */
     public ReportSXSSFSheet(SXSSFWorkbook workbook, XSSFSheet xSheet, ExcelSheet excelSheet) throws IOException {
         super(workbook, xSheet);
-        this.excelSheet = excelSheet;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public SXSSFRow createRow(int rownum) {
-        return super.createRow(rownum);
     }
 
     /**
