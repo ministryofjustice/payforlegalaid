@@ -13,7 +13,4 @@ public abstract class ReportQuery implements Mapping, Identifiable {
     @Override
     public abstract ReportQuerySql getQuery();
 
-    @Override
-    public abstract ExcelSheet getExcelSheet();
-
 }
