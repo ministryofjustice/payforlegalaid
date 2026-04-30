@@ -182,7 +182,7 @@ Acceptance tests are located [here](https://github.com/ministryofjustice/payforl
 
 ### Performance Tests
 
-Performance tests have been set up in payforlegalaid using Gatling to things like retrieving the list of reports, downloading
+Performance tests have been set up in payforlegalaid using Gatling to evaluate things like retrieving the list of reports, downloading
 the reports and also concurrency.
 
 src/test/java/uk.gov.laa.gpfd/simulations
