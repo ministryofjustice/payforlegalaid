@@ -123,36 +123,6 @@ spec:
         for: 2m
         labels:
           severity: ${ALERT_SEVERITY}
-      - alert: WAFCheckDetected
-        annotations:
-          message: "WAF check detected a small 403 spike; likely normal WAF validation traffic."
-          dashboard_url: "https://grafana.live.cloud-platform.service.justice.gov.uk/d/laa-gpfd-${ENV_NAME}"
-        expr: |
-          (
-            sum(
-              rate(nginx_ingress_controller_requests{
-                exported_namespace="${NAMESPACE}",
-                status="403"
-              }[5m])
-            ) > 0.01
-          )
-          and
-          (
-            increase(nginx_ingress_controller_requests{
-              exported_namespace="${NAMESPACE}",
-              status="403"
-            }[10m]) > 5
-          )
-          and
-          (
-            increase(nginx_ingress_controller_requests{
-              exported_namespace="${NAMESPACE}",
-              status="403"
-            }[10m]) <= 40
-          )
-        for: 1m
-        labels:
-          severity: info
       - alert: CSPViolationDetected
         annotations:
           message: "CSP violations detected."
