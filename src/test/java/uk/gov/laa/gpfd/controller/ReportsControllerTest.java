@@ -1,51 +1,67 @@
 package uk.gov.laa.gpfd.controller;
 
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.InputStreamResource;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
 import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.data.ReportListEntryTestDataFactory;
+import uk.gov.laa.gpfd.data.ReportsTestDataFactory;
 import uk.gov.laa.gpfd.exception.InvalidReportFormatException;
 import uk.gov.laa.gpfd.exception.ReportAccessException;
 import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 import uk.gov.laa.gpfd.services.ReportManagementService;
+import uk.gov.laa.gpfd.services.ResponseBuilder;
 import uk.gov.laa.gpfd.services.StreamingService;
 import uk.gov.laa.gpfd.services.s3.FileDownloadService;
+import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
+import uk.gov.laa.gpfd.services.stream.TrackedStreamService;
 import uk.gov.laa.gpfd.utils.BaseMvcTest;
+import uk.gov.laa.gpfd.utils.SecurityUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.createTestReportWithOutputType;
+import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.csvReportOutput;
+import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.s3ReportOutput;
+import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.xlsxReportOutput;
+import static uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.AuthenticationIsNullException;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT ,
-        classes = uk.gov.laa.gpfd.config.TestDatabaseConfig .class)
-@AutoConfigureMockMvc
-@ActiveProfiles("testauth")
+@WebMvcTest(ReportsController.class)
 class ReportsControllerTest extends BaseMvcTest {
 
-    public static final UUID DEFAULT_ID = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
+    private static final UUID REPORT_ID = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
+    private static final UUID USER_ID = UUID.fromString("5aee3d3d-15d3-41ba-9646-06429a183f68");
 
     @MockitoBean
     ReportManagementService reportManagementServiceMock;
@@ -59,6 +75,15 @@ class ReportsControllerTest extends BaseMvcTest {
     @MockitoBean
     ReportDao reportDao;
 
+    @MockitoBean
+    SecurityUtils securityUtils;
+
+    @MockitoBean
+    ResponseBuilder responseBuilder;
+
+    @MockitoBean
+    TrackedStreamService trackedStreamService;
+
     @Test
     void downloadCsvReturnsCorrectResponse() throws Exception {
         // Mock CSV data
@@ -66,7 +91,10 @@ class ReportsControllerTest extends BaseMvcTest {
         csvDataOutputStream.write("1,John,Doe\n".getBytes());
         csvDataOutputStream.write("2,Jane,Smith\n".getBytes());
 
-        StreamingResponseBody responseBody = outputStream -> {
+        var report = createTestReportWithOutputType(csvReportOutput);
+        var reportId = report.getId();
+
+        StreamingResponseBody responseStream = outputStream -> {
             csvDataOutputStream.writeTo(outputStream);
             outputStream.flush();
         };
@@ -75,24 +103,34 @@ class ReportsControllerTest extends BaseMvcTest {
                 ResponseEntity.ok()
                         .header("Content-Disposition", "attachment; filename=data.csv")
                         .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                        .body(responseBody);
+                        .body(responseStream);
 
-        doNothing().when(reportDao).verifyUserCanAccessReport(DEFAULT_ID);
-        when(streamingService.stream(DEFAULT_ID, FileExtension.CSV))
-                .thenReturn(mockResponseEntity);
+        doNothing().when(reportDao).verifyUserCanAccessReport(reportId);
+        when(streamingService.stream(reportId, FileExtension.CSV)).thenReturn(responseStream);
+        when(reportDao.fetchReportById(reportId)).thenReturn(Optional.of(report));
+        when(securityUtils.extractUserId()).thenReturn(USER_ID);
+        when(trackedStreamService.wrapStream(any(), any(), any())).thenReturn(responseStream);
+        when(responseBuilder.buildResponse(any(), any(), any())).thenReturn(mockResponseEntity);
 
-        performAuthenticatedGet("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d1/csv", List.of("Financial"))
+        var response = performAuthenticatedGet("/reports/" + reportId + "/csv", List.of("Financial"))
                 .andExpect(status().isOk())
-                .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=data.csv"));
-        verify(streamingService).stream(DEFAULT_ID, FileExtension.CSV);
-    }
+                .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=data.csv"))
+                .andExpect(content().contentType(MediaType.APPLICATION_OCTET_STREAM))
+                .andReturn();
 
+        assertEquals("1,John,Doe\n2,Jane,Smith\n", response.getResponse().getContentAsString());
+
+        verify(streamingService).stream(reportId, FileExtension.CSV);
+        verify(trackedStreamService).wrapStream(responseStream, reportId, USER_ID);
+        verify(responseBuilder).buildResponse(responseStream, "Test Report.csv", FileExtension.CSV);
+        verify(reportManagementServiceMock).validateReportFormat(reportId, FileExtension.CSV);
+    }
 
     @Test
     void getReportListReturnsCorrectResponseEntity() throws Exception {
         //Create Mock Response objects
         ReportsGet200ResponseReportListInner reportListEntryMock1 = ReportListEntryTestDataFactory.aValidReportsGet200ResponseReportListInner();
-        ReportsGet200ResponseReportListInner reportListEntryMock2 = ReportListEntryTestDataFactory.aValidReportsGet200ResponseReportListInnerWithCustomId(DEFAULT_ID);
+        ReportsGet200ResponseReportListInner reportListEntryMock2 = ReportListEntryTestDataFactory.aValidReportsGet200ResponseReportListInnerWithCustomId(REPORT_ID);
 
         //Add mock response objects to a list
         List<ReportsGet200ResponseReportListInner> reportListResponseMockList = Arrays.asList(reportListEntryMock1, reportListEntryMock2);
@@ -106,49 +144,64 @@ class ReportsControllerTest extends BaseMvcTest {
                 .andExpect(jsonPath("$.reportList[1].id").value(reportListEntryMock2.getId().toString()));
 
         verify(reportManagementServiceMock, times(1)).fetchReportListEntries();
-
     }
 
     @Test
     void getReportReturnsCorrectResponseEntity() throws Exception {
-        var reportId = DEFAULT_ID;
 
-        GetReportById200Response reportResponseMock = new ReportResponseTestBuilder().withId(reportId).createReportResponse();
+        GetReportById200Response reportResponseMock = new ReportResponseTestBuilder().withId(REPORT_ID).createReportResponse();
 
         // Mock the service
-        when(reportManagementServiceMock.createReportResponse(reportId)).thenReturn(reportResponseMock);
+        when(reportManagementServiceMock.createReportResponse(REPORT_ID)).thenReturn(reportResponseMock);
 
         // Perform request and assert results
-        performAuthenticatedGet("/reports/"+ reportId, List.of("Financial"))
+        performAuthenticatedGet("/reports/" + REPORT_ID, List.of("Financial"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id")
-                        .value(reportId.toString()))
+                        .value(REPORT_ID.toString()))
                 .andExpect(jsonPath("$.reportName").value(reportResponseMock.getReportName()));
 
-        verify(reportManagementServiceMock, times(1)).createReportResponse(reportId);
+        verify(reportManagementServiceMock, times(1)).createReportResponse(REPORT_ID);
     }
 
     @Test
     void getReportDownloadByIdReturnsCorrectResponseEntity() throws Exception {
-        var reportId = DEFAULT_ID;
+        var report = ReportsTestDataFactory.createTestReportWithOutputType(s3ReportOutput);
+        var reportId = report.getId();
+        var s3CsvDownload = mock(S3ClientWrapper.S3CsvDownload.class);
+        var responseMetadata = GetObjectResponse.builder().contentLength(120L).build();
+        var inputStream = new ByteArrayInputStream("test".getBytes());
+        var outputStream = new ByteArrayOutputStream();
+        outputStream.write("output!".getBytes());
+        var mockS3Response = new ResponseInputStream<>(responseMetadata, inputStream);
+        StreamingResponseBody responseStream = output -> {
+            outputStream.writeTo(output);
+            outputStream.flush();
+        };
 
-        var inputStreamResource = new InputStreamResource(new ByteArrayInputStream("test".getBytes()));
-        var mockResponse = ResponseEntity.ok(inputStreamResource);
+        when(fileDownloadService.getFileStreamResponse(reportId)).thenReturn(s3CsvDownload);
+        when(reportDao.fetchReportById(reportId)).thenReturn(Optional.of(report));
+        when(s3CsvDownload.stream()).thenReturn(mockS3Response);
+        when(s3CsvDownload.getFileName()).thenReturn("file.csv");
+        when(trackedStreamService.wrapStream(any(), any(), any())).thenReturn(responseStream);
+        when(securityUtils.extractUserId()).thenReturn(USER_ID);
+        when(responseBuilder.buildResponse(any(), any(), any(), any())).thenReturn(ResponseEntity.ok().body(responseStream));
 
-        when(fileDownloadService.getFileStreamResponse(reportId)).thenReturn(mockResponse);
-
-        var result = performAuthenticatedGet("/reports/"+ reportId + "/file", List.of("Financial"))
+        var result = performAuthenticatedGet("/reports/" + reportId + "/file", List.of("Financial"))
                 .andExpect(status().isOk()).andReturn();
+        assertEquals("output!", result.getResponse().getContentAsString());
 
-        assertEquals("test", result.getResponse().getContentAsString());
+        verify(reportManagementServiceMock).validateReportFormat(reportId, FileExtension.S3STORAGE);
         verify(fileDownloadService, times(1)).getFileStreamResponse(reportId);
+        verify(trackedStreamService, times(1)).wrapStream(any(StreamingResponseBody.class), eq(reportId), eq(USER_ID));
+        verify(responseBuilder, times(1)).buildResponse(responseStream, "file.csv", FileExtension.S3STORAGE, 120L);
     }
 
     @Test
     void getReportDownloadByIdReturnsErrorWhenIdInvalid() throws Exception {
         var reportId = "not a uuid";
 
-        performAuthenticatedGet("/reports/"+ reportId + "/file", List.of("Financial"))
+        performAuthenticatedGet("/reports/" + reportId + "/file", List.of("Financial"))
                 .andExpect(status().isBadRequest()).andReturn();
     }
 
@@ -230,7 +283,7 @@ class ReportsControllerTest extends BaseMvcTest {
         when(streamingService.stream(csvReportId, FileExtension.CSV)).thenReturn(mockResponseEntity);
 
         // Perform the GET request
-        performAuthenticatedGet("/reports/"+ csvReportId + "/csv", List.of("Financial"))
+        performAuthenticatedGet("/reports/" + csvReportId + "/csv", List.of("Financial"))
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=data.csv"));
 
@@ -240,7 +293,8 @@ class ReportsControllerTest extends BaseMvcTest {
 
     @Test
     void downloadExcelSucceedsForExcelReport() throws Exception {
-        var excelReportId = DEFAULT_ID;
+        var report = ReportsTestDataFactory.createTestReportWithOutputType(xlsxReportOutput);
+        var excelReportId = report.getId();
 
         // Mock Excel data
         ByteArrayOutputStream excelDataOutputStream = new ByteArrayOutputStream();
@@ -258,7 +312,11 @@ class ReportsControllerTest extends BaseMvcTest {
 
         // Validation passes (no exception thrown)
         doNothing().when(reportManagementServiceMock).validateReportFormat(excelReportId, FileExtension.XLSX);
-        when(streamingService.stream(excelReportId, FileExtension.XLSX)).thenReturn(mockResponseEntity);
+        when(streamingService.stream(excelReportId, FileExtension.XLSX)).thenReturn(responseBody);
+        when(securityUtils.extractUserId()).thenReturn(USER_ID);
+        when(trackedStreamService.wrapStream(any(), any(), any())).thenReturn(responseBody);
+        when(responseBuilder.buildResponse(any(), any(), any())).thenReturn(mockResponseEntity);
+        when(reportDao.fetchReportById(excelReportId)).thenReturn(Optional.of(report));
 
         // Perform the GET request
         performAuthenticatedGet("/reports/"+ excelReportId + "/excel", List.of("Financial"))
@@ -267,6 +325,8 @@ class ReportsControllerTest extends BaseMvcTest {
 
         verify(reportManagementServiceMock).validateReportFormat(excelReportId, FileExtension.XLSX);
         verify(streamingService).stream(excelReportId, FileExtension.XLSX);
+        verify(trackedStreamService).wrapStream(responseBody, excelReportId, USER_ID);
+        verify(responseBuilder).buildResponse(responseBody, "Test Report.xlsx", FileExtension.XLSX);
     }
 
     @ParameterizedTest(name = "Rejects invalid filetype {1} for S3STORAGE download")
@@ -282,7 +342,7 @@ class ReportsControllerTest extends BaseMvcTest {
                 .when(reportManagementServiceMock)
                 .validateReportFormat(uuid, FileExtension.S3STORAGE);
 
-        performAuthenticatedGet("/reports/"+ uuid +"/file", List.of("Financial"))
+        performAuthenticatedGet("/reports/" + uuid + "/file", List.of("Financial"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value(
                         "Report " + uuid +
@@ -297,40 +357,49 @@ class ReportsControllerTest extends BaseMvcTest {
     }
 
     @Test
-    void getReportDownloadByIdSucceedsForS3StorageReport() throws Exception {
-        var s3ReportId = UUID.fromString("523f38f0-2179-4824-b885-3a38c5e149e8");
-
-        var inputStreamResource = new InputStreamResource(new ByteArrayInputStream("test".getBytes()));
-        var mockResponse = ResponseEntity.ok(inputStreamResource);
-
-        // Validation passes (no exception thrown)
-        doNothing().when(reportManagementServiceMock).validateReportFormat(s3ReportId, FileExtension.S3STORAGE);  // Updated this line
-        when(fileDownloadService.getFileStreamResponse(s3ReportId)).thenReturn(mockResponse);
-
-        var result = performAuthenticatedGet("/reports/"+ s3ReportId +"/file", List.of("REP000"))
-                .andExpect(status().isOk()).andReturn();
-
-        assertEquals("test", result.getResponse().getContentAsString());
-        verify(reportManagementServiceMock).validateReportFormat(s3ReportId, FileExtension.S3STORAGE);  // Updated this line
-        verify(fileDownloadService, times(1)).getFileStreamResponse(s3ReportId);
-    }
-
-    @Test
     void csvIdGet_shouldReturn403_whenAccessDenied() throws Exception {
-        UUID id = DEFAULT_ID;
-        doThrow(new ReportAccessException(id))
-                .when(reportDao).verifyUserCanAccessReport(id);
-        performAuthenticatedGet("/reports/" + id + "/csv", List.of("Financial"))
+        doThrow(new ReportAccessException(REPORT_ID))
+                .when(reportDao).verifyUserCanAccessReport(REPORT_ID);
+        performAuthenticatedGet("/reports/" + REPORT_ID + "/csv", List.of("Financial"))
                 .andExpect(status().isForbidden());
     }
 
     @Test
     void excelIdGet_shouldReturn403_whenAccessDenied() throws Exception {
-        UUID id = DEFAULT_ID;
-        doThrow(new ReportAccessException(id))
-                .when(reportDao).verifyUserCanAccessReport(id);
-        performAuthenticatedGet("/reports/" + id + "/excel", List.of("Financial"))
+        doThrow(new ReportAccessException(REPORT_ID))
+                .when(reportDao).verifyUserCanAccessReport(REPORT_ID);
+        performAuthenticatedGet("/reports/" + REPORT_ID + "/excel", List.of("Financial"))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void downloadCsvFailsIfFailToGetUserId() throws Exception {
+
+        when(securityUtils.extractUserId()).thenThrow(new AuthenticationIsNullException());
+
+        // Perform the GET request
+        performAuthenticatedGet("/reports/" + REPORT_ID + "/csv", List.of("Financial"))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    void downloadExcelFailsIfFailToGetUserId() throws Exception {
+
+        when(securityUtils.extractUserId()).thenThrow(new AuthenticationIsNullException());
+
+        // Perform the GET request
+        performAuthenticatedGet("/reports/" + REPORT_ID + "/excel", List.of("Financial"))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    void downloadFromS3FailsIfFailToGetUserId() throws Exception {
+
+        when(securityUtils.extractUserId()).thenThrow(new AuthenticationIsNullException());
+
+        // Perform the GET request
+        performAuthenticatedGet("/reports/" + REPORT_ID + "/file", List.of("REP000"))
+                .andExpect(status().isInternalServerError());
     }
 
 }
