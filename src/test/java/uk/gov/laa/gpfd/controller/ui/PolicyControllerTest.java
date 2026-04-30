@@ -1,26 +1,33 @@
 package uk.gov.laa.gpfd.controller.ui;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.laa.gpfd.utils.BaseMvcTest;
+import uk.gov.laa.gpfd.utils.UrlBuilder;
 
 import java.util.List;
 
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT ,
-        classes = uk.gov.laa.gpfd.config.TestDatabaseConfig .class)
-@AutoConfigureMockMvc
-@ActiveProfiles("testauth")
+@WebMvcTest(PolicyController.class)
 class PolicyControllerTest extends BaseMvcTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    @MockitoBean
+    UrlBuilder urlBuilder;
+
+    @BeforeEach
+    void beforeEach(){
+        when(urlBuilder.getServiceUrl()).thenReturn("http://localhost");
+    }
 
     @Test
     void cookiesPageResolvesToCookiesHtml() throws Exception {

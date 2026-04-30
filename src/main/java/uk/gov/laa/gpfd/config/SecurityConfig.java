@@ -1,6 +1,7 @@
 package uk.gov.laa.gpfd.config;
 
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -11,11 +12,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager;
-import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizedClientRepository;
-import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -142,6 +139,27 @@ public class SecurityConfig {
 //                .csrf(csrf -> csrf.ignoringRequestMatchers(
 //                        PathPatternRequestMatcher.withDefaults().matcher("/csp-report")
 //                ))
+//                .cors(Customizer.withDefaults())
+//                .authorizeHttpRequests(authorizeHttpRequestsBuilder)    // Apply authorization rules
+//                .sessionManagement(sessionManagementConfigurerBuilder)  // Apply session management configuration
+//                .headers(headers -> headers
+//                        .httpStrictTransportSecurity(hsts -> hsts
+//                                .maxAgeInSeconds(63072000)
+//                                .includeSubDomains(true)
+//                                .preload(true)
+//                        )
+//                        .contentTypeOptions(Customizer.withDefaults())
+//                        .referrerPolicy(referrerPolicy -> referrerPolicy
+//                                .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER)
+//                        ).permissionsPolicyHeader(permissionsPolicy -> permissionsPolicy
+//                                .policy("interest-cohort=()")
+//                        )
+//                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny)
+//                        .addHeaderWriter(new StaticHeadersWriter("Cache-Control", "no-store"))
+//                        .addHeaderWriter(new StaticHeadersWriter("Pragma", "no-cache"))
+//                        .contentSecurityPolicy(SecurityConfig::getContentSecurityPolicyConfig)
+//                )
+
                 .sessionManagement(sessionManagementConfigurerBuilder);
 
         return SecurityConfigSupport.applyCommonHeaders(http, false, false)

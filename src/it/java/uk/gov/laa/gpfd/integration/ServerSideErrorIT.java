@@ -32,13 +32,13 @@ class ServerSideErrorIT extends BaseIT {
 
     @BeforeAll
     @Override
-    void setUpDatabase() {
+    void setUpMojfinDatabase() {
         writeJdbcTemplate.execute("CREATE SCHEMA IF NOT EXISTS GPFD;"); //Create an empty schema so that we get a 500 error
     }
 
     @AfterAll
     @Override
-    void cleanUpDatabase() {
+    void cleanUpMojfinDatabase() {
         writeJdbcTemplate.execute("DROP TABLE IF EXISTS GPFD.CSV_TO_SQL_MAPPING_TABLE");
     }
 

@@ -19,6 +19,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
 
+import static uk.gov.laa.gpfd.config.SecurityConfig.getContentSecurityPolicyConfig;
+
 /**
  * Configuration class to set up Spring Security for the application.
  * <p>
@@ -89,6 +91,27 @@ public class SecurityConfigLocal {
                 )
                 .addFilterAfter(SecurityConfigSupport.csrfCookieFilter(), CsrfFilter.class)
                 .cors(Customizer.withDefaults())
+                // Allow h2-console to display in web-frames
+                .headers(headers -> headers
+                        .httpStrictTransportSecurity(hsts -> hsts
+                                .maxAgeInSeconds(63072000)
+                                .includeSubDomains(true)
+                                .preload(true)
+                        )
+                        .contentTypeOptions(contentTypeOptions -> {
+                        })
+                        .referrerPolicy(referrerPolicy -> referrerPolicy
+                                .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER)
+                        ).permissionsPolicyHeader(permissionsPolicy -> permissionsPolicy
+                                .policy("interest-cohort=()")
+                        )
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
+                        .addHeaderWriter(new StaticHeadersWriter("Cache-Control", "no-store"))
+                        .addHeaderWriter(new StaticHeadersWriter("Pragma", "no-cache"))
+                        .contentSecurityPolicy(csp -> getContentSecurityPolicyConfig(csp)
+                                        .reportOnly() // Included in local config for debugging purposes
+                                )
+                )
                 .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
                 .oauth2Login(oauth ->
                         oauth.loginPage("/oauth2/authorization/gpfd-azure-dev"));

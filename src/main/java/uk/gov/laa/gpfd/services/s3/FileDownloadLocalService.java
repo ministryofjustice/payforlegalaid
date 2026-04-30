@@ -1,8 +1,7 @@
 package uk.gov.laa.gpfd.services.s3;
 
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.ResponseEntity;
 import uk.gov.laa.gpfd.exception.OperationNotSupportedException;
+import uk.gov.laa.gpfd.services.s3.S3ClientWrapper.S3CsvDownload;
 
 import java.util.UUID;
 
@@ -17,7 +16,7 @@ public class FileDownloadLocalService implements FileDownloadService {
      * @return will have thrown an {@link OperationNotSupportedException} before it can return
      */
     @Override
-    public ResponseEntity<InputStreamResource> getFileStreamResponse(UUID id) {
+    public S3CsvDownload getFileStreamResponse(UUID id) {
         throw new OperationNotSupportedException("/reports/" + id + "/file");
     }
 }
