@@ -10,8 +10,10 @@ import static org.immutables.value.Value.Immutable;
 public abstract class ReportQuery implements Mapping, Identifiable {
 
     @Nullable
+    @Override
     public abstract ReportQuerySql getQuery();
 
+    @Override
     public abstract ExcelSheet getExcelSheet();
 
 }

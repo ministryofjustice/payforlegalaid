@@ -85,6 +85,7 @@ public sealed interface StrategyFactory<K, S> permits StrategyFactory.GenericStr
          *
          * @return an unmodifiable map of all strategies
          */
+        @Override
         public Map<K, S> getStrategies() {
             return unmodifiableMap(strategies);
         }
@@ -95,6 +96,7 @@ public sealed interface StrategyFactory<K, S> permits StrategyFactory.GenericStr
          * @param key the key to look up
          * @return an Optional containing the strategy if found
          */
+        @Override
         public Optional<S> getStrategy(K key) {
             return ofNullable(strategies.get(key));
         }
@@ -106,6 +108,7 @@ public sealed interface StrategyFactory<K, S> permits StrategyFactory.GenericStr
          * @return the strategy implementation
          * @throws NoSuchElementException if no strategy exists for the key
          */
+        @Override
         public S getRequiredStrategy(K key) {
             return getStrategy(key).orElseThrow(() -> new NoSuchElementException("No strategy found for key: " + key));
         }

@@ -98,6 +98,7 @@ public interface DataStreamer {
          * @throws IllegalStateException     if there's an error writing to the stream
          * @throws IllegalArgumentException  if either argument is null
          */
+        @Override
         default void stream(Report report, OutputStream output) {
             Objects.requireNonNull(report, "Report must not be null");
             Objects.requireNonNull(output, "Output stream must not be null");
