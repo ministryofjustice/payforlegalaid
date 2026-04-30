@@ -69,7 +69,9 @@ class FileDownloadFromS3ServiceTest {
 
         var result = fileDownloadFromS3Service.getFileStreamResponse(testUUID);
 
-        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(result.stream()))) {
+        try (BufferedReader bufferedReader =
+                     new BufferedReader(new InputStreamReader(result.getBody().getInputStream()))) {
+
             var content = bufferedReader
                     .lines()
                     .collect(Collectors.joining());

@@ -85,7 +85,6 @@ class SecurityUtilsTest {
         assertThrows(PrincipalIsNullException.class, securityUtils::extractRoles);
     }
 
-
     @Test
     void extractRoles_parsesListOfRolesCorrectly() {
         when(oidcUser.getAttributes()).thenReturn(Map.of("LAA_APP_ROLES", List.of("REP000", "Financial", "Reconciliation")));

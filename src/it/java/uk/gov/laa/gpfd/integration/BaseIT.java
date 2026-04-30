@@ -4,8 +4,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -15,20 +13,18 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.postgresql.PostgreSQLContainer;
-import uk.gov.laa.gpfd.integration.config.TestDatabaseConfig;
-import uk.gov.laa.gpfd.config.TestSecurityConfig;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.postgresql.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import uk.gov.laa.gpfd.utils.DatabaseUtils;
 
 import java.util.List;
 import java.util.UUID;
 
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 
 @Testcontainers
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@AutoConfigureMockMvc
-@SpringBootTest(webEnvironment = RANDOM_PORT, classes = {TestDatabaseConfig.class, TestSecurityConfig.class})
 public abstract class BaseIT {
 
     @Autowired
@@ -68,12 +64,12 @@ public abstract class BaseIT {
         databaseUtils.cleanUpMockMojfinDatabase();
     }
 
-    protected ResultActions performGetRequest(String uriTemplate) throws Exception {
-        return mockMvc.perform(
-                MockMvcRequestBuilders.get(uriTemplate)
-                        .contentType(MediaType.APPLICATION_JSON)
-        );
-    }
+  protected ResultActions performGetRequest(String uriTemplate) throws Exception {
+    return mockMvc.perform(
+      MockMvcRequestBuilders.get(uriTemplate)
+      .contentType(MediaType.APPLICATION_JSON)
+    );
+  }
 
     protected ResultActions performGetRequestWithRoles(String uri, List<String> roles) throws Exception {
         return mockMvc.perform(

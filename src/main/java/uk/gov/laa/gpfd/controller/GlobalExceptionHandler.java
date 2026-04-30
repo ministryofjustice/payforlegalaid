@@ -455,4 +455,47 @@ public class GlobalExceptionHandler {
                 .body(errorResponse);
     }
 
+    /**
+     * Handles DatabaseWriteException and responds with an HTTP 500 Internal Server Error.
+     *
+     * @param e the DatabaseWriteException thrown when there is a database read failure.
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
+     */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(value = {
+            DatabaseWriteException.class,
+    }, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ReportsGet500Response> handleDatabaseWriteException(Exception e) {
+        var response = new ReportsGet500Response() {{
+            setError(e.getMessage());
+        }};
+
+        log.error("DatabaseWriteException Thrown: %s".formatted(response));
+        log.error("DatabaseWriteException stacktrace: %s".formatted((Object) e.getStackTrace()));
+
+        return internalServerError()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(response);
+    }
+
+    /**
+     * Handles {@link StreamErrorException} and responds with an HTTP 500 Internal Server Error.
+     *
+     * @param e the exception thrown when the stream fails on the service
+     * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
+     */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(StreamErrorException.class)
+    public ResponseEntity<ReportsGet500Response> handleStreamErrorException(StreamErrorException e) {
+        var errorResponse = new ReportsGet500Response();
+        errorResponse.setError("Report streaming failure");
+
+        log.error("StreamErrorException Thrown: Report {} failed streaming on the server side with exception, caused by {}",
+                e.getReportId(), e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(errorResponse);
+    }
+
+
 }
