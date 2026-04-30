@@ -23,6 +23,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
 
+import static uk.gov.laa.gpfd.config.SecurityConfig.getContentSecurityPolicyConfig;
+
 /**
  * Configuration class to set up Spring Security for the application.
  * <p>
@@ -107,21 +109,7 @@ public class SecurityConfigLocal {
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
                         .addHeaderWriter(new StaticHeadersWriter("Cache-Control", "no-store"))
                         .addHeaderWriter(new StaticHeadersWriter("Pragma", "no-cache"))
-                        .contentSecurityPolicy(csp -> csp
-                                .policyDirectives(
-                                        "default-src 'none'; " +
-                                        "base-uri 'self'; " +
-                                        "object-src 'none'; " +
-                                        "frame-ancestors 'none'; " +
-                                        "form-action 'self'; " +
-                                        "script-src 'self'; " +
-                                        "style-src 'self'; " +
-                                        "img-src 'self' data:; " +
-                                        "font-src 'self'; " +
-                                        "connect-src 'self'; " +
-                                        "upgrade-insecure-requests; " +
-                                        "report-uri /csp-report"
-                                )
+                        .contentSecurityPolicy(csp -> getContentSecurityPolicyConfig(csp)
                                         .reportOnly() // Included in local config for debugging purposes
                                 )
                 )

@@ -7,10 +7,10 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP000;
-import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP012;
-import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP013;
-import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP014;
+import static uk.gov.laa.gpfd.utils.ReportIds.ID_REP000;
+import static uk.gov.laa.gpfd.utils.ReportIds.ID_REP012;
+import static uk.gov.laa.gpfd.utils.ReportIds.ID_REP013;
+import static uk.gov.laa.gpfd.utils.ReportIds.ID_REP014;
 
 class ReportFileNameResolverTest {
 

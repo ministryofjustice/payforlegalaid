@@ -1,6 +1,7 @@
 package uk.gov.laa.gpfd.config;
 
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -10,11 +11,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager;
-import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizedClientRepository;
-import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -136,24 +133,27 @@ public class SecurityConfig {
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny)
                         .addHeaderWriter(new StaticHeadersWriter("Cache-Control", "no-store"))
                         .addHeaderWriter(new StaticHeadersWriter("Pragma", "no-cache"))
-                        .contentSecurityPolicy(csp -> csp
-                                .policyDirectives(
-                                        "default-src 'none'; " +
-                                        "base-uri 'self'; " +
-                                        "object-src 'none'; " +
-                                        "frame-ancestors 'none'; " +
-                                        "form-action 'self'; " +
-                                        "script-src 'self'; " +
-                                        "style-src 'self'; " +
-                                        "img-src 'self' data:; " +
-                                        "font-src 'self'; " +
-                                        "connect-src 'self'; " +
-                                        "upgrade-insecure-requests; " +
-                                        "report-uri /csp-report"
-                                )
-                        )
+                        .contentSecurityPolicy(SecurityConfig::getContentSecurityPolicyConfig)
                 )
                 .build();
+    }
+
+    static HeadersConfigurer<HttpSecurity>.@NonNull ContentSecurityPolicyConfig getContentSecurityPolicyConfig(HeadersConfigurer<HttpSecurity>.ContentSecurityPolicyConfig csp) {
+        return csp
+                .policyDirectives(
+                                "default-src 'none'; " +
+                                "base-uri 'self'; " +
+                                "object-src 'none'; " +
+                                "frame-ancestors 'none'; " +
+                                "form-action 'self'; " +
+                                "script-src 'self'; " +
+                                "style-src 'self'; " +
+                                "img-src 'self' data:; " +
+                                "font-src 'self'; " +
+                                "connect-src 'self'; " +
+                                "upgrade-insecure-requests; " +
+                                "report-uri /csp-report"
+                );
     }
 
     /*@Bean
