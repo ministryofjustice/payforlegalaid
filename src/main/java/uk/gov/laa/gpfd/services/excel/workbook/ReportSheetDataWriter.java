@@ -127,6 +127,10 @@ public final class ReportSheetDataWriter extends SheetDataWriter implements Clos
      * @throws IOException if an I/O error occurs
      */
     @Override
+    @SuppressWarnings("java/missing-case-in-switch")
+    /*
+    Suppressing warning about missing values in the switch cases so CodeQL can ignore them.
+     */
     public void writeCell(int columnIndex, Cell cell) throws IOException {
         if (cell == null) {
             return;
