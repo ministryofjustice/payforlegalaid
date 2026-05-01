@@ -29,7 +29,7 @@
         <moj-frontend.version>6.0.0</moj-frontend.version>
 
         <payforlegalaid-openapi.version>0.0.33</payforlegalaid-openapi.version>
-        <aws.java.sdk.version>2.42.37</aws.java.sdk.version>
+        <aws.java.sdk.version>2.43.0</aws.java.sdk.version>
         <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
         <maven-dependency-plugin.version>3.10.0</maven-dependency-plugin.version>
         <maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
@@ -255,12 +255,12 @@
             <dependency>
                 <groupId>org.thymeleaf</groupId>
                 <artifactId>thymeleaf</artifactId>
-                <version>3.1.4.RELEASE</version>
+                <version>3.1.5.RELEASE</version>
             </dependency>
             <dependency>
                 <groupId>org.thymeleaf</groupId>
                 <artifactId>thymeleaf-spring6</artifactId>
-                <version>3.1.4.RELEASE</version>
+                <version>3.1.5.RELEASE</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
