@@ -16,7 +16,7 @@ import java.util.Map;
  * A specialized streaming workbook implementation that extends {@link SXSSFWorkbook} with
  * additional functionality for report generation. This class provides optimized sheet creation
  * and maintains bidirectional mappings between streaming sheets (SXSSF) and their backing
- * XSSF sheets using low-level memory operations via {@link sun.misc.Unsafe}.
+ * XSSF sheets using low-level memory operations.
  */
 public class ReportWorkbook extends SXSSFWorkbook implements Workbook {
     private static final String SX_FROM_X_FIELD = "_sxFromXHash";
