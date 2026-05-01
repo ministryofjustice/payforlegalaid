@@ -11,6 +11,8 @@ import org.springframework.security.web.servlet.util.matcher.PathPatternRequestM
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
 
+import static uk.gov.laa.gpfd.config.SecurityConfig.getContentSecurityPolicyConfig;
+
 /**
  * Configuration class to set up Spring Security for the application.
  * <p>
@@ -49,21 +51,7 @@ public class SecurityConfigLocal {
                 // Allow h2-console to display in web-frames
                 .headers(headers -> headers
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
-                        .contentSecurityPolicy(csp -> csp
-                                .policyDirectives(
-                                        "default-src 'none'; " +
-                                        "base-uri 'self'; " +
-                                        "object-src 'none'; " +
-                                        "frame-ancestors 'none'; " +
-                                        "form-action 'self'; " +
-                                        "script-src 'self'; " +
-                                        "style-src 'self'; " +
-                                        "img-src 'self' data:; " +
-                                        "font-src 'self'; " +
-                                        "connect-src 'self'; " +
-                                        "upgrade-insecure-requests; " +
-                                        "report-uri /csp-report"
-                                )
+                        .contentSecurityPolicy(csp -> getContentSecurityPolicyConfig(csp)
                                         .reportOnly() // Included in local config for debugging purposes
                                 )
                 )

@@ -1,16 +1,13 @@
 package uk.gov.laa.gpfd.config;
 
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager;
-import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizedClientRepository;
-import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
@@ -67,23 +64,26 @@ public class SecurityConfig {
                         }))
                 .sessionManagement(sessionManagementConfigurerBuilder)
                 .headers(headers -> headers
-                        .contentSecurityPolicy(csp -> csp
-                                .policyDirectives(
-                                        "default-src 'none'; " +
-                                                "base-uri 'self'; " +
-                                                "object-src 'none'; " +
-                                                "frame-ancestors 'none'; " +
-                                                "form-action 'self'; " +
-                                                "script-src 'self'; " +
-                                                "style-src 'self'; " +
-                                                "img-src 'self' data:; " +
-                                                "font-src 'self'; " +
-                                                "connect-src 'self'; " +
-                                                "upgrade-insecure-requests; " +
-                                                "report-uri /csp-report"
-                                )
-                        )
+                        .contentSecurityPolicy(SecurityConfig::getContentSecurityPolicyConfig)
                 )
                 .build();
+    }
+
+    static HeadersConfigurer<HttpSecurity>.@NonNull ContentSecurityPolicyConfig getContentSecurityPolicyConfig(HeadersConfigurer<HttpSecurity>.ContentSecurityPolicyConfig csp) {
+        return csp
+                .policyDirectives(
+                                "default-src 'none'; " +
+                                "base-uri 'self'; " +
+                                "object-src 'none'; " +
+                                "frame-ancestors 'none'; " +
+                                "form-action 'self'; " +
+                                "script-src 'self'; " +
+                                "style-src 'self'; " +
+                                "img-src 'self' data:; " +
+                                "font-src 'self'; " +
+                                "connect-src 'self'; " +
+                                "upgrade-insecure-requests; " +
+                                "report-uri /csp-report"
+                );
     }
 }
