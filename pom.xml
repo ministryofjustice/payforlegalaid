@@ -243,7 +243,7 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${jacoco-maven-plugin.version}</version>
                 <executions>
-                    <!-- Prepare agent for unit tests -->
+                    <!-- Prepare runtime agent for unit tests -->
                     <execution>
                         <goals>
                             <goal>prepare-agent</goal>
@@ -268,11 +268,7 @@
                             <rules>
                                 <!-- Line coverage minimum: fail build if below threshold -->
                                 <rule>
-                                    <element>PACKAGE</element>
-                                    <excludes>
-                                        <exclude>uk.gov.laa.gpfd.config</exclude>
-                                        <exclude>uk.gov.laa.gpfd.exception</exclude>
-                                    </excludes>
+                                    <element>BUNDLE</element>
                                     <limits>
                                         <limit>
                                             <counter>LINE</counter>
