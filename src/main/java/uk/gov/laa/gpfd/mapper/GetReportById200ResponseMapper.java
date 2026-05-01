@@ -38,6 +38,7 @@ public final class GetReportById200ResponseMapper extends AbstractReportMapper i
      * @throws IllegalArgumentException if report is {@code null} or contains invalid data
      * @throws IllegalStateException if URL construction fails due to invalid configuration
      */
+    @Override
     public GetReportById200Response map(Report report) {
         var response = new GetReportById200Response();
         response.setId(report.getId());
