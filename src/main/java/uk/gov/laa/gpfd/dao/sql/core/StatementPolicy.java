@@ -39,8 +39,17 @@ public class StatementPolicy {
 
         return (Connection conn) -> {
             PreparedStatement ps = createStatement(conn, sql);
-            configure(ps);
-            return ps;
+            boolean success = false;
+
+            try {
+                configure(ps);
+                success = true;
+                return ps;
+            } finally {
+                if (!success) {
+                    ps.close();
+                }
+            }
         };
     }
 
