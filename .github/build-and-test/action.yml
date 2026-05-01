@@ -1,5 +1,5 @@
 name: Build and run tests
-description: Build the application and run tests in a local environment using Docker
+description: Build the application and run tests in a local environment
 
 runs:
   using: 'composite'
