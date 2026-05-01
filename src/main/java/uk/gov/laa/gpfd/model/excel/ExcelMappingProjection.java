@@ -13,10 +13,12 @@ public abstract class ExcelMappingProjection implements Identifiable, FieldProje
     abstract ExcelColumn getExcelColumn();
 
     @Nullable
+    @Override
     public abstract String getSourceName();
 
     @Nullable
     @Value.Derived
+    @Override
     public String getMappedName() {
         return getExcelColumn().getName();
     }

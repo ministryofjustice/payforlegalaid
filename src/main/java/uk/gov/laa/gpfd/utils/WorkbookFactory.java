@@ -67,6 +67,7 @@ public interface WorkbookFactory {
          * @throws IllegalStateException if the input does not contain an XSSF workbook
          * @throws IllegalArgumentException if the input stream is null
          */
+        @Override
         SXSSFWorkbook create(InputStream input) throws IOException;
     }
 
