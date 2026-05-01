@@ -1,6 +1,5 @@
 package uk.gov.laa.gpfd.mapper;
 
-import io.micrometer.observation.annotation.ObservationKeyValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
