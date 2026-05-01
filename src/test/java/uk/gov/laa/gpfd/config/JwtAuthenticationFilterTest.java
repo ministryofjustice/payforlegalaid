@@ -194,7 +194,7 @@ class JwtAuthenticationFilterTest {
     @SneakyThrows
     void shouldNotAuthoriseWhenTenantMismatch(String tenantId) {
         mockTokenExtractAndGetSysVars();
-        when(appConfig.getEntraIdTenantId()).thenReturn("Another tenant Id");
+        when(appConfig.getEntraIdTenantId()).thenReturn(tenantId);
         when(jwtDecoder.decode(any())).thenReturn(testJwt);
 
         Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.doFilterInternal(mockRequest, mockResponse, mockFilterChain));
