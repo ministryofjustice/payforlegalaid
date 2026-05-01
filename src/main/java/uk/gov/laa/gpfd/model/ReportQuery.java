@@ -1,7 +1,6 @@
 package uk.gov.laa.gpfd.model;
 
 import jakarta.annotation.Nullable;
-import uk.gov.laa.gpfd.model.excel.ExcelSheet;
 
 import static org.immutables.value.Value.Immutable;
 
