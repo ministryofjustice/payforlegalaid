@@ -23,8 +23,7 @@ public class UserService {
      * Retrieve the details for the currently authenticated User, based on the
      * supplied OAuth2AuthorizedClient.
      *
-     * @param client a client which is authorized to query user details from the external directory
-     * @return a populated UserDetails
+     * @return a user's username
      */
     public String getCurrentUserName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
