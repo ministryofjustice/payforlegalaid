@@ -15,6 +15,9 @@ logging:
 gpfd:
   url: http://localhost:8080
   redirect-uri-template: ${gpfd.url}/login/oauth2/code/gpfd-azure-dev
+  security:
+    cors:
+      allowed-origin: https://localhost:8080
 
   datasource:
     read-only:

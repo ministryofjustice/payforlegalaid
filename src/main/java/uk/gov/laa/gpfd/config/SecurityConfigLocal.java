@@ -1,17 +1,24 @@
 package uk.gov.laa.gpfd.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
 
@@ -32,6 +39,8 @@ import java.util.List;
 @Configuration
 @ConditionalOnProperty(name = "spring.cloud.azure.active-directory.enabled", havingValue = "false")
 public class SecurityConfigLocal {
+    @Value("${gpfd.security.cors.allowed-origin:https://127.0.0.1:8020}")
+    private String allowedCorsOrigin;
 
     /**
      * Configures the {@link SecurityFilterChain} for the HTTP security settings.
@@ -53,9 +62,24 @@ public class SecurityConfigLocal {
                         PathPatternRequestMatcher.withDefaults().matcher("/h2-console/**"),
                         PathPatternRequestMatcher.withDefaults().matcher("/csp-report")
                 ))
+                .cors(Customizer.withDefaults())
                 // Allow h2-console to display in web-frames
                 .headers(headers -> headers
+                        .httpStrictTransportSecurity(hsts -> hsts
+                                .maxAgeInSeconds(63072000)
+                                .includeSubDomains(true)
+                                .preload(true)
+                        )
+                        .contentTypeOptions(contentTypeOptions -> {
+                        })
+                        .referrerPolicy(referrerPolicy -> referrerPolicy
+                                .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER)
+                        ).permissionsPolicyHeader(permissionsPolicy -> permissionsPolicy
+                                .policy("interest-cohort=()")
+                        )
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
+                        .addHeaderWriter(new StaticHeadersWriter("Cache-Control", "no-store"))
+                        .addHeaderWriter(new StaticHeadersWriter("Pragma", "no-cache"))
                         .contentSecurityPolicy(csp -> csp
                                 .policyDirectives(
                                         "default-src 'none'; " +
@@ -76,6 +100,17 @@ public class SecurityConfigLocal {
                 )
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                 .build();
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of(allowedCorsOrigin));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     @Bean

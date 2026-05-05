@@ -2,18 +2,27 @@ package uk.gov.laa.gpfd.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authorization.AuthorizationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.HttpSecuritySessionManagementConfigurerBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
 
 import static com.azure.spring.cloud.autoconfigure.implementation.aad.security.AadWebApplicationHttpSecurityConfigurer.aadWebApplication;
+import java.util.List;
 
 /**
  * Configuration class to set up Spring Security for the application.
@@ -33,6 +42,8 @@ public class SecurityConfig {
 
     private final AuthorizationManager<RequestAuthorizationContext> authManager;
     private final HttpSecuritySessionManagementConfigurerBuilder concurrencyControlConfigurerCustomizer;
+    @Value("${gpfd.security.cors.allowed-origin:https://127.0.0.1:8020}")
+    private String allowedCorsOrigin;
 
     /**
      * Configures the {@link SecurityFilterChain} for the HTTP security settings.
@@ -58,9 +69,25 @@ public class SecurityConfig {
                         PathPatternRequestMatcher.withDefaults().matcher("/csp-report")
                 ))
                 .with(aadWebApplication())
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authorizeHttpRequestsBuilder)    // Apply authorization rules
                 .sessionManagement(sessionManagementConfigurerBuilder)  // Apply session management configuration
                 .headers(headers -> headers
+                        .httpStrictTransportSecurity(hsts -> hsts
+                                .maxAgeInSeconds(63072000)
+                                .includeSubDomains(true)
+                                .preload(true)
+                        )
+                        .contentTypeOptions(contentTypeOptions -> {
+                        })
+                        .referrerPolicy(referrerPolicy -> referrerPolicy
+                                .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER)
+                        ).permissionsPolicyHeader(permissionsPolicy -> permissionsPolicy
+                                .policy("interest-cohort=()")
+                        )
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny)
+                        .addHeaderWriter(new StaticHeadersWriter("Cache-Control", "no-store"))
+                        .addHeaderWriter(new StaticHeadersWriter("Pragma", "no-cache"))
                         .contentSecurityPolicy(csp -> csp
                                 .policyDirectives(
                                         "default-src 'none'; " +
@@ -79,6 +106,17 @@ public class SecurityConfig {
                         )
                 )
                 .build();
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of(allowedCorsOrigin));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
 }
