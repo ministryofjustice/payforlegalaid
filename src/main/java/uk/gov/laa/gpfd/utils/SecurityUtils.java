@@ -1,5 +1,6 @@
 package uk.gov.laa.gpfd.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Component
+@Slf4j
 public class SecurityUtils {
 
     private static final String ROLE_CLAIM = "LAA_APP_ROLES";
@@ -33,15 +35,22 @@ public class SecurityUtils {
     public List<String> extractRoles() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (!(auth != null && auth.getPrincipal() instanceof OidcUser oidcUser)) {
+            log.info("No odicUser");
             return List.of();
         }
+        log.info("Got oidcUser");
 
         Map<String, Object> attributes = oidcUser.getAttributes();
         if (attributes == null) {
+            log.info("No attributes");
             return List.of();
         }
 
+        log.info("Got attributes");
+
+        log.info("Is the role claim in there? " + attributes.containsKey(ROLE_CLAIM));
         Object rawRoles = attributes.get(ROLE_CLAIM);
+        log.info("Raw roles are " + rawRoles);
         return parseRoles(rawRoles);
     }
 
