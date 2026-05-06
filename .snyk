@@ -15,14 +15,14 @@ ignore:
           production.
         expires: 2026-09-01T09:00:00.000Z
         created: 2026-05-06T16:30:00.000Z
-"snyk:lic:maven:ch.qos.logback:logback-core:(EPL-1.0_OR_LGPL-2.1)"
+"snyk:lic:maven:ch.qos.logback:logback-core:(EPL-1.0_OR_LGPL-2.1)":
     - '*':
         reason: >
           License is weak copyleft (EPL-1.0 and LGPL-2.1). Service is not distributed.
           Replacement would be disproportionate effort.
         expires: 2026-09-01T09:00:00.000Z
         created: 2026-05-06T16:30:00.000Z
-"snyk:lic:maven:ch.qos.logback:logback-classic:(EPL-1.0_OR_LGPL-2.1)"
+"snyk:lic:maven:ch.qos.logback:logback-classic:(EPL-1.0_OR_LGPL-2.1)":
     - '*':
         reason: >
           Logback is pulled in transitively by Spring Boot. License is weak
