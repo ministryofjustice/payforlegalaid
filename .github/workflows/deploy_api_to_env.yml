@@ -73,8 +73,8 @@ jobs:
         id: login-ecr
 
       - name: Build the docker image and push it to the repository
-        uses: './.github/build-push-docker-image'
         id: build-push-image
+        uses: './.github/build-push-docker-image'
         env:
           REPOSITORY: ${{ vars.ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
@@ -85,15 +85,16 @@ jobs:
         id: data-image-digest
         env:
           REPOSITORY: ${{ vars.DATA_ECR_REPOSITORY }}
-          IMAGE_TAG: ${{ vars.DATA_IMAGE_TAG || 'latest' }}
+          IMAGE_TAG: ${{ vars.DATA_IMAGE_TAG }}
         run: |
           IMAGE_DIGEST=$(aws ecr describe-images \
             --repository-name "${REPOSITORY}" \
             --image-ids imageTag="${IMAGE_TAG}" \
             --query 'imageDetails[0].imageDigest' \
             --output text)
+
           echo "image_digest=${IMAGE_DIGEST}" >> "$GITHUB_OUTPUT"
-        
+
       - name: Set ingress class based on environment
         id: ingress_class
         env:
@@ -119,12 +120,12 @@ jobs:
           DATA_IMAGE_DIGEST: ${{ steps.data-image-digest.outputs.image_digest }}
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+          DATA_REPOSITORY: ${{ vars.DATA_ECR_REPOSITORY }}
           NAMESPACE: ${{ secrets.kube_namespace }}
           ALERT_SEVERITY: ${{ inputs.alert_severity }}
           ENV_NAME: ${{ inputs.environment_name }}
           INGRESS_URL: ${{ inputs.ingress_url }}
           SECRET_NAME: ${{ inputs.secret_name }}
-          DATA_REPOSITORY: ${{ vars.DATA_ECR_REPOSITORY }}
           PERMISSION_REP000_GROUP_ID: ${{ vars.PERMISSION_REP000_GROUP_ID }}
           PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID: ${{ vars.PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID }}
           INGRESS_CLASS_NAME: ${{ steps.ingress_class.outputs.ingress_class }}
@@ -140,19 +141,19 @@ jobs:
             "grafana-dashboard:grafana-dashboard:\$ENV_NAME,\$NAMESPACE"
             "deployment:deployment:\$ENV_NAME,\$SECRET_NAME,\$INGRESS_URL,\$REGISTRY,\$REPOSITORY,\$IMAGE_DIGEST,\$DATA_REPOSITORY,\$DATA_IMAGE_DIGEST,\$PERMISSION_REP000_GROUP_ID,\$PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID,\$INGRESS_CLASS_NAME,\$IP_LIST"
           )
-          
+
           for item in "${template_processing[@]}"; do
             IFS=':' read -r template output vars <<< "$item"
             input="deployments/templates/${template}.yml"
             output="deployments/${output}.yml"
-          
+
             if [[ -n "$vars" ]]; then
               envsubst "$vars" < "$input" > "$output"
             else
               DOLLAR='$' envsubst < "$input" > "$output"
             fi
           done
-          
+
           if [[ "${ENV_NAME}" == "prod" ]]; then
             yq -i '
               .spec.tls[0].secretName = "tls-certificate"
@@ -167,33 +168,43 @@ jobs:
           KUBE_TOKEN: ${{ secrets.kube_token }}
         run: |
           echo "${KUBE_CERT}" > ca.crt
-          kubectl config set-cluster ${KUBE_CLUSTER} --certificate-authority=./ca.crt --server=https://${KUBE_CLUSTER}
-          kubectl config set-credentials deploy-user --token=${KUBE_TOKEN}
-          kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
+          kubectl config set-cluster ${KUBE_CLUSTER} \
+            --certificate-authority=./ca.crt \
+            --server=https://${KUBE_CLUSTER}
+
+          kubectl config set-credentials deploy-user \
+            --token=${KUBE_TOKEN}
+
+          kubectl config set-context ${KUBE_CLUSTER} \
+            --cluster=${KUBE_CLUSTER} \
+            --user=deploy-user \
+            --namespace=${KUBE_NAMESPACE}
+
           kubectl config use-context ${KUBE_CLUSTER}
 
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments
 
-      - name : Verify pod is running
+      - name: Verify pod is running
         env:
           KUBE_NAMESPACE: ${{ secrets.kube_namespace }}
           ENV_NAME: "gpfd-${{ inputs.environment_name }}"
           DEPLOYMENT_NAME: "deployment/gpfd-${{ inputs.environment_name }}-deployment"
         run: |
-              DEPLOYMENT_STATUS=$(kubectl rollout status ${DEPLOYMENT_NAME} -n ${KUBE_NAMESPACE} --timeout=45s)
-              echo "Deployment: $DEPLOYMENT_STATUS"
-              POD_STATUS=$(kubectl get pods -n ${KUBE_NAMESPACE} -l app=${ENV_NAME} -o jsonpath='{.items[*].status.phase}')
-              READY_PODS=$(kubectl get pods -n ${KUBE_NAMESPACE} -l app=${ENV_NAME} --field-selector=status.phase=Running --no-headers | wc -l)
-              
-              echo "Pod statuses: $POD_STATUS"
-              echo "Ready pods: $READY_PODS"
+          DEPLOYMENT_STATUS=$(kubectl rollout status ${DEPLOYMENT_NAME} -n ${KUBE_NAMESPACE} --timeout=45s)
+          echo "Deployment: $DEPLOYMENT_STATUS"
 
-              if [[ "$POD_STATUS" == *"Running"* && $READY_PODS -gt 0 ]]; then
-                echo "✅ pod is running"
-                echo "pods_running=true" >> $GITHUB_OUTPUT
-                exit 0
-              else
-                echo "::error::❌ No pods in Running state"
-                echo "pods_running=false" >> $GITHUB_OUTPUT
-                exit 0
-              fi
+          POD_STATUS=$(kubectl get pods -n ${KUBE_NAMESPACE} -l app=${ENV_NAME} -o jsonpath='{.items[*].status.phase}')
+          READY_PODS=$(kubectl get pods -n ${KUBE_NAMESPACE} -l app=${ENV_NAME} --field-selector=status.phase=Running --no-headers | wc -l)
+
+          echo "Pod statuses: $POD_STATUS"
+          echo "Ready pods: $READY_PODS"
+
+          if [[ "$POD_STATUS" == *"Running"* && $READY_PODS -gt 0 ]]; then
+            echo "✅ pod is running"
+            echo "pods_running=true" >> $GITHUB_OUTPUT
+            exit 0
+          else
+            echo "::error::❌ No pods in Running state"
+            echo "pods_running=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
