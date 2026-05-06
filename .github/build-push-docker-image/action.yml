@@ -1,12 +1,7 @@
 name: Build and push docker image
 
-outputs:
-  image_digest:
-    description: Digest of the pushed image
-    value: ${{ steps.push-image.outputs.image_digest }}
-
 runs:
-  using: composite
+  using: 'composite'
 
   steps:
     - name: Checkout repository
@@ -23,25 +18,19 @@ runs:
       run: |
         cd spec
         mvn clean install
-      shell: bash
+      shell:
+        bash
 
     - name: Build with Maven
       run: mvn -B -DskipTests clean package
-      shell: bash
+      shell:
+        bash
 
     - name: Build and push Docker image to container repository
-      id: push-image
       run: |
         docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
         docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
-        IMAGE_DIGEST=$(aws ecr describe-images \
-          --repository-name "$REPOSITORY" \
-          --image-ids imageTag="$IMAGE_TAG" \
-          --query 'imageDetails[0].imageDigest' \
-          --output text)
-
-        echo "image_digest=${IMAGE_DIGEST}" >> "$GITHUB_OUTPUT"
       env:
         REGISTRY: ${{ env.REGISTRY }}
         REPOSITORY: ${{ env.REPOSITORY }}
