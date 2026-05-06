@@ -8,4 +8,25 @@ ignore:
              Transitive from Spring 4. Will wait for updates to bring in version bump
           expires: 2026-05-14T00:00:00.000Z
           created: 2026-04-14T00:00:00.000Z
+"snyk:lic:maven:com.h2database:h2:(EPL-1.0_OR_MPL-2.0)":
+    - '*':
+        reason: >
+          H2 is used only for development and testing, not distributed in
+          production.
+        expires: 2026-09-01T09:00:00.000Z
+        created: 2026-05-06T16:30:00.000Z
+"snyk:lic:maven:ch.qos.logback:logback-core:(EPL-1.0_OR_LGPL-2.1)"
+    - '*':
+        reason: >
+          License is weak copyleft (EPL-1.0 and LGPL-2.1). Service is not distributed.
+          Replacement would be disproportionate effort.
+        expires: 2026-09-01T09:00:00.000Z
+        created: 2026-05-06T16:30:00.000Z
+"snyk:lic:maven:ch.qos.logback:logback-classic:(EPL-1.0_OR_LGPL-2.1)"
+    - '*':
+        reason: >
+          Logback is pulled in transitively by Spring Boot. License is weak
+          copyleft (EPL-1.0 and LGPL-2.1). Service is not distributed. Replacement would be disproportionate effort.
+        expires: 2026-09-01T09:00:00.000Z
+        created: 2026-05-06T16:30:00.000Z
 patch: {}
