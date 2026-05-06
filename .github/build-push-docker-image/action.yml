@@ -1,4 +1,8 @@
 name: Build and push docker image
+outputs:
+  image_digest:
+    description: "Digest of the pushed image"
+    value: ${{ steps.push-image.outputs.image_digest }}
 
 runs:
   using: 'composite'
@@ -27,9 +31,12 @@ runs:
         bash
 
     - name: Build and push Docker image to container repository
+      id: push-image
       run: |
         docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
         docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+        IMAGE_DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' "$REGISTRY/$REPOSITORY:$IMAGE_TAG" | cut -d'@' -f2)
+        echo "image_digest=${IMAGE_DIGEST}" >> "$GITHUB_OUTPUT"
 
       env:
         REGISTRY: ${{ env.REGISTRY }}

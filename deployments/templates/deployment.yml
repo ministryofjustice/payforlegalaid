@@ -17,7 +17,7 @@ spec:
       serviceAccountName: laa-get-payments-finance-data-${ENV_NAME}-service
       initContainers:
         - name: liquibase
-          image: ${REGISTRY}/${DATA_REPOSITORY}:latest
+          image: ${REGISTRY}/${DATA_REPOSITORY}@${DATA_IMAGE_DIGEST}
           imagePullPolicy: Always
           env:
             - name: MOJFIN_DEV_WRITE_USERNAME
@@ -135,7 +135,7 @@ spec:
               type: RuntimeDefault
       containers:
         - name: gpfd-api-container-${ENV_NAME}
-          image: ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
+          image: ${REGISTRY}/${REPOSITORY}@${IMAGE_DIGEST}
           ports:
             - containerPort: 8080
           livenessProbe:

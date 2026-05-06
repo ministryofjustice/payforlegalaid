@@ -46,6 +46,7 @@ jobs:
 
       - name: Build the docker image and push it to the repository
         uses: './.github/build-push-docker-image'
+        id: build-push-image
         env:
           REPOSITORY: ${{ vars.DEV_ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
@@ -54,7 +55,7 @@ jobs:
 
       - name: Generate Kubernetes files from templates
         env:
-          IMAGE_TAG: ${{ github.sha }}
+          IMAGE_DIGEST: ${{ steps.build-push-image.outputs.image_digest }}
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: ${{ vars.DEV_ECR_REPOSITORY }}
           NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}

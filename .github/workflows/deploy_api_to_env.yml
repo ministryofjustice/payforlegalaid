@@ -74,11 +74,25 @@ jobs:
 
       - name: Build the docker image and push it to the repository
         uses: './.github/build-push-docker-image'
+        id: build-push-image
         env:
           REPOSITORY: ${{ vars.ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           SOCKET_KEY: ${{ secrets.api_socket_key }}
+
+      - name: Resolve data image digest
+        id: data-image-digest
+        env:
+          REPOSITORY: ${{ vars.DATA_ECR_REPOSITORY }}
+          IMAGE_TAG: ${{ vars.DATA_IMAGE_TAG || 'latest' }}
+        run: |
+          IMAGE_DIGEST=$(aws ecr describe-images \
+            --repository-name "${REPOSITORY}" \
+            --image-ids imageTag="${IMAGE_TAG}" \
+            --query 'imageDetails[0].imageDigest' \
+            --output text)
+          echo "image_digest=${IMAGE_DIGEST}" >> "$GITHUB_OUTPUT"
         
       - name: Set ingress class based on environment
         id: ingress_class
@@ -101,7 +115,8 @@ jobs:
 
       - name: Generate Kubernetes files from templates
         env:
-          IMAGE_TAG: ${{ github.sha }} # Tags ECR image with commit sha
+          IMAGE_DIGEST: ${{ steps.build-push-image.outputs.image_digest }}
+          DATA_IMAGE_DIGEST: ${{ steps.data-image-digest.outputs.image_digest }}
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: ${{ vars.ECR_REPOSITORY }}
           NAMESPACE: ${{ secrets.kube_namespace }}
@@ -123,7 +138,7 @@ jobs:
             "network-policy:network-policy"
             "prometheus-rules:prometheus-rules"
             "grafana-dashboard:grafana-dashboard:\$ENV_NAME,\$NAMESPACE"
-            "deployment:deployment:\$ENV_NAME,\$SECRET_NAME,\$INGRESS_URL,\$REGISTRY,\$REPOSITORY,\$IMAGE_TAG,\$DATA_REPOSITORY,\$PERMISSION_REP000_GROUP_ID,\$PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID,\$INGRESS_CLASS_NAME,\$IP_LIST"
+            "deployment:deployment:\$ENV_NAME,\$SECRET_NAME,\$INGRESS_URL,\$REGISTRY,\$REPOSITORY,\$IMAGE_DIGEST,\$DATA_REPOSITORY,\$DATA_IMAGE_DIGEST,\$PERMISSION_REP000_GROUP_ID,\$PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID,\$INGRESS_CLASS_NAME,\$IP_LIST"
           )
           
           for item in "${template_processing[@]}"; do

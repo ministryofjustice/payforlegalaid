@@ -19,7 +19,7 @@ spec:
       serviceAccountName: laa-get-payments-finance-data-dev-service
       containers:
         - name: gpfd-api-container-dev
-          image: ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
+          image: ${REGISTRY}/${REPOSITORY}@${IMAGE_DIGEST}
           ports:
             - containerPort: 8080
           env:
