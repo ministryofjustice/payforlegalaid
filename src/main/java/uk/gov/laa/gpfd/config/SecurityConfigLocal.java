@@ -39,7 +39,7 @@ import java.util.List;
 @Configuration
 @ConditionalOnProperty(name = "spring.cloud.azure.active-directory.enabled", havingValue = "false")
 public class SecurityConfigLocal {
-    @Value("${gpfd.security.cors.allowed-origin}")
+    @Value("${gpfd.security.cors.allowed-origin:https://127.0.0.1:8020}")
     private String allowedCorsOrigin;
 
     /**
