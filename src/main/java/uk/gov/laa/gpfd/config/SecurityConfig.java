@@ -42,7 +42,7 @@ public class SecurityConfig {
 
     private final AuthorizationManager<RequestAuthorizationContext> authManager;
     private final HttpSecuritySessionManagementConfigurerBuilder concurrencyControlConfigurerCustomizer;
-    @Value("${gpfd.security.cors.allowed-origin:https://127.0.0.1:8020}")
+    @Value("${gpfd.security.cors.allowed-origin}")
     private String allowedCorsOrigin;
 
     /**
