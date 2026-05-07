@@ -4,6 +4,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
@@ -11,12 +13,21 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.AuthenticationIsNullException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.NoAttributesOnTokenException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.NoOidSetOnTokenException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.NoRolesException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.NoRolesInAttributeException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.PrincipalIsNullException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.UnexpectedAuthClassException;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Stream;
 
+import static java.util.stream.Stream.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -50,25 +61,31 @@ class SecurityUtilsTest {
     }
 
     @Test
-    void extractRoles_returnsEmptyList_whenNoAuthentication() {
+    void extractRoles_throwsException_whenNoAuthentication() {
         SecurityContextHolder.clearContext();
-
-        List<String> roles = securityUtils.extractRoles();
-
-        assertTrue(roles.isEmpty());
+        assertThrows(AuthenticationIsNullException.class, securityUtils::extractRoles);
     }
 
     @Test
-    void extractRoles_returnsEmptyList_whenPrincipalIsNotOidcUser() {
+    void extractRoles_throwsException_whenPrincipalIsNotOidcUser() {
         Authentication auth = mock(Authentication.class);
         when(auth.getPrincipal()).thenReturn("not-an-oidc-user");
 
         SecurityContextHolder.getContext().setAuthentication(auth);
 
-        List<String> roles = securityUtils.extractRoles();
-
-        assertTrue(roles.isEmpty());
+        assertThrows(UnexpectedAuthClassException.class, securityUtils::extractRoles);
     }
+
+    @Test
+    void extractRoles_throwsException_whenPrincipalIsNull() {
+        Authentication auth = mock(Authentication.class);
+        when(auth.getPrincipal()).thenReturn(null);
+
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        assertThrows(PrincipalIsNullException.class, securityUtils::extractRoles);
+    }
+
 
     @Test
     void extractRoles_parsesListOfRolesCorrectly() {
@@ -95,14 +112,52 @@ class SecurityUtilsTest {
     }
 
     @Test
-    void extractRoles_returnsEmptyList_whenNull() {
+    void extractRoles_throwsException_whenAttributesAreNull() {
         when(authentication.getPrincipal()).thenReturn(oidcUser);
         when(oidcUser.getAttributes()).thenReturn(null);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        List<String> roles = securityUtils.extractRoles();
-        assertTrue(roles.isEmpty());
+        assertThrows(NoAttributesOnTokenException.class, securityUtils::extractRoles);
     }
+
+    @Test
+    void extractRoles_throwsException_whenAttributesDoNotContainLAARoles() {
+        when(authentication.getPrincipal()).thenReturn(oidcUser);
+        when(oidcUser.getAttributes()).thenReturn(Map.of("stuff", "things", "otherEntry", "differentthings,inhere"));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        assertThrows(NoRolesInAttributeException.class, securityUtils::extractRoles);
+    }
+
+    @ParameterizedTest
+    @MethodSource("emptyRoleProvider")
+    void extractRoles_throwsException_whenRoleSuppliedIsEmpty(Object emptyRole) {
+        when(authentication.getPrincipal()).thenReturn(oidcUser);
+        Map<String, Object> emptyRoleMap = new HashMap<>();
+        emptyRoleMap.put("LAA_APP_ROLES", emptyRole);
+        when(oidcUser.getAttributes()).thenReturn(emptyRoleMap);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        assertThrows(NoRolesException.class, securityUtils::extractRoles);
+    }
+
+    private static Stream<Object> emptyRoleProvider() {
+        return of(
+                List.of(),
+                "",
+                null
+        );
+    }
+
+    @Test
+    void extractRoles_throwsException_whenRoleSuppliedIsEmptyStringList() {
+        when(authentication.getPrincipal()).thenReturn(oidcUser);
+        when(oidcUser.getAttributes()).thenReturn(Map.of("LAA_APP_ROLES", ""));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        assertThrows(NoRolesException.class, securityUtils::extractRoles);
+    }
+
 
     @Test
     void isAuthorized_returnsTrue_whenUserHasAtLeastOneRequiredRole() {
@@ -132,7 +187,7 @@ class SecurityUtilsTest {
     @Test
     void extractUserId_throwsExceptionIfAuthIsNull() {
         SecurityContextHolder.clearContext();
-        assertThrows(UnableToParseAuthDetailsException.AuthenticationIsNullException.class, securityUtils::extractUserId);
+        assertThrows(AuthenticationIsNullException.class, securityUtils::extractUserId);
     }
 
     @Test
@@ -140,7 +195,7 @@ class SecurityUtilsTest {
         when(authentication.getPrincipal()).thenReturn(null);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        assertThrows(UnableToParseAuthDetailsException.PrincipalIsNullException.class, securityUtils::extractUserId);
+        assertThrows(PrincipalIsNullException.class, securityUtils::extractUserId);
     }
 
     @Test
@@ -150,7 +205,16 @@ class SecurityUtilsTest {
         when(authenticationWrongType.getPrincipal()).thenReturn(principal);
         SecurityContextHolder.getContext().setAuthentication(authenticationWrongType);
 
-        assertThrows(UnableToParseAuthDetailsException.UnexpectedAuthClassException.class, securityUtils::extractUserId);
+        assertThrows(UnexpectedAuthClassException.class, securityUtils::extractUserId);
+    }
+
+    @Test
+    void extractUserId_throwsExceptionIfNoOidSet() {
+        when(authentication.getPrincipal()).thenReturn(oidcUser);
+        when(oidcUser.getAttribute("oid")).thenReturn(null);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        assertThrows(NoOidSetOnTokenException.class, securityUtils::extractUserId);
     }
 
 }
