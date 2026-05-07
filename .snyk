@@ -8,4 +8,32 @@ ignore:
              Transitive from Spring 4. Will wait for updates to bring in version bump
           expires: 2026-05-14T00:00:00.000Z
           created: 2026-04-14T00:00:00.000Z
+  SNYK-JAVA-IONETTY-16438323:
+        - '*':
+            reason: >-
+                 Discovered on 7th May 2026. Despite Snyk claiming it has been fixed in 4.2.13.Final, it has not.
+                 We will monitor this vulnerability and update the version when it is fixed.
+            expires: 2026-06-07T12:00:00.000Z
+            created: 2026-05-07T11:30:00.000Z
+  SNYK-JAVA-IONETTY-16438931:
+        - '*':
+            reason: >-
+                 Discovered on 7th May 2026. Despite Snyk claiming it has been fixed in 4.2.13.Final, it has not.
+                 We will monitor this vulnerability and update the version when it is fixed.
+            expires: 2026-06-07T12:00:00.000Z
+            created: 2026-05-07T11:30:00.000Z
+  SNYK-JAVA-IONETTY-16438936:
+        - '*':
+            reason: >-
+                 Discovered on 7th May 2026. Despite Snyk claiming it has been fixed in 4.2.13.Final, it has not.
+                 We will monitor this vulnerability and update the version when it is fixed.
+            expires: 2026-06-07T12:00:00.000Z
+            created: 2026-05-07T11:30:00.000Z
+  SNYK-JAVA-IONETTY-16438938:
+        - '*':
+            reason: >-
+                 Discovered on 7th May 2026. Despite Snyk claiming it has been fixed in 4.2.13.Final, it has not.
+                 We will monitor this vulnerability and update the version when it is fixed.
+            expires: 2026-06-07T12:00:00.000Z
+            created: 2026-05-07T11:30:00.000Z
 patch: {}
