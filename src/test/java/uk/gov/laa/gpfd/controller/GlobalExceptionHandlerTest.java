@@ -22,7 +22,10 @@ import uk.gov.laa.gpfd.exception.CsvGenerationException.MetadataInvalidException
 import uk.gov.laa.gpfd.exception.FileDownloadException.InvalidDownloadFormatException;
 import uk.gov.laa.gpfd.exception.FileDownloadException.ReportNotSupportedForDownloadException;
 import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.AuthenticationIsNullException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.NoAttributesOnTokenException;
 import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.NoOidSetOnTokenException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.NoRolesException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.NoRolesInAttributeException;
 import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.PrincipalIsNullException;
 import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.UnexpectedAuthClassException;
 import uk.gov.laa.gpfd.exception.FileDownloadException.S3BucketHasNoCopiesOfReportException;
@@ -398,7 +401,10 @@ class GlobalExceptionHandlerTest {
                 new AuthenticationIsNullException(),
                 new PrincipalIsNullException(),
                 new UnexpectedAuthClassException("UserJwt"),
-                new NoOidSetOnTokenException()
+                new NoOidSetOnTokenException(),
+                new NoRolesException(),
+                new NoRolesInAttributeException(),
+                new NoAttributesOnTokenException()
         );
     }
 
