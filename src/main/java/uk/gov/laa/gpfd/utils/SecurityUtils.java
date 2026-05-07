@@ -6,7 +6,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Component;
 import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.AuthenticationIsNullException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.NoAttributesOnTokenException;
 import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.NoOidSetOnTokenException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.NoRolesException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.NoRolesInAttributeException;
 import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.PrincipalIsNullException;
 import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.UnexpectedAuthClassException;
 
@@ -34,24 +37,33 @@ public class SecurityUtils {
      */
     public List<String> extractRoles() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (!(auth != null && auth.getPrincipal() instanceof OidcUser oidcUser)) {
-            log.info("No odicUser");
-            return List.of();
-        }
-        log.info("Got oidcUser");
-
-        Map<String, Object> attributes = oidcUser.getAttributes();
-        if (attributes == null) {
-            log.info("No attributes");
-            return List.of();
+        if (auth == null) {
+            throw new AuthenticationIsNullException();
         }
 
-        log.info("Got attributes");
+        return switch (auth.getPrincipal()) {
+            case OidcUser oidcUser -> {
 
-        log.info("Is the role claim in there? " + attributes.containsKey(ROLE_CLAIM));
-        Object rawRoles = attributes.get(ROLE_CLAIM);
-        log.info("Raw roles are " + rawRoles);
-        return parseRoles(rawRoles);
+                Map<String, Object> attributes = oidcUser.getAttributes();
+                if (attributes == null) {
+                    throw new NoAttributesOnTokenException();
+                }
+
+                if (!attributes.containsKey(ROLE_CLAIM)) {
+                    throw new NoRolesInAttributeException();
+                }
+
+                Object rawRoles = attributes.get(ROLE_CLAIM);
+                List<String> parsedRoles = parseRoles(rawRoles);
+                if (parsedRoles.isEmpty()) {
+                    throw new NoRolesException();
+                }
+                yield parsedRoles;
+            }
+            case null -> throw new PrincipalIsNullException();
+            default -> throw new UnexpectedAuthClassException("Unexpected Auth Type: " + auth.getClass().getName());
+        };
+
     }
 
     /**
