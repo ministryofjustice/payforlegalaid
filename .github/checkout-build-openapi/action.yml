@@ -42,7 +42,6 @@ runs:
         path: openapi
         ref: refs/tags/v${{ env.OPENAPI_VERSION }}
 
-
     - name: Build openapi spec dependency
       run: |
         cd openapi
