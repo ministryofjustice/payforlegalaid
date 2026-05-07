@@ -98,7 +98,7 @@ public abstract sealed class UnableToParseAuthDetailsException extends RuntimeEx
     }
 
     /**
-     * Exception throw when roles returned in the token but there are none.
+     * Exception throw when roles key is returned in the token attributes but the user has none assigned.
      */
     public static final class NoRolesException extends UnableToParseAuthDetailsException {
 
