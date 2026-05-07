@@ -70,4 +70,44 @@ public abstract sealed class UnableToParseAuthDetailsException extends RuntimeEx
         }
     }
 
+    /**
+     * Exception throw when we can't get attributes out of the auth token sent via SiLAS.
+     */
+    public static final class NoAttributesOnTokenException extends UnableToParseAuthDetailsException {
+
+        /**
+         * Constructs a new {@code NoAttributesOnTokenException}.
+         */
+        public NoAttributesOnTokenException() {
+            super("Could not parse attributes from token");
+        }
+    }
+
+    /**
+     * Exception throw when user has no roles returned in the token.
+     * This isn't really a valid setup in SiLAS so it suggests SiLAS isn't sending us the roles.
+     */
+    public static final class NoRolesInAttributeException extends UnableToParseAuthDetailsException {
+
+        /**
+         * Constructs a new {@code NoRolesException}.
+         */
+        public NoRolesInAttributeException() {
+            super("No roles were sent in the token");
+        }
+    }
+
+    /**
+     * Exception throw when roles returned in the token but there are none.
+     */
+    public static final class NoRolesException extends UnableToParseAuthDetailsException {
+
+        /**
+         * Constructs a new {@code NoRolesException}.
+         */
+        public NoRolesException() {
+            super("No roles are assigned to the user");
+        }
+    }
+
 }
