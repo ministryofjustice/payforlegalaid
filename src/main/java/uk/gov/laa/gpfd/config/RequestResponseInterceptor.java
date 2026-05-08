@@ -68,7 +68,7 @@ public class RequestResponseInterceptor implements HandlerInterceptor {
         }
     }
 
-    private String sanitise(String value) {
+    String sanitise(String value) {
         if (value == null) {
             return null;
         }
