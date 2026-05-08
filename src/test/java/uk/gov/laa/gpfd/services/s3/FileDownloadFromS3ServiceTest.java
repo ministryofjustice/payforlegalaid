@@ -79,10 +79,15 @@ class FileDownloadFromS3ServiceTest {
         assertTrue(contentDisposition.isAttachment());
         assertEquals("report_numero_uno_2025-12-13.csv", contentDisposition.getFilename());
 
-        var content = new BufferedReader(new InputStreamReader(result.getBody().getInputStream()))
-                .lines()
-                .collect(Collectors.joining());
-        assertEquals("csv,data,here,123,4.3,cat", content);
+        try (BufferedReader bufferedReader =
+                     new BufferedReader(new InputStreamReader(result.getBody().getInputStream()))) {
+
+            var content = bufferedReader
+                    .lines()
+                    .collect(Collectors.joining());
+
+            assertEquals("csv,data,here,123,4.3,cat", content);
+        }
 
         verify(reportAccessCheckerService).checkUserCanAccessReport(testUUID);
         verify(fileNameResolver).getS3PrefixFromId(testUUID);
