@@ -6,8 +6,6 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.OoxmlSheetExtensions;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
-import sun.misc.Unsafe;
-import uk.gov.laa.gpfd.model.excel.ExcelSheet;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -22,35 +20,32 @@ import java.util.TreeMap;
  * precise control over row retention is required.</p>
  */
 public class ReportSXSSFSheet extends SXSSFSheet implements Sheet, OoxmlSheetExtensions {
-    /**
-     * The Unsafe instance for low-level memory operations.
-     */
-    private static final Unsafe UNSAFE = getUnsafe();
 
     /**
-     * Memory offset for the rows TreeMap field.
+     * Cached reflection field for the rows TreeMap field.
      */
-    private static final long ROWS_OFFSET;
+    private static final Field ROWS_FIELD;
 
     /**
-     * Memory offset for the allFlushed boolean field.
+     * Cached reflection field for the allFlushed boolean field.
      */
-    private static final long ALL_FLUSHED_OFFSET;
+    private static final Field ALL_FLUSHED_FIELD;
 
     /**
-     * Memory offset for the lastFlushedRowNumber field.
+     * Cached reflection field for the lastFlushedRowNumber field.
      */
-    private static final long LAST_FLUSHED_ROW_OFFSET;
-
-    private final ExcelSheet excelSheet;
+    private static final Field LAST_FLUSHED_ROW_FIELD;
 
     static {
         try {
-            ROWS_OFFSET = UNSAFE.objectFieldOffset(SXSSFSheet.class.getDeclaredField("_rows"));
-            ALL_FLUSHED_OFFSET = UNSAFE.objectFieldOffset(SXSSFSheet.class.getDeclaredField("allFlushed"));
-            LAST_FLUSHED_ROW_OFFSET = UNSAFE.objectFieldOffset(SXSSFSheet.class.getDeclaredField("lastFlushedRowNumber"));
-        } catch (Exception e) {
-            throw new Error("Failed to initialize field offsets", e);
+            ROWS_FIELD = SXSSFSheet.class.getDeclaredField("_rows");
+            ROWS_FIELD.setAccessible(true);
+            ALL_FLUSHED_FIELD = SXSSFSheet.class.getDeclaredField("allFlushed");
+            ALL_FLUSHED_FIELD.setAccessible(true);
+            LAST_FLUSHED_ROW_FIELD = SXSSFSheet.class.getDeclaredField("lastFlushedRowNumber");
+            LAST_FLUSHED_ROW_FIELD.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw new ExceptionInInitializerError(e);
         }
     }
 
@@ -61,33 +56,8 @@ public class ReportSXSSFSheet extends SXSSFSheet implements Sheet, OoxmlSheetExt
      * @param xSheet   the backing XSSFSheet
      * @throws IOException if the sheet cannot be created
      */
-    public ReportSXSSFSheet(SXSSFWorkbook workbook, XSSFSheet xSheet, ExcelSheet excelSheet) throws IOException {
+    public ReportSXSSFSheet(SXSSFWorkbook workbook, XSSFSheet xSheet) throws IOException {
         super(workbook, xSheet);
-        this.excelSheet = excelSheet;
-    }
-
-    /**
-     * Gets the Unsafe instance
-     *
-     * @return the Unsafe instance
-     * @throws Error if Unsafe is not available
-     */
-    private static Unsafe getUnsafe() {
-        try {
-            Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
-            theUnsafe.setAccessible(true);
-            return (Unsafe) theUnsafe.get(null);
-        } catch (Exception e) {
-            throw new Error("Unsafe not available", e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public SXSSFRow createRow(int rownum) {
-        return super.createRow(rownum);
     }
 
     /**
@@ -104,18 +74,26 @@ public class ReportSXSSFSheet extends SXSSFSheet implements Sheet, OoxmlSheetExt
             flushOneRow(rows);
         }
         if (remaining == 0) {
-            UNSAFE.putBoolean(this, ALL_FLUSHED_OFFSET, true);
+            try {
+                ALL_FLUSHED_FIELD.set(this, true);
+            } catch (IllegalAccessException e) {
+                throw new IllegalStateException("Failed to set allFlushed field", e);
+            }
         }
     }
 
     /**
-     * Gets the current rows map using direct memory access.
+     * Gets the current rows map using reflection.
      *
      * @return TreeMap containing the current rows
      */
     @SuppressWarnings("unchecked")
     private TreeMap<Integer, SXSSFRow> getRows() {
-        return (TreeMap<Integer, SXSSFRow>) UNSAFE.getObject(this, ROWS_OFFSET);
+        try {
+            return (TreeMap<Integer, SXSSFRow>) ROWS_FIELD.get(this);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException("Failed to read _rows field", e);
+        }
     }
 
     /**
@@ -132,6 +110,10 @@ public class ReportSXSSFSheet extends SXSSFSheet implements Sheet, OoxmlSheetExt
 
         _writer.writeRow(firstRowNum, row);
         rows.remove(firstRowNum);
-        UNSAFE.putInt(this, LAST_FLUSHED_ROW_OFFSET, firstRowNum);
+        try {
+            LAST_FLUSHED_ROW_FIELD.set(this, firstRowNum);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException("Failed to set lastFlushedRowNumber field", e);
+        }
     }
 }
