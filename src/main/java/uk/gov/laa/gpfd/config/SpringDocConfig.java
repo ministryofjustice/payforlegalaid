@@ -11,6 +11,15 @@ import org.springframework.context.annotation.Configuration;
  * Configuration class to set up the Springdoc OpenAPI integration for the Spring Boot application.
  * This class registers the necessary Springdoc beans for API documentation generation
  * and the Swagger UI configuration.
+ * 
+ * <p>
+ * Swagger UI Compatibility with CSRF Protection:
+ * Swagger UI endpoints are configured to be publicly accessible and do not require authentication.
+ * Since CSRF protection is only enforced for authenticated session-based requests that perform
+ * state changes (POST, PUT, DELETE), Swagger UI documentation access is not affected by CSRF
+ * configuration. Users can access and interact with the API documentation through Swagger UI
+ * without needing to handle CSRF tokens for GET requests.
+ * </p>
  */
 @Configuration
 public class SpringDocConfig {

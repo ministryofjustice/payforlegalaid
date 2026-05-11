@@ -21,6 +21,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.HttpSecuritySessionManagementConfigurerBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+import org.springframework.http.HttpHeaders;
 
 import static com.azure.spring.cloud.autoconfigure.implementation.aad.security.AadWebApplicationHttpSecurityConfigurer.aadWebApplication;
 import java.util.List;
@@ -29,13 +32,17 @@ import java.util.List;
  * Configuration class to set up Spring Security for the application.
  * <p>
  * This class configures the core security settings for HTTP requests, including
- * authorization, session management, and HTTP basic authentication. The configuration
- * is modularized into different components, such as {@link AuthorizeHttpRequestsBuilder}
- * and {@link SessionManagementConfigurerBuilder}, which are injected into this class
- * to manage specific security aspects.
+ * authorization, session management, HTTP basic authentication, and CSRF protection.
+ * The configuration is modularized into different components, such as
+ * {@link AuthorizeHttpRequestsBuilder} and {@link SessionManagementConfigurerBuilder},
+ * which are injected into this class to manage specific security aspects.
+ * </p>
+ * <p>
+ * CSRF Protection: Configured with SameSite=Strict for browser-based clients while
+ * allowing non-browser clients (e.g., API clients) to bypass CSRF checks via proper
+ * request identification.
  * </p>
  */
-@SuppressWarnings("java:S4502") // CSRF disabled only for CSP report POST endpoint
 @Configuration
 @RequiredArgsConstructor
 @ConditionalOnProperty(name = "spring.cloud.azure.active-directory.enabled", havingValue = "true")
@@ -45,6 +52,36 @@ public class SecurityConfig {
     private final HttpSecuritySessionManagementConfigurerBuilder concurrencyControlConfigurerCustomizer;
     @Value("${gpfd.security.cors.allowed-origin:https://127.0.0.1:8080}")
     private String allowedCorsOrigin;
+
+    /**
+     * Creates a {@link CookieCsrfTokenRepository} configured to store the CSRF token
+     * in a secure cookie accessible by client-side scripts.
+     *
+     * <p>The generated cookie is configured with:
+     * <ul>
+     *   <li>{@code SameSite=Strict} to prevent the cookie being sent with
+     *       cross-site requests</li>
+     *   <li>{@code Secure=true} so the cookie is only transmitted over HTTPS</li>
+     *   <li>{@code Path=/} to make the cookie available across the application</li>
+     *   <li>No explicit domain, allowing the browser to scope the cookie
+     *       to the current host</li>
+     *   <li>{@code HttpOnly=false} to allow frontend JavaScript frameworks
+     *       to read and include the CSRF token in requests</li>
+     * </ul>
+     *
+     * @return the configured {@link CookieCsrfTokenRepository}
+     */
+    @Bean
+    CookieCsrfTokenRepository csrfTokenRepository() {
+        CookieCsrfTokenRepository repository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+        repository.setCookieCustomizer(cookie -> {
+            cookie.sameSite("Strict");
+            cookie.secure(true);
+            cookie.path("/");
+            cookie.domain(null);
+        });
+        return repository;
+    }
 
     /**
      * Configures a dedicated security filter chain for static assets.
@@ -82,7 +119,12 @@ public class SecurityConfig {
      * We create the customisers in the function as Bean customisers are automatically implemented by Spring Security 7,
      * and running each customiser twice can cause issues.
      * Static resources are configured using a separate filter chain to ensure
-     * asset caching remains independent from authenticated response cache policies.
+     * asset caching remains independent of authenticated response cache policies.
+     * </p>
+     * <p>
+     * CSRF Configuration: Uses SameSite=Strict for session cookies to prevent cross-site
+     * request forgery. The CSRF token endpoint is excluded to allow CSP violation reports
+     * to be submitted without CSRF tokens.
      * </p>
      *
      * @param httpSecurity the {@link HttpSecurity} object used to configure HTTP security.
@@ -93,15 +135,24 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         var authorizeHttpRequestsBuilder = new AuthorizeHttpRequestsBuilder(authManager);
         var sessionManagementConfigurerBuilder = new SessionManagementConfigurerBuilder(concurrencyControlConfigurerCustomizer);
+        
+        CookieCsrfTokenRepository csrfTokenRepository = csrfTokenRepository();
+        CsrfTokenRequestAttributeHandler delegate = new CsrfTokenRequestAttributeHandler();
+        delegate.setCsrfRequestAttributeName("_csrf");
+        
         return httpSecurity
-                // Allow csp-report to ignore CSRF or else POST requests will be blocked
-                .csrf(csrf -> csrf.ignoringRequestMatchers(
-                        PathPatternRequestMatcher.withDefaults().matcher("/csp-report")
-                ))
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(csrfTokenRepository)
+                        .csrfTokenRequestHandler(delegate)
+                        // CSP report endpoint is excluded as it's triggered by the browser automatically
+                        .ignoringRequestMatchers(
+                                PathPatternRequestMatcher.withDefaults().matcher("/csp-report")
+                        )
+                )
                 .with(aadWebApplication())
                 .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(authorizeHttpRequestsBuilder)    // Apply authorization rules
-                .sessionManagement(sessionManagementConfigurerBuilder)  // Apply session management configuration
+                .authorizeHttpRequests(authorizeHttpRequestsBuilder)
+                .sessionManagement(sessionManagementConfigurerBuilder)
                 .headers(headers -> headers
                         .httpStrictTransportSecurity(hsts -> hsts
                                 .maxAgeInSeconds(63072000)
