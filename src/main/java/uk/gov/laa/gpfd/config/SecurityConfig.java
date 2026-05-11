@@ -22,7 +22,7 @@ import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.HttpSecuritySessionManagementConfigurerBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
 import org.springframework.http.HttpHeaders;
 
 import static com.azure.spring.cloud.autoconfigure.implementation.aad.security.AadWebApplicationHttpSecurityConfigurer.aadWebApplication;
@@ -38,9 +38,10 @@ import java.util.List;
  * which are injected into this class to manage specific security aspects.
  * </p>
  * <p>
- * CSRF Protection: Configured with SameSite=Strict for browser-based clients while
- * allowing non-browser clients (e.g., API clients) to bypass CSRF checks via proper
- * request identification.
+ * CSRF Protection: Configured with SameSite=Strict on the CSRF token cookie for
+ * browser-based clients. The session cookie uses SameSite=Lax to remain compatible
+ * with OAuth2/OIDC redirect flows. CSRF tokens use XOR masking to protect against
+ * BREACH attacks.
  * </p>
  */
 @Configuration
@@ -50,6 +51,8 @@ public class SecurityConfig {
 
     private final AuthorizationManager<RequestAuthorizationContext> authManager;
     private final HttpSecuritySessionManagementConfigurerBuilder concurrencyControlConfigurerCustomizer;
+    private final CookieCsrfTokenRepository csrfTokenRepository;
+
     @Value("${gpfd.security.cors.allowed-origin:https://127.0.0.1:8080}")
     private String allowedCorsOrigin;
 
@@ -122,9 +125,10 @@ public class SecurityConfig {
      * asset caching remains independent of authenticated response cache policies.
      * </p>
      * <p>
-     * CSRF Configuration: Uses SameSite=Strict for session cookies to prevent cross-site
-     * request forgery. The CSRF token endpoint is excluded to allow CSP violation reports
-     * to be submitted without CSRF tokens.
+     * CSRF Configuration: Uses SameSite=Strict on the CSRF token cookie and SameSite=Lax
+     * on the session cookie for OAuth2 redirect compatibility. XOR masking is applied to
+     * CSRF tokens to protect against BREACH attacks. The CSRF token endpoint is excluded
+     * to allow CSP violation reports to be submitted without CSRF tokens.
      * </p>
      *
      * @param httpSecurity the {@link HttpSecurity} object used to configure HTTP security.
@@ -135,16 +139,13 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         var authorizeHttpRequestsBuilder = new AuthorizeHttpRequestsBuilder(authManager);
         var sessionManagementConfigurerBuilder = new SessionManagementConfigurerBuilder(concurrencyControlConfigurerCustomizer);
-        
-        CookieCsrfTokenRepository csrfTokenRepository = csrfTokenRepository();
-        CsrfTokenRequestAttributeHandler delegate = new CsrfTokenRequestAttributeHandler();
-        delegate.setCsrfRequestAttributeName("_csrf");
-        
+
+        XorCsrfTokenRequestAttributeHandler delegate = new XorCsrfTokenRequestAttributeHandler();
+
         return httpSecurity
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(csrfTokenRepository)
                         .csrfTokenRequestHandler(delegate)
-                        // CSP report endpoint is excluded as it's triggered by the browser automatically
                         .ignoringRequestMatchers(
                                 PathPatternRequestMatcher.withDefaults().matcher("/csp-report")
                         )
@@ -162,7 +163,8 @@ public class SecurityConfig {
                         .contentTypeOptions(Customizer.withDefaults())
                         .referrerPolicy(referrerPolicy -> referrerPolicy
                                 .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER)
-                        ).permissionsPolicyHeader(permissionsPolicy -> permissionsPolicy
+                        )
+                        .permissionsPolicyHeader(permissionsPolicy -> permissionsPolicy
                                 .policy("interest-cohort=()")
                         )
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny)
@@ -198,5 +200,4 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
 }

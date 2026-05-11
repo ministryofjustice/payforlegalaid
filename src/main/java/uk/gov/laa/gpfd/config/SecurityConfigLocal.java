@@ -18,7 +18,7 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -38,6 +38,7 @@ import java.util.List;
  * </p>
  * <p>
  * CSRF Protection: Configured with SameSite=Strict for consistency with production configuration.
+ * XOR masking is applied to CSRF tokens to protect against BREACH attacks.
  * H2 console and CSP report endpoints are excluded from CSRF checks as needed for testing.
  * </p>
  */
@@ -45,8 +46,15 @@ import java.util.List;
 @Configuration
 @ConditionalOnProperty(name = "spring.cloud.azure.active-directory.enabled", havingValue = "false")
 public class SecurityConfigLocal {
+
+    private final CookieCsrfTokenRepository csrfTokenRepository;
+
     @Value("${gpfd.security.cors.allowed-origin:https://127.0.0.1:8080}")
     private String allowedCorsOrigin;
+
+    public SecurityConfigLocal(CookieCsrfTokenRepository csrfTokenRepository) {
+        this.csrfTokenRepository = csrfTokenRepository;
+    }
 
     /**
      * Creates a {@link CookieCsrfTokenRepository} configured to store the CSRF token
@@ -115,8 +123,9 @@ public class SecurityConfigLocal {
      * asset caching remains independent from authenticated response cache policies.
      * </p>
      * <p>
-     * CSRF Configuration: Uses SameSite=Strict for session cookies to prevent cross-site
-     * request forgery. H2 console and CSP report endpoints are excluded from CSRF checks.
+     * CSRF Configuration: Uses SameSite=Strict on the CSRF token cookie for consistency
+     * with production. XOR masking is applied to CSRF tokens to protect against BREACH
+     * attacks. H2 console and CSP report endpoints are excluded from CSRF checks.
      * </p>
      *
      * @param httpSecurity the {@link HttpSecurity} object used to configure HTTP security.
@@ -125,10 +134,8 @@ public class SecurityConfigLocal {
      */
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        CookieCsrfTokenRepository csrfTokenRepository = csrfTokenRepository();
-        CsrfTokenRequestAttributeHandler delegate = new CsrfTokenRequestAttributeHandler();
-        delegate.setCsrfRequestAttributeName("_csrf");
-        
+        XorCsrfTokenRequestAttributeHandler delegate = new XorCsrfTokenRequestAttributeHandler();
+
         return httpSecurity
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(csrfTokenRepository)
@@ -140,7 +147,6 @@ public class SecurityConfigLocal {
                         )
                 )
                 .cors(Customizer.withDefaults())
-                // Allow h2-console to display in web-frames
                 .headers(headers -> headers
                         .httpStrictTransportSecurity(hsts -> hsts
                                 .maxAgeInSeconds(63072000)
@@ -151,7 +157,8 @@ public class SecurityConfigLocal {
                         })
                         .referrerPolicy(referrerPolicy -> referrerPolicy
                                 .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER)
-                        ).permissionsPolicyHeader(permissionsPolicy -> permissionsPolicy
+                        )
+                        .permissionsPolicyHeader(permissionsPolicy -> permissionsPolicy
                                 .policy("interest-cohort=()")
                         )
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
@@ -192,7 +199,6 @@ public class SecurityConfigLocal {
 
     @Bean
     public ClientRegistrationRepository emptyClientRegistrationRepository() {
-
         ClientRegistration localRegistration = ClientRegistration.withRegistrationId("graph")
                 .clientId("mockClientId")
                 .clientSecret("mockClientSecret")
@@ -207,6 +213,4 @@ public class SecurityConfigLocal {
 
         return new InMemoryClientRegistrationRepository(registrationList);
     }
-
-
 }
