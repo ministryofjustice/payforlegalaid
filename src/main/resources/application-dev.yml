@@ -3,6 +3,9 @@ gpfd:
   # baseUrl is a Spring Security template that resolves based on the current URL
   redirect-uri-template: "{baseUrl}/login/oauth2/code/gpfd-azure-dev"
   # Note,"gpfd-azure-dev" is also known as the Oauth2 'registrationId'
+  security:
+    cors:
+      allowed-origin: https://dev-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk
 
   # DEV MOJFIN database config
   datasource:
