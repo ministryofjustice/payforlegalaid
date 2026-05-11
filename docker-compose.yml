@@ -1,6 +1,6 @@
 services:
   oracle:
-    image: gvenzl/oracle-free:23-slim
+    image: gvenzl/oracle-free:23-slim@sha256:8f9a8225cc43d28f5b61e4b961734d3d798d4c2f058bed3f21498c03adee6141
     container_name: oracle-local
     environment:
       ORACLE_PASSWORD: ${ORACLE_DB_PASSWORD}
