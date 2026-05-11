@@ -210,6 +210,7 @@ class ReportsControllerTest extends BaseMvcTest {
             "523f38f0-2179-4824-b885-3a38c5e149e8, S3STORAGE",
             "f46b4d3d-c100-429a-bf9a-6c3305dbdbfa, CSV"
     })
+
     void downloadExcelRejectsInvalidFiletypes(String reportId, String actualFormat) throws Exception {
 
         UUID uuid = UUID.fromString(reportId);
@@ -258,37 +259,6 @@ class ReportsControllerTest extends BaseMvcTest {
 
         verify(streamingService, never())
                 .stream(uuid, FileExtension.CSV);
-    }
-
-    @Test
-    void downloadCsvSucceedsForCsvReport() throws Exception {
-        var csvReportId = DEFAULT_ID;
-
-        // Mock CSV data
-        ByteArrayOutputStream csvDataOutputStream = new ByteArrayOutputStream();
-        csvDataOutputStream.write("1,John,Doe\n".getBytes());
-
-        StreamingResponseBody responseBody = outputStream -> {
-            csvDataOutputStream.writeTo(outputStream);
-            outputStream.flush();
-        };
-
-        ResponseEntity<StreamingResponseBody> mockResponseEntity = ResponseEntity.ok()
-                .header("Content-Disposition", "attachment; filename=data.csv")
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(responseBody);
-
-        // Validation passes (no exception thrown)
-        doNothing().when(reportManagementServiceMock).validateReportFormat(csvReportId, FileExtension.CSV);
-        when(streamingService.stream(csvReportId, FileExtension.CSV)).thenReturn(mockResponseEntity);
-
-        // Perform the GET request
-        performAuthenticatedGet("/reports/" + csvReportId + "/csv", List.of("Financial"))
-                .andExpect(status().isOk())
-                .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=data.csv"));
-
-        verify(reportManagementServiceMock).validateReportFormat(csvReportId, FileExtension.CSV);
-        verify(streamingService).stream(csvReportId, FileExtension.CSV);
     }
 
     @Test

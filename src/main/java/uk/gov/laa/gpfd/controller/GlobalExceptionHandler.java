@@ -420,7 +420,6 @@ public class GlobalExceptionHandler {
                 .body(errorResponse);
     }
 
-
     /**
      * Handles DatabaseWriteException and responds with an HTTP 500 Internal Server Error.
      *
@@ -462,6 +461,5 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(errorResponse);
     }
-
 
 }

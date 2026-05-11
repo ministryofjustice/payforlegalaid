@@ -1,7 +1,6 @@
 package uk.gov.laa.gpfd.config;
 
 import lombok.SneakyThrows;
-import org.immutables.value.internal.$generator$.$Generator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = TestDatabaseConfig.class)
+@SpringBootTest()
 @AutoConfigureMockMvc
 @ActiveProfiles("testauth")
 class AppConfigTest {
