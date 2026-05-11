@@ -1,4 +1,4 @@
-package uk.gov.laa.gpfd.config;
+package uk.gov.laa.gpfd.integration.config;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;

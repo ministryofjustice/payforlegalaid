@@ -20,16 +20,18 @@ import java.sql.ResultSet;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
@@ -62,7 +64,7 @@ class ReportDaoTest {
     @BeforeEach
     void setUp() {
         testReportId = UUID.randomUUID();
-        testReport =  ReportsTestDataFactory.createTestReport(testReportId);
+        testReport = ReportsTestDataFactory.createTestReport(testReportId);
         reportDao = spy(new ReportDao(extractor, readOnlyJdbcTemplate, namedParameterJdbcTemplate, securityUtils));
     }
 
@@ -103,7 +105,7 @@ class ReportDaoTest {
     void fetchReports_shouldReturnCollectionOfReports() {
         List<String> roles = List.of("REP000", "Reconciliation");
         when(securityUtils.extractRoles()).thenReturn(roles);
-        var expectedReports = Arrays.asList(testReport,  ReportsTestDataFactory.createTestReport());
+        var expectedReports = Arrays.asList(testReport, ReportsTestDataFactory.createTestReport());
         when(namedParameterJdbcTemplate.query(ReportDao.SELECT_ALL_REPORTS_SQL,
                 Map.of("roles", roles),
                 extractor))
@@ -201,6 +203,6 @@ class ReportDaoTest {
                 requiredRoles))
                 .thenReturn(false);
         assertThrows(ReportAccessException.class,
-                () -> reportDao.verifyUserCanAccessReport(testReportId) );
+                () -> reportDao.verifyUserCanAccessReport(testReportId));
     }
 }
