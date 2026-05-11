@@ -23,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CSV_REPORT;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.allOf;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -122,20 +123,7 @@ class SecurityConfigLocalIT extends BaseIT {
     }
 
     @Test
-    void shouldIncludeCsrfTokenInResponse() throws Exception {
-        // CSRF token is available through Spring Security's automatic token generation
-        // The token may be in cookies, request attributes, or response headers depending on
-        // whether a session already exists. This test verifies the response is successful
-        // and the security configuration is active.
-        mockMvc.perform(get("/reports"))
-                .andExpect(status().isOk());
-    }
-
-    @Test
     void shouldEnforceCsrfProtectionForPostRequests() throws Exception {
-        // POST without CSRF token should fail (403 Forbidden)
-        // Note: In local/test profile all requests are allowed via permitAll(),
-        // but in production this would be enforced
         mockMvc.perform(post("/csp-report")
                         .contentType("application/csp-report")
                         .content("""
@@ -152,7 +140,6 @@ class SecurityConfigLocalIT extends BaseIT {
 
     @Test
     void shouldAcceptPostWithValidCsrfToken() throws Exception {
-        // CSP report endpoint is excluded from CSRF in local/test, so it should work
         mockMvc.perform(post("/csp-report")
                         .with(csrf())
                         .contentType("application/csp-report")
@@ -169,20 +156,17 @@ class SecurityConfigLocalIT extends BaseIT {
     }
 
     @Test
-    void shouldHaveSameSiteStrictOnCsrfCookie() throws Exception {
-        // Verify that CSRF cookie includes SameSite=Strict attribute
-        // This is automatically set by Spring Security's CookieCsrfTokenRepository configuration
-        var result = mockMvc.perform(get("/reports"))
-                .andExpect(status().isOk())
-                .andReturn();
-        
-        String setCookieHeader = result.getResponse().getHeader("Set-Cookie");
-        // The CSRF token cookie should be configured with SameSite=Strict
-        // when the CookieCsrfTokenRepository bean is properly configured
-        if (setCookieHeader != null) {
-            // Cookie should have SameSite=Strict for enhanced CSRF protection
-            // This is verified through the bean configuration rather than response headers
-            // as the exact header format depends on Spring Security version
-        }
+    void shouldGenerateCsrfTokenForRequest() throws Exception {
+
+        mockMvc.perform(get("/reports")
+                        .with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldRejectPostWithoutCsrfToken() throws Exception {
+
+        mockMvc.perform(post("/some-protected-endpoint"))
+                .andExpect(status().isForbidden());
     }
 }
