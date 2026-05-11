@@ -1,7 +1,6 @@
 package uk.gov.laa.gpfd.config;
 
 import lombok.SneakyThrows;
-import org.immutables.value.internal.$generator$.$Generator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;

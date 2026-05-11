@@ -23,6 +23,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
 
+import java.util.List;
+
 import static uk.gov.laa.gpfd.config.SecurityConfig.getContentSecurityPolicyConfig;
 
 /**
@@ -128,20 +130,6 @@ public class SecurityConfigLocal {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
-    }
-
-    @Bean
-    public ClientRegistrationRepository emptyClientRegistrationRepository() {
-
-        ClientRegistration localRegistration = ClientRegistration.withRegistrationId("graph")
-                .clientId("mockClientId")
-                .clientSecret("mockClientSecret")
-                .scope("read")
-                .authorizationUri("test")
-                .redirectUri("test2")
-                .tokenUri("test3")
-                .authorizationGrantType(AuthorizationGrantType.JWT_BEARER)
-                .build();
     }
 
 }
