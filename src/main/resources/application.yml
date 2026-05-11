@@ -38,3 +38,6 @@ gpfd:
     has-s3-access: false
   csv-generation:
     buffer-flush-frequency: 5000
+  security:
+    cors:
+      allowed-origin: https://127.0.0.1:8080
