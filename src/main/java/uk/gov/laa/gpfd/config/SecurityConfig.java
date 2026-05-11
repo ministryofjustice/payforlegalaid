@@ -53,7 +53,22 @@ public class SecurityConfig {
     private String allowedCorsOrigin;
 
     /**
-     * Dedicated filter chain for static resources.
+     * Configures a dedicated security filter chain for static assets.
+     *
+     * <p>
+     * Static resources such as CSS, JavaScript, images, MoJ and GOV.UK frontend assets
+     * are served through a separate higher-priority filter chain to avoid inheriting
+     * the cache-control headers used for authenticated application responses.
+     * </p>
+     *
+     * <p>
+     * This separation allows browsers to cache static assets efficiently while
+     * preserving strict no-store policies for sensitive authenticated content.
+     * </p>
+     *
+     * @param http the {@link HttpSecurity} object used to configure security for static resources
+     * @return a configured {@link SecurityFilterChain} for static resource requests
+     * @throws Exception if an error occurs while building the security filter chain
      */
     @Bean
     @Order(1)
@@ -65,7 +80,20 @@ public class SecurityConfig {
     }
 
     /**
-     * Main application security filter chain.
+     * Configures the {@link SecurityFilterChain} for the HTTP security settings.
+     * <p>
+     * This method customizes the security filter chain by applying the authorization
+     * rules, enabling HTTP basic authentication, and applying the session management
+     * configuration to control session concurrency and expiration.
+     * We create the customisers in the function as Bean customisers are automatically implemented by Spring Security 7,
+     * and running each customiser twice can cause issues.
+     * Static resources are configured using a separate filter chain to ensure
+     * asset caching remains independent of authenticated response cache policies.
+     * </p>
+     *
+     * @param httpSecurity the {@link HttpSecurity} object used to configure HTTP security.
+     * @return a configured {@link SecurityFilterChain} object.
+     * @throws Exception if any error occurs during the configuration of HTTP security.
      */
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -103,8 +131,7 @@ public class SecurityConfig {
                         .contentTypeOptions(Customizer.withDefaults())
                         .referrerPolicy(referrerPolicy -> referrerPolicy
                                 .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER)
-                        )
-                        .permissionsPolicyHeader(permissionsPolicy -> permissionsPolicy
+                        ).permissionsPolicyHeader(permissionsPolicy -> permissionsPolicy
                                 .policy("interest-cohort=()")
                         )
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny)
