@@ -39,6 +39,7 @@ import java.util.List;
  * <p>
  * CSRF Protection: Configured with SameSite=Strict for consistency with production configuration.
  * XOR masking is applied to CSRF tokens to protect against BREACH attacks.
+ * The CSRF token repository is provided by {@link CsrfConfig}.
  * H2 console and CSP report endpoints are excluded from CSRF checks as needed for testing.
  * </p>
  */
@@ -54,36 +55,6 @@ public class SecurityConfigLocal {
 
     public SecurityConfigLocal(CookieCsrfTokenRepository csrfTokenRepository) {
         this.csrfTokenRepository = csrfTokenRepository;
-    }
-
-    /**
-     * Creates a {@link CookieCsrfTokenRepository} configured to store the CSRF token
-     * in a secure cookie accessible by client-side scripts.
-     *
-     * <p>The generated cookie is configured with:
-     * <ul>
-     *   <li>{@code SameSite=Strict} to prevent the cookie being sent with
-     *       cross-site requests</li>
-     *   <li>{@code Secure=true} so the cookie is only transmitted over HTTPS</li>
-     *   <li>{@code Path=/} to make the cookie available across the application</li>
-     *   <li>No explicit domain, allowing the browser to scope the cookie
-     *       to the current host</li>
-     *   <li>{@code HttpOnly=false} to allow frontend JavaScript frameworks
-     *       to read and include the CSRF token in requests</li>
-     * </ul>
-     *
-     * @return the configured {@link CookieCsrfTokenRepository}
-     */
-    @Bean
-    CookieCsrfTokenRepository csrfTokenRepository() {
-        CookieCsrfTokenRepository repository = CookieCsrfTokenRepository.withHttpOnlyFalse();
-        repository.setCookieCustomizer(cookie -> {
-            cookie.sameSite("Strict");
-            cookie.secure(true);
-            cookie.path("/");
-            cookie.domain(null);
-        });
-        return repository;
     }
 
     /**
@@ -140,7 +111,6 @@ public class SecurityConfigLocal {
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(csrfTokenRepository)
                         .csrfTokenRequestHandler(delegate)
-                        // H2 console and CSP report endpoints are excluded as they need to function in local/test
                         .ignoringRequestMatchers(
                                 PathPatternRequestMatcher.withDefaults().matcher("/h2-console/**"),
                                 PathPatternRequestMatcher.withDefaults().matcher("/csp-report")
@@ -209,8 +179,6 @@ public class SecurityConfigLocal {
                 .authorizationGrantType(AuthorizationGrantType.JWT_BEARER)
                 .build();
 
-        List<ClientRegistration> registrationList = List.of(localRegistration);
-
-        return new InMemoryClientRegistrationRepository(registrationList);
+        return new InMemoryClientRegistrationRepository(List.of(localRegistration));
     }
 }

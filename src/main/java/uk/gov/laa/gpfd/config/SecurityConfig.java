@@ -23,7 +23,6 @@ import uk.gov.laa.gpfd.config.builders.HttpSecuritySessionManagementConfigurerBu
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
-import org.springframework.http.HttpHeaders;
 
 import static com.azure.spring.cloud.autoconfigure.implementation.aad.security.AadWebApplicationHttpSecurityConfigurer.aadWebApplication;
 import java.util.List;
@@ -41,7 +40,7 @@ import java.util.List;
  * CSRF Protection: Configured with SameSite=Strict on the CSRF token cookie for
  * browser-based clients. The session cookie uses SameSite=Lax to remain compatible
  * with OAuth2/OIDC redirect flows. CSRF tokens use XOR masking to protect against
- * BREACH attacks.
+ * BREACH attacks. The CSRF token repository is provided by {@link CsrfConfig}.
  * </p>
  */
 @Configuration
@@ -55,36 +54,6 @@ public class SecurityConfig {
 
     @Value("${gpfd.security.cors.allowed-origin:https://127.0.0.1:8080}")
     private String allowedCorsOrigin;
-
-    /**
-     * Creates a {@link CookieCsrfTokenRepository} configured to store the CSRF token
-     * in a secure cookie accessible by client-side scripts.
-     *
-     * <p>The generated cookie is configured with:
-     * <ul>
-     *   <li>{@code SameSite=Strict} to prevent the cookie being sent with
-     *       cross-site requests</li>
-     *   <li>{@code Secure=true} so the cookie is only transmitted over HTTPS</li>
-     *   <li>{@code Path=/} to make the cookie available across the application</li>
-     *   <li>No explicit domain, allowing the browser to scope the cookie
-     *       to the current host</li>
-     *   <li>{@code HttpOnly=false} to allow frontend JavaScript frameworks
-     *       to read and include the CSRF token in requests</li>
-     * </ul>
-     *
-     * @return the configured {@link CookieCsrfTokenRepository}
-     */
-    @Bean
-    CookieCsrfTokenRepository csrfTokenRepository() {
-        CookieCsrfTokenRepository repository = CookieCsrfTokenRepository.withHttpOnlyFalse();
-        repository.setCookieCustomizer(cookie -> {
-            cookie.sameSite("Strict");
-            cookie.secure(true);
-            cookie.path("/");
-            cookie.domain(null);
-        });
-        return repository;
-    }
 
     /**
      * Configures a dedicated security filter chain for static assets.
