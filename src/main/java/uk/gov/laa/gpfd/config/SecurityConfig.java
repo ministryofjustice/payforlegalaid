@@ -39,7 +39,15 @@ import static com.azure.spring.cloud.autoconfigure.implementation.aad.security.A
 
 /**
  * Configuration class to set up Spring Security for the application.
+ * <p>
+ * This class configures the core security settings for HTTP requests, including
+ * authorization, session management, and HTTP basic authentication. The configuration
+ * is modularized into different components, such as {@link AuthorizeHttpRequestsBuilder}
+ * and {@link SessionManagementConfigurerBuilder}, which are injected into this class
+ * to manage specific security aspects.
+ * </p>
  */
+@SuppressWarnings("java:S4502") // CSRF disabled only for CSP report POST endpoint
 @Configuration
 @RequiredArgsConstructor
 @ConditionalOnProperty(name = "spring.cloud.azure.active-directory.enabled", havingValue = "true")
@@ -110,6 +118,7 @@ public class SecurityConfig {
         delegate.setCsrfRequestAttributeName("_csrf");
 
         return httpSecurity
+                // Allow csp-report to ignore CSRF or else POST requests will be blocked
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(csrfTokenRepository)
                         .csrfTokenRequestHandler(delegate)
