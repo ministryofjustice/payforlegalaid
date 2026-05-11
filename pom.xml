@@ -316,6 +316,12 @@
                 <artifactId>thymeleaf-spring6</artifactId>
                 <version>3.1.5.RELEASE</version>
             </dependency>
+            <!-- Overriding webmvc version until it is fixed in 4.0.x -->
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>11.0.21</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -508,6 +514,33 @@
             <scope>test</scope>
         </dependency>
 
+        <!--   Pulling in below Netty dependencies to
+        resolve vulnerabilities raised by Snyk   -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec-compression</artifactId>
+            <version>4.2.13.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec-dns</artifactId>
+            <version>4.2.13.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport-classes-epoll</artifactId>
+            <version>4.2.13.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec-http2</artifactId>
+            <version>4.2.13.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec-http3</artifactId>
+            <version>4.2.13.Final</version>
+        </dependency>
     </dependencies>
 
     <repositories>

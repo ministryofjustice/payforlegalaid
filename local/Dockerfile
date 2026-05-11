@@ -1,5 +1,5 @@
 # ---------- Stage 1: Build ----------
-FROM maven:3.9.14-eclipse-temurin-25 AS builder
+FROM maven:3.9.14-eclipse-temurin-25@sha256:304ea1e9675d07612c36d5d70d8bd1dbd8aac64c307253bbde4e488857f90faa AS builder
 
 WORKDIR /build
 
@@ -29,7 +29,7 @@ RUN --mount=type=cache,target=/root/.m2 \
     mvn -B clean package -DskipTests
 
 # ---------- Stage 2: Runtime ----------
-FROM eclipse-temurin:25-jre-alpine
+FROM eclipse-temurin:25-jre-alpine@sha256:c707c0d18cb9e8556380719f80d96a7529d0746fbb42143893949b98ed2f8943
 
 WORKDIR /app
 
