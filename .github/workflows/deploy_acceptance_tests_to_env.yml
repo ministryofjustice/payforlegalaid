@@ -34,14 +34,14 @@ jobs:
       contents: read
     steps:
       - name: Checkout GitHub repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           repository: $TEST_REPO
           ref: main
           path: testCode
 
       - name: Checkout GitHub repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         env:
           DEV_SOCKET_KEY: ${{ secrets.DEV_SOCKET_KEY }}
         with:
