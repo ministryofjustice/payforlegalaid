@@ -43,6 +43,7 @@ final class AuthTokenIT extends BaseIT {
 
     @ParameterizedTest(name = "[{index}] {0} should redirect when unauthenticated")
     @MethodSource("securedReportEndpoints")
+    @SuppressWarnings("unused") // "description" is used by JUnit but CodeQL can't spot it
     void unauthenticatedAccess_shouldRedirectToLogin(String description, String endpoint) throws Exception {
         performGetRequest(endpoint)
                 .andExpect(status().is3xxRedirection())
