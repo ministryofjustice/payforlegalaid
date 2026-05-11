@@ -51,4 +51,4 @@ server:
     session:
       cookie:
         secure: true
-        same-site: strict
+        same-site: lax
