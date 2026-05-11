@@ -98,25 +98,22 @@ public class SecurityConfig {
      * @return a configured {@link SecurityFilterChain} object.
      * @throws Exception if any error occurs during the configuration of HTTP security.
      */
-    private final SessionManagementConfigurerBuilder sessionManagementConfigurerBuilder;
-    private final SecurityUtils securityUtils;
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         var authorizeHttpRequestsBuilder = new AuthorizeHttpRequestsBuilder(authManager);
         var sessionManagementConfigurerBuilder = new SessionManagementConfigurerBuilder(concurrencyControlConfigurerCustomizer);
         return httpSecurity
-                .authorizeHttpRequests(authorizeHttpRequestsBuilder)
-                .oauth2Login(oauth2 -> oauth2
-                        .successHandler((request, response, authentication) -> {
-                            response.sendRedirect("/");
-                        }))
                 // Allow csp-report to ignore CSRF or else POST requests will be blocked
                 .csrf(csrf -> csrf.ignoringRequestMatchers(
                         PathPatternRequestMatcher.withDefaults().matcher("/csp-report")
                 ))
                 .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(authorizeHttpRequestsBuilder)    // Apply authorization rules
+                .authorizeHttpRequests(authorizeHttpRequestsBuilder)
+                .oauth2Login(oauth2 -> oauth2
+                        .successHandler((request, response, authentication) -> {
+                            response.sendRedirect("/");
+                        }))
                 .sessionManagement(sessionManagementConfigurerBuilder)  // Apply session management configuration
                 .headers(headers -> headers
                         .httpStrictTransportSecurity(hsts -> hsts
@@ -156,52 +153,4 @@ public class SecurityConfig {
                 );
     }
 
-    /*@Bean
-    public OidcUserService oidcUserService() {
-        return new OidcUserService() {
-            @Override
-            public OidcUser loadUser(OidcUserRequest userRequest) {
-                OidcUser oidcUser = super.loadUser(userRequest);
-                Set<GrantedAuthority> authorities = getAuthorities(oidcUser.getAttributes());
-                return new DefaultOidcUser(authorities, oidcUser.getIdToken(), oidcUser.getUserInfo());
-            }
-        };
-    }
-
-    public Set<GrantedAuthority> getAuthorities(Map<String, Object> attributes) {
-        log.info("OIDC attributes: {}", attributes);
-        List<String> roles = securityUtils.extractRoles();
-        log.info("Parsed roles: {}", roles);
-        return new SimpleAuthorityMapper()
-                .mapAuthorities(
-                        roles.stream()
-                                .map(SimpleGrantedAuthority::new)
-                                .collect(Collectors.toList())
-                );
-    }
-
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(allowedCorsOrigin));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
-
-
-    @Bean
-    public OAuth2AuthorizedClientRepository authorizedClientRepository() {
-        // Stores authorized clients in the HTTP session
-        return new HttpSessionOAuth2AuthorizedClientRepository();
-    }
-
-    @Bean
-    public OAuth2AuthorizedClientManager authorizedClientManager(
-            ClientRegistrationRepository clientRegistrationRepository,
-            OAuth2AuthorizedClientRepository authorizedClientRepository) {
-        return new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository, authorizedClientRepository);
-    }*/
 }

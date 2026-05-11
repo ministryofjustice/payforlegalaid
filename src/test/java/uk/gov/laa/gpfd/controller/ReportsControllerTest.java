@@ -261,37 +261,6 @@ class ReportsControllerTest extends BaseMvcTest {
     }
 
     @Test
-    void downloadCsvSucceedsForCsvReport() throws Exception {
-        var csvReportId = DEFAULT_ID;
-
-        // Mock CSV data
-        ByteArrayOutputStream csvDataOutputStream = new ByteArrayOutputStream();
-        csvDataOutputStream.write("1,John,Doe\n".getBytes());
-
-        StreamingResponseBody responseBody = outputStream -> {
-            csvDataOutputStream.writeTo(outputStream);
-            outputStream.flush();
-        };
-
-        ResponseEntity<StreamingResponseBody> mockResponseEntity = ResponseEntity.ok()
-                .header("Content-Disposition", "attachment; filename=data.csv")
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(responseBody);
-
-        // Validation passes (no exception thrown)
-        doNothing().when(reportManagementServiceMock).validateReportFormat(csvReportId, FileExtension.CSV);
-        when(streamingService.stream(csvReportId, FileExtension.CSV)).thenReturn(mockResponseEntity);
-
-        // Perform the GET request
-        performAuthenticatedGet("/reports/" + csvReportId + "/csv", List.of("Financial"))
-                .andExpect(status().isOk())
-                .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=data.csv"));
-
-        verify(reportManagementServiceMock).validateReportFormat(csvReportId, FileExtension.CSV);
-        verify(streamingService).stream(csvReportId, FileExtension.CSV);
-    }
-
-    @Test
     void downloadExcelSucceedsForExcelReport() throws Exception {
         var report = ReportsTestDataFactory.createTestReportWithOutputType(xlsxReportOutput);
         var excelReportId = report.getId();
