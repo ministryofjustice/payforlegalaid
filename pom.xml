@@ -253,6 +253,7 @@
                         <jvmArg>--enable-native-access=ALL-UNNAMED</jvmArg>
                     </jvmArgs>
                 </configuration>
+            </plugin>
             <!-- JaCoCo for code coverage -->
             <plugin>
                 <groupId>org.jacoco</groupId>
