@@ -1,7 +1,6 @@
 package uk.gov.laa.gpfd.services.stream;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
@@ -32,7 +31,7 @@ import static uk.gov.laa.gpfd.model.FileExtension.XLSX;
  * </ul>
  * </p>
  */
-@Slf4j
+@SuppressWarnings("java:S1118") // Abstract base class not a utility class
 public abstract class AbstractDataStream implements DataStream {
 
     /**

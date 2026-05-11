@@ -13,18 +13,10 @@ import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
-import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
-import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
-import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
-import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
@@ -32,7 +24,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.HttpSecuritySessionManagementConfigurerBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
-import uk.gov.laa.gpfd.utils.SecurityUtils;
+
+import java.util.List;
 
 import java.util.List;
 import java.util.Map;
@@ -50,7 +43,6 @@ import static com.azure.spring.cloud.autoconfigure.implementation.aad.security.A
  * to manage specific security aspects.
  * </p>
  */
-@Slf4j
 @Profile("!test")
 @SuppressWarnings("java:S4502") // CSRF disabled only for CSP report POST endpoint
 @Configuration
@@ -108,9 +100,6 @@ public class SecurityConfig {
      * @param httpSecurity the {@link HttpSecurity} object used to configure HTTP security.
      * @return a configured {@link SecurityFilterChain} object.
      */
-    private final SessionManagementConfigurerBuilder sessionManagementConfigurerBuilder;
-    private final SecurityUtils securityUtils;
-
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) {
 
@@ -137,7 +126,9 @@ public class SecurityConfig {
 //                        PathPatternRequestMatcher.withDefaults().matcher("/csp-report")
 //                ))
 //                .cors(Customizer.withDefaults())
-//                .authorizeHttpRequests(authorizeHttpRequestsBuilder)    // Apply authorization rules
+//                .authorizeHttpRequests(authorizeHttpRequestsBuilder)
+//                .oauth2Login(oauth2 -> oauth2
+//                        .successHandler((_, response, _) -> response.sendRedirect("/")))
 //                .sessionManagement(sessionManagementConfigurerBuilder)  // Apply session management configuration
 //                .headers(headers -> headers
 //                        .httpStrictTransportSecurity(hsts -> hsts
@@ -161,6 +152,24 @@ public class SecurityConfig {
 
         return SecurityConfigSupport.applyCommonHeaders(http, false, false)
                 .build();
+    }
+
+    static HeadersConfigurer<HttpSecurity>.@NonNull ContentSecurityPolicyConfig getContentSecurityPolicyConfig(HeadersConfigurer<HttpSecurity>.ContentSecurityPolicyConfig csp) {
+        return csp
+                .policyDirectives(
+                                "default-src 'none'; " +
+                                "base-uri 'self'; " +
+                                "object-src 'none'; " +
+                                "frame-ancestors 'none'; " +
+                                "form-action 'self'; " +
+                                "script-src 'self'; " +
+                                "style-src 'self'; " +
+                                "img-src 'self' data:; " +
+                                "font-src 'self'; " +
+                                "connect-src 'self'; " +
+                                "upgrade-insecure-requests; " +
+                                "report-uri /csp-report"
+                );
     }
 
     /*@Bean
@@ -192,17 +201,4 @@ public class SecurityConfig {
         return SecurityConfigSupport.createCorsConfigurationSource(allowedCorsOrigin);
     }
 
-
-    @Bean
-    public OAuth2AuthorizedClientRepository authorizedClientRepository() {
-        // Stores authorized clients in the HTTP session
-        return new HttpSessionOAuth2AuthorizedClientRepository();
-    }
-
-    @Bean
-    public OAuth2AuthorizedClientManager authorizedClientManager(
-            ClientRegistrationRepository clientRegistrationRepository,
-            OAuth2AuthorizedClientRepository authorizedClientRepository) {
-        return new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository, authorizedClientRepository);
-    }*/
 }

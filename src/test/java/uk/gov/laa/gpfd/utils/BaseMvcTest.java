@@ -13,8 +13,6 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
@@ -24,7 +22,7 @@ public abstract class BaseMvcTest {
     TimeBasedAccessInterceptor timeBasedAccessInterceptor;
 
     @BeforeEach
-    void beforeEach() {
+    void beforeEach_base() {
         when(timeBasedAccessInterceptor.preHandle(any(), any(), any())).thenReturn(true);
     }
 
