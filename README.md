@@ -182,22 +182,29 @@ Acceptance tests are located [here](https://github.com/ministryofjustice/payforl
 
 ### Performance Tests
 
-Performance tests have been set up in payforlegalaid using Gatling to evaluate things like retrieving the list of reports, downloading
-the reports and also concurrency.
+Performance tests have been set up in payforlegalaid using Gatling to evaluate things like retrieving the list of reports, 
+downloading the reports and also concurrency.
 
 src/test/java/uk.gov.laa.gpfd/simulations
 
 The base URL that the tests use is set within gatling.properties within /resources. Set to UAT env by default.
-To run the tests, first log in manually into desired environment, then export session cookie `JSESSIONID`:
+To run the tests, first log in manually into desired environment, then copy the session cookie, `JSESSIONID`, from
+within the browser DevTools -> Application -> Cookies, then run:
 
-`export JSESSIONID=<cookie>`
-
-and then run:
-
-`mvn gatling:test -Dgatling.simulationClass=uk.gov.laa.gpfd.simulations.<test-name> -Dmaven.antrun.skip=true -Dmaven.resources.skip=true`
+```bash
+export JSESSIONID=<insert session id>
+mvn gatling:test -Dgatling.simulationClass=uk.gov.laa.gpfd.simulations.<test-name> -Dmaven.antrun.skip=true -Dmaven.resources.skip=true`
+```
 
 Replace <test-name> with the choice of test. Reports are generated automatically by Gatling and can be accessed at the end of a
-test run within the terminal
+test run within the terminal.
+
+Alternatively, developers can trigger the manual GitHub Actions workflow at
+`.github/workflows/run-gatling-performance-tests.yml` and provide:
+- `simulation-class` as the fully qualified Gatling simulation class
+- `jsessionid` as the authenticated browser session cookie
+
+The workflow runs the same Maven Gatling command and uploads the generated report artifacts for later review.
 
 ## CI/CD
 
