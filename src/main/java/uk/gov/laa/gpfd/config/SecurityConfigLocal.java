@@ -117,7 +117,9 @@ public class SecurityConfigLocal {
                                 .reportOnly() // Included in local config for debugging purposes
                         )
                 )
-                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/login", "/oauth2/**").permitAll()
+                        .anyRequest().authenticated())
                 .oauth2Login(oauth ->
                         oauth.loginPage("/oauth2/authorization/gpfd-azure-dev"));
 
