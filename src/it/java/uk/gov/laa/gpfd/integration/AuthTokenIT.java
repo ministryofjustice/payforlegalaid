@@ -1,33 +1,24 @@
 package uk.gov.laa.gpfd.integration;
 
-import static org.junit.jupiter.params.provider.Arguments.of;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CCMS_REPORT;
-import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.REP012ID;
-import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CSV_REPORT;
-
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
-import uk.gov.laa.gpfd.config.TestDatabaseConfig;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
-import java.util.List;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT, classes = {TestDatabaseConfig.class})
-@AutoConfigureMockMvc
+import static org.junit.jupiter.params.provider.Arguments.of;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CCMS_REPORT;
+import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CSV_REPORT;
+import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.REP012ID;
+
 @ActiveProfiles("testauth")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestPropertySource(locations = "classpath:application-testauth.yml")
 final class AuthTokenIT extends BaseIT {
 

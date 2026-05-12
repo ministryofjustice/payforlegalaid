@@ -2,12 +2,8 @@ package uk.gov.laa.gpfd.integration;
 
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import software.amazon.awssdk.awscore.exception.AwsErrorDetails;
@@ -19,11 +15,7 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import software.amazon.awssdk.services.s3.model.S3Object;
-import uk.gov.laa.gpfd.config.TestDatabaseConfig;
-import uk.gov.laa.gpfd.config.TestSecurityConfig;
-import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.integration.config.TestS3Config;
-import uk.gov.laa.gpfd.utils.SecurityUtils;
 
 import java.io.ByteArrayInputStream;
 import java.time.Instant;
@@ -31,10 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -42,26 +32,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.laa.gpfd.utils.ReportIds.ID_REP012;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT, classes = {TestS3Config.class, TestSecurityConfig.class, TestDatabaseConfig.class})
-@AutoConfigureMockMvc
+@Import(TestS3Config.class)
 @ActiveProfiles("test")
 @TestPropertySource(properties = {"gpfd.s3.has-s3-access=true", "AWS_REGION=eu-west-1",
         "S3_TEMPLATE_STORE=test2", "S3_REPORT_STORE=test"
 })
-@TestInstance(PER_CLASS)
 final class ReportGetFileIT extends BaseIT {
 
     @Autowired
     private S3Client s3Client;
-
-    @Mock
-    private JdbcTemplate readOnlyJdbcTemplate;
-
-    @Mock
-    private SecurityUtils securityUtils;
-
-    @Mock
-    private ReportDao reportDao;
 
     @Test
     @SneakyThrows
