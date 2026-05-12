@@ -1,20 +1,15 @@
 package uk.gov.laa.gpfd.integration;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
 import uk.gov.laa.gpfd.services.ReportManagementService;
-import uk.gov.laa.gpfd.config.TestSecurityConfig;
-import uk.gov.laa.gpfd.config.TestDatabaseConfig;
 
 import java.util.UUID;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -22,12 +17,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CSV_REPORT;
-import static org.hamcrest.Matchers.containsString;
 
-@SpringBootTest(classes = {TestSecurityConfig.class, TestDatabaseConfig.class})
-@AutoConfigureMockMvc
 @ActiveProfiles("test")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestPropertySource(locations = "classpath:application-test.yml")
 class SecurityConfigLocalIT extends BaseIT {
 
@@ -95,14 +86,14 @@ class SecurityConfigLocalIT extends BaseIT {
         mockMvc.perform(post("/csp-report")
                         .contentType("application/csp-report")
                         .content("""
-                {
-                  "csp-report": {
-                    "document-uri": "http://localhost:8080",
-                    "violated-directive": "script-src",
-                    "blocked-uri": "eval"
-                  }
-                }
-                """))
+                                {
+                                  "csp-report": {
+                                    "document-uri": "http://localhost:8080",
+                                    "violated-directive": "script-src",
+                                    "blocked-uri": "eval"
+                                  }
+                                }
+                                """))
                 .andExpect(status().isNoContent());
     }
 

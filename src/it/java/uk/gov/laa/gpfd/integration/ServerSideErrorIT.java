@@ -1,29 +1,16 @@
 package uk.gov.laa.gpfd.integration;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
-import uk.gov.laa.gpfd.config.TestDatabaseConfig;
-import uk.gov.laa.gpfd.config.TestSecurityConfig;
 
-@SpringBootTest(
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = {
-                TestDatabaseConfig.class, TestSecurityConfig.class
-        }
-)
-@AutoConfigureMockMvc
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @ActiveProfiles("test")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestPropertySource(locations = "classpath:application-test.yml")
 class ServerSideErrorIT extends BaseIT {
 
@@ -45,19 +32,19 @@ class ServerSideErrorIT extends BaseIT {
     @Test
     void getReportsShouldReturn500WhenCannotConnectToDb() throws Exception {
         performGetRequest("/reports")
-            .andExpect(status().isInternalServerError());
+                .andExpect(status().isInternalServerError());
     }
 
     @Test
     void getReportWithIdShouldReturn500WhenCannotConnectToDb() throws Exception {
         performGetRequest("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d9")
-            .andExpect(status().isInternalServerError());
+                .andExpect(status().isInternalServerError());
     }
 
     @Test
     void getCsvWithIdShouldReturn500WhenCannotConnectToDbForMappingTable() throws Exception {
         performGetRequest("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d9/csv")
-            .andExpect(status().isInternalServerError());
+                .andExpect(status().isInternalServerError());
     }
 
 }
