@@ -63,30 +63,30 @@ final class ReportGetFileIT extends BaseIT {
     @Mock
     private ReportDao reportDao;
 
-//    @Test
-//    @SneakyThrows
-//    void shouldSuccessfullyPassStreamReturnedFromAWSToUserWithPermission() {
-//
-//        var responseMetadata = GetObjectResponse.builder().contentLength(25L).build();
-//        var inputStream = new ByteArrayInputStream("csv,data,here,123,4.3,cat".getBytes());
-//
-//        var responseList = List.of(
-//                S3Object.builder().key("reports/daily/report_2025-12-14.csv").lastModified(Instant.parse("2025-12-14T05:00:00Z")).build(),
-//                S3Object.builder().key("reports/daily/report_2025-12-15.csv").lastModified(Instant.parse("2025-12-15T05:00:00Z")).build()
-//        );
-//        var mockListResponse = ListObjectsV2Response.builder().contents(new ArrayList<>(responseList)).build();
-//        when(s3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenReturn(mockListResponse);
-//
-//        var mockS3Response = new ResponseInputStream<>(responseMetadata, inputStream);
-//        when(s3Client.getObject(any(GetObjectRequest.class))).thenReturn(mockS3Response);
-//
-//        performGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of("Reconciliation"))
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentType(APPLICATION_OCTET_STREAM))
-//                .andExpect(header().longValue("Content-Length", 25L))
-//                .andExpect(header().string("Content-Disposition", "attachment; filename=\"report_2025-12-15.csv\""))
-//                .andExpect(content().string("csv,data,here,123,4.3,cat"));
-//    }
+    @Test
+    @SneakyThrows
+    void shouldSuccessfullyPassStreamReturnedFromAWSToUserWithPermission() {
+
+        var responseMetadata = GetObjectResponse.builder().contentLength(25L).build();
+        var inputStream = new ByteArrayInputStream("csv,data,here,123,4.3,cat".getBytes());
+
+        var responseList = List.of(
+                S3Object.builder().key("reports/daily/report_2025-12-14.csv").lastModified(Instant.parse("2025-12-14T05:00:00Z")).build(),
+                S3Object.builder().key("reports/daily/report_2025-12-15.csv").lastModified(Instant.parse("2025-12-15T05:00:00Z")).build()
+        );
+        var mockListResponse = ListObjectsV2Response.builder().contents(new ArrayList<>(responseList)).build();
+        when(s3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenReturn(mockListResponse);
+
+        var mockS3Response = new ResponseInputStream<>(responseMetadata, inputStream);
+        when(s3Client.getObject(any(GetObjectRequest.class))).thenReturn(mockS3Response);
+
+        performGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of("Reconciliation"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_OCTET_STREAM))
+                .andExpect(header().longValue("Content-Length", 25L))
+                .andExpect(header().string("Content-Disposition", "attachment; filename=\"report_2025-12-15.csv\""))
+                .andExpect(content().string("csv,data,here,123,4.3,cat"));
+    }
 
     @Test
     @SneakyThrows
@@ -112,24 +112,24 @@ final class ReportGetFileIT extends BaseIT {
                 .andExpect(content().contentType(APPLICATION_JSON));
     }
 
-//    @Test
-//    @SneakyThrows
-//    void shouldHandleS3Errors() {
-//        var exception = NoSuchKeyException.builder().message("File don't exist and some maybe sensitive stuff about addresses here")
-//                .awsErrorDetails(AwsErrorDetails.builder().errorCode("312").errorMessage("uh oh").build())
-//                .build();
-//
-//        when(s3Client.getObject(any(GetObjectRequest.class))).thenThrow(exception);
-//
-//        var result = performGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of("Reconciliation"))
-//                .andExpect(status().isInternalServerError())
-//                .andExpect(content().contentType(APPLICATION_JSON))
-//                .andReturn();
-//
-//        var responseJson = result.getResponse().getContentAsString();
-//        // Just ensuring we sanitise user facing output
-//        assertFalse(responseJson.contains("File don't exist and some maybe sensitive stuff about addresses here"));
-//    }
+    @Test
+    @SneakyThrows
+    void shouldHandleS3Errors() {
+        var exception = NoSuchKeyException.builder().message("File don't exist and some maybe sensitive stuff about addresses here")
+                .awsErrorDetails(AwsErrorDetails.builder().errorCode("312").errorMessage("uh oh").build())
+                .build();
+
+        when(s3Client.getObject(any(GetObjectRequest.class))).thenThrow(exception);
+
+        var result = performGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of("Reconciliation"))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andReturn();
+
+        var responseJson = result.getResponse().getContentAsString();
+        // Just ensuring we sanitise user facing output
+        assertFalse(responseJson.contains("File don't exist and some maybe sensitive stuff about addresses here"));
+    }
 
     @Test
     @SneakyThrows

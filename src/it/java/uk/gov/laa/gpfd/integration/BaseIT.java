@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -20,7 +19,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.securityContext;
 
 @Testcontainers
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -53,7 +51,6 @@ public abstract class BaseIT {
 
     }
 
-
     @BeforeAll
     void setUpMojfinDatabase() {
         databaseUtils.setUpMockMojfinDatabase();
@@ -67,14 +64,6 @@ public abstract class BaseIT {
     protected ResultActions performGetRequest(String uriTemplate) throws Exception {
         return mockMvc.perform(
                 MockMvcRequestBuilders.get(uriTemplate)
-                        .contentType(MediaType.APPLICATION_JSON)
-        );
-    }
-
-    protected ResultActions performGetRequest(String uriTemplate, SecurityContext securityContext) throws Exception {
-        return mockMvc.perform(
-                MockMvcRequestBuilders.get(uriTemplate)
-                        .with(securityContext(securityContext))
                         .contentType(MediaType.APPLICATION_JSON)
         );
     }
