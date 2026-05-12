@@ -109,7 +109,6 @@ public record ReportDao(
        WHERE rr.REPORT_ID = ?
        """;
 
-
     /**
      * Fetches a {@link Report} by its unique identifier (UUID) from the database.
      * This method executes a SQL query to retrieve the report and returns it as an {@link Optional}.

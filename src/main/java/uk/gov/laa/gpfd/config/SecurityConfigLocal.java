@@ -1,6 +1,5 @@
 package uk.gov.laa.gpfd.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,13 +8,9 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.security.web.header.writers.StaticHeadersWriter;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -37,7 +32,6 @@ import static uk.gov.laa.gpfd.config.SecurityConfig.getContentSecurityPolicyConf
  * to manage specific security aspects.
  * </p>
  */
-@Slf4j
 @SuppressWarnings("java:S4502") // CSRF disabled only for H2 console — local/test profiles only, never active in prod
 @Profile({"local", "test"})
 @Configuration
@@ -61,11 +55,10 @@ public class SecurityConfigLocal {
      *
      * @param http the {@link HttpSecurity} object used to configure security for static resources
      * @return a configured {@link SecurityFilterChain} for static resource requests
-     * @throws Exception if an error occurs while building the security filter chain
      */
     @Bean
     @Order(1)
-    SecurityFilterChain staticChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain staticChain(HttpSecurity http) {
         http.securityMatcher("/govuk/**", "/moj/**", "/css/**", "/js/**", "/images/**")
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                 .headers(HeadersConfigurer::disable);
@@ -101,8 +94,7 @@ public class SecurityConfigLocal {
                                 .includeSubDomains(true)
                                 .preload(true)
                         )
-                        .contentTypeOptions(contentTypeOptions -> {
-                        })
+                        .contentTypeOptions(Customizer.withDefaults())
                         .referrerPolicy(referrerPolicy -> referrerPolicy
                                 .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER)
                         ).permissionsPolicyHeader(permissionsPolicy -> permissionsPolicy
@@ -112,8 +104,8 @@ public class SecurityConfigLocal {
                         .addHeaderWriter(new StaticHeadersWriter("Cache-Control", "no-store"))
                         .addHeaderWriter(new StaticHeadersWriter("Pragma", "no-cache"))
                         .contentSecurityPolicy(csp -> getContentSecurityPolicyConfig(csp)
-                                        .reportOnly() // Included in local config for debugging purposes
-                                )
+                                .reportOnly() // Included in local config for debugging purposes
+                        )
                 )
                 .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
                 .oauth2Login(oauth ->
