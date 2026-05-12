@@ -32,7 +32,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = TestDatabaseConfig.class)
+@SpringBootTest()
 @AutoConfigureMockMvc
 @ActiveProfiles("testauth")
 class AppConfigTest {

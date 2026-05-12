@@ -210,6 +210,7 @@ class ReportsControllerTest extends BaseMvcTest {
             "523f38f0-2179-4824-b885-3a38c5e149e8, S3STORAGE",
             "f46b4d3d-c100-429a-bf9a-6c3305dbdbfa, CSV"
     })
+
     void downloadExcelRejectsInvalidFiletypes(String reportId, String actualFormat) throws Exception {
 
         UUID uuid = UUID.fromString(reportId);

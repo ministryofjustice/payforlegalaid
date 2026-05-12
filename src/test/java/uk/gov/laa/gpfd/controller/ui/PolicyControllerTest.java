@@ -2,21 +2,17 @@ package uk.gov.laa.gpfd.controller.ui;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.laa.gpfd.utils.BaseMvcTest;
 import uk.gov.laa.gpfd.utils.UrlBuilder;
 
 import java.util.List;
 
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @WebMvcTest(PolicyController.class)
 class PolicyControllerTest extends BaseMvcTest {
@@ -25,13 +21,13 @@ class PolicyControllerTest extends BaseMvcTest {
     UrlBuilder urlBuilder;
 
     @BeforeEach
-    void beforeEach(){
+    void beforeEach() {
         when(urlBuilder.getServiceUrl()).thenReturn("http://localhost");
     }
 
     @Test
     void cookiesPageResolvesToCookiesHtml() throws Exception {
-       performAuthenticatedGet("/cookies", List.of("Financial"))
+        performAuthenticatedGet("/cookies", List.of("Financial"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("cookies"))
                 .andExpect(model().attribute("gpfdUrl", "http://localhost"));
