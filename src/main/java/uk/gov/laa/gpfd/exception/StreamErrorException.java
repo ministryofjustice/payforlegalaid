@@ -1,6 +1,5 @@
 package uk.gov.laa.gpfd.exception;
 
-
 import lombok.Getter;
 
 import java.util.UUID;

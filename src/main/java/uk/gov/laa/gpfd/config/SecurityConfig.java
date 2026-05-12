@@ -3,7 +3,6 @@ package uk.gov.laa.gpfd.config;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Value;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -12,18 +11,10 @@ import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
-import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
-import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
-import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
-import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -31,7 +22,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.HttpSecuritySessionManagementConfigurerBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
-import uk.gov.laa.gpfd.utils.SecurityUtils;
+
+import java.util.List;
 
 /**
  * Configuration class to set up Spring Security for the application.
@@ -43,7 +35,6 @@ import uk.gov.laa.gpfd.utils.SecurityUtils;
  * to manage specific security aspects.
  * </p>
  */
-@Slf4j
 @Profile("!test")
 @SuppressWarnings("java:S4502") // CSRF disabled only for CSP report POST endpoint
 @Configuration
@@ -71,11 +62,10 @@ public class SecurityConfig {
      *
      * @param http the {@link HttpSecurity} object used to configure security for static resources
      * @return a configured {@link SecurityFilterChain} for static resource requests
-     * @throws Exception if an error occurs while building the security filter chain
      */
     @Bean
     @Order(1)
-    SecurityFilterChain staticChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain staticChain(HttpSecurity http) {
         http.securityMatcher("/govuk/**", "/moj/**", "/css/**", "/js/**", "/images/**")
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                 .headers(HeadersConfigurer::disable);
@@ -91,16 +81,14 @@ public class SecurityConfig {
      * We create the customisers in the function as Bean customisers are automatically implemented by Spring Security 7,
      * and running each customiser twice can cause issues.
      * Static resources are configured using a separate filter chain to ensure
-     * asset caching remains independent from authenticated response cache policies.
+     * asset caching remains independent of authenticated response cache policies.
      * </p>
      *
      * @param httpSecurity the {@link HttpSecurity} object used to configure HTTP security.
      * @return a configured {@link SecurityFilterChain} object.
-     * @throws Exception if any error occurs during the configuration of HTTP security.
      */
-
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity httpSecurity) {
         var authorizeHttpRequestsBuilder = new AuthorizeHttpRequestsBuilder(authManager);
         var sessionManagementConfigurerBuilder = new SessionManagementConfigurerBuilder(concurrencyControlConfigurerCustomizer);
         return httpSecurity
@@ -111,9 +99,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authorizeHttpRequestsBuilder)
                 .oauth2Login(oauth2 -> oauth2
-                        .successHandler((request, response, authentication) -> {
-                            response.sendRedirect("/");
-                        }))
+                        .successHandler((_, response, _) -> response.sendRedirect("/")))
                 .sessionManagement(sessionManagementConfigurerBuilder)  // Apply session management configuration
                 .headers(headers -> headers
                         .httpStrictTransportSecurity(hsts -> hsts
@@ -151,6 +137,17 @@ public class SecurityConfig {
                                 "upgrade-insecure-requests; " +
                                 "report-uri /csp-report"
                 );
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of(allowedCorsOrigin));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
 }
