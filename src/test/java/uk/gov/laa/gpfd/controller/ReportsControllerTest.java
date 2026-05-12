@@ -372,4 +372,85 @@ class ReportsControllerTest extends BaseMvcTest {
                 .andExpect(status().isInternalServerError());
     }
 
+    @Test
+    void downloadCsvFailsIfFetchReportByIdFails() throws Exception {
+        // Mock CSV data
+        ByteArrayOutputStream csvDataOutputStream = new ByteArrayOutputStream();
+        csvDataOutputStream.write("1,John,Doe\n".getBytes());
+        csvDataOutputStream.write("2,Jane,Smith\n".getBytes());
+
+        var report = createTestReportWithOutputType(csvReportOutput);
+        var reportId = report.getId();
+
+        StreamingResponseBody responseStream = outputStream -> {
+            csvDataOutputStream.writeTo(outputStream);
+            outputStream.flush();
+        };
+
+        ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=data.csv")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(responseStream);
+
+        doNothing().when(reportDao).verifyUserCanAccessReport(reportId);
+        when(streamingService.stream(reportId, FileExtension.CSV)).thenReturn(responseStream);
+        when(reportDao.fetchReportById(reportId)).thenReturn(Optional.empty());
+        when(securityUtils.extractUserId()).thenReturn(USER_ID);
+
+        performAuthenticatedGet("/reports/" + reportId + "/csv", List.of("Financial"))
+                .andExpect(status().isNotFound());
+
+    }
+
+    @Test
+    void downloadExcelFailsIfFetchReportByIdFails() throws Exception {
+        var report = ReportsTestDataFactory.createTestReportWithOutputType(xlsxReportOutput);
+        var excelReportId = report.getId();
+
+        // Mock Excel data
+        ByteArrayOutputStream excelDataOutputStream = new ByteArrayOutputStream();
+        excelDataOutputStream.write("mock-excel-data".getBytes());
+
+        StreamingResponseBody responseBody = outputStream -> {
+            excelDataOutputStream.writeTo(outputStream);
+            outputStream.flush();
+        };
+
+        ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=report.xlsx")
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .body(responseBody);
+
+        // Validation passes (no exception thrown)
+        doNothing().when(reportManagementServiceMock).validateReportFormat(excelReportId, FileExtension.XLSX);
+        when(streamingService.stream(excelReportId, FileExtension.XLSX)).thenReturn(responseBody);
+        when(securityUtils.extractUserId()).thenReturn(USER_ID);
+        when(reportDao.fetchReportById(excelReportId)).thenReturn(Optional.empty());
+
+        // Perform the GET request
+        performAuthenticatedGet("/reports/" + excelReportId + "/excel", List.of("Financial"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getReportDownloadByIdFailsIfFetchReportByIdFails() throws Exception {
+        var report = ReportsTestDataFactory.createTestReportWithOutputType(s3ReportOutput);
+        var reportId = report.getId();
+        var s3CsvDownload = mock(S3ClientWrapper.S3CsvDownload.class);
+        var responseMetadata = GetObjectResponse.builder().contentLength(120L).build();
+        var inputStream = new ByteArrayInputStream("test".getBytes());
+        var outputStream = new ByteArrayOutputStream();
+        outputStream.write("output!".getBytes());
+        var mockS3Response = new ResponseInputStream<>(responseMetadata, inputStream);
+
+        when(fileDownloadService.getFileStreamResponse(reportId)).thenReturn(s3CsvDownload);
+        when(reportDao.fetchReportById(reportId)).thenReturn(Optional.empty());
+        when(s3CsvDownload.stream()).thenReturn(mockS3Response);
+        when(s3CsvDownload.getFileName()).thenReturn("file.csv");
+        when(securityUtils.extractUserId()).thenReturn(USER_ID);
+
+        performAuthenticatedGet("/reports/" + reportId + "/file", List.of("Financial"))
+                .andExpect(status().isNotFound());
+    }
+
 }
