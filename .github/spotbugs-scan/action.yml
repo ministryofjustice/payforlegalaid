@@ -4,15 +4,10 @@ description: Run SpotBugs/FindSecBugs security analysis and upload SARIF to GitH
 runs:
   using: 'composite'
   steps:
-    - name: Run SpotBugs security scan
+    - name: Run SpotBugs security scan and generate SARIF report
       run: |
         echo "Running SpotBugs security analysis..."
-        mvn -B -Pfindsecbugs -DskipTests clean compile spotbugs:spotbugs
-      shell: bash
-
-    - name: Generate SpotBugs SARIF report
-      run: |
-      mvn -B -Pfindsecbugs -DskipTests clean compile spotbugs:spotbugs -Dspotbugs.sarifOutput=true
+        mvn -B -Pfindsecbugs -DskipTests clean compile spotbugs:spotbugs -Dspotbugs.sarifOutput=true
       shell: bash
 
     - name: Upload SpotBugs results to GitHub Code Scanning
