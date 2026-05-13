@@ -43,6 +43,7 @@ jobs:
     permissions:
       id-token: write # This is required for requesting the JWT
       contents: read  # This is required for actions/checkout
+      security-events: write # This is required for uploading SARIF to Code Scanning
 
     steps:
       - name: Checkout Github Repository
@@ -57,6 +58,10 @@ jobs:
         uses: './.github/snyk-scan'
         env:
           SNYK_TOKEN: ${{ secrets.snyk_token }}
+
+      - name: Run SpotBugs security scan
+        if: ${{ inputs.environment_name == 'prod' }}
+        uses: './.github/spotbugs-scan'
 
       - name: Set Spring profile
         env:
