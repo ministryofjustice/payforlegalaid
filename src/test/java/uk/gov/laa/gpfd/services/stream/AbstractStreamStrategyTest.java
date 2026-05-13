@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 import static java.util.UUID.randomUUID;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
@@ -25,6 +27,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.gov.laa.gpfd.services.stream.AbstractDataStream.createCsvStreamStrategy;
 import static uk.gov.laa.gpfd.services.stream.AbstractDataStream.createExcelStreamStrategy;
+import static uk.gov.laa.gpfd.services.stream.DataStream.APPLICATION_EXCEL;
 
 @ExtendWith(MockitoExtension.class)
 class AbstractDataStreamTest {
@@ -130,5 +133,16 @@ class AbstractDataStreamTest {
         assertThrows(IOException.class, () -> body.writeTo(outputStream));
     }
 
+    @Test
+    void excelDataStream_shouldGetMediaTypeOfXlsx() {
+        var testStream = new AbstractDataStream.ExcelDataStream(reportDao, dataStreamer);
+        assertEquals(MediaType.valueOf(APPLICATION_EXCEL), testStream.getContentType());
+    }
+
+    @Test
+    void csvDataStream_shouldGetMediaTypeOfCsv() {
+        var testStream = new AbstractDataStream.CsvDataStream(reportDao, dataStreamer);
+        assertEquals(MediaType.APPLICATION_OCTET_STREAM, testStream.getContentType());
+    }
 
 }
