@@ -4,8 +4,6 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import uk.gov.laa.gpfd.integration.data.ReportTestData;
 
 import java.util.List;
@@ -16,8 +14,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CSV_REPORT;
 
-@ActiveProfiles("testauth")
-@TestPropertySource(locations = "classpath:application-test.yml")
 final class GetReportsByIdIT extends BaseIT {
 
     @SneakyThrows

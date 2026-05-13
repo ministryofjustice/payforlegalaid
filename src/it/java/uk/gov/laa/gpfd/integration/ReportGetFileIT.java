@@ -4,7 +4,6 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import software.amazon.awssdk.awscore.exception.AwsErrorDetails;
 import software.amazon.awssdk.core.ResponseInputStream;
@@ -33,7 +32,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.laa.gpfd.utils.ReportIds.ID_REP012;
 
 @Import(TestS3Config.class)
-@ActiveProfiles("test")
 @TestPropertySource(properties = {"gpfd.s3.has-s3-access=true", "AWS_REGION=eu-west-1",
         "S3_TEMPLATE_STORE=test2", "S3_REPORT_STORE=test"
 })
@@ -86,7 +84,7 @@ final class ReportGetFileIT extends BaseIT {
     @Test
     @SneakyThrows
     void shouldErrorIfIdNotValid() {
-        performGetRequest("/reports/hi/file")
+        performGetRequestWithRoles("/reports/hi/file", List.of("Financial"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_JSON));
     }

@@ -5,13 +5,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
+
+import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ActiveProfiles("test")
-@TestPropertySource(locations = "classpath:application-test.yml")
 class ServerSideErrorIT extends BaseIT {
 
     @Autowired
@@ -31,19 +29,19 @@ class ServerSideErrorIT extends BaseIT {
 
     @Test
     void getReportsShouldReturn500WhenCannotConnectToDb() throws Exception {
-        performGetRequest("/reports")
+        performGetRequestWithRoles("/reports", List.of("Financial"))
                 .andExpect(status().isInternalServerError());
     }
 
     @Test
     void getReportWithIdShouldReturn500WhenCannotConnectToDb() throws Exception {
-        performGetRequest("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d9")
+        performGetRequestWithRoles("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d9", List.of("Financial"))
                 .andExpect(status().isInternalServerError());
     }
 
     @Test
     void getCsvWithIdShouldReturn500WhenCannotConnectToDbForMappingTable() throws Exception {
-        performGetRequest("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d9/csv")
+        performGetRequestWithRoles("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d9/csv", List.of("Financial"))
                 .andExpect(status().isInternalServerError());
     }
 
