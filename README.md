@@ -307,4 +307,10 @@ https://learn.microsoft.com/en-us/azure/developer/java/spring-framework/spring-b
 
 # Pre commit hooks
 
-Pre commit hooks have been set up on this repository to ensure no accidental commits of secrets, keys etc. Provided by DevSecOps https://github.com/ministryofjustice/devsecops-hooks
+- Pre commit hooks have been set up on this repository to ensure no accidental commits of secrets, keys etc. Provided by DevSecOps https://github.com/ministryofjustice/devsecops-hooks
+- Pre commit hooks have been set up to ensure commit messages follow the correct format for release-please, which automates our releases. See the [Releases](#releases) section for more details.
+
+Install both hooks with the following command:
+```text
+pre-commit install
+```
