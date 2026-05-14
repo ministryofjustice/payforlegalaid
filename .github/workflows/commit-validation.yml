@@ -1,0 +1,29 @@
+name: Commit Message Validation
+
+on:
+  pull_request:
+
+jobs:
+  validate-commits:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate commit messages
+        run: |
+          echo "Checking commit messages..."
+
+          BASE="${{ github.event.pull_request.base.sha }}"
+          HEAD="${{ github.event.pull_request.head.sha }}"
+
+          git log $BASE..$HEAD --pretty=format:%s | while read msg
+          do
+            echo "Checking: $msg"
+
+            echo "$msg" | grep -Eq '^(feat|fix|docs|chore|refactor|test|ci|build|perf)(\([A-Z]+-[0-9]+\))?: .+' \
+              || (echo "❌ Invalid commit message: $msg" && exit 1)
+          done
