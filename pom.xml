@@ -28,13 +28,15 @@
         <govuk-frontend.version>6.1.0</govuk-frontend.version>
         <moj-frontend.version>6.0.0</moj-frontend.version>
 
-        <payforlegalaid-openapi.version>0.0.33</payforlegalaid-openapi.version>
-        <aws.java.sdk.version>2.43.0</aws.java.sdk.version>
+        <payforlegalaid-openapi.version>0.0.35</payforlegalaid-openapi.version>
+        <aws.java.sdk.version>2.44.1</aws.java.sdk.version>
         <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
         <maven-dependency-plugin.version>3.10.0</maven-dependency-plugin.version>
         <maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
         <maven-war-plugin.version>3.5.1</maven-war-plugin.version>
         <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
+        <spotbugs-maven-plugin.version>4.9.8.0</spotbugs-maven-plugin.version>
+        <findsecbugs-plugin.version>1.14.0</findsecbugs-plugin.version>
         <!-- Code coverage thresholds: fail build if coverage falls below these values -->
         <coverage.line.minimum>0.80</coverage.line.minimum>
         <coverage.branch.minimum>0.68</coverage.branch.minimum>
@@ -320,7 +322,7 @@
             <dependency>
                 <groupId>org.apache.tomcat.embed</groupId>
                 <artifactId>tomcat-embed-core</artifactId>
-                <version>11.0.21</version>
+                <version>11.0.22</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -452,13 +454,13 @@
             <!-- Spring currently sitting at 3.0.4 -->
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>3.1.2</version>
+            <version>3.1.3</version>
         </dependency>
         <dependency>
             <!-- SpringDoc Openapi currently sitting at 2.20.2 -->
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>2.21.2</version>
+            <version>2.21.3</version>
         </dependency>
 
         <!-- Test Dependencies-->
@@ -559,4 +561,42 @@
             <url>https://github.com/ministryofjustice/payforlegalaid-openapi/</url>
         </repository>
     </repositories>
+
+    <profiles>
+        <profile>
+            <id>findsecbugs</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs-maven-plugin</artifactId>
+                        <version>${spotbugs-maven-plugin.version}</version>
+                        <configuration>
+                            <effort>Max</effort>
+                            <threshold>Low</threshold>
+                            <xmlOutput>true</xmlOutput>
+                            <htmlOutput>true</htmlOutput>
+                            <failOnError>false</failOnError>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>findsecbugs-report</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>spotbugs</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.h3xstream.findsecbugs</groupId>
+                                <artifactId>findsecbugs-plugin</artifactId>
+                                <version>${findsecbugs-plugin.version}</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
