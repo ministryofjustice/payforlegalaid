@@ -4,16 +4,18 @@ on:
   pull_request:
     types: [opened, edited, reopened, synchronize]
 
+permissions:
+  contents: read
+  pull-requests: read
+
 jobs:
-  validate-title:
+  validate-pr-title:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Validate PR title
+      - name: Validate PR title format
         run: |
-          TITLE="${{ github.event.pull_request.title }}"
+          echo "Checking PR title: ${{ github.event.pull_request.title }}"
 
-          echo "Checking PR title: $TITLE"
-
-          echo "$TITLE" | grep -Eq '^(feat|fix|docs|chore|refactor|test|ci|build|perf)(\([A-Z]+-[0-9]+\))?: .+' \
+          echo "${{ github.event.pull_request.title }}" | grep -Eq '^(feat|fix|docs|chore|refactor|test|ci|build|perf)(\([A-Z]+-[0-9]+\))?: .+' \
             || (echo "❌ Invalid PR title format" && exit 1)
