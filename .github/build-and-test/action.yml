@@ -28,14 +28,16 @@ runs:
       shell:
         bash
 
-    - name: Generate JaCoCo Report
+    - name: Generate JaCoCo Report (development only)
+      if: ${{ github.environment == 'development' }}
       run: mvn jacoco:report
       env:
         SPRING_PROFILES_ACTIVE: test
       shell: bash
 
-    - name: Upload JaCoCo Report
+    - name: Upload JaCoCo Report (development only)
+      if: ${{ github.environment == 'development' }}
       uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
-        name: jacoco-report
+        name: jacoco-report-${{ github.job }}-${{ github.run_attempt }}
         path: target/site/jacoco
