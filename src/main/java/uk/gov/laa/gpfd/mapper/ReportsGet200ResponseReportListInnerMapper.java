@@ -24,6 +24,7 @@ public final class ReportsGet200ResponseReportListInnerMapper implements Resourc
      * @param reportData the {@link Report} object containing the data to be mapped
      * @return a {@link ReportsGet200ResponseReportListInner} object populated with data from the provided {@link Report}
      */
+    @Override
     public ReportsGet200ResponseReportListInner map(Report reportData) {
         var result = new ReportsGet200ResponseReportListInner();
         result.setId(reportData.getId());

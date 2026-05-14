@@ -1,3 +1,5 @@
+FROM amazoncorretto:25-alpine@sha256:80667e38af71ac103a3ae36a0b531d54c73c4da28fc02b57f69bce8993c0e1b0
+RUN apk update && apk add --no-cache curl
 # Stage 1: Dependency Resolution
 FROM maven:3.9.13-amazoncorretto-25-alpine AS dependency-builder
 

@@ -1,4 +1,4 @@
-package uk.gov.laa.gpfd.service;
+package uk.gov.laa.gpfd.services;
 
 import java.time.Instant;
 import java.util.Collections;
@@ -16,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
-import uk.gov.laa.gpfd.services.UserService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;

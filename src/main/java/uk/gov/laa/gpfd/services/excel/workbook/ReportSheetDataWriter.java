@@ -8,7 +8,6 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.streaming.SheetDataWriter;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
-import sun.misc.Unsafe;
 import uk.gov.laa.gpfd.model.ReportQuery;
 
 import java.io.Closeable;
@@ -47,22 +46,18 @@ import java.lang.reflect.Field;
  * for most data-oriented Excel files.</p>
  */
 public final class ReportSheetDataWriter extends SheetDataWriter implements Closeable {
-    /**
-     * Unsafe instance for low-level memory operations.
-     */
-    private static final Unsafe UNSAFE = getUnsafe();
 
     /**
-     * Memory offset for the row number field.
+     * Cached reflection field for the row number field.
      */
-    private static final long ROWNUM_OFFSET;
+    private static final Field ROWNUM_FIELD;
 
     static {
         try {
-            ROWNUM_OFFSET = UNSAFE.objectFieldOffset(SheetDataWriter.class.getDeclaredField("_rownum"));
-
-        } catch (Exception e) {
-            throw new Error("Failed to initialize", e);
+            ROWNUM_FIELD = SheetDataWriter.class.getDeclaredField("_rownum");
+            ROWNUM_FIELD.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw new ExceptionInInitializerError(e);
         }
     }
 
@@ -89,49 +84,31 @@ public final class ReportSheetDataWriter extends SheetDataWriter implements Clos
     }
 
     /**
-     * Gets the Unsafe
-     *
-     * @return the Unsafe instance
-     * @throws Error if Unsafe is not available
-     */
-    private static Unsafe getUnsafe() {
-        try {
-            Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
-            theUnsafe.setAccessible(true);
-            return (Unsafe) theUnsafe.get(null);
-        } catch (Exception e) {
-            throw new Error("Unsafe not available", e);
-        }
-    }
-
-    /**
      * Writes a cell to the output stream with optimized formatting.
      *
-     * <p><strong>Performance Note:</strong> This method employs {@code sun.misc.Unsafe} for low-level memory
-     * access to achieve optimal performance in high-volume spreadsheet generation scenarios. The operation:
-     * <pre>
-     *   int rownum = UNSAFE.getInt(this, ROWNUM_OFFSET);
-     * </pre>
-     *
-     * <p>This approach provides several performance advantages:
-     * <ul>
-     *   <li><strong>Reduced Overhead:</strong> Eliminates method call overhead that would be incurred by
-     *       traditional getter methods, which is significant when processing millions of cells.</li>
-     *
-     *   <li><strong>Memory Efficiency:</strong> Avoids creating temporary objects or boxed primitives that
-     *       trigger garbage collection pressure during large file generation.</li>
-     * </ul>
+     * <p><strong>Performance Note:</strong> This method employs reflection to read the private
+     * {@code _rownum} field from the parent {@link SheetDataWriter} to achieve optimal performance
+     * in high-volume spreadsheet generation scenarios.</p>
      *
      * @param columnIndex the column index (0-based)
      * @param cell        the cell to write
      * @throws IOException if an I/O error occurs
      */
     @Override
+    @SuppressWarnings("java/missing-case-in-switch")
+    /*
+    Suppressing warning about missing values in the switch cases so CodeQL can ignore them.
+     */
     public void writeCell(int columnIndex, Cell cell) throws IOException {
         if (cell == null) {
             return;
         }
-        int rownum = UNSAFE.getInt(this, ROWNUM_OFFSET);
+        int rownum;
+        try {
+            rownum = (int) ROWNUM_FIELD.get(this);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException("Failed to read _rownum field", e);
+        }
         String ref = new CellReference(rownum, columnIndex).formatAsString();
         _out.write("<c");
         writeXml("r", ref);
@@ -161,6 +138,8 @@ public final class ReportSheetDataWriter extends SheetDataWriter implements Clos
                     case ERROR:
                         writeXml("t", "e");
                         break;
+                    default:
+                        break;
                 }
                 _out.write("><f>");
                 outputEscapedString(cell.getCellFormula());
@@ -189,12 +168,13 @@ public final class ReportSheetDataWriter extends SheetDataWriter implements Clos
                         break;
                     case ERROR: {
                         FormulaError error = FormulaError.forInt(cell.getErrorCellValue());
-
                         _out.write("><v>");
                         outputEscapedString(error.getString());
                         _out.write("</v>");
                         break;
                     }
+                    default:
+                        break;
                 }
                 break;
             }
@@ -269,6 +249,4 @@ public final class ReportSheetDataWriter extends SheetDataWriter implements Clos
         char last = str.charAt(str.length() - 1);
         return first <= ' ' || last <= ' ';
     }
-
-
 }

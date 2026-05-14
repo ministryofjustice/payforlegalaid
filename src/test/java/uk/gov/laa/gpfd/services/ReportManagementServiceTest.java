@@ -1,4 +1,4 @@
-package uk.gov.laa.gpfd.service;
+package uk.gov.laa.gpfd.services;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +14,6 @@ import uk.gov.laa.gpfd.mapper.ReportsGet200ResponseReportListInnerMapper;
 import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.model.ImmutableReportOutputType;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
-import uk.gov.laa.gpfd.services.ReportManagementService;
 
 import java.util.List;
 import java.util.Optional;
