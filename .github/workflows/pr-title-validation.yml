@@ -1,0 +1,19 @@
+name: PR Title Validation
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+jobs:
+  validate-title:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate PR title
+        run: |
+          TITLE="${{ github.event.pull_request.title }}"
+
+          echo "Checking PR title: $TITLE"
+
+          echo "$TITLE" | grep -Eq '^(feat|fix|docs|chore|refactor|test|ci|build|perf)(\([A-Z]+-[0-9]+\))?: .+' \
+            || (echo "❌ Invalid PR title format" && exit 1)
