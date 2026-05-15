@@ -80,6 +80,7 @@ public class SecurityConfigLocal {
      */
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) {
+
         return httpSecurity
                 // Allow h2-console to ignore CSRF or it won't load
                 .csrf(csrf -> csrf.ignoringRequestMatchers(
@@ -107,7 +108,9 @@ public class SecurityConfigLocal {
                                 .reportOnly() // Included in local config for debugging purposes
                         )
                 )
-                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/login", "/oauth2/**").permitAll()
+                        .anyRequest().authenticated())
                 .oauth2Login(oauth ->
                         oauth.loginPage("/oauth2/authorization/gpfd-azure-dev"))
                 .build();
