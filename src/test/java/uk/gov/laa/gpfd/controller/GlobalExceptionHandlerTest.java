@@ -147,7 +147,6 @@ class GlobalExceptionHandlerTest {
                 "Could not find template"
         ), Arguments.of(
                 new TemplateResourceException.ExcelTemplateCreationException("Meh, doesnt work on my machine!", new RuntimeException()),
-                new TemplateResourceException.ExcelTemplateCreationException("Meh, doesnt work on my machine!", new RuntimeException()),
                 "Meh, doesnt work on my machine!"
         ), Arguments.of(
                 new TemplateResourceException.ExcelTemplateCreationException(new RuntimeException(), "Meh %s, doesnt work on my machine! %s", "arg1", "arg2"),
