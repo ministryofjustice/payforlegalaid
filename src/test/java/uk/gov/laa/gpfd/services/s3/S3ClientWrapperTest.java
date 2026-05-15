@@ -1,5 +1,6 @@
 package uk.gov.laa.gpfd.services.s3;
 
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -198,5 +199,14 @@ class S3ClientWrapperTest {
         var stream = mock(ResponseInputStream.class);
         var s3CsvDownload = new S3ClientWrapper.S3CsvDownload("reports/daily/report_000_2025-12-12.csv", stream);
         assertEquals("report_000_2025-12-12.csv", s3CsvDownload.getFileName());
+    }
+
+    @SneakyThrows
+    @Test
+    void S3CsvDownload_close_shouldCallCloseOnTheStream() {
+        var stream = mock(ResponseInputStream.class);
+        var s3CsvDownload = new S3ClientWrapper.S3CsvDownload("reports/daily/report_000_2025-12-12.csv", stream);
+        s3CsvDownload.close();
+        verify(stream).close();
     }
 }
