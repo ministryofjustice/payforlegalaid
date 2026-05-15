@@ -14,7 +14,7 @@ services:
     mem_limit: 2g
     shm_size: 1g
     healthcheck:
-      test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/1521"]
+      test: ["CMD", "healthcheck.sh"]
       interval: 15s
       timeout: 10s
       retries: 20
@@ -36,7 +36,7 @@ services:
       oracle:
         condition: service_healthy        # wait for Oracle to be ready
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/1521"]
       interval: 30s
       timeout: 10s
       retries: 3
