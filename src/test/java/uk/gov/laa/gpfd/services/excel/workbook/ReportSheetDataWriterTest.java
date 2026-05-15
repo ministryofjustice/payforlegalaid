@@ -98,7 +98,7 @@ class ReportSheetDataWriterTest {
 
         assertThat(buffer.toString())
                 .contains("<c r=\"A1\" s=\"32\"></c>");
-        verify(styleManager.getColumnStyle(0, "testSheet"));
+        verify(styleManager).getColumnStyle(0, "testSheet");
     }
 
     @Test
