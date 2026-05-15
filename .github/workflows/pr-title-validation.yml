@@ -9,13 +9,29 @@ permissions:
   pull-requests: read
 
 jobs:
-  validate-pr-title:
+  validate-title:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Validate PR title format
+      - name: Validate PR title
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        shell: bash
         run: |
-          echo "Checking PR title: ${{ github.event.pull_request.title }}"
+          set -euo pipefail
 
-          echo "${{ github.event.pull_request.title }}" | grep -Eq '^(feat|fix|docs|chore|refactor|test|ci|build|perf)(\([A-Z]+-[0-9]+\))?: .+' \
-            || (echo "❌ Invalid PR title format" && exit 1)
+          echo "Checking PR title: $TITLE"
+
+          if echo "$TITLE" | grep -Eq '^(feat|fix|docs|chore|refactor|test|ci|build|perf)(\([A-Z]+-[0-9]+\))?: .+'; then
+            echo "✅ PR title format is valid"
+          else
+            echo "❌ Invalid PR title format"
+            echo
+            echo "Expected format:"
+            echo "  type(PROJECT-123): description"
+            echo
+            echo "Examples:"
+            echo "  feat(ABC-123): add login endpoint"
+            echo "  fix(XYZ-42): handle null response"
+            exit 1
+          fi
