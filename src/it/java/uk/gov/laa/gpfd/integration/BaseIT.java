@@ -8,16 +8,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 import uk.gov.laa.gpfd.integration.config.TestDatabaseConfig;
-import uk.gov.laa.gpfd.config.TestSecurityConfig;
 import uk.gov.laa.gpfd.utils.DatabaseUtils;
 
 import java.util.List;
@@ -30,7 +30,8 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 @Testcontainers
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureMockMvc
-@SpringBootTest(webEnvironment = RANDOM_PORT, classes = {TestDatabaseConfig.class, TestSecurityConfig.class})
+@ActiveProfiles("testauth")
+@SpringBootTest(webEnvironment = RANDOM_PORT, classes = {TestDatabaseConfig.class})
 public abstract class BaseIT {
 
     @Autowired
