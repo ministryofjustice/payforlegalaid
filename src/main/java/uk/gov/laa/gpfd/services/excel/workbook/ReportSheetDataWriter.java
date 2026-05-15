@@ -162,13 +162,15 @@ public final class ReportSheetDataWriter extends SheetDataWriter implements Clos
                         }
                         break;
                     case BOOLEAN:
-                        _out.write("><v>");
+                        // Have tweaked the default Apache POI here as it was placing an extra unopened >
+                        _out.write("<v>");
                         _out.write(cell.getBooleanCellValue() ? "1" : "0");
                         _out.write("</v>");
                         break;
                     case ERROR: {
                         FormulaError error = FormulaError.forInt(cell.getErrorCellValue());
-                        _out.write("><v>");
+                        // Have tweaked the default Apache POI here as it was placing an extra unopened >
+                        _out.write("<v>");
                         outputEscapedString(error.getString());
                         _out.write("</v>");
                         break;
