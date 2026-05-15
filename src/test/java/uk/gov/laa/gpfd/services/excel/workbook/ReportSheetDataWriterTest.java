@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.laa.gpfd.model.ReportQuery;
 import uk.gov.laa.gpfd.model.excel.ExcelSheet;
 
+import java.io.IOException;
 import java.io.StringWriter;
 
 import static org.apache.poi.ss.usermodel.FormulaError.DIV0;
@@ -21,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,18 +39,15 @@ class ReportSheetDataWriterTest {
     @Mock
     ExcelSheet sheet;
 
-
     ReportSheetDataWriter reportSheetDataWriter;
 
     StringWriter buffer;
 
-    @SneakyThrows
     @BeforeEach
     void beforeEach() {
         buffer = new StringWriter();
     }
 
-    @SneakyThrows
     private void createDataWriter() {
         createDataWriter(sharedStringSource);
     }
@@ -68,8 +67,7 @@ class ReportSheetDataWriterTest {
     }
 
     @Test
-    @SneakyThrows
-    void writeCell_shouldDoNothingIfCellNull() {
+    void writeCell_shouldDoNothingIfCellNull() throws IOException {
         createDataWriter();
         reportSheetDataWriter.writeCell(1, null);
 
@@ -77,8 +75,7 @@ class ReportSheetDataWriterTest {
     }
 
     @Test
-    @SneakyThrows
-    void writeCell_shouldWriteBlankCell() {
+    void writeCell_shouldWriteBlankCell() throws IOException {
         createDataWriter();
         setupCommonMocks();
 
@@ -91,8 +88,21 @@ class ReportSheetDataWriterTest {
     }
 
     @Test
-    @SneakyThrows
-    void writeCell_shouldWriteNumericCell() {
+    void writeCell_shouldWriteStyleIfOneSet() throws IOException {
+        createDataWriter();
+        setupCommonMocks();
+
+        when(cell.getCellType()).thenReturn(CellType.BLANK);
+        when(styleManager.getColumnStyle(anyInt(), any())).thenReturn(32);
+        reportSheetDataWriter.writeCell(0, cell);
+
+        assertThat(buffer.toString())
+                .contains("<c r=\"A1\" s=\"32\"></c>");
+        verify(styleManager.getColumnStyle(0, "testSheet"));
+    }
+
+    @Test
+    void writeCell_shouldWriteNumericCell() throws IOException {
         createDataWriter();
         setupCommonMocks();
 
@@ -106,8 +116,7 @@ class ReportSheetDataWriterTest {
     }
 
     @Test
-    @SneakyThrows
-    void writeCell_shouldWriteBooleanCell_withTrueAsOne() {
+    void writeCell_shouldWriteBooleanCell_withTrueAsOne() throws IOException {
         createDataWriter();
         setupCommonMocks();
 
@@ -121,8 +130,7 @@ class ReportSheetDataWriterTest {
     }
 
     @Test
-    @SneakyThrows
-    void writeCell_shouldWriteBooleanCell_withFalseAsZero() {
+    void writeCell_shouldWriteBooleanCell_withFalseAsZero() throws IOException {
         createDataWriter();
         setupCommonMocks();
 
@@ -136,8 +144,7 @@ class ReportSheetDataWriterTest {
     }
 
     @Test
-    @SneakyThrows
-    void writeCell_shouldWriteStringCell_fromSharedStringSource() {
+    void writeCell_shouldWriteStringCell_fromSharedStringSource() throws IOException {
         createDataWriter();
         setupCommonMocks();
 
@@ -152,8 +159,7 @@ class ReportSheetDataWriterTest {
     }
 
     @Test
-    @SneakyThrows
-    void writeCell_shouldWriteStringCell_whenNoSharedStringSource() {
+    void writeCell_shouldWriteStringCell_whenNoSharedStringSource() throws IOException {
         createDataWriter(null);
         setupCommonMocks();
 
@@ -166,8 +172,7 @@ class ReportSheetDataWriterTest {
     }
 
     @Test
-    @SneakyThrows
-    void writeCell_shouldWriteStringCell_whenNoSharedStringSource_shouldPreserveLeadingSpaces() {
+    void writeCell_shouldWriteStringCell_whenNoSharedStringSource_shouldPreserveLeadingSpaces() throws IOException {
         createDataWriter(null);
         setupCommonMocks();
 
@@ -180,8 +185,7 @@ class ReportSheetDataWriterTest {
     }
 
     @Test
-    @SneakyThrows
-    void writeCell_shouldWriteStringCell_whenNoSharedStringSource_shouldPreserveTrailingSpaces() {
+    void writeCell_shouldWriteStringCell_whenNoSharedStringSource_shouldPreserveTrailingSpaces() throws IOException {
         createDataWriter(null);
         setupCommonMocks();
 
@@ -194,8 +198,7 @@ class ReportSheetDataWriterTest {
     }
 
     @Test
-    @SneakyThrows
-    void writeCell_shouldWriteStringCell_whenNoSharedStringSource_shouldHandleEmptyString() {
+    void writeCell_shouldWriteStringCell_whenNoSharedStringSource_shouldHandleEmptyString() throws IOException {
         createDataWriter(null);
         setupCommonMocks();
 
@@ -208,8 +211,7 @@ class ReportSheetDataWriterTest {
     }
 
     @Test
-    @SneakyThrows
-    void writeCell_shouldWriteStringCell_whenNoSharedStringSource_shouldHandleNullString() {
+    void writeCell_shouldWriteStringCell_whenNoSharedStringSource_shouldHandleNullString() throws IOException {
         createDataWriter(null);
         setupCommonMocks();
 
@@ -222,8 +224,7 @@ class ReportSheetDataWriterTest {
     }
 
     @Test
-    @SneakyThrows
-    void writeCell_shouldWriteErrorCell() {
+    void writeCell_shouldWriteErrorCell() throws IOException {
         createDataWriter();
         setupCommonMocks();
 
@@ -236,8 +237,7 @@ class ReportSheetDataWriterTest {
     }
 
     @Test
-    @SneakyThrows
-    void writeCell_shouldHandleNumericFormulae() {
+    void writeCell_shouldHandleNumericFormulae() throws IOException {
         createDataWriter();
         setupCommonMocks();
 
@@ -252,8 +252,7 @@ class ReportSheetDataWriterTest {
     }
 
     @Test
-    @SneakyThrows
-    void writeCell_shouldHandleStringFormulae() {
+    void writeCell_shouldHandleStringFormulae() throws IOException {
         createDataWriter();
         setupCommonMocks();
 
@@ -268,8 +267,7 @@ class ReportSheetDataWriterTest {
     }
 
     @Test
-    @SneakyThrows
-    void writeCell_shouldHandleBooleanFormulae() {
+    void writeCell_shouldHandleBooleanFormulae() throws IOException {
         createDataWriter();
         setupCommonMocks();
 
@@ -284,8 +282,7 @@ class ReportSheetDataWriterTest {
     }
 
     @Test
-    @SneakyThrows
-    void writeCell_shouldHandleErrorFormulae() {
+    void writeCell_shouldHandleErrorFormulae() throws IOException {
         createDataWriter();
         setupCommonMocks();
 
