@@ -210,7 +210,6 @@ class ReportsControllerTest extends BaseMvcTest {
             "523f38f0-2179-4824-b885-3a38c5e149e8, S3STORAGE",
             "f46b4d3d-c100-429a-bf9a-6c3305dbdbfa, CSV"
     })
-
     void downloadExcelRejectsInvalidFiletypes(String reportId, String actualFormat) throws Exception {
 
         UUID uuid = UUID.fromString(reportId);
@@ -289,7 +288,7 @@ class ReportsControllerTest extends BaseMvcTest {
         when(reportDao.fetchReportById(excelReportId)).thenReturn(Optional.of(report));
 
         // Perform the GET request
-        performAuthenticatedGet("/reports/"+ excelReportId + "/excel", List.of("Financial"))
+        performAuthenticatedGet("/reports/" + excelReportId + "/excel", List.of("Financial"))
                 .andExpect(status().isOk())
                 .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report.xlsx"));
 
@@ -387,11 +386,10 @@ class ReportsControllerTest extends BaseMvcTest {
             outputStream.flush();
         };
 
-        ResponseEntity<StreamingResponseBody> mockResponseEntity =
-                ResponseEntity.ok()
-                        .header("Content-Disposition", "attachment; filename=data.csv")
-                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                        .body(responseStream);
+        ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=data.csv")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(responseStream);
 
         doNothing().when(reportDao).verifyUserCanAccessReport(reportId);
         when(streamingService.stream(reportId, FileExtension.CSV)).thenReturn(responseStream);
@@ -417,7 +415,7 @@ class ReportsControllerTest extends BaseMvcTest {
             outputStream.flush();
         };
 
-        ResponseEntity<StreamingResponseBody> mockResponseEntity = ResponseEntity.ok()
+        ResponseEntity.ok()
                 .header("Content-Disposition", "attachment; filename=report.xlsx")
                 .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                 .body(responseBody);
@@ -429,7 +427,7 @@ class ReportsControllerTest extends BaseMvcTest {
         when(reportDao.fetchReportById(excelReportId)).thenReturn(Optional.empty());
 
         // Perform the GET request
-        performAuthenticatedGet("/reports/"+ excelReportId + "/excel", List.of("Financial"))
+        performAuthenticatedGet("/reports/" + excelReportId + "/excel", List.of("Financial"))
                 .andExpect(status().isNotFound());
     }
 
