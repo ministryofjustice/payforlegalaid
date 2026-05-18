@@ -55,7 +55,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
+            "uid": "thanos"
           },
           "fieldConfig": {
             "defaults": {
@@ -152,7 +152,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
+            "uid": "thanos"
           },
           "fieldConfig": {
             "defaults": {
@@ -234,7 +234,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "P5DCFC7561CCDE821"
+                "uid": "thanos"
               },
               "editorMode": "code",
               "expr": "sum by(instance) (increase(http_server_requests_seconds_count{namespace='${NAMESPACE}',status='200'}[$__rate_interval])) ",
@@ -249,7 +249,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
+            "uid": "thanos"
           },
           "fieldConfig": {
             "defaults": {
@@ -331,7 +331,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "P5DCFC7561CCDE821"
+                "uid": "thanos"
               },
               "editorMode": "code",
               "expr": "sum by(uri) (increase(http_server_requests_seconds_count{namespace='${NAMESPACE}', uri!~'.*swagger.*|.*health.*', status='200'}[$__rate_interval])) ",
@@ -359,7 +359,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
+            "uid": "thanos"
           },
           "fieldConfig": {
             "defaults": {
@@ -456,7 +456,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
+            "uid": "thanos"
           },
           "fieldConfig": {
             "defaults": {
@@ -553,7 +553,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
+            "uid": "thanos"
           },
           "description": "HTTP Code 403 including WAF check threshold to display non-issue 403's as well as regular WAF checks which tend to occur every 8 hours or so",
           "fieldConfig": {
@@ -661,7 +661,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
+            "uid": "thanos"
           },
           "fieldConfig": {
             "defaults": {
@@ -744,7 +744,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "P5DCFC7561CCDE821"
+                "uid": "thanos"
               },
               "editorMode": "code",
               "expr": "sum by(uri) (rate(http_server_requests_seconds_sum{namespace='${NAMESPACE}', uri!~'.*swagger.*|.*health.*', status='200'}[1m])) / sum by(uri) (rate(http_server_requests_seconds_count{namespace='${NAMESPACE}', uri!~'.*swagger.*|.*health.*', status='200'}[$__rate_interval]))",
@@ -759,7 +759,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
+            "uid": "thanos"
           },
           "fieldConfig": {
             "defaults": {
@@ -842,7 +842,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "P5DCFC7561CCDE821"
+                "uid": "thanos"
               },
               "editorMode": "code",
               "expr": "max by(uri) (http_server_requests_seconds_max{namespace='${NAMESPACE}', uri!~'.*swagger.*|.*health.*', status='200'}) ",
@@ -870,7 +870,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
+            "uid": "thanos"
           },
           "fieldConfig": {
             "defaults": {
@@ -921,7 +921,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "P5DCFC7561CCDE821"
+                "uid": "thanos"
               },
               "editorMode": "builder",
               "expr": "sum(kube_pod_container_info{namespace='${NAMESPACE}',pod=~'.*gpfd.*'})",
@@ -932,7 +932,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "P5DCFC7561CCDE821"
+                "uid": "thanos"
               },
               "editorMode": "code",
               "expr": "sum({namespace='${NAMESPACE}',phase='Running',pod=~'.*gpfd.*'} + 0)",
@@ -944,7 +944,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "P5DCFC7561CCDE821"
+                "uid": "thanos"
               },
               "editorMode": "builder",
               "expr": "sum({namespace='${NAMESPACE}',phase='Pending',pod=~'.*gpfd.*'} + 0)",
@@ -956,7 +956,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "P5DCFC7561CCDE821"
+                "uid": "thanos"
               },
               "editorMode": "code",
               "expr": "sum({namespace='${NAMESPACE}',phase='Failed',pod=~'.*gpfd.*'} + 0)",
@@ -972,7 +972,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
+            "uid": "thanos"
           },
           "fieldConfig": {
             "defaults": {
@@ -1065,7 +1065,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "P5DCFC7561CCDE821"
+                "uid": "thanos"
               },
               "disableTextWrap": false,
               "editorMode": "code",
@@ -1086,7 +1086,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
+            "uid": "thanos"
           },
           "fieldConfig": {
             "defaults": {
@@ -1187,7 +1187,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
+            "uid": "thanos"
           },
           "fieldConfig": {
             "defaults": {
@@ -1322,7 +1322,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
+            "uid": "thanos"
           },
           "fieldConfig": {
             "defaults": {
@@ -1420,7 +1420,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
+            "uid": "thanos"
           },
           "fieldConfig": {
             "defaults": {
@@ -1518,7 +1518,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
+            "uid": "thanos"
           },
           "fieldConfig": {
             "defaults": {
@@ -1611,7 +1611,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "P5DCFC7561CCDE821"
+                "uid": "thanos"
               },
               "disableTextWrap": false,
               "editorMode": "code",
@@ -1628,7 +1628,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "P5DCFC7561CCDE821"
+                "uid": "thanos"
               },
               "disableTextWrap": false,
               "editorMode": "code",
@@ -1662,7 +1662,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
+            "uid": "thanos"
           },
           "fieldConfig": {
             "defaults": {
@@ -1760,7 +1760,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
+            "uid": "thanos"
           },
           "fieldConfig": {
             "defaults": {
@@ -1843,7 +1843,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "P5DCFC7561CCDE821"
+                "uid": "thanos"
               },
               "disableTextWrap": false,
               "editorMode": "code",
@@ -1864,7 +1864,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
+            "uid": "thanos"
           },
           "description": "Top 3 CPU Used Per Instance",
           "fieldConfig": {
@@ -1962,7 +1962,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
+            "uid": "thanos"
           },
           "description": "",
           "fieldConfig": {
@@ -2056,7 +2056,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "P5DCFC7561CCDE821"
+                "uid": "thanos"
               },
               "disableTextWrap": false,
               "editorMode": "code",
@@ -2090,7 +2090,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
+            "uid": "thanos"
           },
           "fieldConfig": {
             "defaults": {
@@ -2138,7 +2138,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "P5DCFC7561CCDE821"
+                "uid": "thanos"
               },
               "editorMode": "code",
               "expr": "jvm_memory_max_bytes{namespace='${NAMESPACE}',area='heap',id='G1 Survivor Space'} / 1000000",
@@ -2153,7 +2153,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
+            "uid": "thanos"
           },
           "fieldConfig": {
             "defaults": {
@@ -2235,7 +2235,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "P5DCFC7561CCDE821"
+                "uid": "thanos"
               },
               "editorMode": "code",
               "expr": "jvm_memory_used_bytes{namespace='${NAMESPACE}',area='heap',id='G1 Survivor Space'}/1000000",
@@ -2250,7 +2250,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
+            "uid": "thanos"
           },
           "fieldConfig": {
             "defaults": {
@@ -2297,7 +2297,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "P5DCFC7561CCDE821"
+                "uid": "thanos"
               },
               "editorMode": "code",
               "expr": "jvm_memory_max_bytes{namespace='${NAMESPACE}',area='heap',id='G1 Eden Space'}/1000000",
@@ -2312,7 +2312,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
+            "uid": "thanos"
           },
           "fieldConfig": {
             "defaults": {
@@ -2394,7 +2394,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "P5DCFC7561CCDE821"
+                "uid": "thanos"
               },
               "editorMode": "code",
               "expr": "jvm_memory_used_bytes{namespace='${NAMESPACE}',area='heap',id='G1 Eden Space'}/1000000",
@@ -2409,7 +2409,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
+            "uid": "thanos"
           },
           "fieldConfig": {
             "defaults": {
@@ -2456,7 +2456,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "P5DCFC7561CCDE821"
+                "uid": "thanos"
               },
               "editorMode": "code",
               "expr": "jvm_memory_max_bytes{namespace='${NAMESPACE}',area='heap',id='G1 Old Gen'} /1000000",
@@ -2471,7 +2471,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
+            "uid": "thanos"
           },
           "fieldConfig": {
             "defaults": {
@@ -2553,7 +2553,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "P5DCFC7561CCDE821"
+                "uid": "thanos"
               },
               "editorMode": "code",
               "expr": "jvm_memory_used_bytes{namespace='${NAMESPACE}',area='heap',id='G1 Old Gen'} /1000000",
@@ -2581,7 +2581,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
+            "uid": "thanos"
           },
           "fieldConfig": {
             "defaults": {
