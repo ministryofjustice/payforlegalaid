@@ -53,9 +53,7 @@ public class SecurityUtils {
                     throw new NoRolesInAttributeException();
                 }
 
-                log.debug("Is the role claim in there? {}", attributes.containsKey(ROLE_CLAIM));
                 Object rawRoles = attributes.get(ROLE_CLAIM);
-                log.debug("Raw roles are {}", rawRoles);
                 List<String> parsedRoles = parseRoles(rawRoles);
                 if (parsedRoles.isEmpty()) {
                     throw new NoRolesException();
