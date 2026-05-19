@@ -156,7 +156,6 @@ class SecurityUtilsTest {
         assertThrows(NoRolesException.class, securityUtils::extractRoles);
     }
 
-
     @Test
     void isAuthorized_returnsTrue_whenUserHasAtLeastOneRequiredRole() {
         assertTrue(securityUtils.isAuthorized(
