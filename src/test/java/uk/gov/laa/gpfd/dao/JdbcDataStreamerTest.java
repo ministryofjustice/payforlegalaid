@@ -8,7 +8,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.RowCallbackHandler;
 
 import java.io.ByteArrayOutputStream;
 
@@ -36,12 +35,19 @@ class JdbcDataStreamerTest {
     }
 
     @Test
-    void shouldThrowIllegalArgumentExceptionWhenSqlIsNull() {
+    void shouldThrowIllegalArgumentExceptionWhenReportIsNull() {
         var outputStream = new ByteArrayOutputStream();
 
         assertThrows(IllegalArgumentException.class, () -> jdbcDataStreamer.stream(null, outputStream));
     }
 
+    @Test
+    void shouldThrowIllegalStateExceptionWhenReportHasNoQueries() {
+        var outputStream = new ByteArrayOutputStream();
+        var testReport = createTestReport();
+
+        assertThrows(IllegalStateException.class, () -> jdbcDataStreamer.stream(testReport, outputStream));
+    }
 
     @Test
     void shouldThrowIllegalArgumentExceptionWhenOutputStreamIsNull() {
