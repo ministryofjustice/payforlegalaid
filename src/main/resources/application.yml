@@ -1,15 +1,24 @@
 logging:
+  structured:
+    format:
+      console: ecs
+    ecs:
+      service:
+        name: ${spring.application.name:default}
+        version: ${spring.application.version:default}
+        environment: ${spring.profiles.active:default}
+        node_name: ${HOSTNAME:unknown}
   level:
-    root: INFO
+    root: ${ROOT_LOGGING_LEVEL:INFO}
     org:
       springframework:
-        security: INFO
+        security: ${SPRING_LOGGING_LEVEL:INFO}
         jdbc:
           core:
-            JdbcTemplate: INFO
-            StatementCreatorUtils: INFO
-        transaction: INFO
-        web: INFO
+            JdbcTemplate: ${SPRING_LOGGING_LEVEL:INFO}
+            StatementCreatorUtils: ${SPRING_LOGGING_LEVEL:INFO}
+        transaction: ${SPRING_LOGGING_LEVEL:INFO}
+        web: ${SPRING_LOGGING_LEVEL:INFO}
 
 management:
   endpoints:
@@ -28,6 +37,9 @@ springdoc:
     url: /swagger.yml
 
 spring:
+  application:
+    name: Pay For Legal Aid
+    version: @project.version@
   mvc:
     async:
       request-timeout: 3600000
