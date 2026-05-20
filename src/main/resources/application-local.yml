@@ -1,4 +1,9 @@
 logging:
+  structured:
+    format:
+      console: "" # Disable ECS JSON locally for human-readable logs
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %5p [%X{traceId},%X{spanId}] --- [%15.15t] %-40.40logger{39} : %m%n%wEx"
   level:
     root: INFO
     org:
