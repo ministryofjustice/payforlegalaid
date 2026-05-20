@@ -173,6 +173,47 @@ Then reload your shell with `source ~/.zshrc` (or `~/.bashrc`).
 - There is a shared password-manager group account for the GPFD team, ask the team for details on how to request access. 
 This group has a number of test users which can be used to access the Dev environment - these accounts have been registered with the DEV environment's active directory, and so will pass the SSO authentication.
 
+## Logging
+
+This service uses ECS (Elastic Common Schema) structured logging for all deployed environments, providing machine-readable JSON logs that integrate with observability tools like OpenSearch and Kibana. For local development, human-readable console logs are used instead.
+
+### ECS Structured Logging
+
+In non-local profiles (dev, uat, prod), logs are output in ECS JSON format including:
+- `@timestamp` - ISO 8601 timestamp
+- `log.level` - Log level (INFO, WARN, ERROR, etc.)
+- `message` - Log message
+- `service.name` - Application name (`Pay For Legal Aid`)
+- `service.version` - Build version
+- `service.environment` - Active Spring profile
+- `service.node.name` - Hostname/pod name
+- `trace.id` and `span.id` - Distributed tracing correlation IDs
+
+Example ECS JSON log output:
+```json
+{
+  "@timestamp": "2026-05-14T10:23:45.123Z",
+  "log.level": "INFO",
+  "message": "Downloading report for id xxx",
+  "ecs.version": "8.11",
+  "service.name": "Pay For Legal Aid",
+  "service.version": "0.0.1-SNAPSHOT",
+  "service.environment": "dev",
+  "service.node.name": "laa-get-payments-finance-data-xxxx",
+  "trace.id": "1234567890abcdef",
+  "span.id": "fedcba0987654321",
+  "log.logger": "uk.gov.laa.gpfd.controller.ReportController"
+}
+```
+
+### Local Development Logging
+
+When running locally or in Docker with `--spring.profiles.active=local`, logs are output in a human-readable format with trace and span IDs for correlation:
+
+```
+2026-05-14 10:23:45.123  INFO [1234567890abcdef,fedcba0987654321] --- [nio-8080-exec-1] u.g.l.gpfd.controller.ReportController   : Downloading report for id xxx
+```
+
 ## Tests
 
 There are unit tests which use mocked services and an H2 database. Config for the latter is located in the
