@@ -10,7 +10,17 @@ JIRA: [JIRA ticket number](https://dsdmoj.atlassian.net/browse/LPF-XXX)
 - Before & after the change if possible
 
 ## Checklist
-- [ ] Title follows the naming {Type}: {TICKET-NUMBER}-{brief-description}. All fields should be in the branch name. Type is the type of change: feature, documentation, bugfix...
+- [ ] Title follows the format `{type}({TICKET-NUMBER}): {brief description}`.   Example: `feat(ABC-123): add caching layer`
+  - Type must be one of: 
+    - feat
+    - fix
+    - docs
+    - chore
+    - refactor
+    - test
+    - ci
+    - build
+    - perf
 - [ ] New tests are included if this a new feature
 - [ ] Tests and linter checks are passing locally
 - [ ] Documentation README.md & Confluence have been updated

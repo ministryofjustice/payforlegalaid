@@ -251,6 +251,116 @@ The workflow runs the same Maven Gatling command and uploads the generated repor
 
 GitHub Actions is used for CI/CD.
 
+# Releases
+
+This project uses [release-please](https://github.com/googleapis/release-please)
+to automate versioning, changelog generation, and GitHub releases.
+
+### How It Works
+
+When commits are merged into `main`, release-please:
+
+- determines the next semantic version
+- updates `pom.xml`
+- updates `CHANGELOG.md`
+- creates a release pull request
+- creates a GitHub release after the PR is merged
+
+---
+
+When the Release PR is merged:
+- a Git tag is created
+- a GitHub Release is published
+- the new version becomes available
+
+---
+
+### Commit Message Format
+
+All commits should follow this format:
+
+```text
+<type>: <short summary>
+```
+
+Examples:
+
+```text
+feat: add webhook retry support
+fix: prevent duplicate event processing
+docs: update installation instructions
+```
+
+---
+
+### Commit Types
+
+| Type | Description | Version Impact |
+|------|-------------|----------------|
+| `feat` | Introduces a new feature | Minor |
+| `fix` | Fixes a bug | Patch |
+| `feat!` | Breaking feature change | Major |
+| `docs` | Documentation updates only | None |
+| `refactor` | Internal code restructuring | None |
+| `test` | Adding or updating tests | None |
+| `chore` | Maintenance tasks | None |
+| `ci` | CI/CD pipeline changes | None |
+| `build` | Build tooling or dependency changes | None |
+| `perf` | Performance improvements | Patch |
+| `revert` | Reverts a previous commit | Depends |
+
+---
+## Semantic Versioning Examples
+
+### Patch Release
+
+```text
+fix: handle null response from API
+```
+
+Results in:
+
+```text
+1.4.0 → 1.4.1
+```
+
+---
+
+### Minor Release
+
+```text
+feat: add OAuth authentication
+```
+
+Results in:
+
+```text
+1.4.0 → 1.5.0
+```
+
+---
+
+### Major Release
+
+```text
+feat!: remove deprecated REST endpoints
+```
+
+or:
+
+```text
+feat: remove deprecated REST endpoints
+
+BREAKING CHANGE: legacy REST API removed
+```
+
+Results in:
+
+```text
+1.4.0 → 2.0.0
+```
+---
+
 ## Azure Active Directory SSO
 
 The code for authenticating via SSO is located in the pom library `spring-cloud-azure-starter-active-directory`,
@@ -264,4 +374,10 @@ https://learn.microsoft.com/en-us/azure/developer/java/spring-framework/spring-b
 
 # Pre commit hooks
 
-Pre commit hooks have been set up on this repository to ensure no accidental commits of secrets, keys etc. Provided by DevSecOps https://github.com/ministryofjustice/devsecops-hooks
+- Pre commit hooks have been set up on this repository to ensure no accidental commits of secrets, keys etc. Provided by DevSecOps https://github.com/ministryofjustice/devsecops-hooks
+- Pre commit hooks have been set up to ensure commit messages follow the correct format for release-please, which automates our releases. See the [Releases](#releases) section for more details.
+
+Install both hooks with the following command:
+```text
+pre-commit install
+```
