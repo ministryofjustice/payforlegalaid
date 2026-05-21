@@ -4,8 +4,6 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
 import java.util.Objects;
@@ -18,8 +16,6 @@ import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CCMS_RE
 import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CSV_REPORT;
 import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.REP012ID;
 
-@ActiveProfiles("testauth")
-@TestPropertySource(locations = "classpath:application-testauth.yml")
 final class AuthTokenIT extends BaseIT {
 
     private static Stream<Arguments> securedReportEndpoints() {

@@ -1,14 +1,14 @@
 package uk.gov.laa.gpfd.config;
 
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -43,7 +43,6 @@ import static com.azure.spring.cloud.autoconfigure.implementation.aad.security.A
  * to manage specific security aspects.
  * </p>
  */
-@Profile("!test")
 @SuppressWarnings("java:S4502") // CSRF disabled only for CSP report POST endpoint
 @Configuration
 @RequiredArgsConstructor
@@ -104,7 +103,10 @@ public class SecurityConfig {
      * @return a configured {@link SecurityFilterChain} object.
      */
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity httpSecurity) {
+    SecurityFilterChain filterChain(HttpSecurity httpSecurity, Environment env) {
+
+        boolean isLocal = env.acceptsProfiles(Profiles.of("local", "testauth"));
+
 
         var authorizeHttpRequestsBuilder =
                 new AuthorizeHttpRequestsBuilder(authManager, swaggerEnabled);
@@ -148,7 +150,10 @@ public class SecurityConfig {
 //                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny)
 //                        .addHeaderWriter(new StaticHeadersWriter("Cache-Control", "no-store"))
 //                        .addHeaderWriter(new StaticHeadersWriter("Pragma", "no-cache"))
-//                        .contentSecurityPolicy(SecurityConfig::getContentSecurityPolicyConfig)
+//                        .contentSecurityPolicy(csp -> {
+                            SecurityConfig.getContentSecurityPolicyConfig(csp);
+                            if (isLocal) csp.reportOnly();  // Included in local config for debugging purposes
+                        })
 //                )
 
                 .sessionManagement(sessionManagementConfigurerBuilder);
@@ -157,8 +162,8 @@ public class SecurityConfig {
                 .build();
     }
 
-    static HeadersConfigurer<HttpSecurity>.@NonNull ContentSecurityPolicyConfig getContentSecurityPolicyConfig(HeadersConfigurer<HttpSecurity>.ContentSecurityPolicyConfig csp) {
-        return csp
+    static void getContentSecurityPolicyConfig(HeadersConfigurer<HttpSecurity>.ContentSecurityPolicyConfig csp) {
+        csp
                 .policyDirectives(
                                 "default-src 'none'; " +
                                 "base-uri 'self'; " +
