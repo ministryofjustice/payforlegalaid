@@ -1,5 +1,19 @@
 repos:
   - repo: https://github.com/ministryofjustice/devsecops-hooks
-    rev: v1.5.0
+    rev: b5f1f47c014ac21cf0a68c469a1b378f23893d0c #v1.6.0
     hooks:
       - id: baseline
+
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: 772d7ffaeee5d611a904cc564a3fe3c7ad927635 #v3.2.0
+    hooks:
+      - id: conventional-pre-commit
+
+  - repo: local
+    hooks:
+      - id: valid-commit-format
+        name: Validate commit message format (with ticket ID)
+        entry:
+          bash -c 'grep -Eq "^(feat|fix|docs|chore|refactor|test|ci|build|perf)(\([A-Z]+-[0-9]+\))?: .+" <<< "$(cat "$1")"'
+        language: system
+        stages: [ commit-msg ]
