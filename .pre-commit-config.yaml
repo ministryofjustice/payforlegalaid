@@ -8,12 +8,3 @@ repos:
     rev: 772d7ffaeee5d611a904cc564a3fe3c7ad927635 #v3.2.0
     hooks:
       - id: conventional-pre-commit
-
-  - repo: local
-    hooks:
-      - id: valid-commit-format
-        name: Validate commit message format (with ticket ID)
-        entry:
-          bash -c 'grep -Eq "^(feat|fix|docs|chore|refactor|test|ci|build|perf)(\([A-Z]+-[0-9]+\))?: .+" <<< "$(cat "$1")"'
-        language: system
-        stages: [ commit-msg ]
