@@ -4,8 +4,6 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import uk.gov.laa.gpfd.integration.verifier.DatabaseVerifier;
 import uk.gov.laa.gpfd.integration.verifier.DatabaseVerifier.Table;
 
@@ -16,8 +14,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ActiveProfiles("testauth")
-@TestPropertySource(locations = "classpath:application-test.yml")
 final class GetReportsIT extends BaseIT {
 
     @Autowired

@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@ActiveProfiles("test")
+@ActiveProfiles("testauth")
 public class RequestResponseInterceptorTest {
     @Test
     void shouldSanitiseControlCharacters() {
