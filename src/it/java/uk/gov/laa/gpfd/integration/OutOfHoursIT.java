@@ -5,23 +5,21 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import uk.gov.laa.gpfd.integration.config.TestTimeConfig;
+
+import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Import(TestTimeConfig.class)
-@ActiveProfiles("test")
-@TestPropertySource(locations = "classpath:application-test.yml")
 final class OutOfHoursIT extends BaseIT {
 
     @SneakyThrows
     @Test
     void getReportsShouldReturn500WhenOutOfHours() {
         var uri = "/reports/";
-        performGetRequest(uri)
+        performGetRequestWithRoles(uri, List.of("Financial"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.error")
                         .value("The service is unavailable between the hours of 22:00 and 07:00, Mon - Sun"));
@@ -33,7 +31,7 @@ final class OutOfHoursIT extends BaseIT {
     void getByIdShouldReturn500WhenOutOfHours(String type) {
         var uri = "/" + type + "/321";
 
-        performGetRequest(uri)
+        performGetRequestWithRoles(uri, List.of("Financial"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.error")
                         .value("The service is unavailable between the hours of 22:00 and 07:00, Mon - Sun"));
@@ -43,7 +41,7 @@ final class OutOfHoursIT extends BaseIT {
     @Test
     void getReportFileShouldReturn500WhenOutOfHours() {
         var uri = "/reports/321";
-        performGetRequest(uri)
+        performGetRequestWithRoles(uri, List.of("Financial"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.error")
                         .value("The service is unavailable between the hours of 22:00 and 07:00, Mon - Sun"));
