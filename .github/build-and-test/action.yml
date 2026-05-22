@@ -22,8 +22,7 @@ runs:
 
     - name: Run tests
       run: |
-#        TODO put back in!
-#        mvn -B clean test
+        mvn -B clean test
       env:
         SPRING_PROFILES_ACTIVE: test
       shell:
