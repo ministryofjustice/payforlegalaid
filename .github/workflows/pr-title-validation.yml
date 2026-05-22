@@ -22,7 +22,8 @@ jobs:
 
           echo "Checking PR title: $TITLE"
 
-          if echo "$TITLE" | grep -Eq '^(feat|fix|docs|chore|refactor|test|ci|build|perf)(\([A-Z]+-[0-9]+\))?: .+'; then
+          if echo "$TITLE" | grep -Eq \
+            '^(feat|fix|docs|refactor|test|ci|build|perf)\([A-Z]+-[0-9]+\): .+|^chore(.+): .+'; then
             echo "✅ PR title format is valid"
           else
             echo "❌ Invalid PR title format"
