@@ -53,6 +53,7 @@ runs:
 
     - name: Run tests
       run: |
+        APP_VERSION=$(cd sourceCode && mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
         cd testCode
         mvn -B clean test -Dcucumber.filter.tags="not @performance"
       shell:
