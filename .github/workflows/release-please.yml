@@ -14,6 +14,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: googleapis/release-please-action@3b5c1f8a1c2d4e9a0f8b7c6d5e4f3a2b1c0d9e8f #v4.4.1
+      - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 #v5.0.0
         with:
           release-type: maven

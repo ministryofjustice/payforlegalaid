@@ -9,6 +9,8 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
+    commit-message:
+      prefix: "chore(bot)"
     cooldown:
       default-days: 3
     groups:
@@ -22,6 +24,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    commit-message:
+      prefix: "chore(bot)"
     cooldown:
       default-days: 3
     groups:
@@ -35,6 +39,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    commit-message:
+      prefix: "chore(bot)"
     cooldown:
       default-days: 3
     groups:
