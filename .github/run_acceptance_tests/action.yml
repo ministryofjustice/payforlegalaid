@@ -55,6 +55,6 @@ runs:
       run: |
         APP_VERSION=$(cd sourceCode && mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
         cd testCode
-        mvn -B clean test -Dcucumber.filter.tags="not @performance"
+        mvn -B clean test -Dpay-for-legal-aid.version="${APP_VERSION}" -Dcucumber.filter.tags="not @performance"
       shell:
         bash
