@@ -19,10 +19,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Run OWASP ZAP Baseline Scan
-        uses: zaproxy/action-baseline@v0.12.0
+        uses: zaproxy/action-baseline@de8ad967d3548d44ef623df22cf95c3b0baf8b25 # v0.15.0
         with:
           target: 'https://uat-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk/'
           cmd_options: '-a'
