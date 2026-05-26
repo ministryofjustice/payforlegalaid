@@ -1,0 +1,34 @@
+name: OWASP ZAP UAT Scan
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    # Every weekday at 2am UTC
+    - cron: '0 2 * * 1-5'
+
+jobs:
+  zap_scan:
+    name: Run OWASP ZAP Baseline Scan
+    runs-on: ubuntu-latest
+
+    continue-on-error: true
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run OWASP ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.12.0
+        with:
+          target: 'https://uat-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk/'
+          cmd_options: '-a'
+
+      # Example external upload placeholder
+      - name: Upload report to external storage
+        if: always()
+        run: |
+          echo "Upload report_html.html to approved storage location"
