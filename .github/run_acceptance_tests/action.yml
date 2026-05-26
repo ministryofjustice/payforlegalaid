@@ -53,8 +53,21 @@ runs:
 
     - name: Run tests
       run: |
+        set -euo pipefail
+        
         APP_VERSION=$(cd sourceCode && mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+        
+        if [[ -z "${APP_VERSION// }" ]]; then
+          echo "ERROR: Failed to resolve APP_VERSION"
+          exit 1
+        fi
+        
+        echo "Using APP_VERSION=${APP_VERSION}"
+        
         cd testCode
-        mvn -B clean test -Dpay-for-legal-aid.version="${APP_VERSION}" -Dcucumber.filter.tags="not @performance"
+        
+        mvn -B clean test \
+          -Dpay-for-legal-aid.version="${APP_VERSION}" \
+          -Dcucumber.filter.tags="not @performance"
       shell:
         bash
