@@ -54,8 +54,14 @@ runs:
     - name: Run tests
       run: |
         set -euo pipefail
-        
-        APP_VERSION=$(cd sourceCode && mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+                
+        APP_VERSION=$(cd sourceCode && mvn help:evaluate \
+          -Dexpression=project.version \
+          -q \
+          -DforceStdout) || {
+            echo "ERROR: Maven version lookup failed"
+            exit 1
+        }
         
         if [[ -z "${APP_VERSION// }" ]]; then
           echo "ERROR: Failed to resolve APP_VERSION"
