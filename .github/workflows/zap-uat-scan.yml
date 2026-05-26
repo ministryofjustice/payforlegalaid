@@ -26,7 +26,7 @@ jobs:
       - name: Run OWASP ZAP Baseline Scan
         uses: zaproxy/action-baseline@de8ad967d3548d44ef623df22cf95c3b0baf8b25 # v0.15.0
         with:
-          target: 'https://uat-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk/'
+          target: 'https://uat-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk/actuator/health'
           cmd_options: '-a'
 
       # Example external upload placeholder
