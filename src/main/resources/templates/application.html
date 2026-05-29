@@ -10,6 +10,8 @@
     <link rel="icon" sizes="any" th:href="@{/assets/images/favicon.svg}" type="image/svg+xml">
     <link rel="mask-icon" th:href="@{/assets/images/govuk-icon-mask.svg}" color="#1d70b8">
     <link rel="apple-touch-icon" th:href="@{/assets/images/govuk-icon-180.png}">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 </head>
 <body class="govuk-template__body">
 <header class="moj-header" role="banner">
