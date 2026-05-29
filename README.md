@@ -72,7 +72,7 @@ https://dsdmoj.atlassian.net/wiki/spaces/LPF/pages/4736516940/GPFD+Environments
 ### Locally
 Locally you can install the app and run it
 - `mvn clean install`
-- `java -jar -Dspring.profiles.active=local target/pay-for-legal-aid-0.0.1-SNAPSHOT-exec.jar`
+- `java -jar -Dspring.profiles.active=local target/pay-for-legal-aid-${latest JAR version}-exec.jar`
 
 This makes use of a local h2 database. You can create one via running the acceptance tests.
 
@@ -197,7 +197,7 @@ Example ECS JSON log output:
   "message": "Downloading report for id xxx",
   "ecs.version": "8.11",
   "service.name": "Pay For Legal Aid",
-  "service.version": "0.0.1-SNAPSHOT",
+  "service.version": "1.0.0",
   "service.environment": "dev",
   "service.node.name": "laa-get-payments-finance-data-xxxx",
   "trace.id": "1234567890abcdef",
