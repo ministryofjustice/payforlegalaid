@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/ministryofjustice/payforlegalaid/compare/v1.0.0...v1.0.1) (2026-05-29)
+
+
+### Bug Fixes
+
+* fix dockerfile versioning ([#501](https://github.com/ministryofjustice/payforlegalaid/issues/501)) ([74daf11](https://github.com/ministryofjustice/payforlegalaid/commit/74daf11f2132ecf076adf833d6401ba738253a49))
+
 ## 1.0.0 (2026-05-29)
 
 
