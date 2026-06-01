@@ -42,9 +42,9 @@ jobs:
           is_release=false
 
           if [[ "$EVENT_NAME" == "push" ]]; then
-            msg="$COMMIT_MSG"
+            msg="${COMMIT_MSG:-}"
 
-            if [[ "$msg" =~ ^chore(\([^)]+\))?:\ release\ [0-9] ]]; then
+            if [[ -n "$msg" ]] && [[ "$msg" == chore\(main\):\ release* ]]; then
               is_release=true
             fi
           fi
