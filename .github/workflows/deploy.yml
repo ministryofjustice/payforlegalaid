@@ -22,7 +22,6 @@ on:
           - uat
           - all
 
-# One deployment at a time on main; queue later runs instead of cancelling mid-deploy.
 concurrency:
   group: deploy-${{ github.ref }}
   cancel-in-progress: false
@@ -33,30 +32,41 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       is_release_merge: ${{ steps.check.outputs.is_release_merge }}
+
     steps:
       - id: check
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
         run: |
           is_release=false
-          if [[ "${{ github.event_name }}" == "push" ]]; then
-            msg="${{ github.event.head_commit.message }}"
+
+          if [[ "$EVENT_NAME" == "push" ]]; then
+            msg="$COMMIT_MSG"
+
             if [[ "$msg" =~ ^chore(\([^)]+\))?:\ release\ [0-9] ]]; then
               is_release=true
             fi
           fi
-          echo "is_release_merge=$is_release" >> $GITHUB_OUTPUT
+
+          echo "is_release_merge=$is_release" >> "$GITHUB_OUTPUT"
 
       - name: Deployment summary
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          DEPLOY_SCOPE: ${{ inputs.deploy_scope }}
+          IS_RELEASE: ${{ steps.check.outputs.is_release_merge }}
         run: |
           echo "## Deployment Plan" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-  
-          echo "- Event: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
-  
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "- Scope: ${{ inputs.deploy_scope }}" >> $GITHUB_STEP_SUMMARY
+
+          echo "- Event: $EVENT_NAME" >> $GITHUB_STEP_SUMMARY
+
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            echo "- Scope: $DEPLOY_SCOPE" >> $GITHUB_STEP_SUMMARY
           fi
-  
-          echo "- Release merge: ${{ steps.check.outputs.is_release_merge }}" >> $GITHUB_STEP_SUMMARY
+
+          echo "- Release merge: $IS_RELEASE" >> $GITHUB_STEP_SUMMARY
 
   To_Dev:
     name: Deploy to dev
