@@ -2,7 +2,7 @@ FROM amazoncorretto:25-alpine@sha256:80667e38af71ac103a3ae36a0b531d54c73c4da28fc
 RUN apk update && apk add --no-cache curl
 
 WORKDIR /app
-COPY target/pay-for-legal-aid-0.0.1-SNAPSHOT-exec.jar ./app.jar
+COPY target/pay-for-legal-aid-*-exec.jar ./app.jar
 RUN addgroup -S appgroup && adduser -u 1001 -S appuser -G appgroup
 USER 1001
 EXPOSE 8443
