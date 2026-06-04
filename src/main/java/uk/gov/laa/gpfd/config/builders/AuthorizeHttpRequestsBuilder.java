@@ -56,8 +56,11 @@ public class AuthorizeHttpRequestsBuilder
      * <p>
      * This method configures the authorization rules for various URL patterns:
      * <ul>
-     *   <li>{@link #API_DOCS_ROOT}, {@link #SWAGGER_UI}, and {@link #SWAGGER_FILE} are configured to be publicly accessible (no authentication required).</li>
+     *   <li>{@link #API_DOCS_ROOT}, {@link #SWAGGER_UI}, and {@link #SWAGGER_FILE} are configured to be publicly accessible (no authentication required).
+     *   Since these endpoints don't require authentication, CSRF protection does not apply to them. Swagger UI can be used without handling CSRF tokens.</li>
      *   <li>{@link #ACTUATOR_ENDPOINT} and {@link #HEALTH_ENDPOINT} are also publicly accessible, allowing external services or monitoring systems to check the application status.</li>
+     *   <li>CSRF Protection: For authenticated endpoints, CSRF tokens (with SameSite=Strict) are enforced for state-changing requests.
+     *   This protects against cross-site request forgery while allowing GET requests for API documentation.</li>
      *   <li>All other requests require authentication, ensuring that only authenticated users can access protected resources.</li>
      * </ul>
      * </p>
