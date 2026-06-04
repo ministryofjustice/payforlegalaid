@@ -11,8 +11,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.laa.gpfd.dao.JdbcWorkbookDataStreamer;
 import uk.gov.laa.gpfd.data.ReportsTestDataFactory;
+import uk.gov.laa.gpfd.services.TemplateService;
 import uk.gov.laa.gpfd.services.excel.formatting.CellFormatter;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.createTestReportWithMultipleFieldAttributes;
@@ -22,6 +25,9 @@ class ExcelCreationServiceTest {
 
     @Mock
     private JdbcWorkbookDataStreamer jdbcWorkbookDataStreamer;
+
+    @Mock
+    private TemplateService.ExcelTemplateService templateLoader;
 
     @Mock
     private CellFormatter formatter;
@@ -52,6 +58,42 @@ class ExcelCreationServiceTest {
 
         verify(mockWorkbook).createSheet("Sheet1");
         verify(jdbcWorkbookDataStreamer).queryToSheet(mockSheet, testReport.getQueries().stream().findFirst().get());
+    }
+
+    @Test
+    void resolveTemplate_ShouldDelegateToTemplateService() {
+        var report = ReportsTestDataFactory.createTestReport();
+        when(templateLoader.findTemplateById(report.getTemplateDocument())).thenReturn(mockWorkbook);
+
+        assertSame(mockWorkbook, excelCreationService.resolveTemplate(report));
+        verify(templateLoader).findTemplateById(report.getTemplateDocument());
+    }
+
+    @Test
+    void createEmpty_ShouldDelegateToTemplateService() {
+        var report = ReportsTestDataFactory.createTestReport();
+        when(templateLoader.createEmpty(report)).thenReturn(mockWorkbook);
+
+        assertSame(mockWorkbook, excelCreationService.createEmpty(report));
+        verify(templateLoader).createEmpty(report);
+    }
+
+    @Test
+    void stream_ShouldApplyFormattingToHeaderCells() {
+        var report = ReportsTestDataFactory.createTestReportWithQuery();
+        var query = report.getQueries().iterator().next();
+        var mapping = query.getExcelSheet().getFieldAttributes().iterator().next();
+
+        when(mockWorkbook.createSheet("Sheet1")).thenReturn(mockSheet);
+        when(mockSheet.createRow(0)).thenReturn(mockRow);
+        when(mockRow.createCell(0)).thenReturn(mockCell);
+
+        excelCreationService.stream(report, mockWorkbook);
+
+        verify(mockRow).createCell(0);
+        verify(mockCell).setCellValue("Field 1");
+        verify(formatter, times(1)).applyFormatting(mockSheet, mockCell, mapping);
+        verify(jdbcWorkbookDataStreamer).queryToSheet(mockSheet, query);
     }
 
     @Test

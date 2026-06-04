@@ -32,7 +32,7 @@ public abstract class SheetCopier {
      */
     protected SheetCopier(Sheet sourceSheet, Sheet targetSheet) {
         Objects.requireNonNull(sourceSheet, "SourceSheet must not be null");
-        Objects.requireNonNull(targetSheet, "TargetSheet stream must not be null");
+        Objects.requireNonNull(targetSheet, "TargetSheet must not be null");
         this.sourceSheet = sourceSheet;
         this.targetSheet = targetSheet;
     }
