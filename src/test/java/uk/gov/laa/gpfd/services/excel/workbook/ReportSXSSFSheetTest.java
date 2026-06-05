@@ -22,13 +22,15 @@ class ReportSXSSFSheetTest {
             var reportSheet = new ReportSXSSFSheet(streamingWorkbook, xSheet);
             reportSheet.createRow(0);
             reportSheet.createRow(1);
+            reportSheet.createRow(2);
 
             var rows = getRows(reportSheet);
             assertEquals(3, rows.size());
 
             reportSheet.flushRows(1);
+
             assertEquals(1, rows.size());
-            assertEquals(Integer.valueOf(1), rows.firstKey());
+            assertEquals(Integer.valueOf(2), rows.firstKey());
         }
     }
 
@@ -40,6 +42,7 @@ class ReportSXSSFSheetTest {
             var reportSheet = new ReportSXSSFSheet(streamingWorkbook, xSheet);
             reportSheet.createRow(0);
             reportSheet.createRow(1);
+            reportSheet.createRow(2);
 
             reportSheet.flushRows(0);
 

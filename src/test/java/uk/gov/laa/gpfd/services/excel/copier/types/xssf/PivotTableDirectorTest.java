@@ -19,7 +19,7 @@ class PivotTableDirectorTest {
     }
 
     @Test
-    void standard_shouldUseDefaultConfiguratorAndBuild() {
+    void standard_shouldUseCompositeConfiguratorAndBuild() {  // renamed: reflects actual behaviour
         var builder = Mockito.mock(PivotTableBuilder.class);
         when(builder.withConfigurator(any(PivotTableConfigurator.class))).thenReturn(builder);
 
