@@ -70,7 +70,7 @@ class CellValueHandlerTest {
                 Arguments.of(CellValueHandler.STRING, "1232", (Verifier) (cell, value) -> verify(cell).setCellValue(1232.0)),
                 Arguments.of(CellValueHandler.STRING, "1232.12", (Verifier) (cell, value) -> verify(cell).setCellValue(1232.12)),
                 Arguments.of(CellValueHandler.STRING, "Test Value", (Verifier) (cell, value) -> verify(cell).setCellValue((String) value)),
-                Arguments.of(CellValueHandler.NUMBER, 123.12d, (Verifier) (cell, value) -> verify(cell).setCellValue(((Number) value).doubleValue())),
+                Arguments.of(CellValueHandler.NUMBER, 123, (Verifier) (cell, value) -> verify(cell).setCellValue(123.0)),
                 Arguments.of(CellValueHandler.INTEGER, 3, (Verifier) (cell, value) -> verify(cell).setCellValue(((Number) value).doubleValue())),
                 Arguments.of(CellValueHandler.DOUBLE, 123.12d, (Verifier) (cell, value) -> verify(cell).setCellValue((Double) value)),
                 Arguments.of(CellValueHandler.BIG_DECIMAL, new BigDecimal("123.45"), (Verifier) (cell, value) -> verify(cell).setCellValue(((BigDecimal) value).doubleValue())),

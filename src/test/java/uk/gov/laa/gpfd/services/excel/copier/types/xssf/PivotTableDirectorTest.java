@@ -1,9 +1,11 @@
 package uk.gov.laa.gpfd.services.excel.copier.types.xssf;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -17,26 +19,30 @@ class PivotTableDirectorTest {
     }
 
     @Test
-    void standard_shouldConfigureBuilderWithDefaultConfiguratorAndBuild() {
+    void standard_shouldUseDefaultConfiguratorAndBuild() {
         var builder = Mockito.mock(PivotTableBuilder.class);
         when(builder.withConfigurator(any(PivotTableConfigurator.class))).thenReturn(builder);
 
         var director = PivotTableDirector.standard(builder);
         director.construct();
 
-        verify(builder, times(1)).withConfigurator(any(PivotTableConfigurator.class));
+        var configuratorCaptor = ArgumentCaptor.forClass(PivotTableConfigurator.class);
+        verify(builder, times(1)).withConfigurator(configuratorCaptor.capture());
+        assertTrue(configuratorCaptor.getValue() instanceof PivotTableConfigurator.CompositeConfigurator);
         verify(builder, times(1)).build();
     }
 
     @Test
-    void minimal_shouldConfigureBuilderWithMinimalConfiguratorAndBuild() {
+    void minimal_shouldUseDefinitionConfiguratorAndBuild() {
         var builder = Mockito.mock(PivotTableBuilder.class);
         when(builder.withConfigurator(any(PivotTableConfigurator.class))).thenReturn(builder);
 
         var director = PivotTableDirector.minimal(builder);
         director.construct();
 
-        verify(builder, times(1)).withConfigurator(any(PivotTableConfigurator.class));
+        var configuratorCaptor = ArgumentCaptor.forClass(PivotTableConfigurator.class);
+        verify(builder, times(1)).withConfigurator(configuratorCaptor.capture());
+        assertTrue(configuratorCaptor.getValue() instanceof PivotTableConfigurator.DefinitionConfigurator);
         verify(builder, times(1)).build();
     }
 

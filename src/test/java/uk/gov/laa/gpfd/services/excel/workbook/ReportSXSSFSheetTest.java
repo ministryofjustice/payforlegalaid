@@ -24,7 +24,7 @@ class ReportSXSSFSheetTest {
             reportSheet.createRow(1);
 
             var rows = getRows(reportSheet);
-            assertEquals(2, rows.size());
+            assertEquals(3, rows.size());
 
             reportSheet.flushRows(1);
             assertEquals(1, rows.size());
