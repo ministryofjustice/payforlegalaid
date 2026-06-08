@@ -30,7 +30,7 @@ class CellValueHandlerTest {
     void shouldSetCellValueUsingTheCorrectHandler(CellValueHandler handler, Object value, Verifier verifier) {
         handler.accept(cell, value);
 
-        verifier.verify(cell, value);
+        verifier.verify(cell);
     }
 
     @Test
@@ -67,21 +67,61 @@ class CellValueHandlerTest {
 
     private static Stream<Arguments> provideHandlerValues() {
         return Stream.of(
-                Arguments.of(CellValueHandler.STRING, "1232", (Verifier) (cell, value) -> verify(cell).setCellValue(1232.0)),
-                Arguments.of(CellValueHandler.STRING, "1232.12", (Verifier) (cell, value) -> verify(cell).setCellValue(1232.12)),
-                Arguments.of(CellValueHandler.STRING, "Test Value", (Verifier) (cell, value) -> verify(cell).setCellValue((String) value)),
-                Arguments.of(CellValueHandler.NUMBER, 123, (Verifier) (cell, value) -> verify(cell).setCellValue(123.0)),
-                Arguments.of(CellValueHandler.NUMBER, 7.5f, (Verifier) (cell, value) -> verify(cell).setCellValue(7.5)),
-                Arguments.of(CellValueHandler.INTEGER, 3, (Verifier) (cell, value) -> verify(cell).setCellValue(3.0)),
-                Arguments.of(CellValueHandler.DOUBLE, 123.12d, (Verifier) (cell, value) -> verify(cell).setCellValue((Double) value)),
-                Arguments.of(CellValueHandler.BIG_DECIMAL, new BigDecimal("123.45"), (Verifier) (cell, value) -> verify(cell).setCellValue(((BigDecimal) value).doubleValue())),
-                Arguments.of(CellValueHandler.BOOLEAN, true, (Verifier) (cell, value) -> verify(cell).setCellValue((Boolean) value)),
-                Arguments.of(CellValueHandler.TIMESTAMP, new Timestamp(1_000L), (Verifier) (cell, value) -> verify(cell).setCellValue((Timestamp) value))
+                Arguments.of(
+                        CellValueHandler.STRING,
+                        "1232",
+                        (Verifier) cell -> verify(cell).setCellValue(1232.0)
+                ),
+                Arguments.of(
+                        CellValueHandler.STRING,
+                        "1232.12",
+                        (Verifier) cell -> verify(cell).setCellValue(1232.12)
+                ),
+                Arguments.of(
+                        CellValueHandler.STRING,
+                        "Test Value",
+                        (Verifier) cell -> verify(cell).setCellValue("Test Value")
+                ),
+                Arguments.of(
+                        CellValueHandler.NUMBER,
+                        123,
+                        (Verifier) cell -> verify(cell).setCellValue(123.0)
+                ),
+                Arguments.of(
+                        CellValueHandler.NUMBER,
+                        7.5f,
+                        (Verifier) cell -> verify(cell).setCellValue(7.5)
+                ),
+                Arguments.of(
+                        CellValueHandler.INTEGER,
+                        3,
+                        (Verifier) cell -> verify(cell).setCellValue(3.0)
+                ),
+                Arguments.of(
+                        CellValueHandler.DOUBLE,
+                        123.12d,
+                        (Verifier) cell -> verify(cell).setCellValue(123.12)
+                ),
+                Arguments.of(
+                        CellValueHandler.BIG_DECIMAL,
+                        new BigDecimal("123.45"),
+                        (Verifier) cell -> verify(cell).setCellValue(123.45)
+                ),
+                Arguments.of(
+                        CellValueHandler.BOOLEAN,
+                        true,
+                        (Verifier) cell -> verify(cell).setCellValue(true)
+                ),
+                Arguments.of(
+                        CellValueHandler.TIMESTAMP,
+                        new Timestamp(1_000L),
+                        (Verifier) cell -> verify(cell).setCellValue(new Timestamp(1_000L))
+                )
         );
     }
 
     @FunctionalInterface
     private interface Verifier {
-        void verify(Cell cell, Object value);
+        void verify(Cell cell);
     }
 }
