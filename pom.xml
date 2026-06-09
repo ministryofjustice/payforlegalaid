@@ -27,7 +27,7 @@
         <govuk-frontend.version>6.1.0</govuk-frontend.version>
         <moj-frontend.version>6.0.0</moj-frontend.version>
 
-        <payforlegalaid-openapi.version>0.0.35</payforlegalaid-openapi.version>
+        <payforlegalaid-openapi.version>0.0.36</payforlegalaid-openapi.version>
         <aws.java.sdk.version>2.46.0</aws.java.sdk.version>
         <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
         <maven-dependency-plugin.version>3.11.0</maven-dependency-plugin.version>
