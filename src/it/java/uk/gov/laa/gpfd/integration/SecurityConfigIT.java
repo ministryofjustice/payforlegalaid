@@ -11,6 +11,7 @@ import java.util.UUID;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -114,6 +115,9 @@ class SecurityConfigIT extends BaseIT {
     void shouldGenerateCsrfTokenForRequest() throws Exception {
 
         mockMvc.perform(get("/reports")
+                        .with(oidcLogin()
+                                .idToken(token -> token.claim("LAA_APP_ROLES", List.of("Financial"))
+                                        .claim("oid", UUID.randomUUID().toString())))
                         .with(csrf()))
                 .andExpect(status().isOk());
     }
