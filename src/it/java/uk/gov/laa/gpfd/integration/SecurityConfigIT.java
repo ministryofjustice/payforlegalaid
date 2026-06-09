@@ -11,16 +11,15 @@ import java.util.UUID;
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CSV_REPORT;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.allOf;
-import static org.assertj.core.api.Assertions.assertThat;
 
 class SecurityConfigIT extends BaseIT {
+
     @MockitoBean
     ReportManagementService reportManagementService;
 
@@ -82,14 +81,14 @@ class SecurityConfigIT extends BaseIT {
         mockMvc.perform(post("/csp-report")
                         .contentType("application/csp-report")
                         .content("""
-                {
-                  "csp-report": {
-                    "document-uri": "http://localhost:8080",
-                    "violated-directive": "script-src",
-                    "blocked-uri": "eval"
-                  }
-                }
-                """))
+                                {
+                                  "csp-report": {
+                                    "document-uri": "http://localhost:8080",
+                                    "violated-directive": "script-src",
+                                    "blocked-uri": "eval"
+                                  }
+                                }
+                                """))
                 .andExpect(status().isNoContent());
     }
 
@@ -99,14 +98,14 @@ class SecurityConfigIT extends BaseIT {
                         .with(csrf())
                         .contentType("application/csp-report")
                         .content("""
-                {
-                  "csp-report": {
-                    "document-uri": "http://localhost:8080",
-                    "violated-directive": "script-src",
-                    "blocked-uri": "eval"
-                  }
-                }
-                """))
+                                {
+                                  "csp-report": {
+                                    "document-uri": "http://localhost:8080",
+                                    "violated-directive": "script-src",
+                                    "blocked-uri": "eval"
+                                  }
+                                }
+                                """))
                 .andExpect(status().isNoContent());
     }
 
@@ -114,6 +113,9 @@ class SecurityConfigIT extends BaseIT {
     void shouldGenerateCsrfTokenForRequest() throws Exception {
 
         mockMvc.perform(get("/reports")
+                        .with(oidcLogin()
+                                .idToken(token -> token.claim("LAA_APP_ROLES", List.of("Financial"))
+                                        .claim("oid", UUID.randomUUID().toString())))
                         .with(csrf()))
                 .andExpect(status().isOk());
     }
