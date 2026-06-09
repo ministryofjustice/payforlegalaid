@@ -17,11 +17,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CSV_REPORT;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.allOf;
-import static org.assertj.core.api.Assertions.assertThat;
 
 class SecurityConfigIT extends BaseIT {
+
     @MockitoBean
     ReportManagementService reportManagementService;
 
@@ -83,14 +81,14 @@ class SecurityConfigIT extends BaseIT {
         mockMvc.perform(post("/csp-report")
                         .contentType("application/csp-report")
                         .content("""
-                {
-                  "csp-report": {
-                    "document-uri": "http://localhost:8080",
-                    "violated-directive": "script-src",
-                    "blocked-uri": "eval"
-                  }
-                }
-                """))
+                                {
+                                  "csp-report": {
+                                    "document-uri": "http://localhost:8080",
+                                    "violated-directive": "script-src",
+                                    "blocked-uri": "eval"
+                                  }
+                                }
+                                """))
                 .andExpect(status().isNoContent());
     }
 
@@ -100,14 +98,14 @@ class SecurityConfigIT extends BaseIT {
                         .with(csrf())
                         .contentType("application/csp-report")
                         .content("""
-                {
-                  "csp-report": {
-                    "document-uri": "http://localhost:8080",
-                    "violated-directive": "script-src",
-                    "blocked-uri": "eval"
-                  }
-                }
-                """))
+                                {
+                                  "csp-report": {
+                                    "document-uri": "http://localhost:8080",
+                                    "violated-directive": "script-src",
+                                    "blocked-uri": "eval"
+                                  }
+                                }
+                                """))
                 .andExpect(status().isNoContent());
     }
 
