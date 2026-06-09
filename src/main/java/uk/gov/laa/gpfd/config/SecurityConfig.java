@@ -1,9 +1,6 @@
 package uk.gov.laa.gpfd.config;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -12,26 +9,14 @@ import org.springframework.core.env.Profiles;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
-import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
-import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfFilter;
-import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.web.cors.CorsConfigurationSource;
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.HttpSecuritySessionManagementConfigurerBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
-
-import java.util.List;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import static com.azure.spring.cloud.autoconfigure.implementation.aad.security.AadWebApplicationHttpSecurityConfigurer.aadWebApplication;
 
 /**
  * Configuration class to set up Spring Security for the application.
@@ -45,7 +30,6 @@ import static com.azure.spring.cloud.autoconfigure.implementation.aad.security.A
  */
 @SuppressWarnings("java:S4502") // CSRF disabled only for CSP report POST endpoint
 @Configuration
-@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final AuthorizationManager<RequestAuthorizationContext> authManager;
@@ -77,10 +61,11 @@ public class SecurityConfig {
      *
      * @param http the {@link HttpSecurity} object used to configure security for static resources
      * @return a configured {@link SecurityFilterChain} for static resource requests
+     * @throws Exception if an error occurs while building the security filter chain
      */
     @Bean
     @Order(1)
-    SecurityFilterChain staticChain(HttpSecurity http) {
+    SecurityFilterChain staticChain(HttpSecurity http) throws Exception {
         return SecurityConfigSupport.createStaticChain(http);
     }
 
@@ -104,7 +89,6 @@ public class SecurityConfig {
 
         boolean isLocal = env.acceptsProfiles(Profiles.of("local", "testauth"));
 
-
         var authorizeHttpRequestsBuilder =
                 new AuthorizeHttpRequestsBuilder(authManager);
 
@@ -116,89 +100,14 @@ public class SecurityConfig {
                         csrfTokenRepository
                 )
                 .addFilterAfter(SecurityConfigSupport.csrfCookieFilter(), CsrfFilter.class)
-                .with(aadWebApplication())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authorizeHttpRequestsBuilder)
                 .oauth2Login(oauth2 -> oauth2
-                        .successHandler((request, response, authentication) -> {
-                            response.sendRedirect("/");
-                        }))
-                // Allow csp-report to ignore CSRF or else POST requests will be blocked
-//                .csrf(csrf -> csrf.ignoringRequestMatchers(
-//                        PathPatternRequestMatcher.withDefaults().matcher("/csp-report")
-//                ))
-//                .cors(Customizer.withDefaults())
-//                .authorizeHttpRequests(authorizeHttpRequestsBuilder)
-//                .oauth2Login(oauth2 -> oauth2
-//                        .successHandler((_, response, _) -> response.sendRedirect("/")))
-//                .sessionManagement(sessionManagementConfigurerBuilder)  // Apply session management configuration
-//                .headers(headers -> headers
-//                        .httpStrictTransportSecurity(hsts -> hsts
-//                                .maxAgeInSeconds(63072000)
-//                                .includeSubDomains(true)
-//                                .preload(true)
-//                        )
-//                        .contentTypeOptions(Customizer.withDefaults())
-//                        .referrerPolicy(referrerPolicy -> referrerPolicy
-//                                .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER)
-//                        ).permissionsPolicyHeader(permissionsPolicy -> permissionsPolicy
-//                                .policy("interest-cohort=()")
-//                        )
-//                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny)
-//                        .addHeaderWriter(new StaticHeadersWriter("Cache-Control", "no-store"))
-//                        .addHeaderWriter(new StaticHeadersWriter("Pragma", "no-cache"))
-//                        .contentSecurityPolicy(csp -> {
-                            SecurityConfig.getContentSecurityPolicyConfig(csp);
-                            if (isLocal) csp.reportOnly();  // Included in local config for debugging purposes
-                        })
-//                )
-
+                        .successHandler((_, response, _) -> response.sendRedirect("/")))
                 .sessionManagement(sessionManagementConfigurerBuilder);
 
-        return SecurityConfigSupport.applyCommonHeaders(http, false, false)
+        return SecurityConfigSupport.applyCommonHeaders(http, isLocal, isLocal)
                 .build();
-    }
-
-    static void getContentSecurityPolicyConfig(HeadersConfigurer<HttpSecurity>.ContentSecurityPolicyConfig csp) {
-        csp
-                .policyDirectives(
-                                "default-src 'none'; " +
-                                "base-uri 'self'; " +
-                                "object-src 'none'; " +
-                                "frame-ancestors 'none'; " +
-                                "form-action 'self'; " +
-                                "script-src 'self'; " +
-                                "style-src 'self'; " +
-                                "img-src 'self' data:; " +
-                                "font-src 'self'; " +
-                                "connect-src 'self'; " +
-                                "upgrade-insecure-requests; " +
-                                "report-uri /csp-report"
-                );
-    }
-
-    /*@Bean
-    public OidcUserService oidcUserService() {
-        return new OidcUserService() {
-            @Override
-            public OidcUser loadUser(OidcUserRequest userRequest) {
-                OidcUser oidcUser = super.loadUser(userRequest);
-                Set<GrantedAuthority> authorities = getAuthorities(oidcUser.getAttributes());
-                return new DefaultOidcUser(authorities, oidcUser.getIdToken(), oidcUser.getUserInfo());
-            }
-        };
-    }
-
-    public Set<GrantedAuthority> getAuthorities(Map<String, Object> attributes) {
-        log.info("OIDC attributes: {}", attributes);
-        List<String> roles = securityUtils.extractRoles();
-        log.info("Parsed roles: {}", roles);
-        return new SimpleAuthorityMapper()
-                .mapAuthorities(
-                        roles.stream()
-                                .map(SimpleGrantedAuthority::new)
-                                .collect(Collectors.toList())
-                );
     }
 
     @Bean
