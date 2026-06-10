@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Checkout Github Repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
 
       - name: Build and test the code
         uses: './.github/build-and-test'
@@ -41,7 +41,7 @@ jobs:
           AWS_REGION: ${{ vars.DEV_ECR_REGION }}
 
       - name: Login to container repository
-        uses: aws-actions/amazon-ecr-login@19d944daaa35f0fa1d3f7f8af1d3f2e5de25c5b7 # v2.1.4
+        uses: aws-actions/amazon-ecr-login@fa648b43de3d4d023bcb3f89ed6940096949c419 # v2.1.5
         id: login-ecr
 
       - name: Build the docker image and push it to the repository

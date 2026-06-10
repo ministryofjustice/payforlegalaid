@@ -1,0 +1,38 @@
+name: PR Title Validation
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  validate-title:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate PR title
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          echo "Checking PR title: $TITLE"
+
+          if echo "$TITLE" | grep -Eq \
+            '^((feat|fix|docs|refactor|test|ci|build|perf)\([A-Z]+-[0-9]+\)!?: .+)$|^chore(.*): .+$'; then
+            echo "✅ PR title format is valid"
+          else
+            echo "❌ Invalid PR title format"
+            echo
+            echo "Expected format:"
+            echo "  type(PROJECT-123): description"
+            echo
+            echo "Examples:"
+            echo "  feat(ABC-123): add login endpoint"
+            echo "  fix(XYZ-42): handle null response"
+            exit 1
+          fi

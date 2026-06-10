@@ -117,6 +117,10 @@ COPY --from=builder --chown=65532:65532 /build/target/pay-for-legal-aid-*.jar ap
 USER 65532:65532
 
 # This lets the container be run as an executable - if you start the container it will run this command
+COPY target/pay-for-legal-aid-*-exec.jar ./app.jar
+RUN addgroup -S appgroup && adduser -u 1001 -S appuser -G appgroup
+USER 1001
+EXPOSE 8443
 ENTRYPOINT ["java", \
     "-Xms2g", \
     "-Xmx4g", \

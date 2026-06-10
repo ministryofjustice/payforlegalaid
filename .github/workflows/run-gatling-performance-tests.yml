@@ -1,0 +1,50 @@
+name: Run Gatling performance tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      simulation-class:
+        description: 'Fully qualified Gatling simulation class'
+        required: true
+        default: 'uk.gov.laa.gpfd.simulations.ConcurrencySimulation'
+        options:
+          - 'uk.gov.laa.gpfd.simulations.ConcurrencySimulation'
+          - 'uk.gov.laa.gpfd.simulations.ReportDownloadSimulation'
+          - 'uk.gov.laa.gpfd.simulations.ReportListSimulation'
+      jsessionid:
+        description: 'Browser session cookie value for authenticated requests'
+        required: true
+        type: 'string'
+
+jobs:
+  gatling_performance_test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - name: Setup Java
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        with:
+          distribution: 'corretto'
+          java-version: '25'
+          cache: 'maven'
+
+      - name: Run Gatling performance test
+        env:
+          JSESSIONID: ${{ inputs.jsessionid }}
+        run: |
+          mvn -B gatling:test \
+            -Dgatling.simulationClass="${{ inputs.simulation-class }}" \
+            -Dmaven.antrun.skip=true \
+            -Dmaven.resources.skip=true
+
+      - name: Upload Gatling reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: gatling-reports
+          path: target/gatling

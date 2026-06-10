@@ -36,7 +36,7 @@ data:
       "editable": true,
       "fiscalYearStartMonth": 0,
       "graphTooltip": 0,
-      "id": 159,
+      "id": 161,
       "links": [],
       "panels": [
         {
@@ -47,6 +47,411 @@ data:
             "x": 0,
             "y": 0
           },
+          "id": 71,
+          "panels": [],
+          "title": "Database health",
+          "type": "row"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P5DCFC7561CCDE821"
+          },
+          "description": "Database connections currently available (checking for pressure/overloading of connections).",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "Number of connections",
+                "axisPlacement": "left",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 8,
+            "x": 0,
+            "y": 1
+          },
+          "id": 74,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "11.5.6+security-01",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P5DCFC7561CCDE821"
+              },
+              "editorMode": "code",
+              "expr": "jdbc_connections_max{namespace='${NAMESPACE}'} - jdbc_connections_active{namespace='${NAMESPACE}'}",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Available database connections",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P5DCFC7561CCDE821"
+          },
+          "description": "Currently idle database connections",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "Number of connections",
+                "axisPlacement": "left",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 9,
+            "x": 8,
+            "y": 1
+          },
+          "id": 72,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "11.5.6+security-01",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P5DCFC7561CCDE821"
+              },
+              "editorMode": "code",
+              "expr": "jdbc_connections_idle{namespace='${NAMESPACE}'}",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Idle Connections",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P5DCFC7561CCDE821"
+          },
+          "description": "The maximum number of database connections available to the service. ",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "Number of connections",
+                "axisPlacement": "left",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 7,
+            "x": 17,
+            "y": 1
+          },
+          "id": 73,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "11.5.6+security-01",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P5DCFC7561CCDE821"
+              },
+              "editorMode": "code",
+              "expr": "jdbc_connections_max{namespace='${NAMESPACE}'}",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Max connections",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P5DCFC7561CCDE821"
+          },
+          "description": "Monitoring the database connection pool usage.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "% of connection pool used",
+                "axisPlacement": "left",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 8,
+            "x": 0,
+            "y": 11
+          },
+          "id": 75,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "11.5.6+security-01",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P5DCFC7561CCDE821"
+              },
+              "editorMode": "code",
+              "expr": "100 * jdbc_connections_active{namespace=\"${NAMESPACE}\"} / jdbc_connections_max{namespace=\"${NAMESPACE}\"}",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Pool usage (%)",
+          "type": "timeseries"
+        },
+        {
+          "collapsed": false,
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 20
+          },
           "id": 65,
           "panels": [],
           "title": "API Request Rates",
@@ -55,7 +460,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "P5DCFC7561CCDE821"
           },
           "fieldConfig": {
             "defaults": {
@@ -116,7 +521,7 @@ data:
             "h": 10,
             "w": 9,
             "x": 0,
-            "y": 1
+            "y": 21
           },
           "id": 61,
           "options": {
@@ -152,7 +557,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "P5DCFC7561CCDE821"
           },
           "fieldConfig": {
             "defaults": {
@@ -213,7 +618,7 @@ data:
             "h": 10,
             "w": 8,
             "x": 9,
-            "y": 1
+            "y": 21
           },
           "id": 46,
           "options": {
@@ -234,7 +639,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "P5DCFC7561CCDE821"
               },
               "editorMode": "code",
               "expr": "sum by(instance) (increase(http_server_requests_seconds_count{namespace='${NAMESPACE}',status='200'}[$__rate_interval])) ",
@@ -249,7 +654,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "P5DCFC7561CCDE821"
           },
           "fieldConfig": {
             "defaults": {
@@ -310,7 +715,7 @@ data:
             "h": 10,
             "w": 7,
             "x": 17,
-            "y": 1
+            "y": 21
           },
           "id": 4,
           "options": {
@@ -331,7 +736,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "P5DCFC7561CCDE821"
               },
               "editorMode": "code",
               "expr": "sum by(uri) (increase(http_server_requests_seconds_count{namespace='${NAMESPACE}', uri!~'.*swagger.*|.*health.*', status='200'}[$__rate_interval])) ",
@@ -349,7 +754,7 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 11
+            "y": 31
           },
           "id": 64,
           "panels": [],
@@ -359,7 +764,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "P5DCFC7561CCDE821"
           },
           "fieldConfig": {
             "defaults": {
@@ -420,7 +825,7 @@ data:
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 12
+            "y": 32
           },
           "id": 58,
           "options": {
@@ -456,7 +861,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "P5DCFC7561CCDE821"
           },
           "fieldConfig": {
             "defaults": {
@@ -517,7 +922,7 @@ data:
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 12
+            "y": 32
           },
           "id": 57,
           "options": {
@@ -553,7 +958,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "P5DCFC7561CCDE821"
           },
           "description": "HTTP Code 403 including WAF check threshold to display non-issue 403's as well as regular WAF checks which tend to occur every 8 hours or so",
           "fieldConfig": {
@@ -616,7 +1021,7 @@ data:
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 20
+            "y": 40
           },
           "id": 70,
           "options": {
@@ -651,7 +1056,7 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 20
+            "y": 48
           },
           "id": 63,
           "panels": [],
@@ -661,7 +1066,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "P5DCFC7561CCDE821"
           },
           "fieldConfig": {
             "defaults": {
@@ -723,7 +1128,7 @@ data:
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 22
+            "y": 49
           },
           "id": 42,
           "options": {
@@ -744,7 +1149,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "P5DCFC7561CCDE821"
               },
               "editorMode": "code",
               "expr": "sum by(uri) (rate(http_server_requests_seconds_sum{namespace='${NAMESPACE}', uri!~'.*swagger.*|.*health.*', status='200'}[1m])) / sum by(uri) (rate(http_server_requests_seconds_count{namespace='${NAMESPACE}', uri!~'.*swagger.*|.*health.*', status='200'}[$__rate_interval]))",
@@ -759,7 +1164,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "P5DCFC7561CCDE821"
           },
           "fieldConfig": {
             "defaults": {
@@ -821,7 +1226,7 @@ data:
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 22
+            "y": 49
           },
           "id": 44,
           "options": {
@@ -842,7 +1247,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "P5DCFC7561CCDE821"
               },
               "editorMode": "code",
               "expr": "max by(uri) (http_server_requests_seconds_max{namespace='${NAMESPACE}', uri!~'.*swagger.*|.*health.*', status='200'}) ",
@@ -860,7 +1265,7 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 32
+            "y": 59
           },
           "id": 62,
           "panels": [],
@@ -870,7 +1275,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "P5DCFC7561CCDE821"
           },
           "fieldConfig": {
             "defaults": {
@@ -898,7 +1303,7 @@ data:
             "h": 10,
             "w": 2,
             "x": 0,
-            "y": 33
+            "y": 60
           },
           "id": 2,
           "options": {
@@ -921,7 +1326,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "P5DCFC7561CCDE821"
               },
               "editorMode": "builder",
               "expr": "sum(kube_pod_container_info{namespace='${NAMESPACE}',pod=~'.*gpfd.*'})",
@@ -932,7 +1337,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "P5DCFC7561CCDE821"
               },
               "editorMode": "code",
               "expr": "sum({namespace='${NAMESPACE}',phase='Running',pod=~'.*gpfd.*'} + 0)",
@@ -944,7 +1349,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "P5DCFC7561CCDE821"
               },
               "editorMode": "builder",
               "expr": "sum({namespace='${NAMESPACE}',phase='Pending',pod=~'.*gpfd.*'} + 0)",
@@ -956,7 +1361,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "P5DCFC7561CCDE821"
               },
               "editorMode": "code",
               "expr": "sum({namespace='${NAMESPACE}',phase='Failed',pod=~'.*gpfd.*'} + 0)",
@@ -972,7 +1377,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "P5DCFC7561CCDE821"
           },
           "fieldConfig": {
             "defaults": {
@@ -1033,7 +1438,7 @@ data:
             "h": 10,
             "w": 8,
             "x": 2,
-            "y": 33
+            "y": 60
           },
           "id": 55,
           "options": {
@@ -1065,7 +1470,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "P5DCFC7561CCDE821"
               },
               "disableTextWrap": false,
               "editorMode": "code",
@@ -1086,7 +1491,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "P5DCFC7561CCDE821"
           },
           "fieldConfig": {
             "defaults": {
@@ -1148,7 +1553,7 @@ data:
             "h": 10,
             "w": 7,
             "x": 10,
-            "y": 33
+            "y": 60
           },
           "id": 56,
           "options": {
@@ -1187,7 +1592,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "P5DCFC7561CCDE821"
           },
           "fieldConfig": {
             "defaults": {
@@ -1273,7 +1678,7 @@ data:
             "h": 10,
             "w": 7,
             "x": 17,
-            "y": 33
+            "y": 60
           },
           "id": 54,
           "options": {
@@ -1312,7 +1717,7 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 43
+            "y": 70
           },
           "id": 53,
           "panels": [],
@@ -1322,7 +1727,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "P5DCFC7561CCDE821"
           },
           "fieldConfig": {
             "defaults": {
@@ -1384,7 +1789,7 @@ data:
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 44
+            "y": 71
           },
           "id": 51,
           "options": {
@@ -1420,7 +1825,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "P5DCFC7561CCDE821"
           },
           "fieldConfig": {
             "defaults": {
@@ -1482,7 +1887,7 @@ data:
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 44
+            "y": 71
           },
           "id": 52,
           "options": {
@@ -1518,7 +1923,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "P5DCFC7561CCDE821"
           },
           "fieldConfig": {
             "defaults": {
@@ -1579,7 +1984,7 @@ data:
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 44
+            "y": 71
           },
           "id": 50,
           "options": {
@@ -1611,7 +2016,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "P5DCFC7561CCDE821"
               },
               "disableTextWrap": false,
               "editorMode": "code",
@@ -1628,7 +2033,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "P5DCFC7561CCDE821"
               },
               "disableTextWrap": false,
               "editorMode": "code",
@@ -1652,7 +2057,7 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 53
+            "y": 80
           },
           "id": 47,
           "panels": [],
@@ -1662,7 +2067,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "P5DCFC7561CCDE821"
           },
           "fieldConfig": {
             "defaults": {
@@ -1724,7 +2129,7 @@ data:
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 54
+            "y": 81
           },
           "id": 60,
           "options": {
@@ -1760,7 +2165,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "P5DCFC7561CCDE821"
           },
           "fieldConfig": {
             "defaults": {
@@ -1822,7 +2227,7 @@ data:
             "h": 9,
             "w": 12,
             "x": 12,
-            "y": 54
+            "y": 81
           },
           "id": 49,
           "options": {
@@ -1843,7 +2248,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "P5DCFC7561CCDE821"
               },
               "disableTextWrap": false,
               "editorMode": "code",
@@ -1864,7 +2269,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "P5DCFC7561CCDE821"
           },
           "description": "Top 3 CPU Used Per Instance",
           "fieldConfig": {
@@ -1926,7 +2331,7 @@ data:
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 63
+            "y": 90
           },
           "id": 48,
           "options": {
@@ -1962,7 +2367,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "P5DCFC7561CCDE821"
           },
           "description": "",
           "fieldConfig": {
@@ -2024,7 +2429,7 @@ data:
             "h": 9,
             "w": 12,
             "x": 12,
-            "y": 63
+            "y": 90
           },
           "id": 59,
           "options": {
@@ -2056,7 +2461,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "P5DCFC7561CCDE821"
               },
               "disableTextWrap": false,
               "editorMode": "code",
@@ -2080,7 +2485,7 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 72
+            "y": 99
           },
           "id": 36,
           "panels": [],
@@ -2090,7 +2495,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "P5DCFC7561CCDE821"
           },
           "fieldConfig": {
             "defaults": {
@@ -2114,7 +2519,7 @@ data:
             "h": 10,
             "w": 2,
             "x": 0,
-            "y": 73
+            "y": 100
           },
           "id": 16,
           "options": {
@@ -2138,7 +2543,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "P5DCFC7561CCDE821"
               },
               "editorMode": "code",
               "expr": "jvm_memory_max_bytes{namespace='${NAMESPACE}',area='heap',id='G1 Survivor Space'} / 1000000",
@@ -2153,7 +2558,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "P5DCFC7561CCDE821"
           },
           "fieldConfig": {
             "defaults": {
@@ -2214,7 +2619,7 @@ data:
             "h": 10,
             "w": 6,
             "x": 2,
-            "y": 73
+            "y": 100
           },
           "id": 10,
           "options": {
@@ -2235,7 +2640,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "P5DCFC7561CCDE821"
               },
               "editorMode": "code",
               "expr": "jvm_memory_used_bytes{namespace='${NAMESPACE}',area='heap',id='G1 Survivor Space'}/1000000",
@@ -2250,7 +2655,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "P5DCFC7561CCDE821"
           },
           "fieldConfig": {
             "defaults": {
@@ -2274,7 +2679,7 @@ data:
             "h": 10,
             "w": 2,
             "x": 8,
-            "y": 73
+            "y": 100
           },
           "id": 18,
           "options": {
@@ -2297,7 +2702,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "P5DCFC7561CCDE821"
               },
               "editorMode": "code",
               "expr": "jvm_memory_max_bytes{namespace='${NAMESPACE}',area='heap',id='G1 Eden Space'}/1000000",
@@ -2312,7 +2717,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "P5DCFC7561CCDE821"
           },
           "fieldConfig": {
             "defaults": {
@@ -2373,7 +2778,7 @@ data:
             "h": 10,
             "w": 6,
             "x": 10,
-            "y": 73
+            "y": 100
           },
           "id": 8,
           "options": {
@@ -2394,7 +2799,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "P5DCFC7561CCDE821"
               },
               "editorMode": "code",
               "expr": "jvm_memory_used_bytes{namespace='${NAMESPACE}',area='heap',id='G1 Eden Space'}/1000000",
@@ -2409,7 +2814,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "P5DCFC7561CCDE821"
           },
           "fieldConfig": {
             "defaults": {
@@ -2433,7 +2838,7 @@ data:
             "h": 10,
             "w": 2,
             "x": 16,
-            "y": 73
+            "y": 100
           },
           "id": 14,
           "options": {
@@ -2456,7 +2861,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "P5DCFC7561CCDE821"
               },
               "editorMode": "code",
               "expr": "jvm_memory_max_bytes{namespace='${NAMESPACE}',area='heap',id='G1 Old Gen'} /1000000",
@@ -2471,7 +2876,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "P5DCFC7561CCDE821"
           },
           "fieldConfig": {
             "defaults": {
@@ -2532,7 +2937,7 @@ data:
             "h": 10,
             "w": 6,
             "x": 18,
-            "y": 73
+            "y": 100
           },
           "id": 12,
           "options": {
@@ -2553,7 +2958,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "P5DCFC7561CCDE821"
               },
               "editorMode": "code",
               "expr": "jvm_memory_used_bytes{namespace='${NAMESPACE}',area='heap',id='G1 Old Gen'} /1000000",
@@ -2571,7 +2976,7 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 82
+            "y": 110
           },
           "id": 66,
           "panels": [],
@@ -2581,7 +2986,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "P5DCFC7561CCDE821"
           },
           "fieldConfig": {
             "defaults": {
@@ -2645,7 +3050,7 @@ data:
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 83
+            "y": 111
           },
           "id": 67,
           "options": {
@@ -2709,6 +3114,6 @@ data:
       "timezone": "browser",
       "title": "LAA GPFD Get Payment & Finance Data ${ENV_NAME} dashboard",
       "uid": "laa-gpfd-${ENV_NAME}",
-      "version": 22,
+      "version": 23,
       "weekStart": ""
     }
