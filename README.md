@@ -251,6 +251,21 @@ The workflow runs the same Maven Gatling command and uploads the generated repor
 
 GitHub Actions is used for CI/CD.
 
+### Deployments (`One to deploy them all`)
+
+| Trigger | Behaviour |
+|---------|-----------|
+| Push to `main` (feature/fix commits) | **Dev only** — automatically deploys latest merge to dev |
+| Push to `main` (release commit, e.g. `chore(main): release x.x.x`) | **Dev → UAT → prod** — automatic promotion of the versioned release (UAT and prod require environment approval) |
+| Manual run (any branch), scope **dev** | Dev only |
+| Manual run, scope **dev-uat** | Dev, then UAT (UAT approval required) |
+| Manual run, scope **uat** | UAT only for the selected branch/commit (skips dev) |
+| Manual run, scope **all** | Dev → UAT → prod |
+
+To test a feature before release: run the workflow from your branch via **Actions → One to deploy them all → Run workflow**, choose the branch and scope.
+
+Deployments on the same branch are queued rather than cancelling an in-progress deployment.
+
 # Releases
 
 This project uses [release-please](https://github.com/googleapis/release-please)
@@ -272,6 +287,7 @@ When the Release PR is merged:
 - a Git tag is created
 - a GitHub Release is published
 - the new version becomes available
+- the deploy workflow promotes that commit through dev, UAT, and prod (so deployed artefacts align with the released version)
 
 ---
 
