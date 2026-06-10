@@ -601,6 +601,11 @@
             <artifactId>netty-resolver-dns</artifactId>
             <version>4.2.15.Final</version>
         </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec-classes-quic</artifactId>
+            <version>4.2.15.Final</version>
+        </dependency>
         <!-- Override transitive dependency - Spring Boot on 7.0.7 needs at least 7.0.8 -->
         <dependency>
             <groupId>org.springframework</groupId>
