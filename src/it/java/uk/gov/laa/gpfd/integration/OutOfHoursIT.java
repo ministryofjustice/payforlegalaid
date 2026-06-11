@@ -1,37 +1,25 @@
 package uk.gov.laa.gpfd.integration;
 
-import config.TestTimeConfig;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
-import uk.gov.laa.gpfd.config.TestDatabaseConfig;
-import uk.gov.laa.gpfd.integration.config.OAuth2TestConfig;
+import org.springframework.context.annotation.Import;
+import uk.gov.laa.gpfd.integration.config.TestTimeConfig;
 
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import java.util.List;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(
-        webEnvironment = RANDOM_PORT,
-        classes = {TestDatabaseConfig.class, OAuth2TestConfig.class, TestTimeConfig.class}
-)
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@TestPropertySource(locations = "classpath:application-test.yml")
+@Import(TestTimeConfig.class)
 final class OutOfHoursIT extends BaseIT {
 
     @SneakyThrows
     @Test
     void getReportsShouldReturn500WhenOutOfHours() {
         var uri = "/reports/";
-        performGetRequest(uri)
+        performGetRequestWithRoles(uri, List.of("Financial"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.error")
                         .value("The service is unavailable between the hours of 22:00 and 07:00, Mon - Sun"));
@@ -39,11 +27,11 @@ final class OutOfHoursIT extends BaseIT {
 
     @SneakyThrows
     @ParameterizedTest
-    @ValueSource(strings = {"reports","excel", "csv"})
+    @ValueSource(strings = {"reports", "excel", "csv"})
     void getByIdShouldReturn500WhenOutOfHours(String type) {
-        var uri ="/"+ type + "/321";
+        var uri = "/" + type + "/321";
 
-        performGetRequest(uri)
+        performGetRequestWithRoles(uri, List.of("Financial"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.error")
                         .value("The service is unavailable between the hours of 22:00 and 07:00, Mon - Sun"));
@@ -53,7 +41,7 @@ final class OutOfHoursIT extends BaseIT {
     @Test
     void getReportFileShouldReturn500WhenOutOfHours() {
         var uri = "/reports/321";
-        performGetRequest(uri)
+        performGetRequestWithRoles(uri, List.of("Financial"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.error")
                         .value("The service is unavailable between the hours of 22:00 and 07:00, Mon - Sun"));

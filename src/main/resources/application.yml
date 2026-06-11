@@ -43,6 +43,13 @@ spring:
   mvc:
     async:
       request-timeout: 3600000
+  flyway:
+    schemas: glad
+    create-schemas: true
+    locations: classpath:flyway/migration/schema
+    url: ${gpfd.datasource.tracking.jdbcUrl}
+    user: ${gpfd.datasource.tracking.username}
+    password: ${gpfd.datasource.tracking.password}
 
 gpfd:
   s3:
@@ -50,6 +57,15 @@ gpfd:
     has-s3-access: false
   csv-generation:
     buffer-flush-frequency: 5000
+
+  datasource:
+    tracking:
+      # Default connection details for local dev, overridden in other envs
+      driver-class-name: org.postgresql.Driver
+      jdbcUrl: jdbc:postgresql://${RDS_DB_HOST:localhost}:5432/${RDS_DB_NAME:glad}
+      username: ${TRACKING_DB_USERNAME:user}
+      password: ${TRACKING_DB_PASSWORD:dev}
+
   security:
     cors:
       allowed-origin: https://127.0.0.1:8080

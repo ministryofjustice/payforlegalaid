@@ -5,7 +5,10 @@
   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <include file="tables/initial_reporting_system_tables.xml" relativeToChangelogFile="true"/>
+    <include file="db/changelog/tables/create-rbac-tables.xml" />
+    <include file="db/changelog/tables/insert-rbac-data.xml" />
     <includeAll path="report/type" relativeToChangelogFile="true"/>
     <includeAll path="report/csv" relativeToChangelogFile="true"/>
     <includeAll path="report/excel" relativeToChangelogFile="true"/>
+    <includeAll path="report/S3Storage" relativeToChangelogFile="true" />
 </databaseChangeLog>

@@ -1,30 +1,19 @@
 package uk.gov.laa.gpfd.integration;
 
-import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import uk.gov.laa.gpfd.integration.verifier.DatabaseVerifier;
+import uk.gov.laa.gpfd.integration.verifier.DatabaseVerifier.Table;
+
+import java.util.List;
+
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import lombok.SneakyThrows;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
-import uk.gov.laa.gpfd.config.TestDatabaseConfig;
-import uk.gov.laa.gpfd.integration.verifier.DatabaseVerifier;
-import uk.gov.laa.gpfd.integration.verifier.DatabaseVerifier.Table;
-
-@SpringBootTest(webEnvironment = RANDOM_PORT, classes = {TestDatabaseConfig.class})
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
-@TestInstance(PER_CLASS)
-@TestPropertySource(locations = "classpath:application-test.yml")
 final class GetReportsIT extends BaseIT {
 
     @Autowired
@@ -35,7 +24,7 @@ final class GetReportsIT extends BaseIT {
     void shouldSuccessfullyReturnAllAvailableReports() {
         var reportsLen = DatabaseVerifier.rowCountFor(Table.REPORTS).apply(jdbc);
 
-        performGetRequest("/reports")
+        performGetRequestWithRoles("/reports", List.of("REP000", "Financial", "Reconciliation"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.reportList").isArray())
@@ -51,9 +40,11 @@ final class GetReportsIT extends BaseIT {
         jdbc.update("ALTER TABLE GPFD.FIELD_ATTRIBUTES DROP CONSTRAINT fk_field_attributes_report_query_id");
         jdbc.update("TRUNCATE TABLE GPFD.REPORTS");
 
-        performGetRequest("/reports")
+        performGetRequestWithRoles("/reports", List.of("REP000", "Reconciliation", "Financial"))
+                .andExpect(status().isOk())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.reportList").isEmpty());
     }
+
 }

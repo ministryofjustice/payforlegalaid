@@ -1,5 +1,6 @@
 package uk.gov.laa.gpfd.config;
 
+import liquibase.integration.spring.SpringLiquibase;
 import lombok.Getter;
 import oracle.ucp.jdbc.PoolDataSource;
 import oracle.ucp.jdbc.PoolDataSourceFactory;
@@ -9,20 +10,25 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowCallbackHandler;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.laa.gpfd.dao.JdbcWorkbookDataStreamer;
 import uk.gov.laa.gpfd.dao.ReportDao;
+import uk.gov.laa.gpfd.dao.ReportTrackingDao;
 import uk.gov.laa.gpfd.dao.sql.core.StatementPolicy;
 import uk.gov.laa.gpfd.model.FieldProjection;
 import uk.gov.laa.gpfd.model.FileExtension;
@@ -57,8 +63,6 @@ import java.util.Objects;
 import static uk.gov.laa.gpfd.dao.sql.ChannelRowHandler.forSheet;
 import static uk.gov.laa.gpfd.services.DataStreamer.createJdbcStreamer;
 
-import liquibase.integration.spring.SpringLiquibase;
-
 /**
  * Configuration class for application-level beans and settings.
  * <p>
@@ -80,15 +84,6 @@ public class AppConfig {
 
     @Value("${excel.jdbc.streamer.default-fetch-size:1000}")
     private int defaultFetchSize;
-
-    @Getter
-    @Value("${spring.cloud.azure.active-directory.credential.client-id}")
-    private String entraIdClientId;
-
-    @Getter
-    @Value("${spring.cloud.azure.active-directory.profile.tenant-id}")
-    private String entraIdTenantId;
-
     @Getter
     @Value("${gpfd.csv-generation.buffer-flush-frequency:1000}")
     private int csvBufferFlushFrequency;
@@ -178,6 +173,7 @@ public class AppConfig {
      * "gpfd.datasource.write" in the application's configuration file.
      * <p>
      * This data source is intended for write operations in the database, such as inserts and updates.
+     * In practice, it is currently only used by Test and Local profiles to set up the local db.
      * </p>
      *
      * @return a configured {@link DataSource} for write operations.
@@ -186,6 +182,30 @@ public class AppConfig {
     @ConfigurationProperties(prefix = "gpfd.datasource.write")
     DataSource writeDataSource() {
         return new DriverManagerDataSource();
+    }
+
+    /**
+     * Creates Datasource for the Postgres RDS which has tracking data in.
+     * Can rename if we port more functionality over to RDS rather than MOJFIN.
+     *
+     * @return Data Source that talks to the associated Postgres DB
+     */
+    @Bean
+    @ConfigurationProperties(prefix = "gpfd.datasource.tracking")
+    DataSource trackingDataSource() {
+        return DataSourceBuilder.create()
+                .build();
+    }
+
+    /**
+     * Allows JDBC operations on the "trackingDataSource" above.
+     *
+     * @param dataSource - data source for Postgres RDS DB used for tracking
+     * @return JDBC template that lets us perform operations on the tracking DB.
+     */
+    @Bean
+    JdbcTemplate trackingJdbcTemplate(@Qualifier("trackingDataSource") DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
     }
 
     /**
@@ -205,6 +225,17 @@ public class AppConfig {
         template.setMaxRows(0);
         template.setQueryTimeout(0);
         return template;
+    }
+
+    /**
+     * Allows us to perform queries with parameters against the readOnly data source (MOJFIN)
+     *
+     * @param dataSource - MOJFIN datasource
+     * @return JdbcTemplate to access MOJFIN
+     */
+    @Bean
+    public NamedParameterJdbcOperations namedParameterJdbcOperations(@Qualifier("readOnlyDataSource") DataSource dataSource) {
+        return new NamedParameterJdbcTemplate(dataSource);
     }
 
     /**
@@ -436,5 +467,16 @@ public class AppConfig {
         liquibase.setChangeLog(liquibaseChangeLog);
         liquibase.setShouldRun(true);
         return liquibase;
+    }
+
+    /**
+     * Sets up the report tracking data access to use the Postgres tracking db rather than the MOJFIN ones
+     *
+     * @param trackingJdbcTemplate tracking table JDBC template
+     * @return report tracking data access object
+     */
+    @Bean
+    ReportTrackingDao reportTrackingDao(@Qualifier("trackingJdbcTemplate") JdbcOperations trackingJdbcTemplate) {
+        return new ReportTrackingDao(trackingJdbcTemplate);
     }
 }

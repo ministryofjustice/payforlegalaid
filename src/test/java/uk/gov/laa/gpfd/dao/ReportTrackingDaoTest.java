@@ -1,0 +1,55 @@
+package uk.gov.laa.gpfd.dao;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.jdbc.core.JdbcOperations;
+import uk.gov.laa.gpfd.exception.DatabaseWriteException;
+
+import java.sql.Timestamp;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static uk.gov.laa.gpfd.dao.ReportTrackingDao.INSERT_INTO_TRACKING_SQL;
+
+@ExtendWith(MockitoExtension.class)
+class ReportTrackingDaoTest {
+
+    @Mock
+    JdbcOperations trackingJdbcTemplate;
+
+    @InjectMocks
+    ReportTrackingDao reportTrackingDao;
+
+    @BeforeEach
+    void beforeEach() {
+        reset(trackingJdbcTemplate);
+    }
+
+    @Test
+    void insertTrackingRow_shouldUpdateDbWithCorrectValues() {
+        var reportId = UUID.randomUUID();
+        var userId = UUID.randomUUID();
+        reportTrackingDao.insertTrackingRow(reportId, userId);
+
+        verify(trackingJdbcTemplate).update(eq(INSERT_INTO_TRACKING_SQL), any(UUID.class), eq(reportId), eq(userId), any(Timestamp.class));
+    }
+
+    @Test
+    void insertTrackingRow_shouldRethrowExceptionsFromJdbc() {
+        var reportId = UUID.randomUUID();
+        var userId = UUID.randomUUID();
+        when(trackingJdbcTemplate.update(any(), any(), any(), any(), any())).thenThrow(new DuplicateKeyException("Error :("));
+        assertThrows(DatabaseWriteException.class, () -> reportTrackingDao.insertTrackingRow(reportId, userId));
+    }
+
+}

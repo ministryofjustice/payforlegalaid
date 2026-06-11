@@ -1,34 +1,21 @@
 package uk.gov.laa.gpfd.integration;
 
-import static org.junit.jupiter.params.provider.Arguments.of;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CCMS_REPORT;
-import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.REP012ID;
-import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CSV_REPORT;
-
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
-import uk.gov.laa.gpfd.config.TestDatabaseConfig;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT, classes = {TestDatabaseConfig.class})
-@AutoConfigureMockMvc
-@ActiveProfiles("testauth")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@TestPropertySource(locations = "classpath:application-testauth.yml")
+import static org.junit.jupiter.params.provider.Arguments.of;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CCMS_REPORT;
+import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CSV_REPORT;
+import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.REP012ID;
+
 final class AuthTokenIT extends BaseIT {
 
     private static Stream<Arguments> securedReportEndpoints() {
@@ -43,24 +30,37 @@ final class AuthTokenIT extends BaseIT {
 
     @ParameterizedTest(name = "[{index}] {0} should redirect when unauthenticated")
     @MethodSource("securedReportEndpoints")
-    @SneakyThrows
-    void unauthenticatedAccess_shouldRedirectToLogin(String description, String endpoint) {
-        assertNotNull(description);
+    @SuppressWarnings("unused") // "description" is used by JUnit but CodeQL can't spot it
+    void unauthenticatedAccess_shouldRedirectToLogin(String description, String endpoint) throws Exception {
         performGetRequest(endpoint)
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrlPattern("/oauth2/authorization/azure*"));
+                .andExpect(redirectedUrl("/oauth2/authorization/gpfd-azure-dev"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("securedReportEndpoints")
+    void authenticatedAccess_withNoValidRole(String description, String endpoint) throws Exception {
+        if (Objects.equals(description, "Root api endpoint")) {
+            // return 200 with empty list
+            performGetRequestWithRoles(endpoint, List.of("ABC"))
+                    .andExpect(status().is2xxSuccessful());
+        } else {
+            performGetRequestWithRoles(endpoint, List.of("ABC"))
+                    .andExpect(status().isForbidden());
+        }
     }
 
     @ParameterizedTest(name = "[{index}] {0} should return 200 when authenticated")
     @MethodSource("securedReportEndpoints")
-    @WithMockUser(username = "Mock User")
     @SneakyThrows
-    void authenticatedAccess_shouldReturnOk(String description, String endpoint) {
+    void authenticatedAccess_withValidRolesshouldReturnOk(String description, String endpoint) {
         if (Objects.equals(description, "File download endpoint")) {
             // This will not 200 locally as it's not supported
-            performGetRequest(endpoint).andExpect(status().isNotImplemented());
+            performGetRequestWithRoles(endpoint, List.of("REP000", "Reconciliation"))
+                    .andExpect(status().isNotImplemented());
         } else {
-            performGetRequest(endpoint).andExpect(status().isOk());
+            performGetRequestWithRoles(endpoint, List.of("REP000", "Financial", "Reconciliation"))
+                    .andExpect(status().isOk());
         }
     }
 
