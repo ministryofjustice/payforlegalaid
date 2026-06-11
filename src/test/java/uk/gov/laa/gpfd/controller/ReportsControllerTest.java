@@ -187,9 +187,9 @@ class ReportsControllerTest extends BaseMvcTest {
         when(securityUtils.extractUserId()).thenReturn(USER_ID);
         when(responseBuilder.buildResponse(any(), any(), any(), any())).thenReturn(ResponseEntity.ok().body(responseStream));
 
-        var result = performAuthenticatedGet("/reports/" + reportId + "/file", List.of("Financial"))
-                .andExpect(status().isOk()).andReturn();
-        assertEquals("output!", result.getResponse().getContentAsString());
+        performAuthenticatedGet("/reports/" + reportId + "/file", List.of("Financial"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("output!"));
 
         verify(reportManagementServiceMock).validateReportFormat(reportId, FileExtension.S3STORAGE);
         verify(fileDownloadService, times(1)).getFileStreamResponse(reportId);
