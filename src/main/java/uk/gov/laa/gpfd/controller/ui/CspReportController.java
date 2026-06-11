@@ -2,12 +2,12 @@ package uk.gov.laa.gpfd.controller.ui;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Map;
 
 @RestController
@@ -43,7 +43,7 @@ public class CspReportController {
 
                 log.info("CSP Violation detected: directive={}, blockedUri={}",
                         directive, blockedUri);
-            } catch (Exception _) {
+            } catch (IOException _) {
                 log.info("CSP Violation (unparseable payload)");
             }
         } else {

@@ -18,7 +18,7 @@ import java.util.Map;
  * and maintains bidirectional mappings between streaming sheets (SXSSF) and their backing
  * XSSF sheets using low-level memory operations.
  */
-public class ReportWorkbook extends SXSSFWorkbook implements Workbook {
+public class ReportWorkbook extends SXSSFWorkbook {
     private static final String SX_FROM_X_FIELD = "_sxFromXHash";
     private static final String X_FROM_SX_FIELD = "_xFromSxHash";
     private static final Field SX_FROM_X_FIELD_REF;
