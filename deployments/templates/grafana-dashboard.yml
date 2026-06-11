@@ -36,7 +36,7 @@ data:
       "editable": true,
       "fiscalYearStartMonth": 0,
       "graphTooltip": 0,
-      "id": 161,
+      "id": 159,
       "links": [],
       "panels": [
         {
@@ -263,7 +263,7 @@ data:
             "overrides": []
           },
           "gridPos": {
-            "h": 8,
+            "h": 10,
             "w": 12,
             "x": 0,
             "y": 9
@@ -317,12 +317,109 @@ data:
           "type": "heatmap"
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P5DCFC7561CCDE821"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 7,
+            "x": 12,
+            "y": 9
+          },
+          "id": 4,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "11.5.6+security-01",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P5DCFC7561CCDE821"
+              },
+              "editorMode": "code",
+              "expr": "sum by(uri) (increase(http_server_requests_seconds_count{namespace='${NAMESPACE}', uri!~'.*swagger.*|.*health.*', status='200'}[$__rate_interval])) ",
+              "legendFormat": "{{uri}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Successful Requests Per Api Endpoints",
+          "type": "timeseries"
+        },
+        {
           "collapsed": false,
           "gridPos": {
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 17
+            "y": 19
           },
           "id": 71,
           "panels": [],
@@ -391,12 +488,12 @@ data:
             "overrides": []
           },
           "gridPos": {
-            "h": 10,
-            "w": 8,
+            "h": 9,
+            "w": 9,
             "x": 0,
-            "y": 1
+            "y": 20
           },
-          "id": 74,
+          "id": 76,
           "options": {
             "legend": {
               "calcs": [],
@@ -425,6 +522,104 @@ data:
             }
           ],
           "title": "Available database connections",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P5DCFC7561CCDE821"
+          },
+          "description": "The maximum number of database connections available to the service. ",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "Number of connections",
+                "axisPlacement": "left",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 8,
+            "x": 9,
+            "y": 20
+          },
+          "id": 77,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "11.5.6+security-01",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "P5DCFC7561CCDE821"
+              },
+              "editorMode": "code",
+              "expr": "jdbc_connections_max{namespace='${NAMESPACE}'}",
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Max connections",
           "type": "timeseries"
         },
         {
@@ -491,8 +686,8 @@ data:
           "gridPos": {
             "h": 9,
             "w": 9,
-            "x": 8,
-            "y": 1
+            "x": 0,
+            "y": 29
           },
           "id": 72,
           "options": {
@@ -523,104 +718,6 @@ data:
             }
           ],
           "title": "Idle Connections",
-          "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
-          },
-          "description": "The maximum number of database connections available to the service. ",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisBorderShow": false,
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "Number of connections",
-                "axisPlacement": "left",
-                "barAlignment": 0,
-                "barWidthFactor": 0.6,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "insertNulls": false,
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 7,
-            "x": 17,
-            "y": 1
-          },
-          "id": 73,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "hideZeros": false,
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "pluginVersion": "11.5.6+security-01",
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "P5DCFC7561CCDE821"
-              },
-              "editorMode": "code",
-              "expr": "jdbc_connections_max{namespace='${NAMESPACE}'}",
-              "legendFormat": "__auto",
-              "range": true,
-              "refId": "A"
-            }
-          ],
-          "title": "Max connections",
           "type": "timeseries"
         },
         {
@@ -687,10 +784,10 @@ data:
           "gridPos": {
             "h": 9,
             "w": 8,
-            "x": 0,
-            "y": 11
+            "x": 9,
+            "y": 29
           },
-          "id": 75,
+          "id": 78,
           "options": {
             "legend": {
               "calcs": [],
@@ -712,7 +809,7 @@ data:
                 "uid": "P5DCFC7561CCDE821"
               },
               "editorMode": "code",
-              "expr": "100 * jdbc_connections_active{namespace=\"${NAMESPACE}\"} / jdbc_connections_max{namespace=\"${NAMESPACE}\"}",
+              "expr": "100 * jdbc_connections_active{namespace=\"laa-get-payments-finance-data-dev\"} / jdbc_connections_max{namespace=\"laa-get-payments-finance-data-dev\"}",
               "legendFormat": "__auto",
               "range": true,
               "refId": "A"
@@ -727,7 +824,7 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 20
+            "y": 38
           },
           "id": 65,
           "panels": [],
@@ -798,7 +895,7 @@ data:
             "h": 10,
             "w": 9,
             "x": 0,
-            "y": 21
+            "y": 39
           },
           "id": 61,
           "options": {
@@ -895,7 +992,7 @@ data:
             "h": 10,
             "w": 8,
             "x": 9,
-            "y": 21
+            "y": 39
           },
           "id": 46,
           "options": {
@@ -929,109 +1026,12 @@ data:
           "type": "timeseries"
         },
         {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisBorderShow": false,
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "barWidthFactor": 0.6,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "insertNulls": false,
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 10,
-            "w": 7,
-            "x": 17,
-            "y": 21
-          },
-          "id": 4,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "hideZeros": false,
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "pluginVersion": "11.5.6+security-01",
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "P5DCFC7561CCDE821"
-              },
-              "editorMode": "code",
-              "expr": "sum by(uri) (increase(http_server_requests_seconds_count{namespace='${NAMESPACE}', uri!~'.*swagger.*|.*health.*', status='200'}[$__rate_interval])) ",
-              "legendFormat": "{{uri}}",
-              "range": true,
-              "refId": "A"
-            }
-          ],
-          "title": "Successful Requests Per Api Endpoints",
-          "type": "timeseries"
-        },
-        {
           "collapsed": false,
           "gridPos": {
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 31
+            "y": 49
           },
           "id": 64,
           "panels": [],
@@ -1104,7 +1104,7 @@ data:
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 32
+            "y": 50
           },
           "id": 70,
           "options": {
@@ -1124,7 +1124,7 @@ data:
           "targets": [
             {
               "editorMode": "code",
-              "expr": "sum(rate(nginx_ingress_controller_requests{exported_namespace=\"${NAMESPACE}\", status=\"403\"}[5m]))",
+              "expr": "sum(rate(nginx_ingress_controller_requests{exported_namespace=\"laa-get-payments-finance-data-dev\", status=\"403\"}[5m]))",
               "legendFormat": "__auto",
               "range": true,
               "refId": "A"
@@ -1134,14 +1134,111 @@ data:
           "type": "timeseries"
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P5DCFC7561CCDE821"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 50
+          },
+          "id": 58,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "11.5.6+security-01",
+          "targets": [
+            {
+              "disableTextWrap": false,
+              "editorMode": "code",
+              "expr": "sum(rate(nginx_ingress_controller_requests{exported_namespace = \"laa-get-payments-finance-data-dev\",status=~\"4.*\"}[5m])) by (status)",
+              "fullMetaSearch": false,
+              "includeNullMetadata": true,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A",
+              "useBackend": false
+            }
+          ],
+          "title": "HTTP Code 4xx",
+          "type": "timeseries"
+        },
+        {
           "collapsed": false,
           "gridPos": {
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 36
+            "y": 58
           },
-          "id": 64,
+          "id": 79,
           "panels": [],
           "title": "API Error Rates",
           "type": "row"
@@ -1209,105 +1306,8 @@ data:
           "gridPos": {
             "h": 8,
             "w": 12,
-            "x": 12,
-            "y": 32
-          },
-          "id": 58,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "hideZeros": false,
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "pluginVersion": "11.5.6+security-01",
-          "targets": [
-            {
-              "disableTextWrap": false,
-              "editorMode": "code",
-              "expr": "sum(rate(nginx_ingress_controller_requests{exported_namespace = \"${NAMESPACE}\",status=~\"4.*\"}[5m])) by (status)",
-              "fullMetaSearch": false,
-              "includeNullMetadata": true,
-              "legendFormat": "__auto",
-              "range": true,
-              "refId": "A",
-              "useBackend": false
-            }
-          ],
-          "title": "HTTP Code 4xx",
-          "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P5DCFC7561CCDE821"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisBorderShow": false,
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "barWidthFactor": 0.6,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "insertNulls": false,
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 12,
             "x": 0,
-            "y": 40
+            "y": 59
           },
           "id": 57,
           "options": {
@@ -1328,7 +1328,7 @@ data:
             {
               "disableTextWrap": false,
               "editorMode": "code",
-              "expr": "sum(rate(nginx_ingress_controller_requests{exported_namespace = '${NAMESPACE}',status=~\"5.*\"}[5m])) by (status)",
+              "expr": "sum(rate(nginx_ingress_controller_requests{exported_namespace = 'laa-get-payments-finance-data-dev',status=~\"5.*\"}[5m])) by (status)",
               "fullMetaSearch": false,
               "includeNullMetadata": true,
               "legendFormat": "__auto",
@@ -1346,7 +1346,7 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 48
+            "y": 67
           },
           "id": 63,
           "panels": [],
@@ -1418,7 +1418,7 @@ data:
             "h": 10,
             "w": 12,
             "x": 0,
-            "y": 49
+            "y": 68
           },
           "id": 42,
           "options": {
@@ -1516,7 +1516,7 @@ data:
             "h": 10,
             "w": 12,
             "x": 12,
-            "y": 49
+            "y": 68
           },
           "id": 44,
           "options": {
@@ -1555,7 +1555,7 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 59
+            "y": 78
           },
           "id": 62,
           "panels": [],
@@ -1577,7 +1577,8 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -1592,7 +1593,7 @@ data:
             "h": 10,
             "w": 2,
             "x": 0,
-            "y": 60
+            "y": 79
           },
           "id": 2,
           "options": {
@@ -1711,7 +1712,8 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -1726,7 +1728,7 @@ data:
             "h": 10,
             "w": 8,
             "x": 2,
-            "y": 60
+            "y": 79
           },
           "id": 55,
           "options": {
@@ -1824,7 +1826,8 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -1840,7 +1843,7 @@ data:
             "h": 10,
             "w": 7,
             "x": 10,
-            "y": 60
+            "y": 79
           },
           "id": 56,
           "options": {
@@ -1862,7 +1865,7 @@ data:
               "disableTextWrap": false,
               "editorMode": "code",
               "exemplar": false,
-              "expr": "100 * kube_resourcequota{job=\"kube-state-metrics\", type=\"used\", namespace=\"${NAMESPACE}\"}\n/ ignoring(instance, job, type)\n(kube_resourcequota{job=\"kube-state-metrics\", type=\"hard\", namespace=\"${NAMESPACE}\"} > 0)",
+              "expr": "100 * kube_resourcequota{job=\"kube-state-metrics\", type=\"used\", namespace=\"laa-get-payments-finance-data-dev\"}\n/ ignoring(instance, job, type)\n(kube_resourcequota{job=\"kube-state-metrics\", type=\"hard\", namespace=\"laa-get-payments-finance-data-dev\"} > 0)",
               "fullMetaSearch": false,
               "includeNullMetadata": true,
               "instant": false,
@@ -1924,7 +1927,8 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -1964,7 +1968,7 @@ data:
             "h": 10,
             "w": 7,
             "x": 17,
-            "y": 60
+            "y": 79
           },
           "id": 54,
           "options": {
@@ -2003,7 +2007,7 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 70
+            "y": 89
           },
           "id": 53,
           "panels": [],
@@ -2058,7 +2062,8 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -2074,7 +2079,7 @@ data:
             "h": 9,
             "w": 8,
             "x": 0,
-            "y": 71
+            "y": 90
           },
           "id": 51,
           "options": {
@@ -2155,7 +2160,8 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -2171,7 +2177,7 @@ data:
             "h": 9,
             "w": 8,
             "x": 8,
-            "y": 71
+            "y": 90
           },
           "id": 52,
           "options": {
@@ -2252,7 +2258,8 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -2267,7 +2274,7 @@ data:
             "h": 9,
             "w": 8,
             "x": 16,
-            "y": 71
+            "y": 90
           },
           "id": 50,
           "options": {
@@ -2303,7 +2310,7 @@ data:
               },
               "disableTextWrap": false,
               "editorMode": "code",
-              "expr": "container_memory_max_usage_bytes{namespace=\"${NAMESPACE}\", pod=~'gpfd.*'}",
+              "expr": "container_memory_max_usage_bytes{namespace=\"laa-get-payments-finance-data-dev\", pod=~'gpfd.*'}",
               "fullMetaSearch": false,
               "hide": false,
               "includeNullMetadata": true,
@@ -2340,7 +2347,7 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 80
+            "y": 99
           },
           "id": 47,
           "panels": [],
@@ -2395,7 +2402,8 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -2411,7 +2419,7 @@ data:
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 81
+            "y": 100
           },
           "id": 60,
           "options": {
@@ -2492,7 +2500,8 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -2508,7 +2517,7 @@ data:
             "h": 9,
             "w": 12,
             "x": 12,
-            "y": 81
+            "y": 100
           },
           "id": 49,
           "options": {
@@ -2596,7 +2605,8 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -2611,7 +2621,7 @@ data:
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 90
+            "y": 109
           },
           "id": 48,
           "options": {
@@ -2693,7 +2703,8 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -2708,7 +2719,7 @@ data:
             "h": 9,
             "w": 12,
             "x": 12,
-            "y": 90
+            "y": 109
           },
           "id": 59,
           "options": {
@@ -2729,7 +2740,7 @@ data:
             {
               "disableTextWrap": false,
               "editorMode": "code",
-              "expr": "sum(executor_active_threads{namespace=\"${NAMESPACE}\"})",
+              "expr": "sum(executor_active_threads{namespace=\"laa-get-payments-finance-data-dev\"})",
               "fullMetaSearch": false,
               "includeNullMetadata": true,
               "legendFormat": "Number of threads actively executing tasks",
@@ -2744,7 +2755,7 @@ data:
               },
               "disableTextWrap": false,
               "editorMode": "code",
-              "expr": "sum(executor_pool_max_threads{namespace=\"${NAMESPACE}\"})",
+              "expr": "sum(executor_pool_max_threads{namespace=\"laa-get-payments-finance-data-dev\"})",
               "fullMetaSearch": false,
               "hide": false,
               "includeNullMetadata": true,
@@ -2764,7 +2775,7 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 99
+            "y": 118
           },
           "id": 36,
           "panels": [],
@@ -2786,7 +2797,8 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   }
                 ]
               }
@@ -2797,7 +2809,7 @@ data:
             "h": 10,
             "w": 2,
             "x": 0,
-            "y": 100
+            "y": 119
           },
           "id": 16,
           "options": {
@@ -2832,19 +2844,6 @@ data:
           ],
           "title": "Max Survivor",
           "type": "gauge"
-        },
-        {
-          "collapsed": false,
-          "gridPos": {
-            "h": 1,
-            "w": 24,
-            "x": 0,
-            "y": 107
-          },
-          "id": 71,
-          "panels": [],
-          "title": "Security",
-          "type": "row"
         },
         {
           "datasource": {
@@ -2894,7 +2893,8 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -2909,7 +2909,7 @@ data:
             "h": 10,
             "w": 6,
             "x": 2,
-            "y": 100
+            "y": 119
           },
           "id": 10,
           "options": {
@@ -2957,7 +2957,8 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   }
                 ]
               }
@@ -2968,7 +2969,7 @@ data:
             "h": 10,
             "w": 2,
             "x": 8,
-            "y": 100
+            "y": 119
           },
           "id": 18,
           "options": {
@@ -3051,7 +3052,8 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "#EAB839",
@@ -3066,7 +3068,7 @@ data:
             "h": 10,
             "w": 6,
             "x": 10,
-            "y": 100
+            "y": 119
           },
           "id": 8,
           "options": {
@@ -3114,7 +3116,8 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   }
                 ]
               }
@@ -3125,7 +3128,7 @@ data:
             "h": 10,
             "w": 2,
             "x": 16,
-            "y": 100
+            "y": 119
           },
           "id": 14,
           "options": {
@@ -3208,7 +3211,8 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -3223,7 +3227,7 @@ data:
             "h": 10,
             "w": 6,
             "x": 18,
-            "y": 100
+            "y": 119
           },
           "id": 12,
           "options": {
@@ -3262,7 +3266,20 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 110
+            "y": 129
+          },
+          "id": 80,
+          "panels": [],
+          "title": "Security",
+          "type": "row"
+        },
+        {
+          "collapsed": false,
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 130
           },
           "id": 66,
           "panels": [],
@@ -3320,7 +3337,8 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -3335,9 +3353,9 @@ data:
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 111
+            "y": 131
           },
-          "id": 72,
+          "id": 81,
           "options": {
             "legend": {
               "calcs": [],
@@ -3399,6 +3417,6 @@ data:
       "timezone": "browser",
       "title": "LAA GPFD Get Payment & Finance Data ${ENV_NAME} dashboard",
       "uid": "laa-gpfd-${ENV_NAME}",
-      "version": 50,
+      "version": 55,
       "weekStart": ""
       }
