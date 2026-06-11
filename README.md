@@ -253,14 +253,14 @@ GitHub Actions is used for CI/CD.
 
 ### Deployments (`One to deploy them all`)
 
-| Trigger | Behaviour |
-|---------|-----------|
-| Push to `main` (feature/fix commits) | **Dev only** — automatically deploys latest merge to dev |
+| Trigger                                                            | Behaviour                                                                                                       |
+|--------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------|
+| Push to `main` (feature/fix commits)                               | **Dev only** — automatically deploys latest merge to dev                                                        |
 | Push to `main` (release commit, e.g. `chore(main): release x.x.x`) | **Dev → UAT → prod** — automatic promotion of the versioned release (UAT and prod require environment approval) |
-| Manual run (any branch), scope **dev** | Dev only |
-| Manual run, scope **dev-uat** | Dev, then UAT (UAT approval required) |
-| Manual run, scope **uat** | UAT only for the selected branch/commit (skips dev) |
-| Manual run, scope **all** | Dev → UAT → prod |
+| Manual run (any branch), scope **dev**                             | Dev only                                                                                                        |
+| Manual run, scope **dev-uat**                                      | Dev, then UAT (UAT approval required)                                                                           |
+| Manual run, scope **uat**                                          | UAT only for the selected branch/commit (skips dev)                                                             |
+| Manual run, scope **all**                                          | Dev → UAT → prod                                                                                                |
 
 To test a feature before release: run the workflow from your branch via **Actions → One to deploy them all → Run workflow**, choose the branch and scope.
 
@@ -287,7 +287,7 @@ When the Release PR is merged:
 - a Git tag is created
 - a GitHub Release is published
 - the new version becomes available
-- the deploy workflow promotes that commit through dev, UAT, and prod (so deployed artefacts align with the released version)
+- the `deploy` workflow promotes that commit through dev, UAT, and prod (so deployed artefacts align with the released version)
 
 ---
 
@@ -311,19 +311,19 @@ docs: update installation instructions
 
 ### Commit Types
 
-| Type | Description | Version Impact |
-|------|-------------|----------------|
-| `feat` | Introduces a new feature | Minor |
-| `fix` | Fixes a bug | Patch |
-| `feat!` | Breaking feature change | Major |
-| `docs` | Documentation updates only | None |
-| `refactor` | Internal code restructuring | None |
-| `test` | Adding or updating tests | None |
-| `chore` | Maintenance tasks | None |
-| `ci` | CI/CD pipeline changes | None |
-| `build` | Build tooling or dependency changes | None |
-| `perf` | Performance improvements | Patch |
-| `revert` | Reverts a previous commit | Depends |
+| Type       | Description                         | Version Impact |
+|------------|-------------------------------------|----------------|
+| `feat`     | Introduces a new feature            | Minor          |
+| `fix`      | Fixes a bug                         | Patch          |
+| `feat!`    | Breaking feature change             | Major          |
+| `docs`     | Documentation updates only          | None           |
+| `refactor` | Internal code restructuring         | None           |
+| `test`     | Adding or updating tests            | None           |
+| `chore`    | Maintenance tasks                   | None           |
+| `ci`       | CI/CD pipeline changes              | None           |
+| `build`    | Build tooling or dependency changes | None           |
+| `perf`     | Performance improvements            | Patch          |
+| `revert`   | Reverts a previous commit           | Depends        |
 
 ---
 ## Semantic Versioning Examples
