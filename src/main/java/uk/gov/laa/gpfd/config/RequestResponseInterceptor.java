@@ -4,10 +4,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
+import org.slf4j.MDC;
 import org.slf4j.spi.LoggingEventBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
+import uk.gov.laa.gpfd.utils.RequestLogUtils;
 
 @Slf4j
 @Component
@@ -26,17 +28,27 @@ public class RequestResponseInterceptor implements HandlerInterceptor {
                                 @NonNull HttpServletResponse response,
                                 @NonNull Object handler,
                                 Exception ex) {
-
         logResponse(request, response, handler);
 
         if (ex != null) {
-            log.atError().setCause(ex).log("Exception occurred");
+            log.atError()
+                    .setCause(ex)
+                    .addKeyValue(RequestLogUtils.EVENT_ACTION, "http.exception")
+                    .addKeyValue(RequestLogUtils.EVENT_OUTCOME, "failure")
+                    .addKeyValue(RequestLogUtils.REQUEST_ID, MDC.get(RequestLogUtils.REQUEST_ID))
+                    .addKeyValue(RequestLogUtils.TRACE_ID, MDC.get(RequestLogUtils.TRACE_ID))
+                    .addKeyValue(RequestLogUtils.USER_ID, RequestLogUtils.extractUserIdFromSecurityContext())
+                    .log("Exception occurred during request processing");
         }
     }
 
     private void logRequest(HttpServletRequest request, Object handler) {
-
         LoggingEventBuilder logBuilder = log.atInfo()
+                .addKeyValue(RequestLogUtils.EVENT_ACTION, "http.request")
+                .addKeyValue("event.type", "web")
+                .addKeyValue(RequestLogUtils.REQUEST_ID, MDC.get(RequestLogUtils.REQUEST_ID))
+                .addKeyValue(RequestLogUtils.TRACE_ID, MDC.get(RequestLogUtils.TRACE_ID))
+                .addKeyValue(RequestLogUtils.USER_ID, RequestLogUtils.extractUserIdFromSecurityContext())
                 .addKeyValue("method", sanitise(request.getMethod()))
                 .addKeyValue("uri", sanitise(request.getRequestURI()));
 
@@ -48,8 +60,13 @@ public class RequestResponseInterceptor implements HandlerInterceptor {
     private void logResponse(HttpServletRequest request,
                              HttpServletResponse response,
                              Object handler) {
-
         LoggingEventBuilder logBuilder = log.atInfo()
+                .addKeyValue(RequestLogUtils.EVENT_ACTION, "http.response")
+                .addKeyValue("event.type", "web")
+                .addKeyValue(RequestLogUtils.EVENT_OUTCOME, response.getStatus() >= 400 ? "failure" : "success")
+                .addKeyValue(RequestLogUtils.REQUEST_ID, MDC.get(RequestLogUtils.REQUEST_ID))
+                .addKeyValue(RequestLogUtils.TRACE_ID, MDC.get(RequestLogUtils.TRACE_ID))
+                .addKeyValue(RequestLogUtils.USER_ID, RequestLogUtils.extractUserIdFromSecurityContext())
                 .addKeyValue("uri", sanitise(request.getRequestURI()))
                 .addKeyValue("status", response.getStatus());
 
@@ -59,12 +76,8 @@ public class RequestResponseInterceptor implements HandlerInterceptor {
     }
 
     private void addHandler(LoggingEventBuilder logBuilder, Object handler) {
-
         if (handler instanceof HandlerMethod handlerMethod) {
-            logBuilder.addKeyValue(
-                    "handler",
-                    handlerMethod.getMethod().getName()
-            );
+            logBuilder.addKeyValue("handler", handlerMethod.getMethod().getName());
         }
     }
 

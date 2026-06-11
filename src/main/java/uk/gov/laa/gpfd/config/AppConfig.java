@@ -9,9 +9,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.Ordered;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -261,6 +263,20 @@ public class AppConfig {
     @Bean
     public AuthorizationManager<RequestAuthorizationContext> authManager() {
         return new ContextBasedAuthorizationManager();
+    }
+
+    @Bean
+    public RequestContextFilter requestContextFilter() {
+        return new RequestContextFilter();
+    }
+
+    @Bean
+    public FilterRegistrationBean<RequestContextFilter> requestContextFilterRegistration(RequestContextFilter requestContextFilter) {
+        var registration = new FilterRegistrationBean<>(requestContextFilter);
+        registration.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        registration.addUrlPatterns("/*");
+        registration.setName("requestContextFilter");
+        return registration;
     }
 
     /**
