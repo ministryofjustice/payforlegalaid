@@ -28,6 +28,7 @@ import java.util.List;
 /**
  * Shared helper methods for Spring Security configuration classes.
  */
+@SuppressWarnings("java:S4502") // CSRF disabled only for H2 console — local/test profiles only, never active in prod
 public final class SecurityConfigSupport {
 
     private SecurityConfigSupport() {
