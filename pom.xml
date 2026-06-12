@@ -24,11 +24,11 @@
         <poi.version>5.5.1</poi.version>
         <immutables.version>2.12.2</immutables.version>
         <spring-cloud-azure-dependencies.version>7.3.0</spring-cloud-azure-dependencies.version>
-        <govuk-frontend.version>6.1.0</govuk-frontend.version>
+        <govuk-frontend.version>6.2.0</govuk-frontend.version>
         <moj-frontend.version>6.0.0</moj-frontend.version>
 
         <payforlegalaid-openapi.version>0.0.36</payforlegalaid-openapi.version>
-        <aws.java.sdk.version>2.46.0</aws.java.sdk.version>
+        <aws.java.sdk.version>2.46.6</aws.java.sdk.version>
         <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
         <maven-dependency-plugin.version>3.11.0</maven-dependency-plugin.version>
         <maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
@@ -36,7 +36,7 @@
       
         <gatling.version>3.15.1</gatling.version>
         <gatling-maven-plugin.version>4.21.7</gatling-maven-plugin.version>
-        <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
         <spotbugs-maven-plugin.version>4.9.8.3</spotbugs-maven-plugin.version>
         <findsecbugs-plugin.version>1.14.0</findsecbugs-plugin.version>
         <!-- Code coverage thresholds: fail build if coverage falls below these values -->
@@ -469,7 +469,7 @@
             <!-- Spring currently sitting at 3.0.4 -->
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>3.1.4</version>
+            <version>3.2.0</version>
         </dependency>
         <dependency>
             <!-- SpringDoc Openapi currently sitting at 2.20.2 -->
@@ -631,7 +631,7 @@
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-core</artifactId>
-            <version>1.16.6</version>
+            <version>1.17.0</version>
         </dependency>
     </dependencies>
 
