@@ -43,7 +43,7 @@ sealed interface PivotTableValidationStrategy permits CacheDefinitionValidation,
      * @param pivotTable - pivotTable we are validating
      * @return workbook we are validating
      */
-    static private XSSFWorkbook getWorkbookFromPivotTable(XSSFPivotTable pivotTable) {
+    static XSSFWorkbook getWorkbookFromPivotTable(XSSFPivotTable pivotTable) {
         // First parent is the sheet, whose parent is the workbook
         return (XSSFWorkbook) pivotTable.getParent().getParent();
     }
