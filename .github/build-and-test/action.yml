@@ -28,6 +28,14 @@ runs:
       shell:
         bash
 
+    - name: Run acceptance tests
+      run: |
+        mvn -B clean -Dtest=RunCucumberTests test
+      env:
+        SPRING_PROFILES_ACTIVE: testat
+      shell:
+        bash
+
     - name: Generate JaCoCo Report (development only)
       if: ${{ github.environment == 'development' }}
       run: mvn jacoco:report

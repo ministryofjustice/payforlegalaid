@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: 'gpfd-at-tests'
+spec:
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 3000
+    fsGroup: 2000
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+    - name: gpfd-tests
+      image: ${TEST_IMAGE}
+      imagePullPolicy: IfNotPresent
+      securityContext:
+        allowPrivilegeEscalation: false
+        runAsNonRoot: true
+        capabilities:
+          drop: [ "ALL" ]
+      env:
+        - name: AZURE_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: gpfd-test-secret-01
+              key: client-secret-dev
+        - name: AZURE_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: gpfd-test-secret-01
+              key: client-id-dev
+        - name: AZURE_TENANT_ID
+          valueFrom:
+            secretKeyRef:
+              name: gpfd-test-secret-01
+              key: tenant-id-dev
+        - name: MOJFIN_DEV_READ_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: gpfd-test-secret-01
+              key: mojfin-dev-read-username
+        - name: MOJFIN_DEV_READ_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: gpfd-test-secret-01
+              key: mojfin-dev-read-password
+        - name: MOJFIN_DEV_WRITE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: gpfd-test-secret-01
+              key: mojfin-dev-write-username
+        - name: MOJFIN_DEV_WRITE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: gpfd-test-secret-01
+              key: mojfin-dev-write-password
+        - name: MOJFIN_DB_URL
+          valueFrom:
+            secretKeyRef:
+              name: gpfd-test-secret-01
+              key: mojfin-db-url
+        - name: AWS_REGION
+          value: eu-west-2
+        - name: S3_FILE_STORE
+          value: laa-get-payments-finance-data-dev-file-store

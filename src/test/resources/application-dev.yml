@@ -1,0 +1,41 @@
+gpfd:
+  url: https://localhost:8080
+  datasource:
+    read-only:
+      url: ${MOJFIN_DB_URL}
+      username: ${MOJFIN_DEV_READ_USERNAME}
+      password: ${MOJFIN_DEV_READ_PASSWORD}
+      driver-class-name: oracle.jdbc.OracleDriver
+    write:
+      url: ${MOJFIN_DB_URL}
+      username: ${MOJFIN_DEV_WRITE_USERNAME}
+      password: ${MOJFIN_DEV_WRITE_PASSWORD}
+      driver-class-name: oracle.jdbc.OracleDriver
+  jwks-uri: https://sts.windows.net/${spring.cloud.azure.active-directory.profile.tenant-id}/
+  s3:
+    use-template-store: true
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  liquibase:
+    enabled: false
+    changelog: /db/changelog/db.changelog-master.xml
+  cloud:
+    azure:
+      active-directory:
+        enabled: true
+        profile:
+          tenant-id: TestTenantId
+        credential:
+          client-id: TestClientId
+          client-secret: TestClientSecret
+        redirect-uri-template: ${gpfd.redirect-uri-template}
+        authorization-clients:
+          graph:
+            scopes:
+              - https://graph.microsoft.com/User.Read
+
+springdoc:
+  api-docs:
+    enabled: false
