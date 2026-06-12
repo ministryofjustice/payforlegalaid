@@ -86,21 +86,33 @@ public final class RequestLogUtils {
         }
 
         Object principal = authentication.getPrincipal();
-        String identifier = null;
 
-        if (principal instanceof DefaultOidcUser oidcUser) {
-            identifier = oidcUser.getSubject();
-        } else if (principal instanceof OAuth2User oauth2User) {
-            Object sub = oauth2User.getAttribute("sub");
-            Object preferredUsername = oauth2User.getAttribute("preferred_username");
-            identifier = sub != null ? sub.toString() : preferredUsername != null ? preferredUsername.toString() : authentication.getName();
-        } else if (principal instanceof Jwt jwt) {
-            identifier = jwt.getSubject();
-        } else if (principal instanceof String principalString) {
-            identifier = principalString;
-        } else {
-            identifier = authentication.getName();
-        }
+        assert principal != null;
+        String identifier = switch (principal) {
+            case DefaultOidcUser oidcUser -> oidcUser.getSubject();
+
+            case OAuth2User oauth2User -> {
+                Object sub = oauth2User.getAttribute("sub");
+                Object preferredUsername = oauth2User.getAttribute("preferred_username");
+
+                String id;
+                if (sub != null) {
+                    id = sub.toString();
+                } else if (preferredUsername != null) {
+                    id = preferredUsername.toString();
+                } else {
+                    id = authentication.getName();
+                }
+
+                yield id;
+            }
+
+            case Jwt jwt -> jwt.getSubject();
+
+            case String principalString -> principalString;
+
+            default -> authentication.getName();
+        };
 
         if (identifier == null || identifier.isBlank()) {
             return null;
