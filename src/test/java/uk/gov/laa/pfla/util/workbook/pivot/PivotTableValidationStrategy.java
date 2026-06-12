@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import static org.apache.poi.xssf.usermodel.XSSFRelation.PIVOT_CACHE_RECORDS;
+import static uk.gov.laa.pfla.util.workbook.pivot.PivotTableValidationStrategy.*;
 
 /**
  * An interface defining the contract for pivot table validation strategies.
@@ -22,9 +23,9 @@ import static org.apache.poi.xssf.usermodel.XSSFRelation.PIVOT_CACHE_RECORDS;
  * concern.
  * </p>
  */
-sealed interface PivotTableValidationStrategy permits PivotTableValidationStrategy.CacheDefinitionValidation, PivotTableValidationStrategy.PivotFormatValidation,
-        PivotTableValidationStrategy.DataSourceValidation, PivotTableValidationStrategy.LocationValidation, PivotTableValidationStrategy.PivotCacheFieldValidation, PivotTableValidationStrategy.PivotFieldStyleValidation,
-        PivotTableValidationStrategy.PivotFieldsValidation, PivotTableValidationStrategy.PivotCacheFieldStyleValidation {
+sealed interface PivotTableValidationStrategy permits CacheDefinitionValidation, PivotFormatValidation,
+        DataSourceValidation, LocationValidation, PivotCacheFieldValidation, PivotFieldStyleValidation,
+        PivotFieldsValidation, PivotCacheFieldStyleValidation {
 
     /**
      * Validates a specific aspect of the given pivot table.

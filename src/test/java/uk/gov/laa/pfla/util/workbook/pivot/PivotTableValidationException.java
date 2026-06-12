@@ -4,6 +4,8 @@ import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 
+import static uk.gov.laa.pfla.util.workbook.pivot.PivotTableValidationException.ErrorCase.*;
+
 /**
  * Exception thrown when a pivot table fails validation checks.
  * <p>
@@ -34,28 +36,28 @@ public abstract class PivotTableValidationException extends RuntimeException {
      * Creates a validation exception for a pivot table with an invalid cache definition.
      */
     public static PivotTableValidationException invalidCache(POIXMLDocumentPart pivotTable) {
-        return new PivotTableValidationException(ErrorCase.INVALID_CACHE, pivotTable) {};
+        return new PivotTableValidationException(INVALID_CACHE, pivotTable) {};
     }
 
     /**
      * Creates a validation exception for a pivot table missing a data source reference.
      */
     public static PivotTableValidationException noDataSource(POIXMLDocumentPart pivotTable) {
-        return new PivotTableValidationException(ErrorCase.NO_DATA_SOURCE, pivotTable) {};
+        return new PivotTableValidationException(NO_DATA_SOURCE, pivotTable) {};
     }
 
     /**
      * Creates a validation exception for a pivot table with no defined location.
      */
     public static PivotTableValidationException noLocation(POIXMLDocumentPart pivotTable) {
-        return new PivotTableValidationException(ErrorCase.NO_LOCATION, pivotTable) {};
+        return new PivotTableValidationException(NO_LOCATION, pivotTable) {};
     }
 
     /**
      * Creates a validation exception for a pivot table with no configured fields.
      */
     public static PivotTableValidationException noFields(POIXMLDocumentPart pivotTable) {
-        return new PivotTableValidationException(ErrorCase.NO_FIELDS, pivotTable) {};
+        return new PivotTableValidationException(NO_FIELDS, pivotTable) {};
     }
 
     /**
@@ -63,7 +65,7 @@ public abstract class PivotTableValidationException extends RuntimeException {
      * linked together.
      */
     public static PivotTableValidationException invalidCacheRecordsRelationship(POIXMLDocumentPart pivotTable) {
-        return new PivotTableValidationException(ErrorCase.INVALID_CACHE_RECORD_RELATIONSHIP, pivotTable) {
+        return new PivotTableValidationException(INVALID_CACHE_RECORD_RELATIONSHIP, pivotTable) {
         };
     }
 
@@ -71,7 +73,7 @@ public abstract class PivotTableValidationException extends RuntimeException {
      * Creates a validation exception for a pivot table where the configured fields are referencing invalid styles.
      */
     public static PivotTableValidationException invalidFieldStyle(POIXMLDocumentPart pivotTable) {
-        return new PivotTableValidationException(ErrorCase.INVALID_FIELD_STYLES, pivotTable) {
+        return new PivotTableValidationException(INVALID_FIELD_STYLES, pivotTable) {
         };
     }
 
@@ -79,28 +81,28 @@ public abstract class PivotTableValidationException extends RuntimeException {
      * Creates a validation exception for a pivot table where the configured cache fields are referencing invalid styles.
      */
     public static PivotTableValidationException invalidCacheFieldStyle(POIXMLDocumentPart pivotTable) {
-        return new PivotTableValidationException(ErrorCase.INVALID_CACHE_FIELD_STYLES, pivotTable) {};
+        return new PivotTableValidationException(INVALID_CACHE_FIELD_STYLES, pivotTable) {};
     }
 
     /**
      * Creates a validation exception for a pivot table where the source sheet is invalid.
      */
     public static PivotTableValidationException invalidSourceSheet(POIXMLDocumentPart pivotTable) {
-        return new PivotTableValidationException(ErrorCase.INVALID_SOURCE_SHEET, pivotTable) {};
+        return new PivotTableValidationException(INVALID_SOURCE_SHEET, pivotTable) {};
     }
 
     /**
      * Creates a validation exception for a pivot table definition uses columns that no longer exist.
      */
     public static PivotTableValidationException invalidColumnReference(POIXMLDocumentPart pivotTable) {
-        return new PivotTableValidationException(ErrorCase.INVALID_COLUMN_REFERENCE, pivotTable) {};
+        return new PivotTableValidationException(INVALID_COLUMN_REFERENCE, pivotTable) {};
     }
 
     /**
      * Creates a validation exception for a pivot table where the cache has no records and so is invalid.
      */
     public static PivotTableValidationException noCachedFields(POIXMLDocumentPart pivotTable) {
-        return new PivotTableValidationException(ErrorCase.NO_CACHE_FIELDS, pivotTable) {};
+        return new PivotTableValidationException(NO_CACHE_FIELDS, pivotTable) {};
     }
 
     /**

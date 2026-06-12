@@ -2,17 +2,13 @@ package uk.gov.laa.pfla.steps;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.laa.pfla.scenario.ScenarioContext;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CommonSteps {
-
-    @Autowired
-    private ScenarioContext scenarioContext;
+public record CommonSteps(ScenarioContext scenarioContext) {
 
     @Given("I am authenticated with a valid session")
     public void iAmAuthenticatedWithAValidSession() {

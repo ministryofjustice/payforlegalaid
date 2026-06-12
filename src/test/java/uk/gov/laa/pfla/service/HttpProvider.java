@@ -7,6 +7,8 @@ import uk.gov.laa.pfla.scenario.AuthenticationState;
 public interface HttpProvider {
     RestTemplate getClient();
 
+    void setAuthenticationState(AuthenticationState state);
+
     default RestTemplate getClient(RestClient restClient, AuthenticationState state) {
         return switch (state) {
             case AUTHENTICATED -> restClient.authenticated();

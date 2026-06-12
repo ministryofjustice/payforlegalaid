@@ -14,7 +14,7 @@ import uk.gov.laa.pfla.util.DateParser;
 import java.time.Instant;
 import java.util.UUID;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 public record GetSingleReportSteps(HttpProvider httpProvider, ScenarioContext scenarioContext) {

@@ -24,12 +24,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 public class UiSteps {
 
-    @Autowired
-    private AuthenticationProvider authenticationProvider;
     private Page page;
     private int reportCount;
     private Response response;
 
+    @Autowired
+    private AuthenticationProvider authenticationProvider;
 
     @Before("@ui")
     public void setupUI(){

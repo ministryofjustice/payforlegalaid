@@ -25,6 +25,7 @@ import uk.gov.laa.pfla.client.RestTemplateWithErrorHandling;
 import uk.gov.laa.pfla.client.interceptor.AuthenticationInterceptor;
 import uk.gov.laa.pfla.client.interceptor.HostInterceptor;
 import uk.gov.laa.pfla.comparator.WorkbookComparator;
+import uk.gov.laa.pfla.scenario.AuthenticationState;
 import uk.gov.laa.pfla.scenario.ScenarioContext;
 import uk.gov.laa.pfla.service.HttpProvider;
 import uk.gov.laa.pfla.util.JsonDeserializer;
@@ -90,6 +91,11 @@ public class TestConfig {
             public RestTemplate getClient() {
                 return getClient(restClient, scenarioContext.getAuthenticationState());
             }
+
+            @Override
+            public void setAuthenticationState(AuthenticationState state) {
+                scenarioContext.setAuthenticationState(state);
+            }
         };
     }
 
@@ -118,6 +124,7 @@ public class TestConfig {
     }
 
     @Bean
+    @Primary
     public ClientRegistrationRepository emptyClientRegistrationRepository() {
         var localRegistration = ClientRegistration.withRegistrationId("graph")
                 .clientId("mockClientId")
