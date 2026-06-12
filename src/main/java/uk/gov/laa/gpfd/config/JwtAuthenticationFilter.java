@@ -24,7 +24,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final Map<String, String> errorMessages = Map.of(
             JwtClaimNames.AUD, "Audience mismatch",
             JwtTokenComponents.TENANT_ID_KEY.value, "Incorrect Tenant ID",
-            JwtTokenComponents.APPLICATION_ID_KEY.value,"Incorrect Application ID",
+            JwtTokenComponents.APPLICATION_ID_KEY.value, "Incorrect Application ID",
             JwtClaimNames.EXP, "Token is expired",
             JwtClaimNames.NBF, "Token not valid for current time",
             JwtTokenComponents.SCOPE_KEY.value, "Expected scope values are missing");
@@ -42,7 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         var token = servletRequest.getHeader(JwtTokenComponents.HEADER_TYPE.value);
 
         if (token != null && !token.isEmpty()) {
-            String logIdentifier = sha256Hex(token).substring(0,TOKEN_ID_LENGTH);
+            String logIdentifier = sha256Hex(token).substring(0, TOKEN_ID_LENGTH);
             log.info("Token " + logIdentifier + " - token received, attempting validation");
             validateJwt(token, logIdentifier);
         }
@@ -76,10 +76,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 throw new JwtException(errorMessages.get(JwtTokenComponents.APPLICATION_ID_KEY.value));
             }
 
+            if (decodedToken.getExpiresAt() == null) {
+                throw new JwtException("Token expiry is null");
+            }
             if (isTokenExpired(decodedToken)) {
                 throw new JwtException(errorMessages.get(JwtClaimNames.EXP));
             }
 
+            if (decodedToken.getNotBefore() == null) {
+                throw new JwtException("Token not before time is null");
+            }
             if (!isTokenValidForCurrentTime(decodedToken)) {
                 throw new JwtException(errorMessages.get(JwtClaimNames.NBF));
             }
@@ -95,7 +101,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (Exception ex) {
             throw new JwtException("Unable to validate token.\n" + ex.getClass() + ": " + ex.getMessage());
         }
-
     }
 
     private String extractJwtToken(String token) {
@@ -125,16 +130,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private boolean isTokenValidForCurrentTime(Jwt decodedToken) {
-        if (decodedToken.getNotBefore() == null) {
-            throw new JwtException("Token not before time is null");
-        }
         return !decodedToken.getNotBefore().isAfter(Instant.now());
     }
 
     private boolean isTokenExpired(Jwt decodedToken) {
-        if (decodedToken.getExpiresAt() == null) {
-            throw new JwtException("Token expiry is null");
-        }
         return decodedToken.getExpiresAt().isBefore(Instant.now());
     }
 }
