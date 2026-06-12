@@ -50,9 +50,9 @@ public record JdbcDataStreamer(JdbcOperations jdbc, int csvBufferFlushFrequency)
 
         var sql = report.extractFirstQuery().value();
 
-        if (null == sql || sql.isBlank()) {
-            log.error("Attempted to execute null/empty SQL query");
-            throw new IllegalArgumentException("SQL query must not be null or empty");
+        if (sql.isBlank()) {
+            log.error("Attempted to execute empty SQL query");
+            throw new IllegalArgumentException("SQL query must not be empty");
         }
 
         Map<String, String> row = new LinkedHashMap<>();
