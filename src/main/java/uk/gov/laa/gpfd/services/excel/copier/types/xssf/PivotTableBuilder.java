@@ -54,8 +54,7 @@ public class PivotTableBuilder implements PivotTableRefresher {
      * @throws IllegalArgumentException if any parameter is null
      */
     public static PivotTableBuilder create(XSSFWorkbook sourceWorkbook, XSSFWorkbook targetWorkbook,
-                                           XSSFSheet sourceSheet, XSSFSheet targetSheet,
-                                           XSSFPivotTable sourcePivotTable) {
+                                           XSSFSheet targetSheet, XSSFPivotTable sourcePivotTable) {
         return new PivotTableBuilder(sourceWorkbook, targetWorkbook, targetSheet, sourcePivotTable);
     }
 
