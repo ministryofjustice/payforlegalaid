@@ -40,7 +40,7 @@ public class UcpMetricsBinder implements MeterBinder {
         Gauge.builder("ucp.connections.available", dataSource, poolDataSource -> {
                     try {
                         return poolDataSource.getAvailableConnectionsCount();
-                    } catch (SQLException e) {
+                    } catch (SQLException _) {
                         return Double.NaN;
                     }
                 })
@@ -51,7 +51,7 @@ public class UcpMetricsBinder implements MeterBinder {
         Gauge.builder("ucp.connections.borrowed", dataSource, poolDataSource -> {
                     try {
                         return poolDataSource.getBorrowedConnectionsCount();
-                    } catch (SQLException e) {
+                    } catch (SQLException _) {
                         return Double.NaN;
                     }
                 })
@@ -106,7 +106,7 @@ public class UcpMetricsBinder implements MeterBinder {
                                 var active = poolDataSource.getBorrowedConnectionsCount();
                                 var max = poolDataSource.getMaxPoolSize();
                                 return max == 0 ? Double.NaN : (double) active / max;
-                            } catch (SQLException e) {
+                            } catch (SQLException _) {
                                 return Double.NaN;
                             }
                         })
