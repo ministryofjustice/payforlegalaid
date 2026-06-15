@@ -10,11 +10,14 @@ runs:
         ROLE: ${{ env.ROLE }}
         AWS_REGION: ${{ env.AWS_REGION }}
 
-    - name: Checkout GitHub repository
+#    - name: Checkout GitHub repository
+#      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+#      with:
+#        repository: ministryofjustice/payforlegalaid-tests
+#        path: testCode
+
+    - name: Checkout repository
       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      with:
-        repository: ministryofjustice/payforlegalaid-tests
-        path: testCode
 
     - name: Setup Java
       uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
@@ -29,10 +32,10 @@ runs:
       with:
         subfolder: 'testCode'
 
-    - name: Checkout source code repo
-      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      with:
-        path: sourceCode
+#    - name: Checkout source code repo
+#      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+#      with:
+#        path: sourceCode
 
     - name: Get necessary templates from S3
       env:
@@ -43,10 +46,9 @@ runs:
       shell:
         bash
 
-    - name: Build source code
+    - name: Build codebase
 #     Uses cached dependencies from build-and-test action
       run: |
-        cd sourceCode
         mvn -B install -DskipTests
       shell:
         bash
@@ -55,7 +57,7 @@ runs:
       run: |
         set -euo pipefail
                 
-        APP_VERSION=$(cd sourceCode && mvn help:evaluate \
+        APP_VERSION=$(mvn help:evaluate \
           -Dexpression=project.version \
           -q \
           -DforceStdout) || {
