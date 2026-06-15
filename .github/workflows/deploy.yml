@@ -5,10 +5,78 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      deploy_scope:
+        description: >-
+          For feature branches / ad-hoc deploys (merges to main do not auto-deploy except release-please).
+          dev — development only.
+          dev-uat — development then UAT (UAT requires approval).
+          uat — UAT only (does not deploy dev first).
+          all — development, UAT, then prod.
+        type: choice
+        required: true
+        default: dev
+        options:
+          - dev
+          - dev-uat
+          - uat
+          - all
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
+  release_check:
+    name: Determine deployment path
+    runs-on: ubuntu-latest
+    outputs:
+      is_release_merge: ${{ steps.check.outputs.is_release_merge }}
+
+    steps:
+      - id: check
+        name: Check if deployment is a release merge
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          is_release=false
+
+          if [[ "$EVENT_NAME" == "push" ]]; then
+            msg="${COMMIT_MSG:-}"
+
+            if [[ -n "$msg" ]] && [[ "$msg" == chore\(main\):\ release* ]]; then
+              is_release=true
+            fi
+          fi
+
+          echo "is_release_merge=$is_release" >> "$GITHUB_OUTPUT"
+
+      - name: Deployment summary
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          DEPLOY_SCOPE: ${{ inputs.deploy_scope }}
+          IS_RELEASE: ${{ steps.check.outputs.is_release_merge }}
+        run: |
+          echo "## Deployment Plan" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          echo "- Event: $EVENT_NAME" >> $GITHUB_STEP_SUMMARY
+
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            echo "- Scope: $DEPLOY_SCOPE" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "- Release merge: $IS_RELEASE" >> $GITHUB_STEP_SUMMARY
+
   To_Dev:
     name: Deploy to dev
+    needs: release_check
+    if: >-
+      github.event_name == 'push'
+      || inputs.deploy_scope == 'dev'
+      || inputs.deploy_scope == 'dev-uat'
+      || inputs.deploy_scope == 'all'
     uses: ./.github/workflows/deploy_api_to_env.yml
     with:
       github_environment: development
@@ -28,7 +96,14 @@ jobs:
 
   To_Uat:
     name: Deploy to UAT
-    needs: To_Dev
+    needs: [release_check, To_Dev]
+    if: >-
+      always()
+      && (needs.To_Dev.result == 'success' || needs.To_Dev.result == 'skipped')
+      && ((github.event_name == 'push' && needs.release_check.outputs.is_release_merge == 'true')
+        || inputs.deploy_scope == 'uat'
+        || inputs.deploy_scope == 'dev-uat'
+        || inputs.deploy_scope == 'all')
     uses: ./.github/workflows/deploy_api_to_env.yml
     with:
       github_environment: uat
@@ -48,7 +123,12 @@ jobs:
 
   To_Prod:
     name: Deploy to prod
-    needs: To_Uat
+    needs: [release_check, To_Uat]
+    if: >-
+      always()
+      && needs.To_Uat.result == 'success'
+      && ((github.event_name == 'push' && needs.release_check.outputs.is_release_merge == 'true')
+        || inputs.deploy_scope == 'all')
     uses: ./.github/workflows/deploy_api_to_env.yml
     with:
       github_environment: prod
