@@ -17,7 +17,7 @@ runs:
     - name: Build dependency
       run: |
         cd spec
-        mvn clean install
+        mvn clean install -U
       shell:
         bash
 

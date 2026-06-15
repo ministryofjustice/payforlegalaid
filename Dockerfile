@@ -5,7 +5,7 @@ FROM maven:3.9.13-amazoncorretto-25-alpine AS dependency-builder
 
 # We pass in a branch ref, but default to main
 ARG REPO_REF=main
-ARG REPO_REF_OPEN_API=v0.0.32
+ARG REPO_REF_OPEN_API=v0.0.36
 
 WORKDIR /build-deps
 
@@ -53,7 +53,7 @@ WORKDIR /build-deps/payforlegalaid-openapi
 RUN mkdir -p /home/builder/.m2 && \
     mkdir -p /home/builder/.m2/repository && \
     chmod -R 775 /home/builder/.m2 && \
-    mvn clean install -DfinalName=payforlegalaid-openapi-0.0.32 \
+    mvn clean install -DfinalName=payforlegalaid-openapi-0.0.36 \
     -DskipTests \
     -Dmaven.artifact.threads=5
 
