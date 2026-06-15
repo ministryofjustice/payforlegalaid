@@ -1,10 +1,8 @@
 package uk.gov.laa.gpfd.services.excel.workbook;
 
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.OoxmlSheetExtensions;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 import java.io.IOException;
@@ -19,7 +17,7 @@ import java.util.TreeMap;
  * the standard {@link SXSSFSheet}, particularly for memory-constrained environments where
  * precise control over row retention is required.</p>
  */
-public class ReportSXSSFSheet extends SXSSFSheet implements Sheet, OoxmlSheetExtensions {
+public class ReportSXSSFSheet extends SXSSFSheet {
 
     /**
      * Cached reflection field for the rows TreeMap field.

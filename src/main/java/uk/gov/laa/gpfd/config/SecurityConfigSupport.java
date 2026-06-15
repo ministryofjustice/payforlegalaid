@@ -35,12 +35,16 @@ public final class SecurityConfigSupport {
         throw new UnsupportedOperationException("Utility class");
     }
 
-    public static SecurityFilterChain createStaticChain(HttpSecurity http) throws Exception {
+    public static SecurityFilterChain createStaticChain(HttpSecurity http) {
         http.securityMatcher("/govuk/**", "/moj/**", "/css/**", "/js/**", "/images/**")
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                 .headers(HeadersConfigurer::disable);
 
-        return http.build();
+        try {
+            return http.build();
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to build static security filter chain", e);
+        }
     }
 
     public static HttpSecurity applyCsrfConfig(HttpSecurity http,

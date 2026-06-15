@@ -1,5 +1,6 @@
 package uk.gov.laa.gpfd.services;
 
+import java.util.Locale;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -100,7 +101,7 @@ public record ReportManagementService(
 
         if (!actualExtension.equalsIgnoreCase(requestedExtension)) {
             log.warn("Format mismatch for report {}: requested={}, actual={}", id, requestedExtension, actualExtension);
-            throw new InvalidReportFormatException(id, requestedExtension.toUpperCase(), actualExtension.toUpperCase());
+            throw new InvalidReportFormatException(id, requestedExtension.toUpperCase(Locale.ROOT), actualExtension.toUpperCase(Locale.ROOT));
         }
 
         log.debug("Report format validation passed for ID {}", id);

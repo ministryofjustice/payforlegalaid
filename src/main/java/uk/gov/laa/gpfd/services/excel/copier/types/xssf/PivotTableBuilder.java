@@ -22,7 +22,6 @@ import uk.gov.laa.gpfd.services.excel.editor.PivotTableRefresher;
 public class PivotTableBuilder implements PivotTableRefresher {
     private final XSSFWorkbook sourceWorkbook;
     private final XSSFWorkbook targetWorkbook;
-    private final XSSFSheet sourceSheet;
     private final XSSFSheet targetSheet;
     private final XSSFPivotTable sourcePivotTable;
     private PivotTableFactory factory = PivotTableFactory.defaultFactory();
@@ -42,7 +41,6 @@ public class PivotTableBuilder implements PivotTableRefresher {
                               XSSFPivotTable sourcePivotTable) {
         this.sourceWorkbook = sourceWorkbook;
         this.targetWorkbook = targetWorkbook;
-        this.sourceSheet = sourceSheet;
         this.targetSheet = targetSheet;
         this.sourcePivotTable = sourcePivotTable;
     }

@@ -76,17 +76,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 throw new JwtException(errorMessages.get(JwtTokenComponents.APPLICATION_ID_KEY.value));
             }
 
-            if (decodedToken.getExpiresAt() == null) {
+            Instant expiresAt = decodedToken.getExpiresAt();
+            if (expiresAt == null) {
                 throw new JwtException("Token expiry is null");
             }
-            if (isTokenExpired(decodedToken)) {
+            if (isTokenExpired(expiresAt)) {
                 throw new JwtException(errorMessages.get(JwtClaimNames.EXP));
             }
 
-            if (decodedToken.getNotBefore() == null) {
+            Instant notBefore = decodedToken.getNotBefore();
+            if (notBefore == null) {
                 throw new JwtException("Token not before time is null");
             }
-            if (!isTokenValidForCurrentTime(decodedToken)) {
+            if (!isTokenValidForCurrentTime(notBefore)) {
                 throw new JwtException(errorMessages.get(JwtClaimNames.NBF));
             }
 
@@ -129,11 +131,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return token;
     }
 
-    private boolean isTokenValidForCurrentTime(Jwt decodedToken) {
-        return !decodedToken.getNotBefore().isAfter(Instant.now());
+    private boolean isTokenValidForCurrentTime(Instant notBefore) {
+        return !notBefore.isAfter(Instant.now());
     }
 
-    private boolean isTokenExpired(Jwt decodedToken) {
-        return decodedToken.getExpiresAt().isBefore(Instant.now());
+    private boolean isTokenExpired(Instant expiresAt) {
+        return expiresAt.isBefore(Instant.now());
     }
 }

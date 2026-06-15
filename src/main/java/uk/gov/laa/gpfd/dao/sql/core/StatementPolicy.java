@@ -12,7 +12,7 @@ import static java.sql.ResultSet.TYPE_FORWARD_ONLY;
 /**
  * A composite policy class that combines both statement creation and configuration.
  */
-public class StatementPolicy {
+public final class StatementPolicy {
 
     private final int fetchSize;
     private final int timeout;
@@ -73,4 +73,3 @@ public class StatementPolicy {
         ps.setQueryTimeout(timeout);
     }
 }
-
