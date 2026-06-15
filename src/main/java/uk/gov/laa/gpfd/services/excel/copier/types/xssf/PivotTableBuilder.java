@@ -32,13 +32,11 @@ public class PivotTableBuilder implements PivotTableRefresher {
      *
      * @param sourceWorkbook the source workbook containing the original pivot table
      * @param targetWorkbook the target workbook where the new pivot table will be created
-     * @param sourceSheet the source worksheet containing the original pivot table
      * @param targetSheet the target worksheet where the new pivot table will be placed
      * @param sourcePivotTable the source pivot table to copy
      */
     private PivotTableBuilder(XSSFWorkbook sourceWorkbook, XSSFWorkbook targetWorkbook,
-                              XSSFSheet sourceSheet, XSSFSheet targetSheet,
-                              XSSFPivotTable sourcePivotTable) {
+                              XSSFSheet targetSheet, XSSFPivotTable sourcePivotTable) {
         this.sourceWorkbook = sourceWorkbook;
         this.targetWorkbook = targetWorkbook;
         this.targetSheet = targetSheet;
@@ -50,7 +48,6 @@ public class PivotTableBuilder implements PivotTableRefresher {
      *
      * @param sourceWorkbook the source workbook (must not be null)
      * @param targetWorkbook the target workbook (must not be null)
-     * @param sourceSheet the source worksheet (must not be null)
      * @param targetSheet the target worksheet (must not be null)
      * @param sourcePivotTable the source pivot table to copy (must not be null)
      * @return a new PivotTableBuilder instance
@@ -59,7 +56,7 @@ public class PivotTableBuilder implements PivotTableRefresher {
     public static PivotTableBuilder create(XSSFWorkbook sourceWorkbook, XSSFWorkbook targetWorkbook,
                                            XSSFSheet sourceSheet, XSSFSheet targetSheet,
                                            XSSFPivotTable sourcePivotTable) {
-        return new PivotTableBuilder(sourceWorkbook, targetWorkbook, sourceSheet, targetSheet, sourcePivotTable);
+        return new PivotTableBuilder(sourceWorkbook, targetWorkbook, targetSheet, sourcePivotTable);
     }
 
     /**
