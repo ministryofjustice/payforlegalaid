@@ -10,14 +10,8 @@ runs:
         ROLE: ${{ env.ROLE }}
         AWS_REGION: ${{ env.AWS_REGION }}
 
-#    - name: Checkout GitHub repository
-#      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-#      with:
-#        repository: ministryofjustice/payforlegalaid-tests
-#        path: testCode
-
     - name: Checkout repository
-      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
     - name: Setup Java
       uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
@@ -29,53 +23,34 @@ runs:
     - name: Checkout and build openapi
       uses: './.github/checkout-build-openapi'
       id: get_openapi_version
-      with:
-        subfolder: 'testCode'
-
-#    - name: Checkout source code repo
-#      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-#      with:
-#        path: sourceCode
 
     - name: Get necessary templates from S3
       env:
         S3_BUCKET: ${{ env.S3_BUCKET }}
-#      If in future we add reports without adding an AT, we could filter this to just ones needed in a test
       run: |
-        aws s3 sync s3://${S3_BUCKET}/templates sourceCode/src/main/resources
-      shell:
-        bash
+        aws s3 sync s3://${S3_BUCKET}/templates src/main/resources
+      shell: bash
 
-    - name: Build codebase
-#     Uses cached dependencies from build-and-test action
+    - name: Resolve application version
       run: |
-        mvn -B install -DskipTests
-      shell:
-        bash
-
-    - name: Run tests
-      run: |
-        set -euo pipefail
-                
         APP_VERSION=$(mvn help:evaluate \
           -Dexpression=project.version \
           -q \
-          -DforceStdout) || {
-            echo "ERROR: Maven version lookup failed"
-            exit 1
-        }
-        
+          -DforceStdout)
+
         if [[ -z "${APP_VERSION// }" ]]; then
           echo "ERROR: Failed to resolve APP_VERSION"
           exit 1
         fi
-        
+
+        echo "APP_VERSION=${APP_VERSION}" >> "$GITHUB_ENV"
         echo "Using APP_VERSION=${APP_VERSION}"
-        
-        cd testCode
-        
+      shell: bash
+
+    - name: Run acceptance tests
+      run: |
         mvn -B clean test \
+          -Dtest=RunCucumberTest \
           -Dpay-for-legal-aid.version="${APP_VERSION}" \
           -Dcucumber.filter.tags="not @performance"
-      shell:
-        bash
+      shell: bash

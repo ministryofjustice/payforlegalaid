@@ -69,6 +69,9 @@
                         <include>**/*Test.java</include>
                         <include>**/*IT.java</include>
                     </includes>
+                    <excludes>
+                        <exclude>**/RunCucumberTest.java</exclude>
+                    </excludes>
                     <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
                     <systemPropertyVariables>
                         <cucumber.publish.quiet>true</cucumber.publish.quiet>
