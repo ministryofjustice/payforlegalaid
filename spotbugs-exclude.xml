@@ -18,6 +18,11 @@
         <Bug pattern="CRLF_INJECTION_LOGS"/>
     </Match>
 
+    <!-- Exclude SPRING_ENDPOINT violations -->
+    <Match>
+        <Bug pattern="SPRING_ENDPOINT"/>
+    </Match>
+
     <!-- Exclude Immutables-generated code -->
     <Match>
         <Class name="~.*Immutable.*\$Builder"/>

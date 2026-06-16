@@ -3,6 +3,7 @@ package uk.gov.laa.gpfd.services;
 import java.util.Locale;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.internal.annotation.SuppressFBWarnings;
 import org.springframework.stereotype.Service;
 import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
@@ -87,6 +88,10 @@ public record ReportManagementService(
      * @throws InvalidReportFormatException if the report's format doesn't match the requested format
      * @throws DatabaseReadException if there is an error fetching data from the database
      */
+    @SuppressFBWarnings(
+            value = "SECUNI",
+            justification = "File extensions are ASCII-only enum values; locale-sensitive case mapping cannot affect this comparison"
+    )
     public void validateReportFormat(UUID id, FileExtension requestedFormat) {
         log.debug("Validating report format for ID {} with requested format {}", id, requestedFormat);
 

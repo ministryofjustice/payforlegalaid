@@ -1,5 +1,6 @@
 package uk.gov.laa.gpfd.dao.sql.core;
 
+import org.apache.logging.log4j.internal.annotation.SuppressFBWarnings;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 
 import java.sql.Connection;
@@ -53,6 +54,10 @@ public final class StatementPolicy {
         };
     }
 
+    @SuppressFBWarnings(
+            value = "SECSQLIJDBC",
+            justification = "SQL originates from admin-controlled configuration, not user input; prepareStatement is used as a parameterised API with no string concatenation of external data"
+    )
     private PreparedStatement createStatement(Connection conn, String sql) throws SQLException {
         if (conn == null) {
             throw new IllegalArgumentException("Connection cannot be null");

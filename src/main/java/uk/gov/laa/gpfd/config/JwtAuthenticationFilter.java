@@ -5,6 +5,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.internal.annotation.SuppressFBWarnings;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimNames;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -13,6 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.Locale;
 import java.util.Map;
 
 import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
@@ -37,13 +40,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.appConfig = appConfig;
     }
 
+    @SuppressFBWarnings(
+            value = "SECSH",
+            justification = "Token header is user-supplied by design as a JWT bearer token; it is hashed before logging and structurally validated before decode"
+    )
     @Override
-    public void doFilterInternal(HttpServletRequest servletRequest, HttpServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilterInternal(HttpServletRequest servletRequest, @NonNull HttpServletResponse servletResponse, @NonNull FilterChain filterChain) throws IOException, ServletException {
         var token = servletRequest.getHeader(JwtTokenComponents.HEADER_TYPE.value);
 
         if (token != null && !token.isEmpty()) {
             String logIdentifier = sha256Hex(token).substring(0, TOKEN_ID_LENGTH);
-            log.info("Token " + logIdentifier + " - token received, attempting validation");
+            log.info("Token {} - token received, attempting validation", logIdentifier);
             validateJwt(token, logIdentifier);
         }
 
@@ -105,6 +112,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
+    @SuppressFBWarnings(
+            value = "SECUNI",
+            justification = "TOKEN_PREFIX contains only ASCII characters; locale-sensitive case folding cannot affect this comparison"
+    )
     private String extractJwtToken(String token) {
         final String INVALID_JWT_ERROR_MESSAGE = "Token is not a valid JWT";
 
