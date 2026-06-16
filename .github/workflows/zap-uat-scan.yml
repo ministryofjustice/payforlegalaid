@@ -33,7 +33,7 @@ jobs:
             -z "-config authentication.method=form"
             -z "-config authentication.form.username=${{ secrets.ZAP_USERNAME }}"
             -z "-config authentication.form.password=${{ secrets.ZAP_PASSWORD }}"
-            -z "-config authentication.form.login_url=https://login.microsoftonline.com/ff260a8b-cb92-4cfe-8ae9-d48bb0fd9851/oauth2/v2.0/authorize"
+            -z "-config authentication.form.login_url=https://login.microsoftonline.com/ff260a8b-cb92-4cfe-8ae9-d48bb0fd9851/oauth2/v2.0/authorize?response_type=code&client_id=22e33dd8-7c25-48bb-8047-6d9c08cb5c60&scope=openid%20profile%20offline_access%20https://graph.microsoft.com/User.Read&state=CxIwRF-wOu1rdKrPOkXUQS6Cm2xJuEmaS7wZNuhLfVM%3D&redirect_uri=https://uat-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk/login/oauth2/code/gpfd-azure-uat&nonce=K2jLRHGJwHYcANI3-CL_HmCLw1sGLNs4QDthPoyEDzU&code_challenge=L-48TILcLnmnIml3Mwt46_cxZQMJHwr6fIEzsfuokPY&code_challenge_method=S256&sso_reload=true"
             -z "-config authentication.form.username_field=email"
             -z "-config authentication.form.password_field=password"
 
