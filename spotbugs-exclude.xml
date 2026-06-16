@@ -13,6 +13,11 @@
         <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
     </Match>
 
+    <!-- Exclude CRLF_INJECTION_LOGS violations -->
+    <Match>
+        <Bug pattern="CRLF_INJECTION_LOGS"/>
+    </Match>
+
     <!-- Exclude Immutables-generated code -->
     <Match>
         <Class name="~.*Immutable.*\$Builder"/>

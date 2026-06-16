@@ -30,7 +30,7 @@ class PivotTableBuilderTest {
                     new AreaReference("'Source'!A1:A1", workbook.getSpreadsheetVersion()),
                     new CellReference(0, 0));
 
-            var builder = PivotTableBuilder.create(workbook, workbook, sourceSheet, targetSheet, sourcePivotTable);
+            var builder = PivotTableBuilder.create(workbook, workbook, targetSheet, sourcePivotTable);
             assertSame(PivotTableBuilder.class, builder.getClass());
         }
     }
@@ -56,7 +56,7 @@ class PivotTableBuilderTest {
             var configurator = new PivotTableConfigurator.CompositeConfigurator();
             configurator.addConfigurator(new PivotTableConfigurator.CustomStyleConfigurator("TestStyle"));
 
-            var builder = PivotTableBuilder.create(workbook, workbook, sourceSheet, targetSheet, sourcePivotTable)
+            var builder = PivotTableBuilder.create(workbook, workbook, targetSheet, sourcePivotTable)
                     .withFactory(factory)
                     .withConfigurator(configurator);
 
