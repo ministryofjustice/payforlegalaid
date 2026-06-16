@@ -274,4 +274,46 @@ class RequestLogUtilsTest {
 
         assertEquals("invalid", RequestLogUtils.extractTraceId(request));
     }
+
+    @Test
+    void shouldPutUserIdInMdcWhenAuthenticated() {
+        Authentication authentication = mock(Authentication.class);
+
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authentication.getPrincipal()).thenReturn("user123");
+
+        SecurityContext context = mock(SecurityContext.class);
+        when(context.getAuthentication()).thenReturn(authentication);
+
+        SecurityContextHolder.setContext(context);
+
+        RequestLogUtils.putUserIdContext();
+
+        String expectedUserId = UUID.nameUUIDFromBytes("user123".getBytes()).toString();
+        assertEquals(expectedUserId, MDC.get(RequestLogUtils.USER_ID));
+    }
+
+    @Test
+    void shouldNotPutUserIdInMdcWhenNotAuthenticated() {
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.isAuthenticated()).thenReturn(false);
+
+        SecurityContext context = mock(SecurityContext.class);
+        when(context.getAuthentication()).thenReturn(authentication);
+
+        SecurityContextHolder.setContext(context);
+
+        RequestLogUtils.putUserIdContext();
+
+        assertNull(MDC.get(RequestLogUtils.USER_ID));
+    }
+
+    @Test
+    void shouldNotPutUserIdInMdcWhenNoAuthentication() {
+        SecurityContextHolder.clearContext();
+
+        RequestLogUtils.putUserIdContext();
+
+        assertNull(MDC.get(RequestLogUtils.USER_ID));
+    }
 }
