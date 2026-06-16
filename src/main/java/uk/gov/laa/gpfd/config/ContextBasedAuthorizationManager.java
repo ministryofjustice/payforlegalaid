@@ -29,6 +29,7 @@ public class ContextBasedAuthorizationManager implements AuthorizationManager<Re
                     .addKeyValue(RequestLogUtils.EVENT_ACTION, "authorization.check")
                     .addKeyValue(RequestLogUtils.EVENT_OUTCOME, "failure")
                     .addKeyValue(RequestLogUtils.REQUEST_ID, MDC.get(RequestLogUtils.REQUEST_ID))
+                    .addKeyValue(RequestLogUtils.TRACE_ID, MDC.get(RequestLogUtils.TRACE_ID))
                     .addKeyValue(RequestLogUtils.USER_ID, RequestLogUtils.extractUserId(authentication))
                     .log("Unauthenticated access attempt");
             return new AuthorizationDecision(false);
@@ -42,6 +43,7 @@ public class ContextBasedAuthorizationManager implements AuthorizationManager<Re
                 .addKeyValue(RequestLogUtils.EVENT_ACTION, "authorization.check")
                 .addKeyValue(RequestLogUtils.EVENT_OUTCOME, decision.isGranted() ? "success" : "failure")
                 .addKeyValue(RequestLogUtils.REQUEST_ID, MDC.get(RequestLogUtils.REQUEST_ID))
+                .addKeyValue(RequestLogUtils.TRACE_ID, MDC.get(RequestLogUtils.TRACE_ID))
                 .addKeyValue(RequestLogUtils.USER_ID, RequestLogUtils.extractUserId(authentication))
                 .log("Authorization decision: {}", decision.isGranted());
         return decision;
