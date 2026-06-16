@@ -35,9 +35,6 @@ public class RequestResponseInterceptor implements HandlerInterceptor {
                     .setCause(ex)
                     .addKeyValue(RequestLogUtils.EVENT_ACTION, "http.exception")
                     .addKeyValue(RequestLogUtils.EVENT_OUTCOME, "failure")
-                    .addKeyValue(RequestLogUtils.REQUEST_ID, MDC.get(RequestLogUtils.REQUEST_ID))
-                    .addKeyValue(RequestLogUtils.TRACE_ID, MDC.get(RequestLogUtils.TRACE_ID))
-                    .addKeyValue(RequestLogUtils.USER_ID, RequestLogUtils.extractUserIdFromSecurityContext())
                     .log("Exception occurred during request processing");
         }
     }
@@ -46,9 +43,6 @@ public class RequestResponseInterceptor implements HandlerInterceptor {
         LoggingEventBuilder logBuilder = log.atInfo()
                 .addKeyValue(RequestLogUtils.EVENT_ACTION, "http.request")
                 .addKeyValue("event.type", "web")
-                .addKeyValue(RequestLogUtils.REQUEST_ID, MDC.get(RequestLogUtils.REQUEST_ID))
-                .addKeyValue(RequestLogUtils.TRACE_ID, MDC.get(RequestLogUtils.TRACE_ID))
-                .addKeyValue(RequestLogUtils.USER_ID, RequestLogUtils.extractUserIdFromSecurityContext())
                 .addKeyValue("method", sanitise(request.getMethod()))
                 .addKeyValue("uri", sanitise(request.getRequestURI()));
 
@@ -64,9 +58,6 @@ public class RequestResponseInterceptor implements HandlerInterceptor {
                 .addKeyValue(RequestLogUtils.EVENT_ACTION, "http.response")
                 .addKeyValue("event.type", "web")
                 .addKeyValue(RequestLogUtils.EVENT_OUTCOME, response.getStatus() >= 400 ? "failure" : "success")
-                .addKeyValue(RequestLogUtils.REQUEST_ID, MDC.get(RequestLogUtils.REQUEST_ID))
-                .addKeyValue(RequestLogUtils.TRACE_ID, MDC.get(RequestLogUtils.TRACE_ID))
-                .addKeyValue(RequestLogUtils.USER_ID, RequestLogUtils.extractUserIdFromSecurityContext())
                 .addKeyValue("uri", sanitise(request.getRequestURI()))
                 .addKeyValue("status", response.getStatus());
 

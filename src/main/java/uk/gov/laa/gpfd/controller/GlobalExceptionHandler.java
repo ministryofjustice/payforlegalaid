@@ -241,8 +241,6 @@ public class GlobalExceptionHandler {
         log.atError()
                 .addKeyValue(RequestLogUtils.EVENT_ACTION, "s3.download.failure")
                 .addKeyValue(RequestLogUtils.EVENT_OUTCOME, "failure")
-                .addKeyValue(RequestLogUtils.REQUEST_ID, MDC.get(RequestLogUtils.REQUEST_ID))
-                .addKeyValue(RequestLogUtils.USER_ID, RequestLogUtils.extractUserIdFromSecurityContext())
                 .log("AwsServiceException ({}) Thrown: {}", e.getClass().getSimpleName(), e.awsErrorDetails().toString());
 
         return internalServerError().body(errorResponse);
@@ -352,8 +350,6 @@ public class GlobalExceptionHandler {
         log.atError()
                 .addKeyValue(RequestLogUtils.EVENT_ACTION, "authorization.denied")
                 .addKeyValue(RequestLogUtils.EVENT_OUTCOME, "failure")
-                .addKeyValue(RequestLogUtils.REQUEST_ID, MDC.get(RequestLogUtils.REQUEST_ID))
-                .addKeyValue(RequestLogUtils.USER_ID, RequestLogUtils.extractUserIdFromSecurityContext())
                 .log("ReportAccessException Thrown: User tried to access report {} but lacks the relevant permission(s)", e.getReportId());
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
