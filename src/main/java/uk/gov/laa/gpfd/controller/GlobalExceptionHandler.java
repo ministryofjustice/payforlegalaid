@@ -239,7 +239,7 @@ public class GlobalExceptionHandler {
         errorResponse.setError(message);
 
         log.atError()
-                .addKeyValue(RequestLogUtils.EVENT_ACTION, "s3.upload.failure")
+                .addKeyValue(RequestLogUtils.EVENT_ACTION, "s3.download.failure")
                 .addKeyValue(RequestLogUtils.EVENT_OUTCOME, "failure")
                 .addKeyValue(RequestLogUtils.REQUEST_ID, MDC.get(RequestLogUtils.REQUEST_ID))
                 .addKeyValue(RequestLogUtils.USER_ID, RequestLogUtils.extractUserIdFromSecurityContext())
