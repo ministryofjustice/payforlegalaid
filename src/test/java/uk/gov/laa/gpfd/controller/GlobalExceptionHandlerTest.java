@@ -1,10 +1,18 @@
 package uk.gov.laa.gpfd.controller;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import software.amazon.awssdk.awscore.exception.AwsErrorDetails;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import tools.jackson.core.exc.JacksonIOException;
@@ -17,14 +25,16 @@ import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.AuthenticationIsN
 import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.PrincipalIsNullException;
 import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.UnexpectedAuthClassException;
 import uk.gov.laa.gpfd.exception.FileDownloadException.S3BucketHasNoCopiesOfReportException;
+import uk.gov.laa.gpfd.utils.RequestLogUtils;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Stream.of;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -38,6 +48,35 @@ import static uk.gov.laa.gpfd.exception.DatabaseReadException.SqlFormatException
 class GlobalExceptionHandlerTest {
 
     private static final GlobalExceptionHandler globalExceptionHandler = new GlobalExceptionHandler();
+    private ListAppender<ILoggingEvent> appender;
+
+    @AfterEach
+    void tearDown() {
+        MDC.clear();
+        if (appender != null) {
+            appender.stop();
+        }
+    }
+
+    private ListAppender<ILoggingEvent> createListAppender() {
+        Logger logger = (Logger) LoggerFactory.getLogger(GlobalExceptionHandler.class);
+        LoggerContext loggerContext = logger.getLoggerContext();
+
+        ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
+        listAppender.setContext(loggerContext);
+        listAppender.start();
+
+        logger.addAppender(listAppender);
+        logger.setLevel(Level.ERROR);
+        logger.setAdditive(false);
+
+        return listAppender;
+    }
+
+    private Map<String, String> extractKeyValuePairs(ILoggingEvent event) {
+        return event.getKeyValuePairs().stream()
+                .collect(Collectors.toMap(kv -> kv.key, kv -> String.valueOf(kv.value)));
+    }
 
     @Test
     void shouldHandleDatabaseFetchExceptionWithLongMessage() {
@@ -105,7 +144,6 @@ class GlobalExceptionHandlerTest {
         assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertEquals(messageToTest, response.getBody().getError());
     }
-
 
     @ParameterizedTest
     @MethodSource("templateExceptionProvider")
@@ -177,7 +215,7 @@ class GlobalExceptionHandlerTest {
     @ParameterizedTest
     @ValueSource(strings = {"Index out of bounds",
             "Custom error message",
-        "","Error: \n---\n|   |\n---"})
+            "", "Error: \n---\n|   |\n---"})
     void shouldHandleIndexOutOfBoundsException(String messageToTest) {
         // Given
         var exception = new IndexOutOfBoundsException(messageToTest);
@@ -297,7 +335,6 @@ class GlobalExceptionHandlerTest {
         assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertEquals("Metadata is null",
                 response.getBody().getError());
-
     }
 
     @Test
@@ -309,7 +346,6 @@ class GlobalExceptionHandlerTest {
         assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertEquals("File creation error",
                 response.getBody().getError());
-
     }
 
     @Test
@@ -335,4 +371,64 @@ class GlobalExceptionHandlerTest {
                 response.getBody().getError());
     }
 
+    @Test
+    void shouldLogAwsErrorWithCorrectStructure() {
+        MDC.put(RequestLogUtils.REQUEST_ID, "test-request-id");
+        MDC.put(RequestLogUtils.TRACE_ID, "test-trace-id");
+        MDC.put(RequestLogUtils.USER_ID, "test-user-id");
+
+        var exception = NoSuchKeyException.builder()
+                .message("File don't exist")
+                .awsErrorDetails(AwsErrorDetails.builder().errorCode("312").errorMessage("uh oh").build())
+                .build();
+
+        appender = createListAppender();
+        globalExceptionHandler.handleAWSErrors(exception);
+
+        assertFalse(appender.list.isEmpty(), "Expected at least one log event from handleAWSErrors");
+
+        ILoggingEvent loggingEvent = appender.list.get(0);
+        Map<String, String> keyValuePairs = extractKeyValuePairs(loggingEvent);
+
+        assertEquals("s3.download.failure", keyValuePairs.get(RequestLogUtils.EVENT_ACTION));
+        assertEquals("failure", keyValuePairs.get(RequestLogUtils.EVENT_OUTCOME));
+    }
+
+    @Test
+    void shouldLogReportAccessExceptionWithCorrectStructure() {
+        MDC.put(RequestLogUtils.REQUEST_ID, "test-request-id");
+        MDC.put(RequestLogUtils.TRACE_ID, "test-trace-id");
+        MDC.put(RequestLogUtils.USER_ID, "test-user-id");
+
+        var reportId = UUID.randomUUID();
+        var exception = new ReportAccessException(reportId);
+
+        appender = createListAppender();
+        globalExceptionHandler.handleReportAccessException(exception);
+
+        assertFalse(appender.list.isEmpty(), "Expected at least one log event from handleReportAccessException");
+
+        ILoggingEvent loggingEvent = appender.list.get(0);
+        Map<String, String> keyValuePairs = extractKeyValuePairs(loggingEvent);
+
+        assertEquals("authorization.denied", keyValuePairs.get(RequestLogUtils.EVENT_ACTION));
+        assertEquals("failure", keyValuePairs.get(RequestLogUtils.EVENT_OUTCOME));
+    }
+
+    @Test
+    void shouldProduceExactlyOneLogEventPerHandlerCall() {
+        MDC.put(RequestLogUtils.REQUEST_ID, "test-request-id");
+        MDC.put(RequestLogUtils.TRACE_ID, "test-trace-id");
+
+        var exception = NoSuchKeyException.builder()
+                .message("File don't exist")
+                .awsErrorDetails(AwsErrorDetails.builder().errorCode("312").errorMessage("uh oh").build())
+                .build();
+
+        appender = createListAppender();
+        globalExceptionHandler.handleAWSErrors(exception);
+
+        assertEquals(1, appender.list.size(),
+                "Expected exactly one log event per handler call — duplicate MDC keys or repeated logging would produce more");
+    }
 }
