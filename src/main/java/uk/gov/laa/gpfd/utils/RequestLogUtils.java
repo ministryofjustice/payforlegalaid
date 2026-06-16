@@ -66,6 +66,13 @@ public final class RequestLogUtils {
         }
     }
 
+    public static void putUserIdContext() {
+        String userId = extractUserIdFromSecurityContext();
+        if (userId != null && !userId.isBlank()) {
+            MDC.put(USER_ID, userId);
+        }
+    }
+
     public static void clearContext() {
         MDC.remove(REQUEST_ID);
         MDC.remove(TRACE_ID);
