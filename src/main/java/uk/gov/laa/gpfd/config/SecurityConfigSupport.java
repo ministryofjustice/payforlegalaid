@@ -17,7 +17,6 @@ import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -42,25 +41,18 @@ public final class SecurityConfigSupport {
         return http.build();
     }
 
-    public static HttpSecurity applyCsrfConfig(
-            HttpSecurity http,
-            CookieCsrfTokenRepository csrfTokenRepository,
-            RequestMatcher... ignoredMatchers) {
-
-        XorCsrfTokenRequestAttributeHandler delegate =
-                new XorCsrfTokenRequestAttributeHandler();
+    public static HttpSecurity applyCsrfConfig(HttpSecurity http,
+                                               CookieCsrfTokenRepository csrfTokenRepository) {
+        XorCsrfTokenRequestAttributeHandler delegate = new XorCsrfTokenRequestAttributeHandler();
         delegate.setCsrfRequestAttributeName("_csrf");
-
-        csrfTokenRepository.setCookieCustomizer(cookie -> cookie
-                .secure(true)
-                .httpOnly(true)
-                .path("/")
-        );
 
         return http.csrf(csrf -> csrf
                 .csrfTokenRepository(csrfTokenRepository)
                 .csrfTokenRequestHandler(delegate)
-                .ignoringRequestMatchers(ignoredMatchers)
+                .ignoringRequestMatchers(request ->
+                        request.getRequestURI().equals("/csp-report")
+                                && "POST".equals(request.getMethod())
+                )
         );
     }
 
