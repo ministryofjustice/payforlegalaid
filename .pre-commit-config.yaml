@@ -8,3 +8,11 @@ repos:
     rev: 772d7ffaeee5d611a904cc564a3fe3c7ad927635 #v3.2.0
     hooks:
       - id: conventional-pre-commit
+
+  - repo: local
+    hooks:
+      - id: prevent-duplicate-mdc-keys
+        name: Prevent duplicate MDC keys in structured logging
+        entry: 'addKeyValue\s*\(\s*"[^"]+"\s*,\s*MDC\.get\s*\('
+        language: pygrep
+        files: '\.java$'
