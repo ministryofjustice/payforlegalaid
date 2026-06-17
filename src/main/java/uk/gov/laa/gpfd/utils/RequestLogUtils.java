@@ -13,9 +13,9 @@ import java.util.UUID;
 
 public final class RequestLogUtils {
 
-    public static final String REQUEST_ID = "request_id";
+    public static final String REQUEST_ID = "request.id";
     public static final String TRACE_ID = "trace.id";
-    public static final String USER_ID = "user_id";
+    public static final String USER_ID = "user.id";
     public static final String EVENT_ACTION = "event.action";
     public static final String EVENT_OUTCOME = "event.outcome";
 
