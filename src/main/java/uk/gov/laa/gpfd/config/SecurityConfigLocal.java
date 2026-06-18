@@ -90,11 +90,6 @@ public class SecurityConfigLocal {
                         httpSecurity,
                         csrfTokenRepository
                 )
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers(request ->
-                                request.getRequestURI().startsWith("/h2-console/")
-                        )
-                )
                 .addFilterAfter(SecurityConfigSupport.csrfCookieFilter(), CsrfFilter.class)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
