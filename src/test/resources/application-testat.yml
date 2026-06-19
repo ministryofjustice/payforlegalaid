@@ -1,13 +1,16 @@
+server:
+  port: 8080
+
 gpfd:
-  url: https://localhost:8080
+  url: http://localhost:${local.server.port}
   datasource:
     read-only:
-      url: jdbc:h2:file:~/localGpfdDb;MODE=Oracle
+      jdbc-url: jdbc:h2:file:~/localGpfdDb;MODE=Oracle
       username: sa
       password:
       driver-class-name: org.h2.Driver
     write:
-      url: jdbc:h2:file:~/localGpfdDb;MODE=Oracle
+      jdbc-url: jdbc:h2:file:~/localGpfdDb;MODE=Oracle
       username: sa
       password:
       driver-class-name: org.h2.Driver
