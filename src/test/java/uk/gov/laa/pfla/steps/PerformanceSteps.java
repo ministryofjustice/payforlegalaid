@@ -18,14 +18,11 @@ public class PerformanceSteps {
 
     private final ScenarioContext scenarioContext;
 
-    @Value("${gpfd.url}")
-    private String baseUrl;
-
     private Playwright playwright;
     private BrowserContext context;
     private Page page;
 
-    public PerformanceSteps(ScenarioContext scenarioContext, AuthenticationProvider authenticationProvider) {
+    public PerformanceSteps(ScenarioContext scenarioContext) {
         this.scenarioContext = scenarioContext;
     }
 
@@ -47,9 +44,8 @@ public class PerformanceSteps {
         String sessionCookie = System.getenv("JSESSIONID");
         if (sessionCookie != null && !sessionCookie.isEmpty()) {
             Cookie cookie = new Cookie("JSESSIONID", sessionCookie)
-                    .setDomain(getDomainFromUrl(baseUrl))
-                    .setPath("/")
-                    .setSecure(baseUrl.startsWith("https"));
+                    .setDomain(getDomainFromUrl(getBaseUrl()))
+                    .setSecure(getBaseUrl().startsWith("https"));
             context.addCookies(List.of(cookie));
         } else {
             System.out.println("WARNING: JSESSIONID env var not set. Set JSESSIONID=<cookie-value> to authenticate.");
@@ -190,5 +186,9 @@ public class PerformanceSteps {
         assertThat(duration)
                 .describedAs("Download should complete within %dms", thresholdMs)
                 .isLessThan(thresholdMs);
+    }
+
+    private String getBaseUrl() {
+        return scenarioContext.getBaseUrl();
     }
 }
