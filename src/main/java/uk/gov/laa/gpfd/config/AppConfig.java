@@ -104,7 +104,7 @@ public class AppConfig {
      * @return a configured {@link DataSource} for read-only operations.
      */
     @Bean
-    public DataSource readOnlyDataSource(
+    public PoolDataSource readOnlyDataSource(
             @Value("${gpfd.datasource.read-only.url}") String url,
             @Value("${gpfd.datasource.read-only.username}") String username,
             @Value("${gpfd.datasource.read-only.password}") String password,
