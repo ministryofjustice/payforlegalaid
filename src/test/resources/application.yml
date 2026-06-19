@@ -2,12 +2,12 @@ gpfd:
   url: https://localhost:8080
   datasource:
     read-only:
-      url: jdbc:h2:file:~/localGpfdDb;MODE=Oracle
+      jdbc-url: jdbc:h2:file:~/localGpfdDb;MODE=Oracle
       username: sa
       password:
       driver-class-name: org.h2.Driver
     write:
-      url: jdbc:h2:file:~/localGpfdDb;MODE=Oracle
+      jdbc-url: jdbc:h2:file:~/localGpfdDb;MODE=Oracle
       username: sa
       password:
       driver-class-name: org.h2.Driver
