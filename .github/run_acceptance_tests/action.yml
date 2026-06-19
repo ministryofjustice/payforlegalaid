@@ -31,10 +31,13 @@ runs:
         aws s3 sync s3://${S3_BUCKET}/templates src/main/resources
       shell: bash
 
-    - name: List downloaded templates
-      run: |
-        find src/main/resources -type f | sort
-      shell: bash
+#    ** Debug only - prints a list of resources available in /src/main/resources **
+#    **i.e. templates, changelog files, application-*.yml files, etc.**
+
+#    - name: List downloaded templates
+#      run: |
+#        find src/main/resources -type f | sort
+#      shell: bash
 
     - name: Resolve application version
       run: |
