@@ -95,9 +95,7 @@ public class SecurityConfig {
 
         var http = SecurityConfigSupport.applyCsrfConfig(
                         httpSecurity,
-                        csrfTokenRepository,
-                        // Allow csp-report to ignore CSRF or else POST requests will be blocked
-                        SecurityConfigSupport.createMatcher("/csp-report")
+                        csrfTokenRepository
                 )
                 .addFilterAfter(SecurityConfigSupport.csrfCookieFilter(), CsrfFilter.class)
                 .with(aadWebApplication())

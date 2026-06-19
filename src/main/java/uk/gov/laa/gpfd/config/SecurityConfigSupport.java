@@ -48,15 +48,17 @@ public final class SecurityConfigSupport {
     }
 
     public static HttpSecurity applyCsrfConfig(HttpSecurity http,
-                                               CookieCsrfTokenRepository csrfTokenRepository,
-                                               PathPatternRequestMatcher... ignoredMatchers) {
+                                               CookieCsrfTokenRepository csrfTokenRepository) {
         XorCsrfTokenRequestAttributeHandler delegate = new XorCsrfTokenRequestAttributeHandler();
         delegate.setCsrfRequestAttributeName("_csrf");
 
         return http.csrf(csrf -> csrf
                 .csrfTokenRepository(csrfTokenRepository)
                 .csrfTokenRequestHandler(delegate)
-                .ignoringRequestMatchers(ignoredMatchers)
+                .ignoringRequestMatchers(request ->
+                        request.getRequestURI().equals("/csp-report")
+                                && "POST".equals(request.getMethod())
+                )
         );
     }
 

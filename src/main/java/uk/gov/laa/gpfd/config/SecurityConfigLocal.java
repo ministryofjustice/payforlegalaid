@@ -87,11 +87,7 @@ public class SecurityConfigLocal {
 
         var http = SecurityConfigSupport.applyCsrfConfig(
                         httpSecurity,
-                        csrfTokenRepository,
-                        // Allow h2-console to ignore CSRF or it won't load
-                        SecurityConfigSupport.createMatcher("/h2-console/**"),
-                        // Allow csp-report to ignore CSRF or else POST requests will be blocked
-                        SecurityConfigSupport.createMatcher("/csp-report")
+                        csrfTokenRepository
                 )
                 .addFilterAfter(SecurityConfigSupport.csrfCookieFilter(), CsrfFilter.class)
                 .cors(Customizer.withDefaults())
