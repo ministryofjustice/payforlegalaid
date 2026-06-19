@@ -35,12 +35,19 @@ public record GetExcelSteps(HttpProvider httpProvider, ScenarioContext scenarioC
         var headers = scenarioContext.getResponseAs(Object.class).getHeaders();
 
         assertAll("Verify Excel response",
-                () -> assertThat(headers.getContentType()).isEqualTo(parseMediaType(APPLICATION_EXCEL)),
-                () -> assertThat(headers.getContentDisposition()).isEqualTo(
-                    attachment().filename(file + ".xlsx").build()),
-                () -> WorkbookAssert.assertThat(currentResult).isEqualTo(expectedResult),
-                () -> WorkbookAssert.assertThat(currentResult).hasAllFormulasEvaluated(),
-                () -> WorkbookAssert.assertThat(currentResult).hasValidPivotTables()
+                () -> assertThat(headers.getContentType())
+                        .isEqualTo(parseMediaType(APPLICATION_EXCEL)),
+                () -> assertThat(headers.getContentDisposition())
+                        .isEqualTo(
+                                attachment()
+                                        .filename(file + ".xlsx")
+                                        .build()),
+                () -> WorkbookAssert.assertThat(currentResult)
+                        .isEqualTo(expectedResult),
+                () -> WorkbookAssert.assertThat(currentResult)
+                        .hasAllFormulasEvaluated(),
+                () -> WorkbookAssert.assertThat(currentResult)
+                        .hasValidPivotTables()
         );
     }
 
@@ -48,11 +55,16 @@ public record GetExcelSteps(HttpProvider httpProvider, ScenarioContext scenarioC
     public void theExcelReportShouldNotBeEmpty() {
         var workbook = excelService.getExcelWorkbook();
 
-        assertThat(workbook).isNotNull();
-        assertThat(workbook.getNumberOfSheets()).isGreaterThan(0);
-        assertThat(workbook.getSheetAt(0)).isNotNull();
-        assertThat(WorkbookHelper.getRequiredSheet(workbook, ReportSheetEnum.MAIN.getName())).isNotNull();
-
+        assertAll("Verify workbook is not empty",
+                () -> assertThat(workbook).isNotNull(),
+                () -> assertThat(workbook.getNumberOfSheets()).isGreaterThan(0),
+                () -> assertThat(workbook.getSheetAt(0)).isNotNull(),
+                () -> assertThat(
+                        WorkbookHelper.getRequiredSheet(
+                                workbook,
+                                ReportSheetEnum.MAIN.getName()))
+                        .isNotNull()
+        );
     }
     @Then("the report should contain all mandatory fields")
     public void theExcelReportShouldPassMainTabHybridChecks() {
