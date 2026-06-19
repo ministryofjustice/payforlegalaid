@@ -31,6 +31,11 @@ runs:
         aws s3 sync s3://${S3_BUCKET}/templates src/main/resources
       shell: bash
 
+    - name: List downloaded templates
+      run: |
+        find src/main/resources -type f | sort
+      shell: bash
+
     - name: Resolve application version
       run: |
         APP_VERSION=$(mvn help:evaluate \
@@ -49,8 +54,9 @@ runs:
 
     - name: Run acceptance tests
       run: |
-        mvn -B clean test \
+        mvn -B -ntp test \
           -Dtest=RunCucumberTest \
-          -Dpay-for-legal-aid.version="${APP_VERSION}" \
           -Dcucumber.filter.tags="not @performance"
+      env:
+        SPRING_PROFILES_ACTIVE: testat
       shell: bash

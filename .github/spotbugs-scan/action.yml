@@ -7,7 +7,7 @@ runs:
     - name: Run SpotBugs security scan and generate SARIF report
       run: |
         echo "Running SpotBugs security analysis..."
-        mvn -B -Pfindsecbugs -DskipTests clean compile spotbugs:spotbugs -Dspotbugs.sarifOutput=true
+        mvn -B -ntp -Pfindsecbugs -DskipTests clean compile spotbugs:spotbugs -Dspotbugs.sarifOutput=true
       shell: bash
 
     - name: Upload SpotBugs results to GitHub Code Scanning

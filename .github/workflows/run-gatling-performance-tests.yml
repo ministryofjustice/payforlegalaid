@@ -37,7 +37,7 @@ jobs:
         env:
           JSESSIONID: ${{ inputs.jsessionid }}
         run: |
-          mvn -B gatling:test \
+          mvn -B -ntp gatling:test \
             -Dgatling.simulationClass="${{ inputs.simulation-class }}" \
             -Dmaven.antrun.skip=true \
             -Dmaven.resources.skip=true
