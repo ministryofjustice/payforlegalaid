@@ -11,7 +11,7 @@ public record GetReportsFeatureSteps(HttpProvider httpProvider, ScenarioContext 
 
     @When("a request is made to the reports endpoint")
     public void aRequestIsMadeToTheReportsEndpoint() {
-        var response = httpProvider.getClient().getForEntity("reports", String.class);
+        var response = httpProvider.getClient().getForEntity(scenarioContext.url("/reports"), String.class);
         scenarioContext.setResponse(response);
     }
 

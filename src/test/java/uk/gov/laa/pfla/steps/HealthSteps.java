@@ -11,7 +11,7 @@ public record HealthSteps(HttpProvider httpProvider, ScenarioContext scenarioCon
 
     @When("a request is made to the actuator health endpoint")
     public void callActuatorApi() {
-        var response = httpProvider.getClient().getForEntity("actuator/health", String.class);
+        var response = httpProvider.getClient().getForEntity(scenarioContext.url("/actuator/health"), String.class);
         scenarioContext.setResponse(response);
     }
 

@@ -32,7 +32,7 @@ public record GetSingleReportSteps(HttpProvider httpProvider, ScenarioContext sc
 
     @When("a request is made to the reports endpoint with the report ID {string}")
     public void aRequestIsMadeToTheReportsEndpointWithTheReportId(String reportId) {
-        var response = httpProvider.getClient().getForEntity("reports/" + reportId, String.class);
+        var response = httpProvider.getClient().getForEntity(scenarioContext.url("/reports/" + reportId), String.class);
         scenarioContext.setResponse(response);
     }
 

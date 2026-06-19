@@ -28,7 +28,7 @@ public record GetCsvSteps(HttpProvider httpProvider, ScenarioContext scenarioCon
 
     @When("a request is made to the CSV endpoint with the report ID {string}")
     public void aRequestIsMadeToTheCsvEndpointWithTheReportId(String reportId) {
-        var response = httpProvider.getClient().getForEntity("reports/" + reportId + "/csv", String.class);
+        var response = httpProvider.getClient().getForEntity(scenarioContext.url("/reports/" + reportId + "/csv"), String.class);
         scenarioContext.setResponse(response);
     }
 

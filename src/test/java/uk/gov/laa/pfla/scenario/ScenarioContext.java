@@ -21,6 +21,7 @@ public class ScenarioContext {
     private ResponseEntity<?> response;
     private final JsonDeserializer jsonDeserializer;
     private final Map<String, Object> attributes = new HashMap<>();
+    private String baseUrl;
 
     public <T> T deserialize(Class<T> valueType) {
         return jsonDeserializer.deserializeFromResponse(getResponseAs(String.class), valueType);
@@ -51,5 +52,9 @@ public class ScenarioContext {
 
     public Object getAttribute(String key) {
         return attributes.get(key);
+    }
+
+    public String url(String path) {
+        return baseUrl + path;
     }
 }

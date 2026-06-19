@@ -7,8 +7,6 @@ import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.springframework.beans.factory.annotation.Value;
-import uk.gov.laa.pfla.client.AuthenticationProvider;
 import uk.gov.laa.pfla.performance.PerformanceReportRegistry;
 import uk.gov.laa.pfla.scenario.ScenarioContext;
 
@@ -75,7 +73,7 @@ public class PerformanceSteps {
 
     @When("the user navigates to the reports listing page")
     public void navigateToReportListPage() {
-        page.navigate(baseUrl + "/reports");
+        page.navigate(scenarioContext.url("/reports"));
         page.waitForLoadState(LoadState.NETWORKIDLE);
     }
 
@@ -105,7 +103,7 @@ public class PerformanceSteps {
                         "No report found for size: " + size + ", format: " + format
                 ));
 
-        String downloadUrl = baseUrl + "/reports/" + reportId + "/" + format;
+        String downloadUrl = scenarioContext.url("/reports/" + reportId + "/" + format);
         System.out.println("DEBUG: Downloading " + size + " " + format + " report, ID = " + reportId);
         System.out.println("DEBUG: URL = " + downloadUrl);
 
@@ -125,7 +123,7 @@ public class PerformanceSteps {
 
         try {
             // First navigate to reports page
-            page.navigate(baseUrl + "/reports");
+            page.navigate(scenarioContext.url("/reports"));
             page.waitForLoadState(LoadState.DOMCONTENTLOADED);
             
             // Try to find and click the download link
