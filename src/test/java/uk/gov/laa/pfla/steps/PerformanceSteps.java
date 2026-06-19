@@ -55,7 +55,7 @@ public class PerformanceSteps {
     private String getDomainFromUrl(String url) {
         try {
             return java.net.URI.create(url).getHost();
-        } catch (Exception e) {
+        } catch (Exception _) {
             return "localhost";
         }
     }

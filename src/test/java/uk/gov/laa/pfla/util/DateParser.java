@@ -41,7 +41,7 @@ public interface DateParser extends Function<String, Optional<Instant>> {
     default Optional<Instant> apply(String date) {
         try {
             return Optional.of(parse(date));
-        } catch (DateTimeParseException e) {
+        } catch (DateTimeParseException _) {
             return empty();
         }
     }

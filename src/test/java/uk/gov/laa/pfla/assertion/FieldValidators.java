@@ -66,7 +66,7 @@ public class FieldValidators {
         try {
             c.getNumericCellValue();
             return true;
-        } catch (IllegalStateException ex) {
+        } catch (IllegalStateException _) {
             return false;
         }
     }
