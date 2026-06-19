@@ -13,6 +13,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import uk.gov.laa.pfla.client.AuthenticationProvider;
 import uk.gov.laa.pfla.configuration.PlaywrightManager;
 
@@ -23,6 +24,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 public class UiSteps {
+
+    @LocalServerPort
+    int port;
 
     private Page page;
     private int reportCount;
@@ -62,7 +66,7 @@ public class UiSteps {
 
     @When("I load the GLAD page")
     public void loadGladPage() {
-        response = page.navigate("http://localhost:8080/");
+        response = page.navigate("http://localhost:" + port + "/");
     }
 
     @Then("the page loads successfully")
