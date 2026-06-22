@@ -69,6 +69,4 @@ runs:
       with:
         name: test-reports
         path: |
-          **/cucumber.xml
-          **/cucumber.html
-          **/cucumber.json
+          **/cucumber-report.html
