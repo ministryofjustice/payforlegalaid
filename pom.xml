@@ -4,7 +4,7 @@
 
     <groupId>uk.gov.laa</groupId>
     <artifactId>pay-for-legal-aid</artifactId>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -719,6 +719,7 @@
                             <xmlOutput>true</xmlOutput>
                             <htmlOutput>true</htmlOutput>
                             <failOnError>false</failOnError>
+                            <excludeFilterFile>spotbugs-exclude.xml</excludeFilterFile>
                         </configuration>
                         <executions>
                             <execution>

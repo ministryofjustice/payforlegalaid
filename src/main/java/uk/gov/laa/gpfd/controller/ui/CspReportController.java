@@ -2,12 +2,12 @@ package uk.gov.laa.gpfd.controller.ui;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Map;
 
 @RestController
@@ -34,16 +34,20 @@ public class CspReportController {
                 Map<String, Object> report =
                         objectMapper.convertValue(payload.get("csp-report"), new TypeReference<>() {});
 
-                String directive = String.valueOf(
-                        report.getOrDefault("violated-directive", UNKNOWN)
-                );
-                String blockedUri = sanitise(String.valueOf(
-                        report.getOrDefault("blocked-uri", UNKNOWN)
-                ));
+                if (report != null) {
+                    String directive = String.valueOf(
+                            report.getOrDefault("violated-directive", UNKNOWN)
+                    );
+                    String blockedUri = sanitise(String.valueOf(
+                            report.getOrDefault("blocked-uri", UNKNOWN)
+                    ));
 
-                log.info("CSP Violation detected: directive={}, blockedUri={}",
-                        directive, blockedUri);
-            } catch (Exception _) {
+                    log.info("CSP Violation detected: directive={}, blockedUri={}",
+                            directive, blockedUri);
+                } else {
+                    log.info("CSP Violation (no csp-report field in payload)");
+                }
+            } catch (IOException _) {
                 log.info("CSP Violation (unparseable payload)");
             }
         } else {
