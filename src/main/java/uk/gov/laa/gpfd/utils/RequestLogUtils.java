@@ -23,6 +23,7 @@ public final class RequestLogUtils {
     private static final String X_CORRELATION_ID_HEADER = "X-Correlation-Id";
     private static final String TRACEPARENT_HEADER = "traceparent";
     private static final String AWS_TRACE_ID_HEADER = "X-Amzn-Trace-Id";
+    private static final String X_B3_TRACE_ID_HEADER = "X-B3-TraceId";
 
     private RequestLogUtils() {
         // Utility class
@@ -50,7 +51,7 @@ public final class RequestLogUtils {
             return parseTraceParent(traceparent);
         }
 
-        String b3TraceId = getHeaderValue(request, "X-B3-TraceId");
+        String b3TraceId = getHeaderValue(request, X_B3_TRACE_ID_HEADER);
         if (b3TraceId != null && !b3TraceId.isBlank()) {
             return sanitizeHeaderValue(b3TraceId);
         }
@@ -94,7 +95,6 @@ public final class RequestLogUtils {
 
         Object principal = authentication.getPrincipal();
 
-        assert principal != null;
         String identifier = switch (principal) {
             case DefaultOidcUser oidcUser -> oidcUser.getSubject();
 
@@ -118,6 +118,7 @@ public final class RequestLogUtils {
 
             case String principalString -> principalString;
 
+            case null -> null;
             default -> authentication.getName();
         };
 
