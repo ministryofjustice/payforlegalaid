@@ -90,8 +90,8 @@ public sealed interface ChannelRowHandler extends
          * @param projection Mapping of database column names to Excel column indices
          */
         public SheetChannelRowHandler(Sheet sheet, Map<String, Integer> projection) {
-            this.sheet = sheet;
-            this.projection = projection;
+            this.sheet = Objects.requireNonNull(sheet, "Sheet cannot be null");
+            this.projection = Map.copyOf(Objects.requireNonNull(projection, "Projection cannot be null"));
         }
 
         /**

@@ -10,7 +10,6 @@ import org.apache.poi.xssf.streaming.SheetDataWriter;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 import uk.gov.laa.gpfd.model.ReportQuery;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
@@ -45,7 +44,7 @@ import java.lang.reflect.Field;
  * <p>Note that this design assumes formatting consistency within columns, which is typical
  * for most data-oriented Excel files.</p>
  */
-public final class ReportSheetDataWriter extends SheetDataWriter implements Closeable {
+public final class ReportSheetDataWriter extends SheetDataWriter {
 
     /**
      * Cached reflection field for the row number field.

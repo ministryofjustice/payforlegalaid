@@ -21,7 +21,6 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtException;
 
 import java.time.Instant;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -106,7 +105,7 @@ class JwtAuthenticationFilterTest {
 
         verify(mockFilterChain).doFilter(mockRequest, mockResponse);
         verify(jwtDecoder, times(1)).decode(any());
-        assertTrue(output.getOut().contains("Token " + sha256Hex(VALID_BEARER_TOKEN).substring(0,TOKEN_ID_LENGTH) + " - token received, attempting validation"));
+        assertTrue(output.getOut().contains("Token " + sha256Hex(VALID_BEARER_TOKEN).substring(0, TOKEN_ID_LENGTH) + " - token received, attempting validation"));
     }
 
     @Test
@@ -200,7 +199,6 @@ class JwtAuthenticationFilterTest {
         Exception ex = assertThrows(JwtException.class, () -> jwtAuthenticationFilter.doFilterInternal(mockRequest, mockResponse, mockFilterChain));
 
         assertEquals("Unable to validate token: Incorrect Tenant ID", ex.getMessage());
-
     }
 
     @ParameterizedTest
@@ -370,12 +368,14 @@ class JwtAuthenticationFilterTest {
     private Jwt jwt(String appId, Instant notBefore, Instant expiresAt, List<String> scopes, String username) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("sub", username);
-        claims.put("nbf", notBefore);
         claims.put("appid", appId);
-
         claims.putAll(Map.of("aud", EXPECTED_CLIENT_ID,
                 "tid", EXPECTED_TENANT_ID,
                 "scp", scopes));
+
+        if (notBefore != null) {
+            claims.put("nbf", notBefore);
+        }
 
         return new Jwt("tokenValue", notBefore, expiresAt,
                 Map.of("alg", "RSA28"),
