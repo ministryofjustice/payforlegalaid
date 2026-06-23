@@ -1,5 +1,6 @@
 package uk.gov.laa.gpfd.dao;
 
+import org.apache.logging.log4j.internal.annotation.SuppressFBWarnings;
 import tools.jackson.dataformat.csv.CsvMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcOperations;
@@ -36,6 +37,10 @@ public record JdbcDataStreamer(JdbcOperations jdbc, int csvBufferFlushFrequency)
      * @throws RuntimeException        if database access or streaming fails
      * @implNote The caller is responsible for closing the output stream.
      */
+    @SuppressFBWarnings(
+            value = "SECSQLISPRJDBC",
+            justification = "SQL is sourced from ReportQuerySql which is populated from admin-controlled data store; no user input is concatenated into the query string"
+    )
     @Override
     public void stream(Report report, OutputStream stream) throws IOException {
         if (null == report) {
@@ -50,9 +55,9 @@ public record JdbcDataStreamer(JdbcOperations jdbc, int csvBufferFlushFrequency)
 
         var sql = report.extractFirstQuery().value();
 
-        if (null == sql || sql.isBlank()) {
-            log.error("Attempted to execute null/empty SQL query");
-            throw new IllegalArgumentException("SQL query must not be null or empty");
+        if (sql.isBlank()) {
+            log.error("Attempted to execute empty SQL query");
+            throw new IllegalArgumentException("SQL query must not be empty");
         }
 
         Map<String, String> row = new LinkedHashMap<>();

@@ -17,9 +17,6 @@ public abstract class PivotTableDirector {
      * @throws IllegalArgumentException if builder is null
      */
     protected PivotTableDirector(PivotTableBuilder builder) {
-        if (builder == null) {
-            throw new IllegalArgumentException("PivotTableBuilder cannot be null");
-        }
         this.builder = builder;
     }
 
@@ -44,7 +41,7 @@ public abstract class PivotTableDirector {
      * @return a director configured for standard pivot tables
      */
     public static PivotTableDirector standard(PivotTableBuilder builder) {
-        return new PivotTableDirector(builder) {
+        return new PivotTableDirector(requireBuilder(builder)) {
             @Override
             protected void configureBuilder() {
                 builder.withConfigurator(defaultConfigurator());
@@ -59,7 +56,7 @@ public abstract class PivotTableDirector {
      * @return a director configured for minimal pivot tables
      */
     public static PivotTableDirector minimal(PivotTableBuilder builder) {
-        return new PivotTableDirector(builder) {
+        return new PivotTableDirector(requireBuilder(builder)) {
             @Override
             protected void configureBuilder() {
                 builder.withConfigurator(minimalConfigurator());
@@ -77,11 +74,18 @@ public abstract class PivotTableDirector {
     public static PivotTableDirector custom(PivotTableBuilder builder,
                                             PivotTableConfigurator configurator
                                             ) {
-        return new PivotTableDirector(builder) {
+        return new PivotTableDirector(requireBuilder(builder)) {
             @Override
             protected void configureBuilder() {
                 builder.withConfigurator(configurator);
             }
         };
+    }
+
+    private static PivotTableBuilder requireBuilder(PivotTableBuilder builder) {
+        if (builder == null) {
+            throw new IllegalArgumentException("PivotTableBuilder cannot be null");
+        }
+        return builder;
     }
 }

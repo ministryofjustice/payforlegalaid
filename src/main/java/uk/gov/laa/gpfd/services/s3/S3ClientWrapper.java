@@ -10,6 +10,7 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import uk.gov.laa.gpfd.controller.GlobalExceptionHandler;
 
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.Optional;
 
@@ -59,7 +60,7 @@ public class S3ClientWrapper {
     public record S3CsvDownload(String key, ResponseInputStream<GetObjectResponse> stream) implements AutoCloseable {
 
         @Override
-        public void close() throws Exception {
+        public void close() throws IOException {
             stream.close();
         }
 

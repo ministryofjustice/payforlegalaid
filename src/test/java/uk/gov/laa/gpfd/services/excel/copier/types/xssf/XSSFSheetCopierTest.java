@@ -67,13 +67,13 @@ class XSSFSheetCopierTest {
         when(sourceSheet.getPivotTables()).thenReturn(pivotTables);
 
         try (var mockedPivotTableBuilder = mockStatic(PivotTableBuilder.class); var mockedPivotTableDirector = mockStatic(PivotTableDirector.class)) {
-            mockedPivotTableBuilder.when(() -> create(sourceWorkbook, targetWorkbook, sourceSheet, targetSheet, pivotTable)).thenReturn(pivotTableBuilder);
+            mockedPivotTableBuilder.when(() -> create(sourceWorkbook, targetWorkbook, targetSheet, pivotTable)).thenReturn(pivotTableBuilder);
             mockedPivotTableDirector.when(() -> standard(pivotTableBuilder)).thenReturn(pivotTableDirector);
 
             var copier = new XSSFSheetCopier(sourceWorkbook, targetWorkbook, sourceSheet, targetSheet);
             copier.copyAdditionalFeatures();
 
-            mockedPivotTableBuilder.verify(() -> create(sourceWorkbook, targetWorkbook, sourceSheet, targetSheet, pivotTable), times(2));
+            mockedPivotTableBuilder.verify(() -> create(sourceWorkbook, targetWorkbook, targetSheet, pivotTable), times(2));
             mockedPivotTableDirector.verify(() -> standard(pivotTableBuilder), times(2));
             verify(pivotTableDirector, times(2)).construct();
         }
@@ -85,7 +85,7 @@ class XSSFSheetCopierTest {
         when(sourceSheet.getSheetName()).thenReturn("TestSheet");
 
         try (var mockedPivotTableBuilder = mockStatic(PivotTableBuilder.class)) {
-            mockedPivotTableBuilder.when(() -> create(sourceWorkbook, targetWorkbook, sourceSheet, targetSheet, pivotTable)).thenThrow(new RuntimeException("Test error"));
+            mockedPivotTableBuilder.when(() -> create(sourceWorkbook, targetWorkbook, targetSheet, pivotTable)).thenThrow(new RuntimeException("Test error"));
 
             var copier = new XSSFSheetCopier(sourceWorkbook, targetWorkbook, sourceSheet, targetSheet);
 
@@ -110,13 +110,13 @@ class XSSFSheetCopierTest {
         when(sourceSheet.getPivotTables()).thenReturn(List.of(pivotTable));
 
         try (var mockedPivotTableBuilder = mockStatic(PivotTableBuilder.class); var mockedPivotTableDirector = mockStatic(PivotTableDirector.class)) {
-            mockedPivotTableBuilder.when(() -> create(sourceWorkbook, targetWorkbook, sourceSheet, targetSheet, pivotTable)).thenReturn(pivotTableBuilder);
+            mockedPivotTableBuilder.when(() -> create(sourceWorkbook, targetWorkbook, targetSheet, pivotTable)).thenReturn(pivotTableBuilder);
             mockedPivotTableDirector.when(() -> standard(pivotTableBuilder)).thenReturn(pivotTableDirector);
 
             var copier = new XSSFSheetCopier(sourceWorkbook, targetWorkbook, sourceSheet, targetSheet);
             copier.copyAdditionalFeatures();
 
-            mockedPivotTableBuilder.verify(() -> create(sourceWorkbook, targetWorkbook, sourceSheet, targetSheet, pivotTable));
+            mockedPivotTableBuilder.verify(() -> create(sourceWorkbook, targetWorkbook, targetSheet, pivotTable));
             mockedPivotTableDirector.verify(() -> standard(pivotTableBuilder));
             verify(pivotTableDirector).construct();
         }

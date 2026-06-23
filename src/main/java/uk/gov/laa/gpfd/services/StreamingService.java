@@ -7,6 +7,7 @@ import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.services.stream.DataStream;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -42,6 +43,10 @@ public interface StreamingService {
     ResponseEntity<StreamingResponseBody> stream(UUID id, FileExtension format);
 
     record DefaultStreamingService(Map<FileExtension, DataStream> strategies) implements StreamingService {
+
+        public DefaultStreamingService {
+            strategies = Map.copyOf(Objects.requireNonNull(strategies, "Strategies cannot be null"));
+        }
 
         @Override
         public ResponseEntity<StreamingResponseBody> stream(UUID id, FileExtension format) {

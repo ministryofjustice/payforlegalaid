@@ -40,7 +40,7 @@ public class RequestResponseInterceptor implements HandlerInterceptor {
                 .addKeyValue("method", sanitise(request.getMethod()))
                 .addKeyValue("uri", sanitise(request.getRequestURI()));
 
-        addHandler(logBuilder, handler);
+        logBuilder = addHandler(logBuilder, handler);
 
         logBuilder.log("Request received");
     }
@@ -53,19 +53,21 @@ public class RequestResponseInterceptor implements HandlerInterceptor {
                 .addKeyValue("uri", sanitise(request.getRequestURI()))
                 .addKeyValue("status", response.getStatus());
 
-        addHandler(logBuilder, handler);
+        logBuilder = addHandler(logBuilder, handler);
 
         logBuilder.log("Completed request");
     }
 
-    private void addHandler(LoggingEventBuilder logBuilder, Object handler) {
+    private LoggingEventBuilder addHandler(LoggingEventBuilder logBuilder, Object handler) {
 
         if (handler instanceof HandlerMethod handlerMethod) {
-            logBuilder.addKeyValue(
+            return logBuilder.addKeyValue(
                     "handler",
                     handlerMethod.getMethod().getName()
             );
         }
+
+        return logBuilder;
     }
 
     String sanitise(String value) {

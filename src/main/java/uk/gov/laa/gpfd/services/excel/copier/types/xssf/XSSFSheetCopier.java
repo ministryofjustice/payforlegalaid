@@ -67,7 +67,6 @@ public class XSSFSheetCopier extends SheetCopier {
                 PivotTableDirector.standard(PivotTableBuilder.create(
                         sourceWorkbook,
                         targetWorkbook,
-                        xssfSourceSheet,
                         xssfTargetSheet,
                         pivotTable))
                         .construct();
