@@ -1,6 +1,7 @@
 package uk.gov.laa.gpfd.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataAccessException;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
+import uk.gov.laa.gpfd.utils.RequestLogUtils;
 import uk.gov.laa.gpfd.exception.CsvGenerationException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.InvalidReportFormatException;
@@ -236,8 +238,10 @@ public class GlobalExceptionHandler {
         var errorResponse = new ReportsGet500Response();
         errorResponse.setError(message);
 
-        // Ensure log has specific AWS exception class name in, such as NoSuchKeyException.
-        log.error("AwsServiceException ({}) Thrown: {}", e.getClass().getSimpleName(), e.awsErrorDetails().toString());
+        log.atError()
+                .addKeyValue(RequestLogUtils.EVENT_ACTION, "s3.download.failure")
+                .addKeyValue(RequestLogUtils.EVENT_OUTCOME, "failure")
+                .log("AwsServiceException ({}) Thrown: {}", e.getClass().getSimpleName(), e.awsErrorDetails().toString());
 
         return internalServerError().body(errorResponse);
     }
@@ -343,7 +347,10 @@ public class GlobalExceptionHandler {
         var errorResponse = new GetReportDownloadById403Response();
         errorResponse.setError(e.getMessage());
 
-        log.error("ReportAccessException Thrown: User tried to access report {} but lacks the relevant permission(s)", e.getReportId());
+        log.atError()
+                .addKeyValue(RequestLogUtils.EVENT_ACTION, "authorization.denied")
+                .addKeyValue(RequestLogUtils.EVENT_OUTCOME, "failure")
+                .log("ReportAccessException Thrown: User tried to access report {} but lacks the relevant permission(s)", e.getReportId());
 
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(errorResponse);
