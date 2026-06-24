@@ -20,9 +20,9 @@ runs:
       env:
         SOCKET_KEY: ${{ env.SOCKET_KEY }}
 
-    - name: Run tests
+    - name: Run unit tests
       run: |
-        mvn -B clean test
+        mvn -ntp -B clean test -Dtest='!*RunCucumberTest'
       env:
         SPRING_PROFILES_ACTIVE: test
       shell:

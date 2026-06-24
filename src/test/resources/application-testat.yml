@@ -1,0 +1,46 @@
+server:
+  port: 8080
+
+gpfd:
+  url: http://localhost:${local.server.port}
+  datasource:
+    read-only:
+      jdbc-url: jdbc:h2:file:~/localGpfdDb;MODE=Oracle
+      username: sa
+      password:
+      driver-class-name: org.h2.Driver
+    write:
+      jdbc-url: jdbc:h2:file:~/localGpfdDb;MODE=Oracle
+      username: sa
+      password:
+      driver-class-name: org.h2.Driver
+  jwks-uri: https://sts.windows.net/${spring.cloud.azure.active-directory.profile.tenant-id}/
+  s3:
+    # If this is true, the environment will need to be deployed with appropriate config and permission for accessing an S3 bucket.
+    use-template-store: false
+
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  liquibase:
+    enabled: true
+    changelog: /db/changelog/db.changelog-master.xml
+  cloud:
+    azure:
+      active-directory:
+        enabled: true
+        profile:
+          tenant-id: TestTenantId
+        credential:
+          client-id: TestClientId
+          client-secret: TestClientSecret
+        redirect-uri-template: ${gpfd.redirect-uri-template}
+        authorization-clients:
+          graph:
+            scopes:
+              - https://graph.microsoft.com/User.Read
+
+springdoc:
+  api-docs:
+    enabled: false

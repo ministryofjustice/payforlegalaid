@@ -45,6 +45,6 @@ runs:
     - name: Build openapi spec dependency
       run: |
         cd openapi
-        mvn -B clean install
+        mvn -B -ntp clean install
       shell:
         bash

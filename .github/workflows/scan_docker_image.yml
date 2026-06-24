@@ -22,7 +22,7 @@ jobs:
             SOCKET_KEY: ${{ secrets.DEV_API_SOCKET_KEY }}
 
         - name: Build with Maven
-          run: mvn -B -DskipTests clean package -s .github/settings.xml
+          run: mvn -B -ntp -DskipTests clean package -s .github/settings.xml
           shell:
             bash
 
