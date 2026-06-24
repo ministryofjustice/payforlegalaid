@@ -4,10 +4,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
+import org.slf4j.MDC;
 import org.slf4j.spi.LoggingEventBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
+import uk.gov.laa.gpfd.utils.RequestLogUtils;
 
 @Slf4j
 @Component
@@ -26,21 +28,25 @@ public class RequestResponseInterceptor implements HandlerInterceptor {
                                 @NonNull HttpServletResponse response,
                                 @NonNull Object handler,
                                 Exception ex) {
-
         logResponse(request, response, handler);
 
         if (ex != null) {
-            log.atError().setCause(ex).log("Exception occurred");
+            log.atError()
+                    .setCause(ex)
+                    .addKeyValue(RequestLogUtils.EVENT_ACTION, "http.exception")
+                    .addKeyValue(RequestLogUtils.EVENT_OUTCOME, "failure")
+                    .log("Exception occurred during request processing");
         }
     }
 
     private void logRequest(HttpServletRequest request, Object handler) {
-
         LoggingEventBuilder logBuilder = log.atInfo()
+                .addKeyValue(RequestLogUtils.EVENT_ACTION, "http.request")
+                .addKeyValue("event.type", "web")
                 .addKeyValue("method", sanitise(request.getMethod()))
                 .addKeyValue("uri", sanitise(request.getRequestURI()));
 
-        logBuilder = addHandler(logBuilder, handler);
+        addHandler(logBuilder, handler);
 
         logBuilder.log("Request received");
     }
@@ -48,26 +54,22 @@ public class RequestResponseInterceptor implements HandlerInterceptor {
     private void logResponse(HttpServletRequest request,
                              HttpServletResponse response,
                              Object handler) {
-
         LoggingEventBuilder logBuilder = log.atInfo()
+                .addKeyValue(RequestLogUtils.EVENT_ACTION, "http.response")
+                .addKeyValue("event.type", "web")
+                .addKeyValue(RequestLogUtils.EVENT_OUTCOME, response.getStatus() >= 400 ? "failure" : "success")
                 .addKeyValue("uri", sanitise(request.getRequestURI()))
                 .addKeyValue("status", response.getStatus());
 
-        logBuilder = addHandler(logBuilder, handler);
+        addHandler(logBuilder, handler);
 
         logBuilder.log("Completed request");
     }
 
-    private LoggingEventBuilder addHandler(LoggingEventBuilder logBuilder, Object handler) {
-
+    private void addHandler(LoggingEventBuilder logBuilder, Object handler) {
         if (handler instanceof HandlerMethod handlerMethod) {
-            return logBuilder.addKeyValue(
-                    "handler",
-                    handlerMethod.getMethod().getName()
-            );
+            logBuilder.addKeyValue("handler", handlerMethod.getMethod().getName());
         }
-
-        return logBuilder;
     }
 
     String sanitise(String value) {
