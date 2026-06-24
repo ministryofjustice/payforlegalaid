@@ -1,0 +1,44 @@
+name: OWASP ZAP UAT Scan
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+  schedule:
+    # Every weekday at 2am UTC
+    - cron: '0 2 * * 1-5'
+
+jobs:
+  zap_scan:
+    name: Run OWASP ZAP Baseline Scan
+    runs-on: ubuntu-latest
+
+    continue-on-error: true
+
+    permissions:
+      contents: read
+      issues: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Run OWASP ZAP Baseline Scan
+        uses: zaproxy/action-baseline@de8ad967d3548d44ef623df22cf95c3b0baf8b25 # v0.15.0
+        with:
+          target: 'https://uat-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk/'
+          cmd_options: >-
+            -a
+            -z "-config authentication.enabled=true"
+            -z "-config authentication.browser.id=chrome-headless"
+            -z "-config authentication.browser.loginUrl=https://login.microsoftonline.com/ff260a8b-cb92-4cfe-8ae9-d48bb0fd9851/oauth2/v2.0/authorize"
+            -z "-config authentication.browser.username=${{ secrets.ZAP_USERNAME }}"
+            -z "-config authentication.browser.password=${{ secrets.ZAP_PASSWORD }}"
+            -z "-config authentication.browser.usernameField=email"
+            -z "-config authentication.browser.passwordField=password"
+
+      # Example external upload placeholder
+      - name: Upload report to external storage
+        if: always()
+        run: |
+          echo "Upload report_html.html to approved storage location"
