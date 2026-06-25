@@ -403,6 +403,9 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jackson</artifactId>
         </dependency>
+
+        <!--  Do not replace with spring-liquibase due to how we configure Liquibase.  -->
+        <!--  This will cause dev env to break.-->
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
