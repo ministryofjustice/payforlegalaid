@@ -6,6 +6,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -18,6 +19,7 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtException;
+import org.springframework.test.context.ActiveProfiles;
 import uk.gov.laa.pfla.client.interceptor.HostInterceptor;
 import uk.gov.laa.pfla.util.JsonDeserializer;
 
@@ -25,7 +27,8 @@ import javax.sql.DataSource;
 
 import static uk.gov.laa.pfla.client.interceptor.HostInterceptor.withHost;
 
-@Configuration
+@TestConfiguration
+@ActiveProfiles("testat")
 public class TestConfig {
 
     @Bean("readOnlyDataSource")
@@ -41,7 +44,7 @@ public class TestConfig {
     public DataSource writeDataSource() {
         DriverManagerDataSource ds = new DriverManagerDataSource();
         ds.setDriverClassName("org.h2.Driver");
-        ds.setUrl("jdbc:h2:mem:localGpfdDb;MODE=Oracle");
+        ds.setUrl("jdbc:h2:file:~/localGpfdDb;MODE=Oracle");
         ds.setUsername("sa");
         ds.setPassword("");
         return ds;
