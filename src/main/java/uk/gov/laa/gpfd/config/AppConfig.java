@@ -1,17 +1,25 @@
 package uk.gov.laa.gpfd.config;
 
-import lombok.Getter;
-import oracle.ucp.jdbc.PoolDataSource;
-import oracle.ucp.jdbc.PoolDataSourceFactory;
+import java.sql.SQLException;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+
+import javax.sql.DataSource;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.Ordered;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,14 +29,21 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.web.client.RestTemplate;
+
+import liquibase.integration.spring.SpringLiquibase;
+import lombok.Getter;
+import oracle.ucp.jdbc.PoolDataSource;
+import oracle.ucp.jdbc.PoolDataSourceFactory;
 import uk.gov.laa.gpfd.dao.JdbcWorkbookDataStreamer;
 import uk.gov.laa.gpfd.dao.ReportDao;
+import static uk.gov.laa.gpfd.dao.sql.ChannelRowHandler.forSheet;
 import uk.gov.laa.gpfd.dao.sql.core.StatementPolicy;
 import uk.gov.laa.gpfd.model.FieldProjection;
 import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.model.Mapping;
 import uk.gov.laa.gpfd.model.excel.ExcelMappingProjection;
 import uk.gov.laa.gpfd.services.DataStreamer;
+import static uk.gov.laa.gpfd.services.DataStreamer.createJdbcStreamer;
 import uk.gov.laa.gpfd.services.StreamingService;
 import uk.gov.laa.gpfd.services.TemplateService;
 import uk.gov.laa.gpfd.services.excel.editor.CellValueSetter;
@@ -45,19 +60,6 @@ import uk.gov.laa.gpfd.services.stream.AbstractDataStream;
 import uk.gov.laa.gpfd.services.stream.DataStream;
 import uk.gov.laa.gpfd.utils.StrategyFactory;
 import uk.gov.laa.gpfd.utils.WorkbookFactory;
-
-import javax.sql.DataSource;
-import java.sql.SQLException;
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-
-import static uk.gov.laa.gpfd.dao.sql.ChannelRowHandler.forSheet;
-import static uk.gov.laa.gpfd.services.DataStreamer.createJdbcStreamer;
-
-import liquibase.integration.spring.SpringLiquibase;
 
 /**
  * Configuration class for application-level beans and settings.
@@ -261,6 +263,20 @@ public class AppConfig {
     @Bean
     public AuthorizationManager<RequestAuthorizationContext> authManager() {
         return new ContextBasedAuthorizationManager();
+    }
+
+    @Bean
+    public RequestContextFilter customRequestContextFilter() {
+        return new RequestContextFilter();
+    }
+
+    @Bean
+    public FilterRegistrationBean<RequestContextFilter> requestContextFilterRegistration() {
+        var registration = new FilterRegistrationBean<>(customRequestContextFilter());
+        registration.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        registration.addUrlPatterns("/*");
+        registration.setName("laaRequestContextFilter");
+        return registration;
     }
 
     /**

@@ -3,12 +3,14 @@ package uk.gov.laa.gpfd.config;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
+import org.slf4j.MDC;
 import org.springframework.security.authorization.AuthenticatedAuthorizationManager;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.authorization.AuthorizationResult;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
+import uk.gov.laa.gpfd.utils.RequestLogUtils;
 
 import java.util.function.Supplier;
 
@@ -23,7 +25,10 @@ public class ContextBasedAuthorizationManager implements AuthorizationManager<Re
 
         Authentication authentication = authenticationSupplier.get();
         if (authentication == null || !authentication.isAuthenticated()) {
-            log.warn("Unauthenticated access attempt");
+            log.atWarn()
+                    .addKeyValue(RequestLogUtils.EVENT_ACTION, "authorization.check")
+                    .addKeyValue(RequestLogUtils.EVENT_OUTCOME, "failure")
+                    .log("Unauthenticated access attempt");
             return new AuthorizationDecision(false);
         }
 
@@ -31,7 +36,10 @@ public class ContextBasedAuthorizationManager implements AuthorizationManager<Re
         AuthorizationResult decision = AuthenticatedAuthorizationManager.authenticated()
                 .authorize(authenticationSupplier, context);
 
-        log.info("Authorization decision: " + decision.isGranted());
+        log.atInfo()
+                .addKeyValue(RequestLogUtils.EVENT_ACTION, "authorization.check")
+                .addKeyValue(RequestLogUtils.EVENT_OUTCOME, decision.isGranted() ? "success" : "failure")
+                .log("Authorization decision: {}", decision.isGranted());
         return decision;
     }
 }
