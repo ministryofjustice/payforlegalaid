@@ -21,7 +21,7 @@ import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
  */
 @Configuration
 @ConditionalOnProperty(name = "gpfd.s3.has-s3-access", havingValue = "true")
-@Profile("!testauth")
+@Profile({"!testauth & !testat"})
 public class S3Config {
     /**
      * Creates a {@link TemplateClient} which returns templates from S3.

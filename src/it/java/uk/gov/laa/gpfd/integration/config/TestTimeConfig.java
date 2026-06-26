@@ -2,6 +2,7 @@ package uk.gov.laa.gpfd.integration.config;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 import uk.gov.laa.gpfd.config.TimeProvider;
 
 import java.time.LocalTime;
@@ -10,6 +11,7 @@ import java.time.LocalTime;
  * Class overwrites time used when calling endpoints in test, allowing simulation of our of hours response
  */
 @TestConfiguration
+@Profile("!testat")
 public class TestTimeConfig {
     @Bean
     public TimeProvider timeProvider() {
