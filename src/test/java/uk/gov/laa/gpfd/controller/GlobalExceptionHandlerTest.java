@@ -45,7 +45,6 @@ import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.NoRolesExcept
 import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.NoRolesInAttributeException;
 import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.PrincipalIsNullException;
 import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.UnexpectedAuthClassException;
-import uk.gov.laa.gpfd.exception.FileDownloadException.S3BucketHasNoCopiesOfReportException;
 import uk.gov.laa.gpfd.utils.RequestLogUtils;
 
 import java.io.IOException;
@@ -468,7 +467,6 @@ class GlobalExceptionHandlerTest {
         );
     }
 
-}
     @Test
     void shouldLogAwsErrorWithCorrectStructure() {
         MDC.put(RequestLogUtils.REQUEST_ID, "test-request-id");
@@ -485,7 +483,7 @@ class GlobalExceptionHandlerTest {
 
         assertFalse(appender.list.isEmpty(), "Expected at least one log event from handleAWSErrors");
 
-        ILoggingEvent loggingEvent = appender.list.get(0);
+        ILoggingEvent loggingEvent = appender.list.getFirst();
         Map<String, String> keyValuePairs = extractKeyValuePairs(loggingEvent);
 
         assertEquals("s3.download.failure", keyValuePairs.get(RequestLogUtils.EVENT_ACTION));
@@ -506,7 +504,7 @@ class GlobalExceptionHandlerTest {
 
         assertFalse(appender.list.isEmpty(), "Expected at least one log event from handleReportAccessException");
 
-        ILoggingEvent loggingEvent = appender.list.get(0);
+        ILoggingEvent loggingEvent = appender.list.getFirst();
         Map<String, String> keyValuePairs = extractKeyValuePairs(loggingEvent);
 
         assertEquals("authorization.denied", keyValuePairs.get(RequestLogUtils.EVENT_ACTION));
