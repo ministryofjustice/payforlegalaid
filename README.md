@@ -216,17 +216,73 @@ When running locally or in Docker with `--spring.profiles.active=local`, logs ar
 
 ## Tests
 
-There are unit tests which use mocked services and an H2 database. Config for the latter is located in the
-test/resources folder.
+There are unit tests which use mocked services and an H2 database. The tests are in `test/java/uk/gov/uk/gpfd`, with config in the `test/resources` folder.
 
-Acceptance tests are located [here](https://github.com/ministryofjustice/payforlegalaid-tests).
+There are integration tests that mock only external services and also use an H2 database. These are located in the `it` folder.
 
-### Performance Tests
+To run just the unit and integration tests, use `mvn clean test -Dtest='!uk.gov.laa.pfla.**'`
+
+### Acceptance tests
+The acceptance (behaviour-driven) tests are found in `test/java/uk/gov/uk/pfla`. They utilise Cucumber and Axe.
+
+You can run the acceptance tests by doing `mvn clean test -Dtest='uk.gov.laa.pfla.**' -Dcucumber.filter.tags="not @performance"`
+
+You will need to populate the GPFD repository's src/main/resources folder with any template files you need.
+These are the .xlsx files that hold a skeleton of the report in. E.g. if you want to test the Third Party Report you should place a copy of the Third Party Report template in the folder.
+For more details on how to get this template visit the [Confluence](https://dsdmoj.atlassian.net/wiki/spaces/LPF/pages/5803409516/How+to+create+a+template#How-do-I-get-a-template-to-use-on-my-local-system)
+
+#### Skipping Tests
+
+Control which tests are skipped at runtime using the `TESTS_TO_DISABLE` environment variable.
+
+##### 1. Set the Environment Variable
+
+Specify test categories to disable as a comma-separated list:
+
+```shell
+export TESTS_TO_DISABLE="health_api,get_csv"
+```
+
+##### 2. Run Your Tests
+
+The test runner will automatically skip any scenario containing these keywords (case-insensitive):
+
+```shell
+mvn clean test -Dtest='uk.gov.laa.pfla.**' -Dcucumber.filter.tags="not @performance"
+```
+
+| Value               | Behavior                   | Example                                      |
+|---------------------|----------------------------|----------------------------------------------|
+| Not set             | All tests execute normally | -                                            | 
+| Single category     | Skips all matching tests   | export TESTS_TO_DISABLE="health_api"         | 
+| Multiple categories | Skips all matching tests   | export TESTS_TO_DISABLE="health_api,get_csv" | 
+| Empty string        | All tests execute normally | export TESTS_TO_DISABLE=""                   | 
+
+
+#### Skipping Tests in CI/CD Integration
+The TESTS_TO_DISABLE environment variable enables dynamic test skipping directly within the CI/CD pipeline,
+giving fine-grained control over test execution without code changes.
+
+Here's how it works:
+1) Dynamic Skipping - Tests are evaluated at runtime – if a scenario's name or feature file path matches any value in TESTS_TO_DISABLE, it's automatically skipped.
+2) Pattern Matching - The system performs case-insensitive substring matching against test identifiers.
+3) Ephemeral Configuration - Skipping behavior is controlled entirely through environment variables or workflow triggers.
+
+```yaml
+runs:
+  using: 'composite'
+
+  steps:
+    - name: Run tests
+      env:
+        TESTS_TO_DISABLE: "flaky,known_issues"
+      run: mvn test
+```
+
+### Performance Tests (Unit)
 
 Performance tests have been set up in payforlegalaid using Gatling to evaluate things like retrieving the list of reports, 
-downloading the reports and also concurrency.
-
-src/test/java/uk.gov.laa.gpfd/simulations
+downloading the reports and also concurrency. These are located in `src/test/java/uk/gov/laa/gpfd/simulations`.
 
 The base URL that the tests use is set within gatling.properties within /resources. Set to UAT env by default.
 To run the tests, first log in manually into desired environment, then copy the session cookie, `JSESSIONID`, from
@@ -246,6 +302,29 @@ Alternatively, developers can trigger the manual GitHub Actions workflow at
 - `jsessionid` as the authenticated browser session cookie
 
 The workflow runs the same Maven Gatling command and uploads the generated report artifacts for later review.
+
+### Running the performance tests (Playwright)
+`performance.feature` has been created to cover performance related UI metrics. Uses JSESSIONID to authenticate to an existing environment
+session, by default the UAT environment. Retrieve the JSESSIONID by copying it from the browser DevTools -> Application -> Cookies
+whilst logged into a session in UAT then run:
+
+```bash
+export JSESSIONID=<insert session ID>
+mvn test -Dspring.profiles.active=uat -Dcucumber.filter.tags="@performance"
+```
+
+Which grabs the URL from within application-uat.yml
+
+Alternatively, developers can manually trigger the performance tests via GitHub Actions by navigating to the Actions tab and running the "Performance Tests" workflow.
+
+### Running the smoke tests
+By default, the smoke test will run all scenarios tagged with `@smoke`.
+Any existing test can be tagged with `@smoke` to include it in the smoke test suite.
+
+To run the smoke tests, you can use the following command:
+```bash
+mvn -B clean test  -Dcucumber.filter.tags="@smoke"
+```
 
 ## CI/CD
 
