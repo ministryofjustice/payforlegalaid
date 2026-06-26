@@ -4,18 +4,33 @@ Feature: Generate and Retrieve CSV Report
   I want to generate and retrieve a CSV report
   So that I can analyze and work with the data in a structured format
 
-  Scenario: Successfully generate and retrieve a CSV report with valid authentication
+  Scenario Outline: Successfully generate and retrieve a CSV report with valid authentication
     Given I am authenticated with a valid session
-    And a request is made to the reports endpoint
-    When a user request csv for a randomly selected report
+    Given I have an empty tracking table
+    When a request is made to the CSV endpoint with the report ID "<id>"
     Then the service should respond with a status code of 200
     And the response should include the CSV file
+    And a row is entered in the report tracking table for report ID "<id>"
+    Examples:
+      | id                                   |
+      | f46b4d3d-c100-429a-bf9a-6c3305dbdbfa |
+      | f12b4d3d-c100-429a-bf9a-6c3305dbdbfb |
+      | f46b4d3d-c100-429a-bf9a-6c3305dbdbfb |
+      | f46b4d3d-c100-429a-bf9a-6c3305dbdbf8 |
+      | f46b4d3d-c100-429a-bf9a-6c3305dbdbf9 |
+      | f46b4d3d-c100-429a-bf9a-6c3305dbdbf6 |
+      | f46b4d3d-c100-429a-bf9a-6c3305dbdbf7 |
+      | f46b4d3d-c100-429a-bf9a-6c3305dbdbf4 |
+      | f46b4d3d-c100-429a-bf9a-6c3305dbdbf5 |
+      | f46b4d3d-c100-429a-bf9a-6c3305dbdbf3 |
 
   Scenario: Return an error when attempting to retrieve a report with an unrecognized ID
     Given I am authenticated with a valid session
+    Given I have an empty tracking table
     When a request is made to the CSV endpoint with the report ID "01010101-0101-0101-0101-010101010101"
-    Then the service should respond with a status code of 404
-    And the response should include the error message "Report not found for"
+    Then the service should respond with a status code of 403
+    And the response should include the error message "You cannot access report with ID: 01010101-0101-0101-0101-010101010101"
+    And no row is entered in the report tracking table for report ID "01010101-0101-0101-0101-010101010101"
 
   Rule: Bugfix - CSV export should only use data from the valid query when multiple queries exist
 

@@ -19,8 +19,8 @@ Feature: Retrieve a Single Report
   Scenario: Return an error when attempting to retrieve a report with an unrecognized ID
     Given I am authenticated with a valid session
     When a request is made to the reports endpoint with the report ID "01010101-0101-0101-0101-010101010101"
-    Then the service should respond with a status code of 404
-    And the response should include the error message "Report with unrecognised ID"
+    Then the service should respond with a status code of 403
+    And the response should include the error message "You cannot access report with ID: 01010101-0101-0101-0101-010101010101"
 
 #  Scenario: Redirect to login when attempting to retrieve a report with invalid authentication
 #    When an invalid authentication cookie is provided
