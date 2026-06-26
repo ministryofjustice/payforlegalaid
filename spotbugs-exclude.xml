@@ -35,4 +35,9 @@
         <Method name="mergeInternal"/>
         <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
     </Match>
+
+    <!-- Exclude Constructor throw warnings as they are based around finializers which were deprecated in Java 9 -->
+    <Match>
+        <Bug pattern="CT_CONSTRUCTOR_THROW"/>
+    </Match>
 </FindBugsFilter>

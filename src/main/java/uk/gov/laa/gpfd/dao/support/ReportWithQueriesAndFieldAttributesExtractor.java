@@ -116,7 +116,8 @@ public class ReportWithQueriesAndFieldAttributesExtractor implements ResultSetEx
             });
 
             var fieldAttributeId = rs.getString("FIELD_ATTRIBUTE_ID");
-            if (fieldAttributeId != null) {
+            var fieldAttributes = query.getExcelSheet().getFieldAttributes();
+            if (fieldAttributeId != null && fieldAttributes != null) {
                 log.debug("Processing field attribute with ID: {} for query with ID: {}", fieldAttributeId, queryUUID);
                 var fieldAttribute = ImmutableExcelMappingProjection.builder()
                         .id(UUID.fromString(fieldAttributeId))
@@ -130,7 +131,7 @@ public class ReportWithQueriesAndFieldAttributesExtractor implements ResultSetEx
                                         .build())
                                 .build())
                         .build();
-                query.getExcelSheet().getFieldAttributes().add(fieldAttribute);
+                fieldAttributes.add(fieldAttribute);
             }
 
             if (!report.getQueries().contains(query)) {
