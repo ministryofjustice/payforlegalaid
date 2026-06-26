@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
-import org.slf4j.MDC;
 import org.slf4j.spi.LoggingEventBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -46,7 +45,7 @@ public class RequestResponseInterceptor implements HandlerInterceptor {
                 .addKeyValue("method", sanitise(request.getMethod()))
                 .addKeyValue("uri", sanitise(request.getRequestURI()));
 
-        addHandler(logBuilder, handler);
+        logBuilder = addHandler(logBuilder, handler);
 
         logBuilder.log("Request received");
     }
@@ -61,15 +60,16 @@ public class RequestResponseInterceptor implements HandlerInterceptor {
                 .addKeyValue("uri", sanitise(request.getRequestURI()))
                 .addKeyValue("status", response.getStatus());
 
-        addHandler(logBuilder, handler);
+        logBuilder = addHandler(logBuilder, handler);
 
         logBuilder.log("Completed request");
     }
 
-    private void addHandler(LoggingEventBuilder logBuilder, Object handler) {
+    private LoggingEventBuilder addHandler(LoggingEventBuilder logBuilder, Object handler) {
         if (handler instanceof HandlerMethod handlerMethod) {
-            logBuilder.addKeyValue("handler", handlerMethod.getMethod().getName());
+            return logBuilder.addKeyValue("handler", handlerMethod.getMethod().getName());
         }
+        return logBuilder;
     }
 
     String sanitise(String value) {
