@@ -225,7 +225,7 @@ To run just the unit and integration tests, use `mvn clean test -Dtest='!*RunCuc
 ### Acceptance tests
 The acceptance (behaviour-driven) tests are found in `test/java/uk/gov/uk/pfla`. They utilise Cucumber and Axe.
 
-You can run the acceptance tests by doing `mvn clean test -Dtest='!*RunCucumberTest' -Dcucumber.filter.tags="not @performance"`
+You can run the acceptance tests by doing `mvn clean test -Dtest='*RunCucumberTest' -Dcucumber.filter.tags="not @performance"`
 
 You will need to populate the GPFD repository's src/main/resources folder with any template files you need.
 These are the .xlsx files that hold a skeleton of the report in. E.g. if you want to test the Third Party Report you should place a copy of the Third Party Report template in the folder.
