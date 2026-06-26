@@ -11,6 +11,7 @@ import uk.gov.laa.gpfd.services.DataStreamer.WorkbookDataStreamer;
 import uk.gov.laa.gpfd.services.excel.formatting.CellFormatter;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * The class is a Spring component responsible for generating Excel workbooks
@@ -61,7 +62,7 @@ public record ExcelCreationService(
         var headerRow = sheet.createRow(0);
         var columnIndex = 0;
 
-        for (var column : query.getExcelSheet().getFieldAttributes()) {
+        for (var column : Objects.requireNonNull(query.getExcelSheet().getFieldAttributes())) {
             var cell = headerRow.createCell(columnIndex++);
             cell.setCellValue(column.getMappedName());
 
