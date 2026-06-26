@@ -220,12 +220,12 @@ There are unit tests which use mocked services and an H2 database. The tests are
 
 There are integration tests that mock only external services and also use an H2 database. These are located in the `it` folder.
 
-To run just the unit and integration tests, use `mvn clean test -Dtest='!uk.gov.laa.pfla.**'`
+To run just the unit and integration tests, use `mvn clean test -Dtest='!*RunCucumberTest'`
 
 ### Acceptance tests
 The acceptance (behaviour-driven) tests are found in `test/java/uk/gov/uk/pfla`. They utilise Cucumber and Axe.
 
-You can run the acceptance tests by doing `mvn clean test -Dtest='uk.gov.laa.pfla.**' -Dcucumber.filter.tags="not @performance"`
+You can run the acceptance tests by doing `mvn clean test -Dtest='!*RunCucumberTest' -Dcucumber.filter.tags="not @performance"`
 
 You will need to populate the GPFD repository's src/main/resources folder with any template files you need.
 These are the .xlsx files that hold a skeleton of the report in. E.g. if you want to test the Third Party Report you should place a copy of the Third Party Report template in the folder.
@@ -248,7 +248,7 @@ export TESTS_TO_DISABLE="health_api,get_csv"
 The test runner will automatically skip any scenario containing these keywords (case-insensitive):
 
 ```shell
-mvn clean test -Dtest='uk.gov.laa.pfla.**' -Dcucumber.filter.tags="not @performance"
+mvn clean test -Dtest='*RunCucumberTest' -Dcucumber.filter.tags="not @performance"
 ```
 
 | Value               | Behavior                   | Example                                      |
