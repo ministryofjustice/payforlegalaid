@@ -310,7 +310,7 @@ whilst logged into a session in UAT then run:
 
 ```bash
 export JSESSIONID=<insert session ID>
-mvn test -Dspring.profiles.active=uat -Dcucumber.filter.tags="@performance"
+mvn test -Dspring.profiles.active=uat -Dtest='*RunCucumberTest' -Dcucumber.filter.tags="@performance"
 ```
 
 Which grabs the URL from within application-uat.yml
