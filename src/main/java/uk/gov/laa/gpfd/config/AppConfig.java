@@ -165,7 +165,8 @@ public class AppConfig {
 
             @Override
             protected RowCallbackHandler createRowCallbackHandler(Sheet sheet, Mapping mapping) {
-                var list = mapping.getExcelSheet().getFieldAttributes().stream()
+                var list = Objects.requireNonNull(mapping.getExcelSheet().getFieldAttributes())
+                        .stream()
                         .filter(Objects::nonNull)
                         .map(FieldProjection.class::cast)
                         .toList();

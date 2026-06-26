@@ -15,7 +15,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.Locale;
 import java.util.Map;
 
 import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
@@ -45,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             justification = "Token header is user-supplied by design as a JWT bearer token; it is hashed before logging and structurally validated before decode"
     )
     @Override
-    public void doFilterInternal(HttpServletRequest servletRequest, @NonNull HttpServletResponse servletResponse, @NonNull FilterChain filterChain) throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest servletRequest, @NonNull HttpServletResponse servletResponse, @NonNull FilterChain filterChain) throws IOException, ServletException {
         var token = servletRequest.getHeader(JwtTokenComponents.HEADER_TYPE.value);
 
         if (token != null && !token.isEmpty()) {

@@ -1,6 +1,5 @@
 package uk.gov.laa.gpfd.services.excel.workbook;
 
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.streaming.SheetDataWriter;
@@ -11,6 +10,7 @@ import uk.gov.laa.gpfd.model.ReportQuery;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * A specialized streaming workbook implementation that extends {@link SXSSFWorkbook} with
@@ -76,7 +76,11 @@ public class ReportWorkbook extends SXSSFWorkbook {
      */
     private SXSSFSheet createAndRegisterSheet(XSSFSheet xSheet) {
         try {
-            reportQuery = report.extractAllMappings().stream().filter(e -> e.getExcelSheet().getName().equals(xSheet.getSheetName())).findFirst().orElse(null);
+            reportQuery = report.extractAllMappings()
+                    .stream()
+                    .filter(e -> Objects.equals(e.getExcelSheet().getName(), xSheet.getSheetName()))
+                    .findFirst()
+                    .orElse(null);
             var sxSheet = new ReportSXSSFSheet(this, xSheet);
             registerMapping(sxSheet, xSheet);
             return sxSheet;

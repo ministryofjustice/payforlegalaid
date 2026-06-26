@@ -26,17 +26,23 @@ public abstract class ExcelMappingProjection implements Identifiable, FieldProje
     @Nullable
     @Value.Derived
     public String getFormat() {
-        return getExcelColumn().getFormat().getFormat();
+        var format = getExcelColumn().getFormat();
+        if (format == null) return null;
+        return format.getFormat();
     }
 
     @Nullable
     @Value.Derived
     public String getFormatType() {
-        return getExcelColumn().getFormat().getFormatType();
+        var format = getExcelColumn().getFormat();
+        if (format == null) return null;
+        return format.getFormatType();
     }
 
     @Value.Derived
     public double getColumnWidth() {
-        return getExcelColumn().getFormat().getColumnWidth();
+        var format = getExcelColumn().getFormat();
+        if (format == null) return 0;
+        return format.getColumnWidth();
     }
 }
