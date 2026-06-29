@@ -26,6 +26,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 @ConditionalOnBean(name = "trackingJdbcTemplate")
 public class PostgresMetricsCollector implements MeterBinder {
 
+    protected static final String SQL_TOTAL_CONNECTIONS = "SELECT count(*) FROM pg_stat_activity";
+    protected static final String SQL_ACTIVE_CONNECTIONS = "SELECT count(*) FROM pg_stat_activity WHERE state = 'active'";
+    protected static final String SQL_IDLE_CONNECTIONS = "SELECT count(*) FROM pg_stat_activity WHERE state = 'idle'";
+    protected static final String SQL_MAX_CONNECTIONS = "SHOW max_connections";
+    protected static final String SQL_COMMITTED_TRANSACTIONS = "SELECT xact_commit FROM pg_stat_database WHERE datname = current_database()";
+    protected static final String SQL_ROLLBACK_TRANSACTIONS = "SELECT xact_rollback FROM pg_stat_database WHERE datname = current_database()";
+
     private final JdbcTemplate trackingJdbcTemplate;
 
     private final AtomicInteger totalConnections = new AtomicInteger();
@@ -36,7 +43,7 @@ public class PostgresMetricsCollector implements MeterBinder {
     private final AtomicInteger rolledBackTransaction = new AtomicInteger();
 
     private final List<Tag> trackingTag = List.of(Tag.of("datasource", "tracking"));
-    
+
     public PostgresMetricsCollector(@Qualifier("trackingJdbcTemplate") JdbcTemplate trackingJdbcTemplate) {
         this.trackingJdbcTemplate = trackingJdbcTemplate;
     }
@@ -80,6 +87,7 @@ public class PostgresMetricsCollector implements MeterBinder {
                 .description("Active utilisation rate (active/max)")
                 .register(meterRegistry);
 
+        // Metric name can't end in total!
         Gauge.builder("db.tracking.connections.utilisation.total_utilisation",
                         () -> maxConnections.get() == 0 ? Double.NaN : totalConnections.get() / (double) maxConnections.get())
                 .tags(trackingTag)
@@ -93,24 +101,23 @@ public class PostgresMetricsCollector implements MeterBinder {
     public void pollTrackingDbMetrics() {
         log.info("Querying Report Tracking db for metrics");
         try {
-            var total = trackingJdbcTemplate.queryForObject("SELECT count(*) FROM pg_stat_activity", Integer.class);
+            var total = trackingJdbcTemplate.queryForObject(SQL_TOTAL_CONNECTIONS, Integer.class);
             totalConnections.set(total == null ? 0 : total);
 
-            var active = trackingJdbcTemplate.queryForObject("SELECT count(*) FROM pg_stat_activity WHERE state = 'active'", Integer.class);
+            var active = trackingJdbcTemplate.queryForObject(SQL_ACTIVE_CONNECTIONS, Integer.class);
             activeConnections.set(active == null ? 0 : active);
 
-            var idle = trackingJdbcTemplate.queryForObject("SELECT count(*) FROM pg_stat_activity WHERE state = 'idle'", Integer.class);
+            var idle = trackingJdbcTemplate.queryForObject(SQL_IDLE_CONNECTIONS, Integer.class);
             idleConnections.set(idle == null ? 0 : idle);
 
-            var max = trackingJdbcTemplate.queryForObject("SHOW max_connections", Integer.class);
+            var max = trackingJdbcTemplate.queryForObject(SQL_MAX_CONNECTIONS, Integer.class);
             maxConnections.set(max == null ? 0 : max);
 
-            var committed = trackingJdbcTemplate.queryForObject("SELECT xact_commit FROM pg_stat_database WHERE datname = current_database()", Integer.class);
+            var committed = trackingJdbcTemplate.queryForObject(SQL_COMMITTED_TRANSACTIONS, Integer.class);
             committedTransactions.set(committed == null ? 0 : committed);
 
-            var rollbacks = trackingJdbcTemplate.queryForObject("SELECT xact_rollback FROM pg_stat_database WHERE datname = current_database()", Integer.class);
+            var rollbacks = trackingJdbcTemplate.queryForObject(SQL_ROLLBACK_TRANSACTIONS, Integer.class);
             rolledBackTransaction.set(rollbacks == null ? 0 : rollbacks);
-
 
         } catch (DataAccessException e) {
             log.warn("Failed to poll Postgres metrics", e);
