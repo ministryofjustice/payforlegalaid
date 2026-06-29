@@ -19,7 +19,7 @@ public class MetricsConfig {
      * @return metric registry
      */
     @Bean
-    @ConditionalOnBean(name="readOnlyDataSource")
+    @ConditionalOnBean(name = "readOnlyDataSource")
     public MeterBinder readUcpMetricsBinder(@Qualifier("readOnlyDataSource") DataSource readOnlyDataSource) {
 
         return meterRegistry -> {
