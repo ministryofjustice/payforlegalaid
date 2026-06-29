@@ -99,7 +99,7 @@ public class PostgresMetricsCollector implements MeterBinder {
     // Only run every 30s to avoid hammering the db
     @Scheduled(fixedDelay = 30000)
     public void pollTrackingDbMetrics() {
-        log.info("Querying Report Tracking db for metrics");
+        log.debug("Querying Report Tracking db for metrics");
         try {
             var total = trackingJdbcTemplate.queryForObject(SQL_TOTAL_CONNECTIONS, Integer.class);
             totalConnections.set(total == null ? 0 : total);
