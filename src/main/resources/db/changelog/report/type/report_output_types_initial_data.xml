@@ -17,5 +17,10 @@
             <column name="EXTENSION" value="xlsx"/>
             <column name="DESCRIPTION" value="Excel Document"/>
         </insert>
+        <insert tableName="REPORT_OUTPUT_TYPES" schemaName="GPFD">
+            <column name="ID" value="523ed024-74f9-4288-9624-bbfeb04f45d0"/>
+            <column name="EXTENSION" value="s3storage"/>
+            <column name="DESCRIPTION" value="Download from s3 Bucket"/>
+        </insert>
     </changeSet>
 </databaseChangeLog>

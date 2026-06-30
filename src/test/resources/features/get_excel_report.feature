@@ -6,9 +6,11 @@ Feature: Generate and Retrieve Excel Financial Report
 
   Scenario Outline: Successfully generate and retrieve an Excel report with valid authentication
     Given I am authenticated with a valid session
+    Given I have an empty tracking table
     When a request is made to the Excel endpoint with the report ID "<id>"
     Then the service should respond with a status code of 200
     And the response should include the Excel file with "<template>" report
+    And a row is entered in the report tracking table for report ID "<id>"
     Examples:
       | id                                   | template                                                |
       | b36f9bbb-1178-432c-8f99-8090e285f2d3 | CCMS Invoice Analysis (CIS to CCMS)                     |
@@ -22,9 +24,11 @@ Feature: Generate and Retrieve Excel Financial Report
 
   Scenario: Return an error when attempting to retrieve a report with an unrecognized ID
     Given I am authenticated with a valid session
+    Given I have an empty tracking table
     When a request is made to the Excel endpoint with the report ID "01010101-0101-0101-0101-010101010101"
-    Then the service should respond with a status code of 404
-    And the response should include the error message "Report not found for ID"
+    Then the service should respond with a status code of 403
+    And the response should include the error message "You cannot access report with ID: 01010101-0101-0101-0101-010101010101"
+    And no row is entered in the report tracking table for report ID "01010101-0101-0101-0101-010101010101"
 
   @NotReady
   Scenario: Return an error when report generation fails due non existing view
@@ -33,3 +37,12 @@ Feature: Generate and Retrieve Excel Financial Report
     Then the service should respond with a status code of 500
     And the response should include the error message "bad SQL grammar"
 
+  @Role=REP000
+  @Role=Reconciliation
+  Scenario: Do not retrieve report when you have the wrong role
+    Given I am authenticated with a valid session
+    Given I have an empty tracking table
+    When a request is made to the Excel endpoint with the report ID "b36f9bbb-1178-432c-8f99-8090e285f2d3"
+    Then the service should respond with a status code of 403
+    And the response should include the error message "You cannot access report with ID: b36f9bbb-1178-432c-8f99-8090e285f2d3"
+    And no row is entered in the report tracking table for report ID "b36f9bbb-1178-432c-8f99-8090e285f2d3"

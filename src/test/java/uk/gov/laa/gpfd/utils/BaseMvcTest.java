@@ -22,7 +22,7 @@ public abstract class BaseMvcTest {
     TimeBasedAccessInterceptor timeBasedAccessInterceptor;
 
     @BeforeEach
-    void beforeEach() {
+    void beforeEach_base() {
         when(timeBasedAccessInterceptor.preHandle(any(), any(), any())).thenReturn(true);
     }
 
