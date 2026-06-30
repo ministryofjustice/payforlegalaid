@@ -61,11 +61,10 @@ public class SecurityConfig {
      *
      * @param http the {@link HttpSecurity} object used to configure security for static resources
      * @return a configured {@link SecurityFilterChain} for static resource requests
-     * @throws Exception if an error occurs while building the security filter chain
      */
     @Bean
     @Order(1)
-    SecurityFilterChain staticChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain staticChain(HttpSecurity http) {
         return SecurityConfigSupport.createStaticChain(http);
     }
 

@@ -34,7 +34,6 @@ import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.web.client.RestTemplate;
 
-import liquibase.integration.spring.SpringLiquibase;
 import lombok.Getter;
 import oracle.ucp.jdbc.PoolDataSource;
 import oracle.ucp.jdbc.PoolDataSourceFactory;
@@ -65,17 +64,6 @@ import uk.gov.laa.gpfd.services.stream.AbstractDataStream;
 import uk.gov.laa.gpfd.services.stream.DataStream;
 import uk.gov.laa.gpfd.utils.StrategyFactory;
 import uk.gov.laa.gpfd.utils.WorkbookFactory;
-
-import javax.sql.DataSource;
-import java.sql.SQLException;
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-
-import static uk.gov.laa.gpfd.dao.sql.ChannelRowHandler.forSheet;
-import static uk.gov.laa.gpfd.services.DataStreamer.createJdbcStreamer;
 
 /**
  * Configuration class for application-level beans and settings.
