@@ -334,6 +334,20 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+<!--            Snyk vulnerability fix for logback-core and tomcat-embed-core. -->
+<!--            These dependencies are managed by Spring Boot, but we need to override them to fix the vulnerabilities.-->
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>1.5.37</version>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>11.0.23</version>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
