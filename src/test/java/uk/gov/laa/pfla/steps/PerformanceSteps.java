@@ -7,6 +7,7 @@ import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.springframework.beans.factory.annotation.Value;
 import uk.gov.laa.pfla.performance.PerformanceReportRegistry;
 import uk.gov.laa.pfla.scenario.ScenarioContext;
 
@@ -22,6 +23,9 @@ public class PerformanceSteps {
     private BrowserContext context;
     private Page page;
 
+    @Value("${gpfd.url}")
+    private String baseUrl;
+
     public PerformanceSteps(ScenarioContext scenarioContext) {
         this.scenarioContext = scenarioContext;
     }
@@ -29,10 +33,11 @@ public class PerformanceSteps {
     @Before("@performance")
     public void launchBrowser() {
         playwright = Playwright.create();
+        scenarioContext.setBaseUrl(baseUrl);
 
         Browser browser = playwright.chromium().launch(
                 new BrowserType.LaunchOptions()
-                        .setHeadless(true)
+//                        .setHeadless(true)
         );
 
         context = browser.newContext(
@@ -40,12 +45,14 @@ public class PerformanceSteps {
                         .setAcceptDownloads(true)
         );
         page = context.newPage();
-
+// this to uat
         String sessionCookie = System.getenv("JSESSIONID");
+        System.out.println("BASE URL IS " + baseUrl);
         if (sessionCookie != null && !sessionCookie.isEmpty()) {
             Cookie cookie = new Cookie("JSESSIONID", sessionCookie)
-                    .setDomain(getDomainFromUrl(getBaseUrl()))
-                    .setSecure(getBaseUrl().startsWith("https"));
+                    .setDomain(getDomainFromUrl(baseUrl))
+                    .setPath("/")
+                    .setSecure(baseUrl.startsWith("https"));
             context.addCookies(List.of(cookie));
         } else {
             System.out.println("WARNING: JSESSIONID env var not set. Set JSESSIONID=<cookie-value> to authenticate.");
@@ -189,6 +196,6 @@ public class PerformanceSteps {
     }
 
     private String getBaseUrl() {
-        return scenarioContext.getBaseUrl();
+        return baseUrl;
     }
 }
