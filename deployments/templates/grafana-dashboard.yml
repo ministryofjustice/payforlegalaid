@@ -238,7 +238,7 @@ data:
                 "uid": "P5DCFC7561CCDE821"
               },
               "editorMode": "code",
-              "expr": "db_tracking_connections_max{namespace=\"${NAMESPACE}\"}",
+              "expr": "db_tracking_connections_max{namespace='${NAMESPACE}'}",
               "legendFormat": "__auto",
               "range": true,
               "refId": "A"
@@ -434,7 +434,7 @@ data:
                 "uid": "P5DCFC7561CCDE821"
               },
               "editorMode": "code",
-              "expr": "100 * db_tracking_connections_utilisation_active{namespace=\"${NAMESPACE}\"}",
+              "expr": "100 * db_tracking_connections_utilisation_active{namespace='${NAMESPACE}'}",
               "legendFormat": "__auto",
               "range": true,
               "refId": "A"
@@ -532,7 +532,7 @@ data:
                 "uid": "P5DCFC7561CCDE821"
               },
               "editorMode": "code",
-              "expr": "100 * db_tracking_connections_utilisation_total_utilisation{namespace=\"${NAMESPACE}\"}",
+              "expr": "100 * db_tracking_connections_utilisation_total_utilisation{namespace='${NAMESPACE}'}",
               "legendFormat": "__auto",
               "range": true,
               "refId": "A"
@@ -630,7 +630,7 @@ data:
                 "uid": "P5DCFC7561CCDE821"
               },
               "editorMode": "code",
-              "expr": "db_tracking_connections_idle{namespace=~\"${NAMESPACE}\"}",
+              "expr": "db_tracking_connections_idle{namespace='${NAMESPACE}'}",
               "legendFormat": "__auto",
               "range": true,
               "refId": "A"
@@ -826,7 +826,7 @@ data:
                 "uid": "P5DCFC7561CCDE821"
               },
               "editorMode": "code",
-              "expr": "rate(\n  db_tracking_transactions_rollbacks{\n    namespace=\"${NAMESPACE}\"\n  }[1d]\n)",
+              "expr": "rate(db_tracking_transactions_rollbacks{namespace='${NAMESPACE}'}[1d])",
               "legendFormat": "__auto",
               "range": true,
               "refId": "A"
@@ -924,7 +924,7 @@ data:
                 "uid": "P5DCFC7561CCDE821"
               },
               "editorMode": "code",
-              "expr": "100 *\nrate(db_tracking_transactions_rollbacks{namespace=\"${NAMESPACE}\"}[1d])\n/\n(\n  rate(db_tracking_transactions_commits{namespace=\"${NAMESPACE}\"}[1d])\n+\n  rate(db_tracking_transactions_rollbacks{namespace=\"${NAMESPACE}\"}[1d])\n)",
+              "expr": "100 * rate(db_tracking_transactions_rollbacks{namespace='${NAMESPACE}'}[1d])rate(db_tracking_transactions_commits{namespace='${NAMESPACE}'}[1d]) + rate(db_tracking_transactions_rollbacks{namespace='${NAMESPACE}'}[1d]))",
               "legendFormat": "__auto",
               "range": true,
               "refId": "A"
@@ -1022,7 +1022,7 @@ data:
                 "uid": "P5DCFC7561CCDE821"
               },
               "editorMode": "code",
-              "expr": "sum by (pod) (\n  db_tracking_connections_active{\n    namespace=\"${NAMESPACE}\"\n  }\n)",
+              "expr": "sum by (pod) (db_tracking_connections_active{namespace='${NAMESPACE}'})",
               "legendFormat": "__auto",
               "range": true,
               "refId": "A"
@@ -1801,7 +1801,7 @@ data:
                 "uid": "P5DCFC7561CCDE821"
               },
               "editorMode": "code",
-              "expr": "100 * jdbc_connections_active{namespace=\"${NAMESPACE}\"} / jdbc_connections_max{namespace=\"${NAMESPACE}\"}",
+              "expr": "100 * jdbc_connections_active{namespace='${NAMESPACE}'} / jdbc_connections_max{namespace='${NAMESPACE}'}",
               "legendFormat": "__auto",
               "range": true,
               "refId": "A"
@@ -4407,7 +4407,7 @@ data:
         ]
       },
       "timezone": "browser",
-      "title": "LAA GPFD Get Payment & Finance Data ${ENV_NAME}dashboard",
+      "title": "LAA GPFD Get Payment & Finance Data ${ENV_NAME} dashboard",
       "uid": "laa-gpfd-${ENV_NAME}",
       "version": 23,
       "weekStart": ""
