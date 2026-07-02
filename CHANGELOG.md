@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/ministryofjustice/payforlegalaid/compare/v1.1.0...v1.1.1) (2026-07-02)
+
+
+### Bug Fixes
+
+* **LPF-1368:** Fixed test config issues (PFLA tests) ([#531](https://github.com/ministryofjustice/payforlegalaid/issues/531)) ([4a10c09](https://github.com/ministryofjustice/payforlegalaid/commit/4a10c09f2f7def5f19a0206c05ef9948f20b547c))
+
 ## [1.1.0](https://github.com/ministryofjustice/payforlegalaid/compare/v1.0.1...v1.1.0) (2026-06-19)
 
 
