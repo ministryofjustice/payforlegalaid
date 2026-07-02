@@ -27,7 +27,7 @@
         <govuk-frontend.version>6.2.0</govuk-frontend.version>
         <moj-frontend.version>6.0.0</moj-frontend.version>
 
-        <payforlegalaid-openapi.version>0.0.38</payforlegalaid-openapi.version>
+        <payforlegalaid-openapi.version>0.0.40</payforlegalaid-openapi.version>
         <aws.java.sdk.version>2.46.17</aws.java.sdk.version>
         <cucumber.version>7.34.3</cucumber.version>
         <playwright.version>1.60.0</playwright.version>
@@ -46,6 +46,10 @@
         <!-- Code coverage thresholds: fail build if coverage falls below these values -->
         <coverage.line.minimum>0.80</coverage.line.minimum>
         <coverage.branch.minimum>0.68</coverage.branch.minimum>
+
+        <!-- Snyk vulns -->
+        <logback.version>1.5.36</logback.version>
+        <tomcat.version>11.0.23</tomcat.version>
     </properties>
 
     <build>
@@ -402,6 +406,18 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jackson</artifactId>
+        </dependency>
+
+        <!-- Snyk vulns -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-core</artifactId>
+            <version>${tomcat.version}</version>
         </dependency>
 
         <!--  Do not replace with spring-liquibase due to how we configure Liquibase.  -->
