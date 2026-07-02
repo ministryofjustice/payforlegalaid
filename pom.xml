@@ -27,7 +27,7 @@
         <govuk-frontend.version>6.2.0</govuk-frontend.version>
         <moj-frontend.version>6.0.0</moj-frontend.version>
 
-        <payforlegalaid-openapi.version>0.0.38</payforlegalaid-openapi.version>
+        <payforlegalaid-openapi.version>0.0.40</payforlegalaid-openapi.version>
         <aws.java.sdk.version>2.46.17</aws.java.sdk.version>
         <cucumber.version>7.34.3</cucumber.version>
         <playwright.version>1.60.0</playwright.version>
@@ -332,20 +332,6 @@
                 <artifactId>bom</artifactId>
                 <version>${aws.java.sdk.version}</version>
                 <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-<!--            Snyk vulnerability fix for logback-core and tomcat-embed-core. -->
-<!--            These dependencies are managed by Spring Boot, but we need to override them to fix the vulnerabilities.-->
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-core</artifactId>
-                <version>1.5.37</version>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-core</artifactId>
-                <version>11.0.23</version>
                 <scope>import</scope>
             </dependency>
         </dependencies>
