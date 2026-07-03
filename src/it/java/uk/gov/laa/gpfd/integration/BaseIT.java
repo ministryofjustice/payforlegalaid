@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 
 @Testcontainers
@@ -84,6 +85,18 @@ public abstract class BaseIT {
                                         .claim("oid", UUID.randomUUID().toString())))
                         .contentType(MediaType.APPLICATION_JSON)
         );
+    }
+
+    protected ResultActions performStreamingGetRequestWithRoles(String uri, List<String> roles) throws Exception {
+        var result = performGetRequestWithRoles(uri, roles)
+                .andReturn();
+
+        var asyncResult = result.getAsyncResult();
+        if (asyncResult instanceof Throwable throwable) {
+            throw new IllegalStateException("Async streaming request failed", throwable);
+        }
+
+        return mockMvc.perform(asyncDispatch(result));
     }
 
 }

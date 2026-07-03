@@ -154,12 +154,13 @@ public class ReportsController implements ReportsApi {
         var s3Stream = s3CsvDownload.stream();
         var filename = s3CsvDownload.getFileName();
         var fileExtension = FileExtension.fromString(report.getOutputType().getExtension());
-        var contentLength = s3CsvDownload.stream().response().contentLength();
+        var contentLength = s3Stream.response().contentLength();
 
         // Massage the stream into the right format for us to track it
         StreamingResponseBody rawStream = outputStream -> {
             try (s3Stream) {
                 s3Stream.transferTo(outputStream);
+                outputStream.flush();
             }
         };
 

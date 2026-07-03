@@ -4,10 +4,17 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.context.annotation.Import;
+import org.springframework.core.task.SyncTaskExecutor;
+import org.springframework.core.task.support.TaskExecutorAdapter;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
@@ -47,8 +54,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.createTestReportWithOutputType;
@@ -58,6 +63,7 @@ import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.xlsxReportOutput;
 import static uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.AuthenticationIsNullException;
 
 @WebMvcTest(ReportsController.class)
+@Import(ReportsControllerTest.AsyncTestConfig.class)
 class ReportsControllerTest extends BaseMvcTest {
 
     private static final UUID REPORT_ID = UUID.fromString("0d4da9ec-b0b3-4371-af10-f375330d85d1");
@@ -83,6 +89,14 @@ class ReportsControllerTest extends BaseMvcTest {
 
     @MockitoBean
     TrackedStreamService trackedStreamService;
+
+    @TestConfiguration
+    static class AsyncTestConfig implements WebMvcConfigurer {
+        @Override
+        public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
+            configurer.setTaskExecutor(new TaskExecutorAdapter(new SyncTaskExecutor()));
+        }
+    }
 
     @Test
     void downloadCsvReturnsCorrectResponse() throws Exception {
@@ -112,11 +126,11 @@ class ReportsControllerTest extends BaseMvcTest {
         when(trackedStreamService.wrapStream(any(), any(), any())).thenReturn(responseStream);
         when(responseBuilder.buildResponse(any(), any(), any())).thenReturn(mockResponseEntity);
 
-        var response = performAuthenticatedGet("/reports/" + reportId + "/csv", List.of("Financial"))
-                .andExpect(status().isOk())
-                .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=data.csv"))
-                .andExpect(content().contentType(MediaType.APPLICATION_OCTET_STREAM))
-                .andReturn();
+        var response = performAuthenticatedStreamingGet("/reports/" + reportId + "/csv", List.of("Financial"));
+
+        assertEquals(200, response.getResponse().getStatus());
+        assertEquals("attachment; filename=data.csv", response.getResponse().getHeader(HttpHeaders.CONTENT_DISPOSITION));
+        assertEquals(MediaType.APPLICATION_OCTET_STREAM_VALUE, response.getResponse().getContentType());
 
         assertEquals("1,John,Doe\n2,Jane,Smith\n", response.getResponse().getContentAsString());
 
@@ -140,8 +154,8 @@ class ReportsControllerTest extends BaseMvcTest {
         // Perform request and assert results
         performAuthenticatedGet("/reports", List.of("Financial"))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.reportList", hasSize(2)))
-                .andExpect(jsonPath("$.reportList[0].id").value(reportListEntryMock1.getId().toString()))
-                .andExpect(jsonPath("$.reportList[1].id").value(reportListEntryMock2.getId().toString()));
+                .andExpect(jsonPath("$.reportList[0].id").value(String.valueOf(reportListEntryMock1.getId())))
+                .andExpect(jsonPath("$.reportList[1].id").value(String.valueOf(reportListEntryMock2.getId())));
 
         verify(reportManagementServiceMock, times(1)).fetchReportListEntries();
     }
@@ -187,9 +201,11 @@ class ReportsControllerTest extends BaseMvcTest {
         when(securityUtils.extractUserId()).thenReturn(USER_ID);
         when(responseBuilder.buildResponse(any(), any(), any(), any())).thenReturn(ResponseEntity.ok().body(responseStream));
 
-        performAuthenticatedGet("/reports/" + reportId + "/file", List.of("Financial"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("output!"));
+        var result = performAuthenticatedStreamingGet("/reports/" + reportId + "/file", List.of("Financial"));
+
+        assertEquals(200, result.getResponse().getStatus());
+
+        assertEquals("output!", result.getResponse().getContentAsString());
 
         verify(reportManagementServiceMock).validateReportFormat(reportId, FileExtension.S3STORAGE);
         verify(fileDownloadService, times(1)).getFileStreamResponse(reportId);
@@ -289,9 +305,11 @@ class ReportsControllerTest extends BaseMvcTest {
         when(reportDao.fetchReportById(excelReportId)).thenReturn(Optional.of(report));
 
         // Perform the GET request
-        performAuthenticatedGet("/reports/"+ excelReportId + "/excel", List.of("Financial"))
-                .andExpect(status().isOk())
-                .andExpect(header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report.xlsx"));
+        var result = performAuthenticatedStreamingGet("/reports/"+ excelReportId + "/excel", List.of("Financial"));
+
+        assertEquals(200, result.getResponse().getStatus());
+
+        assertEquals("attachment; filename=report.xlsx", result.getResponse().getHeader(HttpHeaders.CONTENT_DISPOSITION));
 
         verify(reportManagementServiceMock).validateReportFormat(excelReportId, FileExtension.XLSX);
         verify(streamingService).stream(excelReportId, FileExtension.XLSX);
@@ -451,6 +469,20 @@ class ReportsControllerTest extends BaseMvcTest {
 
         performAuthenticatedGet("/reports/" + reportId + "/file", List.of("Financial"))
                 .andExpect(status().isNotFound());
+    }
+
+    private MvcResult performAuthenticatedStreamingGet(String uri, List<String> roles) throws Exception {
+        var result = performAuthenticatedGet(uri, roles)
+                .andReturn();
+
+        if (result.getRequest().isAsyncStarted()) {
+            var asyncResult = result.getAsyncResult();
+            if (asyncResult instanceof Throwable throwable) {
+                throw new IllegalStateException("Async streaming request failed", throwable);
+            }
+        }
+
+        return result;
     }
 
 }

@@ -57,7 +57,7 @@ final class ReportGetFileIT extends BaseIT {
         var mockS3Response = new ResponseInputStream<>(responseMetadata, inputStream);
         when(s3Client.getObject(any(GetObjectRequest.class))).thenReturn(mockS3Response);
 
-        performGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of("Reconciliation"))
+        performStreamingGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of("Reconciliation"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_OCTET_STREAM))
                 .andExpect(header().longValue("Content-Length", 25L))
