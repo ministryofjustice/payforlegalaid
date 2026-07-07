@@ -94,14 +94,8 @@ public class SecurityConfig {
      */
     @Bean
     @Order(2)
-    SecurityFilterChain cspReportChain(HttpSecurity http) throws Exception {
-
-        http
-                .securityMatcher("/csp-report")
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
-
-        return http.build();
+    SecurityFilterChain cspReportChain(HttpSecurity http) {
+        return SecurityConfigSupport.createCspReportChain(http);
     }
 
     /**

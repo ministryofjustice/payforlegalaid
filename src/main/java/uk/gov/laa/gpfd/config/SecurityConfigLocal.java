@@ -32,7 +32,12 @@ import java.util.List;
  * to manage specific security aspects.
  * </p>
  */
-@SuppressWarnings("java:S4502") // CSRF disabled only for H2 console — local/test profiles only, never active in prod
+/*
+    - CSRF disabled only for H2 console — local/test profiles only, never active in prod
+    - Suppressing password warning as this is a local-only config file.
+ */
+
+@SuppressWarnings({"java:S4502", "java:S6437"})
 @Profile({"local", "test"})
 @Configuration
 @ConditionalOnProperty(name = "spring.cloud.azure.active-directory.enabled", havingValue = "false")
@@ -96,14 +101,8 @@ public class SecurityConfigLocal {
 
     @Bean
     @Order(2)
-    SecurityFilterChain cspReportChain(HttpSecurity http) throws Exception {
-
-        http
-                .securityMatcher("/csp-report")
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
-
-        return http.build();
+    SecurityFilterChain cspReportChain(HttpSecurity http) {
+        return SecurityConfigSupport.createCspReportChain(http);
     }
 
     /**

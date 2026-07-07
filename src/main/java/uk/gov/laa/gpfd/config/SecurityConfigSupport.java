@@ -5,6 +5,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jspecify.annotations.NonNull;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
@@ -55,10 +57,6 @@ public final class SecurityConfigSupport {
         return http.csrf(csrf -> csrf
                 .csrfTokenRepository(csrfTokenRepository)
                 .csrfTokenRequestHandler(delegate)
-//                .ignoringRequestMatchers(request ->
-//                        request.getRequestURI().equals("/csp-report")
-//                                && "POST".equals(request.getMethod())
-//                )
         );
     }
 
@@ -140,5 +138,14 @@ public final class SecurityConfigSupport {
 
     public static PathPatternRequestMatcher createMatcher(String pattern) {
         return PathPatternRequestMatcher.withDefaults().matcher(pattern);
+    }
+
+    public static SecurityFilterChain createCspReportChain(HttpSecurity http) {
+
+        http.securityMatcher("/csp-report")
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+
+        return http.build();
     }
 }
