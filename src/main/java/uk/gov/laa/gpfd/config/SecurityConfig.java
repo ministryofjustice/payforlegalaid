@@ -98,7 +98,7 @@ public class SecurityConfig {
 
         http
                 .securityMatcher("/csp-report")
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
 
         return http.build();
