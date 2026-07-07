@@ -55,10 +55,10 @@ public final class SecurityConfigSupport {
         return http.csrf(csrf -> csrf
                 .csrfTokenRepository(csrfTokenRepository)
                 .csrfTokenRequestHandler(delegate)
-                .ignoringRequestMatchers(request ->
-                        request.getRequestURI().equals("/csp-report")
-                                && "POST".equals(request.getMethod())
-                )
+//                .ignoringRequestMatchers(request ->
+//                        request.getRequestURI().equals("/csp-report")
+//                                && "POST".equals(request.getMethod())
+//                )
         );
     }
 
