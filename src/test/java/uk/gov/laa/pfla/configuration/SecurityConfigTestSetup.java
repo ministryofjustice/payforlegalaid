@@ -26,7 +26,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @TestConfiguration
 @RequiredArgsConstructor
-public class SecurityConfigTest {
+public class SecurityConfigTestSetup {
     private final AuthorizationManager<RequestAuthorizationContext> authManager;
 
     @Value("${swagger-ui.enabled:true}")
