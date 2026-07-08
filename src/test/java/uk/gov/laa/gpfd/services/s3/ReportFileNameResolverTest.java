@@ -43,18 +43,14 @@ class ReportFileNameResolverTest {
     }
 
     @Test
-    void shouldThrowIllegalArgumentExceptionIfBlankUUIDSupplied() {
-        assertThrows(IllegalArgumentException.class, () -> reportFileNameResolver.getS3PrefixFromId(UUID.fromString("")));
-    }
-
-    @Test
     void shouldThrowIllegalArgumentExceptionIfNullUUIDSupplied() {
         assertThrows(IllegalArgumentException.class, () -> reportFileNameResolver.getS3PrefixFromId(null));
     }
 
     @Test
     void shouldThrowNotSupportedExceptionIfIdIsNotInList() {
-        assertThrows(ReportNotSupportedForDownloadException.class, () -> reportFileNameResolver.getS3PrefixFromId(UUID.fromString("bda2120c-8f82-45a8-a682-8dedfb7997a7")));
+        var uuid = UUID.fromString("bda2120c-8f82-45a8-a682-8dedfb7997a7");
+        assertThrows(ReportNotSupportedForDownloadException.class, () -> reportFileNameResolver.getS3PrefixFromId(uuid));
     }
 
 }

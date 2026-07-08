@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.QueryTimeoutException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.reset;
@@ -253,7 +254,7 @@ class PostgresMetricsCollectorTest {
         when(jdbcTemplate.queryForObject(SQL_ROLLBACK_TRANSACTIONS, Integer.class)).thenThrow(new QueryTimeoutException("Uh oh"));
 
         var metrics = new PostgresMetricsCollector(jdbcTemplate);
-        metrics.pollTrackingDbMetrics();
+        assertDoesNotThrow(metrics::pollTrackingDbMetrics);
         metrics.bindTo(registry);
 
     }
