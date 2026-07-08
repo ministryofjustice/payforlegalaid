@@ -445,7 +445,7 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <!-- Spring currently at 42.7.10 - remove version when Spring upgrades -->
-            <version>42.7.11</version>
+            <version>42.7.12</version>
         </dependency>
 
         <dependency>
