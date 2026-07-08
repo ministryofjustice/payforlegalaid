@@ -28,6 +28,7 @@
         <moj-frontend.version>6.0.0</moj-frontend.version>
 
         <payforlegalaid-openapi.version>0.0.40</payforlegalaid-openapi.version>
+        <glad-bom.version>0.1.0</glad-bom.version>
         <aws.java.sdk.version>2.46.18</aws.java.sdk.version>
         <cucumber.version>7.34.4</cucumber.version>
         <playwright.version>1.61.0</playwright.version>
@@ -338,6 +339,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>uk.gov.laa</groupId>
+                <artifactId>glad-bom</artifactId>
+                <version>${glad-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -605,6 +613,10 @@
         <repository>
             <id>central</id>
             <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/ministryofjustice/glad-parent-bom</url>
         </repository>
         <repository>
             <id>payforlegalaid-openapi</id>
