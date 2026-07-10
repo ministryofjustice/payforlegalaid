@@ -560,7 +560,7 @@
         </repository>
         <repository>
             <id>github</id>
-            <url>https://maven.pkg.github.com/ministryofjustice/glad-parent-bom</url>
+            <url>https://maven.pkg.github.com/ministryofjustice/glad-platform</url>
         </repository>
         <repository>
             <id>payforlegalaid-openapi</id>
