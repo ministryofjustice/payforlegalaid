@@ -9,6 +9,7 @@ import uk.gov.laa.gpfd.api.ReportsApi;
 import uk.gov.laa.gpfd.utils.UrlBuilder;
 
 import java.net.URI;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -72,7 +73,7 @@ public class ReportsViewController {
             return "";
         }
 
-        String path = uri.getPath().toLowerCase();
+        String path = uri.getPath().toLowerCase(Locale.ROOT);
 
         if (path.contains("/excel")) {
             return "xlsx";

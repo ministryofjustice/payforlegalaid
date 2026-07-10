@@ -5,6 +5,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.internal.annotation.SuppressFBWarnings;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimNames;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -24,7 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final Map<String, String> errorMessages = Map.of(
             JwtClaimNames.AUD, "Audience mismatch",
             JwtTokenComponents.TENANT_ID_KEY.value, "Incorrect Tenant ID",
-            JwtTokenComponents.APPLICATION_ID_KEY.value,"Incorrect Application ID",
+            JwtTokenComponents.APPLICATION_ID_KEY.value, "Incorrect Application ID",
             JwtClaimNames.EXP, "Token is expired",
             JwtClaimNames.NBF, "Token not valid for current time",
             JwtTokenComponents.SCOPE_KEY.value, "Expected scope values are missing");
@@ -37,13 +39,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.appConfig = appConfig;
     }
 
+    @SuppressFBWarnings(
+            value = "SECSH",
+            justification = "Token header is user-supplied by design as a JWT bearer token; it is hashed before logging and structurally validated before decode"
+    )
     @Override
-    public void doFilterInternal(HttpServletRequest servletRequest, HttpServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest servletRequest, @NonNull HttpServletResponse servletResponse, @NonNull FilterChain filterChain) throws IOException, ServletException {
         var token = servletRequest.getHeader(JwtTokenComponents.HEADER_TYPE.value);
 
         if (token != null && !token.isEmpty()) {
-            String logIdentifier = sha256Hex(token).substring(0,TOKEN_ID_LENGTH);
-            log.info("Token " + logIdentifier + " - token received, attempting validation");
+            String logIdentifier = sha256Hex(token).substring(0, TOKEN_ID_LENGTH);
+            log.info("Token {} - token received, attempting validation", logIdentifier);
             validateJwt(token, logIdentifier);
         }
 
@@ -76,11 +82,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 throw new JwtException(errorMessages.get(JwtTokenComponents.APPLICATION_ID_KEY.value));
             }
 
-            if (isTokenExpired(decodedToken)) {
+            Instant expiresAt = decodedToken.getExpiresAt();
+            if (expiresAt == null) {
+                throw new JwtException("Token expiry is null");
+            }
+            if (isTokenExpired(expiresAt)) {
                 throw new JwtException(errorMessages.get(JwtClaimNames.EXP));
             }
 
-            if (!isTokenValidForCurrentTime(decodedToken)) {
+            Instant notBefore = decodedToken.getNotBefore();
+            if (notBefore == null) {
+                throw new JwtException("Token not before time is null");
+            }
+            if (!isTokenValidForCurrentTime(notBefore)) {
                 throw new JwtException(errorMessages.get(JwtClaimNames.NBF));
             }
 
@@ -95,9 +109,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (Exception ex) {
             throw new JwtException("Unable to validate token.\n" + ex.getClass() + ": " + ex.getMessage());
         }
-
     }
 
+    @SuppressFBWarnings(
+            value = "SECUNI",
+            justification = "TOKEN_PREFIX contains only ASCII characters; locale-sensitive case folding cannot affect this comparison"
+    )
     private String extractJwtToken(String token) {
         final String INVALID_JWT_ERROR_MESSAGE = "Token is not a valid JWT";
 
@@ -124,19 +141,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return token;
     }
 
-    private boolean isTokenValidForCurrentTime(Jwt decodedToken) {
-        try {
-            return !decodedToken.getNotBefore().isAfter(Instant.now());
-        } catch (NullPointerException ex) {
-            throw new JwtException("Token not before time is null");
-        }
+    private boolean isTokenValidForCurrentTime(Instant notBefore) {
+        return !notBefore.isAfter(Instant.now());
     }
 
-    private boolean isTokenExpired(Jwt decodedToken) {
-        try {
-            return decodedToken.getExpiresAt().isBefore(Instant.now());
-        } catch (NullPointerException ex) {
-            throw new JwtException("Token expiry is null");
-        }
+    private boolean isTokenExpired(Instant expiresAt) {
+        return expiresAt.isBefore(Instant.now());
     }
 }

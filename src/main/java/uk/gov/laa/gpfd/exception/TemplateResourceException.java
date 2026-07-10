@@ -1,5 +1,7 @@
 package uk.gov.laa.gpfd.exception;
 
+import org.apache.logging.log4j.internal.annotation.SuppressFBWarnings;
+
 /**
  * A sealed abstract class representing a hierarchy of exceptions related to template resource operations.
  * This class serves as the base for specific exceptions that can occur during template creation,
@@ -116,6 +118,10 @@ public abstract sealed class TemplateResourceException extends RuntimeException 
          *         extra arguments are ignored.  The number of arguments is
          *         variable and may be zero.
          */
+        @SuppressFBWarnings(
+                value = "SECFSM",
+                justification = "Format string is always a compile-time literal from internal callers; no user input reaches this parameter"
+        )
         public ExcelTemplateCreationException(Exception e, String format, Object... args) {
             super(String.format(format, args), e);
         }

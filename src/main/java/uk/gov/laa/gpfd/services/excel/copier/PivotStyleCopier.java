@@ -12,7 +12,7 @@ import java.util.Objects;
  * Pivot styles (called dxf in the underlying xml - differential formating) are stored differently to cell styles
  * hence why it is necessary to copy these separately
  */
-public class PivotStyleCopier {
+public final class PivotStyleCopier {
 
     /** The source (template) workbook to copy from */
     private final Workbook sourceWorkbook;

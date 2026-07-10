@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.1.1](https://github.com/ministryofjustice/payforlegalaid/compare/v1.1.0...v1.1.1) (2026-07-02)
+
+
+### Bug Fixes
+
+* **LPF-1368:** Fixed test config issues (PFLA tests) ([#531](https://github.com/ministryofjustice/payforlegalaid/issues/531)) ([4a10c09](https://github.com/ministryofjustice/payforlegalaid/commit/4a10c09f2f7def5f19a0206c05ef9948f20b547c))
+
+## [1.1.0](https://github.com/ministryofjustice/payforlegalaid/compare/v1.0.1...v1.1.0) (2026-06-19)
+
+
+### Features
+
+* **LPF-1453:** add metrics for mojfin connection ([#520](https://github.com/ministryofjustice/payforlegalaid/issues/520)) ([a3f91b2](https://github.com/ministryofjustice/payforlegalaid/commit/a3f91b280c0a71556951771f1b1a1f7646a40391))
+
+
+### Bug Fixes
+
+* **LPF-0000:** Fixed CSRF vulnerability ([#521](https://github.com/ministryofjustice/payforlegalaid/issues/521)) ([3dd581c](https://github.com/ministryofjustice/payforlegalaid/commit/3dd581c19dec9fb9f17ad434f81b738f31956cec))
+
 ## [1.0.1](https://github.com/ministryofjustice/payforlegalaid/compare/v1.0.0...v1.0.1) (2026-05-29)
 
 

@@ -1,6 +1,7 @@
 package uk.gov.laa.gpfd.dao;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -17,7 +18,7 @@ import static uk.gov.laa.gpfd.exception.DatabaseReadException.DatabaseFetchExcep
 @Service
 public record ReportDao(
         ResultSetExtractor<Collection<Report>> extractor,
-        JdbcOperations readOnlyJdbcTemplate
+        @Qualifier("readOnlyJdbcTemplate") JdbcOperations readOnlyJdbcTemplate
 ) {
 
     private static final String SELECT_REPORT_BY_ID = """

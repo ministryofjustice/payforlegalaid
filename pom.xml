@@ -4,7 +4,7 @@
 
     <groupId>uk.gov.laa</groupId>
     <artifactId>pay-for-legal-aid</artifactId>
-    <version>1.0.1</version>
+    <version>1.1.1</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -24,16 +24,20 @@
         <poi.version>5.5.1</poi.version>
         <immutables.version>2.12.2</immutables.version>
         <spring-cloud-azure-dependencies.version>7.3.0</spring-cloud-azure-dependencies.version>
-        <govuk-frontend.version>6.2.0</govuk-frontend.version>
+        <govuk-frontend.version>6.3.0</govuk-frontend.version>
         <moj-frontend.version>6.0.0</moj-frontend.version>
 
-        <payforlegalaid-openapi.version>0.0.36</payforlegalaid-openapi.version>
-        <aws.java.sdk.version>2.46.11</aws.java.sdk.version>
+        <payforlegalaid-openapi.version>0.0.40</payforlegalaid-openapi.version>
+        <aws.java.sdk.version>2.47.0</aws.java.sdk.version>
+        <cucumber.version>7.34.4</cucumber.version>
+        <playwright.version>1.61.0</playwright.version>
+        <axe.version>4.12.0</axe.version>
+
         <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
         <maven-dependency-plugin.version>3.11.0</maven-dependency-plugin.version>
         <maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
         <maven-war-plugin.version>3.5.1</maven-war-plugin.version>
-      
+
         <gatling.version>3.15.1</gatling.version>
         <gatling-maven-plugin.version>4.21.7</gatling-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
@@ -42,6 +46,10 @@
         <!-- Code coverage thresholds: fail build if coverage falls below these values -->
         <coverage.line.minimum>0.80</coverage.line.minimum>
         <coverage.branch.minimum>0.68</coverage.branch.minimum>
+
+        <!-- Snyk vulns -->
+        <logback.version>1.5.37</logback.version>
+        <tomcat.version>11.0.24</tomcat.version>
     </properties>
 
     <build>
@@ -63,6 +71,10 @@
                         <include>**/*Test.java</include>
                         <include>**/*IT.java</include>
                     </includes>
+                    <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+                    <systemPropertyVariables>
+                        <cucumber.publish.quiet>true</cucumber.publish.quiet>
+                    </systemPropertyVariables>
                     <reportFormat>plain</reportFormat>
                     <consoleOutputReporter>
                         <disable>true</disable>
@@ -306,6 +318,13 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-bom</artifactId>
+                <version>${cucumber.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.azure.spring</groupId>
                 <artifactId>spring-cloud-azure-dependencies</artifactId>
                 <version>${spring-cloud-azure-dependencies.version}</version>
@@ -318,22 +337,6 @@
                 <version>${aws.java.sdk.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.thymeleaf</groupId>
-                <artifactId>thymeleaf</artifactId>
-                <version>3.1.5.RELEASE</version>
-            </dependency>
-            <dependency>
-                <groupId>org.thymeleaf</groupId>
-                <artifactId>thymeleaf-spring6</artifactId>
-                <version>3.1.5.RELEASE</version>
-            </dependency>
-            <!-- Overriding webmvc version until it is fixed in 4.0.x -->
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-core</artifactId>
-                <version>11.0.22</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -353,6 +356,11 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml-full</artifactId>
             <version>${poi.version}</version>
         </dependency>
 
@@ -400,6 +408,20 @@
             <artifactId>spring-boot-starter-jackson</artifactId>
         </dependency>
 
+        <!-- Snyk vulns -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-core</artifactId>
+            <version>${tomcat.version}</version>
+        </dependency>
+
+        <!--  Do not replace with spring-liquibase due to how we configure Liquibase.  -->
+        <!--  This will cause dev env to break.-->
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
@@ -464,21 +486,12 @@
             <artifactId>sts</artifactId>
         </dependency>
 
-        <!--- Transitive dependency CVEs - remove if Spring etc upgrade -->
-        <dependency>
-            <!-- Spring currently sitting at 3.0.4 -->
-            <groupId>tools.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>3.2.0</version>
-        </dependency>
-        <dependency>
-            <!-- SpringDoc Openapi currently sitting at 2.20.2 -->
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>2.22.0</version>
-        </dependency>
-
         <!-- Test Dependencies-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-liquibase</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-liquibase-test</artifactId>
@@ -554,88 +567,45 @@
             <version>${gatling.version}</version>
             <scope>test</scope>
         </dependency>
-        <!--   Pulling in below Netty dependencies to
-        resolve vulnerabilities raised by Snyk   -->
         <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec-compression</artifactId>
-            <version>4.2.15.Final</version>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-spring</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec-dns</artifactId>
-            <version>4.2.15.Final</version>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit-platform-engine</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-transport-classes-epoll</artifactId>
-            <version>4.2.15.Final</version>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec-http2</artifactId>
-            <version>4.2.15.Final</version>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-suite</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec-http3</artifactId>
-            <version>4.2.15.Final</version>
+            <groupId>com.microsoft.playwright</groupId>
+            <artifactId>playwright</artifactId>
+            <version>${playwright.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec-http</artifactId>
-            <version>4.2.15.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-handler-proxy</artifactId>
-            <version>4.2.15.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-handler</artifactId>
-            <version>4.2.15.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-resolver-dns</artifactId>
-            <version>4.2.15.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec-classes-quic</artifactId>
-            <version>4.2.15.Final</version>
-        </dependency>
-        <!-- Override transitive dependency - Spring Boot on 7.0.7 needs at least 7.0.8 -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>7.0.8</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <version>7.0.8</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-expression</artifactId>
-            <version>7.0.8</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>7.0.8</version>
-        </dependency>
-        <!-- Override transitive dependency - Spring Boot on 1.16.5 but needs at least 1.16.6 -->
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-core</artifactId>
-            <version>1.17.0</version>
+            <groupId>com.deque.html.axe-core</groupId>
+            <artifactId>playwright</artifactId>
+            <version>${axe.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
     <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
         <repository>
             <id>payforlegalaid-openapi</id>
             <url>https://github.com/ministryofjustice/payforlegalaid-openapi/</url>
@@ -657,6 +627,7 @@
                             <xmlOutput>true</xmlOutput>
                             <htmlOutput>true</htmlOutput>
                             <failOnError>false</failOnError>
+                            <excludeFilterFile>spotbugs-exclude.xml</excludeFilterFile>
                         </configuration>
                         <executions>
                             <execution>

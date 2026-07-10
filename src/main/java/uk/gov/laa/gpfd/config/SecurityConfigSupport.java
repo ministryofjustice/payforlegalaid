@@ -28,17 +28,23 @@ import java.util.List;
 /**
  * Shared helper methods for Spring Security configuration classes.
  */
+@SuppressWarnings("java:S4502") // CSRF disabled only for H2 console — local/test profiles only, never active in prod
 public final class SecurityConfigSupport {
 
     private SecurityConfigSupport() {
         throw new UnsupportedOperationException("Utility class");
     }
 
-    public static SecurityFilterChain createStaticChain(HttpSecurity http) throws Exception {
+    public static SecurityFilterChain createStaticChain(HttpSecurity http) {
         http.securityMatcher("/govuk/**", "/moj/**", "/css/**", "/js/**", "/images/**")
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                 .headers(HeadersConfigurer::disable);
-        return http.build();
+
+        try {
+            return http.build();
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to build static security filter chain", e);
+        }
     }
 
     public static HttpSecurity applyCsrfConfig(HttpSecurity http,

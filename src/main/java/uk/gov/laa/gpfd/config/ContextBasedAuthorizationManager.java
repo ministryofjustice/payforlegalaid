@@ -9,7 +9,9 @@ import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.authorization.AuthorizationResult;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
+import uk.gov.laa.gpfd.utils.RequestLogUtils;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 @Slf4j
@@ -23,7 +25,10 @@ public class ContextBasedAuthorizationManager implements AuthorizationManager<Re
 
         Authentication authentication = authenticationSupplier.get();
         if (authentication == null || !authentication.isAuthenticated()) {
-            log.warn("Unauthenticated access attempt");
+            log.atWarn()
+                    .addKeyValue(RequestLogUtils.EVENT_ACTION, "authorization.check")
+                    .addKeyValue(RequestLogUtils.EVENT_OUTCOME, "failure")
+                    .log("Unauthenticated access attempt");
             return new AuthorizationDecision(false);
         }
 
@@ -31,7 +36,12 @@ public class ContextBasedAuthorizationManager implements AuthorizationManager<Re
         AuthorizationResult decision = AuthenticatedAuthorizationManager.authenticated()
                 .authorize(authenticationSupplier, context);
 
-        log.info("Authorization decision: " + decision.isGranted());
+        var decisionGranted = Objects.requireNonNull(decision).isGranted();
+
+        log.atInfo()
+                .addKeyValue(RequestLogUtils.EVENT_ACTION, "authorization.check")
+                .addKeyValue(RequestLogUtils.EVENT_OUTCOME, decisionGranted ? "success" : "failure")
+                .log("Authorization decision: {}", decisionGranted);
         return decision;
     }
 }
