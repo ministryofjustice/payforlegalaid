@@ -7,9 +7,10 @@
     <version>1.1.1</version>
 
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.1.0</version>
+        <groupId>uk.gov.laa</groupId>
+        <artifactId>glad-parent</artifactId>
+        <version>0.1.0</version>
+        <relativePath/>
     </parent>
 
     <properties>
@@ -23,8 +24,6 @@
         <immutables.version>2.12.2</immutables.version>
         <govuk-frontend.version>6.3.0</govuk-frontend.version>
         <moj-frontend.version>6.0.0</moj-frontend.version>
-
-        <glad-bom.version>0.1.0</glad-bom.version>
 
         <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
         <maven-dependency-plugin.version>3.11.0</maven-dependency-plugin.version>
@@ -302,18 +301,6 @@
             </plugin>
         </plugins>
     </build>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>uk.gov.laa</groupId>
-                <artifactId>glad-bom</artifactId>
-                <version>${glad-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <dependency>
