@@ -42,8 +42,8 @@ class CellValueSetterTest implements CellValueSetter {
                 Arguments.of("1232", (Verifier) (cell, value) -> verify(cell).setCellValue(parseLong((String) value))),
                 Arguments.of("1232.12", (Verifier) (cell, value) -> verify(cell).setCellValue(parseDouble((String) value))),
                 Arguments.of("Test Value", (Verifier) (cell, value) -> verify(cell).setCellValue((String) value)),
-                Arguments.of(Double.valueOf("123.12"), (Verifier) (cell, value) -> verify(cell).setCellValue(((Number) value).doubleValue())),
-                Arguments.of(Integer.valueOf("3"), (Verifier) (cell, value) -> verify(cell).setCellValue(((Number) value).doubleValue())),
+                Arguments.of(123.12d, (Verifier) (cell, value) -> verify(cell).setCellValue(((Number) value).doubleValue())),
+                Arguments.of(3, (Verifier) (cell, value) -> verify(cell).setCellValue(((Number) value).doubleValue())),
                 Arguments.of(new BigDecimal("123.45"), (Verifier) (cell, value) -> verify(cell).setCellValue(((BigDecimal) value).doubleValue())),
                 Arguments.of(true, (Verifier) (cell, value) -> verify(cell).setCellValue((Boolean) value)),
                 Arguments.of(new Timestamp(System.currentTimeMillis()), (Verifier) (cell, value) -> verify(cell).setCellValue((Timestamp) value))
