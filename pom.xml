@@ -28,7 +28,7 @@
         <moj-frontend.version>6.0.0</moj-frontend.version>
 
         <payforlegalaid-openapi.version>0.0.40</payforlegalaid-openapi.version>
-        <aws.java.sdk.version>2.47.5</aws.java.sdk.version>
+        <aws.java.sdk.version>2.47.6</aws.java.sdk.version>
         <cucumber.version>7.34.4</cucumber.version>
         <playwright.version>1.61.0</playwright.version>
         <axe.version>4.12.0</axe.version>
@@ -50,6 +50,7 @@
         <!-- Snyk vulns -->
         <logback.version>1.5.37</logback.version>
         <tomcat.version>11.0.24</tomcat.version>
+        <httpclient5.version>5.6.2</httpclient5.version>
     </properties>
 
     <build>
@@ -418,6 +419,12 @@
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-core</artifactId>
             <version>${tomcat.version}</version>
+        </dependency>
+        <!-- needed to stop Spring Boot selecting 5.6.1 -->
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>${httpclient5.version}</version>
         </dependency>
 
         <!--  Do not replace with spring-liquibase due to how we configure Liquibase.  -->
