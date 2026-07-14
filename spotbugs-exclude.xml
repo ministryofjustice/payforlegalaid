@@ -40,4 +40,11 @@
     <Match>
         <Bug pattern="CT_CONSTRUCTOR_THROW"/>
     </Match>
+
+    <!-- Value here is used for logging correlation rather than security decisions so does not apply -->
+    <Match>
+    <Class name="uk.gov.laa.gpfd.utils.RequestLogUtils"/>
+    <Method name="getHeaderValue"/>
+    <Bug pattern="SERVLET_HEADER"/>
+</Match>
 </FindBugsFilter>

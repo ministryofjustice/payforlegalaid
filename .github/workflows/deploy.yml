@@ -30,6 +30,7 @@ jobs:
   release_check:
     name: Determine deployment path
     runs-on: ubuntu-latest
+    permissions: {}
     outputs:
       is_release_merge: ${{ steps.check.outputs.is_release_merge }}
 
@@ -78,6 +79,11 @@ jobs:
       || inputs.deploy_scope == 'dev-uat'
       || inputs.deploy_scope == 'all'
     uses: ./.github/workflows/deploy_api_to_env.yml
+    permissions:
+      # Required for deploy_api_to_env.yml
+      id-token: write
+      contents: read
+      security-events: write
     with:
       github_environment: development
       environment_name: dev
@@ -105,6 +111,11 @@ jobs:
         || inputs.deploy_scope == 'dev-uat'
         || inputs.deploy_scope == 'all')
     uses: ./.github/workflows/deploy_api_to_env.yml
+    permissions:
+      # Required for deploy_api_to_env.yml
+      id-token: write
+      contents: read
+      security-events: write
     with:
       github_environment: uat
       environment_name: uat
@@ -130,6 +141,11 @@ jobs:
       && ((github.event_name == 'push' && needs.release_check.outputs.is_release_merge == 'true')
         || inputs.deploy_scope == 'all')
     uses: ./.github/workflows/deploy_api_to_env.yml
+    permissions:
+      # Required for deploy_api_to_env.yml
+      id-token: write
+      contents: read
+      security-events: write
     with:
       github_environment: prod
       environment_name: prod
