@@ -51,6 +51,7 @@
         <logback.version>1.5.37</logback.version>
         <tomcat.version>11.0.24</tomcat.version>
         <httpclient5.version>5.6.2</httpclient5.version>
+        <httpcore5-h2.version>5.4.3</httpcore5-h2.version>
     </properties>
 
     <build>
@@ -425,6 +426,11 @@
             <groupId>org.apache.httpcomponents.client5</groupId>
             <artifactId>httpclient5</artifactId>
             <version>${httpclient5.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.core5</groupId>
+            <artifactId>httpcore5-h2</artifactId>
+            <version>${httpcore5-h2.version}</version>
         </dependency>
 
         <!--  Do not replace with spring-liquibase due to how we configure Liquibase.  -->
