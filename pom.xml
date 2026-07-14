@@ -569,7 +569,7 @@
             <url>https://github.com/ministryofjustice/payforlegalaid-openapi/</url>
         </repository>
         <repository>
-            <id>payforlegalaid-openapi</id>
+            <id>github</id>
             <url>https://github.com/ministryofjustice/glad-platform/</url>
         </repository>
     </repositories>
