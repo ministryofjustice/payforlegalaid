@@ -28,7 +28,7 @@
         <govuk-frontend.version>6.3.0</govuk-frontend.version>
         <moj-frontend.version>6.0.0</moj-frontend.version>
 
-        <payforlegalaid-openapi.version>0.0.40</payforlegalaid-openapi.version>
+        <payforlegalaid-openapi.version>0.0.42</payforlegalaid-openapi.version>
         <aws.java.sdk.version>2.47.6</aws.java.sdk.version>
         <cucumber.version>7.34.4</cucumber.version>
         <playwright.version>1.61.0</playwright.version>
