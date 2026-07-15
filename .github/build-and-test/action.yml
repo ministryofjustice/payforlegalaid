@@ -1,12 +1,17 @@
 name: Build and run tests
 description: Build the application and run tests in a local environment
 
+inputs:
+  github-username:
+    required: true
+    description: GitHub username
+  github-token:
+    required: true
+    description: GitHub token
+
 runs:
   using: 'composite'
   steps:
-
-    - name: Checkout repository
-      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
     - name: Setup Java
       uses: actions/setup-java@ad2b38190b15e4d6bdf0c97fb4fca8412226d287 # v5.3.0
