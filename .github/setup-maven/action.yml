@@ -22,14 +22,30 @@ runs:
 
     - name: Configure Maven credentials
       shell: bash
+      env:
+        GITHUB_USERNAME: ${{ inputs.github-username }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
       run: |
         mkdir -p ~/.m2
-
+        
         cat > ~/.m2/settings.xml <<EOF
         <settings>
+          <servers>
+            <server>
+              <id>github-openapi</id>
+              <username>${GITHUB_USERNAME}</username>
+              <password>${GITHUB_TOKEN}</password>
+            </server>
+            <server>
+              <id>github-platform</id>
+              <username>${GITHUB_USERNAME}</username>
+              <password>${GITHUB_TOKEN}</password>
+            </server>
+          </servers>
+        
           <profiles>
             <profile>
-              <id>github</id>
+              <id>github-packages</id>
               <repositories>
                 <repository>
                   <id>github-openapi</id>
@@ -42,22 +58,9 @@ runs:
               </repositories>
             </profile>
           </profiles>
-
+        
           <activeProfiles>
-            <activeProfile>github</activeProfile>
+            <activeProfile>github-packages</activeProfile>
           </activeProfiles>
-
-          <servers>
-            <server>
-              <id>github-openapi</id>
-              <username>${{ inputs.github-username }}</username>
-              <password>${{ inputs.github-token }}</password>
-            </server>
-            <server>
-              <id>github-platform</id>
-              <username>${{ inputs.github-username }}</username>
-              <password>${{ inputs.github-token }}</password>
-            </server>
-          </servers>
         </settings>
         EOF
