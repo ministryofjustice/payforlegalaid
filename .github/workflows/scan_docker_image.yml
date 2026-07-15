@@ -16,10 +16,11 @@ jobs:
       steps:
         - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
-        - name: Build OpenAPI dependency
-          uses: './.github/checkout-build-openapi'
-          env:
-            SOCKET_KEY: ${{ secrets.DEV_API_SOCKET_KEY }}
+        - name: Setup Maven
+          uses: './.github/setup-maven'
+          with:
+            github-username: ${{ inputs.github-username }}
+            github-token: ${{ inputs.github-token }}
 
         - name: Build with Maven
           run: mvn -B -ntp -DskipTests clean package -s .github/settings.xml
