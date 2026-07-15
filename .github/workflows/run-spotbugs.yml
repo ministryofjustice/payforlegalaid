@@ -14,5 +14,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Build OpenAPI dependency
+        uses: './.github/checkout-build-openapi'
+        env:
+          SOCKET_KEY: ${{ env.SOCKET_KEY }}
+
       - name: Run SpotBugs security scan
         uses: ./.github/spotbugs-scan
