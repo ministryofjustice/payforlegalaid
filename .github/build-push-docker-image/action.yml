@@ -1,38 +1,34 @@
 name: Build and push docker image
 
+inputs:
+  github-username:
+    required: true
+    description: GitHub username
+  github-token:
+    required: true
+    description: GitHub token
+
 runs:
-  using: 'composite'
+  using: composite
 
   steps:
     - name: Checkout repository
       uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
-    - name: Checkout GitHub repository
-      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-      with:
-        repository: ministryofjustice/payforlegalaid-openapi
-        path: spec
-        ssh-key: ${{ env.SOCKET_KEY }}
-
-    - name: Build dependency
-      run: |
-        cd spec
-        mvn -ntp clean install -U
-      shell:
-        bash
-
     - name: Build with Maven
-      run: mvn -B -ntp -DskipTests clean package
-      shell:
-        bash
+      shell: bash
+      env:
+        GITHUB_USERNAME: ${{ inputs.github-username }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+      run: |
+        mvn -s .github/settings.xml -B -ntp -DskipTests clean package
 
     - name: Build and push Docker image to container repository
-      run: |
-        docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
-        docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-
+      shell: bash
       env:
         REGISTRY: ${{ env.REGISTRY }}
         REPOSITORY: ${{ env.REPOSITORY }}
         IMAGE_TAG: ${{ env.IMAGE_TAG }}
-      shell: bash
+      run: |
+        docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+        docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG

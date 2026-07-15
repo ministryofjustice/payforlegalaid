@@ -20,26 +20,24 @@ runs:
         java-version: '25'
         cache: 'maven'
 
-    - name: Setup Maven
-      uses: './.github/setup-maven'
-      with:
-        github-username: ${{ inputs.github-username }}
-        github-token: ${{ inputs.github-token }}
-
     - name: Run unit tests
-      run: |
-        mvn -ntp -B -T 1C clean test -Dtest='!*RunCucumberTest'
       env:
         SPRING_PROFILES_ACTIVE: test
+        GITHUB_USERNAME: ${{ inputs.github-username }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
       shell:
         bash
+      run: |
+        mvn -s .github/settings.xml -ntp -B clean test -Dtest='!*RunCucumberTest'
 
     - name: Generate JaCoCo Report (development only)
       if: ${{ github.environment == 'development' }}
-      run: mvn jacoco:report
       env:
         SPRING_PROFILES_ACTIVE: test
+        GITHUB_USERNAME: ${{ inputs.github-username }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
       shell: bash
+      run: mvn -s .github/settings.xml jacoco:report
 
     - name: Upload JaCoCo Report (development only)
       if: ${{ github.environment == 'development' }}
