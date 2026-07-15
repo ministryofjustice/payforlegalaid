@@ -1,31 +1,32 @@
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
-                      http://maven.apache.org/xsd/settings-1.0.0.xsd">
+          https://maven.apache.org/xsd/settings-1.0.0.xsd">
 
     <activeProfiles>
-        <activeProfile>github</activeProfile>
+        <activeProfile>github-packages</activeProfile>
     </activeProfiles>
 
     <profiles>
         <profile>
-            <id>github</id>
+            <id>github-packages</id>
             <repositories>
                 <repository>
-                    <id>github</id>
+                    <id>github-openapi</id>
                     <url>https://maven.pkg.github.com/ministryofjustice/payforlegalaid-openapi</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
                     <snapshots>
                         <enabled>true</enabled>
                     </snapshots>
                 </repository>
-            </repositories>
-        </profile>
-        <profile>
-            <id>github</id>
-            <repositories>
                 <repository>
-                    <id>github</id>
+                    <id>github-platform</id>
                     <url>https://maven.pkg.github.com/ministryofjustice/glad-platform</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
                     <snapshots>
                         <enabled>true</enabled>
                     </snapshots>
@@ -36,8 +37,16 @@
 
     <servers>
         <server>
-            <id>github</id>
-            <privateKey>${env.HOME}/.ssh/github_key</privateKey>
+            <id>github-openapi</id>
+            <username>${env.GITHUB_USERNAME}</username>
+            <password>${env.GITHUB_TOKEN}</password>
+        </server>
+
+        <server>
+            <id>github-platform</id>
+            <username>${env.GITHUB_USERNAME}</username>
+            <password>${env.GITHUB_TOKEN}</password>
         </server>
     </servers>
+
 </settings>

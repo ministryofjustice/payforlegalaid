@@ -581,12 +581,12 @@
             <url>https://repo.maven.apache.org/maven2</url>
         </repository>
         <repository>
-            <id>github</id>
-            <url>https://github.com/ministryofjustice/payforlegalaid-openapi/</url>
+            <id>github-openapi</id>
+            <url>https://maven.pkg.github.com/ministryofjustice/payforlegalaid-openapi</url>
         </repository>
         <repository>
-            <id>github</id>
-            <url>https://github.com/ministryofjustice/glad-platform/</url>
+            <id>github-platform</id>
+            <url>https://maven.pkg.github.com/ministryofjustice/glad-platform</url>
         </repository>
     </repositories>
 
