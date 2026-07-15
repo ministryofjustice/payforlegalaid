@@ -8,6 +8,12 @@ outputs:
 inputs:
   subfolder:
     description: 'Location of code being used to define openapi version'
+  github-username:
+    required: true
+    description: 'GitHub username'
+  github-token:
+    required: true
+    description: 'GitHub token'
 
 runs:
   using: 'composite'
@@ -20,14 +26,41 @@ runs:
         java-version: '25'
         cache: 'maven'
         server-id: github-platform
-        server-username: ${{ secrets.GITHUB_USERNAME }}
-        server-password: ${{ secrets.GITHUB_TOKEN }}
+        server-username: github-username
+        server-password: github-token
+      env:
+        github-username: ${{ inputs.github-username }}
+        github-token: ${{ inputs.github-token }}
+
+    - name: Configure Maven credentials
+      shell: bash
+      run: |
+        mkdir -p ~/.m2
+        
+        cat > ~/.m2/settings.xml <<EOF
+        <settings>
+          <servers>
+            <server>
+              <id>github-openapi</id>
+              <username>${{ inputs.github-username }}</username>
+              <password>${{ inputs.github-token }}</password>
+            </server>
+            <server>
+              <id>github-platform</id>
+              <username>${{ inputs.github-username }}</username>
+              <password>${{ inputs.github-token }}</password>
+            </server>
+          </servers>
+        </settings>
+        EOF
 
     - name: Get openapi version from pom
       id: get_openapi_version
       env:
         SUBFOLDER: ${{ inputs.subfolder }}
       run: |
+        echo "username=${{ inputs.github-username }}"
+        echo "token supplied"
         if [[ -n "$SUBFOLDER" ]]; then 
           cd "$SUBFOLDER"
         fi
@@ -45,9 +78,9 @@ runs:
         path: openapi
         ref: refs/tags/v${{ env.OPENAPI_VERSION }}
 
-    - name: Build openapi spec dependency
-      run: |
-        cd openapi
-        mvn -B -ntp clean install
-      shell:
-        bash
+#    - name: Build openapi spec dependency
+#      run: |
+#        cd openapi
+#        mvn -B -ntp clean install
+#      shell:
+#        bash

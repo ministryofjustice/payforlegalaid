@@ -17,6 +17,9 @@ runs:
 
     - name: Build OpenAPI dependency
       uses: './.github/checkout-build-openapi'
+      with:
+        github-username: ${{ secrets.GITHUB_USERNAME }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
       env:
         SOCKET_KEY: ${{ env.SOCKET_KEY }}
 
