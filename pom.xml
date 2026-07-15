@@ -15,6 +15,10 @@
 
     <properties>
         <oracle-jdbc.version>23.26.2.0.0</oracle-jdbc.version>
+        <h2.version>2.4.240</h2.version>
+        <!-- setting the below overrides spring bom version even though we don't use the value directly in our pom -->
+        <spring-security.version>7.1.0</spring-security.version>
+        <springdoc-oas.version>3.0.3</springdoc-oas.version>
 
         <!-- Downgraded due to a known issue: https://github.com/fabriciorby/maven-surefire-junit5-tree-reporter  (until the 2.0.x release becomes available) -->
         <maven-surefire-junit5-tree-reporter.version>1.5.1</maven-surefire-junit5-tree-reporter.version>
@@ -38,6 +42,8 @@
         <!-- Snyk vulns -->
         <httpclient5.version>5.6.2</httpclient5.version>
         <httpcore5-h2.version>5.4.3</httpcore5-h2.version>
+        <jackson-databind.version>2.21.5</jackson-databind.version>
+        <log4j-api.version>2.25.5</log4j-api.version>
     </properties>
 
     <build>
@@ -383,6 +389,16 @@
             <artifactId>httpcore5-h2</artifactId>
             <version>${httpcore5-h2.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson-databind.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j-api.version}</version>
+        </dependency>
 
         <!--  Do not replace with spring-liquibase due to how we configure Liquibase.  -->
         <!--  This will cause dev env to break.-->
@@ -565,7 +581,7 @@
             <url>https://repo.maven.apache.org/maven2</url>
         </repository>
         <repository>
-            <id>payforlegalaid-openapi</id>
+            <id>github</id>
             <url>https://github.com/ministryofjustice/payforlegalaid-openapi/</url>
         </repository>
         <repository>
