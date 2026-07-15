@@ -53,8 +53,9 @@
         <tomcat.version>11.0.24</tomcat.version>
         <httpclient5.version>5.6.2</httpclient5.version>
         <httpcore5-h2.version>5.4.3</httpcore5-h2.version>
-        <jackson-databind.version>2.21.5</jackson-databind.version>
+        <core-jackson-databind.version>2.21.5</core-jackson-databind.version>
         <log4j-api.version>2.25.5</log4j-api.version>
+        <tools-jackson-databind.version>3.1.5</tools-jackson-databind.version>
     </properties>
 
     <build>
@@ -438,7 +439,12 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson-databind.version}</version>
+            <version>${core-jackson-databind.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${tools-jackson-databind.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
