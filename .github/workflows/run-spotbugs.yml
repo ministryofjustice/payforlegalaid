@@ -5,7 +5,7 @@ on:
 
 jobs:
   spotbugs:
-    if: github.ref == 'refs/heads/main'
+#    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -13,6 +13,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Build OpenAPI dependency
+        uses: './.github/checkout-build-openapi'
+        env:
+          SOCKET_KEY: ${{ env.SOCKET_KEY }}
 
       - name: Run SpotBugs security scan
         uses: ./.github/spotbugs-scan
