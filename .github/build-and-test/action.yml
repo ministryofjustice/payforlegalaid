@@ -28,7 +28,7 @@ runs:
 
     - name: Run unit tests
       run: |
-        mvn -ntp -B clean test -Dtest='!*RunCucumberTest'
+        mvn -ntp -B -T 1C clean test -Dtest='!*RunCucumberTest'
       env:
         SPRING_PROFILES_ACTIVE: test
       shell:
