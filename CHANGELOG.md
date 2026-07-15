@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/ministryofjustice/payforlegalaid/compare/v1.1.1...v1.2.0) (2026-07-15)
+
+
+### Features
+
+* **LPF-1530:** Update to include REP002 ([#554](https://github.com/ministryofjustice/payforlegalaid/issues/554)) ([43c98b2](https://github.com/ministryofjustice/payforlegalaid/commit/43c98b2607b60cae142b1a03540f406e8ac0b572))
+
 ## [1.1.1](https://github.com/ministryofjustice/payforlegalaid/compare/v1.1.0...v1.1.1) (2026-07-02)
 
 
