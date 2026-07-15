@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP000;
+import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP002;
 import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP012;
 import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP013;
 import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP014;
@@ -50,6 +51,9 @@ public class ReportAccessCheckerService {
 
     private boolean doesUserHaveAccess(UUID reportId, List<String> groups) {
         if (reportId.equals(ID_REP000) && !groups.contains(rep000GroupId)) {
+            return false;
+        }
+        if (reportId.equals(ID_REP002) && !groups.contains(submissionReconciliationGroupId)) {
             return false;
         }
         if (reportId.equals(ID_REP012) && !groups.contains(submissionReconciliationGroupId)) {
