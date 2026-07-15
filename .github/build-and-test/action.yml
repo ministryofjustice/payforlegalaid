@@ -15,13 +15,11 @@ runs:
         java-version: '25'
         cache: 'maven'
 
-    - name: Build OpenAPI dependency
-      uses: './.github/checkout-build-openapi'
+    - name: Setup Maven
+      uses: './.github/setup-maven'
       with:
         github-username: ${{ secrets.GITHUB_USERNAME }}
         github-token: ${{ secrets.GITHUB_TOKEN }}
-      env:
-        SOCKET_KEY: ${{ env.SOCKET_KEY }}
 
     - name: Run unit tests
       run: |

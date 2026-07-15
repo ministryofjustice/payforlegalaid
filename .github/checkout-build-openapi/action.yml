@@ -1,13 +1,6 @@
-name: Checkout and build OpenAPI repository
-
-outputs:
-  version:
-    description: 'Openapi version'
-    value: ${{ steps.get_openapi_version.outputs.version }}
+name: Setup Maven
 
 inputs:
-  subfolder:
-    description: 'Location of code being used to define openapi version'
   github-username:
     required: true
     description: 'GitHub username'
@@ -17,6 +10,7 @@ inputs:
 
 runs:
   using: 'composite'
+
   steps:
 
     - name: Setup Java
@@ -25,20 +19,34 @@ runs:
         distribution: 'corretto'
         java-version: '25'
         cache: 'maven'
-        server-id: github-platform
-        server-username: github-username
-        server-password: github-token
-      env:
-        github-username: ${{ inputs.github-username }}
-        github-token: ${{ inputs.github-token }}
 
     - name: Configure Maven credentials
       shell: bash
       run: |
         mkdir -p ~/.m2
-        
+
         cat > ~/.m2/settings.xml <<EOF
         <settings>
+          <profiles>
+            <profile>
+              <id>github</id>
+              <repositories>
+                <repository>
+                  <id>github-openapi</id>
+                  <url>https://maven.pkg.github.com/ministryofjustice/payforlegalaid-openapi</url>
+                </repository>
+                <repository>
+                  <id>github-platform</id>
+                  <url>https://maven.pkg.github.com/ministryofjustice/glad-platform</url>
+                </repository>
+              </repositories>
+            </profile>
+          </profiles>
+
+          <activeProfiles>
+            <activeProfile>github</activeProfile>
+          </activeProfiles>
+
           <servers>
             <server>
               <id>github-openapi</id>
@@ -53,34 +61,3 @@ runs:
           </servers>
         </settings>
         EOF
-
-    - name: Get openapi version from pom
-      id: get_openapi_version
-      env:
-        SUBFOLDER: ${{ inputs.subfolder }}
-      run: |
-        echo "username=${{ inputs.github-username }}"
-        echo "token supplied"
-        if [[ -n "$SUBFOLDER" ]]; then 
-          cd "$SUBFOLDER"
-        fi
-        VERSION=$(mvn help:evaluate -Dexpression="payforlegalaid-openapi.version" -q -DforceStdout)
-        echo "version=$VERSION" >> $GITHUB_OUTPUT
-      shell:
-        bash
-
-    - name: Checkout openapi spec
-      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-      env:
-        OPENAPI_VERSION: ${{ steps.get_openapi_version.outputs.version }}
-      with:
-        repository: ministryofjustice/payforlegalaid-openapi
-        path: openapi
-        ref: refs/tags/v${{ env.OPENAPI_VERSION }}
-
-#    - name: Build openapi spec dependency
-#      run: |
-#        cd openapi
-#        mvn -B -ntp clean install
-#      shell:
-#        bash
