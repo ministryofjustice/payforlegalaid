@@ -18,8 +18,8 @@ runs:
     - name: Setup Maven
       uses: './.github/setup-maven'
       with:
-        github-username: ${{ secrets.GITHUB_USERNAME }}
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+        github-username: ${{ inputs.github-username }}
+        github-token: ${{ inputs.github-token }}
 
     - name: Run unit tests
       run: |
