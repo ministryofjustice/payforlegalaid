@@ -29,6 +29,7 @@ runs:
           cd "$SUBFOLDER"
         fi
         VERSION=$(mvn help:evaluate -Dexpression="payforlegalaid-openapi.version" -q -DforceStdout)
+        echo "OpenAPI version: $VERSION"        
         echo "version=$VERSION" >> $GITHUB_OUTPUT
       shell:
         bash
