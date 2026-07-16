@@ -13,12 +13,15 @@ runs:
   using: 'composite'
   steps:
     - name: Run SpotBugs security scan and generate SARIF report
+      shell: bash
+      env:
+        GITHUB_USERNAME: ${{ inputs.github-username }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
       run: |
         echo "Running SpotBugs security analysis..."
         mvn -s .github/settings.xml -B -ntp -Pfindsecbugs -DskipTests clean compile spotbugs:spotbugs \
           -Dspotbugs.sarifOutput=true \
           -Dspotbugs.excludeFilterFile=spotbugs-exclude.xml
-      shell: bash
 
     - name: Upload SpotBugs results to GitHub Code Scanning
       uses: github/codeql-action/upload-sarif@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4.36.2
