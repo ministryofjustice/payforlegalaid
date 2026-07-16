@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/ministryofjustice/payforlegalaid/compare/v1.2.0...v2.0.0) (2026-07-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* **LPF-1514:** Implement glad SBOM ([#552](https://github.com/ministryofjustice/payforlegalaid/issues/552))
+
+### Build System
+
+* **LPF-1514:** Implement glad SBOM ([#552](https://github.com/ministryofjustice/payforlegalaid/issues/552)) ([968cd84](https://github.com/ministryofjustice/payforlegalaid/commit/968cd84a6fe5f72f3844dc2aaeecc295b6a6263b))
+
 ## [1.2.0](https://github.com/ministryofjustice/payforlegalaid/compare/v1.1.1...v1.2.0) (2026-07-15)
 
 
