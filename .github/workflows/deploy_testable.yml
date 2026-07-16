@@ -26,6 +26,9 @@ jobs:
         uses: './.github/build-and-test'
         env:
           SOCKET_KEY: ${{ secrets.DEV_API_SOCKET_KEY }}
+        with:
+          github-username: ${{ secrets.GITHUB_USERNAME }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run Snyk security suite
         uses: './.github/snyk-scan'
@@ -51,6 +54,9 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           SOCKET_KEY: ${{ secrets.DEV_API_SOCKET_KEY }}
+        with:
+          github-username: ${{ secrets.GITHUB_USERNAME }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Generate Kubernetes files from templates
         env:
