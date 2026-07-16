@@ -1,5 +1,13 @@
 name: Build and test
 
+inputs:
+  github-username:
+    required: true
+    description: GitHub username
+  github-token:
+    required: true
+    description: GitHub token
+
 runs:
   using: 'composite'
 
@@ -10,19 +18,12 @@ runs:
         ROLE: ${{ env.ROLE }}
         AWS_REGION: ${{ env.AWS_REGION }}
 
-    - name: Checkout repository
-      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-
     - name: Setup Java
       uses: actions/setup-java@ad2b38190b15e4d6bdf0c97fb4fca8412226d287 # v5.3.0
       with:
         distribution: 'corretto'
         java-version: '25'
         cache: 'maven'
-
-    - name: Checkout and build openapi
-      uses: './.github/checkout-build-openapi'
-      id: get_openapi_version
 
     - name: Get necessary templates from S3
       env:
@@ -31,38 +32,43 @@ runs:
         aws s3 sync s3://${S3_BUCKET}/templates src/main/resources
       shell: bash
 
-#    ** Debug only - prints a list of resources available in /src/main/resources **
-#    **i.e. templates, changelog files, application-*.yml files, etc.**
+    #    ** Debug only - prints a list of resources available in /src/main/resources **
+    #    **i.e. templates, changelog files, application-*.yml files, etc.**
 
-#    - name: List downloaded templates
-#      run: |
-#        find src/main/resources -type f | sort
-#      shell: bash
+    #    - name: List downloaded templates
+    #      run: |
+    #        find src/main/resources -type f | sort
+    #      shell: bash
 
     - name: Resolve application version
+      shell: bash
+      env:
+        GITHUB_USERNAME: ${{ inputs.github-username }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
       run: |
-        APP_VERSION=$(mvn help:evaluate \
+        APP_VERSION=$(mvn -s .github/settings.xml help:evaluate \
           -Dexpression=project.version \
           -q \
           -DforceStdout)
-
+        
         if [[ -z "${APP_VERSION// }" ]]; then
           echo "ERROR: Failed to resolve APP_VERSION"
           exit 1
         fi
-
+        
         echo "APP_VERSION=${APP_VERSION}" >> "$GITHUB_ENV"
         echo "Using APP_VERSION=${APP_VERSION}"
-      shell: bash
 
     - name: Run acceptance tests
-      run: |
-        mvn -B -ntp test \
-          -Dtest=RunCucumberTest \
-          -Dcucumber.filter.tags="not @performance"
+      shell: bash
       env:
         SPRING_PROFILES_ACTIVE: testat
-      shell: bash
+        GITHUB_USERNAME: ${{ inputs.github-username }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+      run: |
+        mvn -s .github/settings.xml -B -ntp test \
+          -Dtest=RunCucumberTest \
+          -Dcucumber.filter.tags="not @performance"
 
     - name: Publish cucumber results
       uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
