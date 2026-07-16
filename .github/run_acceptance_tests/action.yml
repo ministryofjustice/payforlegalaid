@@ -28,12 +28,6 @@ runs:
         java-version: '25'
         cache: 'maven'
 
-    #    - name: Setup Maven
-    #      uses: './.github/setup-maven'
-    #      with:
-    #        github-username: ${{ inputs.github-username }}
-    #        github-token: ${{ inputs.github-token }}
-
     - name: Get necessary templates from S3
       env:
         S3_BUCKET: ${{ env.S3_BUCKET }}
