@@ -1,13 +1,21 @@
 name: SpotBugs Security Scan
 description: Run SpotBugs/FindSecBugs security analysis and upload SARIF to GitHub Code Scanning
 
+inputs:
+  github-username:
+    required: true
+    description: GitHub username
+  github-token:
+    required: true
+    description: GitHub token
+
 runs:
   using: 'composite'
   steps:
     - name: Run SpotBugs security scan and generate SARIF report
       run: |
         echo "Running SpotBugs security analysis..."
-        mvn -B -ntp -Pfindsecbugs -DskipTests clean compile spotbugs:spotbugs \
+        mvn -s .github/settings.xml -B -ntp -Pfindsecbugs -DskipTests clean compile spotbugs:spotbugs \
           -Dspotbugs.sarifOutput=true \
           -Dspotbugs.excludeFilterFile=spotbugs-exclude.xml
       shell: bash
