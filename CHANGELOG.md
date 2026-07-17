@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/ministryofjustice/payforlegalaid/compare/v2.0.0...v2.0.1) (2026-07-17)
+
+
+### Bug Fixes
+
+* **LPF-000:** Bump actions/checkout from 3 to 7 ([#563](https://github.com/ministryofjustice/payforlegalaid/issues/563)) ([3dbebaf](https://github.com/ministryofjustice/payforlegalaid/commit/3dbebafc1121650b9d377c1f11784ac818158e3a))
+
 ## [2.0.0](https://github.com/ministryofjustice/payforlegalaid/compare/v1.2.0...v2.0.0) (2026-07-16)
 
 
