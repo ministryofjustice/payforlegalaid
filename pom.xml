@@ -42,7 +42,6 @@
         <!-- Snyk vulns -->
         <httpclient5.version>5.6.2</httpclient5.version>
         <httpcore5-h2.version>5.4.3</httpcore5-h2.version>
-        <tools-jackson-databind.version>3.2.1</tools-jackson-databind.version>
         <fasterxml-jackson-databind.version>2.22.1</fasterxml-jackson-databind.version>
         <log4j-api.version>2.26.1</log4j-api.version>
     </properties>
@@ -394,11 +393,6 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${fasterxml-jackson-databind.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>tools.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${tools-jackson-databind.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
