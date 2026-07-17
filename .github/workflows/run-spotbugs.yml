@@ -11,7 +11,7 @@ jobs:
       contents: read
       security-events: write # This is required for uploading SARIF to Code Scanning
     steps:
-      - name: Checkout GitHub repository
+      - name: Checkout repository
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - name: Run SpotBugs security scan
