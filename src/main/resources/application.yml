@@ -34,8 +34,6 @@ management:
       instance: ${HOSTNAME:local}
 
 springdoc:
-  api-docs:
-    enabled: false
   swagger-ui:
     url: /swagger.yml
 
