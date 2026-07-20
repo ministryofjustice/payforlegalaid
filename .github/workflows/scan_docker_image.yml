@@ -16,6 +16,12 @@ jobs:
       steps:
         - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
+        - name: Setup Java
+          uses: actions/setup-java@v5
+          with:
+            distribution: 'corretto'
+            java-version: '25'
+
         - name: Build with Maven
           env:
             GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
