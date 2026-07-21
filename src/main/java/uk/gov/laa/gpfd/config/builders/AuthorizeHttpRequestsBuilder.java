@@ -1,6 +1,7 @@
 package uk.gov.laa.gpfd.config.builders;
 
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.Customizer;
@@ -18,6 +19,9 @@ import org.springframework.security.web.access.intercept.RequestAuthorizationCon
  */
 public class AuthorizeHttpRequestsBuilder
         implements Customizer<AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry> {
+
+    @Value("${swagger-ui.enabled:true}")
+    private boolean swaggerEnabled;
 
     /**
      * Endpoint pattern for the Actuator endpoints, which expose management and health status information.
@@ -47,8 +51,9 @@ public class AuthorizeHttpRequestsBuilder
 
     private final AuthorizationManager<RequestAuthorizationContext> authManager;
 
-    public AuthorizeHttpRequestsBuilder(AuthorizationManager<RequestAuthorizationContext> authManager) {
+    public AuthorizeHttpRequestsBuilder(AuthorizationManager<RequestAuthorizationContext> authManager, Boolean swaggerEnabled) {
         this.authManager = authManager;
+        this.swaggerEnabled = swaggerEnabled;
     }
 
     /**
@@ -71,8 +76,15 @@ public class AuthorizeHttpRequestsBuilder
     @SneakyThrows
     @Override
     public void customize(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorizationManagerRequestMatcherRegistry) {
-        authorizationManagerRequestMatcherRegistry
-                .requestMatchers(API_DOCS_ROOT, SWAGGER_UI, SWAGGER_FILE).permitAll()  // Allow unrestricted access to API docs and Swagger UI
+        if (!swaggerEnabled) {
+            authorizationManagerRequestMatcherRegistry
+                    .requestMatchers(SWAGGER_UI, SWAGGER_FILE, API_DOCS_ROOT).denyAll();  // Allow unrestricted access to Swagger UI and API docs
+        } else {
+            authorizationManagerRequestMatcherRegistry
+                    .requestMatchers(SWAGGER_UI, SWAGGER_FILE, API_DOCS_ROOT).permitAll();
+        }
+
+        authorizationManagerRequestMatcherRegistry// Allow unrestricted access to API docs and Swagger UI
                 .requestMatchers(ACTUATOR_ENDPOINT, HEALTH_ENDPOINT).permitAll()         // Allow unrestricted access to actuator and health endpoints
                 .requestMatchers("/login").permitAll()
                 .requestMatchers(HttpMethod.POST, "/csp-report").permitAll()

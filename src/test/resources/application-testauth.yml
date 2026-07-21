@@ -24,6 +24,12 @@ management:
       exposure:
         include: health,info,metrics,prometheus
 
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
 # Azure AD and Graph config
 spring:
   liquibase:
