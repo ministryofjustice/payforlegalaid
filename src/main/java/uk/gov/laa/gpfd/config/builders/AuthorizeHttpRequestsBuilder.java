@@ -78,10 +78,10 @@ public class AuthorizeHttpRequestsBuilder
     public void customize(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorizationManagerRequestMatcherRegistry) {
         if (!swaggerEnabled) {
             authorizationManagerRequestMatcherRegistry
-                    .requestMatchers(SWAGGER_UI, SWAGGER_FILE, API_DOCS_ROOT).denyAll();  // Allow unrestricted access to Swagger UI and API docs
+                    .requestMatchers(SWAGGER_UI, SWAGGER_FILE, API_DOCS_ROOT).denyAll();
         } else {
             authorizationManagerRequestMatcherRegistry
-                    .requestMatchers(SWAGGER_UI, SWAGGER_FILE, API_DOCS_ROOT).permitAll();
+                    .requestMatchers(SWAGGER_UI, SWAGGER_FILE, API_DOCS_ROOT).permitAll();   // Allow unrestricted access to Swagger UI and API docs
         }
 
         authorizationManagerRequestMatcherRegistry// Allow unrestricted access to API docs and Swagger UI
