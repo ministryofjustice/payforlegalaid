@@ -76,12 +76,12 @@ public class AuthorizeHttpRequestsBuilder
     @SneakyThrows
     @Override
     public void customize(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorizationManagerRequestMatcherRegistry) {
-        if (!swaggerEnabled) {
+        if (swaggerEnabled) {
             authorizationManagerRequestMatcherRegistry
-                    .requestMatchers(SWAGGER_UI, SWAGGER_FILE, API_DOCS_ROOT).denyAll();
+                    .requestMatchers(SWAGGER_UI, SWAGGER_FILE, API_DOCS_ROOT).permitAll();   // Allow unrestricted access if swagger is enabled
         } else {
             authorizationManagerRequestMatcherRegistry
-                    .requestMatchers(SWAGGER_UI, SWAGGER_FILE, API_DOCS_ROOT).permitAll();   // Allow unrestricted access to Swagger UI and API docs
+                    .requestMatchers(SWAGGER_UI, SWAGGER_FILE, API_DOCS_ROOT).denyAll();   // Deny access if swagger is disabled
         }
 
         authorizationManagerRequestMatcherRegistry// Allow unrestricted access to API docs and Swagger UI
