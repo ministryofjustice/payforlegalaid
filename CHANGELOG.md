@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/ministryofjustice/payforlegalaid/compare/v2.0.1...v2.0.2) (2026-07-22)
+
+
+### Bug Fixes
+
+* **LPF-1287:** Disable swagger UI in prod ([#567](https://github.com/ministryofjustice/payforlegalaid/issues/567)) ([33cd18a](https://github.com/ministryofjustice/payforlegalaid/commit/33cd18a688caf0d5fa68d0e813e3712970b58051))
+
 ## [2.0.1](https://github.com/ministryofjustice/payforlegalaid/compare/v2.0.0...v2.0.1) (2026-07-17)
 
 
