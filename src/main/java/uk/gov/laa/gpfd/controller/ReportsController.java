@@ -13,7 +13,7 @@ import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200Response;
 import uk.gov.laa.gpfd.services.ReportManagementService;
-import uk.gov.laa.gpfd.services.ResponseBuilder;
+import uk.gov.laa.gpfd.services.ReportResponseBuilder;
 import uk.gov.laa.gpfd.services.StreamingService;
 import uk.gov.laa.gpfd.services.s3.FileDownloadService;
 import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
@@ -37,7 +37,7 @@ public class ReportsController implements ReportsApi {
     private final FileDownloadService fileDownloadService;
     private final ReportDao reportDao;
     private final SecurityUtils securityUtils;
-    private final ResponseBuilder responseBuilder;
+    private final ReportResponseBuilder reportResponseBuilder;
     private final TrackedStreamService trackedStreamService;
 
     @Override
@@ -145,7 +145,7 @@ public class ReportsController implements ReportsApi {
 
         var filename = String.format("%s.%s", report.getName(), report.getOutputType().getExtension());
         var fileExtension = FileExtension.fromString(report.getOutputType().getExtension());
-        return responseBuilder.buildResponse(trackedStream, filename, fileExtension);
+        return reportResponseBuilder.buildResponse(trackedStream, filename, fileExtension);
     }
 
     private ResponseEntity<StreamingResponseBody> fetchS3DownloadResponse(UUID reportId, S3ClientWrapper.S3CsvDownload s3CsvDownload) {
@@ -165,7 +165,7 @@ public class ReportsController implements ReportsApi {
         };
 
         StreamingResponseBody trackedStream = trackedStreamService.wrapStream(rawStream, reportId, userId);
-        return responseBuilder.buildResponse(trackedStream, filename, fileExtension, contentLength);
+        return reportResponseBuilder.buildResponse(trackedStream, filename, fileExtension, contentLength);
     }
 
 }

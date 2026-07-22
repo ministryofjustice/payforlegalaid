@@ -20,16 +20,16 @@ import static org.junit.jupiter.params.provider.Arguments.of;
 import static uk.gov.laa.gpfd.services.stream.DataStream.APPLICATION_EXCEL;
 
 @ExtendWith(MockitoExtension.class)
-class ResponseBuilderTest {
+class ReportResponseBuilderTest {
 
     @Mock
     StreamingResponseBody streamingResponseBody;
 
-    ResponseBuilder responseBuilder = new ResponseBuilder();
+    ReportResponseBuilder reportResponseBuilder = new ReportResponseBuilder();
 
     @Test
     void shouldCreateResponseWhenGivenStreamAndDetails() {
-        var response = responseBuilder.buildResponse(streamingResponseBody, "filename.csv", FileExtension.CSV, 10L);
+        var response = reportResponseBuilder.buildResponse(streamingResponseBody, "filename.csv", FileExtension.CSV, 10L);
         assertTrue(response.getStatusCode().is2xxSuccessful());
 
         var headers = response.getHeaders();
@@ -49,14 +49,14 @@ class ResponseBuilderTest {
     @ParameterizedTest()
     @MethodSource("extensionTypeTestCases")
     void shouldSetCorrectContentTypeForEachFileExtension(FileExtension extensionToTest, MediaType expectedMediaType) {
-        var response = responseBuilder.buildResponse(streamingResponseBody, "filename", extensionToTest);
+        var response = reportResponseBuilder.buildResponse(streamingResponseBody, "filename", extensionToTest);
         var contentType = response.getHeaders().getContentType();
         assertEquals(expectedMediaType, contentType);
     }
 
     @Test
     void shouldNotSetContentLengthIfNotProvided() {
-        var response = responseBuilder.buildResponse(streamingResponseBody, "filename.csv", FileExtension.CSV);
+        var response = reportResponseBuilder.buildResponse(streamingResponseBody, "filename.csv", FileExtension.CSV);
         var headers = response.getHeaders();
         assertNull(headers.get("Content-Length"));
     }

@@ -12,7 +12,7 @@ import static org.apache.poi.xdgf.util.Util.sanitizeFilename;
 import static uk.gov.laa.gpfd.services.stream.DataStream.APPLICATION_EXCEL;
 
 @Component
-public class ResponseBuilder {
+public class ReportResponseBuilder {
 
     public ResponseEntity<StreamingResponseBody> buildResponse(StreamingResponseBody trackedStream,
                                                                String filename, FileExtension fileExtension) {

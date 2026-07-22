@@ -28,7 +28,7 @@ import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 import uk.gov.laa.gpfd.services.ReportManagementService;
-import uk.gov.laa.gpfd.services.ResponseBuilder;
+import uk.gov.laa.gpfd.services.ReportResponseBuilder;
 import uk.gov.laa.gpfd.services.StreamingService;
 import uk.gov.laa.gpfd.services.s3.FileDownloadService;
 import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
@@ -85,7 +85,7 @@ class ReportsControllerTest extends BaseMvcTest {
     SecurityUtils securityUtils;
 
     @MockitoBean
-    ResponseBuilder responseBuilder;
+    ReportResponseBuilder reportResponseBuilder;
 
     @MockitoBean
     TrackedStreamService trackedStreamService;
@@ -124,7 +124,7 @@ class ReportsControllerTest extends BaseMvcTest {
         when(reportDao.fetchReportById(reportId)).thenReturn(Optional.of(report));
         when(securityUtils.extractUserId()).thenReturn(USER_ID);
         when(trackedStreamService.wrapStream(any(), any(), any())).thenReturn(responseStream);
-        when(responseBuilder.buildResponse(any(), any(), any())).thenReturn(mockResponseEntity);
+        when(reportResponseBuilder.buildResponse(any(), any(), any())).thenReturn(mockResponseEntity);
 
         var response = performAuthenticatedStreamingGet("/reports/" + reportId + "/csv", List.of("Financial"));
 
@@ -136,7 +136,7 @@ class ReportsControllerTest extends BaseMvcTest {
 
         verify(streamingService).stream(reportId, FileExtension.CSV);
         verify(trackedStreamService).wrapStream(responseStream, reportId, USER_ID);
-        verify(responseBuilder).buildResponse(responseStream, "Test Report.csv", FileExtension.CSV);
+        verify(reportResponseBuilder).buildResponse(responseStream, "Test Report.csv", FileExtension.CSV);
         verify(reportManagementServiceMock).validateReportFormat(reportId, FileExtension.CSV);
     }
 
@@ -199,7 +199,7 @@ class ReportsControllerTest extends BaseMvcTest {
         when(s3CsvDownload.getFileName()).thenReturn("file.csv");
         when(trackedStreamService.wrapStream(any(), any(), any())).thenReturn(responseStream);
         when(securityUtils.extractUserId()).thenReturn(USER_ID);
-        when(responseBuilder.buildResponse(any(), any(), any(), any())).thenReturn(ResponseEntity.ok().body(responseStream));
+        when(reportResponseBuilder.buildResponse(any(), any(), any(), any())).thenReturn(ResponseEntity.ok().body(responseStream));
 
         var result = performAuthenticatedStreamingGet("/reports/" + reportId + "/file", List.of("Financial"));
 
@@ -210,7 +210,7 @@ class ReportsControllerTest extends BaseMvcTest {
         verify(reportManagementServiceMock).validateReportFormat(reportId, FileExtension.S3STORAGE);
         verify(fileDownloadService, times(1)).getFileStreamResponse(reportId);
         verify(trackedStreamService, times(1)).wrapStream(any(StreamingResponseBody.class), eq(reportId), eq(USER_ID));
-        verify(responseBuilder, times(1)).buildResponse(responseStream, "file.csv", FileExtension.S3STORAGE, 120L);
+        verify(reportResponseBuilder, times(1)).buildResponse(responseStream, "file.csv", FileExtension.S3STORAGE, 120L);
     }
 
     @Test
@@ -301,7 +301,7 @@ class ReportsControllerTest extends BaseMvcTest {
         when(streamingService.stream(excelReportId, FileExtension.XLSX)).thenReturn(responseBody);
         when(securityUtils.extractUserId()).thenReturn(USER_ID);
         when(trackedStreamService.wrapStream(any(), any(), any())).thenReturn(responseBody);
-        when(responseBuilder.buildResponse(any(), any(), any())).thenReturn(mockResponseEntity);
+        when(reportResponseBuilder.buildResponse(any(), any(), any())).thenReturn(mockResponseEntity);
         when(reportDao.fetchReportById(excelReportId)).thenReturn(Optional.of(report));
 
         // Perform the GET request
@@ -314,7 +314,7 @@ class ReportsControllerTest extends BaseMvcTest {
         verify(reportManagementServiceMock).validateReportFormat(excelReportId, FileExtension.XLSX);
         verify(streamingService).stream(excelReportId, FileExtension.XLSX);
         verify(trackedStreamService).wrapStream(responseBody, excelReportId, USER_ID);
-        verify(responseBuilder).buildResponse(responseBody, "Test Report.xlsx", FileExtension.XLSX);
+        verify(reportResponseBuilder).buildResponse(responseBody, "Test Report.xlsx", FileExtension.XLSX);
     }
 
     @ParameterizedTest(name = "Rejects invalid filetype {1} for S3STORAGE download")
