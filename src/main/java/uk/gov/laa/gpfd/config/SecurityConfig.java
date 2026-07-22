@@ -40,6 +40,9 @@ public class SecurityConfig {
     @Value("${gpfd.security.cors.allowed-origin:https://127.0.0.1:8080}")
     private String allowedCorsOrigin;
 
+    @Value("${swagger-ui.enabled:true}")
+    private boolean swaggerEnabled;
+
     public SecurityConfig(AuthorizationManager<RequestAuthorizationContext> authManager, HttpSecuritySessionManagementConfigurerBuilder concurrencyControlConfigurerCustomizer, CookieCsrfTokenRepository csrfTokenRepository) {
         this.authManager = authManager;
         this.concurrencyControlConfigurerCustomizer = concurrencyControlConfigurerCustomizer;
@@ -88,7 +91,7 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) {
 
         var authorizeHttpRequestsBuilder =
-                new AuthorizeHttpRequestsBuilder(authManager);
+                new AuthorizeHttpRequestsBuilder(authManager, swaggerEnabled);
 
         var sessionManagementConfigurerBuilder =
                 new SessionManagementConfigurerBuilder(concurrencyControlConfigurerCustomizer);

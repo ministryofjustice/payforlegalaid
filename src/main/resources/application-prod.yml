@@ -53,3 +53,9 @@ server:
         secure: true
         same-site: lax
         http-only: true
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false

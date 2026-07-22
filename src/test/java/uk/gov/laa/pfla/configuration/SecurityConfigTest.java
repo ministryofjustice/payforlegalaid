@@ -2,6 +2,7 @@ package uk.gov.laa.pfla.configuration;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,11 +25,14 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfigTest {
     private final AuthorizationManager<RequestAuthorizationContext> authManager;
 
+    @Value("${swagger-ui.enabled:true}")
+    private boolean swaggerEnabled;
+
     @Bean
     @Primary
     @SneakyThrows
     public SecurityFilterChain filterChain(HttpSecurity http) {
-        var authorizeHttpRequestsBuilder = new AuthorizeHttpRequestsBuilder(authManager);
+        var authorizeHttpRequestsBuilder = new AuthorizeHttpRequestsBuilder(authManager, swaggerEnabled);
         http
                 .authorizeHttpRequests(authorizeHttpRequestsBuilder)
                 .exceptionHandling(exceptionHandling -> exceptionHandling

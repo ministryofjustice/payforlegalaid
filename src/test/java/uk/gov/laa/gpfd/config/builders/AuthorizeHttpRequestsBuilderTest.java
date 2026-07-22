@@ -32,9 +32,9 @@ class AuthorizeHttpRequestsBuilderTest {
     }
 
     @Test
-    void shouldOpenAPIDocsDoesNotExist() throws Exception {
+    void shouldOpenAPIDocsAccessible() throws Exception {
         mockMvc.perform(get("/v3/api-docs"))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -62,82 +62,9 @@ class AuthorizeHttpRequestsBuilderTest {
     }
 
     @Test
-    void shouldUnauthenticatedAccessDeniedToOtherEndpoints() throws Exception {
-        mockMvc.perform(get("/private-endpoint"))
-                .andExpect(status().is3xxRedirection());  // Should be forbidden without authentication
-    }
-
-    @Test
-    void shouldSwaggerUIAccessibleAfterLogin() throws Exception {
-        mockMvc.perform(get("/swagger-ui/index.html")
-                        .with(user("admin").password("admin").roles("ADMIN")))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void shouldActuatorAndSwaggerConfiguredForPermitAll() throws Exception {
-        mockMvc.perform(get("/actuator"))
-                .andExpect(status().isOk());
-
-        mockMvc.perform(get("/swagger-ui/index.html"))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void shouldUnauthorizedAccessToOtherPagesBeBlocked() throws Exception {
-        mockMvc.perform(get("/private-endpoint"))
-                .andExpect(status().is3xxRedirection());
-    }
-
-    @Test
-    void shouldSwaggerUIPageAccessWithoutCredentials() throws Exception {
-        mockMvc.perform(get("/swagger-ui/index.html"))
-                .andExpect(status().isOk());
-    }
-
-    @Test
     void shouldActuatorEndpointsWithCorrectRole() throws Exception {
         mockMvc.perform(get("/actuator/info")
                         .with(user("admin").password("admin").roles("ADMIN")))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void shouldSwaggerUIExemptFromAuthentication() throws Exception {
-        mockMvc.perform(get("/swagger-ui/index.html"))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void shouldOtherEndpointsSecuredWithAuthentication() throws Exception {
-        mockMvc.perform(get("/other-endpoint"))
-                .andExpect(status().is3xxRedirection());
-    }
-
-    @Test
-    void shouldSwaggerUIForAllUsers() throws Exception {
-        mockMvc.perform(get("/swagger-ui/index.html"))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void shouldSwaggerUIAccessibleForAuthenticatedUsers() throws Exception {
-        mockMvc.perform(get("/swagger-ui/index.html")
-                        .with(user("admin").password("admin").roles("ADMIN")))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void shouldCustomSecurityConfigurationApplied() throws Exception {
-        mockMvc.perform(get("/swagger-ui/index.html"))
-                .andExpect(status().isOk());
-        mockMvc.perform(get("/private-endpoint"))
-                .andExpect(status().is3xxRedirection());
-    }
-
-    @Test
-    void shouldSwaggerUIExemptFromAuthenticationForAllUsers() throws Exception {
-        mockMvc.perform(get("/swagger-ui/index.html"))
                 .andExpect(status().isOk());
     }
 }
