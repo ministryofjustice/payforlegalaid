@@ -19,7 +19,7 @@ Feature: List All Available S3 Storage Reports
     And the response should include the file
 
   @Role=Financial
-  Scenario: Successfully retrieve report details for a Financial report with valid authentication
+  Scenario: Return forbidden when requesting REP000 report with Financial role
     Given I am authenticated with a valid session
     When a request is made to get the report details with the report ID "523f38f0-2179-4824-b885-3a38c5e149e8"
     Then the service should respond with a status code of 403

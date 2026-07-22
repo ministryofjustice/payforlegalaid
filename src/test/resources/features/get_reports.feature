@@ -18,7 +18,7 @@ Feature: List All Available Reports
     Given I am authenticated with a valid session
     When a request is made to the reports endpoint
     Then the service should respond with a status code of 200
-    And the response should include a empty list
+    And the response should include an empty list
 
   Scenario: Redirect to login when attempting to retrieve reports with invalid authentication
     Given I am authenticated with an invalid session

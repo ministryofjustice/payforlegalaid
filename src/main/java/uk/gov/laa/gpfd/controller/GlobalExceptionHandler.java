@@ -1,7 +1,6 @@
 package uk.gov.laa.gpfd.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataAccessException;
@@ -430,13 +429,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = {
             DatabaseWriteException.class,
     }, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ReportsGet500Response> handleDatabaseWriteException(Exception e) {
-        var response = new ReportsGet500Response() {{
-            setError(e.getMessage());
-        }};
+    public ResponseEntity<ReportsGet500Response> handleDatabaseWriteException(DatabaseWriteException e) {
+        var response = new ReportsGet500Response();
+        response.setError(e.getMessage());
 
-        log.error("DatabaseWriteException Thrown: %s".formatted(response));
-        log.error("DatabaseWriteException stacktrace: %s".formatted((Object) e.getStackTrace()));
+        log.error("DatabaseWriteException thrown", e);
 
         return internalServerError()
                 .contentType(MediaType.APPLICATION_JSON)

@@ -22,7 +22,7 @@ public record GetReportsFeatureSteps(HttpProvider httpProvider, ScenarioContext 
         assertTrue(responseBody != null && responseBody.contains("reportList"), "Expected response to include a list of reports");
     }
 
-    @Then("the response should include a empty list")
+    @Then("the response should include an empty list")
     public void theResponseShouldIncludeEmptyReportList() {
         String responseBody = scenarioContext.getResponseAs(String.class).getBody();
 
