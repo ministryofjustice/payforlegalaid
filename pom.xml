@@ -4,7 +4,7 @@
 
     <groupId>uk.gov.laa</groupId>
     <artifactId>pay-for-legal-aid</artifactId>
-    <version>2.0.2</version>
+    <version>3.0.0</version>
 
     <parent>
         <groupId>uk.gov.laa</groupId>
