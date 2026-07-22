@@ -1,33 +1,19 @@
 package uk.gov.laa.gpfd.integration;
 
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
-import uk.gov.laa.gpfd.config.TestDatabaseConfig;
-import uk.gov.laa.gpfd.integration.config.OAuth2TestConfig;
 import uk.gov.laa.gpfd.integration.data.ReportTestData;
 
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import java.util.List;
+
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CSV_REPORT;
 
-@SpringBootTest(
-        webEnvironment = RANDOM_PORT,
-        classes = {TestDatabaseConfig.class, OAuth2TestConfig.class}
-)
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@TestPropertySource(locations = "classpath:application-test.yml")
 final class GetReportsByIdIT extends BaseIT {
 
     @SneakyThrows
@@ -36,7 +22,7 @@ final class GetReportsByIdIT extends BaseIT {
     void shouldReturnOkGivenValidExistedReport(ReportTestData testData) {
         var uri = "/reports/%s".formatted(testData.id());
 
-        performGetRequest(uri)
+        performGetRequestWithRoles(uri, List.of("REP000", "Financial", "Reconciliation"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(testData.id()))
                 .andExpect(jsonPath("$.reportName").value(testData.name()))
@@ -49,7 +35,7 @@ final class GetReportsByIdIT extends BaseIT {
     void shouldReturn400WhenGivenInvalidId(String type) {
         var uri = "/reports/%s321/%s".formatted(CSV_REPORT.getReportData().id(), type);
 
-        performGetRequest(uri)
+        performGetRequestWithRoles(uri, List.of("REP000", "Financial", "Reconciliation"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.error")
@@ -63,11 +49,11 @@ final class GetReportsByIdIT extends BaseIT {
         var nonExistentReportId = "0d4da9ec-b0b3-4371-af10-321";
         var uri = "/reports/%s/%s".formatted(nonExistentReportId, type);
 
-        performGetRequest(uri)
-                .andExpect(status().isNotFound())
+        performGetRequestWithRoles(uri, List.of("REP000", "Financial", "Reconciliation"))
+                .andExpect(status().isForbidden())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.error")
-                        .value("Report not found for ID 0d4da9ec-b0b3-4371-af10-000000000321"));
+                        .value("You cannot access report with ID: 0d4da9ec-b0b3-4371-af10-000000000321"));
     }
 
 }

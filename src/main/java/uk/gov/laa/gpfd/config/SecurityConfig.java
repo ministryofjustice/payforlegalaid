@@ -1,10 +1,11 @@
 package uk.gov.laa.gpfd.config;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,7 +17,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.HttpSecuritySessionManagementConfigurerBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
-import static com.azure.spring.cloud.autoconfigure.implementation.aad.security.AadWebApplicationHttpSecurityConfigurer.aadWebApplication;
 
 /**
  * Configuration class to set up Spring Security for the application.
@@ -30,7 +30,6 @@ import static com.azure.spring.cloud.autoconfigure.implementation.aad.security.A
  */
 @SuppressWarnings("java:S4502") // CSRF disabled only for CSP report POST endpoint
 @Configuration
-@ConditionalOnProperty(name = "spring.cloud.azure.active-directory.enabled", havingValue = "true")
 public class SecurityConfig {
 
     private final AuthorizationManager<RequestAuthorizationContext> authManager;
@@ -88,7 +87,9 @@ public class SecurityConfig {
      * @return a configured {@link SecurityFilterChain} object.
      */
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity httpSecurity) {
+    SecurityFilterChain filterChain(HttpSecurity httpSecurity, Environment env) {
+
+        boolean isLocal = env.acceptsProfiles(Profiles.of("local", "testauth"));
 
         var authorizeHttpRequestsBuilder =
                 new AuthorizeHttpRequestsBuilder(authManager, swaggerEnabled);
@@ -101,20 +102,19 @@ public class SecurityConfig {
                         csrfTokenRepository
                 )
                 .addFilterAfter(SecurityConfigSupport.csrfCookieFilter(), CsrfFilter.class)
-                .with(aadWebApplication())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authorizeHttpRequestsBuilder)
+                .oauth2Login(oauth2 -> oauth2
+                        .successHandler((_, response, _) -> response.sendRedirect("/")))
                 .sessionManagement(sessionManagementConfigurerBuilder);
 
-        return SecurityConfigSupport.applyCommonHeaders(http, false, false)
+        return SecurityConfigSupport.applyCommonHeaders(http, isLocal, isLocal)
                 .build();
     }
 
-    /**
-     * CORS configuration.
-     */
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         return SecurityConfigSupport.createCorsConfigurationSource(allowedCorsOrigin);
     }
+
 }

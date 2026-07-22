@@ -2,12 +2,6 @@
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
-  SNYK-JAVA-ORGAPACHETOMCATEMBED-15989820:
-      - '*':
-          reason: >-
-             Transitive from Spring 4. Will wait for updates to bring in version bump
-          expires: 2026-05-14T00:00:00.000Z
-          created: 2026-04-14T00:00:00.000Z
 "snyk:lic:maven:com.h2database:h2:(EPL-1.0_OR_MPL-2.0)":
     - '*':
         reason: >

@@ -1,20 +1,18 @@
 package uk.gov.laa.gpfd.services.stream;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.dao.ReportDao;
-import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
-import uk.gov.laa.gpfd.model.Report;
+import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.services.DataStreamer;
 
 import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
+import static uk.gov.laa.gpfd.exception.TransferException.StreamException.ExcelStreamWriteException;
 import static uk.gov.laa.gpfd.model.FileExtension.CSV;
 import static uk.gov.laa.gpfd.model.FileExtension.XLSX;
-import static uk.gov.laa.gpfd.exception.TransferException.StreamException.ExcelStreamWriteException;
 
 /**
  * Abstract base class for implementing {@link DataStream} with common response building functionality.
@@ -33,38 +31,8 @@ import static uk.gov.laa.gpfd.exception.TransferException.StreamException.ExcelS
  * </ul>
  * </p>
  */
+@SuppressWarnings("java:S1118") // Abstract base class not a utility class
 public abstract class AbstractDataStream implements DataStream {
-
-    /**
-     * Builds a complete streaming response with proper headers.
-     * <p>
-     * Automatically generates the filename by combining the base name with the
-     * format-specific extension from {@link #getFormat()}.
-     * </p>
-     *
-     * @param report       the report details
-     * @param responseBody the streaming content to include in the response
-     * @return fully constructed ResponseEntity with proper headers
-     * @throws IllegalArgumentException if filenameBase is null or empty
-     */
-    ResponseEntity<StreamingResponseBody> buildResponse(Report report, StreamingResponseBody responseBody) {
-        requireNonNull(report, "Report cannot be null");
-        //todo LPF-1067 Use getOutputFileName()
-        var filename = String.format("%s.%s", report.getName(), getFormat().getExtension());
-
-        return ResponseEntity.ok()
-                .header("Content-Disposition", createContentDisposition(filename))
-                .contentType(getContentType())
-                .body(responseBody);
-    }
-
-    private String createContentDisposition(String filename) {
-        return "attachment; filename=\"%s\"".formatted(sanitizeFilename(filename));
-    }
-
-    private String sanitizeFilename(String filename) {
-        return filename.replace("\"", "");
-    }
 
     /**
      * Creates a new CSV streaming strategy instance.
@@ -107,11 +75,11 @@ public abstract class AbstractDataStream implements DataStream {
          * @throws IllegalStateException if the report contains no queries
          */
         @Override
-        public ResponseEntity<StreamingResponseBody> stream(UUID uuid) {
+        public StreamingResponseBody stream(UUID uuid) {
             var report = reportDao.fetchReportById(uuid)
                     .orElseThrow(() -> new ReportIdNotFoundException(uuid));
 
-            return buildResponse(report, output -> dataStreamer.stream(report, output));
+            return output -> dataStreamer.stream(report, output);
         }
 
         /**
@@ -139,11 +107,11 @@ public abstract class AbstractDataStream implements DataStream {
          * @throws ExcelStreamWriteException if there's an error writing the Excel data
          */
         @Override
-        public ResponseEntity<StreamingResponseBody> stream(UUID uuid) {
+        public StreamingResponseBody stream(UUID uuid) {
             var report = reportDao.fetchReportById(uuid)
                     .orElseThrow(() -> new ReportIdNotFoundException(uuid));
 
-            return buildResponse(report, output -> dataStreamer.stream(report, output));
+            return output -> dataStreamer.stream(report, output);
         }
 
         /**

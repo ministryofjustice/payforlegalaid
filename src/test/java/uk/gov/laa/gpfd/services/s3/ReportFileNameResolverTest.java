@@ -7,11 +7,11 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP000;
-import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP002;
-import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP012;
-import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP013;
-import static uk.gov.laa.gpfd.utils.TokenUtils.ID_REP014;
+import static uk.gov.laa.gpfd.utils.ReportIds.ID_REP000;
+import static uk.gov.laa.gpfd.utils.ReportIds.ID_REP002;
+import static uk.gov.laa.gpfd.utils.ReportIds.ID_REP012;
+import static uk.gov.laa.gpfd.utils.ReportIds.ID_REP013;
+import static uk.gov.laa.gpfd.utils.ReportIds.ID_REP014;
 
 class ReportFileNameResolverTest {
 
@@ -43,18 +43,14 @@ class ReportFileNameResolverTest {
     }
 
     @Test
-    void shouldThrowIllegalArgumentExceptionIfBlankUUIDSupplied() {
-        assertThrows(IllegalArgumentException.class, () -> reportFileNameResolver.getS3PrefixFromId(UUID.fromString("")));
-    }
-
-    @Test
     void shouldThrowIllegalArgumentExceptionIfNullUUIDSupplied() {
         assertThrows(IllegalArgumentException.class, () -> reportFileNameResolver.getS3PrefixFromId(null));
     }
 
     @Test
     void shouldThrowNotSupportedExceptionIfIdIsNotInList() {
-        assertThrows(ReportNotSupportedForDownloadException.class, () -> reportFileNameResolver.getS3PrefixFromId(UUID.fromString("bda2120c-8f82-45a8-a682-8dedfb7997a7")));
+        var uuid = UUID.fromString("bda2120c-8f82-45a8-a682-8dedfb7997a7");
+        assertThrows(ReportNotSupportedForDownloadException.class, () -> reportFileNameResolver.getS3PrefixFromId(uuid));
     }
 
 }
