@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/ministryofjustice/payforlegalaid/compare/v2.0.2...v3.0.0) (2026-07-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* **LPF-1189:** Role-based access control and Sign into Legal Aid Services integration ([#401](https://github.com/ministryofjustice/payforlegalaid/issues/401))
+
+### Features
+
+* **LPF-1189:** Role-based access control and Sign into Legal Aid Services integration ([#401](https://github.com/ministryofjustice/payforlegalaid/issues/401)) ([7b759fb](https://github.com/ministryofjustice/payforlegalaid/commit/7b759fb0071f3a739c0facd8368bc129e426dbcb))
+
 ## [2.0.2](https://github.com/ministryofjustice/payforlegalaid/compare/v2.0.1...v2.0.2) (2026-07-22)
 
 
