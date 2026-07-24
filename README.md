@@ -16,7 +16,7 @@ It also contains a user interface for users to view the available reports and do
 
 The API definition can be found in the [openapi repository](https://github.com/ministryofjustice/payforlegalaid-openapi).
 
-The API will authenticate the user with LAA's `Sign Into Legal Aid Service` (SILAS), and if the user has an account
+The API will authenticate the user with LAA's `Sign Into Legal Aid Services` ([SILAS](https://dsdmoj.atlassian.net/wiki/spaces/LS/pages/5994940818/SiLAS+Introduction)), and if the user has an account
 with the correct roles, will allow them to access the reports.
 
 ## Database
@@ -100,7 +100,7 @@ docker compose build --no-cache
 > **Note:** Avoid using `--no-cache` routinely as it discards the Maven dependency cache and will significantly slow down the build.
 
 #### Setting up Excel templates
-If you want to testYou will need to populate the `src/main/resources` folder with any template files you need. These are the `.xlsx` files that
+If you want to test locally, you will need to populate the `src/main/resources` folder with any template files you need. These are the `.xlsx` files that
 hold a skeleton of the report in. E.g. if you want to test the Third Party Report you should place a copy of the Third Party Report template in the folder.
 For more details on how to get this template visit the [Confluence](https://dsdmoj.atlassian.net/wiki/spaces/LPF/pages/5803409516/How+to+create+a+template#How-do-I-get-a-template-to-use-on-my-local-system)
 
