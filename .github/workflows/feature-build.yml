@@ -34,6 +34,7 @@ jobs:
           S3_BUCKET: ${{ vars.FILE_STORE_UAT_S3_BUCKET_NAME }}
 
       - name: Snyk Scan
+        if: github.event.pull_request.user.login != 'dependabot[bot]'
         uses: './.github/snyk-scan'
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN}}
