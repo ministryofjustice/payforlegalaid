@@ -23,6 +23,9 @@ gpfd:
 spring:
   main:
     allow-bean-definition-overriding: true
+  flyway:
+    # Stop the ATs trying to apply repo to all the data sources
+    enabled: false
   liquibase:
     enabled: true
     changelog: /db/changelog/db.changelog-master.xml
@@ -43,4 +46,6 @@ spring:
 
 springdoc:
   api-docs:
+    enabled: false
+  swagger-ui:
     enabled: false

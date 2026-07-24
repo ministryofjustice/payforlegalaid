@@ -16,15 +16,35 @@ import org.slf4j.MDC;
 import software.amazon.awssdk.awscore.exception.AwsErrorDetails;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import tools.jackson.core.exc.JacksonIOException;
-import uk.gov.laa.gpfd.exception.*;
-import uk.gov.laa.gpfd.exception.CsvGenerationException.WritingToCsvException;
 import uk.gov.laa.gpfd.exception.CsvGenerationException.MetadataInvalidException;
+import uk.gov.laa.gpfd.exception.CsvGenerationException.WritingToCsvException;
+import uk.gov.laa.gpfd.exception.DatabaseReadException;
+import uk.gov.laa.gpfd.exception.DatabaseWriteException;
 import uk.gov.laa.gpfd.exception.FileDownloadException.InvalidDownloadFormatException;
 import uk.gov.laa.gpfd.exception.FileDownloadException.ReportNotSupportedForDownloadException;
-import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.AuthenticationIsNullException;
-import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.PrincipalIsNullException;
-import uk.gov.laa.gpfd.exception.UnableToGetAuthGroupException.UnexpectedAuthClassException;
 import uk.gov.laa.gpfd.exception.FileDownloadException.S3BucketHasNoCopiesOfReportException;
+import uk.gov.laa.gpfd.exception.InvalidReportFormatException;
+import uk.gov.laa.gpfd.exception.OperationNotSupportedException;
+import uk.gov.laa.gpfd.exception.ReportAccessException;
+import uk.gov.laa.gpfd.exception.ReportGenerationException;
+import uk.gov.laa.gpfd.exception.ReportGenerationException.InvalidWorkbookTypeException;
+import uk.gov.laa.gpfd.exception.ReportGenerationException.PivotTableCopyException;
+import uk.gov.laa.gpfd.exception.ReportGenerationException.PivotTableCreationException;
+import uk.gov.laa.gpfd.exception.ReportGenerationException.SheetCopyException;
+import uk.gov.laa.gpfd.exception.ReportGenerationException.SheetNotFoundException;
+import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
+import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
+import uk.gov.laa.gpfd.exception.StreamErrorException;
+import uk.gov.laa.gpfd.exception.TemplateResourceException;
+import uk.gov.laa.gpfd.exception.TransferException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.AuthenticationIsNullException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.NoAttributesOnTokenException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.NoOidSetOnTokenException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.NoRolesException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.NoRolesInAttributeException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.PrincipalIsNullException;
+import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.UnexpectedAuthClassException;
 import uk.gov.laa.gpfd.utils.RequestLogUtils;
 
 import java.io.IOException;
@@ -167,8 +187,14 @@ class GlobalExceptionHandlerTest {
                 new TemplateResourceException.ExcelTemplateCreationException("Meh, doesnt work on my machine!", new RuntimeException()),
                 "Meh, doesnt work on my machine!"
         ), Arguments.of(
+                new TemplateResourceException.ExcelTemplateCreationException(new RuntimeException(), "Meh %s, doesnt work on my machine! %s", "arg1", "arg2"),
+                "Meh arg1, doesnt work on my machine! arg2"
+        ), Arguments.of(
                 new TemplateResourceException.TemplateResourceNotFoundException("Template file '%s' not found in resources for ID: %s"),
                 "Template file '%s' not found in resources for ID: %s"
+        ), Arguments.of(
+                new TemplateResourceException.TemplateDownloadException("Template download failed"),
+                "Template download failed"
         ));
     }
 
@@ -199,6 +225,10 @@ class GlobalExceptionHandlerTest {
     private static Stream<Arguments> databaseExceptionProvider() {
         return of(Arguments.of(
                         new DatabaseFetchException("Error reading from DB: permissions problem"),
+                        "Error reading from DB: permissions problem"
+                ),
+                Arguments.of(
+                        new DatabaseFetchException("Error reading from DB: permissions problem", new RuntimeException("error")),
                         "Error reading from DB: permissions problem"
                 ),
                 Arguments.of(
@@ -372,6 +402,72 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
+    void shouldHandleDatabaseWriteException() {
+        var exception = new DatabaseWriteException("Error writing to db :(");
+
+        var response = globalExceptionHandler.handleDatabaseWriteException(exception);
+
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Error writing to db :(",
+                response.getBody().getError());
+    }
+
+
+    @ParameterizedTest
+    @MethodSource("unableToParseAuthDetailsProvider")
+    void shouldHandleUnableToParseAuthDetailsExceptions(UnableToParseAuthDetailsException exception) {
+        var response = globalExceptionHandler.handleUnexpectedAuthTypeException(exception);
+
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Authentication response error.", response.getBody().getError());
+    }
+
+    private static Stream<UnableToParseAuthDetailsException> unableToParseAuthDetailsProvider() {
+        return of(
+                new AuthenticationIsNullException(),
+                new PrincipalIsNullException(),
+                new UnexpectedAuthClassException("UserJwt"),
+                new NoOidSetOnTokenException(),
+                new NoRolesException(),
+                new NoRolesInAttributeException(),
+                new NoAttributesOnTokenException()
+        );
+    }
+
+    @Test
+    void shouldHandleStreamErrorException() {
+        var reportId = UUID.randomUUID();
+        var exception = new StreamErrorException("Error writing to db :(", reportId);
+
+        var response = globalExceptionHandler.handleStreamErrorException(exception);
+
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("Report streaming failure",
+                response.getBody().getError());
+    }
+
+    @ParameterizedTest
+    @MethodSource("reportGenerationExceptionProvider")
+    void shouldHandleReportGenerationExceptionProvider(ReportGenerationException exception, String expectedMessage) {
+        var response = globalExceptionHandler.handleReportGenerationException(exception);
+
+        assertEquals(INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals(expectedMessage, response.getBody().getError());
+    }
+
+    private static Stream<Arguments> reportGenerationExceptionProvider() {
+        return of(
+                Arguments.of(new InvalidWorkbookTypeException("oh no"), "oh no"),
+                Arguments.of(new SheetNotFoundException("uh oh"), "uh oh"),
+                Arguments.of(new SheetCopyException("errorin'", new RuntimeException("error")), "errorin'"),
+                Arguments.of(new PivotTableCreationException("oops"), "oops"),
+                Arguments.of(new PivotTableCreationException("excel problems", new RuntimeException("error")), "excel problems"),
+                Arguments.of(new PivotTableCopyException("WORKBOOK_A", "no copy"), "Failed to copy pivot table in sheet 'WORKBOOK_A': no copy"),
+                Arguments.of(new PivotTableCopyException("WORKBOOK_B", "boo", new RuntimeException("error")), "Failed to copy pivot table in sheet 'WORKBOOK_B': boo")
+        );
+    }
+
+    @Test
     void shouldLogAwsErrorWithCorrectStructure() {
         MDC.put(RequestLogUtils.REQUEST_ID, "test-request-id");
         MDC.put(RequestLogUtils.TRACE_ID, "test-trace-id");
@@ -387,7 +483,7 @@ class GlobalExceptionHandlerTest {
 
         assertFalse(appender.list.isEmpty(), "Expected at least one log event from handleAWSErrors");
 
-        ILoggingEvent loggingEvent = appender.list.get(0);
+        ILoggingEvent loggingEvent = appender.list.getFirst();
         Map<String, String> keyValuePairs = extractKeyValuePairs(loggingEvent);
 
         assertEquals("s3.download.failure", keyValuePairs.get(RequestLogUtils.EVENT_ACTION));
@@ -408,7 +504,7 @@ class GlobalExceptionHandlerTest {
 
         assertFalse(appender.list.isEmpty(), "Expected at least one log event from handleReportAccessException");
 
-        ILoggingEvent loggingEvent = appender.list.get(0);
+        ILoggingEvent loggingEvent = appender.list.getFirst();
         Map<String, String> keyValuePairs = extractKeyValuePairs(loggingEvent);
 
         assertEquals("authorization.denied", keyValuePairs.get(RequestLogUtils.EVENT_ACTION));

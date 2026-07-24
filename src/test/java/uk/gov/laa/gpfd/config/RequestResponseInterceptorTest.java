@@ -11,7 +11,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import uk.gov.laa.gpfd.utils.RequestLogUtils;
 
@@ -23,9 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@ActiveProfiles("test")
-public class RequestResponseInterceptorTest {
+@ActiveProfiles("testauth")
+class RequestResponseInterceptorTest {
 
     private ListAppender<ILoggingEvent> appender;
 

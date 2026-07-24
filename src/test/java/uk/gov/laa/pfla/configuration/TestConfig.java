@@ -3,12 +3,12 @@ package uk.gov.laa.pfla.configuration;
 import com.fasterxml.jackson.core.TokenStreamFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zaxxer.hikari.HikariDataSource;
+import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -111,5 +111,33 @@ public class TestConfig {
     @Bean
     public HostInterceptor hostInterceptor() {
         return withHost("http://localhost:8080");
+    }
+
+    // Let this definition take over from the main one - This points it at the testcontainers postgres db
+    @Bean
+    public DataSource trackingDataSource() {
+        return DataSourceBuilder.create()
+                .url(TrackingDbSetup.POSTGRES.getJdbcUrl())
+                .username(TrackingDbSetup.POSTGRES.getUsername())
+                .password(TrackingDbSetup.POSTGRES.getPassword())
+                .build();
+    }
+
+    // Manually get Flyway to act on the postgres db
+    // Using the default Spring config it was constantly attempting to apply Flyway to the other data sources
+    @Bean
+    public Flyway postgresFlyway(
+            @Qualifier("trackingDataSource") DataSource dataSource) {
+
+        Flyway flyway = Flyway.configure()
+                .dataSource(dataSource)
+                .schemas("glad")
+                .locations("classpath:flyway/migration/schema")
+                .baselineOnMigrate(true)   // optional, but often useful in ATs
+                .load();
+
+        flyway.migrate();
+
+        return flyway;
     }
 }
