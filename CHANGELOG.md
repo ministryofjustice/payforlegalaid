@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.0.1](https://github.com/ministryofjustice/payforlegalaid/compare/v3.0.0...v3.0.1) (2026-07-24)
+
+
+### Bug Fixes
+
+* **LPF-1383:** Ignore snyk scan for dependabot raised PRs ([#564](https://github.com/ministryofjustice/payforlegalaid/issues/564)) ([03f5d8e](https://github.com/ministryofjustice/payforlegalaid/commit/03f5d8e7cc129c9409352355c2646451d283f404))
+* **LPF-1538:** Add explicit user and group to PFLA container  ([#573](https://github.com/ministryofjustice/payforlegalaid/issues/573)) ([8f83a41](https://github.com/ministryofjustice/payforlegalaid/commit/8f83a4184118ce21410acb67b92d60a5ecf6ec67))
+
 ## [3.0.0](https://github.com/ministryofjustice/payforlegalaid/compare/v2.0.2...v3.0.0) (2026-07-22)
 
 
