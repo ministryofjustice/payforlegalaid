@@ -23,7 +23,7 @@
         <!-- Downgraded due to a known issue: https://github.com/fabriciorby/maven-surefire-junit5-tree-reporter  (until the 2.0.x release becomes available) -->
         <maven-surefire-junit5-tree-reporter.version>1.5.1</maven-surefire-junit5-tree-reporter.version>
         <immutables.version>2.12.2</immutables.version>
-        <govuk-frontend.version>6.3.0</govuk-frontend.version>
+        <govuk-frontend.version>6.4.0</govuk-frontend.version>
         <moj-frontend.version>6.0.0</moj-frontend.version>
 
         <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
@@ -445,7 +445,7 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <!-- Spring currently at 42.7.10 - remove version when Spring upgrades -->
-            <version>42.7.12</version>
+            <version>42.7.13</version>
         </dependency>
 
         <dependency>
