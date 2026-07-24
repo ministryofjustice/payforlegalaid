@@ -20,7 +20,6 @@
         <spring-security.version>7.1.0</spring-security.version>
         <springdoc-oas.version>3.0.3</springdoc-oas.version>
 
-        <!-- Downgraded due to a known issue: https://github.com/fabriciorby/maven-surefire-junit5-tree-reporter  (until the 2.0.x release becomes available) -->
         <maven-surefire-junit5-tree-reporter.version>1.5.1</maven-surefire-junit5-tree-reporter.version>
         <immutables.version>2.12.2</immutables.version>
         <govuk-frontend.version>6.4.0</govuk-frontend.version>
@@ -374,20 +373,20 @@
         </dependency>
 
         <!-- Snyk vulns -->
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-core</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>ch.qos.logback</groupId>-->
+<!--            <artifactId>logback-core</artifactId>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.apache.tomcat.embed</groupId>-->
+<!--            <artifactId>tomcat-embed-core</artifactId>-->
+<!--        </dependency>-->
         <!-- needed to stop Spring Boot selecting 5.6.1 -->
-        <dependency>
-            <groupId>org.apache.httpcomponents.client5</groupId>
-            <artifactId>httpclient5</artifactId>
-            <version>${httpclient5.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.apache.httpcomponents.client5</groupId>-->
+<!--            <artifactId>httpclient5</artifactId>-->
+<!--            <version>${httpclient5.version}</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.apache.httpcomponents.core5</groupId>
             <artifactId>httpcore5-h2</artifactId>
@@ -398,11 +397,37 @@
             <artifactId>jackson-databind</artifactId>
             <version>${fasterxml-jackson-databind.version}</version>
         </dependency>
+        <!-- Needed until AWS, Gatling & Spring Azure upgrades to 4.2.16.Final or later -->
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>${log4j-api.version}</version>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec</artifactId>
+            <version>4.2.16.Final</version>
         </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec-http</artifactId>
+            <version>4.2.16.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec-http2</artifactId>
+            <version>4.2.16.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec-http3</artifactId>
+            <version>4.2.16.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec-compression</artifactId>
+            <version>4.2.16.Final</version>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.apache.logging.log4j</groupId>-->
+<!--            <artifactId>log4j-api</artifactId>-->
+<!--            <version>${log4j-api.version}</version>-->
+<!--        </dependency>-->
 
         <!--  Do not replace with spring-liquibase due to how we configure Liquibase.  -->
         <!--  This will cause dev env to break.-->
