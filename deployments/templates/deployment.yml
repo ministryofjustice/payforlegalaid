@@ -224,6 +224,8 @@ spec:
                   name: rds-postgresql-instance-output
                   key: database_password
           securityContext:
+            runAsUser: 1001
+            runAsGroup: 1001
             capabilities:
               drop:
                 - ALL
