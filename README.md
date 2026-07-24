@@ -32,7 +32,7 @@ The GPFD table definitions and data are stored in the [data repository](https://
 
 There is an RDS database used to store Report Tracking information.
 
-There is also an H2 database which some unit tests run against, the schema of which is defined in `test/resources`, as Liquibase changelogs
+There is also an H2 database which some unit tests run against, the schema of which is defined in `src/test/resources`, as Liquibase changelogs
 
 ## Technology Stack
 
