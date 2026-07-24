@@ -49,6 +49,8 @@ There is also an H2 database which some unit tests run against, the schema of wh
 - GitHub Actions
 - Microsoft Entra
 - Liquibase
+- AWS CLI
+- Flyway
 - [OpenAPI](https://github.com/ministryofjustice/payforlegalaid-openapi)
 
 ## Architecture
