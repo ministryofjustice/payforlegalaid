@@ -20,6 +20,10 @@ updates:
           - "patch"
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "uk.gov.laa:glad-parent"
+      - dependency-name: "uk.gov.laa:glad-bom"
+      - dependency-name: "uk.gov.laa:payforlegalaid-openapi"
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
