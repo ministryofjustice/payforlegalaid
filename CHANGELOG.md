@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.0.1](https://github.com/ministryofjustice/payforlegalaid/compare/v3.0.0...v3.0.1) (2026-07-28)
+
+
+### Bug Fixes
+
+* **bot:** Bump io.gatling:gatling-maven-plugin from 4.21.9 to 4.21.10 in the minor group across 1 directory ([#577](https://github.com/ministryofjustice/payforlegalaid/issues/577)) ([e9a7fbe](https://github.com/ministryofjustice/payforlegalaid/commit/e9a7fbe8541a81388b33a84a922fe8b13b46f9bc))
+* **LPF-000:** Sort out some Snyk vulnerabilities ([#575](https://github.com/ministryofjustice/payforlegalaid/issues/575)) ([dfa0bc5](https://github.com/ministryofjustice/payforlegalaid/commit/dfa0bc519f89743f7bd369dba99e6456c3189eb7))
+* **LPF-1383:** Ignore snyk scan for dependabot raised PRs ([#564](https://github.com/ministryofjustice/payforlegalaid/issues/564)) ([03f5d8e](https://github.com/ministryofjustice/payforlegalaid/commit/03f5d8e7cc129c9409352355c2646451d283f404))
+* **LPF-1538:** Add explicit user and group to PFLA container  ([#573](https://github.com/ministryofjustice/payforlegalaid/issues/573)) ([8f83a41](https://github.com/ministryofjustice/payforlegalaid/commit/8f83a4184118ce21410acb67b92d60a5ecf6ec67))
+
+
+### Documentation
+
+* **LPF-1505:** update readme  ([#574](https://github.com/ministryofjustice/payforlegalaid/issues/574)) ([3731b4b](https://github.com/ministryofjustice/payforlegalaid/commit/3731b4b26fece6bb0364662db3419bcbf79b32d3))
+
 ## [3.0.0](https://github.com/ministryofjustice/payforlegalaid/compare/v2.0.2...v3.0.0) (2026-07-22)
 
 
