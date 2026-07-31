@@ -49,6 +49,16 @@ public class AuthorizeHttpRequestsBuilder
      */
     private static final String API_DOCS_ROOT = "/v3/**";
 
+    /**
+     * Endpoint pattern for the Secure Document Storage (SDS) API endpoints.
+     */
+    private static final String SDS_ENDPOINT = "/sds/**";
+
+    /**
+     * Health check endpoint for SDS service (accessible without authentication).
+     */
+    private static final String SDS_HEALTH_ENDPOINT = "/sds/health";
+
     private final AuthorizationManager<RequestAuthorizationContext> authManager;
 
     public AuthorizeHttpRequestsBuilder(AuthorizationManager<RequestAuthorizationContext> authManager, Boolean swaggerEnabled) {
@@ -88,6 +98,8 @@ public class AuthorizeHttpRequestsBuilder
                 .requestMatchers(ACTUATOR_ENDPOINT, HEALTH_ENDPOINT).permitAll()         // Allow unrestricted access to actuator and health endpoints
                 .requestMatchers("/login").permitAll()
                 .requestMatchers(HttpMethod.POST, "/csp-report").permitAll()
+                .requestMatchers(SDS_HEALTH_ENDPOINT).permitAll()                        // Allow unrestricted access to SDS health endpoint
+                .requestMatchers(SDS_ENDPOINT).access(authManager)                       // SDS endpoints require authentication
                 .anyRequest().access(authManager);  // Require authentication for all other requests
     }
 
