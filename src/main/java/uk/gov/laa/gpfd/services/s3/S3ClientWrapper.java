@@ -1,8 +1,8 @@
 package uk.gov.laa.gpfd.services.s3;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
@@ -11,8 +11,8 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import uk.gov.laa.gpfd.controller.GlobalExceptionHandler;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 import java.util.Optional;
 
@@ -86,7 +86,6 @@ public class S3ClientWrapper {
      * @param filePrefix - path + start of the filename
      * @return Stream of the file
      */
-    @SneakyThrows
     public Optional<S3CsvDownload> getResultCsv(String filePrefix) {
 
         log.info("Getting list of all files matching {}", filePrefix);
@@ -105,15 +104,13 @@ public class S3ClientWrapper {
                 .sorted(Comparator.comparing(S3Object::lastModified).reversed());
         var latestFile = sortedList.findFirst();
 
-        File file = new File("chris-s3-test.txt");
-        file.createNewFile();
 
         s3Client.putObject(
                 software.amazon.awssdk.services.s3.model.PutObjectRequest.builder()
                         .bucket(s3Bucket)
                         .key("chris-s3-test.txt")
                         .build(),
-                software.amazon.awssdk.core.sync.RequestBody.fromFile(file)
+                RequestBody.fromBytes("S3 test object".getBytes(StandardCharsets.UTF_8))
         );
 
         System.out.println("File uploaded to S3 bucket: " + s3Bucket + "/chris-s3-test.txt");
