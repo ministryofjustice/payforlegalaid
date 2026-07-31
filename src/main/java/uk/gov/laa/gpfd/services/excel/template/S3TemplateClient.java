@@ -32,6 +32,8 @@ public record S3TemplateClient(S3ClientWrapper s3Client, TemplateFileNameResolve
             throw new TemplateResourceNotFoundException("Template '%s' not found in file store for ID: %s".formatted(filename, id));
         }
 
+        System.out.println("Got template from S3 bucket: " + s3Client.s3Bucket + "/" + filename);
+
         s3Client.s3Client.putObject(
                 software.amazon.awssdk.services.s3.model.PutObjectRequest.builder()
                         .bucket(s3Client.s3Bucket)
