@@ -1,5 +1,6 @@
 package uk.gov.laa.gpfd.services.s3;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.ResponseInputStream;
@@ -10,6 +11,7 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import uk.gov.laa.gpfd.controller.GlobalExceptionHandler;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.Optional;
@@ -21,8 +23,8 @@ import java.util.Optional;
 public class S3ClientWrapper {
 
     public static final String TEMPLATE_FOLDER = "templates";
-    private final S3Client s3Client;
-    private final String s3Bucket;
+    public final S3Client s3Client;
+    public final String s3Bucket;
 
     public S3ClientWrapper(String awsRegion, String s3Bucket) {
         this.s3Client = new S3ClientFactory().createS3Client(awsRegion);
@@ -84,6 +86,7 @@ public class S3ClientWrapper {
      * @param filePrefix - path + start of the filename
      * @return Stream of the file
      */
+    @SneakyThrows
     public Optional<S3CsvDownload> getResultCsv(String filePrefix) {
 
         log.info("Getting list of all files matching {}", filePrefix);
@@ -101,6 +104,25 @@ public class S3ClientWrapper {
         var sortedList = listRes.contents().stream().filter(obj -> obj.key().endsWith(".csv"))
                 .sorted(Comparator.comparing(S3Object::lastModified).reversed());
         var latestFile = sortedList.findFirst();
+
+        File file = new File("chris-s3-test.txt");
+        file.createNewFile();
+
+        s3Client.putObject(
+                software.amazon.awssdk.services.s3.model.PutObjectRequest.builder()
+                        .bucket(s3Bucket)
+                        .key("chris-s3-test.txt")
+                        .build(),
+                software.amazon.awssdk.core.sync.RequestBody.fromFile(file)
+        );
+
+        System.out.println("File uploaded to S3 bucket: " + s3Bucket + "/chris-s3-test.txt");
+
+        s3Client.listObjectsV2(ListObjectsV2Request.builder()
+                .bucket("laa-get-payments-finance-data-uat-report-store-logging")
+                .prefix("/logs/")
+                .build()
+        ).contents().forEach(obj -> System.out.println("Found object: " + obj.key() + ", last modified: " + obj.lastModified()));
 
         return latestFile.map(first -> {
             log.info("Attempting to download file with key {}, last modified {}", latestFile.get().key(), latestFile.get().lastModified());
