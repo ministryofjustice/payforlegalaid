@@ -1,6 +1,5 @@
 package uk.gov.laa.gpfd.security;
 
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
@@ -11,6 +10,9 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.stereotype.Component;
+import uk.gov.laa.gpfd.exception.sds.TokenProviderException;
+
+import java.util.Objects;
 
 /** Responsible for getting access token from OAuth2 provider. */
 @Component
@@ -39,9 +41,10 @@ public class TokenProvider {
             OAuth2AuthorizedClient authorizedClient =
                     authorizedClientManager.authorize(buildAuthorizeRequest());
 
-            if (Objects.isNull(authorizedClient)
-                    || Objects.requireNonNull(authorizedClient).getAccessToken() == null) {
+            if (Objects.isNull(authorizedClient)) {
                 throw new TokenProviderException("Failed to obtain SDS API access token");
+            } else {
+                Objects.requireNonNull(authorizedClient);
             }
 
             return authorizedClient.getAccessToken();
