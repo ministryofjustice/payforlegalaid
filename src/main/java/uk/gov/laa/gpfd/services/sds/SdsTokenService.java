@@ -1,45 +1,39 @@
 package uk.gov.laa.gpfd.services.sds;
 
-import com.azure.core.credential.TokenCredential;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Component;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
+import org.springframework.stereotype.Service;
+import uk.gov.laa.gpfd.security.TokenProvider;
 
-/**
- * Service for obtaining access tokens for the SDS API.
- * Uses Azure AD (Entra) credentials to authenticate with the SDS service.
- */
-@Component
+import static java.time.Instant.*;
+
+@Service
 @RequiredArgsConstructor
-@Slf4j
-@ConditionalOnProperty(name = "gpfd.sds-enabled.enabled", havingValue = "true")
 public class SdsTokenService {
 
-    private final TokenCredential tokenCredential;
-
-    @Value("${app.sds-api.scope:https://graph.microsoft.com/.default}")
-    private String sdsApiScope;
+    private final TokenProvider tokenProvider;
 
     /**
-     * Get an access token for the SDS API.
+     * Get the SDS API access token.
      *
-     * @return the access token string
+     * @return the access token
      */
     public String getSdsAccessToken() {
-        try {
-            var accessToken = tokenCredential
-                    .getToken(new com.azure.core.credential.TokenRequestContext().addScopes(sdsApiScope))
-                    .block();
-            if (accessToken == null) {
-                throw new RuntimeException("SDS access token was null");
-            }
-            return accessToken.getToken();
-        } catch (RuntimeException e) {
-            log.error("Failed to obtain SDS access token", e);
-            throw e;
+        OAuth2AccessToken accessToken = tokenProvider.getTokenFromProvider();
+
+        if (isValidToken(accessToken)) {
+            return accessToken.getTokenValue();
         }
+
+        // Evict token and get new token
+        tokenProvider.evictToken();
+        return tokenProvider.getTokenFromProvider().getTokenValue();
+    }
+
+    private boolean isValidToken(OAuth2AccessToken accessToken) {
+        return accessToken != null
+                && accessToken.getExpiresAt() != null
+                && accessToken.getExpiresAt().isAfter(now());
     }
 }
 
