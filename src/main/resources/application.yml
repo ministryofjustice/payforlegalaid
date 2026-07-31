@@ -73,3 +73,6 @@ gpfd:
   security:
     cors:
       allowed-origin: https://127.0.0.1:8080
+
+  sds-enabled:
+    enabled: false

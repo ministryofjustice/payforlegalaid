@@ -26,6 +26,9 @@ gpfd:
       rep000: ${PERMISSION_REP000_GROUP_ID}
       submission-reconciliation: ${PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID}
 
+  sds-enabled:
+    enabled: false
+
 spring:
   security:
     oauth2:
