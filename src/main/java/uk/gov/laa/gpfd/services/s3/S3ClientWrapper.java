@@ -104,17 +104,6 @@ public class S3ClientWrapper {
                 .sorted(Comparator.comparing(S3Object::lastModified).reversed());
         var latestFile = sortedList.findFirst();
 
-
-        s3Client.putObject(
-                software.amazon.awssdk.services.s3.model.PutObjectRequest.builder()
-                        .bucket(s3Bucket)
-                        .key("chris-s3-test.txt")
-                        .build(),
-                RequestBody.fromBytes("S3 test object".getBytes(StandardCharsets.UTF_8))
-        );
-
-        System.out.println("File uploaded to S3 bucket: " + s3Bucket + "/chris-s3-test.txt");
-
         s3Client.listObjectsV2(ListObjectsV2Request.builder()
                 .bucket("laa-get-payments-finance-data-uat-report-store-logging")
                 .prefix("/logs/")
