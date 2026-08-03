@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.oauth2.client.ClientAuthorizationException;
 import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
@@ -17,6 +18,7 @@ import java.util.Objects;
 /** Responsible for getting access token from OAuth2 provider. */
 @Component
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "gpfd.sds-enabled.enabled", havingValue = "true")
 public class TokenProvider {
 
     static final String CACHE_NAME = "tokenCache";

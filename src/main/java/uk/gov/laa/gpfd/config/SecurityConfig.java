@@ -12,6 +12,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfFilter;
@@ -41,6 +42,9 @@ public class SecurityConfig {
 
     @Value("${gpfd.security.cors.allowed-origin:https://127.0.0.1:8080}")
     private String allowedCorsOrigin;
+
+    @Value("${gpfd.security.login-registration-id:gpfd-azure-dev}")
+    private String loginRegistrationId;
 
     @Value("${swagger-ui.enabled:true}")
     private boolean swaggerEnabled;
@@ -100,6 +104,10 @@ public class SecurityConfig {
         var sessionManagementConfigurerBuilder =
                 new SessionManagementConfigurerBuilder(concurrencyControlConfigurerCustomizer);
 
+        var loginEntryPoint = new LoginUrlAuthenticationEntryPoint(
+                "/oauth2/authorization/" + loginRegistrationId
+        );
+
         var http = SecurityConfigSupport.applyCsrfConfig(
                         httpSecurity,
                         csrfTokenRepository
@@ -110,6 +118,7 @@ public class SecurityConfig {
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler((_, response, _) -> response.sendRedirect("/")))
                 .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint(loginEntryPoint)
                         .defaultAuthenticationEntryPointFor(
                                 new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
                                 PathPatternRequestMatcher.withDefaults().matcher("/sds/**")

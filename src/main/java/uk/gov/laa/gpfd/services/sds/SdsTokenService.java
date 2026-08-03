@@ -1,6 +1,7 @@
 package uk.gov.laa.gpfd.services.sds;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.stereotype.Service;
 import uk.gov.laa.gpfd.security.TokenProvider;
@@ -9,6 +10,7 @@ import static java.time.Instant.*;
 
 @Service
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "gpfd.sds-enabled.enabled", havingValue = "true")
 public class SdsTokenService {
 
     private final TokenProvider tokenProvider;
@@ -36,5 +38,4 @@ public class SdsTokenService {
                 && accessToken.getExpiresAt().isAfter(now());
     }
 }
-
 
