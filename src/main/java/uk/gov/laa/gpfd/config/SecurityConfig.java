@@ -116,9 +116,11 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authorizeHttpRequestsBuilder)
                 .oauth2Login(oauth2 -> oauth2
-                        .successHandler((_, response, _) -> response.sendRedirect("/")))
+                        .successHandler((_, response, _) -> response.sendRedirect("/"))
+                        .failureUrl("/oauth2/authorization/" + loginRegistrationId))
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint(loginEntryPoint)
+                        .accessDeniedHandler((_, response, _) -> response.sendError(HttpStatus.FORBIDDEN.value()))
                         .defaultAuthenticationEntryPointFor(
                                 new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
                                 PathPatternRequestMatcher.withDefaults().matcher("/sds/**")
