@@ -8,7 +8,13 @@ runs:
       uses: snyk/actions/setup@9adf32b1121593767fc3c057af55b55db032dc04 # v1.0.0
 
     - name: Run Snyk scan
-      run: snyk test -d --all-projects --severity-threshold=high --sarif-file-output=snyk.sarif --policy-path=./.snyk
+      run: |
+        set -euo pipefail
+           if [ ! -f "pom.xml" ]; then
+            echo "ERROR: pom.xml not found"
+          exit 1
+          fi
+        snyk test -d --file=pom.xml --severity-threshold=high --sarif-file-output=snyk.sarif --policy-path=./.snyk -- -s .github/settings.xml
       env:
         SNYK_TOKEN: ${{ env.SNYK_TOKEN }}
       shell: bash
