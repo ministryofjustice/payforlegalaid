@@ -28,7 +28,7 @@ gpfd:
       submission-reconciliation: ${PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID}
 
   sds-enabled:
-    enabled: false
+    enabled: ${GPFD_SDS_ENABLED:false}
 
 spring:
   security:

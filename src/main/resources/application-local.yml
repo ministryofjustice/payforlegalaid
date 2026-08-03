@@ -36,7 +36,7 @@ gpfd:
       driver-class-name: oracle.jdbc.OracleDriver
 
   sds-enabled:
-    enabled: true
+    enabled: ${GPFD_SDS_ENABLED:true}
 
 app:
   sds-api:

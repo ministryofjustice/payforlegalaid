@@ -28,13 +28,8 @@ gpfd:
       submission-reconciliation: ${PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID}
 
   sds-enabled:
-    enabled: true
+    enabled: ${GPFD_SDS_ENABLED:true}
 
-  app:
-    sds-api:
-      url: https://login.microsoftonline.com/${SDS_TENANT_ID}/oauth2/v2.0/token
-      scope: api://laa-sds-test/.default
-      bucket-name: ${SDS_BUCKET_NAME:laa-sds-glad-test}
 spring:
   security:
     oauth2:
