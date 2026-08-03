@@ -4,6 +4,7 @@ gpfd:
   redirect-uri-template: "{baseUrl}/login/oauth2/code/gpfd-azure-uat"
   # Note,"gpfd-azure-uat" is also known as the Oauth2 'registrationId'
   security:
+    login-registration-id: gpfd-azure-uat
     cors:
       allowed-origin: https://uat-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk
 
@@ -27,7 +28,7 @@ gpfd:
       submission-reconciliation: ${PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID}
 
   sds-enabled:
-    enabled: false
+    enabled: ${GPFD_SDS_ENABLED:false}
 
 spring:
   security:
