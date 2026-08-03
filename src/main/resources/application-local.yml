@@ -25,12 +25,12 @@ gpfd:
 
   datasource:
     read-only:
-      url: jdbc:oracle:thin:@oracle-local:1521/FREEPDB1
+      url: jdbc:oracle:thin:@localhost:1521/FREEPDB1
       username: GPFD
       password: ${ORACLE_DB_PASSWORD}
       driver-class-name: oracle.jdbc.OracleDriver
     write:
-      url: jdbc:oracle:thin:@oracle-local:1521/FREEPDB1
+      url: jdbc:oracle:thin:@localhost:1521/FREEPDB1
       username: GPFD
       password: ${ORACLE_DB_PASSWORD}
       driver-class-name: oracle.jdbc.OracleDriver
@@ -81,7 +81,7 @@ spring:
     allow-bean-definition-overriding: true
 
   datasource:
-    url: jdbc:oracle:thin:@oracle-local:1521/FREEPDB1
+    url: jdbc:oracle:thin:@localhost:1521/FREEPDB1
     username: GPFD
     password: ${ORACLE_DB_PASSWORD}
     driver-class-name: oracle.jdbc.OracleDriver
@@ -90,7 +90,7 @@ spring:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.xml
     default-schema: GPFD
-    url: jdbc:oracle:thin:@oracle-local:1521/FREEPDB1
+    url: jdbc:oracle:thin:@localhost:1521/FREEPDB1
     user: GPFD
     password: ${ORACLE_DB_PASSWORD}
 
