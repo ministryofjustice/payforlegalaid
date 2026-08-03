@@ -1,3 +1,8 @@
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: TRACE
+
 gpfd:
   # This is the url which the Active directory dev app registration will redirect to after SSO is complete
   # baseUrl is a Spring Security template that resolves based on the current URL
