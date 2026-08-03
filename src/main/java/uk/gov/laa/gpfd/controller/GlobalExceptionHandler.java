@@ -216,7 +216,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ReportsGet400Response> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
-        var message = ERROR_STRING + "Invalid input for parameter " + e.getName() + ". Expected a numeric value";
+        var message = ERROR_STRING + "Invalid input for parameter " + e.getName() + ". Expected a valid UUID";
         var response = new ReportsGet400Response() {{
             setError(message);
         }};
