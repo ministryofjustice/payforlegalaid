@@ -4,6 +4,7 @@ gpfd:
   redirect-uri-template: "{baseUrl}/login/oauth2/code/gpfd-azure-prod"
   # Note,"gpfd-azure-prod" is also known as the Oauth2 'registrationId'
   security:
+    login-registration-id: gpfd-azure-prod
     cors:
       allowed-origin: https://get-legal-aid-data.service.justice.gov.uk
 

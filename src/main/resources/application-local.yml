@@ -38,12 +38,14 @@ gpfd:
   sds-enabled:
     enabled: true
 
-#app:
-#  sds-api:
-#    # Base URL of the SDS REST API (not the OAuth2 token endpoint)
-#    url: ${SDS_API_URL:https://sds-api-placeholder.example.com}
-#    scope: api://laa-sds-test/.default
-#    bucket-name: ${SDS_BUCKET_NAME:laa-sds-glad-test}
+app:
+  sds-api:
+    # Base URL of the SDS REST API (not the OAuth2 token endpoint)
+    url: ${SDS_API_URL:https://laa-sds-test.apps.live.cloud-platform.service.justice.gov.uk}
+    scope: ${SDS_API_SCOPE:api://laa-sds-test/.default}
+    bucket-name: ${SDS_BUCKET_NAME:laa-sds-glad-test}
+    client-registration-id: ${SDS_API_CLIENT_REGISTRATION_ID:sds-api-client}
+    principal-name: ${SDS_API_PRINCIPAL_NAME:laa-sds-test}
 
 spring:
   config:
@@ -57,13 +59,23 @@ spring:
             client-id: ${CLIENT_ID}
             client-secret: ${CLIENT_SECRET}
             scope: openid, profile, email
-            redirect-uri:  ${gpfd.redirect-uri-template}
+            redirect-uri: ${gpfd.redirect-uri-template}
             authorization-grant-type: authorization_code
             client-authentication-method: client_secret_basic
+            provider: gpfd-azure-dev
+          sds-api-client:
+            client-id: ${SDS_API_CLIENT_ID:${AZURE_CLIENT_ID}}
+            client-secret: ${SDS_API_CLIENT_SECRET:${AZURE_CLIENT_SECRET}}
+            scope: ${SDS_API_SCOPE:api://laa-sds-test/.default}
+            authorization-grant-type: client_credentials
+            client-authentication-method: client_secret_basic
+            provider: sds-api-client
 
         provider:
           gpfd-azure-dev:
-            issuer-uri: https://login.microsoftonline.com/${TENANT_ID}/v2.0
+            issuer-uri: https://login.microsoftonline.com/${AZURE_TENANT_ID:${AUTH_TENANT_ID:${TENANT_ID}}}/v2.0
+          sds-api-client:
+            token-uri: https://login.microsoftonline.com/${SDS_TENANT_ID:${AZURE_TENANT_ID:${AUTH_TENANT_ID:${TENANT_ID}}}}/oauth2/v2.0/token
 
   main:
     allow-bean-definition-overriding: true
