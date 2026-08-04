@@ -27,9 +27,7 @@ public class DatabaseUtils {
       Database database = new liquibase.database.core.H2Database(); // or OracleDatabase, PostgresDatabase, etc.
       database.setConnection(new JdbcConnection(connection));
 
-      applyLiquibaseXml("db.changelog-gpfd-schema.xml", database);
       applyLiquibaseXml("db.changelog-gpfd-reports-schema.xml", database);
-      applyLiquibaseXml("db.changelog-gpfd-data.xml", database);
       applyLiquibaseXml("db.changelog-gpfd-reports-data.xml", database);
       applyLiquibaseXml("db.changelog-any-report-schema.xml", database);
       applyLiquibaseXml("db.changelog-any-report-data.xml", database);

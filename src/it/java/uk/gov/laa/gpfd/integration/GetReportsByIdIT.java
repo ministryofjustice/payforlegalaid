@@ -39,7 +39,7 @@ final class GetReportsByIdIT extends BaseIT {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.error")
-                        .value("Error: Invalid input for parameter id. Expected a numeric value"));
+                        .value("Error: Invalid input for parameter id. Expected a valid UUID"));
     }
 
     @SneakyThrows
