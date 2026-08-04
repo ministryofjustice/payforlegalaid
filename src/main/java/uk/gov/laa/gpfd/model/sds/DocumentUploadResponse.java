@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.lang.Nullable;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -12,33 +13,12 @@ import java.util.Objects;
  */
 public class DocumentUploadResponse implements Serializable {
 
+  @Serial
   private static final long serialVersionUID = 1L;
-
-  private @Nullable String detail;
 
   private @Nullable String success;
 
   private @Nullable String checksum;
-
-  public DocumentUploadResponse detail(@Nullable String detail) {
-    this.detail = detail;
-    return this;
-  }
-
-  /**
-   * Get detail
-   * @return detail
-   */
-  @Schema(name = "detail", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("detail")
-  public @Nullable String getDetail() {
-    return detail;
-  }
-
-  @JsonProperty("detail")
-  public void setDetail(@Nullable String detail) {
-    this.detail = detail;
-  }
 
   public DocumentUploadResponse success(@Nullable String success) {
     this.success = success;
@@ -89,21 +69,19 @@ public class DocumentUploadResponse implements Serializable {
       return false;
     }
     DocumentUploadResponse documentUploadResponse = (DocumentUploadResponse) o;
-    return Objects.equals(this.detail, documentUploadResponse.detail) &&
-        Objects.equals(this.success, documentUploadResponse.success) &&
+    return Objects.equals(this.success, documentUploadResponse.success) &&
         Objects.equals(this.checksum, documentUploadResponse.checksum);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(detail, success, checksum);
+    return Objects.hash(success, checksum);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class DocumentUploadResponse {\n");
-    sb.append("    detail: ").append(toIndentedString(detail)).append("\n");
     sb.append("    success: ").append(toIndentedString(success)).append("\n");
     sb.append("    checksum: ").append(toIndentedString(checksum)).append("\n");
     sb.append("}");
@@ -131,14 +109,8 @@ public class DocumentUploadResponse implements Serializable {
     }
 
     protected Builder copyOf(DocumentUploadResponse value) {
-      this.instance.setDetail(value.detail);
       this.instance.setSuccess(value.success);
       this.instance.setChecksum(value.checksum);
-      return this;
-    }
-
-    public DocumentUploadResponse.Builder detail(String detail) {
-      this.instance.detail(detail);
       return this;
     }
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.lang.Nullable;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -12,13 +13,10 @@ import java.util.Objects;
  */
 public class DocumentDownloadResponse implements Serializable {
 
+  @Serial
   private static final long serialVersionUID = 1L;
 
   private @Nullable String fileUrl;
-
-  private @Nullable String detail;
-
-  private @Nullable String checksum;
 
   public DocumentDownloadResponse fileUrl(@Nullable String fileUrl) {
     this.fileUrl = fileUrl;
@@ -30,54 +28,14 @@ public class DocumentDownloadResponse implements Serializable {
    * @return fileUrl
    */
   @Schema(name = "fileUrl", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("fileUrl")
+  @JsonProperty("fileURL")
   public @Nullable String getFileUrl() {
     return fileUrl;
   }
 
-  @JsonProperty("fileUrl")
+  @JsonProperty("fileURL")
   public void setFileUrl(@Nullable String fileUrl) {
     this.fileUrl = fileUrl;
-  }
-
-  public DocumentDownloadResponse detail(@Nullable String detail) {
-    this.detail = detail;
-    return this;
-  }
-
-  /**
-   * Get detail
-   * @return detail
-   */
-  @Schema(name = "detail", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("detail")
-  public @Nullable String getDetail() {
-    return detail;
-  }
-
-  @JsonProperty("detail")
-  public void setDetail(@Nullable String detail) {
-    this.detail = detail;
-  }
-
-  public DocumentDownloadResponse checksum(@Nullable String checksum) {
-    this.checksum = checksum;
-    return this;
-  }
-
-  /**
-   * Get checksum
-   * @return checksum
-   */
-  @Schema(name = "checksum", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  @JsonProperty("checksum")
-  public @Nullable String getChecksum() {
-    return checksum;
-  }
-
-  @JsonProperty("checksum")
-  public void setChecksum(@Nullable String checksum) {
-    this.checksum = checksum;
   }
 
   @Override
@@ -89,14 +47,12 @@ public class DocumentDownloadResponse implements Serializable {
       return false;
     }
     DocumentDownloadResponse documentDownloadResponse = (DocumentDownloadResponse) o;
-    return Objects.equals(this.fileUrl, documentDownloadResponse.fileUrl) &&
-        Objects.equals(this.detail, documentDownloadResponse.detail) &&
-        Objects.equals(this.checksum, documentDownloadResponse.checksum);
+    return Objects.equals(this.fileUrl, documentDownloadResponse.fileUrl);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(fileUrl, detail, checksum);
+    return Objects.hash(fileUrl);
   }
 
   @Override
@@ -104,8 +60,6 @@ public class DocumentDownloadResponse implements Serializable {
     StringBuilder sb = new StringBuilder();
     sb.append("class DocumentDownloadResponse {\n");
     sb.append("    fileUrl: ").append(toIndentedString(fileUrl)).append("\n");
-    sb.append("    detail: ").append(toIndentedString(detail)).append("\n");
-    sb.append("    checksum: ").append(toIndentedString(checksum)).append("\n");
     sb.append("}");
     return sb.toString();
   }
@@ -132,23 +86,11 @@ public class DocumentDownloadResponse implements Serializable {
 
     protected Builder copyOf(DocumentDownloadResponse value) {
       this.instance.setFileUrl(value.fileUrl);
-      this.instance.setDetail(value.detail);
-      this.instance.setChecksum(value.checksum);
       return this;
     }
 
     public DocumentDownloadResponse.Builder fileUrl(String fileUrl) {
       this.instance.fileUrl(fileUrl);
-      return this;
-    }
-
-    public DocumentDownloadResponse.Builder detail(String detail) {
-      this.instance.detail(detail);
-      return this;
-    }
-
-    public DocumentDownloadResponse.Builder checksum(String checksum) {
-      this.instance.checksum(checksum);
       return this;
     }
 
