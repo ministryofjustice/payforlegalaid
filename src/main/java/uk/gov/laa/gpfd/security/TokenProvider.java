@@ -55,6 +55,11 @@ public class TokenProvider {
         }
     }
 
+    /**
+     * Spring's caching aspect intercepts the call and handles the cache eviction at runtime.
+     * The empty method is just a hook for the annotation. The @CacheEvict decorator does all the work
+     * before or after method execution.
+     */
     @CacheEvict(value = CACHE_NAME, key = CACHE_KEY)
     public void evictToken() {}
 
