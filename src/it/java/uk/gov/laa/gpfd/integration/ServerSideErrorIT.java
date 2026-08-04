@@ -24,7 +24,7 @@ class ServerSideErrorIT extends BaseIT {
     @AfterAll
     @Override
     void cleanUpMojfinDatabase() {
-        writeJdbcTemplate.execute("DROP TABLE IF EXISTS GPFD.CSV_TO_SQL_MAPPING_TABLE");
+        writeJdbcTemplate.execute("DROP SCHEMA IF EXISTS GPFD CASCADE");
     }
 
     @Test
