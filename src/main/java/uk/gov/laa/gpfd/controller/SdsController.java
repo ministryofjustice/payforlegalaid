@@ -37,42 +37,39 @@ public class SdsController {
      *
      * <p>Example usage:
      * <pre>
-     *     POST /sds/files/{applicationId}
+     *     POST /sds/files
      *     Content-Type: multipart/form-data
      * </pre>
      *
-     * @param applicationId the UUID of the application to associate the file with
-     * @param file          the file to upload
+     * @param file the file to upload
      * @return the upload response containing detail, success, and checksum fields
      */
-    @PostMapping(value = "/files/{applicationId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/files", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<DocumentUploadResponse> saveFile(
-            @PathVariable UUID applicationId,
             @RequestParam("file") MultipartFile file) {
-        log.info("Uploading file '{}' for applicationId {}", file.getOriginalFilename(), applicationId);
-        DocumentUploadResponse response = sdsService.saveFile(applicationId, file);
-        log.info("File upload successful for applicationId {}, success={}", applicationId, response.getSuccess());
+        log.info("Uploading file '{}'", file.getOriginalFilename());
+        DocumentUploadResponse response = sdsService.saveFile(file);
+        log.info("File upload successful for '{}', success={}", file.getOriginalFilename(), response.getSuccess());
         return ResponseEntity.ok(response);
     }
 
     /**
-     * Retrieve a file URL from the SDS service.
+     * Retrieve a file from the SDS service by its file key.
+     *
+     * @param fileKey - the unique identifier for the file in SDS
      *
      * <p>Example usage:
      * <pre>
-     *     GET /sds/files/{applicationId}/{documentId}
+     *     GET /sds/files/{fileKey}
      * </pre>
      *
-     * @param applicationId the UUID of the application
-     * @param documentId    the document identifier within the application folder
-     * @return the download response containing the file URL and checksum
+     * @return the download response containing file content and metadata
      */
-    @GetMapping("/files/{applicationId}/{documentId}")
+    @GetMapping("/files/{fileKey}")
     public ResponseEntity<DocumentDownloadResponse> getFile(
-            @PathVariable UUID applicationId,
-            @PathVariable String documentId) {
-        log.info("Retrieving file '{}' for applicationId {}", documentId, applicationId);
-        DocumentDownloadResponse response = sdsService.getFile(applicationId, documentId);
+            @PathVariable String fileKey) {
+        log.info("Retrieving file '{}'", fileKey);
+        DocumentDownloadResponse response = sdsService.getFile(fileKey);
         return ResponseEntity.ok(response);
     }
 
