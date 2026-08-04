@@ -14,7 +14,7 @@ runs:
             echo "ERROR: pom.xml not found"
           exit 1
           fi
-        snyk test -d --file=pom.xml --severity-threshold=high --sarif-file-output=snyk.sarif --policy-path=./.snyk
+        snyk test -d --file=pom.xml --severity-threshold=high --sarif-file-output=snyk.sarif --policy-path=./.snyk -- -s .github/settings.xml
       env:
         SNYK_TOKEN: ${{ env.SNYK_TOKEN }}
       shell: bash
