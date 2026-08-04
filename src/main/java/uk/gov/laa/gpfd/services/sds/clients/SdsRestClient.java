@@ -2,7 +2,9 @@ package uk.gov.laa.gpfd.services.sds.clients;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -16,7 +18,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Configuration for SDS RestClient with request/response logging and header sanitization.
+ * Provides a pre-configured RestClient bean with automatic trace context propagation.
+ */
+@Configuration
+@ConditionalOnProperty(name = "gpfd.sds-enabled.enabled", havingValue = "true")
 public class SdsRestClient {
+
+    public static final String HTTP_RESPONSE_STATUS_CODE = "http.response.status_code";
+    public static final String EVENT_DURATION = "event.duration";
+    public static final String URL_FULL = "url.full";
+    public static final String HTTP_REQUEST_METHOD = "http.request.method";
 
     @Bean
     ClientHttpRequestInterceptor loggingInterceptor() {
@@ -81,24 +94,24 @@ public class SdsRestClient {
 
                 if (statusCode >= 200 && statusCode < 300) {
                     log.atInfo()
-                            .addKeyValue("http.request.method", method)
-                            .addKeyValue("url.full", uri)
-                            .addKeyValue("http.response.status_code", statusCode)
-                            .addKeyValue("event.duration", duration)
+                            .addKeyValue(HTTP_REQUEST_METHOD, method)
+                            .addKeyValue(URL_FULL, uri)
+                            .addKeyValue(HTTP_RESPONSE_STATUS_CODE, statusCode)
+                            .addKeyValue(EVENT_DURATION, duration)
                             .log("Outbound response");
                 } else if (statusCode >= 400 && statusCode < 500) {
                     log.atWarn()
-                            .addKeyValue("http.request.method", method)
-                            .addKeyValue("url.full", uri)
-                            .addKeyValue("http.response.status_code", statusCode)
-                            .addKeyValue("event.duration", duration)
+                            .addKeyValue(HTTP_REQUEST_METHOD, method)
+                            .addKeyValue(URL_FULL, uri)
+                            .addKeyValue(HTTP_RESPONSE_STATUS_CODE, statusCode)
+                            .addKeyValue(EVENT_DURATION, duration)
                             .log("Outbound client error");
                 } else if (statusCode >= 500) {
                     log.atError()
-                            .addKeyValue("http.request.method", method)
-                            .addKeyValue("url.full", uri)
-                            .addKeyValue("http.response.status_code", statusCode)
-                            .addKeyValue("event.duration", duration)
+                            .addKeyValue(HTTP_REQUEST_METHOD, method)
+                            .addKeyValue(URL_FULL, uri)
+                            .addKeyValue(HTTP_RESPONSE_STATUS_CODE, statusCode)
+                            .addKeyValue(EVENT_DURATION, duration)
                             .log("Outbound server error");
                 }
 
