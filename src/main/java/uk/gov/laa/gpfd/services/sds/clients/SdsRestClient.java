@@ -53,7 +53,7 @@ public class SdsRestClient {
      * propagates trace context and baggage (including correlation ID).
      */
     @Bean
-    RestClient sdsRestClient(
+    RestClient sdsApiRestClient(
             RestClient.Builder builder,
             @Value("${app.sds-api.url}") String sdsApiUrl,
             ClientHttpRequestInterceptor loggingInterceptor) {
