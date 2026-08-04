@@ -30,6 +30,8 @@ public class SdsRestClient {
     public static final String EVENT_DURATION = "event.duration";
     public static final String URL_FULL = "url.full";
     public static final String HTTP_REQUEST_METHOD = "http.request.method";
+    public static final String HTTP_REQUEST_HEADERS = "http.request.headers";
+    public static final String ERROR_MESSAGE = "error.message";
 
     @Bean
     ClientHttpRequestInterceptor loggingInterceptor() {
@@ -74,14 +76,14 @@ public class SdsRestClient {
 
             if (log.isDebugEnabled()) {
                 log.atDebug()
-                        .addKeyValue("http.request.method", method)
-                        .addKeyValue("url.full", uri)
-                        .addKeyValue("http.request.headers", sanitizeHeaders(request))
+                        .addKeyValue(HTTP_REQUEST_METHOD, method)
+                        .addKeyValue(URL_FULL, uri)
+                        .addKeyValue(HTTP_REQUEST_HEADERS, sanitizeHeaders(request))
                         .log("Outbound request");
             } else {
                 log.atInfo()
-                        .addKeyValue("http.request.method", method)
-                        .addKeyValue("url.full", uri)
+                        .addKeyValue(HTTP_REQUEST_METHOD, method)
+                        .addKeyValue(URL_FULL, uri)
                         .log("Outbound request");
             }
 
@@ -120,10 +122,10 @@ public class SdsRestClient {
             } catch (IOException e) {
                 long duration = System.currentTimeMillis() - startTime;
                 log.atError()
-                        .addKeyValue("http.request.method", method)
-                        .addKeyValue("url.full", uri)
-                        .addKeyValue("event.duration", duration)
-                        .addKeyValue("error.message", e.getMessage())
+                        .addKeyValue(HTTP_REQUEST_METHOD, method)
+                        .addKeyValue(URL_FULL, uri)
+                        .addKeyValue(EVENT_DURATION, duration)
+                        .addKeyValue(ERROR_MESSAGE, e.getMessage())
                         .setCause(e)
                         .log("Outbound request failed");
                 throw e;
