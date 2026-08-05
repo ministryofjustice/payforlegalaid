@@ -1,7 +1,9 @@
 -- =============================================================
--- V3__seed_metadata.sql
--- Seed data for GPFD metadata tables in the tracking RDS (PostgreSQL).
--- All statements are idempotent (ON CONFLICT DO NOTHING).
+-- R__02_seed_metadata.sql
+-- Repeatable migration: full reload of GPFD metadata seed data.
+-- Re-runs whenever the checksum changes (e.g. new report added).
+-- Tables are freshly created by R__create_metadata_tables.sql
+-- which always runs first (alphabetical order).
 -- =============================================================
 
 -- -----------------------------------------------------------

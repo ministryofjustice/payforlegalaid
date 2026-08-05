@@ -1,9 +1,19 @@
 -- =============================================================
--- V2__create_metadata_tables.sql
--- Creates the GPFD report metadata tables in the tracking RDS (PostgreSQL).
+-- R__01_create_metadata_tables.sql
+-- Repeatable migration: drops and recreates the GPFD report metadata tables
+-- in the tracking RDS (PostgreSQL). Re-runs whenever the checksum changes.
+-- Tables are dropped in reverse FK order to avoid constraint violations.
 -- These are the equivalent of the GPFD schema tables previously held in
 -- MoJFin (Oracle), migrated as part of DR046 / LPF-1551.
 -- =============================================================
+
+-- Drop in reverse FK dependency order
+DROP TABLE IF EXISTS report_roles;
+DROP TABLE IF EXISTS field_attributes;
+DROP TABLE IF EXISTS report_queries;
+DROP TABLE IF EXISTS reports;
+DROP TABLE IF EXISTS roles;
+DROP TABLE IF EXISTS report_output_types;
 
 -- report_output_types
 -- Describes the output format of a report (csv, xlsx, s3storage).
