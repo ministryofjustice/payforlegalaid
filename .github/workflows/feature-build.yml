@@ -37,4 +37,4 @@ jobs:
         if: github.event.pull_request.user.login != 'dependabot[bot]'
         uses: './.github/snyk-scan'
         env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN}}
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
