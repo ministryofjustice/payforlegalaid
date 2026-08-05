@@ -14,7 +14,7 @@
     </parent>
 
     <properties>
-        <oracle-jdbc.version>23.26.2.0.0</oracle-jdbc.version>
+        <oracle-jdbc.version>23.26.3.0.0</oracle-jdbc.version>
         <h2.version>2.4.240</h2.version>
         <!-- setting the below overrides spring bom version even though we don't use the value directly in our pom -->
         <spring-security.version>7.1.0</spring-security.version>
