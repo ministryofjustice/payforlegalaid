@@ -1,7 +1,6 @@
 -- =============================================================
 -- V3__seed_metadata.sql
 -- Seed data for GPFD metadata tables in the tracking RDS (PostgreSQL).
--- Generated from Liquibase changelogs by scripts/generate_metadata_flyway_seed.py
 -- All statements are idempotent (ON CONFLICT DO NOTHING).
 -- =============================================================
 
