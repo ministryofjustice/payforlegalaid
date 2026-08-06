@@ -242,6 +242,18 @@ public class AppConfig {
     }
 
     /**
+     * Allows us to perform queries with named parameters against the tracking (PostgreSQL RDS) data source.
+     * Used by ReportDao for metadata queries after the Oracle→Postgres cutover (LPF-1552).
+     *
+     * @param dataSource - tracking PostgreSQL datasource
+     * @return NamedParameterJdbcOperations to access the tracking RDS
+     */
+    @Bean
+    public NamedParameterJdbcOperations namedTrackingJdbcOperations(@Qualifier("trackingDataSource") DataSource dataSource) {
+        return new NamedParameterJdbcTemplate(dataSource);
+    }
+
+    /**
      * Configures a {@link JdbcTemplate} for write-enabled database operations.
      * <p>
      * The {@code JdbcTemplate} is built on the {@code writeDataSource} and simplifies
