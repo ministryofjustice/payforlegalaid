@@ -40,10 +40,6 @@ VALUES ('3', 'Financial')
 -- REPORTS (21 rows)
 -- -----------------------------------------------------------
 INSERT INTO reports (id, name, template_secure_document_id, report_creation_date, description, num_days_to_keep, file_name, active, report_output_type, report_owner_id, report_owner_name, report_owner_email)
-VALUES ('0fbec75b-2d72-44f5-a0e3-2dcb29d92f79', 'acceptance_test_table', '00000000-0000-0000-0000-000000000000', '2025-02-15', 'acceptance_test_table', '30', 'acceptance_test_table', 'Y', '6ebd27ac-4d83-485d-a4fd-3e45f9a53484', '00000000-0000-0000-0000-000000000003', 'Teresa Green', 'teresagreen@example.org')
-    ON CONFLICT (id) DO NOTHING;
-
-INSERT INTO reports (id, name, template_secure_document_id, report_creation_date, description, num_days_to_keep, file_name, active, report_output_type, report_owner_id, report_owner_name, report_owner_email)
 VALUES ('f46b4d3d-c100-429a-bf9a-6c3305dbdbf3', 'CIS to CCMS import exceptions', '00000000-0000-0000-0000-000000000000', '2025-02-15', 'Details of invoices transferred from CIS to CCMS by Legal Aid Scheme', '30', 'CIS_TO_CCMS_IMPORT_EXCEPTIONS', 'Y', '6ebd27ac-4d83-485d-a4fd-3e45f9a53484', '00000000-0000-0000-0000-000000000003', 'Teresa Green', 'teresagreen@example.org')
     ON CONFLICT (id) DO NOTHING;
 
@@ -107,10 +103,6 @@ INSERT INTO reports (id, name, template_secure_document_id, report_creation_date
 VALUES ('b36f9bbb-1178-432c-8f99-8090e285f2d3', 'CCMS Invoice Analysis (CIS to CCMS)', '7c2b9f4e-3a6d-4b8a-9f12-6e5d0c8a1b34', '2025-02-15', 'Summary of invoices in CIS and CCMS by original source IT system', '30', 'CCMS_invoice_analysis', 'Y', 'bd098666-94e4-4b0e-822c-8e5dfb04c908', '00000000-0000-0000-0000-000000000001', 'Teresa Green', 'teresagreen@example.org')
     ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO reports (id, name, template_secure_document_id, report_creation_date, description, num_days_to_keep, file_name, active, report_output_type, report_owner_id, report_owner_name, report_owner_email)
-VALUES ('abbec75b-2d72-44f5-a0e3-2dcb29d92f79', 'acceptance_test_table', '00000000-0000-0000-0000-000000000000', '2025-02-15', 'acceptance_test_table', '30', 'acceptance_test_table', 'Y', '6ebd27ac-4d83-485d-a4fd-3e45f9a53484', '00000000-0000-0000-0000-000000000003', 'Teresa Green', 'teresagreen@example.org')
-    ON CONFLICT (id) DO NOTHING;
-
 INSERT INTO reports (id, name, template_secure_document_id, report_creation_date, num_days_to_keep, description, file_name, active, report_output_type, report_owner_id, report_owner_name, report_owner_email)
 VALUES ('77ef818d-e35d-47ad-8813-74b9fa675877', 'CCMS Third party report', '8b9f0484-819f-4e0f-b60a-0b3f9d30d9ba', CURRENT_DATE, '30', 'CCMS Third party report', 'CCMS_THIRD_PARTY_REPORT', 'Y', 'bd098666-94e4-4b0e-822c-8e5dfb04c908', '00000000-0000-0000-0000-000000000003', 'Teresa Green', 'teresagreen@Justice.gov.uk')
     ON CONFLICT (id) DO NOTHING;
@@ -126,10 +118,6 @@ VALUES ('56328b13-254d-435d-813a-5863f94b996d', 'Mediation contract balances', '
 -- -----------------------------------------------------------
 -- REPORT_QUERIES (40 rows)
 -- -----------------------------------------------------------
-INSERT INTO report_queries (id, report_id, query, tab_name)
-VALUES ('069bd36f-b3e5-474d-9408-75b8de56de03', '0fbec75b-2d72-44f5-a0e3-2dcb29d92f79', 'SELECT * FROM ANY_REPORT.MARSHMALLOW_DENSITY_SUMMARY_VIEW', 'MAIN')
-    ON CONFLICT (id) DO NOTHING;
-
 INSERT INTO report_queries (id, report_id, query, tab_name)
 VALUES ('65727ff3-6e7f-4296-9321-921335caa0e4', 'f46b4d3d-c100-429a-bf9a-6c3305dbdbf3', 'SELECT * FROM ANY_REPORT.MARSHMALLOW_DENSITY_SUMMARY_VIEW', 'MAIN')
     ON CONFLICT (id) DO NOTHING;
@@ -236,10 +224,6 @@ VALUES ('adc32729-f50d-418e-a2af-ad83d9248bb5', 'b36f9bbb-1178-432c-8f99-8090e28
 
 INSERT INTO report_queries (id, report_id, query, tab_name, index)
 VALUES ('1dc32729-f50d-418e-a2af-ad83d9248bb5', 'b36f9bbb-1178-432c-8f99-8090e285f2d3', 'SELECT * FROM ANY_REPORT.SAUSAGE_ROLL_RELATED_DEBT', 'CCMS AP Debtors', '6')
-    ON CONFLICT (id) DO NOTHING;
-
-INSERT INTO report_queries (id, report_id, query, tab_name, index)
-VALUES ('1dc32729-f50d-418e-a2af-ad83d9248cc1', 'abbec75b-2d72-44f5-a0e3-2dcb29d92f79', 'SELECT * FROM ANY_REPORT.V_VIEW_THAT_DOESNT_EXIST', 'RESULTS', '0')
     ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO report_queries (id, report_id, query, tab_name)
@@ -2210,10 +2194,6 @@ VALUES ('9cc6dbec-02cf-4736-8535-28c9282d7225', '70847839-5103-4971-b163-f718328
 -- -----------------------------------------------------------
 INSERT INTO report_roles (report_id, role_id)
 VALUES ('b36f9bbb-1178-432c-8f99-8090e285f2d3', '3')
-    ON CONFLICT (report_id, role_id) DO NOTHING;
-
-INSERT INTO report_roles (report_id, role_id)
-VALUES ('abbec75b-2d72-44f5-a0e3-2dcb29d92f79', '3')
     ON CONFLICT (report_id, role_id) DO NOTHING;
 
 INSERT INTO report_roles (report_id, role_id)
