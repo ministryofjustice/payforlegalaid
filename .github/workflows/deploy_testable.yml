@@ -5,6 +5,10 @@ on:
     branches:
       - 'test-*'
 
+concurrency:
+  group: deploy-testable-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-and-deploy-to-testable:
     environment: development
