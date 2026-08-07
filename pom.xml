@@ -305,6 +305,57 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- OpenAPI Generator for SDS Client -->
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>7.1.0</version>
+                <configuration>
+                    <inputSpec>${project.basedir}/open-api-specification/sds-open-api-specification.yml</inputSpec>
+                    <generatorName>java</generatorName>
+                    <packageName>uk.gov.laa.gpfd.services.sds.client</packageName>
+                    <apiPackage>uk.gov.laa.gpfd.services.sds.client.api</apiPackage>
+                    <modelPackage>uk.gov.laa.gpfd.services.sds.client.model</modelPackage>
+                    <invokerPackage>uk.gov.laa.gpfd.services.sds.client</invokerPackage>
+                    <output>${project.build.directory}/generated-sources/sds-openapi</output>
+                    <globalProperties>
+                        <skipFormModel>false</skipFormModel>
+                    </globalProperties>
+                    <configOptions>
+                        <useSpringBootFeatures>true</useSpringBootFeatures>
+                        <useJakartaEe>true</useJakartaEe>
+                        <generatePom>false</generatePom>
+                        <serializableModel>true</serializableModel>
+                    </configOptions>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Build Helper to include generated sources -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <id>add-generated-sources</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/sds-openapi/src/main/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -313,6 +364,26 @@
             <groupId>org.immutables</groupId>
             <artifactId>value-annotations</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <!-- OkHttp & Gson for generated SDS OpenAPI client -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.12.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>logging-interceptor</artifactId>
+            <version>4.12.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.gsonfire</groupId>
+            <artifactId>gson-fire</artifactId>
+            <version>1.9.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
@@ -378,6 +449,11 @@
             <groupId>org.apache.httpcomponents.core5</groupId>
             <artifactId>httpcore5-h2</artifactId>
             <version>${httpcore5-h2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>0.2.11</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
