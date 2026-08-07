@@ -1,0 +1,86 @@
+openapi: "3.0.0"
+info:
+  title: Secure Document Storage (SDS) API
+  version: 1.0.0
+  description: External API contract for Secure Document Storage (SDS) service
+
+servers:
+  - url: https://laa-sds-test.apps.live.cloud-platform.service.justice.gov.uk
+    description: Test environment
+
+security:
+  - bearerAuth: []
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      description: Returns the health status of the SDS service
+      operationId: getHealth
+      tags:
+        - Health
+      responses:
+        "200":
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SdsHealthResponse"
+        "500":
+          description: Service error
+
+  /get_file:
+    get:
+      summary: Download a file from SDS
+      description: Retrieve a file from SDS by its file key
+      operationId: getFile
+      tags:
+        - Files
+      parameters:
+        - name: file_key
+          in: query
+          required: true
+          description: The name of the file to retrieve
+          schema:
+            type: string
+          example: "CCMS AP Debtors.csv"
+      responses:
+        "200":
+          description: File retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SdsFileDownloadResponse"
+        "404":
+          description: File not found
+        "500":
+          description: Server error
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: OAuth2 M2M token for client credentials flow
+
+  schemas:
+    SdsHealthResponse:
+      type: object
+      required:
+        - Health
+      properties:
+        Health:
+          type: string
+          description: Health status of the service
+          example: "OK"
+
+    SdsFileDownloadResponse:
+      type: object
+      required:
+        - fileURL
+      properties:
+        fileURL:
+          type: string
+          description: Pre-signed URL to download the file from S3
+          example: "https://laa-sds-glad-uat.s3.amazonaws.com/..."
