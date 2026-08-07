@@ -1,9 +1,9 @@
 -- =============================================================
--- R__02_seed_metadata.sql
+-- R__01_seed_metadata.sql
 -- Repeatable migration: full reload of GPFD metadata seed data.
 -- Re-runs whenever the checksum changes (e.g. new report added).
--- Tables are freshly created by R__create_metadata_tables.sql
--- which always runs first (alphabetical order).
+-- Table structure is created by versioned migration V2__create_metadata_tables.sql.
+-- This repeatable migration should only contain idempotent seed actions.
 -- =============================================================
 
 -- -----------------------------------------------------------
