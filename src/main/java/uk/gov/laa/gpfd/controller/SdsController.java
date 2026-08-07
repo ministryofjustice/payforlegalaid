@@ -14,6 +14,7 @@ import uk.gov.laa.gpfd.services.sds.client.model.SdsHealthResponse;
 
 /**
  * REST controller for Secure Document Storage (SDS) operations.
+ * Provides endpoints to interact with the SDS API.
  * Only active when {@code gpfd.sds-enabled.enabled=true}.
  */
 @Slf4j
@@ -28,19 +29,18 @@ public class SdsController {
     /**
      * Retrieve a file from the SDS service by its file key.
      *
-     * @param fileKey - the unique identifier for the file in SDS
-     *
      * <p>Example usage:
      * <pre>
-     *     GET /sds/files/{fileKey}
+     *     GET /sds/files/CCMS%20AP%20Debtors.csv
      * </pre>
      *
-     * @return the download response containing file URL
+     * @param fileKey the name of the file to retrieve from SDS
+     * @return the download response containing the file URL
      */
     @GetMapping("/files/{fileKey}")
     public ResponseEntity<SdsFileDownloadResponse> getFile(
             @PathVariable String fileKey) {
-        log.info("Retrieving file '{}'", fileKey);
+        log.info("Retrieving file '{}' from SDS", fileKey);
         SdsFileDownloadResponse response = sdsService.getFile(fileKey);
         return ResponseEntity.ok(response);
     }
@@ -53,7 +53,7 @@ public class SdsController {
      *     GET /sds/health
      * </pre>
      *
-     * @return the SDS health response
+     * @return the health status response from SDS
      */
     @GetMapping("/health")
     public ResponseEntity<SdsHealthResponse> health() {
