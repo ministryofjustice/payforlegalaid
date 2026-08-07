@@ -8,6 +8,9 @@ inputs:
   github-token:
     required: true
     description: GitHub token
+  github-environment:
+    required: true
+    description: GitHub environment name (for conditional report upload)
 
 runs:
   using: 'composite'
@@ -30,8 +33,8 @@ runs:
       run: |
         mvn -s .github/settings.xml -ntp -B clean test -Dtest='!*RunCucumberTest'
 
-    - name: Generate JaCoCo Report (development only)
-      if: ${{ github.environment == 'development' || github.environment == 'acceptance-tests' }}
+    - name: Generate JaCoCo Report (development and PR only)
+      if: ${{ inputs.github-environment == 'development' || inputs.github-environment == 'acceptance-tests' }}
       run: mvn jacoco:report
       env:
         SPRING_PROFILES_ACTIVE: test
@@ -39,8 +42,8 @@ runs:
         GITHUB_TOKEN: ${{ inputs.github-token }}
       shell: bash
 
-    - name: Upload JaCoCo Report (development only)
-      if: ${{ github.environment == 'development' || github.environment == 'acceptance-tests' }}
+    - name: Upload JaCoCo Report (development and PR only)
+      if: ${{ inputs.github-environment == 'development' || inputs.github-environment == 'acceptance-tests' }}
       uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
         name: jacoco-report-${{ github.job }}-${{ github.run_attempt }}
