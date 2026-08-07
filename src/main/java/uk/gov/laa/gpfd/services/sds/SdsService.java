@@ -2,35 +2,19 @@ package uk.gov.laa.gpfd.services.sds;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
-import org.springframework.web.multipart.MultipartFile;
-import uk.gov.laa.gpfd.exception.sds.FileConflictException;
-import uk.gov.laa.gpfd.exception.sds.FileLengthRequiredException;
+import uk.gov.laa.gpfd.exception.ServiceUnavailableException;
 import uk.gov.laa.gpfd.exception.sds.SdsFileNotFoundException;
-import uk.gov.laa.gpfd.exception.sds.VirusDetectedException;
-import uk.gov.laa.gpfd.exception.sds.VirusScanException;
-import uk.gov.laa.gpfd.model.sds.DocumentDownloadResponse;
-import uk.gov.laa.gpfd.model.sds.DocumentUploadResponse;
-import uk.gov.laa.gpfd.model.sds.SdsHealthResponse;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.LENGTH_REQUIRED;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM;
-import static org.springframework.http.MediaType.MULTIPART_FORM_DATA;
+import uk.gov.laa.gpfd.services.sds.client.ApiException;
+import uk.gov.laa.gpfd.services.sds.client.api.FilesApi;
+import uk.gov.laa.gpfd.services.sds.client.api.HealthApi;
+import uk.gov.laa.gpfd.services.sds.client.model.SdsFileDownloadResponse;
+import uk.gov.laa.gpfd.services.sds.client.model.SdsHealthResponse;
 
 /**
  * Service class for interacting with the Secure Document Storage (SDS) API.
+ * Uses generated OpenAPI client for type-safe API calls.
  */
 @Service
 @RequiredArgsConstructor
@@ -38,205 +22,55 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA;
 @ConditionalOnProperty(name = "gpfd.sds-enabled.enabled", havingValue = "true")
 public class SdsService {
 
-    private static final String SAVE_FILE_ENDPOINT = "/save_file";
-    //    private static final String SAVE_OR_UPDATE_FILE_ENDPOINT = "/save_or_update_file";
-    private static final String GET_FILE_ENDPOINT = "/get_file";
-    //    private static final String DELETE_FILES_ENDPOINT = "/delete_files";
-    private static final String HEALTH_ENDPOINT = "/health";
-    //
-    private static final String FILE_KEY_PARAM = "file_key";
-//    private static final String FILE_KEYS_PARAM = "file_keys";
-    private static final String BUCKET_NAME_FIELD = "bucketName";
-//    private static final String FOLDER_FIELD = "folder";
-//    private static final String PATH_SEPARATOR = "/";
-
-    private final RestClient sdsApiRestClient;
-    private final SdsTokenService sdsTokenService;
-
-    @Value("${app.sds-api.bucket-name}")
-    private String bucketName;
+    private final FilesApi filesApi;
+    private final HealthApi healthApi;
 
     /**
-     * Save a file in the SDS service.
-     *
-     * @param file the file to be saved
-     * @return the file URL response from SDS
-     */
-    public DocumentUploadResponse saveFile(MultipartFile file) {
-        Map<String, String> bodyMap = new HashMap<>();
-        bodyMap.put(BUCKET_NAME_FIELD, bucketName);
-
-        MultipartBodyBuilder builder = buildMultipartBody(file, bodyMap);
-
-        return handleUploadErrors(
-                sdsApiRestClient
-                        .post()
-                        .uri(SAVE_FILE_ENDPOINT)
-                        .headers(headers -> headers.setBearerAuth(sdsTokenService.getSdsAccessToken()))
-                        .contentType(MULTIPART_FORM_DATA)
-                        .body(builder.build())
-                        .retrieve()
-                        .onStatus(
-                                status -> status.isSameCodeAs(CONFLICT),
-                                (_, _) -> {
-                                    throw new FileConflictException("File already exists in SDS");
-                                }))
-                .body(DocumentUploadResponse.class);
-    }
-
-//    /**
-//     * Save or update a file in the SDS service.
-//     *
-//     * @param applicationId the application ID used as folder name
-//     * @param file the file to be saved or updated
-//     * @return the file URL response from SDS
-//     */
-//    public DocumentUpdateResponse saveOrUpdateFile(UUID applicationId, MultipartFile file) {
-//        Map<String, String> bodyMap =
-//                Map.of(BUCKET_NAME_FIELD, bucketName, FOLDER_FIELD, applicationId.toString());
-//        MultipartBodyBuilder builder = buildMultipartBody(file, bodyMap);
-//
-//        return handleUploadErrors(
-//                sdsRestClient
-//                        .put()
-//                        .uri(SAVE_OR_UPDATE_FILE_ENDPOINT)
-//                        .headers(headers -> headers.setBearerAuth(tokenService.getSdsAccessToken()))
-//                        .contentType(MULTIPART_FORM_DATA)
-//                        .body(builder.build())
-//                        .retrieve())
-//                .body(DocumentUpdateResponse.class);
-//    }
-
-    /**
-     * Get the file URL from the SDS service.
+     * Retrieve a file from the SDS service by its file key.
      *
      * @param fileKey the unique identifier for the file in SDS
-     *                <p>
-     *                Example usage:
-     *                <pre>
-     *                    GET /sds/files/{fileKey}
-     *                </pre>
-     * @return the file URL response from SDS
+     * @return the file download response containing the file URL
+     * @throws SdsFileNotFoundException if the file is not found in SDS
+     * @throws ServiceUnavailableException if SDS is unavailable or returns a server error
      */
-    public DocumentDownloadResponse getFile(String fileKey) {
+    public SdsFileDownloadResponse getFile(String fileKey) {
+        log.debug("Retrieving file from SDS: {}", fileKey);
 
-        return sdsApiRestClient
-                .get()
-                .uri(
-                        uriBuilder ->
-                                uriBuilder.path(GET_FILE_ENDPOINT).queryParam(FILE_KEY_PARAM, fileKey).build())
-                .headers(headers -> headers.setBearerAuth(sdsTokenService.getSdsAccessToken()))
-                .accept(APPLICATION_JSON)
-                .retrieve()
-                .onStatus(
-                        status -> status.value() == NOT_FOUND.value(),
-                        (_, _) -> {
-                            throw new SdsFileNotFoundException("File not found");
-                        })
-                .body(DocumentDownloadResponse.class);
+        try {
+            return filesApi.getFile(fileKey);
+        } catch (ApiException e) {
+            throw switch (e.getCode()) {
+                case 404 -> {
+                    log.warn("File not found in SDS: {}", fileKey);
+                    yield new SdsFileNotFoundException("File not found: " + fileKey);
+                }
+
+                case 500, 502, 503, 504 -> {
+                    log.error("SDS service error retrieving file '{}': HTTP {}", fileKey, e.getCode(), e);
+                    yield new ServiceUnavailableException("SDS service unavailable: " + e.getMessage());
+                }
+
+                default -> {
+                    log.error("Unexpected error retrieving file '{}': HTTP {}", fileKey, e.getCode(), e);
+                    yield new ServiceUnavailableException("Failed to retrieve file from SDS: " + e.getMessage());
+                }
+            };
+        }
     }
-
-//    /**
-//     * Delete files from the SDS service.
-//     *
-//     * @param applicationId the application ID
-//     * @param fileIds the list of file IDs to be deleted
-//     * @return per-file deletion results
-//     */
-//    public DocumentDeleteResponse deleteFiles(UUID applicationId, List<String> fileIds) {
-//        List<String> fileKeys =
-//                fileIds.stream().map(fileId -> buildFileKey(applicationId, fileId)).toList();
-//
-//        Map<String, Integer> sdsResults =
-//                sdsRestClient
-//                        .delete()
-//                        .uri(
-//                                uriBuilder -> {
-//                                    UriBuilder deleteFilesUri = uriBuilder.path(DELETE_FILES_ENDPOINT);
-//                                    fileKeys.forEach(key -> deleteFilesUri.queryParam(FILE_KEYS_PARAM, key));
-//                                    return deleteFilesUri.build();
-//                                })
-//                        .headers(headers -> headers.setBearerAuth(tokenService.getSdsAccessToken()))
-//                        .retrieve()
-//                        .body(
-//                                new org.springframework.core.ParameterizedTypeReference<Map<String, Integer>>() {});
-//
-//        List<DocumentDeleteResult> results =
-//                sdsResults == null
-//                        ? List.of()
-//                        : fileIds.stream()
-//                        .map(
-//                                fileId -> {
-//                                    var result = new DocumentDeleteResult();
-//                                    result.setDocumentId(fileId);
-//                                    result.setStatus(sdsResults.get(buildFileKey(applicationId, fileId)));
-//                                    return result;
-//                                })
-//                        .toList();
-//
-//        var response = new DocumentDeleteResponse();
-//        response.setResults(results);
-//        return response;
-//    }
 
     /**
      * Get the health status of the SDS service.
      *
      * @return the health response from SDS
+     * @throws ServiceUnavailableException if SDS is unavailable or returns an error
      */
     public SdsHealthResponse getHealth() {
-
-        return sdsApiRestClient
-                .get()
-                .uri(HEALTH_ENDPOINT)
-                .headers(headers -> headers.setBearerAuth(sdsTokenService.getSdsAccessToken()))
-                .accept(APPLICATION_JSON)
-                .retrieve()
-                .body(SdsHealthResponse.class);
-    }
-
-    private RestClient.ResponseSpec handleUploadErrors(RestClient.ResponseSpec spec) {
-        return spec.onStatus(
-                        status -> status.isSameCodeAs(LENGTH_REQUIRED),
-                        (_, _) -> {
-                            throw new FileLengthRequiredException("File content length is required");
-                        })
-                .onStatus(
-                        status -> status.isSameCodeAs(BAD_REQUEST),
-                        (_, _) -> {
-                            throw new VirusDetectedException("Virus detected in uploaded file");
-                        })
-                .onStatus(
-                        status -> status.isSameCodeAs(INTERNAL_SERVER_ERROR),
-                        (_, _) -> {
-                            throw new VirusScanException("Virus scan gave a non-standard result");
-                        });
-    }
-
-    /**
-     * Build multipart body with file and JSON body fields.
-     *
-     * @param file       the file to upload
-     * @param bodyFields the JSON body fields
-     * @return the multipart body builder
-     */
-    private MultipartBodyBuilder buildMultipartBody(
-            MultipartFile file, Map<String, String> bodyFields) {
-        MultipartBodyBuilder builder = new MultipartBodyBuilder();
-        builder.part("file", file.getResource()).contentType(APPLICATION_OCTET_STREAM);
-
-        // Convert map to JSON string manually (simple format)
-        StringBuilder jsonBody = new StringBuilder("{");
-        bodyFields.forEach(
-                (key, value) -> {
-                    if (jsonBody.length() > 1) {
-                        jsonBody.append(",");
-                    }
-                    jsonBody.append(String.format("\"%s\":\"%s\"", key, value));
-                });
-        jsonBody.append("}");
-
-        builder.part("body", jsonBody.toString());
-        return builder;
+        log.debug("Checking SDS service health");
+        try {
+            return healthApi.getHealth();
+        } catch (ApiException e) {
+            log.error("Error retrieving health status from SDS: HTTP {}", e.getCode(), e);
+            throw new ServiceUnavailableException("Failed to retrieve SDS health status: " + e.getMessage());
+        }
     }
 }
