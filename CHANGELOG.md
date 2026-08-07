@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.0.2](https://github.com/ministryofjustice/payforlegalaid/compare/v3.0.1...v3.0.2) (2026-08-07)
+
+
+### Bug Fixes
+
+* **bot:** Bump the minor group with 2 updates ([#586](https://github.com/ministryofjustice/payforlegalaid/issues/586)) ([434acf2](https://github.com/ministryofjustice/payforlegalaid/commit/434acf2895e79e84324d0465744fb277f624bf77))
+* **LPF-000:** resolve snyk failures and fix some snyk issues ([#585](https://github.com/ministryofjustice/payforlegalaid/issues/585)) ([8aa790d](https://github.com/ministryofjustice/payforlegalaid/commit/8aa790dd46af3f6050aa67c3fbdbf8d6ee2fdda5))
+* **LPF-618:** Update exception message to use UUID instead of number ([#581](https://github.com/ministryofjustice/payforlegalaid/issues/581)) ([0c4d5d9](https://github.com/ministryofjustice/payforlegalaid/commit/0c4d5d962489d3ae343e3a2b9be45eecf3b98cd6))
+
 ## [3.0.1](https://github.com/ministryofjustice/payforlegalaid/compare/v3.0.0...v3.0.1) (2026-07-28)
 
 
