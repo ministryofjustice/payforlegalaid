@@ -35,7 +35,7 @@ runs:
 
     - name: Generate JaCoCo Report (development and PR only)
       if: ${{ inputs.github-environment == 'development' || inputs.github-environment == 'acceptance-tests' }}
-      run: mvn jacoco:report
+      run: mvn -s .github/settings.xml jacoco:report
       env:
         SPRING_PROFILES_ACTIVE: test
         GITHUB_USERNAME: ${{ inputs.github-username }}
