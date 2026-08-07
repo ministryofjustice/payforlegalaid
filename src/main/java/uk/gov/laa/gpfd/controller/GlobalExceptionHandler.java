@@ -27,11 +27,6 @@ import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.exception.ServiceUnavailableException;
 import uk.gov.laa.gpfd.exception.StreamErrorException;
 import uk.gov.laa.gpfd.exception.TemplateResourceException;
-import uk.gov.laa.gpfd.exception.sds.FileConflictException;
-import uk.gov.laa.gpfd.exception.sds.FileLengthRequiredException;
-import uk.gov.laa.gpfd.exception.sds.SdsFileNotFoundException;
-import uk.gov.laa.gpfd.exception.sds.VirusDetectedException;
-import uk.gov.laa.gpfd.exception.sds.VirusScanException;
 import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException;
 import uk.gov.laa.gpfd.model.GetReportDownloadById403Response;
 import uk.gov.laa.gpfd.model.GetReportDownloadById501Response;
@@ -463,70 +458,4 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(errorResponse);
     }
-
-    /**
-     * Handles {@link SdsFileNotFoundException} and responds with an HTTP 404 Not Found.
-     *
-     * @param e the exception thrown when a requested SDS file is not found
-     * @return a {@link ResponseEntity} with error details
-     */
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(SdsFileNotFoundException.class)
-    public ResponseEntity<String> handleSdsFileNotFoundException(SdsFileNotFoundException e) {
-        log.warn("SDS file not found: {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ERROR_STRING + e.getMessage());
-    }
-
-    /**
-     * Handles {@link FileConflictException} and responds with an HTTP 409 Conflict.
-     *
-     * @param e the exception thrown when the file already exists in SDS
-     * @return a {@link ResponseEntity} with error details
-     */
-    @ResponseStatus(HttpStatus.CONFLICT)
-    @ExceptionHandler(FileConflictException.class)
-    public ResponseEntity<String> handleFileConflictException(FileConflictException e) {
-        log.warn("SDS file conflict: {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(ERROR_STRING + e.getMessage());
-    }
-
-    /**
-     * Handles {@link FileLengthRequiredException} and responds with an HTTP 411 Length Required.
-     *
-     * @param e the exception thrown when the file content-length header is missing
-     * @return a {@link ResponseEntity} with error details
-     */
-    @ResponseStatus(HttpStatus.LENGTH_REQUIRED)
-    @ExceptionHandler(FileLengthRequiredException.class)
-    public ResponseEntity<String> handleFileLengthRequiredException(FileLengthRequiredException e) {
-        log.warn("SDS file length required: {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.LENGTH_REQUIRED).body(ERROR_STRING + e.getMessage());
-    }
-
-    /**
-     * Handles {@link VirusDetectedException} and responds with an HTTP 400 Bad Request.
-     *
-     * @param e the exception thrown when a virus is detected in the uploaded file
-     * @return a {@link ResponseEntity} with error details
-     */
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(VirusDetectedException.class)
-    public ResponseEntity<String> handleVirusDetectedException(VirusDetectedException e) {
-        log.error("Virus detected in SDS upload: {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ERROR_STRING + e.getMessage());
-    }
-
-    /**
-     * Handles {@link VirusScanException} and responds with an HTTP 500 Internal Server Error.
-     *
-     * @param e the exception thrown when the virus scanner returns a non-standard result
-     * @return a {@link ResponseEntity} with error details
-     */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(VirusScanException.class)
-    public ResponseEntity<String> handleVirusScanException(VirusScanException e) {
-        log.error("SDS virus scan error: {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ERROR_STRING + e.getMessage());
-    }
-
 }
