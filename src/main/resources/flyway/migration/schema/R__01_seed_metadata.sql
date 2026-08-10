@@ -9,8 +9,6 @@
 -- does not change them.
 --
 
-BEGIN;
-
 -- REPORT_OUTPUT_TYPES
 INSERT INTO glad.report_output_types (id, extension, description)
 VALUES
@@ -805,5 +803,3 @@ VALUES
     ('c4ba2e89-c106-48a7-8e1d-7c19dbd7710d', 2)
 
     ON CONFLICT (report_id, role_id) DO NOTHING;
-
-COMMIT;
