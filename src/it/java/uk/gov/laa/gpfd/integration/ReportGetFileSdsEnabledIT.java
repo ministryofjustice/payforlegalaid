@@ -1,4 +1,4 @@
-package java.uk.gov.laa.gpfd.integration;
+package uk.gov.laa.gpfd.integration;
 
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
