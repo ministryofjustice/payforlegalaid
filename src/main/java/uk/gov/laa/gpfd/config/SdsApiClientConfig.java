@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -14,8 +13,6 @@ import uk.gov.laa.gpfd.services.sds.SdsTokenService;
 import uk.gov.laa.gpfd.services.sds.client.ApiClient;
 import uk.gov.laa.gpfd.services.sds.client.api.FilesApi;
 import uk.gov.laa.gpfd.services.sds.client.api.HealthApi;
-
-import java.io.IOException;
 
 /**
  * Configuration for SDS API client with Bearer token authentication.
