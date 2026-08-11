@@ -2,6 +2,8 @@ package uk.gov.laa.gpfd.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -9,23 +11,26 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import uk.gov.laa.gpfd.api.ReportsApi;
 import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
+import uk.gov.laa.gpfd.exception.sds.SdsFileNotFoundException;
 import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
+import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.model.ReportsGet200Response;
 import uk.gov.laa.gpfd.services.ReportManagementService;
 import uk.gov.laa.gpfd.services.ReportResponseBuilder;
 import uk.gov.laa.gpfd.services.StreamingService;
 import uk.gov.laa.gpfd.services.s3.FileDownloadService;
 import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
+import uk.gov.laa.gpfd.services.sds.SdsService;
 import uk.gov.laa.gpfd.services.stream.TrackedStreamService;
 import uk.gov.laa.gpfd.utils.SecurityUtils;
 
+import java.net.URI;
 import java.util.Optional;
 import java.util.UUID;
 
-import static uk.gov.laa.gpfd.model.FileExtension.CSV;
-import static uk.gov.laa.gpfd.model.FileExtension.S3STORAGE;
-import static uk.gov.laa.gpfd.model.FileExtension.XLSX;
+import static org.springframework.http.HttpStatus.FOUND;
+import static uk.gov.laa.gpfd.model.FileExtension.*;
 
 @Slf4j
 @RestController
@@ -39,6 +44,7 @@ public class ReportsController implements ReportsApi {
     private final SecurityUtils securityUtils;
     private final ReportResponseBuilder reportResponseBuilder;
     private final TrackedStreamService trackedStreamService;
+    private final ObjectProvider<SdsService> sdsServiceProvider;
 
     @Override
     public Optional<NativeWebRequest> getRequest() {
@@ -133,8 +139,20 @@ public class ReportsController implements ReportsApi {
         // Validate that this report is S3STORAGE format
         reportManagementService.validateReportFormat(id, S3STORAGE);
 
+        reportDao.verifyUserCanAccessReport(id);
+        var report = reportDao.fetchReportById(id).orElseThrow(() -> new ReportIdNotFoundException(id));
+
+        var sdsService = sdsServiceProvider.getIfAvailable();
+        if (sdsService != null) {
+            try {
+                return redirectToSdsDownload(report, sdsService);
+            } catch (SdsFileNotFoundException e) {
+                log.info("Report {} not found in SDS, falling back to current S3 download path", id);
+            }
+        }
+
         var s3Response = fileDownloadService.getFileStreamResponse(id);
-        return fetchS3DownloadResponse(id, s3Response);
+        return fetchS3DownloadResponse(report, s3Response);
     }
 
     private ResponseEntity<StreamingResponseBody> fetchCsvExcelDownloadResponse(UUID reportId, StreamingResponseBody rawStream) {
@@ -148,9 +166,23 @@ public class ReportsController implements ReportsApi {
         return reportResponseBuilder.buildResponse(trackedStream, filename, fileExtension);
     }
 
-    private ResponseEntity<StreamingResponseBody> fetchS3DownloadResponse(UUID reportId, S3ClientWrapper.S3CsvDownload s3CsvDownload) {
+    private ResponseEntity<StreamingResponseBody> redirectToSdsDownload(Report report, SdsService sdsService) {
+        var fileKey = report.getName() + ".csv";
+        var sdsResponse = sdsService.getFile(fileKey);
+        var fileUrl = sdsResponse.getFileURL();
+
+        if (fileUrl.isBlank()) {
+            throw new IllegalStateException("SDS response missing fileURL for report " + report.getIdAsString());
+        }
+
+        return ResponseEntity.status(FOUND)
+                .header(HttpHeaders.LOCATION, URI.create(fileUrl).toString())
+                .build();
+    }
+
+    private ResponseEntity<StreamingResponseBody> fetchS3DownloadResponse(Report report, S3ClientWrapper.S3CsvDownload s3CsvDownload) {
+        var reportId = report.getId();
         var userId = securityUtils.extractUserId();
-        var report = reportDao.fetchReportById(reportId).orElseThrow(() -> new ReportIdNotFoundException(reportId));
         var s3Stream = s3CsvDownload.stream();
         var filename = s3CsvDownload.getFileName();
         var fileExtension = FileExtension.fromString(report.getOutputType().getExtension());
