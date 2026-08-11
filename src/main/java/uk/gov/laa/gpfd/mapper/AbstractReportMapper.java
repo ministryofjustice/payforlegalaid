@@ -1,6 +1,5 @@
 package uk.gov.laa.gpfd.mapper;
 
-import org.springframework.stereotype.Component;
 import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.utils.UrlBuilder;
@@ -14,7 +13,6 @@ import java.util.Objects;
  * Abstract base class for report mappers that provides common functionality
  * for constructing report URLs and basic mapping operations.
  */
-@Component
 public abstract class AbstractReportMapper {
 
     protected final UrlBuilder urlBuilder;
