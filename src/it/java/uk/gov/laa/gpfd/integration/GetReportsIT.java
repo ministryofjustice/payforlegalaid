@@ -3,9 +3,9 @@ package uk.gov.laa.gpfd.integration;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
-import uk.gov.laa.gpfd.integration.verifier.DatabaseVerifier;
-import uk.gov.laa.gpfd.integration.verifier.DatabaseVerifier.Table;
+import uk.gov.laa.gpfd.testsupport.TestRoles;
 
 import java.util.List;
 
@@ -17,14 +17,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 final class GetReportsIT extends BaseIT {
 
     @Autowired
-    private JdbcTemplate jdbc;
+    @Qualifier("trackingJdbcTemplate")
+    private JdbcTemplate trackingJdbc;
 
     @Test
     @SneakyThrows
     void shouldSuccessfullyReturnAllAvailableReports() {
-        var reportsLen = DatabaseVerifier.rowCountFor(Table.REPORTS).apply(jdbc);
+        var reportsLen = trackingJdbc.queryForObject("""
+                SELECT COUNT(DISTINCT r.id)
+                FROM glad.reports r
+                INNER JOIN glad.report_roles rr ON r.id = rr.report_id
+                INNER JOIN glad.roles ro ON rr.role_id = ro.role_id
+                WHERE r.active = 'Y'
+                  AND ro.role_name IN (?, ?, ?)
+                """, Long.class, TestRoles.REP000, TestRoles.RECONCILIATION, TestRoles.FINANCIAL);
 
-        performGetRequestWithRoles("/reports", List.of("REP000", "Financial", "Reconciliation"))
+        performGetRequestWithRoles("/reports", TestRoles.all())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.reportList").isArray())
@@ -34,13 +42,9 @@ final class GetReportsIT extends BaseIT {
     @Test
     @SneakyThrows
     void shouldSuccessfullyReturn200WhenNoReportsFound() {
-        jdbc.update("ALTER TABLE GPFD.REPORTS DROP CONSTRAINT fk_report_output_types_report_id");
-        jdbc.update("ALTER TABLE GPFD.REPORT_GROUPS DROP CONSTRAINT fk_report_groups_report_id");
-        jdbc.update("ALTER TABLE GPFD.REPORT_QUERIES DROP CONSTRAINT fk_report_queries_report_id");
-        jdbc.update("ALTER TABLE GPFD.FIELD_ATTRIBUTES DROP CONSTRAINT fk_field_attributes_report_query_id");
-        jdbc.update("TRUNCATE TABLE GPFD.REPORTS");
+        trackingJdbc.update("TRUNCATE glad.reports CASCADE");
 
-        performGetRequestWithRoles("/reports", List.of("REP000", "Reconciliation", "Financial"))
+        performGetRequestWithRoles("/reports", TestRoles.all())
                 .andExpect(status().isOk())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().contentType(APPLICATION_JSON))

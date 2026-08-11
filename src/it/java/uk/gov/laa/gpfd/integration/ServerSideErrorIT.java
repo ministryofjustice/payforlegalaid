@@ -4,44 +4,46 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
-
-import java.util.List;
+import uk.gov.laa.gpfd.testsupport.TestRoles;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class ServerSideErrorIT extends BaseIT {
 
     @Autowired
-    private JdbcTemplate writeJdbcTemplate;
+    @Qualifier("trackingJdbcTemplate")
+    private JdbcTemplate trackingJdbcTemplate;
 
     @BeforeAll
     @Override
     void setUpMojfinDatabase() {
-        writeJdbcTemplate.execute("CREATE SCHEMA IF NOT EXISTS GPFD;"); //Create an empty schema so that we get a 500 error
+        // Metadata now lives in tracking Postgres; remove schema so ReportDao reads fail.
+        trackingJdbcTemplate.execute("DROP SCHEMA IF EXISTS glad CASCADE");
     }
 
     @AfterAll
     @Override
     void cleanUpMojfinDatabase() {
-        writeJdbcTemplate.execute("DROP SCHEMA IF EXISTS GPFD CASCADE");
+        // No-op: other IT classes use a fresh Postgres container per JVM.
     }
 
     @Test
     void getReportsShouldReturn500WhenCannotConnectToDb() throws Exception {
-        performGetRequestWithRoles("/reports", List.of("Financial"))
+        performGetRequestWithRoles("/reports", TestRoles.all())
                 .andExpect(status().isInternalServerError());
     }
 
     @Test
     void getReportWithIdShouldReturn500WhenCannotConnectToDb() throws Exception {
-        performGetRequestWithRoles("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d9", List.of("Financial"))
+        performGetRequestWithRoles("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d9", TestRoles.all())
                 .andExpect(status().isInternalServerError());
     }
 
     @Test
     void getCsvWithIdShouldReturn500WhenCannotConnectToDbForMappingTable() throws Exception {
-        performGetRequestWithRoles("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d9/csv", List.of("Financial"))
+        performGetRequestWithRoles("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d9/csv", TestRoles.all())
                 .andExpect(status().isInternalServerError());
     }
 

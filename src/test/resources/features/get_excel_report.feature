@@ -37,8 +37,8 @@ Feature: Generate and Retrieve Excel Financial Report
     Then the service should respond with a status code of 500
     And the response should include the error message "bad SQL grammar"
 
-  @Role=Get legal aid data - REP000
-  @Role=Get legal aid data - Reconciliation
+  @Role=REP000
+  @Role=Reconciliation
   Scenario: Do not retrieve report when you have the wrong role
     Given I am authenticated with a valid session
     Given I have an empty tracking table

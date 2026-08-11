@@ -56,7 +56,7 @@ class ReportDaoTest {
     SecurityUtils securityUtils;
 
     @Mock
-    NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    NamedParameterJdbcTemplate namedTrackingJdbcTemplate;
 
     private UUID testReportId;
     private Report testReport;
@@ -65,7 +65,7 @@ class ReportDaoTest {
     void setUp() {
         testReportId = UUID.randomUUID();
         testReport = ReportsTestDataFactory.createTestReport(testReportId);
-        reportDao = spy(new ReportDao(extractor, readOnlyJdbcTemplate, namedParameterJdbcTemplate, securityUtils));
+        reportDao = spy(new ReportDao(extractor, readOnlyJdbcTemplate, namedTrackingJdbcTemplate, securityUtils));
     }
 
     @Test
@@ -106,7 +106,7 @@ class ReportDaoTest {
         List<String> roles = List.of("REP000", "Reconciliation");
         when(securityUtils.extractRoles()).thenReturn(roles);
         var expectedReports = Arrays.asList(testReport, ReportsTestDataFactory.createTestReport());
-        when(namedParameterJdbcTemplate.query(ReportDao.SELECT_ALL_REPORTS_SQL,
+        when(namedTrackingJdbcTemplate.query(ReportDao.SELECT_ALL_REPORTS_SQL,
                 Map.of("roles", roles),
                 extractor))
                 .thenReturn(expectedReports);
@@ -115,12 +115,12 @@ class ReportDaoTest {
 
         assertEquals(2, result.size());
         assertTrue(result.contains(testReport));
-        verify(namedParameterJdbcTemplate).query(anyString(), anyMap(), eq(extractor));
+        verify(namedTrackingJdbcTemplate).query(anyString(), anyMap(), eq(extractor));
     }
 
     @Test
     void fetchReports_shouldReturnEmptyCollectionWhenNoReportsFound() {
-        when(namedParameterJdbcTemplate.query(
+        when(namedTrackingJdbcTemplate.query(
                 eq(ReportDao.SELECT_ALL_REPORTS_SQL),
                 anyMap(),
                 any(ReportWithQueriesAndFieldAttributesExtractor.class)
@@ -131,7 +131,7 @@ class ReportDaoTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
 
-        verify(namedParameterJdbcTemplate).query(
+        verify(namedTrackingJdbcTemplate).query(
                 eq(ReportDao.SELECT_ALL_REPORTS_SQL),
                 anyMap(),
                 any(ReportWithQueriesAndFieldAttributesExtractor.class)
@@ -141,7 +141,7 @@ class ReportDaoTest {
 
     @Test
     void fetchReports_shouldThrowDatabaseFetchExceptionOnDataAccessError() {
-        when(namedParameterJdbcTemplate.query(
+        when(namedTrackingJdbcTemplate.query(
                 eq(ReportDao.SELECT_ALL_REPORTS_SQL),
                 anyMap(),
                 any(ReportWithQueriesAndFieldAttributesExtractor.class)
@@ -152,7 +152,7 @@ class ReportDaoTest {
 
     @Test
     void fetchReports_shouldNotThrowReportIdNotFoundException() {
-        when(namedParameterJdbcTemplate.query(
+        when(namedTrackingJdbcTemplate.query(
                 eq(ReportDao.SELECT_ALL_REPORTS_SQL),
                 anyMap(),
                 any(ReportWithQueriesAndFieldAttributesExtractor.class)

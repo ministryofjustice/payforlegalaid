@@ -15,6 +15,7 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import uk.gov.laa.gpfd.integration.config.TestS3Config;
+import uk.gov.laa.gpfd.testsupport.TestRoles;
 
 import java.io.ByteArrayInputStream;
 import java.time.Instant;
@@ -57,7 +58,7 @@ final class ReportGetFileIT extends BaseIT {
         var mockS3Response = new ResponseInputStream<>(responseMetadata, inputStream);
         when(s3Client.getObject(any(GetObjectRequest.class))).thenReturn(mockS3Response);
 
-        performStreamingGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of("Reconciliation"))
+        performStreamingGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of(TestRoles.RECONCILIATION))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_OCTET_STREAM))
                 .andExpect(header().longValue("Content-Length", 25L))
@@ -76,7 +77,7 @@ final class ReportGetFileIT extends BaseIT {
     @Test
     @SneakyThrows
     void shouldErrorIfIdNotSupportedByEndpoint() {
-        performGetRequestWithRoles("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d3/file", List.of("Financial"))
+        performGetRequestWithRoles("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d3/file", List.of(TestRoles.FINANCIAL))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_JSON));
     }
@@ -84,7 +85,7 @@ final class ReportGetFileIT extends BaseIT {
     @Test
     @SneakyThrows
     void shouldErrorIfIdNotValid() {
-        performGetRequestWithRoles("/reports/hi/file", List.of("Financial"))
+        performGetRequestWithRoles("/reports/hi/file", List.of(TestRoles.FINANCIAL))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_JSON));
     }
@@ -98,7 +99,7 @@ final class ReportGetFileIT extends BaseIT {
 
         when(s3Client.getObject(any(GetObjectRequest.class))).thenThrow(exception);
 
-        var result = performGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of("Reconciliation"))
+        var result = performGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of(TestRoles.RECONCILIATION))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andReturn();
@@ -114,7 +115,7 @@ final class ReportGetFileIT extends BaseIT {
         var mockListResponse = ListObjectsV2Response.builder().contents(new ArrayList<>()).build();
         when(s3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenReturn(mockListResponse);
 
-        performGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of("Reconciliation"))
+        performGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of(TestRoles.RECONCILIATION))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andReturn();

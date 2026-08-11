@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import uk.gov.laa.gpfd.builders.ReportResponseTestBuilder;
 import uk.gov.laa.gpfd.services.ReportManagementService;
+import uk.gov.laa.gpfd.testsupport.TestRoles;
 
 import java.util.List;
 import java.util.UUID;
@@ -30,7 +31,7 @@ class SecurityConfigIT extends BaseIT {
 
         when(reportManagementService.createReportResponse(reportId)).thenReturn(reportResponseMock);
 
-        performGetRequestWithRoles("/reports/" + reportId, List.of("Financial"))
+        performGetRequestWithRoles("/reports/" + reportId, List.of(TestRoles.FINANCIAL))
                 .andExpect(status().isOk())
                 .andExpect(header().string(
                         "Content-Security-Policy-Report-Only",
@@ -72,7 +73,7 @@ class SecurityConfigIT extends BaseIT {
         mockMvc.perform(get("/csp-report"))
                 .andExpect(status().is3xxRedirection());
 
-        performGetRequestWithRoles("/csp-report", List.of("Financial"))
+        performGetRequestWithRoles("/csp-report", List.of(TestRoles.FINANCIAL))
                 .andExpect(status().isMethodNotAllowed());
     }
 
@@ -114,7 +115,7 @@ class SecurityConfigIT extends BaseIT {
 
         mockMvc.perform(get("/reports")
                         .with(oidcLogin()
-                                .idToken(token -> token.claim("LAA_APP_ROLES", List.of("Financial"))
+                                .idToken(token -> token.claim("LAA_APP_ROLES", List.of(TestRoles.FINANCIAL))
                                         .claim("oid", UUID.randomUUID().toString())))
                         .with(csrf()))
                 .andExpect(status().isOk());

@@ -5,6 +5,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import uk.gov.laa.gpfd.testsupport.TestRoles;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -56,10 +58,10 @@ final class AuthTokenIT extends BaseIT {
     void authenticatedAccess_withValidRolesshouldReturnOk(String description, String endpoint) {
         if (Objects.equals(description, "File download endpoint")) {
             // This will not 200 locally as it's not supported
-            performGetRequestWithRoles(endpoint, List.of("REP000", "Reconciliation"))
+            performGetRequestWithRoles(endpoint, List.of(TestRoles.REP000, TestRoles.RECONCILIATION))
                     .andExpect(status().isNotImplemented());
         } else {
-            performGetRequestWithRoles(endpoint, List.of("REP000", "Financial", "Reconciliation"))
+            performGetRequestWithRoles(endpoint, TestRoles.all())
                     .andExpect(status().isOk());
         }
     }

@@ -13,17 +13,17 @@ import java.util.function.Function;
  */
 public class DatabaseVerifier {
     /**
-     * The default database schema name (GPFD) used for table qualification.
+     * The default database schema name (glad) used for metadata table qualification.
      */
-    private static final String DEFAULT_SCHEMA = "GPFD";
+    private static final String DEFAULT_SCHEMA = "glad";
 
     /**
-     * Enumerates tables available for verification.
+     * Enumerates metadata tables in the tracking Postgres database.
      */
     public enum Table {
-        REPORTS("REPORTS"),
-        REPORT_QUERIES("REPORT_QUERIES"),
-        REPORT_GROUPS("REPORT_GROUPS");
+        REPORTS("reports"),
+        REPORT_QUERIES("report_queries"),
+        REPORT_ROLES("report_roles");
 
         private final String name;
 
@@ -34,7 +34,7 @@ public class DatabaseVerifier {
         /**
          * Gets the fully qualified table name (schema.table) format.
          *
-         * @return the qualified table name in the format "GPFD.table_name"
+         * @return the qualified table name in the format "glad.table_name"
          */
         public String getQualifiedName() {
             return DEFAULT_SCHEMA + "." + name;

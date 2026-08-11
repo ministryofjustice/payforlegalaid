@@ -5,6 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import uk.gov.laa.gpfd.integration.data.ReportTestData;
+import uk.gov.laa.gpfd.testsupport.TestRoles;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ final class GetReportsByIdIT extends BaseIT {
     void shouldReturnOkGivenValidExistedReport(ReportTestData testData) {
         var uri = "/reports/%s".formatted(testData.id());
 
-        performGetRequestWithRoles(uri, List.of("REP000", "Financial", "Reconciliation"))
+        performGetRequestWithRoles(uri, TestRoles.all())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(testData.id()))
                 .andExpect(jsonPath("$.reportName").value(testData.name()))
@@ -35,7 +36,7 @@ final class GetReportsByIdIT extends BaseIT {
     void shouldReturn400WhenGivenInvalidId(String type) {
         var uri = "/reports/%s321/%s".formatted(CSV_REPORT.getReportData().id(), type);
 
-        performGetRequestWithRoles(uri, List.of("REP000", "Financial", "Reconciliation"))
+        performGetRequestWithRoles(uri, TestRoles.all())
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.error")
@@ -49,7 +50,7 @@ final class GetReportsByIdIT extends BaseIT {
         var nonExistentReportId = "0d4da9ec-b0b3-4371-af10-321";
         var uri = "/reports/%s/%s".formatted(nonExistentReportId, type);
 
-        performGetRequestWithRoles(uri, List.of("REP000", "Financial", "Reconciliation"))
+        performGetRequestWithRoles(uri, TestRoles.all())
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.error")

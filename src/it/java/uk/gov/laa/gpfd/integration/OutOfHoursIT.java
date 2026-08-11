@@ -6,6 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.context.annotation.Import;
 import uk.gov.laa.gpfd.integration.config.TestTimeConfig;
+import uk.gov.laa.gpfd.testsupport.TestRoles;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ final class OutOfHoursIT extends BaseIT {
     @Test
     void getReportsShouldReturn500WhenOutOfHours() {
         var uri = "/reports/";
-        performGetRequestWithRoles(uri, List.of("Financial"))
+        performGetRequestWithRoles(uri, List.of(TestRoles.FINANCIAL))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.error")
                         .value("The service is unavailable between the hours of 22:00 and 07:00, Mon - Sun"));
@@ -31,7 +32,7 @@ final class OutOfHoursIT extends BaseIT {
     void getByIdShouldReturn500WhenOutOfHours(String type) {
         var uri = "/" + type + "/321";
 
-        performGetRequestWithRoles(uri, List.of("Financial"))
+        performGetRequestWithRoles(uri, List.of(TestRoles.FINANCIAL))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.error")
                         .value("The service is unavailable between the hours of 22:00 and 07:00, Mon - Sun"));
@@ -41,7 +42,7 @@ final class OutOfHoursIT extends BaseIT {
     @Test
     void getReportFileShouldReturn500WhenOutOfHours() {
         var uri = "/reports/321";
-        performGetRequestWithRoles(uri, List.of("Financial"))
+        performGetRequestWithRoles(uri, List.of(TestRoles.FINANCIAL))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.error")
                         .value("The service is unavailable between the hours of 22:00 and 07:00, Mon - Sun"));
