@@ -320,6 +320,8 @@
                     <output>${project.build.directory}/generated-sources/sds-openapi</output>
                     <globalProperties>
                         <skipFormModel>false</skipFormModel>
+                        <apiTests>false</apiTests>
+                        <modelTests>false</modelTests>
                     </globalProperties>
                     <configOptions>
                         <useSpringBootFeatures>true</useSpringBootFeatures>
