@@ -12,16 +12,6 @@
             <id>github-packages</id>
             <repositories>
                 <repository>
-                    <id>github-openapi</id>
-                    <url>https://maven.pkg.github.com/ministryofjustice/payforlegalaid-openapi</url>
-                    <releases>
-                        <enabled>true</enabled>
-                    </releases>
-                    <snapshots>
-                        <enabled>true</enabled>
-                    </snapshots>
-                </repository>
-                <repository>
                     <id>github-platform</id>
                     <url>https://maven.pkg.github.com/ministryofjustice/glad-platform</url>
                     <releases>
@@ -36,12 +26,6 @@
     </profiles>
 
     <servers>
-        <server>
-            <id>github-openapi</id>
-            <username>${env.GITHUB_USERNAME}</username>
-            <password>${env.GITHUB_TOKEN}</password>
-        </server>
-
         <server>
             <id>github-platform</id>
             <username>${env.GITHUB_USERNAME}</username>
