@@ -1,8 +1,8 @@
 package uk.gov.laa.gpfd.mapper;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.laa.gpfd.model.Report;
@@ -26,8 +26,12 @@ class GetReportById200ResponseMapperTest {
     @Mock
     private UrlBuilder urlBuilder;
 
-    @InjectMocks
     private GetReportById200ResponseMapper mapper;
+
+    @BeforeEach
+    void setUp() {
+        mapper = new GetReportById200ResponseMapper(urlBuilder);
+    }
 
     @Test
     void shouldReturnCorrectResponse() {
@@ -67,6 +71,7 @@ class GetReportById200ResponseMapperTest {
         assertNotNull(response);
         assertEquals(reportId, response.getId());
         assertEquals("Test Report", response.getReportName());
+        // When SDS is not available, should fall back to internal URL
         assertEquals(URI.create("https://api.example.com/reports/" + reportId + "/file"), response.getReportDownloadUrl());
     }
 
