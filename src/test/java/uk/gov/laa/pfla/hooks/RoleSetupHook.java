@@ -18,7 +18,7 @@ public class RoleSetupHook {
 
         //set Default role = Financial
         if (roles.isEmpty()) {
-            roles = List.of("Financial");
+            roles = List.of("Get legal aid data - Financial");
         }
         RoleRegistry.setRoles(roles);
     }
