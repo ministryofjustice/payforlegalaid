@@ -26,6 +26,8 @@ services:
       dockerfile: ./local/Dockerfile
       args:
         BUILDKIT_INLINE_CACHE: "1"
+      secrets:
+        - maven_settings
     container_name: payforlegalaid-local
     ports:
       - "8080:8080"
@@ -63,3 +65,7 @@ services:
 volumes:
   oracle-data:
   postgres-data:
+
+secrets:
+  maven_settings:
+    file: ${HOME}/.m2/settings.xml
