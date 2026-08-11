@@ -24,6 +24,7 @@ import uk.gov.laa.gpfd.data.ReportListEntryTestDataFactory;
 import uk.gov.laa.gpfd.data.ReportsTestDataFactory;
 import uk.gov.laa.gpfd.exception.InvalidReportFormatException;
 import uk.gov.laa.gpfd.exception.ReportAccessException;
+import uk.gov.laa.gpfd.exception.sds.SdsFileNotFoundException;
 import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
@@ -32,6 +33,8 @@ import uk.gov.laa.gpfd.services.ReportResponseBuilder;
 import uk.gov.laa.gpfd.services.StreamingService;
 import uk.gov.laa.gpfd.services.s3.FileDownloadService;
 import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
+import uk.gov.laa.gpfd.services.sds.SdsService;
+import uk.gov.laa.gpfd.services.sds.client.model.SdsFileDownloadResponse;
 import uk.gov.laa.gpfd.services.stream.TrackedStreamService;
 import uk.gov.laa.gpfd.utils.BaseMvcTest;
 import uk.gov.laa.gpfd.utils.SecurityUtils;
@@ -89,6 +92,9 @@ class ReportsControllerTest extends BaseMvcTest {
 
     @MockitoBean
     TrackedStreamService trackedStreamService;
+
+    @MockitoBean
+    SdsService sdsService;
 
     @TestConfiguration
     static class AsyncTestConfig implements WebMvcConfigurer {
@@ -179,7 +185,7 @@ class ReportsControllerTest extends BaseMvcTest {
     }
 
     @Test
-    void getReportDownloadByIdReturnsCorrectResponseEntity() throws Exception {
+    void getReportDownloadByIdFallsBackToS3WhenSdsFileNotFound() throws Exception {
         var report = ReportsTestDataFactory.createTestReportWithOutputType(s3ReportOutput);
         var reportId = report.getId();
         var s3CsvDownload = mock(S3ClientWrapper.S3CsvDownload.class);
@@ -193,6 +199,9 @@ class ReportsControllerTest extends BaseMvcTest {
             outputStream.flush();
         };
 
+        doThrow(new SdsFileNotFoundException("File not found: Test Report.csv"))
+                .when(sdsService).getFile("Test Report.csv");
+        doNothing().when(reportDao).verifyUserCanAccessReport(reportId);
         when(fileDownloadService.getFileStreamResponse(reportId)).thenReturn(s3CsvDownload);
         when(reportDao.fetchReportById(reportId)).thenReturn(Optional.of(report));
         when(s3CsvDownload.stream()).thenReturn(mockS3Response);
@@ -208,9 +217,29 @@ class ReportsControllerTest extends BaseMvcTest {
         assertEquals("output!", result.getResponse().getContentAsString());
 
         verify(reportManagementServiceMock).validateReportFormat(reportId, FileExtension.S3STORAGE);
+        verify(sdsService).getFile("Test Report.csv");
         verify(fileDownloadService, times(1)).getFileStreamResponse(reportId);
         verify(trackedStreamService, times(1)).wrapStream(any(StreamingResponseBody.class), eq(reportId), eq(USER_ID));
         verify(reportResponseBuilder, times(1)).buildResponse(responseStream, "file.csv", FileExtension.S3STORAGE, 120L);
+    }
+
+    @Test
+    void getReportDownloadByIdRedirectsToSdsWhenFileExists() throws Exception {
+        var report = ReportsTestDataFactory.createTestReportWithOutputType(s3ReportOutput);
+        var reportId = report.getId();
+        var sdsResponse = new SdsFileDownloadResponse().fileURL("https://sds.example.com/presigned/file.csv");
+
+        doNothing().when(reportDao).verifyUserCanAccessReport(reportId);
+        when(reportDao.fetchReportById(reportId)).thenReturn(Optional.of(report));
+        when(sdsService.getFile("Test Report.csv")).thenReturn(sdsResponse);
+
+        performAuthenticatedGet("/reports/" + reportId + "/file", List.of("Financial"))
+                .andExpect(status().isFound())
+                .andExpect(result -> assertEquals("https://sds.example.com/presigned/file.csv",
+                        result.getResponse().getHeader(HttpHeaders.LOCATION)));
+
+        verify(sdsService).getFile("Test Report.csv");
+        verify(fileDownloadService, never()).getFileStreamResponse(reportId);
     }
 
     @Test
@@ -382,6 +411,11 @@ class ReportsControllerTest extends BaseMvcTest {
 
     @Test
     void downloadFromS3FailsIfFailToGetUserId() throws Exception {
+        var report = ReportsTestDataFactory.createTestReportWithOutputType(s3ReportOutput);
+        doNothing().when(reportDao).verifyUserCanAccessReport(REPORT_ID);
+        when(reportDao.fetchReportById(REPORT_ID)).thenReturn(Optional.of(report));
+        doThrow(new SdsFileNotFoundException("File not found: Test Report.csv"))
+                .when(sdsService).getFile("Test Report.csv");
 
         when(securityUtils.extractUserId()).thenThrow(new AuthenticationIsNullException());
 
@@ -461,6 +495,9 @@ class ReportsControllerTest extends BaseMvcTest {
         outputStream.write("output!".getBytes());
         var mockS3Response = new ResponseInputStream<>(responseMetadata, inputStream);
 
+        doThrow(new SdsFileNotFoundException("File not found: Test Report.csv"))
+                .when(sdsService).getFile("Test Report.csv");
+        doNothing().when(reportDao).verifyUserCanAccessReport(reportId);
         when(fileDownloadService.getFileStreamResponse(reportId)).thenReturn(s3CsvDownload);
         when(reportDao.fetchReportById(reportId)).thenReturn(Optional.empty());
         when(s3CsvDownload.stream()).thenReturn(mockS3Response);
