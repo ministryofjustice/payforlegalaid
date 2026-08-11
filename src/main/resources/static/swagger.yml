@@ -1,11 +1,11 @@
 openapi: 3.0.0
 info:
-  title: PayForLegalAid API
+  title: Get Legal Aid Data API
   version: 1.1.0
   description: >
     API for accessing financial reports related to legal aid payments.
     **Authentication Notice**: 
-    All endpoints are secured using OAuth 2.0 with Azure Graph. A valid access token must be provided 
+    All endpoints are secured using OAuth 2.0 via Sign Into Legal Aid Services (SILAS) and Entra. A valid access token must be provided 
     in the `Authorization` header of each request in the following format: 
     `Authorization: Bearer <ACCESS_TOKEN>`.
 
