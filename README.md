@@ -89,7 +89,7 @@ Once set up, build the images:
 docker compose build
 ```
 
-On first build this will take a few minutes as Maven downloads dependencies and builds the OpenAPI library. Subsequent builds are significantly faster due to layer and dependency caching — as long as `pom.xml` hasn't changed, the dependency resolution step is skipped entirely.
+This build uses `~/.m2/settings.xml` as a Docker BuildKit secret so Maven can authenticate to GitHub Packages. On first build this will take a few minutes as Maven downloads dependencies. Subsequent builds are significantly faster due to layer and dependency caching — as long as `pom.xml` hasn't changed, the dependency resolution step is skipped entirely.
 
 To force a clean rebuild from scratch:
 ```bash
