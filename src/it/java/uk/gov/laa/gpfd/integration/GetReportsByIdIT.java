@@ -46,7 +46,7 @@ final class GetReportsByIdIT extends BaseIT {
     @ParameterizedTest
     @ValueSource(strings = {"csv", "excel"})
     void shouldReturn404WhenNoReportsFound(String type) {
-        var nonExistentReportId = "0d4da9ec-b0b3-4371-af10-321";
+        var nonExistentReportId = "0d4da9ec-b0b3-4371-af10-000000000321";
         var uri = "/reports/%s/%s".formatted(nonExistentReportId, type);
 
         performGetRequestWithRoles(uri, List.of("REP000", "Financial", "Reconciliation"))

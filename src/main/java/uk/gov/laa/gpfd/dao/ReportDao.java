@@ -48,7 +48,7 @@ public record ReportDao(
             q.ID AS QUERY_ID,
             q.QUERY,
             q.TAB_NAME,
-            q."INDEX",
+            q."index" AS "INDEX",
             fa.ID AS FIELD_ATTRIBUTE_ID,
             fa.SOURCE_NAME,
             fa.MAPPED_NAME,
@@ -63,7 +63,7 @@ public record ReportDao(
         LEFT JOIN glad.field_attributes fa ON q.ID = fa.REPORT_QUERY_ID
         LEFT JOIN glad.report_output_types rot ON r.REPORT_OUTPUT_TYPE = rot.ID
         WHERE r.ID = ?
-        ORDER BY q."INDEX" ASC, fa.COLUMN_ORDER ASC
+        ORDER BY q."index" ASC, fa.column_order ASC
     """;
 
     static final String SELECT_ALL_REPORTS_SQL = """
@@ -83,7 +83,7 @@ public record ReportDao(
             r.REPORT_OWNER_EMAIL,
             q.ID AS QUERY_ID,
             q.QUERY,
-            q."INDEX",
+            q."index" AS "INDEX",
             q.TAB_NAME,
             fa.ID AS FIELD_ATTRIBUTE_ID,
             fa.SOURCE_NAME,
@@ -104,10 +104,10 @@ public record ReportDao(
     """;
 
    static final String SELECT_REPORT_ROLES = """
-       SELECT r.ROLE_NAME
+       SELECT r.role_name AS "ROLE_NAME"
        FROM glad.roles r
-       JOIN glad.report_roles rr ON rr.ROLE_ID = r.ROLE_ID
-       WHERE rr.REPORT_ID = ?
+       JOIN glad.report_roles rr ON rr.role_id = r.role_id
+       WHERE rr.report_id = ?
        """;
 
     /**
@@ -125,7 +125,7 @@ public record ReportDao(
             // Enforce role-based access control for this report
             verifyUserCanAccessReport(reportId);
 
-            return metadataJdbcTemplate.query(SELECT_REPORT_BY_ID, extractor, reportId.toString())
+            return metadataJdbcTemplate.query(SELECT_REPORT_BY_ID, extractor, reportId)
                     .stream()
                     .findFirst();
         } catch (DataAccessException e) {
@@ -174,7 +174,7 @@ public record ReportDao(
                 SELECT_REPORT_ROLES,
                 new ResultSetExtractorHelper<>(rs ->
                         roles.add(rs.getString("ROLE_NAME"))),
-                reportId.toString()
+                reportId
         );
         return roles;
     }

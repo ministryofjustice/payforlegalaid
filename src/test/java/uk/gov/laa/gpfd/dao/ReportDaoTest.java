@@ -78,7 +78,7 @@ class ReportDaoTest {
 
         assertTrue(result.isPresent());
         assertEquals(testReportId, result.get().getId());
-        verify(metadataJdbcTemplate).query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class), eq(testReportId.toString()));
+        verify(metadataJdbcTemplate).query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class), eq(testReportId));
     }
 
     @Test
@@ -168,7 +168,7 @@ class ReportDaoTest {
         when(metadataJdbcTemplate.query(
                 anyString(),
                 any(ResultSetExtractor.class),
-                anyString()
+                any(UUID.class)
         )).thenAnswer(invocation -> {
             ResultSetExtractor<?> extractor1 = invocation.getArgument(1);
             ResultSet rs = mock(ResultSet.class);
@@ -190,7 +190,7 @@ class ReportDaoTest {
         when(metadataJdbcTemplate.query(
                 anyString(),
                 any(ResultSetExtractor.class),
-                anyString()
+                any(UUID.class)
         )).thenAnswer(invocation -> {
             ResultSetExtractor<?> extractor1 = invocation.getArgument(1);
             ResultSet rs = mock(ResultSet.class);

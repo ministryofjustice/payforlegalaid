@@ -13,18 +13,17 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.postgresql.PostgreSQLContainer;
 import uk.gov.laa.gpfd.integration.config.TestDatabaseConfig;
 import uk.gov.laa.gpfd.utils.DatabaseUtils;
+import uk.gov.laa.pfla.configuration.TrackingDbSetup;
 
 import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
 
 @Testcontainers
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -39,28 +38,11 @@ public abstract class BaseIT {
     @Autowired
     MockMvc mockMvc;
 
-    /*
-        Can't fully take advantage of things like ServiceConnection here because we are connecting to multiple data sources currently
-     */
-    @Container
-    static final PostgreSQLContainer trackingDb =
-            new PostgreSQLContainer("postgres:18");
-
     @DynamicPropertySource
-    static void overrideTracking(DynamicPropertyRegistry r) {
-        trackingDb.start();
-        r.add("gpfd.datasource.tracking.jdbcUrl", trackingDb::getJdbcUrl);
-        r.add("gpfd.datasource.tracking.username", trackingDb::getUsername);
-        r.add("gpfd.datasource.tracking.password", trackingDb::getPassword);
-
-        r.add("spring.flyway.enabled", () -> true);
-        r.add("spring.flyway.url", trackingDb::getJdbcUrl);
-        r.add("spring.flyway.user", trackingDb::getUsername);
-        r.add("spring.flyway.password", trackingDb::getPassword);
-        r.add("spring.flyway.schemas", () -> "glad");
-        r.add("spring.flyway.default-schema", () -> "glad");
-        r.add("spring.flyway.locations", () -> "classpath:flyway/migration/schema");
-        r.add("spring.flyway.baseline-on-migrate", () -> true);
+    static void overrideTracking(DynamicPropertyRegistry registry) {
+        registry.add("gpfd.datasource.tracking.jdbcUrl", TrackingDbSetup.POSTGRES::getJdbcUrl);
+        registry.add("gpfd.datasource.tracking.username", TrackingDbSetup.POSTGRES::getUsername);
+        registry.add("gpfd.datasource.tracking.password", TrackingDbSetup.POSTGRES::getPassword);
     }
 
     @BeforeAll

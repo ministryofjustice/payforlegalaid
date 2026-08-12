@@ -15,7 +15,7 @@ Feature: Generate and Retrieve CSV Report
       | id                                   |
       | f46b4d3d-c100-429a-bf9a-6c3305dbdbfa |
       | f12b4d3d-c100-429a-bf9a-6c3305dbdbfb |
-      | f46b4d3d-c100-429a-bf9a-6c3305dbdbfb |
+      | f12b4d3d-c100-429a-bf9a-6c3305dbdbfb |
       | f46b4d3d-c100-429a-bf9a-6c3305dbdbf8 |
       | f46b4d3d-c100-429a-bf9a-6c3305dbdbf9 |
       | f46b4d3d-c100-429a-bf9a-6c3305dbdbf6 |
@@ -36,7 +36,7 @@ Feature: Generate and Retrieve CSV Report
 
     Scenario: Successfully generate and retrieve a CSV report with valid authentication
       Given I am authenticated with a valid session
-      When a request is made to the CSV endpoint with the report ID "f12b4d3d-c100-429a-bf9a-6c3305dbdbfb"
+      When a request is made to the CSV endpoint with the report ID "f46b4d3d-c100-429a-bf9a-6c3305dbdbfb"
       Then the service should respond with a status code of 200
       And the response should include the CSV file
 

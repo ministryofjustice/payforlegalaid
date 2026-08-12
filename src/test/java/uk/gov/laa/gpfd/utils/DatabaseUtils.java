@@ -38,6 +38,25 @@ public class DatabaseUtils {
 
   }
 
+  /**
+   * Seeds only the ANY_REPORT finance fixtures used by acceptance tests.
+   *
+   * <p>Metadata now lives in the tracking Postgres database, so the GPFD metadata changelogs
+   * must not be applied to the H2 MoJFin test database when prod Liquibase has already run.</p>
+   */
+  public void setUpMockAnyReportDatabase() {
+    try {
+      connection = writeDataSource.getConnection();
+      Database database = new liquibase.database.core.H2Database();
+      database.setConnection(new JdbcConnection(connection));
+
+      applyLiquibaseXml("db.changelog-any-report-schema.xml", database);
+      applyLiquibaseXml("db.changelog-any-report-data.xml", database);
+    } catch (Exception e) {
+      throw new RuntimeException("Exception when setting up ANY_REPORT test database:" + e.getMessage());
+    }
+  }
+
   private static void applyLiquibaseXml(String changeLogFile, Database database)
       throws LiquibaseException {
     liquibase = new Liquibase(changeLogFile, new ClassLoaderResourceAccessor(), database);

@@ -76,7 +76,7 @@ final class ReportGetFileIT extends BaseIT {
     @Test
     @SneakyThrows
     void shouldErrorIfIdNotSupportedByEndpoint() {
-        performGetRequestWithRoles("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d3/file", List.of("Financial"))
+        performGetRequestWithRoles("/reports/f46b4d3d-c100-429a-bf9a-6c3305dbdbf4/file", List.of("Financial"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_JSON));
     }
