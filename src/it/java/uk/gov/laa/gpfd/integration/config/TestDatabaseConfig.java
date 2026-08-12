@@ -1,6 +1,5 @@
 package uk.gov.laa.gpfd.integration.config;
 
-import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -61,34 +60,6 @@ public class TestDatabaseConfig {
     NamedParameterJdbcOperations namedMetadataJdbcTemplate(
             @Qualifier("metadataDataSource") DataSource dataSource) {
         return new NamedParameterJdbcTemplate(dataSource);
-    }
-
-    /**
-     * Manually configure Flyway to apply migrations to the PostgreSQL test container.
-     * This ensures the metadata tables are created and seeded properly for integration tests.
-     */
-    @Bean
-    Flyway metadataFlyway(@Qualifier("trackingDataSource") DataSource dataSource) {
-        try {
-            // First, create the glad schema if it doesn't exist
-            JdbcTemplate template = new JdbcTemplate(dataSource);
-            template.execute("CREATE SCHEMA IF NOT EXISTS glad");
-            
-            Flyway flyway = Flyway.configure()
-                    .dataSource(dataSource)
-                    .schemas("glad")
-                    .defaultSchema("glad")
-                    .locations("classpath:flyway/migration/schema")
-                    .baselineOnMigrate(true)
-                    .load();
-            
-            flyway.migrate();
-            return flyway;
-        } catch (Exception e) {
-            System.err.println("=== Flyway migration failed: " + e.getMessage() + " ===");
-            e.printStackTrace();
-            throw e;
-        }
     }
 
 }
