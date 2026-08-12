@@ -11,11 +11,12 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultHandler;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.postgresql.PostgreSQLContainer;
+import uk.gov.laa.gpfd.integration.config.SharedTrackingPostgres;
 import uk.gov.laa.gpfd.integration.config.TestDatabaseConfig;
 import uk.gov.laa.gpfd.utils.DatabaseUtils;
 
@@ -26,7 +27,6 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 
-@Testcontainers
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureMockMvc
 @ActiveProfiles("testauth")
@@ -39,19 +39,11 @@ public abstract class BaseIT {
     @Autowired
     MockMvc mockMvc;
 
-    /*
-        Can't fully take advantage of things like ServiceConnection here because we are connecting to multiple data sources currently
-     */
-    @Container
-    static final PostgreSQLContainer trackingDb =
-            new PostgreSQLContainer("postgres:18");
-
     @DynamicPropertySource
     static void overrideTracking(DynamicPropertyRegistry r) {
-        trackingDb.start();
-        r.add("gpfd.datasource.tracking.jdbcUrl", trackingDb::getJdbcUrl);
-        r.add("gpfd.datasource.tracking.username", trackingDb::getUsername);
-        r.add("gpfd.datasource.tracking.password", trackingDb::getPassword);
+        r.add("gpfd.datasource.tracking.jdbcUrl", SharedTrackingPostgres.CONTAINER::getJdbcUrl);
+        r.add("gpfd.datasource.tracking.username", SharedTrackingPostgres.CONTAINER::getUsername);
+        r.add("gpfd.datasource.tracking.password", SharedTrackingPostgres.CONTAINER::getPassword);
         r.add("gpfd.datasource.tracking.driver-class-name", () -> "org.postgresql.Driver");
     }
 
@@ -86,12 +78,36 @@ public abstract class BaseIT {
         var result = performGetRequestWithRoles(uri, roles)
                 .andReturn();
 
+        if (!result.getRequest().isAsyncStarted()) {
+            return new CompletedResultActions(result);
+        }
+
         var asyncResult = result.getAsyncResult();
         if (asyncResult instanceof Throwable throwable) {
             throw new IllegalStateException("Async streaming request failed", throwable);
         }
 
         return mockMvc.perform(asyncDispatch(result));
+    }
+
+    private record CompletedResultActions(MvcResult result) implements ResultActions {
+
+        @Override
+        public ResultActions andExpect(ResultMatcher matcher) throws Exception {
+            matcher.match(result);
+            return this;
+        }
+
+        @Override
+        public ResultActions andDo(ResultHandler handler) throws Exception {
+            handler.handle(result);
+            return this;
+        }
+
+        @Override
+        public MvcResult andReturn() {
+            return result;
+        }
     }
 
 }

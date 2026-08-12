@@ -2,33 +2,21 @@ package uk.gov.laa.gpfd.integration.config;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import uk.gov.laa.gpfd.config.TimeProvider;
 
 import java.time.LocalTime;
 
 /**
- * Class overwrites time used when calling endpoints in test, allowing simulation of our of hours response
+ * Overrides the clock for out-of-hours integration tests only.
  */
 @TestConfiguration
 @Profile("!testat")
 public class TestTimeConfig {
     @Bean
+    @Primary
     public TimeProvider timeProvider() {
-        // Simulate 6:30 AM (before working hours)
-        return new FixedTimeProvider(LocalTime.of(6, 30));
-    }
-
-    public static class FixedTimeProvider implements TimeProvider {
-        private final LocalTime fixedTime;
-
-        public FixedTimeProvider(LocalTime fixedTime) {
-            this.fixedTime = fixedTime;
-        }
-
-        @Override
-        public LocalTime getCurrentTime() {
-            return fixedTime;
-        }
+        return () -> LocalTime.of(6, 30);
     }
 }
