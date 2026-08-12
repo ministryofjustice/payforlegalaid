@@ -50,7 +50,7 @@ spring:
   flyway:
     schemas: glad
     create-schemas: true
-    locations: classpath:flyway/migration/schema
+    locations: classpath:flyway/migration/schema,classpath:flyway/migration/proddata
     url: ${gpfd.datasource.tracking.jdbcUrl}
     user: ${gpfd.datasource.tracking.username}
     password: ${gpfd.datasource.tracking.password}

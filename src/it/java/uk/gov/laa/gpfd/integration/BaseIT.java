@@ -52,12 +52,7 @@ public abstract class BaseIT {
         r.add("gpfd.datasource.tracking.jdbcUrl", trackingDb::getJdbcUrl);
         r.add("gpfd.datasource.tracking.username", trackingDb::getUsername);
         r.add("gpfd.datasource.tracking.password", trackingDb::getPassword);
-
-        r.add("spring.flyway.enabled", () -> true);
-        r.add("spring.flyway.url", trackingDb::getJdbcUrl);
-        r.add("spring.flyway.user", trackingDb::getUsername);
-        r.add("spring.flyway.password", trackingDb::getPassword);
-
+        r.add("gpfd.datasource.tracking.driver-class-name", () -> "org.postgresql.Driver");
     }
 
     @BeforeAll

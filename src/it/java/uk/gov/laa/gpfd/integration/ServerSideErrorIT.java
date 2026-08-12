@@ -1,6 +1,5 @@
 package uk.gov.laa.gpfd.integration;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +18,8 @@ class ServerSideErrorIT extends BaseIT {
     @BeforeAll
     @Override
     void setUpMojfinDatabase() {
-        // Metadata now lives in tracking Postgres; remove schema so ReportDao reads fail.
+        // Metadata reads use tracking Postgres; remove schema so ReportDao calls fail with 500.
         trackingJdbcTemplate.execute("DROP SCHEMA IF EXISTS glad CASCADE");
-    }
-
-    @AfterAll
-    @Override
-    void cleanUpMojfinDatabase() {
-        // No-op: other IT classes use a fresh Postgres container per JVM.
     }
 
     @Test

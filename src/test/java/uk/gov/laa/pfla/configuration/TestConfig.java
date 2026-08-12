@@ -123,8 +123,8 @@ public class TestConfig {
                 .build();
     }
 
-    // Manually get Flyway to act on the postgres db
-    // Using the default Spring config it was constantly attempting to apply Flyway to the other data sources
+    // Manually get Flyway to act on the postgres db.
+    // Schema DDL (V1/V2) + test fixtures only — not flyway/migration/proddata (production catalogue).
     @Bean
     public Flyway postgresFlyway(
             @Qualifier("trackingDataSource") DataSource dataSource) {
@@ -132,8 +132,11 @@ public class TestConfig {
         Flyway flyway = Flyway.configure()
                 .dataSource(dataSource)
                 .schemas("glad")
-                .locations("classpath:flyway/migration/schema")
-                .baselineOnMigrate(true)   // optional, but often useful in ATs
+                .createSchemas(true)
+                .locations(
+                        "classpath:flyway/migration/schema",
+                        "classpath:flyway/migration/testdata")
+                .baselineOnMigrate(true)
                 .load();
 
         flyway.migrate();

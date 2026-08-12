@@ -1,4 +1,6 @@
 -- Repeatable Flyway migration generated from the pfla-data Liquibase changelogs.
+-- Production/staging catalogue only (loaded from flyway/migration/proddata in application.yml).
+-- Integration and Cucumber tests use src/test/resources/flyway/migration/testdata/R__test_metadata.sql instead.
 -- Scope:
 --   REPORT_OUTPUT_TYPES, ROLES, REPORTS, REPORT_QUERIES,
 --   FIELD_ATTRIBUTES, REPORT_ROLES
