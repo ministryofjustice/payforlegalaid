@@ -33,4 +33,23 @@ public class TestDatabaseConfig {
         return new NamedParameterJdbcTemplate(dataSource);
     }
 
+    /**
+     * Metadata is held alongside report tracking data in the PostgreSQL test container.
+     */
+    @Bean
+    DataSource metadataDataSource(@Qualifier("trackingDataSource") DataSource dataSource) {
+        return dataSource;
+    }
+
+    @Bean
+    JdbcTemplate metadataJdbcTemplate(@Qualifier("metadataDataSource") DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
+    }
+
+    @Bean
+    NamedParameterJdbcOperations namedMetadataJdbcTemplate(
+            @Qualifier("metadataDataSource") DataSource dataSource) {
+        return new NamedParameterJdbcTemplate(dataSource);
+    }
+
 }

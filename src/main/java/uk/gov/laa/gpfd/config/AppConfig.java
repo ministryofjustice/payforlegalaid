@@ -193,11 +193,25 @@ public class AppConfig {
      *
      * @return Data Source that talks to the associated Postgres DB
      */
-    @Bean(name = {"trackingDataSource", "metadataDataSource"})
+    @Bean
     @ConfigurationProperties(prefix = "gpfd.datasource.tracking")
     DataSource trackingDataSource() {
         return DataSourceBuilder.create()
                 .build();
+    }
+
+    /**
+     * Exposes the existing tracking RDS connection for metadata reads.
+     *
+     * <p>Keeping this as its own bean allows test configurations to replace the
+     * metadata connection explicitly, while production continues to use the same RDS.</p>
+     *
+     * @param trackingDataSource the tracking RDS data source
+     * @return the data source used for report metadata
+     */
+    @Bean
+    DataSource metadataDataSource(@Qualifier("trackingDataSource") DataSource trackingDataSource) {
+        return trackingDataSource;
     }
 
     /**

@@ -11,6 +11,8 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
@@ -121,6 +123,24 @@ public class TestConfig {
                 .username(TrackingDbSetup.POSTGRES.getUsername())
                 .password(TrackingDbSetup.POSTGRES.getPassword())
                 .build();
+    }
+
+    @Bean
+    public DataSource metadataDataSource(
+            @Qualifier("trackingDataSource") DataSource dataSource) {
+        return dataSource;
+    }
+
+    @Bean
+    public JdbcTemplate metadataJdbcTemplate(
+            @Qualifier("metadataDataSource") DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
+    }
+
+    @Bean
+    public NamedParameterJdbcOperations namedMetadataJdbcTemplate(
+            @Qualifier("metadataDataSource") DataSource dataSource) {
+        return new NamedParameterJdbcTemplate(dataSource);
     }
 
     // Manually get Flyway to act on the postgres db
