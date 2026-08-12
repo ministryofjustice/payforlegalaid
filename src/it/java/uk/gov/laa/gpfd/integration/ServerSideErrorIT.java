@@ -4,6 +4,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
@@ -14,6 +15,10 @@ class ServerSideErrorIT extends BaseIT {
 
     @Autowired
     private JdbcTemplate writeJdbcTemplate;
+
+    @Autowired
+    @Qualifier("metadataJdbcTemplate")
+    private JdbcTemplate metadataJdbcTemplate;
 
     @BeforeAll
     @Override
@@ -29,14 +34,24 @@ class ServerSideErrorIT extends BaseIT {
 
     @Test
     void getReportsShouldNotDependOnMojfinGpfdMetadataTables() throws Exception {
-        performGetRequestWithRoles("/reports", List.of("Financial"))
-                .andExpect(status().isOk());
+        try {
+            performGetRequestWithRoles("/reports", List.of("Financial"))
+                    .andExpect(status().isOk());
+        } catch (Exception e) {
+            System.out.println("=== Test failed with exception: " + e.getMessage() + " ===");
+            throw e;
+        }
     }
 
     @Test
     void getReportByIdShouldNotDependOnMojfinGpfdMetadataTables() throws Exception {
-        performGetRequestWithRoles("/reports/b36f9bbb-1178-432c-8f99-8090e285f2d3", List.of("Financial"))
-                .andExpect(status().isOk());
+        try {
+            performGetRequestWithRoles("/reports/b36f9bbb-1178-432c-8f99-8090e285f2d3", List.of("Financial"))
+                    .andExpect(status().isOk());
+        } catch (Exception e) {
+            System.out.println("=== Test failed with exception: " + e.getMessage() + " ===");
+            throw e;
+        }
     }
 
 }
