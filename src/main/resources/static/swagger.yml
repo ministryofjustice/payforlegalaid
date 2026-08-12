@@ -5,9 +5,8 @@ info:
   description: >
     API for accessing financial reports related to legal aid payments.
     **Authentication Notice**: 
-    All endpoints are secured using OAuth 2.0 via Sign Into Legal Aid Services (SILAS) and Entra. A valid access token must be provided 
-    in the `Authorization` header of each request in the following format: 
-    `Authorization: Bearer <ACCESS_TOKEN>`.
+    All endpoints are secured via Sign Into Legal Aid Services (SILAS) and Entra login.
+    Authenticated requests must include the `JSESSIONID` cookie issued after login.
 
   contact:
     name: Ministry of Justice
@@ -29,15 +28,20 @@ components:
       description: >
         Link to retrieve detailed metadata for a specific report using its ID.
       parameters:
-        id: $response.body#/reportList/{id}
+        id: $response.body#/reportList/0/{id}
     CsvDownloadLink:
-      operationId: downloadCsv
+      operationId: getCsvById
       description: Download the report as a CSV stream using its ID.
       parameters:
         id: $response.body#/id
     ExcelDownloadLink:
       operationId: getExcelById
       description: Download the report as a Excel stream using its ID.
+      parameters:
+        id: $response.body#/id
+    FileDownloadLink:
+      operationId: getFileById
+      description: Download the report as a file stream using its ID.
       parameters:
         id: $response.body#/id
   securitySchemes:
@@ -54,7 +58,6 @@ components:
         ```
         JSESSIONID=I_LIKE_PANCAKES
         ```
-
 
   responses:
     UnauthorizedError:
@@ -133,9 +136,7 @@ paths:
         - Reports
       summary: List All Available Reports
       description: >
-        Retrieves a list of all available reports, including each report's ID, name, metadata, 
-        and a link to retrieve detailed metadata for each report.
-        **Note**: The `reportDetailUrl` field in each report provides a direct link to `/report/{id}`.
+        Retrieves a list of all available reports, including each report's ID, name and metadata.
       responses:
         '200':
           description: A JSON array containing metadata for each report.
@@ -196,15 +197,15 @@ paths:
                 Report1:
                   summary: Example Retrieve Report Metadata by ID
                   value:
-                    id: 1
+                    id: bab60961-061f-4e8e-82f4-ee41ec4f03af
                     reportName: "Monthly Revenue Report"
-                    reportDownloadUrl: "https://example.com/reports/1"
+                    reportDownloadUrl: "https://example.com/reports/bab60961-061f-4e8e-82f4-ee41ec4f03af"
                 Report2:
                   summary: Example  Retrieve Report Metadata by ID 2
                   value:
-                    id: 2
+                    id: 5dfac672-50be-4a01-aced-a496da7b2308
                     reportName: "Quarterly Profit Analysis"
-                    reportDownloadUrl: "https://example.com/reports/2"
+                    reportDownloadUrl: "https://example.com/reports/5dfac672-50be-4a01-aced-a496da7b2308"
               schema:
                 type: object
                 properties:
@@ -220,10 +221,12 @@ paths:
                     format: uri
                     example: "https://<service_destination>/csv/1"
           links:
-            downloadCsv:
+            getCsvById:
               $ref: '#/components/links/CsvDownloadLink'
-            downloadExcel:
+            getExcelById:
               $ref: '#/components/links/ExcelDownloadLink'
+            getFileById:
+              $ref: '#/components/links/FileDownloadLink'
         '400':
           $ref: '#/components/responses/BadRequestError'
         '401':
