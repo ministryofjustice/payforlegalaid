@@ -193,7 +193,7 @@ public class AppConfig {
      *
      * @return Data Source that talks to the associated Postgres DB
      */
-    @Bean
+    @Bean(name = {"trackingDataSource", "metadataDataSource"})
     @ConfigurationProperties(prefix = "gpfd.datasource.tracking")
     DataSource trackingDataSource() {
         return DataSourceBuilder.create()
@@ -209,6 +209,33 @@ public class AppConfig {
     @Bean
     JdbcTemplate trackingJdbcTemplate(@Qualifier("trackingDataSource") DataSource dataSource) {
         return new JdbcTemplate(dataSource);
+    }
+
+    /**
+     * Allows report metadata and RBAC reads to use the tracking RDS.
+     *
+     * <p>The tracking and metadata tables intentionally share the same RDS instance,
+     * but this separately named template prevents metadata reads from being routed to
+     * the MoJFin read-only template.</p>
+     *
+     * @param dataSource the tracking RDS data source containing the metadata tables
+     * @return JDBC template for report metadata reads
+     */
+    @Bean
+    JdbcTemplate metadataJdbcTemplate(@Qualifier("metadataDataSource") DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
+    }
+
+    /**
+     * Allows named-parameter metadata queries to use the tracking RDS.
+     *
+     * @param dataSource the tracking RDS data source containing the metadata tables
+     * @return named-parameter JDBC operations for report metadata reads
+     */
+    @Bean
+    NamedParameterJdbcOperations namedMetadataJdbcTemplate(
+            @Qualifier("metadataDataSource") DataSource dataSource) {
+        return new NamedParameterJdbcTemplate(dataSource);
     }
 
     /**

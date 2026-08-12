@@ -3,6 +3,7 @@ package uk.gov.laa.gpfd.integration;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import uk.gov.laa.gpfd.integration.verifier.DatabaseVerifier;
 import uk.gov.laa.gpfd.integration.verifier.DatabaseVerifier.Table;
@@ -17,12 +18,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 final class GetReportsIT extends BaseIT {
 
     @Autowired
-    private JdbcTemplate jdbc;
+    @Qualifier("metadataJdbcTemplate")
+    private JdbcTemplate metadataJdbcTemplate;
 
     @Test
     @SneakyThrows
     void shouldSuccessfullyReturnAllAvailableReports() {
-        var reportsLen = DatabaseVerifier.rowCountFor(Table.REPORTS).apply(jdbc);
+        var reportsLen = DatabaseVerifier.rowCountFor(Table.REPORTS).apply(metadataJdbcTemplate);
 
         performGetRequestWithRoles("/reports", List.of("REP000", "Financial", "Reconciliation"))
                 .andExpect(status().isOk())
@@ -34,13 +36,7 @@ final class GetReportsIT extends BaseIT {
     @Test
     @SneakyThrows
     void shouldSuccessfullyReturn200WhenNoReportsFound() {
-        jdbc.update("ALTER TABLE GPFD.REPORTS DROP CONSTRAINT fk_report_output_types_report_id");
-        jdbc.update("ALTER TABLE GPFD.REPORT_GROUPS DROP CONSTRAINT fk_report_groups_report_id");
-        jdbc.update("ALTER TABLE GPFD.REPORT_QUERIES DROP CONSTRAINT fk_report_queries_report_id");
-        jdbc.update("ALTER TABLE GPFD.FIELD_ATTRIBUTES DROP CONSTRAINT fk_field_attributes_report_query_id");
-        jdbc.update("TRUNCATE TABLE GPFD.REPORTS");
-
-        performGetRequestWithRoles("/reports", List.of("REP000", "Reconciliation", "Financial"))
+        performGetRequestWithRoles("/reports", List.of("not-a-report-role"))
                 .andExpect(status().isOk())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().contentType(APPLICATION_JSON))

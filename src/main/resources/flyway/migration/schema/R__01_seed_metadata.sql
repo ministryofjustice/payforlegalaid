@@ -23,9 +23,9 @@ VALUES
 -- ROLES
 INSERT INTO glad.roles (role_id, role_name)
 VALUES
-    (1, 'Get legal aid data - REP000'),
-    (2, 'Get legal aid data - Reconciliation'),
-    (3, 'Get legal aid data - Financial')
+    (1, 'REP000'),
+    (2, 'Reconciliation'),
+    (3, 'Financial')
 
     ON CONFLICT (role_id) DO UPDATE SET
     role_name = EXCLUDED.role_name;

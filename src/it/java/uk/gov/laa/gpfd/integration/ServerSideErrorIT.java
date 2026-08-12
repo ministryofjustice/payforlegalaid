@@ -18,7 +18,7 @@ class ServerSideErrorIT extends BaseIT {
     @BeforeAll
     @Override
     void setUpMojfinDatabase() {
-        writeJdbcTemplate.execute("CREATE SCHEMA IF NOT EXISTS GPFD;"); //Create an empty schema so that we get a 500 error
+        writeJdbcTemplate.execute("CREATE SCHEMA IF NOT EXISTS GPFD;");
     }
 
     @AfterAll
@@ -28,21 +28,15 @@ class ServerSideErrorIT extends BaseIT {
     }
 
     @Test
-    void getReportsShouldReturn500WhenCannotConnectToDb() throws Exception {
+    void getReportsShouldNotDependOnMojfinGpfdMetadataTables() throws Exception {
         performGetRequestWithRoles("/reports", List.of("Financial"))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isOk());
     }
 
     @Test
-    void getReportWithIdShouldReturn500WhenCannotConnectToDb() throws Exception {
-        performGetRequestWithRoles("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d9", List.of("Financial"))
-                .andExpect(status().isInternalServerError());
-    }
-
-    @Test
-    void getCsvWithIdShouldReturn500WhenCannotConnectToDbForMappingTable() throws Exception {
-        performGetRequestWithRoles("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d9/csv", List.of("Financial"))
-                .andExpect(status().isInternalServerError());
+    void getReportByIdShouldNotDependOnMojfinGpfdMetadataTables() throws Exception {
+        performGetRequestWithRoles("/reports/b36f9bbb-1178-432c-8f99-8090e285f2d3", List.of("Financial"))
+                .andExpect(status().isOk());
     }
 
 }

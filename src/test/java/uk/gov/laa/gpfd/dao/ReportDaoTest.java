@@ -44,7 +44,7 @@ import static uk.gov.laa.gpfd.exception.DatabaseReadException.DatabaseFetchExcep
 class ReportDaoTest {
 
     @Mock
-    private JdbcTemplate readOnlyJdbcTemplate;
+    private JdbcTemplate metadataJdbcTemplate;
 
     @Mock
     private ReportWithQueriesAndFieldAttributesExtractor extractor;
@@ -56,7 +56,7 @@ class ReportDaoTest {
     SecurityUtils securityUtils;
 
     @Mock
-    NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    NamedParameterJdbcTemplate namedMetadataJdbcTemplate;
 
     private UUID testReportId;
     private Report testReport;
@@ -65,26 +65,26 @@ class ReportDaoTest {
     void setUp() {
         testReportId = UUID.randomUUID();
         testReport = ReportsTestDataFactory.createTestReport(testReportId);
-        reportDao = spy(new ReportDao(extractor, readOnlyJdbcTemplate, namedParameterJdbcTemplate, securityUtils));
+        reportDao = spy(new ReportDao(extractor, metadataJdbcTemplate, namedMetadataJdbcTemplate, securityUtils));
     }
 
     @Test
     void fetchReportById_shouldReturnReportWhenFound() {
         doNothing().when(reportDao).verifyUserCanAccessReport(any());
-        when(readOnlyJdbcTemplate.query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class), any()))
+        when(metadataJdbcTemplate.query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class), any()))
                 .thenReturn(Collections.singletonList(testReport));
 
         var result = reportDao.fetchReportById(testReportId);
 
         assertTrue(result.isPresent());
         assertEquals(testReportId, result.get().getId());
-        verify(readOnlyJdbcTemplate).query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class), eq(testReportId.toString()));
+        verify(metadataJdbcTemplate).query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class), eq(testReportId.toString()));
     }
 
     @Test
     void fetchReportById_shouldReturnEmptyOptionalWhenReportNotFound() {
         doNothing().when(reportDao).verifyUserCanAccessReport(any());
-        when(readOnlyJdbcTemplate.query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class), any()))
+        when(metadataJdbcTemplate.query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class), any()))
                 .thenReturn(Collections.emptyList());
 
         var result = reportDao.fetchReportById(testReportId);
@@ -95,7 +95,7 @@ class ReportDaoTest {
     @Test
     void fetchReportById_shouldThrowDatabaseReadExceptionOnDataAccessError() {
         doNothing().when(reportDao).verifyUserCanAccessReport(any());
-        when(readOnlyJdbcTemplate.query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class), any()))
+        when(metadataJdbcTemplate.query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class), any()))
                 .thenThrow(new DataAccessException("Database error") {});
 
         assertThrows(DatabaseFetchException.class, () -> reportDao.fetchReportById(testReportId));
@@ -106,7 +106,7 @@ class ReportDaoTest {
         List<String> roles = List.of("REP000", "Reconciliation");
         when(securityUtils.extractRoles()).thenReturn(roles);
         var expectedReports = Arrays.asList(testReport, ReportsTestDataFactory.createTestReport());
-        when(namedParameterJdbcTemplate.query(ReportDao.SELECT_ALL_REPORTS_SQL,
+        when(namedMetadataJdbcTemplate.query(ReportDao.SELECT_ALL_REPORTS_SQL,
                 Map.of("roles", roles),
                 extractor))
                 .thenReturn(expectedReports);
@@ -115,12 +115,12 @@ class ReportDaoTest {
 
         assertEquals(2, result.size());
         assertTrue(result.contains(testReport));
-        verify(namedParameterJdbcTemplate).query(anyString(), anyMap(), eq(extractor));
+        verify(namedMetadataJdbcTemplate).query(anyString(), anyMap(), eq(extractor));
     }
 
     @Test
     void fetchReports_shouldReturnEmptyCollectionWhenNoReportsFound() {
-        when(namedParameterJdbcTemplate.query(
+        when(namedMetadataJdbcTemplate.query(
                 eq(ReportDao.SELECT_ALL_REPORTS_SQL),
                 anyMap(),
                 any(ReportWithQueriesAndFieldAttributesExtractor.class)
@@ -131,7 +131,7 @@ class ReportDaoTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
 
-        verify(namedParameterJdbcTemplate).query(
+        verify(namedMetadataJdbcTemplate).query(
                 eq(ReportDao.SELECT_ALL_REPORTS_SQL),
                 anyMap(),
                 any(ReportWithQueriesAndFieldAttributesExtractor.class)
@@ -141,7 +141,7 @@ class ReportDaoTest {
 
     @Test
     void fetchReports_shouldThrowDatabaseFetchExceptionOnDataAccessError() {
-        when(namedParameterJdbcTemplate.query(
+        when(namedMetadataJdbcTemplate.query(
                 eq(ReportDao.SELECT_ALL_REPORTS_SQL),
                 anyMap(),
                 any(ReportWithQueriesAndFieldAttributesExtractor.class)
@@ -152,7 +152,7 @@ class ReportDaoTest {
 
     @Test
     void fetchReports_shouldNotThrowReportIdNotFoundException() {
-        when(namedParameterJdbcTemplate.query(
+        when(namedMetadataJdbcTemplate.query(
                 eq(ReportDao.SELECT_ALL_REPORTS_SQL),
                 anyMap(),
                 any(ReportWithQueriesAndFieldAttributesExtractor.class)
@@ -165,7 +165,7 @@ class ReportDaoTest {
         List<String> userRoles = List.of("REP000");
         List<String> requiredRoles = List.of("REP000");
         when(securityUtils.extractRoles()).thenReturn(userRoles);
-        when(readOnlyJdbcTemplate.query(
+        when(metadataJdbcTemplate.query(
                 anyString(),
                 any(ResultSetExtractor.class),
                 anyString()
@@ -187,7 +187,7 @@ class ReportDaoTest {
         List<String> userRoles = List.of("REP000");
         List<String> requiredRoles = List.of("Reconciliation");
         when(securityUtils.extractRoles()).thenReturn(userRoles);
-        when(readOnlyJdbcTemplate.query(
+        when(metadataJdbcTemplate.query(
                 anyString(),
                 any(ResultSetExtractor.class),
                 anyString()
