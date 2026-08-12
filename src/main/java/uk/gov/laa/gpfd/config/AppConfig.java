@@ -13,6 +13,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -210,6 +211,7 @@ public class AppConfig {
      * @return the data source used for report metadata
      */
     @Bean
+    @ConditionalOnMissingBean(name = "metadataDataSource")
     DataSource metadataDataSource(@Qualifier("trackingDataSource") DataSource trackingDataSource) {
         return trackingDataSource;
     }
@@ -236,6 +238,7 @@ public class AppConfig {
      * @return JDBC template for report metadata reads
      */
     @Bean
+    @ConditionalOnMissingBean(name = "metadataJdbcTemplate")
     JdbcTemplate metadataJdbcTemplate(@Qualifier("metadataDataSource") DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }
@@ -247,6 +250,7 @@ public class AppConfig {
      * @return named-parameter JDBC operations for report metadata reads
      */
     @Bean
+    @ConditionalOnMissingBean(name = "namedMetadataJdbcTemplate")
     NamedParameterJdbcOperations namedMetadataJdbcTemplate(
             @Qualifier("metadataDataSource") DataSource dataSource) {
         return new NamedParameterJdbcTemplate(dataSource);
