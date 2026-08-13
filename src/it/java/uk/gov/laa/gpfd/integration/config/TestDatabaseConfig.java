@@ -31,8 +31,7 @@ public class TestDatabaseConfig {
     }
 
     @Bean
-    public NamedParameterJdbcOperations namedParameterJdbcOperations(
-            @Qualifier("readOnlyDataSource") DataSource dataSource) {
+    public NamedParameterJdbcOperations namedParameterJdbcOperations(@Qualifier("readOnlyDataSource") DataSource dataSource) {
         return new NamedParameterJdbcTemplate(dataSource);
     }
 

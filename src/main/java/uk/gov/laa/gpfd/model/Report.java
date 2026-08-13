@@ -15,9 +15,11 @@ import static org.immutables.value.Value.Immutable;
 @Immutable
 public abstract class Report implements Queryable<ReportQuery, Report>, Identifiable {
     @Nullable
+    @Override
     public abstract UUID getId();
 
     @Nullable
+    @Override
     public abstract Collection<ReportQuery> getQueries();
 
     @NotBlank
