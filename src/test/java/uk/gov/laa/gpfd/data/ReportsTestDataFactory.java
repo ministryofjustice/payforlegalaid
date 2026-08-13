@@ -2,7 +2,6 @@ package uk.gov.laa.gpfd.data;
 
 import uk.gov.laa.gpfd.model.*;
 import uk.gov.laa.gpfd.model.excel.*;
-import uk.gov.laa.gpfd.model.ImmutableReport;
 
 import java.sql.Timestamp;
 import java.time.Instant;
