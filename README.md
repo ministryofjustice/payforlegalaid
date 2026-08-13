@@ -14,7 +14,7 @@ This is an API that:
 
 It also contains a user interface for users to view the available reports and download them.
 
-The API definition can be found in the [openapi repository](https://github.com/ministryofjustice/payforlegalaid-openapi).
+The API definition can be found in the [swagger file](https://github.com/ministryofjustice/payforlegalaid/tree/main/src/main/resources/static/swagger.yml).
 
 The API will authenticate the user with LAA's `Sign Into Legal Aid Services` ([SILAS](https://dsdmoj.atlassian.net/wiki/spaces/LS/pages/5994940818/SiLAS+Introduction)), and if the user has an account
 with the correct roles, will allow them to access the reports.
@@ -89,7 +89,7 @@ Once set up, build the images:
 docker compose build
 ```
 
-On first build this will take a few minutes as Maven downloads dependencies and builds the OpenAPI library. Subsequent builds are significantly faster due to layer and dependency caching — as long as `pom.xml` hasn't changed, the dependency resolution step is skipped entirely.
+This build uses `~/.m2/settings.xml` as a Docker BuildKit secret so Maven can authenticate to GitHub Packages. On first build this will take a few minutes as Maven downloads dependencies. Subsequent builds are significantly faster due to layer and dependency caching — as long as `pom.xml` hasn't changed, the dependency resolution step is skipped entirely.
 
 To force a clean rebuild from scratch:
 ```bash

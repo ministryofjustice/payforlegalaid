@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.0](https://github.com/ministryofjustice/payforlegalaid/compare/v3.0.2...v3.1.0) (2026-08-11)
+
+
+### Features
+
+* **LPF-1551:** v2 v3 migration to create metadata tables ([#587](https://github.com/ministryofjustice/payforlegalaid/issues/587)) ([c391364](https://github.com/ministryofjustice/payforlegalaid/commit/c391364ca0a98c3696fe927dbfc4e12181436038))
+
 ## [3.0.2](https://github.com/ministryofjustice/payforlegalaid/compare/v3.0.1...v3.0.2) (2026-08-07)
 
 
