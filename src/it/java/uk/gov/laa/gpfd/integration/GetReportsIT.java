@@ -14,10 +14,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.laa.gpfd.security.SilasRoles.all;
 
 final class GetReportsIT extends BaseIT {
 
-    private static final List<String> REPORT_ROLES = List.of("REP000", "Financial", "Reconciliation");
+    private static final List<String> REPORT_ROLES = all();
 
     private static final String COUNT_ACCESSIBLE_REPORTS_SQL = """
             SELECT COUNT(DISTINCT r.id)

@@ -7,11 +7,13 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import static uk.gov.laa.gpfd.security.SilasRoles.FINANCIAL;
+
 class ServerSideErrorIT extends BaseIT {
 
     @Test
     void getReportsShouldNotDependOnMojfinGpfdMetadataTables() throws Exception {
-        MvcResult result = performGetRequestWithRoles("/reports", List.of("Financial"))
+        MvcResult result = performGetRequestWithRoles("/reports", List.of(FINANCIAL))
                 .andReturn();
 
         assertEquals(200, result.getResponse().getStatus(),
@@ -23,7 +25,7 @@ class ServerSideErrorIT extends BaseIT {
     void getReportByIdShouldNotDependOnMojfinGpfdMetadataTables() throws Exception {
         MvcResult result = performGetRequestWithRoles(
                         "/reports/b36f9bbb-1178-432c-8f99-8090e285f2d3",
-                        List.of("Financial"))
+                        List.of(FINANCIAL))
                 .andReturn();
 
         assertEquals(200, result.getResponse().getStatus(),

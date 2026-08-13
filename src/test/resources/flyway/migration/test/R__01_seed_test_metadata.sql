@@ -7,9 +7,9 @@ INSERT INTO glad.report_output_types (id, extension, description) VALUES ('bd098
 INSERT INTO glad.report_output_types (id, extension, description) VALUES ('523ed024-74f9-4288-9624-bbfeb04f45d0'::uuid, 's3storage', 'Download from s3 Bucket') ON CONFLICT DO NOTHING;
 
 -- ROLES
-INSERT INTO glad.roles (role_id, role_name) VALUES ('1', 'REP000') ON CONFLICT DO NOTHING;
-INSERT INTO glad.roles (role_id, role_name) VALUES ('2', 'Reconciliation') ON CONFLICT DO NOTHING;
-INSERT INTO glad.roles (role_id, role_name) VALUES ('3', 'Financial') ON CONFLICT DO NOTHING;
+INSERT INTO glad.roles (role_id, role_name) VALUES ('1', 'Get legal aid data - REP000') ON CONFLICT DO NOTHING;
+INSERT INTO glad.roles (role_id, role_name) VALUES ('2', 'Get legal aid data - Reconciliation') ON CONFLICT DO NOTHING;
+INSERT INTO glad.roles (role_id, role_name) VALUES ('3', 'Get legal aid data - Financial') ON CONFLICT DO NOTHING;
 
 -- REPORTS
 INSERT INTO glad.reports (id, name, template_secure_document_id, report_creation_date, description, num_days_to_keep, file_name, active, report_output_type, report_owner_id, report_owner_name, report_owner_email) VALUES ('0fbec75b-2d72-44f5-a0e3-2dcb29d92f79'::uuid, 'acceptance_test_table', '00000000-0000-0000-0000-000000000000'::uuid, DATE '2025-02-15', 'acceptance_test_table', '30', 'acceptance_test_table', 'Y', '6ebd27ac-4d83-485d-a4fd-3e45f9a53484'::uuid, '00000000-0000-0000-0000-000000000003'::uuid, 'Teresa Green', 'teresagreen@example.org') ON CONFLICT DO NOTHING;

@@ -38,6 +38,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.gov.laa.gpfd.security.SilasRoles.RECONCILIATION;
+import static uk.gov.laa.gpfd.security.SilasRoles.REP000;
 import static uk.gov.laa.gpfd.exception.DatabaseReadException.DatabaseFetchException;
 
 @ExtendWith(MockitoExtension.class)
@@ -103,7 +105,7 @@ class ReportDaoTest {
 
     @Test
     void fetchReports_shouldReturnCollectionOfReports() {
-        List<String> roles = List.of("REP000", "Reconciliation");
+        List<String> roles = List.of(REP000, RECONCILIATION);
         when(securityUtils.extractRoles()).thenReturn(roles);
         var expectedReports = Arrays.asList(testReport, ReportsTestDataFactory.createTestReport());
         when(namedMetadataJdbcTemplate.query(ReportDao.SELECT_ALL_REPORTS_SQL,
@@ -162,8 +164,8 @@ class ReportDaoTest {
 
     @Test
     void verifyUserCanAccessReport_whenAuthorized_shouldNotThrow() {
-        List<String> userRoles = List.of("REP000");
-        List<String> requiredRoles = List.of("REP000");
+        List<String> userRoles = List.of(REP000);
+        List<String> requiredRoles = List.of(REP000);
         when(securityUtils.extractRoles()).thenReturn(userRoles);
         when(metadataJdbcTemplate.query(
                 anyString(),
@@ -184,8 +186,8 @@ class ReportDaoTest {
 
     @Test
     void verifyUserCanAccessReport_whenNotAuthorized_shouldThrowAccessDenied() {
-        List<String> userRoles = List.of("REP000");
-        List<String> requiredRoles = List.of("Reconciliation");
+        List<String> userRoles = List.of(REP000);
+        List<String> requiredRoles = List.of(RECONCILIATION);
         when(securityUtils.extractRoles()).thenReturn(userRoles);
         when(metadataJdbcTemplate.query(
                 anyString(),

@@ -35,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
+import static uk.gov.laa.gpfd.security.SilasRoles.all;
 
 @ExtendWith(MockitoExtension.class)
 class SecurityUtilsTest {
@@ -88,26 +89,27 @@ class SecurityUtilsTest {
 
     @Test
     void extractRoles_parsesListOfRolesCorrectly() {
-        when(oidcUser.getAttributes()).thenReturn(Map.of("LAA_APP_ROLES", List.of("REP000", "Financial", "Reconciliation")));
+        when(oidcUser.getAttributes()).thenReturn(Map.of("LAA_APP_ROLES", all()));
         when(authentication.getPrincipal()).thenReturn(oidcUser);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         List<String> roles = securityUtils.extractRoles();
 
-        assertEquals(List.of("REP000", "Financial", "Reconciliation"), roles);
+        assertEquals(all(), roles);
     }
 
     @Test
     void extractRoles_parsesCommaSeparatedStringCorrectly() {
-        when(oidcUser.getAttributes()).thenReturn(Map.of("LAA_APP_ROLES", "REP000, Financial, Reconciliation"));
+        when(oidcUser.getAttributes()).thenReturn(Map.of("LAA_APP_ROLES",
+                "Get legal aid data - REP000, Get legal aid data - Reconciliation, Get legal aid data - Financial"));
         when(authentication.getPrincipal()).thenReturn(oidcUser);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         List<String> roles = securityUtils.extractRoles();
 
-        assertEquals(List.of("REP000", "Financial", "Reconciliation"), roles);
+        assertEquals(all(), roles);
     }
 
     @Test

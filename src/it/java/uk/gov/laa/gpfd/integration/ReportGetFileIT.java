@@ -29,6 +29,8 @@ import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.laa.gpfd.security.SilasRoles.FINANCIAL;
+import static uk.gov.laa.gpfd.security.SilasRoles.RECONCILIATION;
 import static uk.gov.laa.gpfd.utils.ReportIds.ID_REP012;
 
 @Import(TestS3Config.class)
@@ -57,7 +59,7 @@ final class ReportGetFileIT extends BaseIT {
         var mockS3Response = new ResponseInputStream<>(responseMetadata, inputStream);
         when(s3Client.getObject(any(GetObjectRequest.class))).thenReturn(mockS3Response);
 
-        performStreamingGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of("Reconciliation"))
+        performStreamingGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of(RECONCILIATION))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_OCTET_STREAM))
                 .andExpect(header().longValue("Content-Length", 25L))
@@ -76,7 +78,7 @@ final class ReportGetFileIT extends BaseIT {
     @Test
     @SneakyThrows
     void shouldErrorIfIdNotSupportedByEndpoint() {
-        performGetRequestWithRoles("/reports/f46b4d3d-c100-429a-bf9a-6c3305dbdbf4/file", List.of("Financial"))
+        performGetRequestWithRoles("/reports/f46b4d3d-c100-429a-bf9a-6c3305dbdbf4/file", List.of(FINANCIAL))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_JSON));
     }
@@ -84,7 +86,7 @@ final class ReportGetFileIT extends BaseIT {
     @Test
     @SneakyThrows
     void shouldErrorIfIdNotValid() {
-        performGetRequestWithRoles("/reports/hi/file", List.of("Financial"))
+        performGetRequestWithRoles("/reports/hi/file", List.of(FINANCIAL))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_JSON));
     }
@@ -98,7 +100,7 @@ final class ReportGetFileIT extends BaseIT {
 
         when(s3Client.getObject(any(GetObjectRequest.class))).thenThrow(exception);
 
-        var result = performGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of("Reconciliation"))
+        var result = performGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of(RECONCILIATION))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andReturn();
@@ -114,7 +116,7 @@ final class ReportGetFileIT extends BaseIT {
         var mockListResponse = ListObjectsV2Response.builder().contents(new ArrayList<>()).build();
         when(s3Client.listObjectsV2(any(ListObjectsV2Request.class))).thenReturn(mockListResponse);
 
-        performGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of("Reconciliation"))
+        performGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of(RECONCILIATION))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andReturn();
