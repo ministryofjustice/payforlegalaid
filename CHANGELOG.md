@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.2.0](https://github.com/ministryofjustice/payforlegalaid/compare/v3.1.0...v3.2.0) (2026-08-13)
+
+
+### Features
+
+* **LPF-1559:** merge Openapi into main repo ([#596](https://github.com/ministryofjustice/payforlegalaid/issues/596)) ([50fc5bd](https://github.com/ministryofjustice/payforlegalaid/commit/50fc5bdec3c27cddbff1153c02797aa6dfd2b1ba))
+
+
+### Bug Fixes
+
+* **bot:** Bump the minor group with 6 updates ([#599](https://github.com/ministryofjustice/payforlegalaid/issues/599)) ([d5cd72d](https://github.com/ministryofjustice/payforlegalaid/commit/d5cd72d2c85da21af717981b2086eaafc8ae777f))
+
 ## [3.1.0](https://github.com/ministryofjustice/payforlegalaid/compare/v3.0.2...v3.1.0) (2026-08-11)
 
 
