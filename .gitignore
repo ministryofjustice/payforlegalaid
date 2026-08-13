@@ -33,9 +33,6 @@ modules.xml
 .vscode/
 **/.DS_Store
 
-# Generated swagger - not to be committed in this repo
-**/resources/static/swagger.yml
-
 ### Ignore generated static assets ###
 src/main/resources/static/
 !src/main/resources/static/css/
