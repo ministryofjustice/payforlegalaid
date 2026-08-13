@@ -9,7 +9,7 @@
     <parent>
         <groupId>uk.gov.laa</groupId>
         <artifactId>glad-parent</artifactId>
-        <version>2.0.3</version>
+        <version>2.1.0</version>
         <relativePath/>
     </parent>
 
@@ -19,6 +19,7 @@
         <!-- setting the below overrides spring bom version even though we don't use the value directly in our pom -->
         <spring-security.version>7.1.0</spring-security.version>
         <springdoc-oas.version>3.0.3</springdoc-oas.version>
+        <openapi-generator.version>7.24.0</openapi-generator.version>
 
         <maven-surefire-junit5-tree-reporter.version>1.5.1</maven-surefire-junit5-tree-reporter.version>
         <immutables.version>2.12.2</immutables.version>
@@ -115,24 +116,6 @@
                 <version>${maven-dependency-plugin.version}</version>
                 <executions>
                     <execution>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>uk.gov.laa</groupId>
-                                    <artifactId>payforlegalaid-openapi</artifactId>
-                                    <type>jar</type>
-                                    <overWrite>false</overWrite>
-                                    <outputDirectory>${project.basedir}/src/main/resources/static</outputDirectory>
-                                    <includes>swagger.yml</includes>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>unpack-govuk</id>
                         <phase>generate-resources</phase>
                         <goals>
@@ -149,6 +132,44 @@
                                     <outputDirectory>${project.build.directory}/govuk</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>${openapi-generator.version}</version>
+                <configuration>
+                    <skip>false</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>
+                                ${project.basedir}/src/main/resources/static/swagger.yml
+                            </inputSpec>
+                            <typeMappings>
+                                <typeMapping>string+binary=StreamingResponseBody</typeMapping>
+                            </typeMappings>
+                            <importMappings>
+                                <importMapping>StreamingResponseBody=org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody</importMapping>
+                            </importMappings>
+                            <generatorName>spring</generatorName>
+                            <apiPackage>uk.gov.laa.gpfd.api</apiPackage>
+                            <modelPackage>uk.gov.laa.gpfd.model</modelPackage>
+                            <supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
+                            <configOptions>
+                                <library>spring-boot</library>
+                                <interfaceOnly>true</interfaceOnly>
+                                <dateLibrary>java8</dateLibrary>
+                                <openApiNullable>false</openApiNullable>
+                                <hideGenerationTimestamp>true</hideGenerationTimestamp>
+                                <useJakartaEe>true</useJakartaEe>
+                            </configOptions>
                         </configuration>
                     </execution>
                 </executions>
@@ -327,10 +348,6 @@
             <artifactId>poi-ooxml-full</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>uk.gov.laa</groupId>
-            <artifactId>payforlegalaid-openapi</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
