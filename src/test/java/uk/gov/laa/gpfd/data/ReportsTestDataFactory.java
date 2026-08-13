@@ -1,15 +1,27 @@
 package uk.gov.laa.gpfd.data;
 
-import uk.gov.laa.gpfd.model.*;
-import uk.gov.laa.gpfd.model.excel.*;
-import uk.gov.laa.gpfd.model.ImmutableReport;
-
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+
+import uk.gov.laa.gpfd.model.FileExtension;
+import uk.gov.laa.gpfd.model.ImmutableReport;
+import uk.gov.laa.gpfd.model.ImmutableReportCreator;
+import uk.gov.laa.gpfd.model.ImmutableReportOutputType;
+import uk.gov.laa.gpfd.model.ImmutableReportOwner;
+import uk.gov.laa.gpfd.model.ImmutableReportQuery;
+import uk.gov.laa.gpfd.model.Report;
+import uk.gov.laa.gpfd.model.ReportOutputType;
+import uk.gov.laa.gpfd.model.ReportQuery;
+import uk.gov.laa.gpfd.model.ReportQuerySql;
+import uk.gov.laa.gpfd.model.excel.ExcelTemplate;
+import uk.gov.laa.gpfd.model.excel.ImmutableColumnFormat;
+import uk.gov.laa.gpfd.model.excel.ImmutableExcelColumn;
+import uk.gov.laa.gpfd.model.excel.ImmutableExcelMappingProjection;
+import uk.gov.laa.gpfd.model.excel.ImmutableExcelSheet;
 
 public class ReportsTestDataFactory {
 

@@ -4,11 +4,9 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.simple.JdbcClient;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -29,21 +27,16 @@ final class GetReportsIT extends BaseIT {
             """;
 
     @Autowired
-    @Qualifier("namedMetadataJdbcTemplate")
-    private NamedParameterJdbcTemplate namedMetadataJdbcTemplate;
-
-    @Autowired
-    @Qualifier("metadataJdbcTemplate")
-    private JdbcTemplate metadataJdbcTemplate;
+    @Qualifier("metadataClient")
+    private JdbcClient metadataClient;
 
     @Test
     @SneakyThrows
     void shouldSuccessfullyReturnAllAvailableReports() {
-        var reportsLen = namedMetadataJdbcTemplate.queryForObject(
-                COUNT_ACCESSIBLE_REPORTS_SQL,
-                Map.of("roles", REPORT_ROLES),
-                Integer.class
-        );
+        var reportsLen = metadataClient.sql(COUNT_ACCESSIBLE_REPORTS_SQL)
+                .param("roles", REPORT_ROLES)
+                .query(Integer.class)
+                .single();
 
         performGetRequestWithRoles("/reports", REPORT_ROLES)
                 .andExpect(status().isOk())

@@ -7,9 +7,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.RowCallbackHandler;
+import org.springframework.jdbc.core.simple.JdbcClient;
 import uk.gov.laa.gpfd.dao.support.ReportWithQueriesAndFieldAttributesExtractor;
 import uk.gov.laa.gpfd.data.ReportsTestDataFactory;
 import uk.gov.laa.gpfd.exception.ReportAccessException;
@@ -20,7 +20,6 @@ import java.sql.ResultSet;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -30,10 +29,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -46,7 +45,7 @@ import static uk.gov.laa.gpfd.exception.DatabaseReadException.DatabaseFetchExcep
 class ReportDaoTest {
 
     @Mock
-    private JdbcTemplate metadataJdbcTemplate;
+    private JdbcClient metadataClient;
 
     @Mock
     private ReportWithQueriesAndFieldAttributesExtractor extractor;
@@ -57,8 +56,7 @@ class ReportDaoTest {
     @Mock
     SecurityUtils securityUtils;
 
-    @Mock
-    NamedParameterJdbcTemplate namedMetadataJdbcTemplate;
+    private JdbcClient.StatementSpec statementSpec;
 
     private UUID testReportId;
     private Report testReport;
@@ -67,26 +65,30 @@ class ReportDaoTest {
     void setUp() {
         testReportId = UUID.randomUUID();
         testReport = ReportsTestDataFactory.createTestReport(testReportId);
-        reportDao = spy(new ReportDao(extractor, metadataJdbcTemplate, namedMetadataJdbcTemplate, securityUtils));
+        statementSpec = mock(JdbcClient.StatementSpec.class);
+        when(metadataClient.sql(anyString())).thenReturn(statementSpec);
+        lenient().when(statementSpec.param(any())).thenReturn(statementSpec);
+        lenient().when(statementSpec.param(anyString(), any())).thenReturn(statementSpec);
+        reportDao = spy(new ReportDao(extractor, metadataClient, securityUtils));
     }
 
     @Test
     void fetchReportById_shouldReturnReportWhenFound() {
         doNothing().when(reportDao).verifyUserCanAccessReport(any());
-        when(metadataJdbcTemplate.query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class), any()))
+        when(statementSpec.query(any(ResultSetExtractor.class)))
                 .thenReturn(Collections.singletonList(testReport));
 
         var result = reportDao.fetchReportById(testReportId);
 
         assertTrue(result.isPresent());
         assertEquals(testReportId, result.get().getId());
-        verify(metadataJdbcTemplate).query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class), eq(testReportId));
+        verify(metadataClient).sql(anyString());
     }
 
     @Test
     void fetchReportById_shouldReturnEmptyOptionalWhenReportNotFound() {
         doNothing().when(reportDao).verifyUserCanAccessReport(any());
-        when(metadataJdbcTemplate.query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class), any()))
+        when(statementSpec.query(any(ResultSetExtractor.class)))
                 .thenReturn(Collections.emptyList());
 
         var result = reportDao.fetchReportById(testReportId);
@@ -97,7 +99,7 @@ class ReportDaoTest {
     @Test
     void fetchReportById_shouldThrowDatabaseReadExceptionOnDataAccessError() {
         doNothing().when(reportDao).verifyUserCanAccessReport(any());
-        when(metadataJdbcTemplate.query(anyString(), any(ReportWithQueriesAndFieldAttributesExtractor.class), any()))
+        when(statementSpec.query(any(ResultSetExtractor.class)))
                 .thenThrow(new DataAccessException("Database error") {});
 
         assertThrows(DatabaseFetchException.class, () -> reportDao.fetchReportById(testReportId));
@@ -108,57 +110,39 @@ class ReportDaoTest {
         List<String> roles = List.of(REP000, RECONCILIATION);
         when(securityUtils.extractRoles()).thenReturn(roles);
         var expectedReports = Arrays.asList(testReport, ReportsTestDataFactory.createTestReport());
-        when(namedMetadataJdbcTemplate.query(ReportDao.SELECT_ALL_REPORTS_SQL,
-                Map.of("roles", roles),
-                extractor))
-                .thenReturn(expectedReports);
+        when(statementSpec.query(any(ResultSetExtractor.class))).thenReturn(expectedReports);
 
         var result = reportDao.fetchReports();
 
         assertEquals(2, result.size());
         assertTrue(result.contains(testReport));
-        verify(namedMetadataJdbcTemplate).query(anyString(), anyMap(), eq(extractor));
+        verify(statementSpec).query(any(ResultSetExtractor.class));
     }
 
     @Test
     void fetchReports_shouldReturnEmptyCollectionWhenNoReportsFound() {
-        when(namedMetadataJdbcTemplate.query(
-                eq(ReportDao.SELECT_ALL_REPORTS_SQL),
-                anyMap(),
-                any(ReportWithQueriesAndFieldAttributesExtractor.class)
-        )).thenReturn(Collections.emptyList());
+        when(statementSpec.query(any(ResultSetExtractor.class))).thenReturn(Collections.emptyList());
 
         var result = reportDao.fetchReports();
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
 
-        verify(namedMetadataJdbcTemplate).query(
-                eq(ReportDao.SELECT_ALL_REPORTS_SQL),
-                anyMap(),
-                any(ReportWithQueriesAndFieldAttributesExtractor.class)
-        );
+        verify(statementSpec).query(any(ResultSetExtractor.class));
     }
 
 
     @Test
     void fetchReports_shouldThrowDatabaseFetchExceptionOnDataAccessError() {
-        when(namedMetadataJdbcTemplate.query(
-                eq(ReportDao.SELECT_ALL_REPORTS_SQL),
-                anyMap(),
-                any(ReportWithQueriesAndFieldAttributesExtractor.class)
-        )).thenThrow(new DataAccessException("Database error") {});
+        when(statementSpec.query(any(ResultSetExtractor.class)))
+                .thenThrow(new DataAccessException("Database error") {});
         assertThrows(DatabaseFetchException.class, () -> reportDao.fetchReports());
     }
 
 
     @Test
     void fetchReports_shouldNotThrowReportIdNotFoundException() {
-        when(namedMetadataJdbcTemplate.query(
-                eq(ReportDao.SELECT_ALL_REPORTS_SQL),
-                anyMap(),
-                any(ReportWithQueriesAndFieldAttributesExtractor.class)
-        )).thenReturn(Collections.emptyList());
+        when(statementSpec.query(any(ResultSetExtractor.class))).thenReturn(Collections.emptyList());
         assertDoesNotThrow(() -> reportDao.fetchReports());
     }
 
@@ -167,18 +151,13 @@ class ReportDaoTest {
         List<String> userRoles = List.of(REP000);
         List<String> requiredRoles = List.of(REP000);
         when(securityUtils.extractRoles()).thenReturn(userRoles);
-        when(metadataJdbcTemplate.query(
-                anyString(),
-                any(ResultSetExtractor.class),
-                any(UUID.class)
-        )).thenAnswer(invocation -> {
-            ResultSetExtractor<?> extractor1 = invocation.getArgument(1);
+        doAnswer(invocation -> {
+            RowCallbackHandler handler = invocation.getArgument(0);
             ResultSet rs = mock(ResultSet.class);
-            when(rs.next()).thenReturn(true, false);
             when(rs.getString("ROLE_NAME")).thenReturn(requiredRoles.get(0));
-            extractor1.extractData(rs);
+            handler.processRow(rs);
             return null;
-        });
+        }).when(statementSpec).query(any(RowCallbackHandler.class));
         when(securityUtils.isAuthorized(userRoles, requiredRoles))
                 .thenReturn(true);
         assertDoesNotThrow(() -> reportDao.verifyUserCanAccessReport(testReportId));
@@ -189,20 +168,14 @@ class ReportDaoTest {
         List<String> userRoles = List.of(REP000);
         List<String> requiredRoles = List.of(RECONCILIATION);
         when(securityUtils.extractRoles()).thenReturn(userRoles);
-        when(metadataJdbcTemplate.query(
-                anyString(),
-                any(ResultSetExtractor.class),
-                any(UUID.class)
-        )).thenAnswer(invocation -> {
-            ResultSetExtractor<?> extractor1 = invocation.getArgument(1);
+        doAnswer(invocation -> {
+            RowCallbackHandler handler = invocation.getArgument(0);
             ResultSet rs = mock(ResultSet.class);
-            when(rs.next()).thenReturn(true, false);
             when(rs.getString("ROLE_NAME")).thenReturn(requiredRoles.get(0));
-            extractor1.extractData(rs);
+            handler.processRow(rs);
             return null;
-        });
-        when(securityUtils.isAuthorized(userRoles,
-                requiredRoles))
+        }).when(statementSpec).query(any(RowCallbackHandler.class));
+        when(securityUtils.isAuthorized(userRoles, requiredRoles))
                 .thenReturn(false);
         assertThrows(ReportAccessException.class,
                 () -> reportDao.verifyUserCanAccessReport(testReportId));

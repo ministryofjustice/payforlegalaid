@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import uk.gov.laa.pfla.configuration.TrackingDbSetup;
 
@@ -55,14 +56,8 @@ public class TestDatabaseConfig {
     }
 
     @Bean
-    JdbcTemplate metadataJdbcTemplate(@Qualifier("metadataDataSource") DataSource dataSource) {
-        return new JdbcTemplate(dataSource);
-    }
-
-    @Bean
-    NamedParameterJdbcOperations namedMetadataJdbcTemplate(
-            @Qualifier("metadataDataSource") DataSource dataSource) {
-        return new NamedParameterJdbcTemplate(dataSource);
+    JdbcClient metadataClient(@Qualifier("metadataDataSource") DataSource dataSource) {
+        return JdbcClient.create(dataSource);
     }
 
     @Bean
