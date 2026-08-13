@@ -3,7 +3,6 @@ package uk.gov.laa.gpfd.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -21,15 +20,19 @@ import uk.gov.laa.gpfd.services.ReportResponseBuilder;
 import uk.gov.laa.gpfd.services.StreamingService;
 import uk.gov.laa.gpfd.services.s3.FileDownloadService;
 import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
+import uk.gov.laa.gpfd.services.sds.SdsDownloadService;
 import uk.gov.laa.gpfd.services.sds.SdsService;
+import uk.gov.laa.gpfd.services.sds.model.SdsFileDetails;
+import uk.gov.laa.gpfd.services.sds.model.SdsFileVersionDetail;
 import uk.gov.laa.gpfd.services.stream.TrackedStreamService;
 import uk.gov.laa.gpfd.utils.SecurityUtils;
 
-import java.net.URI;
+import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.springframework.http.HttpStatus.FOUND;
 import static uk.gov.laa.gpfd.model.FileExtension.*;
 
 @Slf4j
@@ -45,6 +48,7 @@ public class ReportsController implements ReportsApi {
     private final ReportResponseBuilder reportResponseBuilder;
     private final TrackedStreamService trackedStreamService;
     private final ObjectProvider<SdsService> sdsServiceProvider;
+    private final ObjectProvider<SdsDownloadService> sdsDownloadServiceProvider;
 
     @Override
     public Optional<NativeWebRequest> getRequest() {
@@ -143,9 +147,10 @@ public class ReportsController implements ReportsApi {
         var report = reportDao.fetchReportById(id).orElseThrow(() -> new ReportIdNotFoundException(id));
 
         var sdsService = sdsServiceProvider.getIfAvailable();
-        if (sdsService != null) {
+        var sdsDownloadService = sdsDownloadServiceProvider.getIfAvailable();
+        if (sdsService != null && sdsDownloadService != null) {
             try {
-                return redirectToSdsDownload(report, sdsService);
+                return streamFromSdsDownload(report, sdsService, sdsDownloadService);
             } catch (SdsFileNotFoundException e) {
                 log.info("Report {} not found in SDS, falling back to current S3 download path", id);
             }
@@ -166,8 +171,13 @@ public class ReportsController implements ReportsApi {
         return reportResponseBuilder.buildResponse(trackedStream, filename, fileExtension);
     }
 
-    private ResponseEntity<StreamingResponseBody> redirectToSdsDownload(Report report, SdsService sdsService) {
+    private ResponseEntity<StreamingResponseBody> streamFromSdsDownload(
+            Report report,
+            SdsService sdsService,
+            SdsDownloadService sdsDownloadService) {
         var fileKey = report.getName() + ".csv";
+        var sdsDetails = sdsService.getFileDetails(fileKey);
+        var latestFileDetail = findLatestSdsFileDetail(sdsDetails, fileKey);
         var sdsResponse = sdsService.getFile(fileKey);
         var fileUrl = sdsResponse.getFileURL();
 
@@ -175,9 +185,42 @@ public class ReportsController implements ReportsApi {
             throw new IllegalStateException("SDS response missing fileURL for report " + report.getIdAsString());
         }
 
-        return ResponseEntity.status(FOUND)
-                .header(HttpHeaders.LOCATION, URI.create(fileUrl).toString())
-                .build();
+        var filename = buildSdsFilename(report.getName(), latestFileDetail);
+        var download = sdsDownloadService.download(fileUrl);
+        var reportId = report.getId();
+        var userId = securityUtils.extractUserId();
+        var fileExtension = S3STORAGE;
+
+        StreamingResponseBody rawStream = outputStream -> {
+            try (var inputStream = download.stream()) {
+                inputStream.transferTo(outputStream);
+                outputStream.flush();
+            }
+        };
+
+        StreamingResponseBody trackedStream = trackedStreamService.wrapStream(rawStream, reportId, userId);
+        return download.contentLength() != null
+                ? reportResponseBuilder.buildResponse(trackedStream, filename, fileExtension, download.contentLength())
+                : reportResponseBuilder.buildResponse(trackedStream, filename, fileExtension);
+    }
+
+    private SdsFileVersionDetail findLatestSdsFileDetail(SdsFileDetails sdsDetails, String fileKey) {
+        if (sdsDetails == null) {
+            throw new SdsFileNotFoundException("File not found: " + fileKey);
+        }
+
+        var latestFileDetail = Optional.ofNullable(sdsDetails.files())
+                .orElse(List.of())
+                .stream()
+                .filter(detail -> detail.lastModified() != null)
+                .max(Comparator.comparing(SdsFileVersionDetail::lastModified));
+
+        return latestFileDetail.orElseThrow(() -> new SdsFileNotFoundException("File not found: " + fileKey));
+    }
+
+    private String buildSdsFilename(String reportName, SdsFileVersionDetail latestFileDetail) {
+        var uploadDate = latestFileDetail.lastModified().toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE);
+        return "%s_%s.csv".formatted(reportName, uploadDate);
     }
 
     private ResponseEntity<StreamingResponseBody> fetchS3DownloadResponse(Report report, S3ClientWrapper.S3CsvDownload s3CsvDownload) {

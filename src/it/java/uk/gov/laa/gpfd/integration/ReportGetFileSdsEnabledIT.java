@@ -15,8 +15,11 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import uk.gov.laa.gpfd.exception.sds.SdsFileNotFoundException;
 import uk.gov.laa.gpfd.integration.config.TestS3Config;
+import uk.gov.laa.gpfd.services.sds.SdsDownloadService;
 import uk.gov.laa.gpfd.services.sds.SdsService;
 import uk.gov.laa.gpfd.services.sds.client.model.SdsFileDownloadResponse;
+import uk.gov.laa.gpfd.services.sds.model.SdsFileDetails;
+import uk.gov.laa.gpfd.services.sds.model.SdsFileVersionDetail;
 
 import java.io.ByteArrayInputStream;
 import java.time.Instant;
@@ -58,6 +61,9 @@ final class ReportGetFileSdsEnabledIT extends uk.gov.laa.gpfd.integration.BaseIT
     @MockitoBean
     private SdsService sdsService;
 
+    @MockitoBean
+    private SdsDownloadService sdsDownloadService;
+
     @Test
     @SneakyThrows
     void shouldReturnStableFileEndpointInReportMetadataWhenSdsFeatureFlagEnabled() {
@@ -69,21 +75,36 @@ final class ReportGetFileSdsEnabledIT extends uk.gov.laa.gpfd.integration.BaseIT
 
     @Test
     @SneakyThrows
-    void shouldRedirectToSdsDownloadWhenReportExistsInSds() {
+    void shouldStreamFromSdsDownloadWhenReportExistsInSds() {
+        when(sdsService.getFileDetails("REP012 - Original Submissions Value Report.csv"))
+                .thenReturn(new SdsFileDetails(List.of(
+                        new SdsFileVersionDetail(java.time.OffsetDateTime.parse("2026-08-11T09:00:00Z")),
+                        new SdsFileVersionDetail(java.time.OffsetDateTime.parse("2026-08-12T09:00:00Z"))
+                )));
         when(sdsService.getFile("REP012 - Original Submissions Value Report.csv"))
                 .thenReturn(new SdsFileDownloadResponse().fileURL("https://sds.example.com/presigned/report.csv"));
+        when(sdsDownloadService.download("https://sds.example.com/presigned/report.csv"))
+                .thenReturn(new SdsDownloadService.SdsDownloadResult(
+                        new ByteArrayInputStream("sds-csv".getBytes()),
+                        7L
+                ));
 
-        performGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of("Reconciliation"))
-                .andExpect(status().isFound())
-                .andExpect(header().string("Location", "https://sds.example.com/presigned/report.csv"));
+        performStreamingGetRequestWithRoles("/reports/" + ID_REP012 + "/file", List.of("Reconciliation"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_OCTET_STREAM))
+                .andExpect(header().longValue("Content-Length", 7L))
+                .andExpect(header().string("Content-Disposition", "attachment; filename=\"REP012 - Original Submissions Value Report_2026-08-12.csv\""))
+                .andExpect(content().string("sds-csv"));
 
+        verify(sdsService).getFileDetails("REP012 - Original Submissions Value Report.csv");
         verify(sdsService).getFile("REP012 - Original Submissions Value Report.csv");
+        verify(sdsDownloadService).download("https://sds.example.com/presigned/report.csv");
     }
 
     @Test
     @SneakyThrows
     void shouldFallbackToS3WhenSdsFileDoesNotExist() {
-        when(sdsService.getFile("REP012 - Original Submissions Value Report.csv"))
+        when(sdsService.getFileDetails("REP012 - Original Submissions Value Report.csv"))
                 .thenThrow(new SdsFileNotFoundException("File not found"));
 
         var responseMetadata = GetObjectResponse.builder().contentLength(25L).build();
