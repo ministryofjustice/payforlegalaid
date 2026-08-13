@@ -15,7 +15,6 @@ import uk.gov.laa.gpfd.services.sds.model.SdsFileDetails;
 import uk.gov.laa.gpfd.services.sds.model.SdsFileVersionDetail;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Service class for interacting with the Secure Document Storage (SDS) API.
@@ -44,22 +43,7 @@ public class SdsService {
         try {
             return filesApi.getFile(fileKey);
         } catch (ApiException e) {
-            throw switch (e.getCode()) {
-                case 404 -> {
-                    log.warn("File not found in SDS: {}", fileKey);
-                    yield new SdsFileNotFoundException("File not found: " + fileKey);
-                }
-
-                case 500, 502, 503, 504 -> {
-                    log.error("SDS service error retrieving file '{}': HTTP {}", fileKey, e.getCode(), e);
-                    yield new ServiceUnavailableException("SDS service unavailable: " + e.getMessage());
-                }
-
-                default -> {
-                    log.error("Unexpected error retrieving file '{}': HTTP {}", fileKey, e.getCode(), e);
-                    yield new ServiceUnavailableException("Failed to retrieve file from SDS: " + e.getMessage());
-                }
-            };
+            throw mapFileApiException(e, fileKey, "file", "retrieve file from SDS");
         }
     }
 
@@ -76,31 +60,42 @@ public class SdsService {
 
         try {
             var response = filesApi.getFileDetails(fileKey);
-            var files = response == null ? List.<SdsFileVersionDetail>of() :
-                    Optional.of(response.getVersionHistory())
-                            .orElse(List.of())
-                            .stream()
-                            .map(file -> new SdsFileVersionDetail(file.getLastModified()))
-                            .toList();
+            if (response == null) {
+                return new SdsFileDetails(List.of());
+            }
+
+            var files = response.getVersionHistory().stream()
+                    .map(file -> new SdsFileVersionDetail(file.getLastModified()))
+                    .toList();
             return new SdsFileDetails(files);
         } catch (ApiException e) {
-            throw switch (e.getCode()) {
-                case 404 -> {
-                    log.warn("File details not found in SDS: {}", fileKey);
-                    yield new SdsFileNotFoundException("File not found: " + fileKey);
-                }
-
-                case 500, 502, 503, 504 -> {
-                    log.error("SDS service error retrieving file details '{}': HTTP {}", fileKey, e.getCode(), e);
-                    yield new ServiceUnavailableException("SDS service unavailable: " + e.getMessage());
-                }
-
-                default -> {
-                    log.error("Unexpected error retrieving file details '{}': HTTP {}", fileKey, e.getCode(), e);
-                    yield new ServiceUnavailableException("Failed to retrieve file details from SDS: " + e.getMessage());
-                }
-            };
+            throw mapFileApiException(e, fileKey, "file details", "retrieve file details from SDS");
         }
+    }
+
+    private RuntimeException mapFileApiException(
+            ApiException exception,
+            String fileKey,
+            String targetDescription,
+            String failureAction) {
+        return switch (exception.getCode()) {
+            case 404 -> {
+                log.warn("{} not found in SDS: {}", targetDescription, fileKey);
+                yield new SdsFileNotFoundException("File not found: " + fileKey);
+            }
+            case 500, 502, 503, 504 -> {
+                log.atError()
+                        .setCause(exception)
+                        .log("SDS service error retrieving {} '{}': HTTP {}", targetDescription, fileKey, exception.getCode());
+                yield new ServiceUnavailableException("SDS service unavailable: " + exception.getMessage());
+            }
+            default -> {
+                log.atError()
+                        .setCause(exception)
+                        .log("Unexpected error retrieving {} '{}': HTTP {}", targetDescription, fileKey, exception.getCode());
+                yield new ServiceUnavailableException("Failed to " + failureAction + ": " + exception.getMessage());
+            }
+        };
     }
 
     /**
