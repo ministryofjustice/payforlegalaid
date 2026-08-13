@@ -145,6 +145,7 @@
                 </configuration>
                 <executions>
                     <execution>
+                        <id>generate-gpfd-api</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
@@ -169,6 +170,32 @@
                                 <openApiNullable>false</openApiNullable>
                                 <hideGenerationTimestamp>true</hideGenerationTimestamp>
                                 <useJakartaEe>true</useJakartaEe>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-sds-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/open-api-specification/sds-open-api-specification.yml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <packageName>uk.gov.laa.gpfd.services.sds.client</packageName>
+                            <apiPackage>uk.gov.laa.gpfd.services.sds.client.api</apiPackage>
+                            <modelPackage>uk.gov.laa.gpfd.services.sds.client.model</modelPackage>
+                            <invokerPackage>uk.gov.laa.gpfd.services.sds.client</invokerPackage>
+                            <output>${project.build.directory}/generated-sources/sds-openapi</output>
+                            <globalProperties>
+                                <skipFormModel>false</skipFormModel>
+                                <apiTests>false</apiTests>
+                                <modelTests>false</modelTests>
+                            </globalProperties>
+                            <configOptions>
+                                <useSpringBootFeatures>true</useSpringBootFeatures>
+                                <useJakartaEe>true</useJakartaEe>
+                                <generatePom>false</generatePom>
+                                <serializableModel>true</serializableModel>
                             </configOptions>
                         </configuration>
                     </execution>
@@ -323,39 +350,6 @@
                                 </rule>
                             </rules>
                         </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- OpenAPI Generator for SDS Client -->
-            <plugin>
-                <groupId>org.openapitools</groupId>
-                <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>7.1.0</version>
-                <configuration>
-                    <inputSpec>${project.basedir}/open-api-specification/sds-open-api-specification.yml</inputSpec>
-                    <generatorName>java</generatorName>
-                    <packageName>uk.gov.laa.gpfd.services.sds.client</packageName>
-                    <apiPackage>uk.gov.laa.gpfd.services.sds.client.api</apiPackage>
-                    <modelPackage>uk.gov.laa.gpfd.services.sds.client.model</modelPackage>
-                    <invokerPackage>uk.gov.laa.gpfd.services.sds.client</invokerPackage>
-                    <output>${project.build.directory}/generated-sources/sds-openapi</output>
-                    <globalProperties>
-                        <skipFormModel>false</skipFormModel>
-                        <apiTests>false</apiTests>
-                        <modelTests>false</modelTests>
-                    </globalProperties>
-                    <configOptions>
-                        <useSpringBootFeatures>true</useSpringBootFeatures>
-                        <useJakartaEe>true</useJakartaEe>
-                        <generatePom>false</generatePom>
-                        <serializableModel>true</serializableModel>
-                    </configOptions>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>
