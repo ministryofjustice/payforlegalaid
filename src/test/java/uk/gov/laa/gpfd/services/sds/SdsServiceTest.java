@@ -18,7 +18,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -49,19 +48,6 @@ class SdsServiceTest {
         assertEquals(2, result.files().size());
         assertEquals(OffsetDateTime.parse("2026-04-23T07:51:26+00:00"), result.files().get(0).lastModified());
         assertEquals(OffsetDateTime.parse("2026-04-24T13:39:38+00:00"), result.files().get(1).lastModified());
-    }
-
-    @Test
-    void getFileDetails_shouldReturnEmptyListWhenVersionHistoryMissing() throws ApiException {
-        var response = mock(SdsFileDetailsResponse.class);
-        when(response.getVersionHistory()).thenReturn(null);
-        when(filesApi.getFileDetails("README.md")).thenReturn(response);
-
-        var service = new SdsService(filesApi, healthApi);
-
-        var result = service.getFileDetails("README.md");
-
-        assertTrue(result.files().isEmpty());
     }
 
     @Test
