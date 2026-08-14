@@ -1,6 +1,5 @@
 package uk.gov.laa.gpfd.config;
 
-import liquibase.integration.spring.SpringLiquibase;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -9,18 +8,17 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.sql.DataSource;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.Ordered;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -30,7 +28,6 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.web.client.RestTemplate;
@@ -40,8 +37,8 @@ import oracle.ucp.jdbc.PoolDataSource;
 import oracle.ucp.jdbc.PoolDataSourceFactory;
 import uk.gov.laa.gpfd.dao.JdbcWorkbookDataStreamer;
 import uk.gov.laa.gpfd.dao.ReportDao;
-import static uk.gov.laa.gpfd.dao.sql.ChannelRowHandler.forSheet;
 import uk.gov.laa.gpfd.dao.ReportTrackingDao;
+import static uk.gov.laa.gpfd.dao.sql.ChannelRowHandler.forSheet;
 import uk.gov.laa.gpfd.dao.sql.core.StatementPolicy;
 import uk.gov.laa.gpfd.model.FieldProjection;
 import uk.gov.laa.gpfd.model.FileExtension;
@@ -76,9 +73,6 @@ import uk.gov.laa.gpfd.utils.WorkbookFactory;
  */
 @Configuration
 public class AppConfig {
-    @Value("${spring.liquibase.changelog:}")
-    private String liquibaseChangeLog;
-
     @Value("${excel.security.compression-ratio:0.001}")
     private double allowedCompressionRatio;
 
@@ -170,22 +164,6 @@ public class AppConfig {
                 return forSheet(sheet, list);
             }
         };
-    }
-
-    /**
-     * Configures a write-enabled {@link DataSource} using properties prefixed with
-     * "gpfd.datasource.write" in the application's configuration file.
-     * <p>
-     * This data source is intended for write operations in the database, such as inserts and updates.
-     * In practice, it is currently only used by Test and Local profiles to set up the local db.
-     * </p>
-     *
-     * @return a configured {@link DataSource} for write operations.
-     */
-    @Bean
-    @ConfigurationProperties(prefix = "gpfd.datasource.write")
-    DataSource writeDataSource() {
-        return new DriverManagerDataSource();
     }
 
     /**
@@ -284,21 +262,6 @@ public class AppConfig {
     @Bean
     public NamedParameterJdbcOperations namedParameterJdbcOperations(@Qualifier("readOnlyDataSource") DataSource dataSource) {
         return new NamedParameterJdbcTemplate(dataSource);
-    }
-
-    /**
-     * Configures a {@link JdbcTemplate} for write-enabled database operations.
-     * <p>
-     * The {@code JdbcTemplate} is built on the {@code writeDataSource} and simplifies
-     * executing updates and inserts into the database.
-     * </p>
-     *
-     * @param dataSource the write-enabled {@link DataSource} to be used by the {@link JdbcTemplate}.
-     * @return a configured {@link JdbcTemplate} for write-enabled operations.
-     */
-    @Bean
-    JdbcTemplate writeJdbcTemplate(@Qualifier("writeDataSource") DataSource dataSource) {
-        return new JdbcTemplate(dataSource);
     }
 
     /**
@@ -504,31 +467,6 @@ public class AppConfig {
     @Bean
     public StrategyFactory<FileExtension, DataStream> streamStrategyFactory(Collection<DataStream> strategies) {
         return StrategyFactory.createGenericStrategyFactory(strategies, DataStream::getFormat);
-    }
-
-    /**
-     * Creates and configures a {@link SpringLiquibase} bean to be used for database,
-     * if the property `spring.liquibase.enabled` is set to `true` in the application properties.
-     *
-     * This method will set the data source to the specified {@link DataSource} bean, configure the
-     * change log file to be used by Liquibase, and ensure that the migrations are executed by
-     * setting {@code setShouldRun(true)}.
-     *
-     * @param dataSource The {@link DataSource} bean to be used by Liquibase for database connectivity.
-     * @return A configured {@link SpringLiquibase} instance ready for migration.
-     *
-     * @see SpringLiquibase
-     * @see DataSource
-     */
-    @Bean
-    @Primary
-    @ConditionalOnProperty(name = "spring.liquibase.enabled", havingValue = "true")
-    public SpringLiquibase liquibase(@Qualifier("writeDataSource") DataSource dataSource) {
-        SpringLiquibase liquibase = new SpringLiquibase();
-        liquibase.setDataSource(dataSource);
-        liquibase.setChangeLog(liquibaseChangeLog);
-        liquibase.setShouldRun(true);
-        return liquibase;
     }
 
     /**

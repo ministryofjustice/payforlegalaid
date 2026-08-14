@@ -21,14 +21,11 @@ with the correct roles, will allow them to access the reports.
 
 ## Database
 
-GPFD currently uses two sets of MOJFIN database user credentials, defined in the application properties:
-
-1. 'read-only', which is used to access reports data through db views created in MOJFIN
-2. 'write' which is used during setup to write updates (via Liquibase scripts) to the custom GPFD tables created in MOJFIN
+GPFD uses read-only MOJFIN database credentials to access report data through database views.
 
 There are multiple GPFD tables - see the [Database Design page](https://dsdmoj.atlassian.net/wiki/spaces/LPF/pages/5481922635/Database+Design)
 
-The GPFD table definitions and data are stored in the [data repository](https://github.com/ministryofjustice/payforlegalaid-data)
+The GPFD table definitions and data are stored in the [data repository](https://github.com/ministryofjustice/payforlegalaid-data). Deployed environments do not run Liquibase against MOJFIN.
 
 There is an RDS database used to store Report Tracking information.
 

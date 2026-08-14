@@ -1,29 +1,34 @@
 package uk.gov.laa.gpfd.utils;
 
+import java.sql.Connection;
+
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+
 import liquibase.CatalogAndSchema;
 import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-
-import javax.sql.DataSource;
-import java.sql.Connection;
 
 @Component
-@RequiredArgsConstructor
 public class DatabaseUtils {
 
-  private final DataSource writeDataSource;
+  private final DataSource readOnlyDataSource;
+
+  public DatabaseUtils(@Qualifier("readOnlyDataSource") DataSource readOnlyDataSource) {
+    this.readOnlyDataSource = readOnlyDataSource;
+  }
 
   private static Liquibase liquibase;
   private static Connection connection;
 
   public void setUpMockMojfinDatabase() {
     try {
-      connection = writeDataSource.getConnection();
+      connection = readOnlyDataSource.getConnection();
       Database database = new liquibase.database.core.H2Database(); // or OracleDatabase, PostgresDatabase, etc.
       database.setConnection(new JdbcConnection(connection));
 
