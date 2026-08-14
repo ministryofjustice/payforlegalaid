@@ -10,6 +10,8 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import uk.gov.laa.gpfd.utils.RequestLogUtils;
 
+import static uk.gov.laa.gpfd.utils.LogSanitiser.sanitise;
+
 @Slf4j
 @Component
 public class RequestResponseInterceptor implements HandlerInterceptor {
@@ -70,14 +72,5 @@ public class RequestResponseInterceptor implements HandlerInterceptor {
             return logBuilder.addKeyValue("handler", handlerMethod.getMethod().getName());
         }
         return logBuilder;
-    }
-
-    String sanitise(String value) {
-        if (value == null) {
-            return null;
-        }
-
-        // Prevent CRLF / log forging attacks
-        return value.replaceAll("\\p{Cntrl}", "_");
     }
 }

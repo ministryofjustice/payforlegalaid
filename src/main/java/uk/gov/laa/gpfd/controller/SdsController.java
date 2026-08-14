@@ -12,6 +12,8 @@ import uk.gov.laa.gpfd.services.sds.SdsService;
 import uk.gov.laa.gpfd.services.sds.client.model.SdsFileDownloadResponse;
 import uk.gov.laa.gpfd.services.sds.client.model.SdsHealthResponse;
 
+import static uk.gov.laa.gpfd.utils.LogSanitiser.sanitise;
+
 /**
  * REST controller for Secure Document Storage (SDS) operations.
  * Provides endpoints to interact with the SDS API.
@@ -40,7 +42,7 @@ public class SdsController {
     @GetMapping("/files/{fileKey}")
     public ResponseEntity<SdsFileDownloadResponse> getFile(
             @PathVariable String fileKey) {
-        log.info("Retrieving file '{}' from SDS", fileKey);
+        log.info("Retrieving file '{}' from SDS", sanitise(fileKey));
         SdsFileDownloadResponse response = sdsService.getFile(fileKey);
         return ResponseEntity.ok(response);
     }
@@ -62,4 +64,3 @@ public class SdsController {
         return ResponseEntity.ok(response);
     }
 }
-

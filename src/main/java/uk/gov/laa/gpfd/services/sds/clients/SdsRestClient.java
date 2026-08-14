@@ -10,6 +10,7 @@ import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.RestClient;
+import uk.gov.laa.gpfd.utils.LogSanitiser;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -17,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static uk.gov.laa.gpfd.utils.LogSanitiser.sanitise;
 
 /**
  * Configuration for SDS RestClient with request/response logging and header sanitization.
@@ -72,7 +75,7 @@ public class SdsRestClient {
 
             long startTime = System.currentTimeMillis();
             String method = request.getMethod().name();
-            String uri = request.getURI().toString();
+            String uri = sanitise(request.getURI().toString());
 
             if (log.isDebugEnabled()) {
                 log.atDebug()
@@ -125,7 +128,7 @@ public class SdsRestClient {
                         .addKeyValue(HTTP_REQUEST_METHOD, method)
                         .addKeyValue(URL_FULL, uri)
                         .addKeyValue(EVENT_DURATION, duration)
-                        .addKeyValue(ERROR_MESSAGE, e.getMessage())
+                        .addKeyValue(ERROR_MESSAGE, sanitise(e.getMessage()))
                         .setCause(e)
                         .log("Outbound request failed");
                 throw e;
@@ -159,7 +162,9 @@ public class SdsRestClient {
             boolean isSensitive = SENSITIVE_HEADERS.stream().anyMatch(lowerKey::contains);
 
             List<String> sanitizedValues = isSensitive ? List.of("[REDACTED]") : values;
-            return key + "=" + sanitizedValues;
+            var cleanKey = sanitise(key);
+            var cleanValues = sanitizedValues.stream().map(LogSanitiser::sanitise).toList();
+            return cleanKey + "=" + cleanValues;
         }
     }
 }

@@ -16,6 +16,8 @@ import uk.gov.laa.gpfd.services.sds.model.SdsFileVersionDetail;
 
 import java.util.List;
 
+import static uk.gov.laa.gpfd.utils.LogSanitiser.sanitise;
+
 /**
  * Service class for interacting with the Secure Document Storage (SDS) API.
  * Uses generated OpenAPI client for type-safe API calls.
@@ -38,7 +40,7 @@ public class SdsService {
      * @throws ServiceUnavailableException if SDS is unavailable or returns a server error
      */
     public SdsFileDownloadResponse getFile(String fileKey) {
-        log.debug("Retrieving file from SDS: {}", fileKey);
+        log.debug("Retrieving file from SDS: {}", sanitise(fileKey));
 
         try {
             return filesApi.getFile(fileKey);
@@ -56,7 +58,7 @@ public class SdsService {
      * @throws ServiceUnavailableException if SDS is unavailable or returns a server error
      */
     public SdsFileDetails getFileDetails(String fileKey) {
-        log.debug("Retrieving file details from SDS: {}", fileKey);
+        log.debug("Retrieving file details from SDS: {}", sanitise(fileKey));
 
         try {
             var response = filesApi.getFileDetails(fileKey);
@@ -80,19 +82,21 @@ public class SdsService {
             String failureAction) {
         return switch (exception.getCode()) {
             case 404 -> {
-                log.warn("{} not found in SDS: {}", targetDescription, fileKey);
+                log.warn("{} not found in SDS: {}", targetDescription, sanitise(fileKey));
                 yield new SdsFileNotFoundException("File not found: " + fileKey);
             }
             case 500, 502, 503, 504 -> {
                 log.atError()
                         .setCause(exception)
-                        .log("SDS service error retrieving {} '{}': HTTP {}", targetDescription, fileKey, exception.getCode());
+                        .log("SDS service error retrieving {} '{}': HTTP {}",
+                                targetDescription, sanitise(fileKey), exception.getCode());
                 yield new ServiceUnavailableException("SDS service unavailable: " + exception.getMessage());
             }
             default -> {
                 log.atError()
                         .setCause(exception)
-                        .log("Unexpected error retrieving {} '{}': HTTP {}", targetDescription, fileKey, exception.getCode());
+                        .log("Unexpected error retrieving {} '{}': HTTP {}",
+                                targetDescription, sanitise(fileKey), exception.getCode());
                 yield new ServiceUnavailableException("Failed to " + failureAction + ": " + exception.getMessage());
             }
         };
