@@ -11,7 +11,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
+import uk.gov.laa.gpfd.utils.LogSanitiser;
 import uk.gov.laa.gpfd.utils.RequestLogUtils;
 
 import java.util.List;
@@ -62,9 +64,8 @@ class RequestResponseInterceptorTest {
 
     @Test
     void shouldSanitiseControlCharacters() {
-        RequestResponseInterceptor interceptor = new RequestResponseInterceptor();
-        String sanitized = interceptor.sanitise("/reports/\r\nFAKE");
-        assertEquals("/reports/__FAKE", sanitized);
+        String sanitised = LogSanitiser.sanitise("/reports/\r\nFAKE");
+        assertEquals("/reports/__FAKE", sanitised);
     }
 
     @Test
