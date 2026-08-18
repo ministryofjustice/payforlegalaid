@@ -66,7 +66,7 @@
                         <include>**/*Test.java</include>
                         <include>**/*IT.java</include>
                     </includes>
-                    <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+                    <argLine>@{argLine} --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
                     <systemPropertyVariables>
                         <cucumber.publish.quiet>true</cucumber.publish.quiet>
                     </systemPropertyVariables>
@@ -288,27 +288,12 @@
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
-                    <!-- Prepare runtime agent for integration tests -->
-                    <execution>
-                        <id>prepare-agent-integration</id>
-                        <goals>
-                            <goal>prepare-agent-integration</goal>
-                        </goals>
-                    </execution>
                     <!-- Generate coverage report after unit tests -->
                     <execution>
                         <id>report</id>
                         <phase>test</phase>
                         <goals>
                             <goal>report</goal>
-                        </goals>
-                    </execution>
-                    <!-- Generate coverage report after integration tests -->
-                    <execution>
-                        <id>report-integration</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>report-integration</goal>
                         </goals>
                     </execution>
                     <!-- Check coverage against minimum thresholds -->
