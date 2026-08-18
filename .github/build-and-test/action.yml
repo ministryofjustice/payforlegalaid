@@ -30,8 +30,7 @@ runs:
       run: |
         mvn -s .github/settings.xml -ntp -B clean test -Dtest='!*RunCucumberTest'
 
-    - name: Generate JaCoCo Report (development only)
-      if: ${{ github.environment == 'development' }}
+    - name: Generate JaCoCo Report
       env:
         SPRING_PROFILES_ACTIVE: test
         GITHUB_USERNAME: ${{ inputs.github-username }}
@@ -39,9 +38,13 @@ runs:
       shell: bash
       run: mvn -s .github/settings.xml jacoco:report
 
-    - name: Upload JaCoCo Report (development only)
-      if: ${{ github.environment == 'development' }}
-      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@v1.10
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       with:
-        name: jacoco-report-${{ github.job }}-${{ github.run_attempt }}
-        path: target/site/jacoco
+        args: >
+          -Dsonar.projectKey=ministryofjustice_payforlegalaid
+          -Dsonar.organization=ministryofjustice
+          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
