@@ -4,18 +4,22 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import jakarta.annotation.Nullable;
+import org.immutables.value.Value;
 import uk.gov.laa.gpfd.model.excel.ExcelTemplate;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import static org.immutables.value.Value.Immutable;
 
 @Immutable
 public abstract class Report implements Queryable<ReportQuery, Report>, Identifiable {
-    @Nullable
+    @Value.Default
     @Override
-    public abstract Collection<ReportQuery> getQueries();
+    public Collection<ReportQuery> getQueries() {
+        return new ArrayList<>();
+    }
 
     @NotBlank
     public abstract String getName();
