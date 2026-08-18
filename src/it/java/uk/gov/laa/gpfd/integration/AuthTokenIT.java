@@ -15,6 +15,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CCMS_REPORT;
 import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CSV_REPORT;
 import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.REP012ID;
+import static uk.gov.laa.gpfd.security.SilasRoles.RECONCILIATION;
+import static uk.gov.laa.gpfd.security.SilasRoles.REP000;
+import static uk.gov.laa.gpfd.security.SilasRoles.all;
 
 final class AuthTokenIT extends BaseIT {
 
@@ -56,10 +59,10 @@ final class AuthTokenIT extends BaseIT {
     void authenticatedAccess_withValidRolesshouldReturnOk(String description, String endpoint) {
         if (Objects.equals(description, "File download endpoint")) {
             // This will not 200 locally as it's not supported
-            performGetRequestWithRoles(endpoint, List.of("REP000", "Reconciliation"))
+            performGetRequestWithRoles(endpoint, List.of(REP000, RECONCILIATION))
                     .andExpect(status().isNotImplemented());
         } else {
-            performGetRequestWithRoles(endpoint, List.of("REP000", "Financial", "Reconciliation"))
+            performGetRequestWithRoles(endpoint, all())
                     .andExpect(status().isOk());
         }
     }

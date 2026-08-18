@@ -34,17 +34,17 @@
     <changeSet id="test-insert-roles" author="neeta">
         <insert tableName="ROLES" schemaName="GPFD">
             <column name="ROLE_ID" valueNumeric="1"/>
-            <column name="ROLE_NAME" value="REP000"/>
+            <column name="ROLE_NAME" value="Get legal aid data - REP000"/>
         </insert>
 
         <insert tableName="ROLES" schemaName="GPFD">
             <column name="ROLE_ID" valueNumeric="2"/>
-            <column name="ROLE_NAME" value="Reconciliation"/>
+            <column name="ROLE_NAME" value="Get legal aid data - Reconciliation"/>
         </insert>
 
         <insert tableName="ROLES" schemaName="GPFD">
             <column name="ROLE_ID" valueNumeric="3"/>
-            <column name="ROLE_NAME" value="Financial"/>
+            <column name="ROLE_NAME" value="Get legal aid data - Financial"/>
         </insert>
     </changeSet>
 

@@ -13,6 +13,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -201,6 +202,21 @@ public class AppConfig {
     }
 
     /**
+     * Exposes the existing tracking RDS connection for metadata reads.
+     *
+     * <p>Keeping this as its own bean allows test configurations to replace the
+     * metadata connection explicitly, while production continues to use the same RDS.</p>
+     *
+     * @param trackingDataSource the tracking RDS data source
+     * @return the data source used for report metadata
+     */
+    @Bean
+    @ConditionalOnMissingBean(name = "metadataDataSource")
+    DataSource metadataDataSource(@Qualifier("trackingDataSource") DataSource trackingDataSource) {
+        return trackingDataSource;
+    }
+
+    /**
      * Allows JDBC operations on the "trackingDataSource" above.
      *
      * @param dataSource - data source for Postgres RDS DB used for tracking
@@ -209,6 +225,35 @@ public class AppConfig {
     @Bean
     JdbcTemplate trackingJdbcTemplate(@Qualifier("trackingDataSource") DataSource dataSource) {
         return new JdbcTemplate(dataSource);
+    }
+
+    /**
+     * Allows report metadata and RBAC reads to use the tracking RDS.
+     *
+     * <p>The tracking and metadata tables intentionally share the same RDS instance,
+     * but this separately named template prevents metadata reads from being routed to
+     * the MoJFin read-only template.</p>
+     *
+     * @param dataSource the tracking RDS data source containing the metadata tables
+     * @return JDBC template for report metadata reads
+     */
+    @Bean
+    @ConditionalOnMissingBean(name = "metadataJdbcTemplate")
+    JdbcTemplate metadataJdbcTemplate(@Qualifier("metadataDataSource") DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
+    }
+
+    /**
+     * Allows named-parameter metadata queries to use the tracking RDS.
+     *
+     * @param dataSource the tracking RDS data source containing the metadata tables
+     * @return named-parameter JDBC operations for report metadata reads
+     */
+    @Bean
+    @ConditionalOnMissingBean(name = "namedMetadataJdbcTemplate")
+    NamedParameterJdbcOperations namedMetadataJdbcTemplate(
+            @Qualifier("metadataDataSource") DataSource dataSource) {
+        return new NamedParameterJdbcTemplate(dataSource);
     }
 
     /**

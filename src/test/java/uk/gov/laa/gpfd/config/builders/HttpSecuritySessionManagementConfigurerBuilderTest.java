@@ -17,6 +17,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import static uk.gov.laa.gpfd.security.SilasRoles.REP000;
+
 @ActiveProfiles("testauth")
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -44,7 +46,7 @@ class HttpSecuritySessionManagementConfigurerBuilderTest extends BaseMvcTest {
 
         when(reportServiceMock.createReportResponse(reportId)).thenReturn(reportResponseMock);
 
-        performAuthenticatedGet("/reports/" + reportId, List.of("REP000"))
+        performAuthenticatedGet("/reports/" + reportId, List.of(REP000))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(reportId.toString()));
     }
 }

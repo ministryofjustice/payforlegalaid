@@ -14,6 +14,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import static uk.gov.laa.gpfd.security.SilasRoles.FINANCIAL;
+
 @WebMvcTest(PolicyController.class)
 class PolicyControllerTest extends BaseMvcTest {
 
@@ -27,7 +29,7 @@ class PolicyControllerTest extends BaseMvcTest {
 
     @Test
     void cookiesPageResolvesToCookiesHtml() throws Exception {
-        performAuthenticatedGet("/cookies", List.of("Financial"))
+        performAuthenticatedGet("/cookies", List.of(FINANCIAL))
                 .andExpect(status().isOk())
                 .andExpect(view().name("cookies"))
                 .andExpect(model().attribute("gpfdUrl", "http://localhost"));
@@ -35,7 +37,7 @@ class PolicyControllerTest extends BaseMvcTest {
 
     @Test
     void privacyPageResolvesToPrivacyHtml() throws Exception {
-        performAuthenticatedGet("/privacy", List.of("Financial"))
+        performAuthenticatedGet("/privacy", List.of(FINANCIAL))
                 .andExpect(status().isOk())
                 .andExpect(view().name("privacy"))
                 .andExpect(model().attribute("gpfdUrl", "http://localhost"));
@@ -43,7 +45,7 @@ class PolicyControllerTest extends BaseMvcTest {
 
     @Test
     void accessibilityPageResolvesToAccessibilityHtml() throws Exception {
-        performAuthenticatedGet("/accessibility", List.of("Financial"))
+        performAuthenticatedGet("/accessibility", List.of(FINANCIAL))
                 .andExpect(status().isOk())
                 .andExpect(view().name("accessibility"))
                 .andExpect(model().attribute("gpfdUrl", "http://localhost"));
