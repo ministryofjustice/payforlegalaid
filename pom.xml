@@ -281,6 +281,12 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${jacoco-maven-plugin.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>uk/gov/laa/gpfd/api/**</exclude>
+                        <exclude>uk/gov/laa/gpfd/model/**</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <!-- Prepare runtime agent for unit tests -->
                     <execution>
