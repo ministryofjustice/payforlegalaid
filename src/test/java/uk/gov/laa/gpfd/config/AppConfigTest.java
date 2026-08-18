@@ -89,6 +89,20 @@ class AppConfigTest {
     }
 
     @Test
+    void shouldMetadataJdbcTemplateBean() {
+        var jdbcTemplate = applicationContext.getBean("metadataJdbcTemplate", JdbcTemplate.class);
+
+        assertNotNull(jdbcTemplate, "Metadata JDBC template should be created.");
+    }
+
+    @Test
+    void shouldMetadataDataSourceBean() {
+        var dataSource = applicationContext.getBean("metadataDataSource", DataSource.class);
+
+        assertNotNull(dataSource, "Metadata data source should be created.");
+    }
+
+    @Test
     void shouldHaveARestTemplateBeanAndMessageConverters() {
         // Given
         // When
