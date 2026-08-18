@@ -172,7 +172,7 @@ class AppConfigTest {
     void shouldCreateStatementPolicyWithCorrectDetails() {
         var mockConnection = mock(Connection.class);
         var mockPreparedStatement = mock(PreparedStatement.class);
-        when(mockConnection.prepareStatement(any(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)).thenReturn(mockPreparedStatement);
+        when(mockConnection.prepareStatement(any(), anyInt(), anyInt())).thenReturn(mockPreparedStatement);
         var statementPolicy = applicationContext.getBean(StatementPolicy.class);
         var statementCreator = statementPolicy.createStatementCreator("SELECT * FROM test");
         statementCreator.createPreparedStatement(mockConnection);
