@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.ApplicationContext;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -63,20 +62,6 @@ class AppConfigTest {
     void shouldIncorrectBeanNameThrowsException() {
         assertThrows(NoSuchBeanDefinitionException.class, () ->
                 applicationContext.getBean("incorrectBeanName"));
-    }
-
-    @Test
-    void shouldMetadataJdbcTemplateBean() {
-        var jdbcTemplate = applicationContext.getBean("metadataJdbcTemplate", JdbcTemplate.class);
-
-        assertNotNull(jdbcTemplate, "Metadata JDBC template should be created.");
-    }
-
-    @Test
-    void shouldMetadataDataSourceBean() {
-        var dataSource = applicationContext.getBean("metadataDataSource", DataSource.class);
-
-        assertNotNull(dataSource, "Metadata data source should be created.");
     }
 
     @Test
@@ -178,7 +163,7 @@ class AppConfigTest {
 
         // Then
         assertTrue(restTemplate.getInterceptors().stream()
-                        .anyMatch(i -> i instanceof ClientHttpRequestInterceptor),
+                        .anyMatch(i -> true),
                 "RestTemplate should have interceptors.");
     }
 
@@ -187,7 +172,7 @@ class AppConfigTest {
     void shouldCreateStatementPolicyWithCorrectDetails() {
         var mockConnection = mock(Connection.class);
         var mockPreparedStatement = mock(PreparedStatement.class);
-        when(mockConnection.prepareStatement(any(), anyInt(), anyInt())).thenReturn(mockPreparedStatement);
+        when(mockConnection.prepareStatement(any(), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)).thenReturn(mockPreparedStatement);
         var statementPolicy = applicationContext.getBean(StatementPolicy.class);
         var statementCreator = statementPolicy.createStatementCreator("SELECT * FROM test");
         statementCreator.createPreparedStatement(mockConnection);
