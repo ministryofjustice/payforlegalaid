@@ -1,48 +1,36 @@
 package uk.gov.laa.gpfd.integration;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import static uk.gov.laa.gpfd.security.SilasRoles.FINANCIAL;
 
 class ServerSideErrorIT extends BaseIT {
 
-    @Autowired
-    private JdbcTemplate writeJdbcTemplate;
+    @Test
+    void getReportsShouldNotDependOnMojfinGpfdMetadataTables() throws Exception {
+        MvcResult result = performGetRequestWithRoles("/reports", List.of(FINANCIAL))
+                .andReturn();
 
-    @BeforeAll
-    @Override
-    void setUpMojfinDatabase() {
-        writeJdbcTemplate.execute("CREATE SCHEMA IF NOT EXISTS GPFD;"); //Create an empty schema so that we get a 500 error
-    }
-
-    @AfterAll
-    @Override
-    void cleanUpMojfinDatabase() {
-        writeJdbcTemplate.execute("DROP SCHEMA IF EXISTS GPFD CASCADE");
+        assertEquals(200, result.getResponse().getStatus(),
+                "Expected 200 but got " + result.getResponse().getStatus()
+                        + ": " + result.getResponse().getContentAsString());
     }
 
     @Test
-    void getReportsShouldReturn500WhenCannotConnectToDb() throws Exception {
-        performGetRequestWithRoles("/reports", List.of("Financial"))
-                .andExpect(status().isInternalServerError());
-    }
+    void getReportByIdShouldNotDependOnMojfinGpfdMetadataTables() throws Exception {
+        MvcResult result = performGetRequestWithRoles(
+                        "/reports/b36f9bbb-1178-432c-8f99-8090e285f2d3",
+                        List.of(FINANCIAL))
+                .andReturn();
 
-    @Test
-    void getReportWithIdShouldReturn500WhenCannotConnectToDb() throws Exception {
-        performGetRequestWithRoles("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d9", List.of("Financial"))
-                .andExpect(status().isInternalServerError());
-    }
-
-    @Test
-    void getCsvWithIdShouldReturn500WhenCannotConnectToDbForMappingTable() throws Exception {
-        performGetRequestWithRoles("/reports/0d4da9ec-b0b3-4371-af10-f375330d85d9/csv", List.of("Financial"))
-                .andExpect(status().isInternalServerError());
+        assertEquals(200, result.getResponse().getStatus(),
+                "Expected 200 but got " + result.getResponse().getStatus()
+                        + ": " + result.getResponse().getContentAsString());
     }
 
 }

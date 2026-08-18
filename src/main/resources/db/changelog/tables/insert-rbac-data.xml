@@ -8,15 +8,15 @@
     <changeSet id="insert-rbac-data" author="neeta shinde" >
     <insert tableName="ROLES" schemaName="GPFD">
         <column name="ROLE_ID" value="1"/>
-        <column name="ROLE_NAME" value="REP000"/>
+        <column name="ROLE_NAME" value="Get legal aid data - REP000"/>
     </insert>
     <insert tableName="ROLES" schemaName="GPFD">
         <column name="ROLE_ID" value="2"/>
-        <column name="ROLE_NAME" value="Reconciliation"/>
+        <column name="ROLE_NAME" value="Get legal aid data - Reconciliation"/>
     </insert>
     <insert tableName="ROLES" schemaName="GPFD">
         <column name="ROLE_ID" value="3"/>
-        <column name="ROLE_NAME" value="Financial"/>
+        <column name="ROLE_NAME" value="Get legal aid data - Financial"/>
     </insert>
     <insert tableName="REPORT_ROLES" schemaName="GPFD">
         <column name="REPORT_ID" value="b36f9bbb-1178-432c-8f99-8090e285f2d3"/>

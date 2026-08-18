@@ -14,6 +14,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CSV_REPORT;
 
+import static uk.gov.laa.gpfd.security.SilasRoles.all;
+
 final class GetReportsByIdIT extends BaseIT {
 
     @SneakyThrows
@@ -22,7 +24,7 @@ final class GetReportsByIdIT extends BaseIT {
     void shouldReturnOkGivenValidExistedReport(ReportTestData testData) {
         var uri = "/reports/%s".formatted(testData.id());
 
-        performGetRequestWithRoles(uri, List.of("REP000", "Financial", "Reconciliation"))
+        performGetRequestWithRoles(uri, all())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(testData.id()))
                 .andExpect(jsonPath("$.reportName").value(testData.name()))
@@ -35,7 +37,7 @@ final class GetReportsByIdIT extends BaseIT {
     void shouldReturn400WhenGivenInvalidId(String type) {
         var uri = "/reports/%s321/%s".formatted(CSV_REPORT.getReportData().id(), type);
 
-        performGetRequestWithRoles(uri, List.of("REP000", "Financial", "Reconciliation"))
+        performGetRequestWithRoles(uri, all())
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.error")
@@ -46,10 +48,10 @@ final class GetReportsByIdIT extends BaseIT {
     @ParameterizedTest
     @ValueSource(strings = {"csv", "excel"})
     void shouldReturn404WhenNoReportsFound(String type) {
-        var nonExistentReportId = "0d4da9ec-b0b3-4371-af10-321";
+        var nonExistentReportId = "0d4da9ec-b0b3-4371-af10-000000000321";
         var uri = "/reports/%s/%s".formatted(nonExistentReportId, type);
 
-        performGetRequestWithRoles(uri, List.of("REP000", "Financial", "Reconciliation"))
+        performGetRequestWithRoles(uri, all())
                 .andExpect(status().isForbidden())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.error")

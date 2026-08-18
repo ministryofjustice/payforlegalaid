@@ -3,28 +3,44 @@ package uk.gov.laa.gpfd.integration;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import uk.gov.laa.gpfd.integration.verifier.DatabaseVerifier;
-import uk.gov.laa.gpfd.integration.verifier.DatabaseVerifier.Table;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.laa.gpfd.security.SilasRoles.all;
 
 final class GetReportsIT extends BaseIT {
 
+    private static final List<String> REPORT_ROLES = all();
+
+    private static final String COUNT_ACCESSIBLE_REPORTS_SQL = """
+            SELECT COUNT(DISTINCT r.id)
+            FROM glad.reports r
+            INNER JOIN glad.report_roles rr ON r.id = rr.report_id
+            INNER JOIN glad.roles ro ON rr.role_id = ro.role_id
+            WHERE r.active = 'Y' AND ro.role_name IN (:roles)
+            """;
+
     @Autowired
-    private JdbcTemplate jdbc;
+    @Qualifier("namedMetadataJdbcTemplate")
+    private NamedParameterJdbcTemplate namedMetadataJdbcTemplate;
 
     @Test
     @SneakyThrows
     void shouldSuccessfullyReturnAllAvailableReports() {
-        var reportsLen = DatabaseVerifier.rowCountFor(Table.REPORTS).apply(jdbc);
+        var reportsLen = namedMetadataJdbcTemplate.queryForObject(
+                COUNT_ACCESSIBLE_REPORTS_SQL,
+                Map.of("roles", REPORT_ROLES),
+                Integer.class
+        );
 
-        performGetRequestWithRoles("/reports", List.of("REP000", "Financial", "Reconciliation"))
+        performGetRequestWithRoles("/reports", REPORT_ROLES)
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.reportList").isArray())
@@ -34,13 +50,7 @@ final class GetReportsIT extends BaseIT {
     @Test
     @SneakyThrows
     void shouldSuccessfullyReturn200WhenNoReportsFound() {
-        jdbc.update("ALTER TABLE GPFD.REPORTS DROP CONSTRAINT fk_report_output_types_report_id");
-        jdbc.update("ALTER TABLE GPFD.REPORT_GROUPS DROP CONSTRAINT fk_report_groups_report_id");
-        jdbc.update("ALTER TABLE GPFD.REPORT_QUERIES DROP CONSTRAINT fk_report_queries_report_id");
-        jdbc.update("ALTER TABLE GPFD.FIELD_ATTRIBUTES DROP CONSTRAINT fk_field_attributes_report_query_id");
-        jdbc.update("TRUNCATE TABLE GPFD.REPORTS");
-
-        performGetRequestWithRoles("/reports", List.of("REP000", "Reconciliation", "Financial"))
+        performGetRequestWithRoles("/reports", List.of("not-a-report-role"))
                 .andExpect(status().isOk())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().contentType(APPLICATION_JSON))
