@@ -5,12 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zaxxer.hikari.HikariDataSource;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
@@ -32,19 +33,15 @@ import static uk.gov.laa.pfla.client.interceptor.HostInterceptor.withHost;
 public class TestConfig {
 
     @Bean("readOnlyDataSource")
-    @ConfigurationProperties(prefix = "gpfd.datasource.read-only")
-    public DataSource readOnlyDataSource() {
-        return DataSourceBuilder
-                .create()
-                .type(HikariDataSource.class)
-                .build();
+    public DataSource readOnlyDataSource(@Qualifier("writeDataSource") DataSource writeDataSource) {
+        return writeDataSource;
     }
 
     @Bean
     public DataSource writeDataSource() {
         DriverManagerDataSource ds = new DriverManagerDataSource();
         ds.setDriverClassName("org.h2.Driver");
-        ds.setUrl("jdbc:h2:file:~/localGpfdDb;MODE=Oracle");
+        ds.setUrl("jdbc:h2:mem:PayForLegalAidAcceptanceTests;MODE=Oracle;DB_CLOSE_DELAY=-1");
         ds.setUsername("sa");
         ds.setPassword("");
         return ds;
@@ -123,6 +120,24 @@ public class TestConfig {
                 .build();
     }
 
+    @Bean
+    public DataSource metadataDataSource(
+            @Qualifier("trackingDataSource") DataSource dataSource) {
+        return dataSource;
+    }
+
+    @Bean
+    public JdbcTemplate metadataJdbcTemplate(
+            @Qualifier("metadataDataSource") DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
+    }
+
+    @Bean
+    public NamedParameterJdbcOperations namedMetadataJdbcTemplate(
+            @Qualifier("metadataDataSource") DataSource dataSource) {
+        return new NamedParameterJdbcTemplate(dataSource);
+    }
+
     // Manually get Flyway to act on the postgres db
     // Using the default Spring config it was constantly attempting to apply Flyway to the other data sources
     @Bean
@@ -132,8 +147,9 @@ public class TestConfig {
         Flyway flyway = Flyway.configure()
                 .dataSource(dataSource)
                 .schemas("glad")
-                .locations("classpath:flyway/migration/schema")
-                .baselineOnMigrate(true)   // optional, but often useful in ATs
+                .defaultSchema("glad")
+                .locations("classpath:flyway/migration/test")
+                .baselineOnMigrate(true)
                 .load();
 
         flyway.migrate();

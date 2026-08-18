@@ -18,6 +18,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CSV_REPORT;
 
+import static uk.gov.laa.gpfd.security.SilasRoles.FINANCIAL;
+
 class SecurityConfigIT extends BaseIT {
 
     @MockitoBean
@@ -30,7 +32,7 @@ class SecurityConfigIT extends BaseIT {
 
         when(reportManagementService.createReportResponse(reportId)).thenReturn(reportResponseMock);
 
-        performGetRequestWithRoles("/reports/" + reportId, List.of("Financial"))
+        performGetRequestWithRoles("/reports/" + reportId, List.of(FINANCIAL))
                 .andExpect(status().isOk())
                 .andExpect(header().string(
                         "Content-Security-Policy-Report-Only",
@@ -72,7 +74,7 @@ class SecurityConfigIT extends BaseIT {
         mockMvc.perform(get("/csp-report"))
                 .andExpect(status().is3xxRedirection());
 
-        performGetRequestWithRoles("/csp-report", List.of("Financial"))
+        performGetRequestWithRoles("/csp-report", List.of(FINANCIAL))
                 .andExpect(status().isMethodNotAllowed());
     }
 
@@ -114,7 +116,7 @@ class SecurityConfigIT extends BaseIT {
 
         mockMvc.perform(get("/reports")
                         .with(oidcLogin()
-                                .idToken(token -> token.claim("LAA_APP_ROLES", List.of("Financial"))
+                                .idToken(token -> token.claim("LAA_APP_ROLES", List.of(FINANCIAL))
                                         .claim("oid", UUID.randomUUID().toString())))
                         .with(csrf()))
                 .andExpect(status().isOk());

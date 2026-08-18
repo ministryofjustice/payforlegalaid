@@ -56,6 +56,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.laa.gpfd.security.SilasRoles.FINANCIAL;
+import static uk.gov.laa.gpfd.security.SilasRoles.REP000;
 import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.createTestReportWithOutputType;
 import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.csvReportOutput;
 import static uk.gov.laa.gpfd.data.ReportsTestDataFactory.s3ReportOutput;
@@ -126,7 +128,7 @@ class ReportsControllerTest extends BaseMvcTest {
         when(trackedStreamService.wrapStream(any(), any(), any())).thenReturn(responseStream);
         when(reportResponseBuilder.buildResponse(any(), any(), any())).thenReturn(mockResponseEntity);
 
-        var response = performAuthenticatedStreamingGet("/reports/" + reportId + "/csv", List.of("Financial"));
+        var response = performAuthenticatedStreamingGet("/reports/" + reportId + "/csv", List.of(FINANCIAL));
 
         assertEquals(200, response.getResponse().getStatus());
         assertEquals("attachment; filename=data.csv", response.getResponse().getHeader(HttpHeaders.CONTENT_DISPOSITION));
@@ -152,7 +154,7 @@ class ReportsControllerTest extends BaseMvcTest {
         when(reportManagementServiceMock.fetchReportListEntries()).thenReturn(reportListResponseMockList);
 
         // Perform request and assert results
-        performAuthenticatedGet("/reports", List.of("Financial"))
+        performAuthenticatedGet("/reports", List.of(FINANCIAL))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.reportList", hasSize(2)))
                 .andExpect(jsonPath("$.reportList[0].id").value(String.valueOf(reportListEntryMock1.getId())))
                 .andExpect(jsonPath("$.reportList[1].id").value(String.valueOf(reportListEntryMock2.getId())));
@@ -169,7 +171,7 @@ class ReportsControllerTest extends BaseMvcTest {
         when(reportManagementServiceMock.createReportResponse(REPORT_ID)).thenReturn(reportResponseMock);
 
         // Perform request and assert results
-        performAuthenticatedGet("/reports/" + REPORT_ID, List.of("Financial"))
+        performAuthenticatedGet("/reports/" + REPORT_ID, List.of(FINANCIAL))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id")
                         .value(REPORT_ID.toString()))
@@ -201,7 +203,7 @@ class ReportsControllerTest extends BaseMvcTest {
         when(securityUtils.extractUserId()).thenReturn(USER_ID);
         when(reportResponseBuilder.buildResponse(any(), any(), any(), any())).thenReturn(ResponseEntity.ok().body(responseStream));
 
-        var result = performAuthenticatedStreamingGet("/reports/" + reportId + "/file", List.of("Financial"));
+        var result = performAuthenticatedStreamingGet("/reports/" + reportId + "/file", List.of(FINANCIAL));
 
         assertEquals(200, result.getResponse().getStatus());
 
@@ -217,7 +219,7 @@ class ReportsControllerTest extends BaseMvcTest {
     void getReportDownloadByIdReturnsErrorWhenIdInvalid() throws Exception {
         var reportId = "not a uuid";
 
-        performAuthenticatedGet("/reports/" + reportId + "/file", List.of("Financial"))
+        performAuthenticatedGet("/reports/" + reportId + "/file", List.of(FINANCIAL))
                 .andExpect(status().isBadRequest()).andReturn();
     }
 
@@ -236,7 +238,7 @@ class ReportsControllerTest extends BaseMvcTest {
                 .when(reportManagementServiceMock)
                 .validateReportFormat(uuid, FileExtension.XLSX);
 
-        performAuthenticatedGet("/reports/" + uuid + "/excel", List.of("Financial"))
+        performAuthenticatedGet("/reports/" + uuid + "/excel", List.of(FINANCIAL))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value(
                         "Report " + uuid +
@@ -263,7 +265,7 @@ class ReportsControllerTest extends BaseMvcTest {
                 .when(reportManagementServiceMock)
                 .validateReportFormat(uuid, FileExtension.CSV);
 
-        performAuthenticatedGet("/reports/" + uuid + "/csv", List.of("Financial"))
+        performAuthenticatedGet("/reports/" + uuid + "/csv", List.of(FINANCIAL))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value(
                         "Report " + uuid +
@@ -305,7 +307,7 @@ class ReportsControllerTest extends BaseMvcTest {
         when(reportDao.fetchReportById(excelReportId)).thenReturn(Optional.of(report));
 
         // Perform the GET request
-        var result = performAuthenticatedStreamingGet("/reports/"+ excelReportId + "/excel", List.of("Financial"));
+        var result = performAuthenticatedStreamingGet("/reports/"+ excelReportId + "/excel", List.of(FINANCIAL));
 
         assertEquals(200, result.getResponse().getStatus());
 
@@ -330,7 +332,7 @@ class ReportsControllerTest extends BaseMvcTest {
                 .when(reportManagementServiceMock)
                 .validateReportFormat(uuid, FileExtension.S3STORAGE);
 
-        performAuthenticatedGet("/reports/" + uuid + "/file", List.of("Financial"))
+        performAuthenticatedGet("/reports/" + uuid + "/file", List.of(FINANCIAL))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value(
                         "Report " + uuid +
@@ -348,7 +350,7 @@ class ReportsControllerTest extends BaseMvcTest {
     void csvIdGet_shouldReturn403_whenAccessDenied() throws Exception {
         doThrow(new ReportAccessException(REPORT_ID))
                 .when(reportDao).verifyUserCanAccessReport(REPORT_ID);
-        performAuthenticatedGet("/reports/" + REPORT_ID + "/csv", List.of("Financial"))
+        performAuthenticatedGet("/reports/" + REPORT_ID + "/csv", List.of(FINANCIAL))
                 .andExpect(status().isForbidden());
     }
 
@@ -356,7 +358,7 @@ class ReportsControllerTest extends BaseMvcTest {
     void excelIdGet_shouldReturn403_whenAccessDenied() throws Exception {
         doThrow(new ReportAccessException(REPORT_ID))
                 .when(reportDao).verifyUserCanAccessReport(REPORT_ID);
-        performAuthenticatedGet("/reports/" + REPORT_ID + "/excel", List.of("Financial"))
+        performAuthenticatedGet("/reports/" + REPORT_ID + "/excel", List.of(FINANCIAL))
                 .andExpect(status().isForbidden());
     }
 
@@ -366,7 +368,7 @@ class ReportsControllerTest extends BaseMvcTest {
         when(securityUtils.extractUserId()).thenThrow(new AuthenticationIsNullException());
 
         // Perform the GET request
-        performAuthenticatedGet("/reports/" + REPORT_ID + "/csv", List.of("Financial"))
+        performAuthenticatedGet("/reports/" + REPORT_ID + "/csv", List.of(FINANCIAL))
                 .andExpect(status().isInternalServerError());
     }
 
@@ -376,7 +378,7 @@ class ReportsControllerTest extends BaseMvcTest {
         when(securityUtils.extractUserId()).thenThrow(new AuthenticationIsNullException());
 
         // Perform the GET request
-        performAuthenticatedGet("/reports/" + REPORT_ID + "/excel", List.of("Financial"))
+        performAuthenticatedGet("/reports/" + REPORT_ID + "/excel", List.of(FINANCIAL))
                 .andExpect(status().isInternalServerError());
     }
 
@@ -386,7 +388,7 @@ class ReportsControllerTest extends BaseMvcTest {
         when(securityUtils.extractUserId()).thenThrow(new AuthenticationIsNullException());
 
         // Perform the GET request
-        performAuthenticatedGet("/reports/" + REPORT_ID + "/file", List.of("REP000"))
+        performAuthenticatedGet("/reports/" + REPORT_ID + "/file", List.of(REP000))
                 .andExpect(status().isInternalServerError());
     }
 
@@ -415,7 +417,7 @@ class ReportsControllerTest extends BaseMvcTest {
         when(reportDao.fetchReportById(reportId)).thenReturn(Optional.empty());
         when(securityUtils.extractUserId()).thenReturn(USER_ID);
 
-        performAuthenticatedGet("/reports/" + reportId + "/csv", List.of("Financial"))
+        performAuthenticatedGet("/reports/" + reportId + "/csv", List.of(FINANCIAL))
                 .andExpect(status().isNotFound());
 
     }
@@ -446,7 +448,7 @@ class ReportsControllerTest extends BaseMvcTest {
         when(reportDao.fetchReportById(excelReportId)).thenReturn(Optional.empty());
 
         // Perform the GET request
-        performAuthenticatedGet("/reports/" + excelReportId + "/excel", List.of("Financial"))
+        performAuthenticatedGet("/reports/" + excelReportId + "/excel", List.of(FINANCIAL))
                 .andExpect(status().isNotFound());
     }
 
@@ -467,7 +469,7 @@ class ReportsControllerTest extends BaseMvcTest {
         when(s3CsvDownload.getFileName()).thenReturn("file.csv");
         when(securityUtils.extractUserId()).thenReturn(USER_ID);
 
-        performAuthenticatedGet("/reports/" + reportId + "/file", List.of("Financial"))
+        performAuthenticatedGet("/reports/" + reportId + "/file", List.of(FINANCIAL))
                 .andExpect(status().isNotFound());
     }
 
