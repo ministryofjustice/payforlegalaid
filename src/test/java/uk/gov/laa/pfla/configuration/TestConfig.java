@@ -1,7 +1,7 @@
 package uk.gov.laa.pfla.configuration;
 
-import javax.sql.DataSource;
-
+import com.fasterxml.jackson.core.TokenStreamFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -20,13 +20,12 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.test.context.ActiveProfiles;
-
-import com.fasterxml.jackson.core.TokenStreamFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import uk.gov.laa.pfla.client.interceptor.HostInterceptor;
-import static uk.gov.laa.pfla.client.interceptor.HostInterceptor.withHost;
 import uk.gov.laa.pfla.util.JsonDeserializer;
+
+import javax.sql.DataSource;
+
+import static uk.gov.laa.pfla.client.interceptor.HostInterceptor.withHost;
 
 @TestConfiguration
 @ActiveProfiles("testat")
