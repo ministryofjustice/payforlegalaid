@@ -11,6 +11,7 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
@@ -89,10 +90,10 @@ class AppConfigTest {
     }
 
     @Test
-    void shouldMetadataJdbcTemplateBean() {
-        var jdbcTemplate = applicationContext.getBean("metadataJdbcTemplate", JdbcTemplate.class);
+    void shouldMetadataClientBean() {
+        var client = applicationContext.getBean("metadataClient", JdbcClient.class);
 
-        assertNotNull(jdbcTemplate, "Metadata JDBC template should be created.");
+        assertNotNull(client, "Metadata JdbcClient should be created.");
     }
 
     @Test
