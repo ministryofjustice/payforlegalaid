@@ -15,6 +15,9 @@ spec:
         app: gpfd-${ENV_NAME}
     spec:
       serviceAccountName: laa-get-payments-finance-data-${ENV_NAME}-service
+      volumes:
+        - name: tmp
+          emptyDir: {}
       initContainers:
         - name: liquibase
           image: ${REGISTRY}/${DATA_REPOSITORY}:latest
@@ -43,25 +46,25 @@ spec:
                   echo "❌ ERROR: Required database credentials not set"
                   exit 1
               fi
-                            
+
               BASE_FOLDER="/liquibase"
               CHANGELOG_FILENAME="master-changelog.xml"
               CHANGELOG="${BASE_FOLDER}/${CHANGELOG_FILENAME}"
-                                                  
+
               if [ ! -f ${CHANGELOG} ]; then
                 echo "❌ ERROR: Changelog file not found at ${CHANGELOG}"
                 exit 1
               fi
-              
+
               echo "===== Changelog Content ====="
               cat ${CHANGELOG}
               echo "=========="
-              
+
               db_healthcheck() {
-              
+
                 local max_retries=5
                 local retry_delay=5
-              
+
                 for i in $(seq 1 $max_retries); do
                     if liquibase \
                           --url="$MOJFIN_DB_URL" \
@@ -70,19 +73,19 @@ spec:
                           --changelog-file=${CHANGELOG_FILENAME} \
                           --searchPath=${BASE_FOLDER} \
                           status; then
-              
+
                           echo "Database connection established"
                           return 0
                     fi
-              
+
                     echo "⚠️ Attempt $i/$max_retries failed. Retrying in $retry_delay seconds..."
                     sleep $retry_delay
                 done
-              
+
                 echo "❌ Error: Could not establish database connection"
                 exit 1
               }
-              
+
               run_update() {
                   liquibase \
                       --url="$MOJFIN_DB_URL" \
@@ -93,7 +96,7 @@ spec:
                       --searchPath=${BASE_FOLDER} \
                       update
               }
-              
+
               run_validate() {
                   liquibase \
                         --url="$MOJFIN_DB_URL" \
@@ -104,7 +107,7 @@ spec:
                         --searchPath=${BASE_FOLDER} \
                         validate
               }
-                           
+
               echo "Checking database connectivity..."
               db_healthcheck
 
@@ -118,14 +121,18 @@ spec:
                       echo "❌ Liquibase update failed"
                       exit 1
                   fi
-              else 
+              else
                  echo "❌ Error: Changelog validation failed"
                  exit 1
               fi
 
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
           securityContext:
             runAsUser: 1001
             runAsGroup: 1001
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
@@ -223,9 +230,13 @@ spec:
                 secretKeyRef:
                   name: rds-postgresql-instance-output
                   key: database_password
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
           securityContext:
             runAsUser: 1001
             runAsGroup: 1001
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
