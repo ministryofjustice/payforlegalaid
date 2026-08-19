@@ -3,11 +3,10 @@ package uk.gov.laa.gpfd.dao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.jdbc.core.RowCallbackHandler;
+import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Service;
-import uk.gov.laa.gpfd.dao.sql.ResultSetExtractorHelper;
 import uk.gov.laa.gpfd.exception.ReportAccessException;
 import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.utils.SecurityUtils;
@@ -15,7 +14,6 @@ import uk.gov.laa.gpfd.utils.SecurityUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,8 +23,7 @@ import static uk.gov.laa.gpfd.exception.DatabaseReadException.DatabaseFetchExcep
 @Service
 public record ReportDao(
         ResultSetExtractor<Collection<Report>> extractor,
-        @Qualifier("metadataJdbcTemplate") JdbcOperations metadataJdbcTemplate,
-        @Qualifier("namedMetadataJdbcTemplate") NamedParameterJdbcOperations namedMetadataJdbcTemplate,
+        @Qualifier("metadataClient") JdbcClient metadataClient,
         SecurityUtils securityUtils
 ) {
 
@@ -125,7 +122,9 @@ public record ReportDao(
             // Enforce role-based access control for this report
             verifyUserCanAccessReport(reportId);
 
-            return metadataJdbcTemplate.query(SELECT_REPORT_BY_ID, extractor, reportId)
+            return metadataClient.sql(SELECT_REPORT_BY_ID)
+                    .param(reportId)
+                    .query(extractor)
                     .stream()
                     .findFirst();
         } catch (DataAccessException e) {
@@ -145,9 +144,9 @@ public record ReportDao(
         try {
             List<String> roles = securityUtils.extractRoles();
             log.info("Fetching reports from database for RBAC roles: {}", roles);
-            Map<String, Object> params = Map.of("roles", roles);
-
-            return namedMetadataJdbcTemplate.query(SELECT_ALL_REPORTS_SQL, params, extractor);
+            return metadataClient.sql(SELECT_ALL_REPORTS_SQL)
+                    .param("roles", roles)
+                    .query(extractor);
         } catch (DataAccessException e) {
             String errorMessage = "Failed to fetch reports from database";
             log.error("{}: {}", errorMessage, e.getMessage(), e);
@@ -170,12 +169,9 @@ public record ReportDao(
 
     private List<String> loadRequiredRoles(UUID reportId) {
         List<String> roles = new ArrayList<>();
-        metadataJdbcTemplate.query(
-                SELECT_REPORT_ROLES,
-                new ResultSetExtractorHelper<>(rs ->
-                        roles.add(rs.getString("ROLE_NAME"))),
-                reportId
-        );
+        metadataClient.sql(SELECT_REPORT_ROLES)
+                .param(reportId)
+                .query((RowCallbackHandler) rs -> roles.add(rs.getString("ROLE_NAME")));
         return roles;
     }
 
