@@ -27,6 +27,7 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.web.client.RestTemplate;
@@ -205,32 +206,17 @@ public class AppConfig {
     }
 
     /**
-     * Allows report metadata and RBAC reads to use the tracking RDS.
+     * Provides a JDBC client for reading report metadata from the tracking RDS database.
      *
-     * <p>The tracking and metadata tables intentionally share the same RDS instance,
-     * but this separately named template prevents metadata reads from being routed to
-     * the MoJFin read-only template.</p>
+     * <p>Supports both positional and named-parameter queries through a single API.</p>
      *
      * @param dataSource the tracking RDS data source containing the metadata tables
-     * @return JDBC template for report metadata reads
+     * @return a JdbcClient for report metadata access
      */
     @Bean
-    @ConditionalOnMissingBean(name = "metadataJdbcTemplate")
-    JdbcTemplate metadataJdbcTemplate(@Qualifier("metadataDataSource") DataSource dataSource) {
-        return new JdbcTemplate(dataSource);
-    }
-
-    /**
-     * Allows named-parameter metadata queries to use the tracking RDS.
-     *
-     * @param dataSource the tracking RDS data source containing the metadata tables
-     * @return named-parameter JDBC operations for report metadata reads
-     */
-    @Bean
-    @ConditionalOnMissingBean(name = "namedMetadataJdbcTemplate")
-    NamedParameterJdbcOperations namedMetadataJdbcTemplate(
-            @Qualifier("metadataDataSource") DataSource dataSource) {
-        return new NamedParameterJdbcTemplate(dataSource);
+    @ConditionalOnMissingBean(name = "metadataClient")
+    JdbcClient metadataClient(@Qualifier("metadataDataSource") DataSource dataSource) {
+        return JdbcClient.create(dataSource);
     }
 
     /**
