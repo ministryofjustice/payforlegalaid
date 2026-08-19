@@ -229,14 +229,12 @@ public class AppConfig {
     }
 
     /**
-     * Provides a unified JDBC client for report metadata reads.
+     * Provides a JDBC client for reading report metadata from the tracking RDS database.
      *
-     * <p>Combines positional and named-parameter query support into a single
-     * fluent API, replacing the separate JdbcTemplate and NamedParameterJdbcTemplate
-     * previously used for metadata reads.</p>
+     * <p>Supports both positional and named-parameter queries through a single API.</p>
      *
      * @param dataSource the tracking RDS data source containing the metadata tables
-     * @return JdbcClient for report metadata reads
+     * @return a JdbcClient for report metadata access
      */
     @Bean
     @ConditionalOnMissingBean(name = "metadataClient")
