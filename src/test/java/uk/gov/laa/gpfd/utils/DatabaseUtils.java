@@ -1,11 +1,5 @@
 package uk.gov.laa.gpfd.utils;
 
-import java.sql.Connection;
-
-import javax.sql.DataSource;
-
-import org.springframework.stereotype.Component;
-
 import liquibase.CatalogAndSchema;
 import liquibase.Liquibase;
 import liquibase.database.Database;
@@ -13,6 +7,10 @@ import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import javax.sql.DataSource;
+import java.sql.Connection;
 
 @Component
 @RequiredArgsConstructor
