@@ -48,7 +48,7 @@ public class TestConfig {
     }
 
     @Bean
-        public JdbcTemplate testJdbcTemplate(
+    public JdbcTemplate testJdbcTemplate(
             @Qualifier("testDataSource") DataSource ds) {
         return new JdbcTemplate(ds);
     }

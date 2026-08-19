@@ -25,7 +25,11 @@ GPFD uses read-only MOJFIN database credentials to access report data through da
 
 There are multiple GPFD tables - see the [Database Design page](https://dsdmoj.atlassian.net/wiki/spaces/LPF/pages/5481922635/Database+Design)
 
-The GPFD table definitions and data are stored in the [data repository](https://github.com/ministryofjustice/payforlegalaid-data). Deployed environments do not run Liquibase against MOJFIN.
+The GPFD metadata table definitions and seed data used by this service are managed through Flyway migrations in
+[`src/main/resources/flyway/migration/schema`](src/main/resources/flyway/migration/schema).
+
+Deployed environments run these migrations against the tracking RDS. They do not run Liquibase against MOJFIN. The application accesses report data in
+MOJFIN using read-only credentials.
 
 There is an RDS database used to store Report Tracking information.
 

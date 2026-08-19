@@ -17,10 +17,10 @@ import liquibase.resource.ClassLoaderResourceAccessor;
 @Component
 public class DatabaseUtils {
 
-  private final DataSource readOnlyDataSource;
+  private final DataSource dataSource;
 
-  public DatabaseUtils(@Qualifier("readOnlyDataSource") DataSource readOnlyDataSource) {
-    this.readOnlyDataSource = readOnlyDataSource;
+  public DatabaseUtils(@Qualifier("readOnlyDataSource") DataSource dataSource) {
+    this.dataSource = dataSource;
   }
 
   private static Liquibase liquibase;
@@ -28,7 +28,7 @@ public class DatabaseUtils {
 
   public void setUpMockMojfinDatabase() {
     try {
-      connection = readOnlyDataSource.getConnection();
+      connection = dataSource.getConnection();
       Database database = new liquibase.database.core.H2Database(); // or OracleDatabase, PostgresDatabase, etc.
       database.setConnection(new JdbcConnection(connection));
 
