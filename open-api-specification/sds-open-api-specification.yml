@@ -1,0 +1,156 @@
+openapi: "3.0.0"
+info:
+  title: Secure Document Storage (SDS) API
+  version: 1.0.0
+  description: External API contract for Secure Document Storage (SDS) service
+
+servers:
+  - url: https://laa-sds-test.apps.live.cloud-platform.service.justice.gov.uk
+    description: Test environment
+
+security:
+  - bearerAuth: []
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      description: Returns the health status of the SDS service
+      operationId: getHealth
+      tags:
+        - Health
+      responses:
+        "200":
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SdsHealthResponse"
+        "500":
+          description: Service error
+
+  /get_file:
+    get:
+      summary: Download a file from SDS
+      description: Retrieve a file from SDS by its file key
+      operationId: getFile
+      tags:
+        - Files
+      parameters:
+        - name: file_key
+          in: query
+          required: true
+          description: The name of the file to retrieve
+          schema:
+            type: string
+          example: "CCMS AP Debtors.csv"
+      responses:
+        "200":
+          description: File retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SdsFileDownloadResponse"
+        "404":
+          description: File not found
+        "500":
+          description: Server error
+
+  /get_file_details:
+    get:
+      summary: Get file details from SDS
+      description: Retrieve metadata for all versions of a file in SDS by its file key
+      operationId: getFileDetails
+      tags:
+        - Files
+      parameters:
+        - name: file_key
+          in: query
+          required: true
+          description: The name of the file to inspect
+          schema:
+            type: string
+          example: "CCMS AP Debtors.csv"
+      responses:
+        "200":
+          description: File details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SdsFileDetailsResponse"
+        "404":
+          description: File not found
+        "500":
+          description: Server error
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: OAuth2 M2M token for client credentials flow
+
+  schemas:
+    SdsHealthResponse:
+      type: object
+      required:
+        - Health
+      properties:
+        Health:
+          type: string
+          description: Health status of the service
+          example: "OK"
+
+    SdsFileDownloadResponse:
+      type: object
+      required:
+        - fileURL
+      properties:
+        fileURL:
+          type: string
+          description: Pre-signed URL to download the file from S3
+          example: "https://laa-sds-glad-uat.s3.amazonaws.com/..."
+
+    SdsFileDetailsResponse:
+      type: object
+      required:
+        - version_history
+      properties:
+        version_history:
+          type: array
+          description: Metadata for each version of the file
+          items:
+            $ref: "#/components/schemas/SdsFileDetail"
+
+    SdsFileDetail:
+      type: object
+      required:
+        - Key
+        - VersionId
+        - IsLatest
+        - Size
+        - LastModified
+      properties:
+        Key:
+          type: string
+          description: File key in SDS
+          example: "CCMS AP Debtors.csv"
+        VersionId:
+          type: string
+          description: SDS object version identifier
+          example: "AZ2.eOOs_UrTIR36qVsTPRm7lJupRZTI"
+        IsLatest:
+          type: boolean
+          description: Whether this is the latest version for the file key
+          example: true
+        Size:
+          type: integer
+          format: int64
+          description: File size in bytes
+          example: 320
+        LastModified:
+          type: string
+          format: date-time
+          description: Last modified timestamp for this version
+          example: "2026-04-24T13:39:38+00:00"

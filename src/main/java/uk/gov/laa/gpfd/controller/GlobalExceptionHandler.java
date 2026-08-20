@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
-import uk.gov.laa.gpfd.utils.RequestLogUtils;
 import uk.gov.laa.gpfd.exception.CsvGenerationException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.DatabaseWriteException;
@@ -34,6 +33,7 @@ import uk.gov.laa.gpfd.model.GetReportDownloadById501Response;
 import uk.gov.laa.gpfd.model.ReportsGet400Response;
 import uk.gov.laa.gpfd.model.ReportsGet404Response;
 import uk.gov.laa.gpfd.model.ReportsGet500Response;
+import uk.gov.laa.gpfd.utils.RequestLogUtils;
 
 import java.sql.SQLSyntaxErrorException;
 
@@ -458,5 +458,4 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(errorResponse);
     }
-
 }

@@ -4,6 +4,7 @@ gpfd:
   redirect-uri-template: "{baseUrl}/login/oauth2/code/gpfd-azure-prod"
   # Note,"gpfd-azure-prod" is also known as the Oauth2 'registrationId'
   security:
+    login-registration-id: gpfd-azure-prod
     cors:
       allowed-origin: https://get-legal-aid-data.service.justice.gov.uk
 
@@ -25,6 +26,9 @@ gpfd:
     permissions:
       rep000: ${PERMISSION_REP000_GROUP_ID}
       submission-reconciliation: ${PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID}
+
+  sds-enabled:
+    enabled: ${GPFD_SDS_ENABLED:false}
 
 spring:
   security:

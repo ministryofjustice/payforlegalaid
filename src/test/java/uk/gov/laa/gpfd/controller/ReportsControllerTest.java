@@ -24,6 +24,7 @@ import uk.gov.laa.gpfd.data.ReportListEntryTestDataFactory;
 import uk.gov.laa.gpfd.data.ReportsTestDataFactory;
 import uk.gov.laa.gpfd.exception.InvalidReportFormatException;
 import uk.gov.laa.gpfd.exception.ReportAccessException;
+import uk.gov.laa.gpfd.exception.sds.SdsFileNotFoundException;
 import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
@@ -32,6 +33,11 @@ import uk.gov.laa.gpfd.services.ReportResponseBuilder;
 import uk.gov.laa.gpfd.services.StreamingService;
 import uk.gov.laa.gpfd.services.s3.FileDownloadService;
 import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
+import uk.gov.laa.gpfd.services.sds.SdsDownloadService;
+import uk.gov.laa.gpfd.services.sds.SdsService;
+import uk.gov.laa.gpfd.services.sds.client.model.SdsFileDownloadResponse;
+import uk.gov.laa.gpfd.services.sds.model.SdsFileDetails;
+import uk.gov.laa.gpfd.services.sds.model.SdsFileVersionDetail;
 import uk.gov.laa.gpfd.services.stream.TrackedStreamService;
 import uk.gov.laa.gpfd.utils.BaseMvcTest;
 import uk.gov.laa.gpfd.utils.SecurityUtils;
@@ -91,6 +97,12 @@ class ReportsControllerTest extends BaseMvcTest {
 
     @MockitoBean
     TrackedStreamService trackedStreamService;
+
+    @MockitoBean
+    SdsService sdsService;
+
+    @MockitoBean
+    SdsDownloadService sdsDownloadService;
 
     @TestConfiguration
     static class AsyncTestConfig implements WebMvcConfigurer {
@@ -181,7 +193,7 @@ class ReportsControllerTest extends BaseMvcTest {
     }
 
     @Test
-    void getReportDownloadByIdReturnsCorrectResponseEntity() throws Exception {
+    void getReportDownloadByIdFallsBackToS3WhenSdsFileNotFound() throws Exception {
         var report = ReportsTestDataFactory.createTestReportWithOutputType(s3ReportOutput);
         var reportId = report.getId();
         var s3CsvDownload = mock(S3ClientWrapper.S3CsvDownload.class);
@@ -195,6 +207,9 @@ class ReportsControllerTest extends BaseMvcTest {
             outputStream.flush();
         };
 
+        doThrow(new SdsFileNotFoundException("File not found: Test Report.csv"))
+                .when(sdsService).getFileDetails("Test Report.csv");
+        doNothing().when(reportDao).verifyUserCanAccessReport(reportId);
         when(fileDownloadService.getFileStreamResponse(reportId)).thenReturn(s3CsvDownload);
         when(reportDao.fetchReportById(reportId)).thenReturn(Optional.of(report));
         when(s3CsvDownload.stream()).thenReturn(mockS3Response);
@@ -210,9 +225,52 @@ class ReportsControllerTest extends BaseMvcTest {
         assertEquals("output!", result.getResponse().getContentAsString());
 
         verify(reportManagementServiceMock).validateReportFormat(reportId, FileExtension.S3STORAGE);
+        verify(sdsService).getFileDetails("Test Report.csv");
+        verify(sdsService, never()).getFile("Test Report.csv");
         verify(fileDownloadService, times(1)).getFileStreamResponse(reportId);
         verify(trackedStreamService, times(1)).wrapStream(any(StreamingResponseBody.class), eq(reportId), eq(USER_ID));
         verify(reportResponseBuilder, times(1)).buildResponse(responseStream, "file.csv", FileExtension.S3STORAGE, 120L);
+    }
+
+    @Test
+    void getReportDownloadByIdStreamsFromSdsWhenFileExists() throws Exception {
+        var report = ReportsTestDataFactory.createTestReportWithOutputType(s3ReportOutput);
+        var reportId = report.getId();
+        var sdsResponse = new SdsFileDownloadResponse().fileURL("https://sds.example.com/presigned/file.csv");
+        var sdsDetails = new SdsFileDetails(List.of(
+                new SdsFileVersionDetail(java.time.OffsetDateTime.parse("2026-08-11T09:00:00Z")),
+                new SdsFileVersionDetail(java.time.OffsetDateTime.parse("2026-08-12T09:00:00Z"))
+        ));
+        var downloadResult = new SdsDownloadService.SdsDownloadResult(
+                new ByteArrayInputStream("sds-output".getBytes()),
+                42L
+        );
+
+        doNothing().when(reportDao).verifyUserCanAccessReport(reportId);
+        when(reportDao.fetchReportById(reportId)).thenReturn(Optional.of(report));
+        when(sdsService.getFileDetails("Test Report.csv")).thenReturn(sdsDetails);
+        when(sdsService.getFile("Test Report.csv")).thenReturn(sdsResponse);
+        when(sdsDownloadService.download("https://sds.example.com/presigned/file.csv")).thenReturn(downloadResult);
+        when(securityUtils.extractUserId()).thenReturn(USER_ID);
+        when(trackedStreamService.wrapStream(any(), any(), any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(reportResponseBuilder.buildResponse(any(), any(), any(), any())).thenAnswer(invocation ->
+                ResponseEntity.ok()
+                        .header("Content-Disposition", "attachment; filename=\"Test Report_2026-08-12.csv\"")
+                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                        .contentLength(42L)
+                        .body((StreamingResponseBody) invocation.getArgument(0)));
+
+        var result = performAuthenticatedStreamingGet("/reports/" + reportId + "/file", List.of("Financial"));
+
+        assertEquals(200, result.getResponse().getStatus());
+        assertEquals("attachment; filename=\"Test Report_2026-08-12.csv\"",
+                result.getResponse().getHeader(HttpHeaders.CONTENT_DISPOSITION));
+        assertEquals("sds-output", result.getResponse().getContentAsString());
+
+        verify(sdsService).getFileDetails("Test Report.csv");
+        verify(sdsService).getFile("Test Report.csv");
+        verify(sdsDownloadService).download("https://sds.example.com/presigned/file.csv");
+        verify(fileDownloadService, never()).getFileStreamResponse(reportId);
     }
 
     @Test
@@ -384,6 +442,11 @@ class ReportsControllerTest extends BaseMvcTest {
 
     @Test
     void downloadFromS3FailsIfFailToGetUserId() throws Exception {
+        var report = ReportsTestDataFactory.createTestReportWithOutputType(s3ReportOutput);
+        doNothing().when(reportDao).verifyUserCanAccessReport(REPORT_ID);
+        when(reportDao.fetchReportById(REPORT_ID)).thenReturn(Optional.of(report));
+        doThrow(new SdsFileNotFoundException("File not found: Test Report.csv"))
+                .when(sdsService).getFileDetails("Test Report.csv");
 
         when(securityUtils.extractUserId()).thenThrow(new AuthenticationIsNullException());
 
@@ -463,6 +526,9 @@ class ReportsControllerTest extends BaseMvcTest {
         outputStream.write("output!".getBytes());
         var mockS3Response = new ResponseInputStream<>(responseMetadata, inputStream);
 
+        doThrow(new SdsFileNotFoundException("File not found: Test Report.csv"))
+                .when(sdsService).getFileDetails("Test Report.csv");
+        doNothing().when(reportDao).verifyUserCanAccessReport(reportId);
         when(fileDownloadService.getFileStreamResponse(reportId)).thenReturn(s3CsvDownload);
         when(reportDao.fetchReportById(reportId)).thenReturn(Optional.empty());
         when(s3CsvDownload.stream()).thenReturn(mockS3Response);

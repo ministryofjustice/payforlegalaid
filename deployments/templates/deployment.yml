@@ -223,6 +223,29 @@ spec:
                 secretKeyRef:
                   name: rds-postgresql-instance-output
                   key: database_password
+            - name: SDS_API_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: ${SECRET_NAME}
+                  key: sds-api-client-id-${ENV_NAME}
+            - name: SDS_API_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: ${SECRET_NAME}
+                  key: sds-api-client-secret-${ENV_NAME}
+            - name: SDS_TENANT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: ${SECRET_NAME}
+                  key: sds-tenant-id-${ENV_NAME}
+            - name: SDS_API_SCOPE
+              value: ${SDS_API_SCOPE}
+            - name: SDS_API_URL
+              value: ${SDS_API_URL}
+            - name: SDS_BUCKET_NAME
+              value: ${SDS_BUCKET_NAME}
+            - name: GPFD_SDS_ENABLED
+              value: "${GPFD_SDS_ENABLED}"
           securityContext:
             runAsUser: 1001
             runAsGroup: 1001

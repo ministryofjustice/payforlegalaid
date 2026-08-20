@@ -33,9 +33,15 @@ import static uk.gov.laa.gpfd.security.SilasRoles.FINANCIAL;
 import static uk.gov.laa.gpfd.security.SilasRoles.RECONCILIATION;
 import static uk.gov.laa.gpfd.utils.ReportIds.ID_REP012;
 
+/**
+ * "gpfd.sds-enabled.enabled=false" flag is set explicitly to ensure that SDS is not used in this test,
+ * as the S3 service is being mocked and SDS is not required for this test.
+ * Removing it will result in the test context failing as SDS will be required to be available for the test to run.
+ * This test is focused on testing the S3 file retrieval functionality and does not require SDS to be enabled.
+ */
 @Import(TestS3Config.class)
 @TestPropertySource(properties = {"gpfd.s3.has-s3-access=true", "AWS_REGION=eu-west-1",
-        "S3_TEMPLATE_STORE=test2", "S3_REPORT_STORE=test"
+        "S3_TEMPLATE_STORE=test2", "S3_REPORT_STORE=test", "gpfd.sds-enabled.enabled=false"
 })
 final class ReportGetFileIT extends BaseIT {
 

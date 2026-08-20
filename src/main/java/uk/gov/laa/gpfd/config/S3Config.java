@@ -23,6 +23,10 @@ import uk.gov.laa.gpfd.services.s3.S3ClientWrapper;
 @ConditionalOnProperty(name = "gpfd.s3.has-s3-access", havingValue = "true")
 @Profile({"!testauth & !testat"})
 public class S3Config {
+
+    @Value("${gpfd.sds-enabled.enabled}")
+    private String sdsEnabled;
+
     /**
      * Creates a {@link TemplateClient} which returns templates from S3.
      *
