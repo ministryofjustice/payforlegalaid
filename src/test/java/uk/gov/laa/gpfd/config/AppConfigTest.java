@@ -12,7 +12,6 @@ import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.JdbcClient;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.laa.gpfd.dao.sql.core.StatementPolicy;
@@ -23,7 +22,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -52,16 +50,6 @@ class AppConfigTest {
     }
 
     @Test
-    void shouldWriteDataSourceBeanWithQualifier() {
-        // Given
-        // When
-        var dataSource = applicationContext.getBean("writeDataSource", DataSource.class);
-
-        // Then
-        assertNotNull(dataSource, "WriteDataSource bean should be created.");
-    }
-
-    @Test
     void shouldJdbcTemplateWithQualifier() {
         // Given
         // When
@@ -75,18 +63,6 @@ class AppConfigTest {
     void shouldIncorrectBeanNameThrowsException() {
         assertThrows(NoSuchBeanDefinitionException.class, () ->
                 applicationContext.getBean("incorrectBeanName"));
-    }
-
-    @Test
-    void shouldMultipleJdbcTemplates() {
-        // Given
-        // When
-        var readOnlyJdbcTemplate = applicationContext.getBean("readOnlyJdbcTemplate", JdbcTemplate.class);
-        var writeJdbcTemplate = applicationContext.getBean("writeJdbcTemplate", JdbcTemplate.class);
-
-        // Then
-        assertNotNull(readOnlyJdbcTemplate, "Read-only JdbcTemplate bean should be created.");
-        assertNotNull(writeJdbcTemplate, "Write-enabled JdbcTemplate bean should be created.");
     }
 
     @Test
@@ -125,17 +101,6 @@ class AppConfigTest {
     }
 
     @Test
-    void shouldWriteDataSourceBean() {
-        // Given
-        // When
-        var dataSource = applicationContext.getBean("writeDataSource", DataSource.class);
-
-        // Then
-        assertNotNull(dataSource, "WriteDataSource bean should be created.");
-        assertInstanceOf(DriverManagerDataSource.class, dataSource, "DataSource should be of type DriverManagerDataSource.");
-    }
-
-    @Test
     void shouldReadOnlyJdbcTemplateBean() {
         // Given
         // When
@@ -146,11 +111,11 @@ class AppConfigTest {
     }
 
     @Test
-    void shouldWriteJdbcTemplateBean() {
-        // Given
-        // When
-        var jdbcTemplate = applicationContext.getBean("writeJdbcTemplate", JdbcTemplate.class);
-        assertNotNull(jdbcTemplate, "WriteJdbcTemplate bean should be created.");
+    void shouldNotCreateWriteDataSourceOrJdbcTemplate() {
+        assertThrows(NoSuchBeanDefinitionException.class, () ->
+                applicationContext.getBean("writeDataSource"));
+        assertThrows(NoSuchBeanDefinitionException.class, () ->
+                applicationContext.getBean("writeJdbcTemplate"));
     }
 
     @Test
