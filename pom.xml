@@ -411,7 +411,7 @@
             <artifactId>jackson-core</artifactId>
             <version>${fasterxml-jackson-databind.version}</version>
         </dependency>
-        <!-- Needed until AWS, Gatling & Spring Azure upgrades to 4.2.16.Final or later -->
+        <!-- Forced upgrades: pins Netty modules to avoid vulnerable transitive versions pulled in by AWS SDK / Gatling -->
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-codec</artifactId>
@@ -440,6 +440,11 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-codec-dns</artifactId>
+            <version>${netty-codec.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-handler</artifactId>
             <version>${netty-codec.version}</version>
         </dependency>
         <dependency>
