@@ -2,7 +2,6 @@ package uk.gov.laa.pfla.configuration;
 
 import com.fasterxml.jackson.core.TokenStreamFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zaxxer.hikari.HikariDataSource;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -10,8 +9,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
@@ -33,12 +31,12 @@ import static uk.gov.laa.pfla.client.interceptor.HostInterceptor.withHost;
 public class TestConfig {
 
     @Bean("readOnlyDataSource")
-    public DataSource readOnlyDataSource(@Qualifier("writeDataSource") DataSource writeDataSource) {
-        return writeDataSource;
+    public DataSource readOnlyDataSource(@Qualifier("testDataSource") DataSource testDataSource) {
+        return testDataSource;
     }
 
-    @Bean
-    public DataSource writeDataSource() {
+    @Bean("testDataSource")
+    public DataSource testDataSource() {
         DriverManagerDataSource ds = new DriverManagerDataSource();
         ds.setDriverClassName("org.h2.Driver");
         ds.setUrl("jdbc:h2:mem:PayForLegalAidAcceptanceTests;MODE=Oracle;DB_CLOSE_DELAY=-1");
@@ -48,15 +46,15 @@ public class TestConfig {
     }
 
     @Bean
-    public JdbcTemplate writeJdbcTemplate(
-            @Qualifier("writeDataSource") DataSource ds) {
+    public JdbcTemplate testJdbcTemplate(
+            @Qualifier("testDataSource") DataSource ds) {
         return new JdbcTemplate(ds);
     }
 
     @Bean
     @Primary
     public JdbcTemplate jdbcTemplate(
-            @Qualifier("writeDataSource") DataSource dataSource) {
+            @Qualifier("testDataSource") DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }
 
@@ -127,15 +125,9 @@ public class TestConfig {
     }
 
     @Bean
-    public JdbcTemplate metadataJdbcTemplate(
+    public JdbcClient metadataClient(
             @Qualifier("metadataDataSource") DataSource dataSource) {
-        return new JdbcTemplate(dataSource);
-    }
-
-    @Bean
-    public NamedParameterJdbcOperations namedMetadataJdbcTemplate(
-            @Qualifier("metadataDataSource") DataSource dataSource) {
-        return new NamedParameterJdbcTemplate(dataSource);
+        return JdbcClient.create(dataSource);
     }
 
     // Manually get Flyway to act on the postgres db
