@@ -66,7 +66,7 @@
                         <include>**/*Test.java</include>
                         <include>**/*IT.java</include>
                     </includes>
-                    <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+                    <argLine>@{argLine} --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
                     <systemPropertyVariables>
                         <cucumber.publish.quiet>true</cucumber.publish.quiet>
                     </systemPropertyVariables>
@@ -281,6 +281,12 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${jacoco-maven-plugin.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>uk/gov/laa/gpfd/api/**</exclude>
+                        <exclude>uk/gov/laa/gpfd/model/**</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <!-- Prepare runtime agent for unit tests -->
                     <execution>
@@ -288,7 +294,7 @@
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
-                    <!-- Generate coverage report after tests -->
+                    <!-- Generate coverage report after unit tests -->
                     <execution>
                         <id>report</id>
                         <phase>test</phase>
