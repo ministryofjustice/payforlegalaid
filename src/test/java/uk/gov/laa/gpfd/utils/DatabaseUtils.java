@@ -6,24 +6,27 @@ import liquibase.database.Database;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 
 @Component
-@RequiredArgsConstructor
 public class DatabaseUtils {
 
-  private final DataSource writeDataSource;
+  private final DataSource dataSource;
+
+  public DatabaseUtils(@Qualifier("readOnlyDataSource") DataSource dataSource) {
+    this.dataSource = dataSource;
+  }
 
   private static Liquibase liquibase;
   private static Connection connection;
 
   public void setUpMockMojfinDatabase() {
     try {
-      connection = writeDataSource.getConnection();
+      connection = dataSource.getConnection();
       Database database = new liquibase.database.core.H2Database(); // or OracleDatabase, PostgresDatabase, etc.
       database.setConnection(new JdbcConnection(connection));
 
