@@ -1,5 +1,23 @@
 # Changelog
 
+## [4.0.0](https://github.com/ministryofjustice/payforlegalaid/compare/v3.2.0...v4.0.0) (2026-08-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* **LPF-1553:** Remove MOJFIN write path ([#600](https://github.com/ministryofjustice/payforlegalaid/issues/600))
+
+### Features
+
+* **LPF-1552:** Metadata application cutover RDS ([#597](https://github.com/ministryofjustice/payforlegalaid/issues/597)) ([01db4b7](https://github.com/ministryofjustice/payforlegalaid/commit/01db4b7b6189ba2c964457957f50f22e05154e09))
+* **LPF-1553:** Remove MOJFIN write path ([#600](https://github.com/ministryofjustice/payforlegalaid/issues/600)) ([00f70c0](https://github.com/ministryofjustice/payforlegalaid/commit/00f70c083aecfa4fa4f088a122cabb4a3072e646))
+
+
+### Bug Fixes
+
+* **bot:** Bump the minor group with 3 updates ([#605](https://github.com/ministryofjustice/payforlegalaid/issues/605)) ([1ee7be1](https://github.com/ministryofjustice/payforlegalaid/commit/1ee7be14754dbdb12785e21a5746e6a347faf55b))
+* **LPF-0000:** Snyk netty fix ([#607](https://github.com/ministryofjustice/payforlegalaid/issues/607)) ([a39128c](https://github.com/ministryofjustice/payforlegalaid/commit/a39128cda5498b3d40938429f9c95e111563d8dd))
+
 ## [3.2.0](https://github.com/ministryofjustice/payforlegalaid/compare/v3.1.0...v3.2.0) (2026-08-13)
 
 
