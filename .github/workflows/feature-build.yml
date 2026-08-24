@@ -22,17 +22,6 @@ jobs:
         env:
           SOCKET_KEY: ${{ secrets.DEV_API_SOCKET_KEY }}
 
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@ffc3010689be73b8e5ae0c57ce35968afd7909e8 # v5.0.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.projectKey=ministryofjustice_payforlegalaid
-            -Dsonar.organization=ministryofjustice
-            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-
       - name: Run acceptance tests
         uses: './.github/run_acceptance_tests'
         with:
