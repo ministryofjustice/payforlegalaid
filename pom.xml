@@ -304,16 +304,16 @@
                             <goal>report</goal>
                         </goals>
                     </execution>
-                    <!-- Check coverage against minimum thresholds -->
+                    <!-- Enforce minimum coverage during Maven verify -->
                     <execution>
                         <id>coverage-check</id>
-                        <phase>test</phase>
+                        <phase>verify</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
                         <configuration>
                             <rules>
-                                <!-- Line coverage minimum: fail build if below threshold -->
+                                <!-- Line and branch coverage minimums -->
                                 <rule>
                                     <element>BUNDLE</element>
                                     <limits>
