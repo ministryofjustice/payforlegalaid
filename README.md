@@ -50,7 +50,7 @@ There is also an H2 database which some unit tests run against, the schema of wh
 - Liquibase
 - AWS CLI
 - Flyway
-- [OpenAPI](https://github.com/ministryofjustice/payforlegalaid-openapi)
+- OpenAPI Generator
 
 ## Architecture
 
@@ -147,7 +147,7 @@ After everything is configured, start the application. When prompted, use your i
 #### Troubleshooting
 
 **Build fails with `invalid target release` error**
-Ensure you are using the correct base image in the Dockerfile (`amazoncorretto:25-alpine`). The OpenAPI dependency requires Java 25 to compile.
+Ensure you are using the correct base image in the Dockerfile (`amazoncorretto:25-alpine`).
 
 **Application exits immediately with `UnsupportedClassVersionError`**
 The runtime image must match the Java version used to compile the app. Ensure the runtime stage uses Java 25.
