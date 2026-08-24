@@ -1,6 +1,7 @@
 package uk.gov.laa.gpfd.utils;
 
 import liquibase.CatalogAndSchema;
+import liquibase.Contexts;
 import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.jvm.JdbcConnection;
@@ -44,7 +45,7 @@ public class DatabaseUtils {
   private static void applyLiquibaseXml(String changeLogFile, Database database)
       throws LiquibaseException {
     liquibase = new Liquibase(changeLogFile, new ClassLoaderResourceAccessor(), database);
-    liquibase.update("test");
+    liquibase.update(new Contexts("test"));
   }
 
   public void cleanUpMockMojfinDatabase() {
