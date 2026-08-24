@@ -45,6 +45,8 @@
         <fasterxml-jackson-annotations.version>2.22</fasterxml-jackson-annotations.version>
         <netty-codec.version>4.2.17.Final</netty-codec.version>
         <jackson-databind.version>3.2.2</jackson-databind.version>
+        <micrometer-tracing-bridge-brave.version>1.7.1</micrometer-tracing-bridge-brave.version>
+        <micrometer-core.version>1.17.1</micrometer-core.version>
     </properties>
 
     <build>
@@ -417,6 +419,11 @@
             <artifactId>jackson-core</artifactId>
             <version>${fasterxml-jackson-databind.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
+            <version>${micrometer-core.version}</version>
+        </dependency>
         <!-- Forced upgrades: pins Netty modules to avoid vulnerable transitive versions pulled in by AWS SDK / Gatling -->
         <dependency>
             <groupId>io.netty</groupId>
@@ -454,6 +461,11 @@
             <version>${netty-codec.version}</version>
         </dependency>
         <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec-socks</artifactId>
+            <version>${netty-codec.version}</version>
+        </dependency>
+        <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson-databind.version}</version>
@@ -483,6 +495,8 @@
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-tracing-bridge-brave</artifactId>
+            <!-- override for snyk's sake temporarily -->
+            <version>${micrometer-tracing-bridge-brave.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
