@@ -52,6 +52,7 @@ public class SecurityConfigTestSetup {
     }
 
     @Bean
+    @SuppressWarnings("deprecation") // Deprecated for prod but fine to use in tests
     public UserDetailsService userDetailsService() {
         var testUser = User.withDefaultPasswordEncoder()
                 .username("test-user")

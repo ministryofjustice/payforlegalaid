@@ -41,6 +41,12 @@
         <Bug pattern="CT_CONSTRUCTOR_THROW"/>
     </Match>
 
+    <!-- Exclude issues in generated ApiUtil (called only with trusted internal example strings) -->
+    <Match>
+        <Class name="uk.gov.laa.gpfd.api.ApiUtil"/>
+        <Bug pattern="XSS_SERVLET,THROWS_METHOD_THROWS_RUNTIMEEXCEPTION"/>
+    </Match>
+
     <!-- Value here is used for logging correlation rather than security decisions so does not apply -->
     <Match>
     <Class name="uk.gov.laa.gpfd.utils.RequestLogUtils"/>
