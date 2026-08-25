@@ -4,6 +4,7 @@ Feature: Retrieve a Single Report
   I want to retrieve details of a specific report
   So that I can view and analyze the report's information
 
+  @Role=REP000
   Scenario: Successfully retrieve details of an existing report with valid authentication
     Given I am authenticated with a valid session
     And a request is made to the reports endpoint

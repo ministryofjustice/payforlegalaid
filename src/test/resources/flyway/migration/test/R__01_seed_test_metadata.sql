@@ -31,7 +31,7 @@ INSERT INTO glad.reports (id, name, template_secure_document_id, report_creation
 INSERT INTO glad.reports (id, name, template_secure_document_id, report_creation_date, num_days_to_keep, description, file_name, active, report_output_type, report_owner_id, report_owner_name, report_owner_email) VALUES ('77ef818d-e35d-47ad-8813-74b9fa675877'::uuid, 'CCMS Third party report', '8b9f0484-819f-4e0f-b60a-0b3f9d30d9ba'::uuid, CURRENT_DATE, '30', 'CCMS Third party report', 'CCMS_THIRD_PARTY_REPORT', 'Y', 'bd098666-94e4-4b0e-822c-8e5dfb04c908'::uuid, '00000000-0000-0000-0000-000000000003'::uuid, 'Teresa Green', 'teresagreen@Justice.gov.uk') ON CONFLICT DO NOTHING;
 INSERT INTO glad.reports (id, name, template_secure_document_id, report_creation_date, description, num_days_to_keep, file_name, active, report_output_type, report_owner_id, report_owner_name, report_owner_email) VALUES ('7073dd13-e325-4863-a05c-a049a815d1f7'::uuid, 'Legal Help contract balances', '7073dd13-e325-4863-a05c-a049a815d1f7'::uuid, CURRENT_DATE, 'Legal Help contract balances', '30', 'LEGAL_HELP_CONTRACT_BALANCES', 'Y', 'bd098666-94e4-4b0e-822c-8e5dfb04c908'::uuid, '00000000-0000-0000-0000-000000000003'::uuid, 'Teresa Green', 'teresagreen@example.org') ON CONFLICT DO NOTHING;
 INSERT INTO glad.reports (id, name, template_secure_document_id, report_creation_date, description, num_days_to_keep, file_name, active, report_output_type, report_owner_id, report_owner_name, report_owner_email) VALUES ('56328b13-254d-435d-813a-5863f94b996d'::uuid, 'Mediation contract balances', 'b380e788-2096-46dc-b58a-21bf771669dc'::uuid, CURRENT_DATE, 'Mediation contract balances', '30', 'MEDIATION_CONTRACT_BALANCES_TEMPLATE', 'Y', 'bd098666-94e4-4b0e-822c-8e5dfb04c908'::uuid, '00000000-0000-0000-0000-000000000003'::uuid, 'Steve Bloggs', 'steve.bloggs@example.org') ON CONFLICT DO NOTHING;
-INSERT INTO glad.reports (id, name, template_secure_document_id, report_creation_date, description, num_days_to_keep, file_name, active, report_output_type, report_owner_id, report_owner_name, report_owner_email) VALUES ('cc55e276-97b0-4dd8-a919-26d4aa373266'::uuid, 'REP012 - Original Submissions Value Report', '00000000-0000-0000-0000-000000000000'::uuid, CURRENT_DATE, 'Original Submissions Value Report', '30', 'Original Submissions Value Report', 'N', '523ed024-74f9-4288-9624-bbfeb04f45d0'::uuid, '00000000-0000-0000-0000-000000000003'::uuid, 'Blah blah', 'email@email.com') ON CONFLICT DO NOTHING;
+INSERT INTO glad.reports (id, name, template_secure_document_id, report_creation_date, description, num_days_to_keep, file_name, active, report_output_type, report_owner_id, report_owner_name, report_owner_email) VALUES ('cc55e276-97b0-4dd8-a919-26d4aa373266'::uuid, 'REP012 - Original Submissions Value Report', '00000000-0000-0000-0000-000000000000'::uuid, CURRENT_DATE, 'Original Submissions Value Report', '30', 'Original Submissions Value Report', 'Y', '523ed024-74f9-4288-9624-bbfeb04f45d0'::uuid, '00000000-0000-0000-0000-000000000003'::uuid, 'Blah blah', 'email@email.com') ON CONFLICT DO NOTHING;
 INSERT INTO glad.reports (id, name, template_secure_document_id, report_creation_date, description, num_days_to_keep, file_name, active, report_output_type, report_owner_id, report_owner_name, report_owner_email) VALUES ('523f38f0-2179-4824-b885-3a38c5e149e8'::uuid, 'REP000 - Combined Data Extract for Submit a Bulk Claim Data', '00000000-0000-0000-0000-000000000000'::uuid, CURRENT_DATE, 'Combined Data Extract for Submit a Bulk Claim Data', '30', 'Bulk Claim Data', 'Y', '523ed024-74f9-4288-9624-bbfeb04f45d0'::uuid, '00000000-0000-0000-0000-000000000003'::uuid, 'Stevie Steve', 'email@email.com') ON CONFLICT DO NOTHING;
 
 -- REPORT_QUERIES
@@ -578,3 +578,12 @@ INSERT INTO glad.report_roles (report_id, role_id) VALUES ('56328b13-254d-435d-8
 INSERT INTO glad.report_roles (report_id, role_id) VALUES ('77ef818d-e35d-47ad-8813-74b9fa675877'::uuid, '3') ON CONFLICT DO NOTHING;
 INSERT INTO glad.report_roles (report_id, role_id) VALUES ('cc55e276-97b0-4dd8-a919-26d4aa373266'::uuid, '2') ON CONFLICT DO NOTHING;
 INSERT INTO glad.report_roles (report_id, role_id) VALUES ('523f38f0-2179-4824-b885-3a38c5e149e8'::uuid, '1') ON CONFLICT DO NOTHING;
+
+UPDATE glad.reports r
+SET active = 'N'
+WHERE EXISTS (
+		SELECT 1
+		FROM glad.report_roles rr
+		WHERE rr.report_id = r.id
+			AND rr.role_id = 3
+);

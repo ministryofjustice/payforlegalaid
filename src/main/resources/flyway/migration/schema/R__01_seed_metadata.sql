@@ -803,3 +803,12 @@ VALUES
     ('c4ba2e89-c106-48a7-8e1d-7c19dbd7710d', 2)
 
     ON CONFLICT (report_id, role_id) DO NOTHING;
+
+UPDATE glad.reports r
+SET active = 'N'
+WHERE EXISTS (
+        SELECT 1
+        FROM glad.report_roles rr
+        WHERE rr.report_id = r.id
+            AND rr.role_id = 3
+);

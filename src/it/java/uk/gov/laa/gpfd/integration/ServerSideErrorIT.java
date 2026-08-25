@@ -22,14 +22,14 @@ class ServerSideErrorIT extends BaseIT {
     }
 
     @Test
-    void getReportByIdShouldNotDependOnMojfinGpfdMetadataTables() throws Exception {
+        void getDisabledFinanceReportByIdShouldReturnNotFound() throws Exception {
         MvcResult result = performGetRequestWithRoles(
                         "/reports/b36f9bbb-1178-432c-8f99-8090e285f2d3",
                         List.of(FINANCIAL))
                 .andReturn();
 
-        assertEquals(200, result.getResponse().getStatus(),
-                "Expected 200 but got " + result.getResponse().getStatus()
+        assertEquals(404, result.getResponse().getStatus(),
+                "Expected 404 but got " + result.getResponse().getStatus()
                         + ": " + result.getResponse().getContentAsString());
     }
 
