@@ -29,6 +29,7 @@ jobs:
         with:
           github-username: ${{ secrets.GITHUB_USERNAME }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-environment: development
 
       - name: Run Snyk security suite
         uses: './.github/snyk-scan'

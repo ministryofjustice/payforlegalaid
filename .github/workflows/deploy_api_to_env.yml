@@ -54,6 +54,7 @@ jobs:
         with:
           github-username: ${{ secrets.GITHUB_USERNAME }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-environment: ${{ inputs.github_environment }}
         env:
           SOCKET_KEY: ${{ secrets.api_socket_key }}
 
