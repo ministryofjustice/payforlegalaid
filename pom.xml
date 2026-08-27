@@ -9,17 +9,15 @@
     <parent>
         <groupId>uk.gov.laa</groupId>
         <artifactId>glad-parent</artifactId>
-        <version>2.1.0</version>
+        <version>2.1.2</version>
         <relativePath/>
     </parent>
 
     <properties>
         <oracle-jdbc.version>23.26.3.0.0</oracle-jdbc.version>
         <h2.version>2.4.240</h2.version>
-        <!-- setting the below overrides spring bom version even though we don't use the value directly in our pom -->
-        <spring-security.version>7.1.0</spring-security.version>
-        <springdoc-oas.version>3.0.3</springdoc-oas.version>
-        <openapi-generator.version>7.24.0</openapi-generator.version>
+        <!-- setting the below overrides spring bom version also -->
+        <spring-security.version>7.1.1</spring-security.version>
 
         <maven-surefire-junit5-tree-reporter.version>1.5.1</maven-surefire-junit5-tree-reporter.version>
         <immutables.version>2.12.2</immutables.version>
@@ -39,14 +37,6 @@
         <coverage.line.minimum>0.80</coverage.line.minimum>
         <coverage.branch.minimum>0.68</coverage.branch.minimum>
 
-        <!-- Snyk vulns -->
-        <httpcore5-h2.version>5.4.3</httpcore5-h2.version>
-        <fasterxml-jackson-databind.version>2.22.2</fasterxml-jackson-databind.version>
-        <fasterxml-jackson-annotations.version>2.22</fasterxml-jackson-annotations.version>
-        <netty-codec.version>4.2.17.Final</netty-codec.version>
-        <jackson-databind.version>3.2.2</jackson-databind.version>
-        <micrometer-tracing-bridge-brave.version>1.7.1</micrometer-tracing-bridge-brave.version>
-        <micrometer-core.version>1.17.1</micrometer-core.version>
     </properties>
 
     <build>
@@ -398,79 +388,6 @@
             <artifactId>spring-boot-starter-flyway</artifactId>
         </dependency>
 
-        <!-- Snyk vulns -->
-        <dependency>
-            <groupId>org.apache.httpcomponents.core5</groupId>
-            <artifactId>httpcore5-h2</artifactId>
-            <version>${httpcore5-h2.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${fasterxml-jackson-databind.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>${fasterxml-jackson-annotations.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>${fasterxml-jackson-databind.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-core</artifactId>
-            <version>${micrometer-core.version}</version>
-        </dependency>
-        <!-- Forced upgrades: pins Netty modules to avoid vulnerable transitive versions pulled in by AWS SDK / Gatling -->
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec</artifactId>
-            <version>${netty-codec.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec-http</artifactId>
-            <version>${netty-codec.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec-http2</artifactId>
-            <version>${netty-codec.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec-http3</artifactId>
-            <version>${netty-codec.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec-compression</artifactId>
-            <version>${netty-codec.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec-dns</artifactId>
-            <version>${netty-codec.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-handler</artifactId>
-            <version>${netty-codec.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec-socks</artifactId>
-            <version>${netty-codec.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>tools.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson-databind.version}</version>
-        </dependency>
-
         <!--  Do not replace with spring-liquibase due to how we configure Liquibase.  -->
         <!--  This will cause dev env to break.-->
         <dependency>
@@ -495,8 +412,6 @@
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-tracing-bridge-brave</artifactId>
-            <!-- override for snyk's sake temporarily -->
-            <version>${micrometer-tracing-bridge-brave.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -513,8 +428,6 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <!-- Spring currently at 42.7.10 - remove version when Spring upgrades -->
-            <version>42.7.13</version>
         </dependency>
 
         <dependency>
@@ -525,10 +438,14 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-oauth2-client</artifactId>
+            <!-- Override Spring Boot version. Need at least 7.1.1 for SNYK-JAVA-ORGSPRINGFRAMEWORKSECURITY-19267391 -->
+            <version>${spring-security.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-oauth2-jose</artifactId>
+            <!-- Override Spring Boot version. Need at least 7.1.1 for SNYK-JAVA-ORGSPRINGFRAMEWORKSECURITY-19268249 -->
+            <version>${spring-security.version}</version>
         </dependency>
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
@@ -685,6 +602,15 @@
             <artifactId>playwright</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- Snyk vulns -->
+        <dependency>
+            <groupId>org.apache.qpid</groupId>
+            <artifactId>proton-j</artifactId>
+            <!-- Needed until Spring Cloud Azure Starter upgrades past 0.35.0, to solve multiple vuln including SNYK-JAVA-ORGAPACHEQPID-19315769 -->
+            <version>0.35.0</version>
+        </dependency>
+
     </dependencies>
 
     <repositories>
