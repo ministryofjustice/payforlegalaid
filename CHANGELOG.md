@@ -1,5 +1,17 @@
 # Changelog
 
+## [4.0.1](https://github.com/ministryofjustice/payforlegalaid/compare/v4.0.0...v4.0.1) (2026-08-27)
+
+
+### Bug Fixes
+
+* **LPF-000:** High vuln snyk issue ([#610](https://github.com/ministryofjustice/payforlegalaid/issues/610)) ([d002347](https://github.com/ministryofjustice/payforlegalaid/commit/d002347eb989db29e76728100a1069b45b9498c5))
+
+
+### Documentation
+
+* **LPF-1573:** clean up stray openapi repo references ([#608](https://github.com/ministryofjustice/payforlegalaid/issues/608)) ([15db8b9](https://github.com/ministryofjustice/payforlegalaid/commit/15db8b91dafa0be0e650008908fa42bbf500ebff))
+
 ## [4.0.0](https://github.com/ministryofjustice/payforlegalaid/compare/v3.2.0...v4.0.0) (2026-08-21)
 
 
