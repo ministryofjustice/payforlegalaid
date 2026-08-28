@@ -15,8 +15,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CCMS_REPORT;
 import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CSV_REPORT;
 import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.REP012ID;
-import static uk.gov.laa.gpfd.security.SilasRoles.RECONCILIATION;
-import static uk.gov.laa.gpfd.security.SilasRoles.REP000;
 import static uk.gov.laa.gpfd.security.SilasRoles.all;
 
 final class AuthTokenIT extends BaseIT {
@@ -57,13 +55,12 @@ final class AuthTokenIT extends BaseIT {
     @MethodSource("securedReportEndpoints")
     @SneakyThrows
     void authenticatedAccess_withValidRolesshouldReturnOk(String description, String endpoint) {
-        if (Objects.equals(description, "File download endpoint")) {
-            // This will not 200 locally as it's not supported
-            performGetRequestWithRoles(endpoint, List.of(REP000, RECONCILIATION))
-                    .andExpect(status().isNotImplemented());
+        if (Objects.equals(description, "Root api endpoint")) {
+            performGetRequestWithRoles(endpoint, all()).andExpect(status().isOk());
+        } else if (Objects.equals(description, "File download endpoint")) {
+            performGetRequestWithRoles(endpoint, all()).andExpect(status().isNotImplemented());
         } else {
-            performGetRequestWithRoles(endpoint, all())
-                    .andExpect(status().isOk());
+            performGetRequestWithRoles(endpoint, all()).andExpect(status().isNotFound());
         }
     }
 
