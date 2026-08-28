@@ -31,7 +31,7 @@
 
         <gatling-maven-plugin.version>4.21.10</gatling-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
-        <spotbugs-maven-plugin.version>4.10.3.0</spotbugs-maven-plugin.version>
+        <spotbugs-maven-plugin.version>4.10.4.0</spotbugs-maven-plugin.version>
         <findsecbugs-plugin.version>1.14.0</findsecbugs-plugin.version>
         <!-- Code coverage thresholds: fail build if coverage falls below these values -->
         <coverage.line.minimum>0.80</coverage.line.minimum>
