@@ -18,7 +18,7 @@ public class RoleSetupHook {
                 .toList();
 
         if (roles.isEmpty()) {
-            roles = List.of(SilasRoles.FINANCIAL);
+            roles = List.of(SilasRoles.REP000);
         }
         RoleRegistry.setRoles(roles);
     }

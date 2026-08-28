@@ -133,6 +133,11 @@ public class UiSteps {
                         descriptorText.contains("(.csv"),
                         "Expected CSV descriptor for link: " + href
                 );
+            } else if (href.contains("/file")) {
+                assertTrue(
+                    descriptorText.contains("file"),
+                    "Expected file descriptor for S3 link: " + href
+                );
             } else {
                 fail("Unexpected download link format: " + href);
             }
