@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.2](https://github.com/ministryofjustice/payforlegalaid/compare/v4.0.1...v4.0.2) (2026-08-28)
+
+
+### Bug Fixes
+
+* **bot:** Bump com.github.spotbugs:spotbugs-maven-plugin from 4.10.3.0 to 4.10.4.0 in the minor group ([#615](https://github.com/ministryofjustice/payforlegalaid/issues/615)) ([b756a81](https://github.com/ministryofjustice/payforlegalaid/commit/b756a81034599635c639d6779c412dddae59047c))
+
 ## [4.0.1](https://github.com/ministryofjustice/payforlegalaid/compare/v4.0.0...v4.0.1) (2026-08-27)
 
 
