@@ -77,15 +77,6 @@
             <column name="ACTIVE" type="VARCHAR(1)"/>
         </createTable>
 
-        <createTable tableName="REPORT_GROUPS" schemaName="GPFD">
-            <column name="REPORT_ID" type="CHAR(36)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="GROUP_ID" type="CHAR(36)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-
         <createTable tableName="REPORT_QUERIES" schemaName="GPFD">
             <column name="ID" type="CHAR(36)">
                 <constraints primaryKey="true" nullable="false"/>
