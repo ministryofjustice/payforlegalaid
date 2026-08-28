@@ -59,7 +59,7 @@ public record ReportDao(
         LEFT JOIN glad.report_queries q ON r.ID = q.REPORT_ID
         LEFT JOIN glad.field_attributes fa ON q.ID = fa.REPORT_QUERY_ID
         LEFT JOIN glad.report_output_types rot ON r.REPORT_OUTPUT_TYPE = rot.ID
-        WHERE r.ID = ?
+        WHERE r.ID = ? AND r.ACTIVE = 'Y'
         ORDER BY q."index" ASC, fa.column_order ASC
     """;
 

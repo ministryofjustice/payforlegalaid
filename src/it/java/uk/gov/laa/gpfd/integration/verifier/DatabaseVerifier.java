@@ -22,8 +22,7 @@ public class DatabaseVerifier {
      */
     public enum Table {
         REPORTS("REPORTS"),
-        REPORT_QUERIES("REPORT_QUERIES"),
-        REPORT_GROUPS("REPORT_GROUPS");
+        REPORT_QUERIES("REPORT_QUERIES");
 
         private final String name;
 
