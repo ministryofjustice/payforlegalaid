@@ -19,6 +19,7 @@ jobs:
         with:
           github-username: ${{ secrets.GITHUB_USERNAME }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-environment: acceptance-tests
         env:
           SOCKET_KEY: ${{ secrets.DEV_API_SOCKET_KEY }}
 
