@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.laa.gpfd.security.SilasRoles.all;
+import static uk.gov.laa.gpfd.security.SilasRoles.FINANCIAL;
 
 final class GetReportsIT extends BaseIT {
 
@@ -54,5 +55,13 @@ final class GetReportsIT extends BaseIT {
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.reportList").isEmpty());
     }
+
+        @Test
+        @SneakyThrows
+        void shouldNotReturnDisabledFinanceReports() {
+                performGetRequestWithRoles("/reports", List.of(FINANCIAL))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.reportList").isEmpty());
+        }
 
 }
