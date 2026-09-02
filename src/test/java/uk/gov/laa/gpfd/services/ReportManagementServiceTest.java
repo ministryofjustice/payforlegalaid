@@ -83,7 +83,7 @@ class ReportManagementServiceTest {
     void validateReportFormat_shouldThrowInvalidReportFormatExceptionWhenCsvReportRequestedAsExcel() {
         // Given
         var reportId = UUID.randomUUID();
-        var csvReport = ReportsTestDataFactory.createTestReportWithOutputType(ReportsTestDataFactory.csvReportOutput);
+        var csvReport = ReportsTestDataFactory.createTestReportWithOutputType(reportId, ReportsTestDataFactory.csvReportOutput);
 
         when(reportDetailsDao.fetchReportById(reportId)).thenReturn(Optional.of(csvReport));
 
@@ -102,7 +102,7 @@ class ReportManagementServiceTest {
     void validateReportFormat_shouldThrowInvalidReportFormatExceptionWhenExcelReportRequestedAsCsv() {
         // Given
         var reportId = UUID.randomUUID();
-        var excelReport = ReportsTestDataFactory.createTestReportWithOutputType(ReportsTestDataFactory.xlsxReportOutput);
+        var excelReport = ReportsTestDataFactory.createTestReportWithOutputType(reportId, ReportsTestDataFactory.xlsxReportOutput);
 
         when(reportDetailsDao.fetchReportById(reportId)).thenReturn(Optional.of(excelReport));
 
@@ -121,7 +121,7 @@ class ReportManagementServiceTest {
     void validateReportFormat_shouldNotThrowExceptionWhenCsvReportRequestedAsCsv() {
         // Given
         var reportId = UUID.randomUUID();
-        var csvReport = ReportsTestDataFactory.createTestReportWithOutputType(ReportsTestDataFactory.csvReportOutput);
+        var csvReport = ReportsTestDataFactory.createTestReportWithOutputType(reportId, ReportsTestDataFactory.csvReportOutput);
 
         when(reportDetailsDao.fetchReportById(reportId)).thenReturn(Optional.of(csvReport));
 
@@ -137,7 +137,7 @@ class ReportManagementServiceTest {
     void validateReportFormat_shouldNotThrowExceptionWhenExcelReportRequestedAsExcel() {
         // Given
         var reportId = UUID.randomUUID();
-        var excelReport = ReportsTestDataFactory.createTestReportWithOutputType(ReportsTestDataFactory.xlsxReportOutput);
+        var excelReport = ReportsTestDataFactory.createTestReportWithOutputType(reportId, ReportsTestDataFactory.xlsxReportOutput);
 
         when(reportDetailsDao.fetchReportById(reportId)).thenReturn(Optional.of(excelReport));
 
@@ -181,7 +181,7 @@ class ReportManagementServiceTest {
     void validateReportFormat_shouldThrowInvalidReportFormatExceptionWhenS3StorageReportRequestedAsExcel() {
         // Given
         var reportId = UUID.randomUUID();
-        var s3Report = ReportsTestDataFactory.createTestReportWithOutputType(ReportsTestDataFactory.s3ReportOutput);
+        var s3Report = ReportsTestDataFactory.createTestReportWithOutputType(reportId, ReportsTestDataFactory.s3ReportOutput);
 
         when(reportDetailsDao.fetchReportById(reportId)).thenReturn(Optional.of(s3Report));
 
@@ -200,7 +200,7 @@ class ReportManagementServiceTest {
     void validateReportFormat_shouldThrowInvalidReportFormatExceptionWhenS3StorageReportRequestedAsCsv() {
         // Given
         var reportId = UUID.randomUUID();
-        var s3Report = ReportsTestDataFactory.createTestReportWithOutputType(ReportsTestDataFactory.s3ReportOutput);
+        var s3Report = ReportsTestDataFactory.createTestReportWithOutputType(reportId, ReportsTestDataFactory.s3ReportOutput);
 
         when(reportDetailsDao.fetchReportById(reportId)).thenReturn(Optional.of(s3Report));
 

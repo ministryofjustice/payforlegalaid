@@ -3,6 +3,7 @@ package uk.gov.laa.gpfd.services;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
+import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.services.stream.DataStream;
 
 import java.util.Map;
@@ -41,6 +42,15 @@ public interface StreamingService {
      */
     StreamingResponseBody stream(UUID id, FileExtension format);
 
+    /**
+     * Streams an already-resolved report in the requested format.
+     *
+     * @param report The report to stream
+     * @param format The desired output format for the report
+     * @return The report data as a {@link StreamingResponseBody}
+     */
+    StreamingResponseBody stream(Report report, FileExtension format);
+
     record DefaultStreamingService(Map<FileExtension, DataStream> strategies) implements StreamingService {
 
         public DefaultStreamingService {
@@ -50,6 +60,11 @@ public interface StreamingService {
         @Override
         public StreamingResponseBody stream(UUID id, FileExtension format) {
             return strategies.get(format).stream(id);
+        }
+
+        @Override
+        public StreamingResponseBody stream(Report report, FileExtension format) {
+            return strategies.get(format).stream(report);
         }
     }
 }

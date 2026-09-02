@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.services.stream.DataStream;
 
 import static java.util.Map.of;
@@ -30,6 +31,9 @@ class StreamingServiceTest {
     @Mock
     private StreamingResponseBody mockStreamingBody;
 
+    @Mock
+    private Report report;
+
     @Test
     void shouldUseCorrectSteamStrategyForFormat() {
         var reportId = randomUUID();
@@ -45,6 +49,23 @@ class StreamingServiceTest {
 
         assertEquals(mockStreamingBody, result);
         verify(csvStrategy).stream(reportId);
+        verifyNoInteractions(excelStrategy);
+    }
+
+    @Test
+    void shouldUseCorrectStreamStrategyForResolvedReport() {
+        var strategies = of(
+                CSV, csvStrategy,
+                XLSX, excelStrategy
+        );
+
+        var service = new DefaultStreamingService(strategies);
+        when(csvStrategy.stream(report)).thenReturn(mockStreamingBody);
+
+        var result = service.stream(report, CSV);
+
+        assertEquals(mockStreamingBody, result);
+        verify(csvStrategy).stream(report);
         verifyNoInteractions(excelStrategy);
     }
 

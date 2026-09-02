@@ -101,6 +101,15 @@ public record ReportManagementService(
         }
 
         var report = reportDetails.get();
+        validateReportFormat(report, requestedFormat);
+    }
+
+    @SuppressFBWarnings(
+        value = "SECUNI",
+        justification = "File extensions are ASCII-only enum values; locale-sensitive case mapping cannot affect this comparison"
+    )
+    public void validateReportFormat(Report report, FileExtension requestedFormat) {
+        var id = report.getId();
         var actualExtension = report.getOutputType().getExtension();
         var requestedExtension = requestedFormat.getExtension();
 

@@ -5,6 +5,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.model.FileExtension;
+import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.services.DataStreamer;
 
 import java.util.UUID;
@@ -79,6 +80,11 @@ public abstract class AbstractDataStream implements DataStream {
             var report = reportDao.fetchReportById(uuid)
                     .orElseThrow(() -> new ReportIdNotFoundException(uuid));
 
+            return stream(report);
+        }
+
+        @Override
+        public StreamingResponseBody stream(Report report) {
             return output -> dataStreamer.stream(report, output);
         }
 
@@ -111,6 +117,11 @@ public abstract class AbstractDataStream implements DataStream {
             var report = reportDao.fetchReportById(uuid)
                     .orElseThrow(() -> new ReportIdNotFoundException(uuid));
 
+            return stream(report);
+        }
+
+        @Override
+        public StreamingResponseBody stream(Report report) {
             return output -> dataStreamer.stream(report, output);
         }
 

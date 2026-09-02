@@ -11,6 +11,7 @@ import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
+import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.model.ReportsGet200Response;
 import uk.gov.laa.gpfd.services.ReportManagementService;
 import uk.gov.laa.gpfd.services.ReportResponseBuilder;
@@ -79,13 +80,13 @@ public class ReportsController implements ReportsApi {
         log.info("Returning a CSV report for id {} to user", requestedId);
 
         // Enforce role-based access control for this report
-        reportDao.verifyUserCanAccessReport(requestedId);
+        var report = reportDao.fetchReportById(requestedId).orElseThrow(() -> new ReportIdNotFoundException(requestedId));
 
         // Validate that this report is actually a CSV report
-        reportManagementService.validateReportFormat(requestedId, CSV);
-        var rawStream = streamingService.stream(requestedId, CSV);
+        reportManagementService.validateReportFormat(report, CSV);
+        var rawStream = streamingService.stream(report, CSV);
 
-        return fetchCsvExcelDownloadResponse(requestedId, rawStream);
+        return fetchCsvExcelDownloadResponse(report, rawStream);
     }
 
     /**
@@ -117,13 +118,13 @@ public class ReportsController implements ReportsApi {
         log.info("Returning an Excel report for id {} to user", id);
 
         // Enforce role-based access control for this report
-        reportDao.verifyUserCanAccessReport(id);
+        var report = reportDao.fetchReportById(id).orElseThrow(() -> new ReportIdNotFoundException(id));
 
         // Validate format before attempting to stream
-        reportManagementService.validateReportFormat(id, XLSX);
+        reportManagementService.validateReportFormat(report, XLSX);
 
-        var rawStream = streamingService.stream(id, XLSX);
-        return fetchCsvExcelDownloadResponse(id, rawStream);
+        var rawStream = streamingService.stream(report, XLSX);
+        return fetchCsvExcelDownloadResponse(report, rawStream);
     }
 
     @Override
@@ -137,9 +138,9 @@ public class ReportsController implements ReportsApi {
         return fetchS3DownloadResponse(id, s3Response);
     }
 
-    private ResponseEntity<StreamingResponseBody> fetchCsvExcelDownloadResponse(UUID reportId, StreamingResponseBody rawStream) {
+    private ResponseEntity<StreamingResponseBody> fetchCsvExcelDownloadResponse(Report report, StreamingResponseBody rawStream) {
+        var reportId = report.getId();
         var userId = securityUtils.extractUserId();
-        var report = reportDao.fetchReportById(reportId).orElseThrow(() -> new ReportIdNotFoundException(reportId));
 
         StreamingResponseBody trackedStream = trackedStreamService.wrapStream(rawStream, reportId, userId);
 

@@ -3,6 +3,7 @@ package uk.gov.laa.gpfd.services.stream;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.model.FileExtension;
+import uk.gov.laa.gpfd.model.Report;
 
 import java.util.UUID;
 
@@ -26,6 +27,14 @@ public interface DataStream {
      * @throws IllegalStateException if there's an error generating the stream
      */
     StreamingResponseBody stream(UUID uuid);
+
+    /**
+     * Streams an already-resolved report in the strategy's format.
+     *
+     * @param report the report to stream
+     * @return a {@link StreamingResponseBody} of the data
+     */
+    StreamingResponseBody stream(Report report);
 
     /**
      * Gets the file format supported by this strategy.
