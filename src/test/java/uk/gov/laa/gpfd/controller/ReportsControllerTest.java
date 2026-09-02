@@ -210,7 +210,9 @@ class ReportsControllerTest extends BaseMvcTest {
 
         assertEquals("output!", result.getResponse().getContentAsString());
 
-        verify(reportManagementServiceMock).validateReportFormat(reportId, FileExtension.S3STORAGE);
+        verify(reportDao, times(1)).fetchReportById(reportId);
+        verify(reportDao, never()).verifyUserCanAccessReport(reportId);
+        verify(reportManagementServiceMock).validateReportFormat(report, FileExtension.S3STORAGE);
         verify(fileDownloadService, times(1)).getFileStreamResponse(reportId);
         verify(trackedStreamService, times(1)).wrapStream(any(StreamingResponseBody.class), eq(reportId), eq(USER_ID));
         verify(reportResponseBuilder, times(1)).buildResponse(responseStream, "file.csv", FileExtension.S3STORAGE, 120L);
@@ -331,10 +333,12 @@ class ReportsControllerTest extends BaseMvcTest {
     void getReportDownloadByIdRejectsInvalidFiletypes(String reportId, String actualFormat) throws Exception {
 
         UUID uuid = UUID.fromString(reportId);
+        var report = createReportWithOutputType(actualFormat);
 
+        when(reportDao.fetchReportById(uuid)).thenReturn(Optional.of(report));
         doThrow(new InvalidReportFormatException(uuid, "S3STORAGE", actualFormat))
                 .when(reportManagementServiceMock)
-                .validateReportFormat(uuid, FileExtension.S3STORAGE);
+                .validateReportFormat(report, FileExtension.S3STORAGE);
 
         performAuthenticatedGet("/reports/" + uuid + "/file", List.of(FINANCIAL))
                 .andExpect(status().isBadRequest())
@@ -344,7 +348,7 @@ class ReportsControllerTest extends BaseMvcTest {
                                 actualFormat + " format."));
 
         verify(reportManagementServiceMock)
-                .validateReportFormat(uuid, FileExtension.S3STORAGE);
+                .validateReportFormat(report, FileExtension.S3STORAGE);
 
         verify(fileDownloadService, never())
                 .getFileStreamResponse(uuid);
@@ -396,7 +400,11 @@ class ReportsControllerTest extends BaseMvcTest {
 
     @Test
     void downloadFromS3FailsIfFailToGetUserId() throws Exception {
+                var report = createTestReportWithOutputType(REPORT_ID, s3ReportOutput);
+                var s3CsvDownload = mock(S3ClientWrapper.S3CsvDownload.class);
 
+                when(reportDao.fetchReportById(REPORT_ID)).thenReturn(Optional.of(report));
+                when(fileDownloadService.getFileStreamResponse(REPORT_ID)).thenReturn(s3CsvDownload);
         when(securityUtils.extractUserId()).thenThrow(new AuthenticationIsNullException());
 
         // Perform the GET request

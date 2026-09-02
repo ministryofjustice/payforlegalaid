@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import software.amazon.awssdk.services.s3.S3Client;
-import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.services.excel.template.S3TemplateClient;
 import uk.gov.laa.gpfd.services.excel.template.TemplateClient;
 import uk.gov.laa.gpfd.services.excel.template.TemplateFileNameResolver;
@@ -66,8 +65,8 @@ public class S3Config {
      * @return an object that determines how file download should behave for this system
      */
     @Bean
-    public FileDownloadService createFileDownloadService(@Qualifier("createS3ReportClient") S3ClientWrapper s3ClientWrapper, ReportDao reportDao) {
-        return new FileDownloadFromS3Service(s3ClientWrapper, new ReportFileNameResolver(), reportDao);
+    public FileDownloadService createFileDownloadService(@Qualifier("createS3ReportClient") S3ClientWrapper s3ClientWrapper) {
+        return new FileDownloadFromS3Service(s3ClientWrapper, new ReportFileNameResolver());
     }
 
 }

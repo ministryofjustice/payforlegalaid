@@ -7,11 +7,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.access.AccessDeniedException;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
-import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.exception.FileDownloadException.S3BucketHasNoCopiesOfReportException;
 import uk.gov.laa.gpfd.services.s3.S3ClientWrapper.S3CsvDownload;
 
@@ -25,8 +23,6 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -46,19 +42,15 @@ class FileDownloadFromS3ServiceTest {
 
     private final UUID testUUID = UUID.randomUUID();
 
-    @Mock
-    ReportDao reportDao;
-
     @BeforeEach
     void beforeEach() {
-        reset(fileNameResolver, s3ClientWrapper, reportDao);
+        reset(fileNameResolver, s3ClientWrapper);
     }
 
     @SneakyThrows
     @Test
     void shouldReturnFileStream() {
 
-        doNothing().when(reportDao).verifyUserCanAccessReport(testUUID);
         var responseMetadata = GetObjectResponse.builder().contentLength(25L).build();
         var inputStream = new ByteArrayInputStream("csv,data,here,123,4.3,cat".getBytes());
         var mockS3Response = new ResponseInputStream<>(responseMetadata, inputStream);
@@ -77,7 +69,6 @@ class FileDownloadFromS3ServiceTest {
             assertEquals("csv,data,here,123,4.3,cat", content);
         }
 
-        verify(reportDao).verifyUserCanAccessReport(testUUID);
         verify(fileNameResolver).getS3PrefixFromId(testUUID);
         verify(s3ClientWrapper).getResultCsv("reports/daily/report_numero_uno");
     }
@@ -95,21 +86,7 @@ class FileDownloadFromS3ServiceTest {
     }
 
     @Test
-    void shouldThrowExceptionIfUserLacksPermissionToAccessReport() {
-        doThrow(new AccessDeniedException("nope"))
-                .when(reportDao)
-                .verifyUserCanAccessReport(testUUID);
-        assertThrows(AccessDeniedException.class,
-                () -> fileDownloadFromS3Service.getFileStreamResponse(testUUID));
-
-        verify(reportDao).verifyUserCanAccessReport(testUUID);
-        verifyNoInteractions(fileNameResolver);
-        verifyNoInteractions(s3ClientWrapper);
-    }
-
-    @Test
     void shouldLetExceptionHandlerHandleExceptionThrownByFileNameResolver() {
-        doNothing().when(reportDao).verifyUserCanAccessReport(testUUID);
         when(fileNameResolver.getS3PrefixFromId(testUUID)).thenThrow(new IllegalArgumentException("Report ID cannot be null or blank"));
 
         var exception = assertThrows(IllegalArgumentException.class, () -> fileDownloadFromS3Service.getFileStreamResponse(testUUID));
@@ -120,7 +97,6 @@ class FileDownloadFromS3ServiceTest {
 
     @Test
     void shouldLetExceptionHandlerHandleExceptionThrownByS3Client() {
-        doNothing().when(reportDao).verifyUserCanAccessReport(testUUID);
         when(fileNameResolver.getS3PrefixFromId(testUUID)).thenReturn("prefix");
         when(s3ClientWrapper.getResultCsv("prefix")).thenThrow(NoSuchKeyException.builder().build());
 

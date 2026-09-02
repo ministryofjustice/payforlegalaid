@@ -131,11 +131,12 @@ public class ReportsController implements ReportsApi {
     public ResponseEntity<StreamingResponseBody> getReportDownloadById(UUID id) {
         log.info("Downloading report for id {}", id);
 
-        // Validate that this report is S3STORAGE format
-        reportManagementService.validateReportFormat(id, S3STORAGE);
+        var report = reportDao.fetchReportById(id).orElseThrow(() -> new ReportIdNotFoundException(id));
 
+        // Validate that this report is S3STORAGE format
+        reportManagementService.validateReportFormat(report, S3STORAGE);
         var s3Response = fileDownloadService.getFileStreamResponse(id);
-        return fetchS3DownloadResponse(id, s3Response);
+        return fetchS3DownloadResponse(report, s3Response);
     }
 
     private ResponseEntity<StreamingResponseBody> fetchCsvExcelDownloadResponse(Report report, StreamingResponseBody rawStream) {
@@ -149,9 +150,9 @@ public class ReportsController implements ReportsApi {
         return reportResponseBuilder.buildResponse(trackedStream, filename, fileExtension);
     }
 
-    private ResponseEntity<StreamingResponseBody> fetchS3DownloadResponse(UUID reportId, S3ClientWrapper.S3CsvDownload s3CsvDownload) {
+    private ResponseEntity<StreamingResponseBody> fetchS3DownloadResponse(Report report, S3ClientWrapper.S3CsvDownload s3CsvDownload) {
+        var reportId = report.getId();
         var userId = securityUtils.extractUserId();
-        var report = reportDao.fetchReportById(reportId).orElseThrow(() -> new ReportIdNotFoundException(reportId));
         var s3Stream = s3CsvDownload.stream();
         var filename = s3CsvDownload.getFileName();
         var fileExtension = FileExtension.fromString(report.getOutputType().getExtension());
