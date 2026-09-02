@@ -1,6 +1,5 @@
 package uk.gov.laa.gpfd.services.stream;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
@@ -11,7 +10,6 @@ import uk.gov.laa.gpfd.services.DataStreamer;
 import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
-import static uk.gov.laa.gpfd.exception.TransferException.StreamException.ExcelStreamWriteException;
 import static uk.gov.laa.gpfd.model.FileExtension.CSV;
 import static uk.gov.laa.gpfd.model.FileExtension.XLSX;
 
@@ -34,6 +32,34 @@ import static uk.gov.laa.gpfd.model.FileExtension.XLSX;
  */
 @SuppressWarnings("java:S1118") // Abstract base class not a utility class
 public abstract class AbstractDataStream implements DataStream {
+
+    private final ReportDao reportDao;
+    private final DataStreamer dataStreamer;
+    private final FileExtension format;
+
+    protected AbstractDataStream(ReportDao reportDao, DataStreamer dataStreamer, FileExtension format) {
+        this.reportDao = reportDao;
+        this.dataStreamer = dataStreamer;
+        this.format = format;
+    }
+
+    @Override
+    public StreamingResponseBody stream(UUID uuid) {
+        var report = reportDao.fetchReportById(uuid)
+                .orElseThrow(() -> new ReportIdNotFoundException(uuid));
+
+        return stream(report);
+    }
+
+    @Override
+    public StreamingResponseBody stream(Report report) {
+        return output -> dataStreamer.stream(report, output);
+    }
+
+    @Override
+    public FileExtension getFormat() {
+        return format;
+    }
 
     /**
      * Creates a new CSV streaming strategy instance.
@@ -65,35 +91,10 @@ public abstract class AbstractDataStream implements DataStream {
      * Handles conversion of report data to CSV format and streaming to the client.
      * </p>
      */
-    @RequiredArgsConstructor
     static class CsvDataStream extends AbstractDataStream {
-        private final ReportDao reportDao;
-        private final DataStreamer dataStreamer;
 
-        /**
-         * {@inheritDoc}
-         * @throws ReportIdNotFoundException if the requested report doesn't exist
-         * @throws IllegalStateException if the report contains no queries
-         */
-        @Override
-        public StreamingResponseBody stream(UUID uuid) {
-            var report = reportDao.fetchReportById(uuid)
-                    .orElseThrow(() -> new ReportIdNotFoundException(uuid));
-
-            return stream(report);
-        }
-
-        @Override
-        public StreamingResponseBody stream(Report report) {
-            return output -> dataStreamer.stream(report, output);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public FileExtension getFormat() {
-            return CSV;
+        CsvDataStream(ReportDao reportDao, DataStreamer dataStreamer) {
+            super(reportDao, dataStreamer, CSV);
         }
     }
 
@@ -103,34 +104,10 @@ public abstract class AbstractDataStream implements DataStream {
      * Handles generation of Excel workbooks and streaming to the client.
      * </p>
      */
-    @RequiredArgsConstructor
     static class ExcelDataStream extends AbstractDataStream {
-        private final ReportDao reportDao;
-        private final DataStreamer dataStreamer;
 
-        /**
-         * {@inheritDoc}
-         * @throws ExcelStreamWriteException if there's an error writing the Excel data
-         */
-        @Override
-        public StreamingResponseBody stream(UUID uuid) {
-            var report = reportDao.fetchReportById(uuid)
-                    .orElseThrow(() -> new ReportIdNotFoundException(uuid));
-
-            return stream(report);
-        }
-
-        @Override
-        public StreamingResponseBody stream(Report report) {
-            return output -> dataStreamer.stream(report, output);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public FileExtension getFormat() {
-            return XLSX;
+        ExcelDataStream(ReportDao reportDao, DataStreamer dataStreamer) {
+            super(reportDao, dataStreamer, XLSX);
         }
     }
 }
