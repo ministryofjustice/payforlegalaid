@@ -502,13 +502,13 @@ class ReportsControllerTest extends BaseMvcTest {
         return result;
     }
 
-        private static Report createReportWithOutputType(String outputType) {
-                return switch (outputType) {
-                        case "CSV" -> createTestReportWithOutputType(csvReportOutput);
-                        case "XLSX" -> createTestReportWithOutputType(xlsxReportOutput);
-                        case "S3STORAGE" -> createTestReportWithOutputType(s3ReportOutput);
-                        default -> throw new IllegalArgumentException("Unsupported output type: " + outputType);
-                };
-        }
+    private static Report createReportWithOutputType(String outputType) {
+        return switch (outputType) {
+            case "CSV" -> createTestReportWithOutputType(csvReportOutput);
+            case "XLSX" -> createTestReportWithOutputType(xlsxReportOutput);
+            case "S3STORAGE" -> createTestReportWithOutputType(s3ReportOutput);
+            default -> throw new IllegalArgumentException("Unsupported output type: " + outputType);
+        };
+    }
 
 }

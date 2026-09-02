@@ -12,6 +12,7 @@ import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.mapper.GetReportById200ResponseMapper;
 import uk.gov.laa.gpfd.mapper.ReportsGet200ResponseReportListInnerMapper;
 import uk.gov.laa.gpfd.model.FileExtension;
+import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 
 import java.util.List;
@@ -175,6 +176,24 @@ class ReportManagementServiceTest {
         );
 
         verify(reportDetailsDao).fetchReportById(reportId);
+    }
+
+    @Test
+    void validateReportFormat_shouldRejectNullReport() {
+        assertThrows(NullPointerException.class,
+                () -> reportManagementService.validateReportFormat((Report) null, FileExtension.CSV));
+
+        verifyNoInteractions(reportDetailsDao);
+    }
+
+    @Test
+    void validateReportFormat_shouldRejectNullRequestedFormat() {
+        var report = ReportsTestDataFactory.createTestReport();
+
+        assertThrows(NullPointerException.class,
+                () -> reportManagementService.validateReportFormat(report, null));
+
+        verifyNoInteractions(reportDetailsDao);
     }
 
     @Test
