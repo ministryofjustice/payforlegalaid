@@ -178,12 +178,12 @@ public class ReportsTestDataFactory {
     }
 
     public static Report createTestReportWithOutputType(ReportOutputType outputType) {
-                return createTestReportWithOutputType(UUID.randomUUID(), outputType);
-        }
+        return createTestReportWithOutputType(UUID.randomUUID(), outputType);
+    }
 
-        public static Report createTestReportWithOutputType(UUID reportId, ReportOutputType outputType) {
+    public static Report createTestReportWithOutputType(UUID reportId, ReportOutputType outputType) {
         return ImmutableReport.builder()
-                                .id(reportId)
+                .id(reportId)
                 .name("Test Report")
                 .templateDocument(ExcelTemplate.fromString("b36f9bbb-1178-432c-8f99-8090e285f2d3"))
                 .creationTime(Timestamp.from(Instant.now()))

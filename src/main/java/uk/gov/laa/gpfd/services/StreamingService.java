@@ -48,6 +48,7 @@ public interface StreamingService {
      * @param report The report to stream
      * @param format The desired output format for the report
      * @return The report data as a {@link StreamingResponseBody}
+     * @throws ReportOutputTypeNotFoundException if no strategy is available for the requested format
      */
     StreamingResponseBody stream(Report report, FileExtension format);
 
@@ -59,12 +60,20 @@ public interface StreamingService {
 
         @Override
         public StreamingResponseBody stream(UUID id, FileExtension format) {
-            return strategies.get(format).stream(id);
+            return streamStrategyFor(format).stream(id);
         }
 
         @Override
         public StreamingResponseBody stream(Report report, FileExtension format) {
-            return strategies.get(format).stream(report);
+            return streamStrategyFor(format).stream(report);
+        }
+
+        private DataStream streamStrategyFor(FileExtension format) {
+            var strategy = strategies.get(format);
+            if (strategy == null) {
+                throw new ReportOutputTypeNotFoundException("Unsupported file type: " + format);
+            }
+            return strategy;
         }
     }
 }

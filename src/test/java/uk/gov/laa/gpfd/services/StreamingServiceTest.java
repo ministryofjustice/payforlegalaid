@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
 import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.services.stream.DataStream;
 
@@ -70,7 +71,7 @@ class StreamingServiceTest {
     }
 
     @Test
-    void shouldThrowExceptionForUnsupportedSteamFormat() {
+    void shouldThrowReportOutputTypeNotFoundExceptionForUnsupportedStreamFormat() {
         var reportId = randomUUID();
         var strategies = of(
                 CSV, csvStrategy
@@ -78,9 +79,14 @@ class StreamingServiceTest {
 
         var service = new DefaultStreamingService(strategies);
 
-        assertThrows(NullPointerException.class, () -> {
-            service.stream(reportId, XLSX);
-        });
+        assertThrows(ReportOutputTypeNotFoundException.class, () -> service.stream(reportId, XLSX));
+    }
+
+    @Test
+    void shouldThrowReportOutputTypeNotFoundExceptionForUnsupportedResolvedReportFormat() {
+        var service = new DefaultStreamingService(of(CSV, csvStrategy));
+
+        assertThrows(ReportOutputTypeNotFoundException.class, () -> service.stream(report, XLSX));
     }
 
     @Test

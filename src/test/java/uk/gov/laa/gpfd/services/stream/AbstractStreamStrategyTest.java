@@ -104,6 +104,14 @@ class AbstractDataStreamTest {
     }
 
     @Test
+    void shouldRejectNullResolvedReport() {
+        var testStream = new AbstractDataStream.CsvDataStream(reportDao, dataStreamer);
+
+        assertThrows(NullPointerException.class, () -> testStream.stream((Report) null));
+        verifyNoInteractions(dataStreamer);
+    }
+
+    @Test
     void shouldRequireNonNullArgs() {
         assertThrows(NullPointerException.class, () -> createCsvStreamStrategy(null, dataStreamer));
         assertThrows(NullPointerException.class, () -> createCsvStreamStrategy(reportDao, null));

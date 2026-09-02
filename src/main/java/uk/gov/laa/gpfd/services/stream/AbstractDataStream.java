@@ -53,6 +53,7 @@ public abstract class AbstractDataStream implements DataStream {
 
     @Override
     public StreamingResponseBody stream(Report report) {
+        requireNonNull(report, "Report cannot be null");
         return output -> dataStreamer.stream(report, output);
     }
 
