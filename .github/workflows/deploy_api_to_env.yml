@@ -54,6 +54,7 @@ jobs:
         with:
           github-username: ${{ secrets.GITHUB_USERNAME }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-environment: ${{ inputs.github_environment }}
         env:
           SOCKET_KEY: ${{ secrets.api_socket_key }}
 
@@ -80,7 +81,7 @@ jobs:
           AWS_REGION: ${{ vars.ECR_REGION }}
 
       - name: Login to container repository
-        uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
+        uses: aws-actions/amazon-ecr-login@03f1aad4c6c7ffd436567f42f9384779290529bd # v2.1.7
         id: login-ecr
 
       - name: Build the docker image and push it to the repository
@@ -123,7 +124,6 @@ jobs:
           ENV_NAME: ${{ inputs.environment_name }}
           INGRESS_URL: ${{ inputs.ingress_url }}
           SECRET_NAME: ${{ inputs.secret_name }}
-          DATA_REPOSITORY: ${{ vars.DATA_ECR_REPOSITORY }}
           PERMISSION_REP000_GROUP_ID: ${{ vars.PERMISSION_REP000_GROUP_ID }}
           PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID: ${{ vars.PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID }}
           INGRESS_CLASS_NAME: ${{ steps.ingress_class.outputs.ingress_class }}
@@ -137,7 +137,7 @@ jobs:
             "network-policy:network-policy"
             "prometheus-rules:prometheus-rules"
             "grafana-dashboard:grafana-dashboard:\$ENV_NAME,\$NAMESPACE"
-            "deployment:deployment:\$ENV_NAME,\$SECRET_NAME,\$INGRESS_URL,\$REGISTRY,\$REPOSITORY,\$IMAGE_TAG,\$DATA_REPOSITORY,\$PERMISSION_REP000_GROUP_ID,\$PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID,\$INGRESS_CLASS_NAME,\$IP_LIST"
+            "deployment:deployment:\$ENV_NAME,\$SECRET_NAME,\$INGRESS_URL,\$REGISTRY,\$REPOSITORY,\$IMAGE_TAG,\$PERMISSION_REP000_GROUP_ID,\$PERMISSION_SUBMISSION_RECONCILIATION_GROUP_ID,\$INGRESS_CLASS_NAME,\$IP_LIST"
           )
           
           for item in "${template_processing[@]}"; do

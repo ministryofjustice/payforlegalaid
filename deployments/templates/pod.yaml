@@ -45,16 +45,6 @@ spec:
             secretKeyRef:
               name: gpfd-test-secret-01
               key: mojfin-dev-read-password
-        - name: MOJFIN_DEV_WRITE_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: gpfd-test-secret-01
-              key: mojfin-dev-write-username
-        - name: MOJFIN_DEV_WRITE_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: gpfd-test-secret-01
-              key: mojfin-dev-write-password
         - name: MOJFIN_DB_URL
           valueFrom:
             secretKeyRef:

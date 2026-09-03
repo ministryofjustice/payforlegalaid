@@ -50,20 +50,6 @@
       constraintName="fk_report_output_types_report_id"/>
   </changeSet>
 
-  <changeSet id="2005" author="liquibase">
-    <createTable tableName="REPORT_GROUPS" schemaName="GPFD">
-      <column name="REPORT_ID" type="UUID"/>
-      <column name="GROUP_ID" type="UUID"/>
-    </createTable>
-  </changeSet>
-
-  <changeSet id="2006" author="liquibase">
-    <addForeignKeyConstraint baseTableName="REPORT_GROUPS" baseColumnNames="REPORT_ID"
-      referencedTableName="REPORTS" referencedColumnNames="ID"
-      baseTableSchemaName="GPFD" referencedTableSchemaName="GPFD"
-      constraintName="fk_report_groups_report_id"/>
-  </changeSet>
-
   <changeSet id="2007" author="liquibase">
     <createTable tableName="REPORT_QUERIES" schemaName="GPFD">
       <column name="ID" type="UUID">

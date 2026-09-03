@@ -1,5 +1,42 @@
 # Changelog
 
+## [4.0.2](https://github.com/ministryofjustice/payforlegalaid/compare/v4.0.1...v4.0.2) (2026-08-28)
+
+
+### Bug Fixes
+
+* **bot:** Bump com.github.spotbugs:spotbugs-maven-plugin from 4.10.3.0 to 4.10.4.0 in the minor group ([#615](https://github.com/ministryofjustice/payforlegalaid/issues/615)) ([b756a81](https://github.com/ministryofjustice/payforlegalaid/commit/b756a81034599635c639d6779c412dddae59047c))
+
+## [4.0.1](https://github.com/ministryofjustice/payforlegalaid/compare/v4.0.0...v4.0.1) (2026-08-27)
+
+
+### Bug Fixes
+
+* **LPF-000:** High vuln snyk issue ([#610](https://github.com/ministryofjustice/payforlegalaid/issues/610)) ([d002347](https://github.com/ministryofjustice/payforlegalaid/commit/d002347eb989db29e76728100a1069b45b9498c5))
+
+
+### Documentation
+
+* **LPF-1573:** clean up stray openapi repo references ([#608](https://github.com/ministryofjustice/payforlegalaid/issues/608)) ([15db8b9](https://github.com/ministryofjustice/payforlegalaid/commit/15db8b91dafa0be0e650008908fa42bbf500ebff))
+
+## [4.0.0](https://github.com/ministryofjustice/payforlegalaid/compare/v3.2.0...v4.0.0) (2026-08-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* **LPF-1553:** Remove MOJFIN write path ([#600](https://github.com/ministryofjustice/payforlegalaid/issues/600))
+
+### Features
+
+* **LPF-1552:** Metadata application cutover RDS ([#597](https://github.com/ministryofjustice/payforlegalaid/issues/597)) ([01db4b7](https://github.com/ministryofjustice/payforlegalaid/commit/01db4b7b6189ba2c964457957f50f22e05154e09))
+* **LPF-1553:** Remove MOJFIN write path ([#600](https://github.com/ministryofjustice/payforlegalaid/issues/600)) ([00f70c0](https://github.com/ministryofjustice/payforlegalaid/commit/00f70c083aecfa4fa4f088a122cabb4a3072e646))
+
+
+### Bug Fixes
+
+* **bot:** Bump the minor group with 3 updates ([#605](https://github.com/ministryofjustice/payforlegalaid/issues/605)) ([1ee7be1](https://github.com/ministryofjustice/payforlegalaid/commit/1ee7be14754dbdb12785e21a5746e6a347faf55b))
+* **LPF-0000:** Snyk netty fix ([#607](https://github.com/ministryofjustice/payforlegalaid/issues/607)) ([a39128c](https://github.com/ministryofjustice/payforlegalaid/commit/a39128cda5498b3d40938429f9c95e111563d8dd))
+
 ## [3.2.0](https://github.com/ministryofjustice/payforlegalaid/compare/v3.1.0...v3.2.0) (2026-08-13)
 
 

@@ -21,14 +21,15 @@ with the correct roles, will allow them to access the reports.
 
 ## Database
 
-GPFD currently uses two sets of MOJFIN database user credentials, defined in the application properties:
-
-1. 'read-only', which is used to access reports data through db views created in MOJFIN
-2. 'write' which is used during setup to write updates (via Liquibase scripts) to the custom GPFD tables created in MOJFIN
+GPFD uses read-only MOJFIN database credentials to access report data through database views.
 
 There are multiple GPFD tables - see the [Database Design page](https://dsdmoj.atlassian.net/wiki/spaces/LPF/pages/5481922635/Database+Design)
 
-The GPFD table definitions and data are stored in the [data repository](https://github.com/ministryofjustice/payforlegalaid-data)
+The GPFD metadata table definitions and seed data used by this service are managed through Flyway migrations in
+[`src/main/resources/flyway/migration/schema`](src/main/resources/flyway/migration/schema).
+
+Deployed environments run these migrations against the tracking RDS. They do not run Liquibase against MOJFIN. The application accesses report data in
+MOJFIN using read-only credentials.
 
 There is an RDS database used to store Report Tracking information.
 
@@ -49,7 +50,7 @@ There is also an H2 database which some unit tests run against, the schema of wh
 - Liquibase
 - AWS CLI
 - Flyway
-- [OpenAPI](https://github.com/ministryofjustice/payforlegalaid-openapi)
+- OpenAPI Generator
 
 ## Architecture
 
@@ -146,7 +147,7 @@ After everything is configured, start the application. When prompted, use your i
 #### Troubleshooting
 
 **Build fails with `invalid target release` error**
-Ensure you are using the correct base image in the Dockerfile (`amazoncorretto:25-alpine`). The OpenAPI dependency requires Java 25 to compile.
+Ensure you are using the correct base image in the Dockerfile (`amazoncorretto:25-alpine`).
 
 **Application exits immediately with `UnsupportedClassVersionError`**
 The runtime image must match the Java version used to compile the app. Ensure the runtime stage uses Java 25.
