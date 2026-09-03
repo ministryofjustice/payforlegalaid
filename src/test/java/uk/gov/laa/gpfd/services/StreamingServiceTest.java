@@ -36,7 +36,7 @@ class StreamingServiceTest {
     private Report report;
 
     @Test
-    void shouldUseCorrectSteamStrategyForFormat() {
+    void shouldUseCorrectStreamStrategyForFormat() {
         var reportId = randomUUID();
         var strategies = of(
                 CSV, csvStrategy,
@@ -90,7 +90,7 @@ class StreamingServiceTest {
     }
 
     @Test
-    void shouldPropagateSteamStrategyExceptions() {
+    void shouldPropagateStreamStrategyExceptions() {
         var reportId = randomUUID();
         var strategies = of(
                 CSV, csvStrategy
