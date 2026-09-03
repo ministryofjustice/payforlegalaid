@@ -332,9 +332,13 @@ class ReportsControllerTest extends BaseMvcTest {
     })
     void getReportDownloadByIdRejectsInvalidFiletypes(String reportId, String actualFormat) throws Exception {
 
-        UUID uuid = UUID.fromString(reportId);
-        var report = createReportWithOutputType(actualFormat);
-
+        var uuid = UUID.fromString(reportId);
+        var report = switch (actualFormat) {
+            case "CSV" -> createTestReportWithOutputType(uuid, csvReportOutput);
+            case "XLSX" -> createTestReportWithOutputType(uuid, xlsxReportOutput);
+            case "S3STORAGE" -> createTestReportWithOutputType(uuid, s3ReportOutput);
+            default -> throw new IllegalArgumentException("Unsupported output type: " + actualFormat);
+        };
         when(reportDao.fetchReportById(uuid)).thenReturn(Optional.of(report));
         doThrow(new InvalidReportFormatException(uuid, "S3STORAGE", actualFormat))
                 .when(reportManagementServiceMock)
