@@ -325,20 +325,14 @@ class ReportsControllerTest extends BaseMvcTest {
         verify(reportResponseBuilder).buildResponse(responseBody, "Test Report.xlsx", FileExtension.XLSX);
     }
 
-    @ParameterizedTest(name = "Rejects invalid filetype {1} for S3STORAGE download")
+    @ParameterizedTest(name = "Rejects invalid filetype {0} for S3STORAGE download")
     @CsvSource({
-            "f46b4d3d-c100-429a-bf9a-6c3305dbdbfa, CSV",
-            "0d4da9ec-b0b3-4371-af10-f375330d85d1, XLSX"
+        "CSV",
+        "XLSX"
     })
-    void getReportDownloadByIdRejectsInvalidFiletypes(String reportId, String actualFormat) throws Exception {
-
-        var uuid = UUID.fromString(reportId);
-        var report = switch (actualFormat) {
-            case "CSV" -> createTestReportWithOutputType(uuid, csvReportOutput);
-            case "XLSX" -> createTestReportWithOutputType(uuid, xlsxReportOutput);
-            case "S3STORAGE" -> createTestReportWithOutputType(uuid, s3ReportOutput);
-            default -> throw new IllegalArgumentException("Unsupported output type: " + actualFormat);
-        };
+    void getReportDownloadByIdRejectsInvalidFiletypes(String actualFormat) throws Exception {
+        var report = createReportWithOutputType(actualFormat);
+        var uuid = report.getId();
         when(reportDao.fetchReportById(uuid)).thenReturn(Optional.of(report));
         doThrow(new InvalidReportFormatException(uuid, "S3STORAGE", actualFormat))
                 .when(reportManagementServiceMock)
@@ -404,15 +398,16 @@ class ReportsControllerTest extends BaseMvcTest {
 
     @Test
     void downloadFromS3FailsIfFailToGetUserId() throws Exception {
-                var report = createTestReportWithOutputType(REPORT_ID, s3ReportOutput);
-                var s3CsvDownload = mock(S3ClientWrapper.S3CsvDownload.class);
+        var report = createTestReportWithOutputType(s3ReportOutput);
+        var reportId = report.getId();
+        var s3CsvDownload = mock(S3ClientWrapper.S3CsvDownload.class);
 
-                when(reportDao.fetchReportById(REPORT_ID)).thenReturn(Optional.of(report));
-                when(fileDownloadService.getFileStreamResponse(REPORT_ID)).thenReturn(s3CsvDownload);
+        when(reportDao.fetchReportById(reportId)).thenReturn(Optional.of(report));
+        when(fileDownloadService.getFileStreamResponse(reportId)).thenReturn(s3CsvDownload);
         when(securityUtils.extractUserId()).thenThrow(new AuthenticationIsNullException());
 
         // Perform the GET request
-        performAuthenticatedGet("/reports/" + REPORT_ID + "/file", List.of(REP000))
+        performAuthenticatedGet("/reports/" + reportId + "/file", List.of(REP000))
                 .andExpect(status().isInternalServerError());
     }
 
