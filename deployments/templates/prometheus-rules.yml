@@ -131,9 +131,22 @@ spec:
         for: 5m
         labels:
           severity: ${ALERT_SEVERITY}
-      - alert: ReportDownloadRateSpike
+      - alert: ReportDownloadBurst
         annotations:
-          message: "Report downloads in the last hour are more than 5x the hourly average of the preceding 24 hours - possible data exfiltration."
+          message: "Sudden burst of report downloads - more than 50 in 5 minutes. Possible smash-and-grab exfiltration."
+          dashboard_url: "https://grafana.live.cloud-platform.service.justice.gov.uk/d/laa-gpfd-${ENV_NAME}"
+        expr: |
+          sum(increase(http_server_requests_seconds_count{
+            namespace="${NAMESPACE}",
+            status="200",
+            uri=~"/reports/.*/(csv|file|excel)"
+          }[5m])) > 50
+        for: 1m
+        labels:
+          severity: ${ALERT_SEVERITY}
+      - alert: ReportDownloadVolumeAnomaly
+        annotations:
+          message: "Report downloads in the last hour are more than 5x the hourly average of the preceding 24 hours - possible sustained/low-and-slow exfiltration."
           dashboard_url: "https://grafana.live.cloud-platform.service.justice.gov.uk/d/laa-gpfd-${ENV_NAME}"
         expr: |
           (
@@ -152,11 +165,13 @@ spec:
             }[1h]))
             >
             5 * (
-              sum(increase(http_server_requests_seconds_count{
-                namespace="${NAMESPACE}",
-                status="200",
-                uri=~"/reports/.*/(csv|file|excel)"
-              }[24h] offset 1h)) / 24
+              (
+                sum(increase(http_server_requests_seconds_count{
+                  namespace="${NAMESPACE}",
+                  status="200",
+                  uri=~"/reports/.*/(csv|file|excel)"
+                }[24h] offset 1h)) or vector(0)
+              ) / 24
             )
           )
         for: 10m
