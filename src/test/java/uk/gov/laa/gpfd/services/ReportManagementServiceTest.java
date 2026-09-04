@@ -12,6 +12,7 @@ import uk.gov.laa.gpfd.exception.ReportIdNotFoundException;
 import uk.gov.laa.gpfd.mapper.GetReportById200ResponseMapper;
 import uk.gov.laa.gpfd.mapper.ReportsGet200ResponseReportListInnerMapper;
 import uk.gov.laa.gpfd.model.FileExtension;
+import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 
 import java.util.List;
@@ -83,7 +84,7 @@ class ReportManagementServiceTest {
     void validateReportFormat_shouldThrowInvalidReportFormatExceptionWhenCsvReportRequestedAsExcel() {
         // Given
         var reportId = UUID.randomUUID();
-        var csvReport = ReportsTestDataFactory.createTestReportWithOutputType(ReportsTestDataFactory.csvReportOutput);
+        var csvReport = ReportsTestDataFactory.createTestReportWithOutputType(reportId, ReportsTestDataFactory.csvReportOutput);
 
         when(reportDetailsDao.fetchReportById(reportId)).thenReturn(Optional.of(csvReport));
 
@@ -102,7 +103,7 @@ class ReportManagementServiceTest {
     void validateReportFormat_shouldThrowInvalidReportFormatExceptionWhenExcelReportRequestedAsCsv() {
         // Given
         var reportId = UUID.randomUUID();
-        var excelReport = ReportsTestDataFactory.createTestReportWithOutputType(ReportsTestDataFactory.xlsxReportOutput);
+        var excelReport = ReportsTestDataFactory.createTestReportWithOutputType(reportId, ReportsTestDataFactory.xlsxReportOutput);
 
         when(reportDetailsDao.fetchReportById(reportId)).thenReturn(Optional.of(excelReport));
 
@@ -121,7 +122,7 @@ class ReportManagementServiceTest {
     void validateReportFormat_shouldNotThrowExceptionWhenCsvReportRequestedAsCsv() {
         // Given
         var reportId = UUID.randomUUID();
-        var csvReport = ReportsTestDataFactory.createTestReportWithOutputType(ReportsTestDataFactory.csvReportOutput);
+        var csvReport = ReportsTestDataFactory.createTestReportWithOutputType(reportId, ReportsTestDataFactory.csvReportOutput);
 
         when(reportDetailsDao.fetchReportById(reportId)).thenReturn(Optional.of(csvReport));
 
@@ -137,7 +138,7 @@ class ReportManagementServiceTest {
     void validateReportFormat_shouldNotThrowExceptionWhenExcelReportRequestedAsExcel() {
         // Given
         var reportId = UUID.randomUUID();
-        var excelReport = ReportsTestDataFactory.createTestReportWithOutputType(ReportsTestDataFactory.xlsxReportOutput);
+        var excelReport = ReportsTestDataFactory.createTestReportWithOutputType(reportId, ReportsTestDataFactory.xlsxReportOutput);
 
         when(reportDetailsDao.fetchReportById(reportId)).thenReturn(Optional.of(excelReport));
 
@@ -178,10 +179,28 @@ class ReportManagementServiceTest {
     }
 
     @Test
+    void validateReportFormat_shouldRejectNullReport() {
+        assertThrows(NullPointerException.class,
+                () -> reportManagementService.validateReportFormat((Report) null, FileExtension.CSV));
+
+        verifyNoInteractions(reportDetailsDao);
+    }
+
+    @Test
+    void validateReportFormat_shouldRejectNullRequestedFormat() {
+        var report = ReportsTestDataFactory.createTestReport();
+
+        assertThrows(NullPointerException.class,
+                () -> reportManagementService.validateReportFormat(report, null));
+
+        verifyNoInteractions(reportDetailsDao);
+    }
+
+    @Test
     void validateReportFormat_shouldThrowInvalidReportFormatExceptionWhenS3StorageReportRequestedAsExcel() {
         // Given
         var reportId = UUID.randomUUID();
-        var s3Report = ReportsTestDataFactory.createTestReportWithOutputType(ReportsTestDataFactory.s3ReportOutput);
+        var s3Report = ReportsTestDataFactory.createTestReportWithOutputType(reportId, ReportsTestDataFactory.s3ReportOutput);
 
         when(reportDetailsDao.fetchReportById(reportId)).thenReturn(Optional.of(s3Report));
 
@@ -200,7 +219,7 @@ class ReportManagementServiceTest {
     void validateReportFormat_shouldThrowInvalidReportFormatExceptionWhenS3StorageReportRequestedAsCsv() {
         // Given
         var reportId = UUID.randomUUID();
-        var s3Report = ReportsTestDataFactory.createTestReportWithOutputType(ReportsTestDataFactory.s3ReportOutput);
+        var s3Report = ReportsTestDataFactory.createTestReportWithOutputType(reportId, ReportsTestDataFactory.s3ReportOutput);
 
         when(reportDetailsDao.fetchReportById(reportId)).thenReturn(Optional.of(s3Report));
 

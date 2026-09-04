@@ -26,6 +26,7 @@ import uk.gov.laa.gpfd.exception.InvalidReportFormatException;
 import uk.gov.laa.gpfd.exception.ReportAccessException;
 import uk.gov.laa.gpfd.model.FileExtension;
 import uk.gov.laa.gpfd.model.GetReportById200Response;
+import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 import uk.gov.laa.gpfd.services.ReportManagementService;
 import uk.gov.laa.gpfd.services.ReportResponseBuilder;
@@ -46,7 +47,6 @@ import java.util.UUID;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
@@ -121,8 +121,7 @@ class ReportsControllerTest extends BaseMvcTest {
                         .contentType(MediaType.APPLICATION_OCTET_STREAM)
                         .body(responseStream);
 
-        doNothing().when(reportDao).verifyUserCanAccessReport(reportId);
-        when(streamingService.stream(reportId, FileExtension.CSV)).thenReturn(responseStream);
+        when(streamingService.stream(report, FileExtension.CSV)).thenReturn(responseStream);
         when(reportDao.fetchReportById(reportId)).thenReturn(Optional.of(report));
         when(securityUtils.extractUserId()).thenReturn(USER_ID);
         when(trackedStreamService.wrapStream(any(), any(), any())).thenReturn(responseStream);
@@ -136,10 +135,12 @@ class ReportsControllerTest extends BaseMvcTest {
 
         assertEquals("1,John,Doe\n2,Jane,Smith\n", response.getResponse().getContentAsString());
 
-        verify(streamingService).stream(reportId, FileExtension.CSV);
+        verify(reportDao, times(1)).fetchReportById(reportId);
+        verify(reportDao, never()).verifyUserCanAccessReport(reportId);
+        verify(streamingService).stream(report, FileExtension.CSV);
         verify(trackedStreamService).wrapStream(responseStream, reportId, USER_ID);
         verify(reportResponseBuilder).buildResponse(responseStream, "Test Report.csv", FileExtension.CSV);
-        verify(reportManagementServiceMock).validateReportFormat(reportId, FileExtension.CSV);
+        verify(reportManagementServiceMock).validateReportFormat(report, FileExtension.CSV);
     }
 
     @Test
@@ -209,7 +210,9 @@ class ReportsControllerTest extends BaseMvcTest {
 
         assertEquals("output!", result.getResponse().getContentAsString());
 
-        verify(reportManagementServiceMock).validateReportFormat(reportId, FileExtension.S3STORAGE);
+        verify(reportDao, times(1)).fetchReportById(reportId);
+        verify(reportDao, never()).verifyUserCanAccessReport(reportId);
+        verify(reportManagementServiceMock).validateReportFormat(report, FileExtension.S3STORAGE);
         verify(fileDownloadService, times(1)).getFileStreamResponse(reportId);
         verify(trackedStreamService, times(1)).wrapStream(any(StreamingResponseBody.class), eq(reportId), eq(USER_ID));
         verify(reportResponseBuilder, times(1)).buildResponse(responseStream, "file.csv", FileExtension.S3STORAGE, 120L);
@@ -223,20 +226,21 @@ class ReportsControllerTest extends BaseMvcTest {
                 .andExpect(status().isBadRequest()).andReturn();
     }
 
-    @ParameterizedTest(name = "Rejects invalid filetype {1} for Excel download")
+    @ParameterizedTest(name = "Rejects invalid filetype {0} for Excel download")
     @CsvSource({
-            "523f38f0-2179-4824-b885-3a38c5e149e8, S3STORAGE",
-            "f46b4d3d-c100-429a-bf9a-6c3305dbdbfa, CSV"
+            "S3STORAGE",
+            "CSV"
     })
 
-    void downloadExcelRejectsInvalidFiletypes(String reportId, String actualFormat) throws Exception {
+    void downloadExcelRejectsInvalidFiletypes(String actualFormat) throws Exception {
 
-        UUID uuid = UUID.fromString(reportId);
-        doNothing().when(reportDao).verifyUserCanAccessReport(uuid);
+        var report = createReportWithOutputType(actualFormat);
+        var uuid = report.getId();
+        when(reportDao.fetchReportById(uuid)).thenReturn(Optional.of(report));
 
         doThrow(new InvalidReportFormatException(uuid, "XLSX", actualFormat))
                 .when(reportManagementServiceMock)
-                .validateReportFormat(uuid, FileExtension.XLSX);
+                .validateReportFormat(report, FileExtension.XLSX);
 
         performAuthenticatedGet("/reports/" + uuid + "/excel", List.of(FINANCIAL))
                 .andExpect(status().isBadRequest())
@@ -246,24 +250,26 @@ class ReportsControllerTest extends BaseMvcTest {
                                 actualFormat + " format."));
 
         verify(reportManagementServiceMock)
-                .validateReportFormat(uuid, FileExtension.XLSX);
+                .validateReportFormat(report, FileExtension.XLSX);
 
         verify(streamingService, never())
-                .stream(uuid, FileExtension.XLSX);
+                .stream(report, FileExtension.XLSX);
     }
 
-    @ParameterizedTest(name = "Rejects invalid filetype {1} for CSV download")
+    @ParameterizedTest(name = "Rejects invalid filetype {0} for CSV download")
     @CsvSource({
-            "0d4da9ec-b0b3-4371-af10-f375330d85d1, XLSX",
-            "523f38f0-2179-4824-b885-3a38c5e149e8, S3STORAGE"
+            "XLSX",
+            "S3STORAGE"
     })
-    void downloadCsvRejectsInvalidFiletypes(String reportId, String actualFormat) throws Exception {
+    void downloadCsvRejectsInvalidFiletypes(String actualFormat) throws Exception {
 
-        UUID uuid = UUID.fromString(reportId);
+        var report = createReportWithOutputType(actualFormat);
+        var uuid = report.getId();
+        when(reportDao.fetchReportById(uuid)).thenReturn(Optional.of(report));
 
         doThrow(new InvalidReportFormatException(uuid, "CSV", actualFormat))
                 .when(reportManagementServiceMock)
-                .validateReportFormat(uuid, FileExtension.CSV);
+                .validateReportFormat(report, FileExtension.CSV);
 
         performAuthenticatedGet("/reports/" + uuid + "/csv", List.of(FINANCIAL))
                 .andExpect(status().isBadRequest())
@@ -273,10 +279,10 @@ class ReportsControllerTest extends BaseMvcTest {
                                 actualFormat + " format."));
 
         verify(reportManagementServiceMock)
-                .validateReportFormat(uuid, FileExtension.CSV);
+                .validateReportFormat(report, FileExtension.CSV);
 
         verify(streamingService, never())
-                .stream(uuid, FileExtension.CSV);
+                .stream(report, FileExtension.CSV);
     }
 
     @Test
@@ -298,9 +304,7 @@ class ReportsControllerTest extends BaseMvcTest {
                 .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                 .body(responseBody);
 
-        // Validation passes (no exception thrown)
-        doNothing().when(reportManagementServiceMock).validateReportFormat(excelReportId, FileExtension.XLSX);
-        when(streamingService.stream(excelReportId, FileExtension.XLSX)).thenReturn(responseBody);
+        when(streamingService.stream(report, FileExtension.XLSX)).thenReturn(responseBody);
         when(securityUtils.extractUserId()).thenReturn(USER_ID);
         when(trackedStreamService.wrapStream(any(), any(), any())).thenReturn(responseBody);
         when(reportResponseBuilder.buildResponse(any(), any(), any())).thenReturn(mockResponseEntity);
@@ -313,24 +317,26 @@ class ReportsControllerTest extends BaseMvcTest {
 
         assertEquals("attachment; filename=report.xlsx", result.getResponse().getHeader(HttpHeaders.CONTENT_DISPOSITION));
 
-        verify(reportManagementServiceMock).validateReportFormat(excelReportId, FileExtension.XLSX);
-        verify(streamingService).stream(excelReportId, FileExtension.XLSX);
+        verify(reportDao, times(1)).fetchReportById(excelReportId);
+        verify(reportDao, never()).verifyUserCanAccessReport(excelReportId);
+        verify(reportManagementServiceMock).validateReportFormat(report, FileExtension.XLSX);
+        verify(streamingService).stream(report, FileExtension.XLSX);
         verify(trackedStreamService).wrapStream(responseBody, excelReportId, USER_ID);
         verify(reportResponseBuilder).buildResponse(responseBody, "Test Report.xlsx", FileExtension.XLSX);
     }
 
-    @ParameterizedTest(name = "Rejects invalid filetype {1} for S3STORAGE download")
+    @ParameterizedTest(name = "Rejects invalid filetype {0} for S3STORAGE download")
     @CsvSource({
-            "f46b4d3d-c100-429a-bf9a-6c3305dbdbfa, CSV",
-            "0d4da9ec-b0b3-4371-af10-f375330d85d1, XLSX"
+        "CSV",
+        "XLSX"
     })
-    void getReportDownloadByIdRejectsInvalidFiletypes(String reportId, String actualFormat) throws Exception {
-
-        UUID uuid = UUID.fromString(reportId);
-
+    void getReportDownloadByIdRejectsInvalidFiletypes(String actualFormat) throws Exception {
+        var report = createReportWithOutputType(actualFormat);
+        var uuid = report.getId();
+        when(reportDao.fetchReportById(uuid)).thenReturn(Optional.of(report));
         doThrow(new InvalidReportFormatException(uuid, "S3STORAGE", actualFormat))
                 .when(reportManagementServiceMock)
-                .validateReportFormat(uuid, FileExtension.S3STORAGE);
+                .validateReportFormat(report, FileExtension.S3STORAGE);
 
         performAuthenticatedGet("/reports/" + uuid + "/file", List.of(FINANCIAL))
                 .andExpect(status().isBadRequest())
@@ -340,7 +346,7 @@ class ReportsControllerTest extends BaseMvcTest {
                                 actualFormat + " format."));
 
         verify(reportManagementServiceMock)
-                .validateReportFormat(uuid, FileExtension.S3STORAGE);
+                .validateReportFormat(report, FileExtension.S3STORAGE);
 
         verify(fileDownloadService, never())
                 .getFileStreamResponse(uuid);
@@ -349,7 +355,7 @@ class ReportsControllerTest extends BaseMvcTest {
     @Test
     void csvIdGet_shouldReturn403_whenAccessDenied() throws Exception {
         doThrow(new ReportAccessException(REPORT_ID))
-                .when(reportDao).verifyUserCanAccessReport(REPORT_ID);
+                .when(reportDao).fetchReportById(REPORT_ID);
         performAuthenticatedGet("/reports/" + REPORT_ID + "/csv", List.of(FINANCIAL))
                 .andExpect(status().isForbidden());
     }
@@ -357,38 +363,51 @@ class ReportsControllerTest extends BaseMvcTest {
     @Test
     void excelIdGet_shouldReturn403_whenAccessDenied() throws Exception {
         doThrow(new ReportAccessException(REPORT_ID))
-                .when(reportDao).verifyUserCanAccessReport(REPORT_ID);
+                .when(reportDao).fetchReportById(REPORT_ID);
         performAuthenticatedGet("/reports/" + REPORT_ID + "/excel", List.of(FINANCIAL))
                 .andExpect(status().isForbidden());
     }
 
     @Test
     void downloadCsvFailsIfFailToGetUserId() throws Exception {
+        var report = createTestReportWithOutputType(csvReportOutput);
+        var reportId = report.getId();
+        StreamingResponseBody responseStream = outputStream -> outputStream.write("csv".getBytes());
 
+        when(reportDao.fetchReportById(reportId)).thenReturn(Optional.of(report));
+        when(streamingService.stream(report, FileExtension.CSV)).thenReturn(responseStream);
         when(securityUtils.extractUserId()).thenThrow(new AuthenticationIsNullException());
 
-        // Perform the GET request
-        performAuthenticatedGet("/reports/" + REPORT_ID + "/csv", List.of(FINANCIAL))
+        performAuthenticatedGet("/reports/" + reportId + "/csv", List.of(FINANCIAL))
                 .andExpect(status().isInternalServerError());
     }
 
     @Test
     void downloadExcelFailsIfFailToGetUserId() throws Exception {
+        var report = createTestReportWithOutputType(xlsxReportOutput);
+        var reportId = report.getId();
+        StreamingResponseBody responseStream = outputStream -> outputStream.write("excel".getBytes());
 
+        when(reportDao.fetchReportById(reportId)).thenReturn(Optional.of(report));
+        when(streamingService.stream(report, FileExtension.XLSX)).thenReturn(responseStream);
         when(securityUtils.extractUserId()).thenThrow(new AuthenticationIsNullException());
 
-        // Perform the GET request
-        performAuthenticatedGet("/reports/" + REPORT_ID + "/excel", List.of(FINANCIAL))
+        performAuthenticatedGet("/reports/" + reportId + "/excel", List.of(FINANCIAL))
                 .andExpect(status().isInternalServerError());
     }
 
     @Test
     void downloadFromS3FailsIfFailToGetUserId() throws Exception {
+        var report = createTestReportWithOutputType(s3ReportOutput);
+        var reportId = report.getId();
+        var s3CsvDownload = mock(S3ClientWrapper.S3CsvDownload.class);
 
+        when(reportDao.fetchReportById(reportId)).thenReturn(Optional.of(report));
+        when(fileDownloadService.getFileStreamResponse(reportId)).thenReturn(s3CsvDownload);
         when(securityUtils.extractUserId()).thenThrow(new AuthenticationIsNullException());
 
         // Perform the GET request
-        performAuthenticatedGet("/reports/" + REPORT_ID + "/file", List.of(REP000))
+        performAuthenticatedGet("/reports/" + reportId + "/file", List.of(REP000))
                 .andExpect(status().isInternalServerError());
     }
 
@@ -412,8 +431,6 @@ class ReportsControllerTest extends BaseMvcTest {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(responseStream);
 
-        doNothing().when(reportDao).verifyUserCanAccessReport(reportId);
-        when(streamingService.stream(reportId, FileExtension.CSV)).thenReturn(responseStream);
         when(reportDao.fetchReportById(reportId)).thenReturn(Optional.empty());
         when(securityUtils.extractUserId()).thenReturn(USER_ID);
 
@@ -441,9 +458,6 @@ class ReportsControllerTest extends BaseMvcTest {
                 .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                 .body(responseBody);
 
-        // Validation passes (no exception thrown)
-        doNothing().when(reportManagementServiceMock).validateReportFormat(excelReportId, FileExtension.XLSX);
-        when(streamingService.stream(excelReportId, FileExtension.XLSX)).thenReturn(responseBody);
         when(securityUtils.extractUserId()).thenReturn(USER_ID);
         when(reportDao.fetchReportById(excelReportId)).thenReturn(Optional.empty());
 
@@ -485,6 +499,15 @@ class ReportsControllerTest extends BaseMvcTest {
         }
 
         return result;
+    }
+
+    private static Report createReportWithOutputType(String outputType) {
+        return switch (outputType) {
+            case "CSV" -> createTestReportWithOutputType(csvReportOutput);
+            case "XLSX" -> createTestReportWithOutputType(xlsxReportOutput);
+            case "S3STORAGE" -> createTestReportWithOutputType(s3ReportOutput);
+            default -> throw new IllegalArgumentException("Unsupported output type: " + outputType);
+        };
     }
 
 }

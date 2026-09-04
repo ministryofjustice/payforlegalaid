@@ -35,6 +35,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static uk.gov.laa.gpfd.security.SilasRoles.RECONCILIATION;
@@ -82,6 +83,7 @@ class ReportDaoTest {
 
         assertTrue(result.isPresent());
         assertEquals(testReportId, result.get().getId());
+        verify(reportDao, times(1)).verifyUserCanAccessReport(testReportId);
         verify(metadataClient).sql(anyString());
     }
 
