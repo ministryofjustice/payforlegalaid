@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.0.3](https://github.com/ministryofjustice/payforlegalaid/compare/v4.0.2...v4.0.3) (2026-09-04)
+
+
+### Bug Fixes
+
+* **bot:** Bump the minor group with 4 updates ([#622](https://github.com/ministryofjustice/payforlegalaid/issues/622)) ([ebc573a](https://github.com/ministryofjustice/payforlegalaid/commit/ebc573a42669fc7e98f32f81ceddf17f58fa4b66))
+* **LPF-1333:** verifyUserCanAccessReport() called multiple times ([#620](https://github.com/ministryofjustice/payforlegalaid/issues/620)) ([20a2358](https://github.com/ministryofjustice/payforlegalaid/commit/20a2358a8ebc84ab26e30f8f47f26343ea765629))
+
 ## [4.0.2](https://github.com/ministryofjustice/payforlegalaid/compare/v4.0.1...v4.0.2) (2026-08-28)
 
 
