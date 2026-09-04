@@ -18,6 +18,7 @@ runs:
       env:
         SNYK_TOKEN: ${{ env.SNYK_TOKEN }}
       shell: bash
+      continue-on-error: true
 
     - name: Upload SARIF
       if: always() && hashFiles('snyk.sarif') != ''
