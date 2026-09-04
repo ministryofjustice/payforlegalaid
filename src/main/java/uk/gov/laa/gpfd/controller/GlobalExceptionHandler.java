@@ -36,7 +36,11 @@ import uk.gov.laa.gpfd.utils.RequestLogUtils;
 
 import java.sql.SQLSyntaxErrorException;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.NOT_IMPLEMENTED;
 import static org.springframework.http.ResponseEntity.badRequest;
 import static org.springframework.http.ResponseEntity.internalServerError;
 import static uk.gov.laa.gpfd.exception.TransferException.StreamException.ExcelStreamWriteException;
