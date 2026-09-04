@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Build and test
-        uses: './.github/build-and-test'
+        uses: './.github/actions/build-and-test'
         with:
           github-username: ${{ secrets.GITHUB_USERNAME }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -24,7 +24,7 @@ jobs:
           SOCKET_KEY: ${{ secrets.DEV_API_SOCKET_KEY }}
 
       - name: Run acceptance tests
-        uses: './.github/run_acceptance_tests'
+        uses: './.github/actions/run_acceptance_tests'
         with:
           github-username: ${{ secrets.GITHUB_USERNAME }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -36,6 +36,6 @@ jobs:
 
       - name: Snyk Scan
         if: github.event.pull_request.user.login != 'dependabot[bot]'
-        uses: './.github/snyk-scan'
+        uses: './.github/actions/snyk-scan'
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}

@@ -13,7 +13,7 @@ runs:
 
   steps:
     - name: Assume role in Cloud Platform
-      uses: './.github/login-to-aws'
+      uses: './.github/actions/login-to-aws'
       env:
         ROLE: ${{ env.ROLE }}
         AWS_REGION: ${{ env.AWS_REGION }}
