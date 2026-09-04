@@ -18,6 +18,8 @@ import uk.gov.laa.gpfd.model.ReportsGet200ResponseReportListInner;
 
 import java.util.List;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Service class responsible for interacting with the Reports table and transforming its data
  * into a format suitable for API responses.
@@ -101,6 +103,18 @@ public record ReportManagementService(
         }
 
         var report = reportDetails.get();
+        validateReportFormat(report, requestedFormat);
+    }
+
+    @SuppressFBWarnings(
+        value = "SECUNI",
+        justification = "File extensions are ASCII-only enum values; locale-sensitive case mapping cannot affect this comparison"
+    )
+    public void validateReportFormat(Report report, FileExtension requestedFormat) {
+        requireNonNull(report, "Report cannot be null");
+        requireNonNull(requestedFormat, "Requested format cannot be null");
+
+        var id = report.getId();
         var actualExtension = report.getOutputType().getExtension();
         var requestedExtension = requestedFormat.getExtension();
 
