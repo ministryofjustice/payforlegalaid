@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Build and test the code
-        uses: './.github/build-and-test'
+        uses: './.github/actions/build-and-test'
         env:
           SOCKET_KEY: ${{ secrets.DEV_API_SOCKET_KEY }}
         with:
@@ -31,14 +31,14 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run Snyk security suite
-        uses: './.github/snyk-scan'
+        uses: './.github/actions/snyk-scan'
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
       - name: Set Spring profile
         run: echo "SPRING_PROFILES_ACTIVE=dev" >> $GITHUB_ENV
 
-      - uses: './.github/login-to-aws'
+      - uses: './.github/actions/login-to-aws'
         env:
           ROLE: ${{ secrets.ECR_ROLE_TO_ASSUME }}
           AWS_REGION: ${{ vars.ECR_REGION }}
@@ -48,7 +48,7 @@ jobs:
         id: login-ecr
 
       - name: Build the docker image and push it to the repository
-        uses: './.github/build-push-docker-image'
+        uses: './.github/actions/build-push-docker-image'
         env:
           REPOSITORY: ${{ vars.ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
