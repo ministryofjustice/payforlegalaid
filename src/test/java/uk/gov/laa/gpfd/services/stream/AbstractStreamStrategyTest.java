@@ -91,6 +91,27 @@ class AbstractDataStreamTest {
     }
 
     @Test
+    void csvDataStream_shouldStreamResolvedReportWithoutFetchingItAgain() throws Exception {
+        var testStream = new AbstractDataStream.CsvDataStream(reportDao, dataStreamer);
+        var mockReport = mock(Report.class);
+        var outputStream = new ByteArrayOutputStream();
+
+        var body = testStream.stream(mockReport);
+        body.writeTo(outputStream);
+
+        verifyNoInteractions(reportDao);
+        verify(dataStreamer).stream(mockReport, outputStream);
+    }
+
+    @Test
+    void shouldRejectNullResolvedReport() {
+        var testStream = new AbstractDataStream.CsvDataStream(reportDao, dataStreamer);
+
+        assertThrows(NullPointerException.class, () -> testStream.stream((Report) null));
+        verifyNoInteractions(dataStreamer);
+    }
+
+    @Test
     void shouldRequireNonNullArgs() {
         assertThrows(NullPointerException.class, () -> createCsvStreamStrategy(null, dataStreamer));
         assertThrows(NullPointerException.class, () -> createCsvStreamStrategy(reportDao, null));

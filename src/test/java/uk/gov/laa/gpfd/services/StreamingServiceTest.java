@@ -5,6 +5,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import uk.gov.laa.gpfd.exception.ReportOutputTypeNotFoundException;
+import uk.gov.laa.gpfd.model.Report;
 import uk.gov.laa.gpfd.services.stream.DataStream;
 
 import static java.util.Map.of;
@@ -30,8 +32,11 @@ class StreamingServiceTest {
     @Mock
     private StreamingResponseBody mockStreamingBody;
 
+    @Mock
+    private Report report;
+
     @Test
-    void shouldUseCorrectSteamStrategyForFormat() {
+    void shouldUseCorrectStreamStrategyForFormat() {
         var reportId = randomUUID();
         var strategies = of(
                 CSV, csvStrategy,
@@ -49,7 +54,24 @@ class StreamingServiceTest {
     }
 
     @Test
-    void shouldThrowExceptionForUnsupportedSteamFormat() {
+    void shouldUseCorrectStreamStrategyForResolvedReport() {
+        var strategies = of(
+                CSV, csvStrategy,
+                XLSX, excelStrategy
+        );
+
+        var service = new DefaultStreamingService(strategies);
+        when(csvStrategy.stream(report)).thenReturn(mockStreamingBody);
+
+        var result = service.stream(report, CSV);
+
+        assertEquals(mockStreamingBody, result);
+        verify(csvStrategy).stream(report);
+        verifyNoInteractions(excelStrategy);
+    }
+
+    @Test
+    void shouldThrowReportOutputTypeNotFoundExceptionForUnsupportedStreamFormat() {
         var reportId = randomUUID();
         var strategies = of(
                 CSV, csvStrategy
@@ -57,13 +79,18 @@ class StreamingServiceTest {
 
         var service = new DefaultStreamingService(strategies);
 
-        assertThrows(NullPointerException.class, () -> {
-            service.stream(reportId, XLSX);
-        });
+        assertThrows(ReportOutputTypeNotFoundException.class, () -> service.stream(reportId, XLSX));
     }
 
     @Test
-    void shouldPropagateSteamStrategyExceptions() {
+    void shouldThrowReportOutputTypeNotFoundExceptionForUnsupportedResolvedReportFormat() {
+        var service = new DefaultStreamingService(of(CSV, csvStrategy));
+
+        assertThrows(ReportOutputTypeNotFoundException.class, () -> service.stream(report, XLSX));
+    }
+
+    @Test
+    void shouldPropagateStreamStrategyExceptions() {
         var reportId = randomUUID();
         var strategies = of(
                 CSV, csvStrategy

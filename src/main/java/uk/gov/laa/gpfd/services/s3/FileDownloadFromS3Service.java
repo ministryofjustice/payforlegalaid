@@ -3,7 +3,6 @@ package uk.gov.laa.gpfd.services.s3;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
-import uk.gov.laa.gpfd.dao.ReportDao;
 import uk.gov.laa.gpfd.exception.FileDownloadException.S3BucketHasNoCopiesOfReportException;
 import uk.gov.laa.gpfd.services.s3.S3ClientWrapper.S3CsvDownload;
 
@@ -17,12 +16,10 @@ public class FileDownloadFromS3Service implements FileDownloadService {
 
     private final S3ClientWrapper s3ClientWrapper;
     private final ReportFileNameResolver fileNameResolver;
-    private final ReportDao reportDao;
 
-    public FileDownloadFromS3Service(S3ClientWrapper s3ClientWrapper, ReportFileNameResolver fileNameResolver, ReportDao reportDao) {
+    public FileDownloadFromS3Service(S3ClientWrapper s3ClientWrapper, ReportFileNameResolver fileNameResolver) {
         this.s3ClientWrapper = s3ClientWrapper;
         this.fileNameResolver = fileNameResolver;
-        this.reportDao = reportDao;
     }
 
     /**
@@ -34,10 +31,6 @@ public class FileDownloadFromS3Service implements FileDownloadService {
     @SneakyThrows
     @Override
     public S3CsvDownload getFileStreamResponse(UUID id) {
-
-        // Enforce role-based access control for this report
-        reportDao.verifyUserCanAccessReport(id);
-
         var s3Prefix = fileNameResolver.getS3PrefixFromId(id);
 
         var fileStreamOptional = s3ClientWrapper.getResultCsv(s3Prefix);
