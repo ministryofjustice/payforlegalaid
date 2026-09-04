@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataAccessException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
-import uk.gov.laa.gpfd.utils.RequestLogUtils;
 import uk.gov.laa.gpfd.exception.CsvGenerationException;
 import uk.gov.laa.gpfd.exception.DatabaseReadException;
 import uk.gov.laa.gpfd.exception.DatabaseWriteException;
@@ -34,9 +32,11 @@ import uk.gov.laa.gpfd.model.GetReportDownloadById501Response;
 import uk.gov.laa.gpfd.model.ReportsGet400Response;
 import uk.gov.laa.gpfd.model.ReportsGet404Response;
 import uk.gov.laa.gpfd.model.ReportsGet500Response;
+import uk.gov.laa.gpfd.utils.RequestLogUtils;
 
 import java.sql.SQLSyntaxErrorException;
 
+import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.ResponseEntity.badRequest;
 import static org.springframework.http.ResponseEntity.internalServerError;
 import static uk.gov.laa.gpfd.exception.TransferException.StreamException.ExcelStreamWriteException;
@@ -60,7 +60,7 @@ public class GlobalExceptionHandler {
      * @param e the LocalTemplateReadException thrown when there is an issue reading a local template resource.
      * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
      */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
     @ExceptionHandler({
             TemplateResourceException.TemplateNotFoundException.class,
             TemplateResourceException.LocalTemplateReadException.class,
@@ -78,7 +78,7 @@ public class GlobalExceptionHandler {
             log.error("Caused by: {}", e.getCause().getMessage());
         }
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(response);
     }
 
     /**
@@ -87,7 +87,7 @@ public class GlobalExceptionHandler {
      * @param e the ReportGenerationException thrown when there is an issue while creating xls report
      * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
      */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
     @ExceptionHandler({
             ReportGenerationException.InvalidWorkbookTypeException.class,
             ReportGenerationException.PivotTableCopyException.class,
@@ -105,7 +105,7 @@ public class GlobalExceptionHandler {
             log.error("Caused by: {}", e.getCause().getMessage());
         }
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(response);
     }
 
     /**
@@ -114,7 +114,7 @@ public class GlobalExceptionHandler {
      * @param e the ExcelStreamWriteException thrown when there is an issue writing an Excel file to a stream.
      * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
      */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
     @ExceptionHandler(ExcelStreamWriteException.class)
     public ResponseEntity<ReportsGet500Response> handleExcelStreamWriteException(ExcelStreamWriteException e) {
         var response = new ReportsGet500Response() {{
@@ -132,7 +132,7 @@ public class GlobalExceptionHandler {
      * @param e the DatabaseReadException thrown when there is a database read failure.
      * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
      */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
     @ExceptionHandler(value = {
             DatabaseReadException.class,
             DataAccessException.class,
@@ -143,8 +143,8 @@ public class GlobalExceptionHandler {
             setError(e.getMessage());
         }};
 
-        log.error("DatabaseReadException Thrown: %s".formatted(response));
-        log.error("DatabaseReadException stacktrace: %s".formatted((Object) e.getStackTrace()));
+        log.error("DatabaseReadException Thrown: {}", response, e);
+        log.error("DatabaseReadException Thrown: {}", e.getMessage(), e);
 
         return internalServerError()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -157,7 +157,7 @@ public class GlobalExceptionHandler {
      * @param e the ReportOutputTypeNotFoundException thrown when an unknown report output type is encountered.
      * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
      */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
     @ExceptionHandler(ReportOutputTypeNotFoundException.class)
     public ResponseEntity<ReportsGet500Response> handleReportOutputTypeNotFoundException(ReportOutputTypeNotFoundException e) {
 
@@ -165,8 +165,8 @@ public class GlobalExceptionHandler {
             setError(e.getMessage());
         }};
 
-        log.error("ReportOutputTypeNotFoundException Thrown: %s".formatted(response));
-        log.error("ReportOutputTypeNotFoundException stacktrace: %s".formatted((Object) e.getStackTrace()));
+        log.error("ReportOutputTypeNotFoundException Thrown: {}", response, e);
+        log.error("ReportOutputTypeNotFoundException stacktrace: {}", e.getMessage(), e);
 
         return internalServerError().body(response);
     }
@@ -177,16 +177,16 @@ public class GlobalExceptionHandler {
      * @param e the ReportIdNotFoundException thrown when a requested report ID is not found.
      * @return a {@link ResponseEntity} containing a {@link ReportsGet400Response} with error details.
      */
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(NOT_FOUND)
     @ExceptionHandler(ReportIdNotFoundException.class)
     public ResponseEntity<ReportsGet404Response> handleReportIdNotFoundException(ReportIdNotFoundException e) {
         var response = new ReportsGet404Response() {{
             setError(e.getMessage());
         }};
 
-        log.error("ReportIdNotFoundException Thrown: %s".formatted(response));
+        log.error("ReportIdNotFoundException Thrown: {}", response, e);
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        return ResponseEntity.status(NOT_FOUND).body(response);
     }
 
     /**
@@ -195,7 +195,7 @@ public class GlobalExceptionHandler {
      * @param e the IndexOutOfBoundsException thrown when an index is accessed out of bounds.
      * @return a {@link ResponseEntity} containing a {@link ReportsGet400Response} with error details.
      */
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(IndexOutOfBoundsException.class)
     public ResponseEntity<ReportsGet400Response> handleIndexOutOfBoundsException(IndexOutOfBoundsException e) {
         var response = new ReportsGet400Response() {{
@@ -213,7 +213,7 @@ public class GlobalExceptionHandler {
      * @param e the MethodArgumentTypeMismatchException thrown when an argument type is mismatched.
      * @return a {@link ResponseEntity} containing a {@link ReportsGet400Response} with error details.
      */
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ReportsGet400Response> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
         var message = ERROR_STRING + "Invalid input for parameter " + e.getName() + ". Expected a valid UUID";
@@ -232,7 +232,7 @@ public class GlobalExceptionHandler {
      * @param e the exception thrown when there is an issue connecting to S3.
      * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
      */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
     @ExceptionHandler(AwsServiceException.class)
     public ResponseEntity<ReportsGet500Response> handleAWSErrors(AwsServiceException e) {
         var message = ERROR_STRING + "Failed to prepare report for download";
@@ -253,7 +253,7 @@ public class GlobalExceptionHandler {
      * @param e the exception thrown when the user is acting outside of service active hours.
      * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
      */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
     @ExceptionHandler(ServiceUnavailableException.class)
     public ResponseEntity<ReportsGet500Response> handleServiceUnavailable(ServiceUnavailableException e) {
         var errorResponse = new ReportsGet500Response();
@@ -270,7 +270,7 @@ public class GlobalExceptionHandler {
      * @param e the exception thrown when the user is on a system that doesn't support the endpoint.
      * @return a {@link ResponseEntity} containing a {@link GetReportDownloadById501Response} with error details.
      */
-    @ResponseStatus(HttpStatus.NOT_IMPLEMENTED)
+    @ResponseStatus(NOT_IMPLEMENTED)
     @ExceptionHandler(OperationNotSupportedException.class)
     public ResponseEntity<GetReportDownloadById501Response> handleNotSupportedException(OperationNotSupportedException e) {
         var errorResponse = new GetReportDownloadById501Response();
@@ -278,7 +278,7 @@ public class GlobalExceptionHandler {
 
         log.error("OperationNotSupportedException Thrown: {}", e.getMessage());
 
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
+        return ResponseEntity.status(NOT_IMPLEMENTED)
                 .body(errorResponse);
     }
 
@@ -288,7 +288,7 @@ public class GlobalExceptionHandler {
      * @param e the exception thrown when the file being downloaded would not be a csv
      * @return a {@link ResponseEntity} containing a {@link ReportsGet400Response} with error details.
      */
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(InvalidDownloadFormatException.class)
     public ResponseEntity<ReportsGet400Response> handleInvalidDownloadFormatException(InvalidDownloadFormatException e) {
         var errorResponse = new ReportsGet400Response();
@@ -296,7 +296,7 @@ public class GlobalExceptionHandler {
 
         log.error("InvalidDownloadFormatException Thrown: Report {} has file {} which is not a csv file", e.getReportId(), e.getFileName());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity.status(BAD_REQUEST)
                 .body(errorResponse);
     }
 
@@ -306,7 +306,7 @@ public class GlobalExceptionHandler {
      * @param e the exception thrown when the report can't be downloaded via this endpoint
      * @return a {@link ResponseEntity} containing a {@link ReportsGet400Response} with error details.
      */
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(ReportNotSupportedForDownloadException.class)
     public ResponseEntity<ReportsGet400Response> handleReportNotSupportedForDownloadException(ReportNotSupportedForDownloadException e) {
         var errorResponse = new ReportsGet400Response();
@@ -314,7 +314,7 @@ public class GlobalExceptionHandler {
 
         log.error("ReportNotSupportedForDownloadException Thrown: Report {} is not supported on the '/report/{id}/file' endpoint", e.getReportId());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity.status(BAD_REQUEST)
                 .body(errorResponse);
     }
 
@@ -324,7 +324,7 @@ public class GlobalExceptionHandler {
      * @param e the exception thrown when we can't extract a group from the user's auth token
      * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
      */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
     @ExceptionHandler(UnableToParseAuthDetailsException.class)
     public ResponseEntity<ReportsGet500Response> handleUnexpectedAuthTypeException(UnableToParseAuthDetailsException e) {
         var errorResponse = new ReportsGet500Response();
@@ -332,7 +332,7 @@ public class GlobalExceptionHandler {
 
         log.error("UnexpectedAuthTypeException Thrown: {}", e.getMessage());
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                 .body(errorResponse);
     }
 
@@ -342,7 +342,7 @@ public class GlobalExceptionHandler {
      * @param e the exception thrown when we can't extract a group from the user's auth token
      * @return a {@link ResponseEntity} containing a {@link GetReportDownloadById403Response} with error details.
      */
-    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseStatus(FORBIDDEN)
     @ExceptionHandler(ReportAccessException.class)
     public ResponseEntity<GetReportDownloadById403Response> handleReportAccessException(ReportAccessException e) {
         var errorResponse = new GetReportDownloadById403Response();
@@ -353,7 +353,7 @@ public class GlobalExceptionHandler {
                 .addKeyValue(RequestLogUtils.EVENT_OUTCOME, "failure")
                 .log("ReportAccessException Thrown: User tried to access report {} but lacks the relevant permission(s)", e.getReportId());
 
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+        return ResponseEntity.status(FORBIDDEN)
                 .body(errorResponse);
     }
 
@@ -363,7 +363,7 @@ public class GlobalExceptionHandler {
      * @param e the CsvGenerationException thrown when there is an issue while creating xls report
      * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
      */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
     @ExceptionHandler({
             CsvGenerationException.WritingToCsvException.class,
             CsvGenerationException.MetadataInvalidException.class,
@@ -378,7 +378,7 @@ public class GlobalExceptionHandler {
             log.error("Caused by: {}", e.getCause().getMessage());
         }
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(response);
     }
 
     /**
@@ -387,7 +387,7 @@ public class GlobalExceptionHandler {
      * @param e the exception thrown when the S3 doesn't contain any copies of the report
      * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
      */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
     @ExceptionHandler(S3BucketHasNoCopiesOfReportException.class)
     public ResponseEntity<ReportsGet500Response> handleS3BucketHasNoCopiesOfReportException(S3BucketHasNoCopiesOfReportException e) {
         var errorResponse = new ReportsGet500Response();
@@ -396,7 +396,7 @@ public class GlobalExceptionHandler {
         log.error("S3BucketHasNoCopiesOfReportException Thrown: No matching entries in the S3 bucket were found for report with ID {} using prefix {}.",
                 e.getReportId(), e.getPrefix());
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                 .body(errorResponse);
     }
 
@@ -406,7 +406,7 @@ public class GlobalExceptionHandler {
      * @param e the exception thrown when a report is requested in an unsupported format
      * @return a {@link ResponseEntity} containing a {@link ReportsGet400Response} with error details.
      */
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(InvalidReportFormatException.class)
     public ResponseEntity<ReportsGet400Response> handleInvalidReportFormatException(InvalidReportFormatException e) {
         var errorResponse = new ReportsGet400Response();
@@ -415,7 +415,7 @@ public class GlobalExceptionHandler {
         log.error("InvalidReportFormatException Thrown: Report {} requested as {} but is actually {}",
                 e.getReportId(), e.getRequestedFormat(), e.getActualFormat());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity.status(BAD_REQUEST)
                 .body(errorResponse);
     }
 
@@ -425,7 +425,7 @@ public class GlobalExceptionHandler {
      * @param e the DatabaseWriteException thrown when there is a database read failure.
      * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
      */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
     @ExceptionHandler(value = {
             DatabaseWriteException.class,
     }, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -446,7 +446,7 @@ public class GlobalExceptionHandler {
      * @param e the exception thrown when the stream fails on the service
      * @return a {@link ResponseEntity} containing a {@link ReportsGet500Response} with error details.
      */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
     @ExceptionHandler(StreamErrorException.class)
     public ResponseEntity<ReportsGet500Response> handleStreamErrorException(StreamErrorException e) {
         var errorResponse = new ReportsGet500Response();
@@ -455,7 +455,7 @@ public class GlobalExceptionHandler {
         log.error("StreamErrorException Thrown: Report {} failed streaming on the server side with exception, caused by {}",
                 e.getReportId(), e.getMessage());
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                 .body(errorResponse);
     }
 
