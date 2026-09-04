@@ -15,6 +15,9 @@ spec:
         app: gpfd-${ENV_NAME}
     spec:
       serviceAccountName: laa-get-payments-finance-data-${ENV_NAME}-service
+      volumes:
+        - name: tmp
+          emptyDir: { }
       containers:
         - name: gpfd-api-container-${ENV_NAME}
           image: ${REGISTRY}/${REPOSITORY}:${IMAGE_TAG}
@@ -95,9 +98,13 @@ spec:
                 secretKeyRef:
                   name: rds-postgresql-instance-output
                   key: database_password
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
           securityContext:
             runAsUser: 1001
             runAsGroup: 1001
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
