@@ -1,11 +1,7 @@
 package uk.gov.laa.gpfd.config;
 
-import java.sql.SQLException;
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 import javax.sql.DataSource;
 import org.apache.poi.ss.usermodel.Cell;
@@ -23,29 +19,14 @@ import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.RowCallbackHandler;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.web.client.RestTemplate;
 
-import lombok.Getter;
-import oracle.ucp.jdbc.PoolDataSource;
-import oracle.ucp.jdbc.PoolDataSourceFactory;
-import uk.gov.laa.gpfd.dao.JdbcWorkbookDataStreamer;
-import uk.gov.laa.gpfd.dao.ReportDao;
-import static uk.gov.laa.gpfd.dao.sql.ChannelRowHandler.forSheet;
 import uk.gov.laa.gpfd.dao.ReportTrackingDao;
-import uk.gov.laa.gpfd.dao.sql.core.StatementPolicy;
-import uk.gov.laa.gpfd.model.FieldProjection;
 import uk.gov.laa.gpfd.model.FileExtension;
-import uk.gov.laa.gpfd.model.Mapping;
 import uk.gov.laa.gpfd.model.excel.ExcelMappingProjection;
-import uk.gov.laa.gpfd.services.DataStreamer;
-import static uk.gov.laa.gpfd.services.DataStreamer.createJdbcStreamer;
 import uk.gov.laa.gpfd.services.StreamingService;
 import uk.gov.laa.gpfd.services.TemplateService;
 import uk.gov.laa.gpfd.services.excel.editor.CellValueSetter;
@@ -58,7 +39,6 @@ import uk.gov.laa.gpfd.services.excel.formatting.Formatting;
 import uk.gov.laa.gpfd.services.excel.template.TemplateClient;
 import uk.gov.laa.gpfd.services.excel.template.TemplateFileNameResolver;
 import uk.gov.laa.gpfd.services.excel.workbook.StyleManager;
-import uk.gov.laa.gpfd.services.stream.AbstractDataStream;
 import uk.gov.laa.gpfd.services.stream.DataStream;
 import uk.gov.laa.gpfd.utils.StrategyFactory;
 import uk.gov.laa.gpfd.utils.WorkbookFactory;
@@ -78,93 +58,6 @@ public class AppConfig {
 
     @Value("${excel.steam.window.size:1000}")
     private int rowAccessWindowSize;
-
-    @Value("${excel.jdbc.streamer.default-fetch-size:1000}")
-    private int defaultFetchSize;
-    @Getter
-    @Value("${gpfd.csv-generation.buffer-flush-frequency:1000}")
-    private int csvBufferFlushFrequency;
-
-    /**
-     * Configures a read-only {@link DataSource}.
-     * <p>
-     * This data source is intended for read-only operations in the database, such as queries.
-     * </p>
-     *
-     * @return a configured {@link DataSource} for read-only operations.
-     */
-    @Bean
-    public PoolDataSource readOnlyDataSource(
-            @Value("${gpfd.datasource.read-only.url}") String url,
-            @Value("${gpfd.datasource.read-only.username}") String username,
-            @Value("${gpfd.datasource.read-only.password}") String password,
-            @Value("${gpfd.datasource.read-only.driver-class-name}") String driverClass
-    ) throws SQLException {
-        PoolDataSource pds = PoolDataSourceFactory.getPoolDataSource();
-
-        pds.setConnectionFactoryClassName(driverClass);
-        pds.setURL(url);
-        pds.setUser(username);
-        pds.setPassword(password);
-
-        pds.setInitialPoolSize(5);
-        pds.setMinPoolSize(5);
-        pds.setMaxPoolSize(10);
-        pds.setCommitOnConnectionReturn(false);
-        pds.setConnectionWaitDuration(Duration.of(30, ChronoUnit.SECONDS));
-        pds.setTimeoutCheckInterval(5);
-        pds.setInactiveConnectionTimeout(60);
-        pds.setAbandonedConnectionTimeout(120);
-        pds.setConnectionHarvestTriggerCount(3);
-        pds.setConnectionHarvestMaxCount(5);
-
-        pds.setValidateConnectionOnBorrow(false);
-        pds.setConnectionProperty("oracle.jdbc.defaultRowPrefetch", "1000");
-        pds.setConnectionProperty("oracle.jdbc.useFetchSizeWithLongColumn", "true");
-        pds.setConnectionProperty("oracle.jdbc.JdbcConnectionFlags", "0x8000");
-        pds.setConnectionProperty("oracle.net.CONNECT_TIMEOUT", "10000");
-        pds.setConnectionProperty("oracle.jdbc.ReadTimeout", "30000");
-
-        return pds;
-    }
-
-    @Bean
-    public StatementPolicy statementPolicy(
-            @Value("${jdbc.fetch-size:1000}") int fetchSize,
-            @Value("${jdbc.query-timeout:30}") int timeout
-    ) {
-        return new StatementPolicy(fetchSize, timeout);
-    }
-
-    @Bean
-    public JdbcWorkbookDataStreamer workbookDataStreamer(
-            JdbcTemplate readOnlyJdbcTemplate,
-            StatementPolicy statementPolicy
-    ) {
-        return new JdbcWorkbookDataStreamer(readOnlyJdbcTemplate) {
-
-            @Override
-            protected String getSql(Mapping mapping) {
-                return mapping.getQuery().value();
-            }
-
-            @Override
-            protected PreparedStatementCreator createStatementCreator(String sql) {
-                return statementPolicy.createStatementCreator(sql);
-            }
-
-            @Override
-            protected RowCallbackHandler createRowCallbackHandler(Sheet sheet, Mapping mapping) {
-                var list = Objects.requireNonNull(mapping.getExcelSheet().getFieldAttributes())
-                        .stream()
-                        .filter(Objects::nonNull)
-                        .map(FieldProjection.class::cast)
-                        .toList();
-
-                return forSheet(sheet, list);
-            }
-        };
-    }
 
     /**
      * Creates Datasource for the Postgres RDS which has tracking data in.
@@ -217,36 +110,6 @@ public class AppConfig {
     @ConditionalOnMissingBean(name = "metadataClient")
     JdbcClient metadataClient(@Qualifier("metadataDataSource") DataSource dataSource) {
         return JdbcClient.create(dataSource);
-    }
-
-    /**
-     * Configures a {@link JdbcTemplate} for read-only database operations.
-     * <p>
-     * The {@code JdbcTemplate} is built on the {@code readOnlyDataSource} and simplifies
-     * querying and interacting with the database in a read-only capacity.
-     * </p>
-     *
-     * @param dataSource the read-only {@link DataSource} to be used by the {@link JdbcTemplate}.
-     * @return a configured {@link JdbcTemplate} for read-only operations.
-     */
-    @Bean
-    JdbcTemplate readOnlyJdbcTemplate(@Qualifier("readOnlyDataSource") DataSource dataSource) {
-        JdbcTemplate template = new JdbcTemplate(dataSource);
-        template.setFetchSize(defaultFetchSize);
-        template.setMaxRows(0);
-        template.setQueryTimeout(0);
-        return template;
-    }
-
-    /**
-     * Allows us to perform queries with parameters against the readOnly data source (MOJFIN)
-     *
-     * @param dataSource - MOJFIN datasource
-     * @return JdbcTemplate to access MOJFIN
-     */
-    @Bean
-    public NamedParameterJdbcOperations namedParameterJdbcOperations(@Qualifier("readOnlyDataSource") DataSource dataSource) {
-        return new NamedParameterJdbcTemplate(dataSource);
     }
 
     /**
@@ -414,34 +277,6 @@ public class AppConfig {
     public PivotTableRefresher pivotTableRefresher() {
         return new PivotTableRefresher() {
         };
-    }
-
-    /**
-     * Creates and returns a {@link DataStreamer} bean. This bean is responsible for
-     * streaming csv files.
-     *
-     * @return a {@link DataStreamer} instance
-     */
-    @Bean
-    DataStreamer dataStreamer(JdbcTemplate readOnlyJdbcTemplate) {
-        return createJdbcStreamer(readOnlyJdbcTemplate, getCsvBufferFlushFrequency());
-    }
-
-    @Bean
-    DataStreamer createExcelStreamer(TemplateService templateLoader,
-                                     JdbcWorkbookDataStreamer dataFetcher,
-                                     CellFormatter formatter) {
-        return DataStreamer.createExcelStreamer(templateLoader, dataFetcher, formatter);
-    }
-
-    @Bean
-    DataStream createCsvStreamStrategy(ReportDao reportDao, DataStreamer dataStreamer) {
-        return AbstractDataStream.createCsvStreamStrategy(reportDao, dataStreamer);
-    }
-
-    @Bean
-    DataStream createExcelStreamStrategy(ReportDao reportDao, DataStreamer createExcelStreamer) {
-        return AbstractDataStream.createExcelStreamStrategy(reportDao, createExcelStreamer);
     }
 
     @Bean
