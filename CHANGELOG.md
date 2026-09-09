@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.1](https://github.com/ministryofjustice/payforlegalaid/compare/v4.1.0...v4.1.1) (2026-09-08)
+
+
+### Bug Fixes
+
+* **LPF-1601:** Stacktrace logging bug ([#626](https://github.com/ministryofjustice/payforlegalaid/issues/626)) ([2aa4ba2](https://github.com/ministryofjustice/payforlegalaid/commit/2aa4ba26569590eea841d3a6417b619136520de7))
+
 ## [4.1.0](https://github.com/ministryofjustice/payforlegalaid/compare/v4.0.2...v4.1.0) (2026-09-07)
 
 
