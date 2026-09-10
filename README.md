@@ -469,3 +469,5 @@ Install the hook with the following command:
 ```text
 pre-commit install
 ```
+
+additional text that should not be merged.
