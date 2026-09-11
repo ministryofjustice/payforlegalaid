@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.1.2](https://github.com/ministryofjustice/payforlegalaid/compare/v4.1.1...v4.1.2) (2026-09-11)
+
+
+### Bug Fixes
+
+* **bot:** Bump com.github.spotbugs:spotbugs-maven-plugin from 4.10.4.0 to 4.10.4.1 ([#635](https://github.com/ministryofjustice/payforlegalaid/issues/635)) ([36a7c26](https://github.com/ministryofjustice/payforlegalaid/commit/36a7c26285afad595c9e882d1b8effb7afebb021))
+* **bot:** Bump io.gatling:gatling-maven-plugin from 4.21.11 to 4.21.12 in the minor group ([#634](https://github.com/ministryofjustice/payforlegalaid/issues/634)) ([92755bb](https://github.com/ministryofjustice/payforlegalaid/commit/92755bb7a31cf9eb315cff3f56d2f387ebd88a50))
+
 ## [4.1.1](https://github.com/ministryofjustice/payforlegalaid/compare/v4.1.0...v4.1.1) (2026-09-08)
 
 
