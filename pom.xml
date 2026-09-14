@@ -420,8 +420,6 @@
         <dependency>
             <groupId>tools.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-csv</artifactId>
-            <!-- Would normally let Spring Boot manage but we need it to be at least 3.1.6 for SNYK-JAVA-TOOLSJACKSONCORE-19778371 -->
-<!--            <version>3.1.6</version>-->
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
