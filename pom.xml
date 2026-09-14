@@ -420,6 +420,8 @@
         <dependency>
             <groupId>tools.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-csv</artifactId>
+            <!-- Would normally let Spring Boot manage but we need it to be at least 3.1.6 for SNYK-JAVA-TOOLSJACKSONCORE-19778371 -->
+<!--            <version>3.1.6</version>-->
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
@@ -611,18 +613,18 @@
             <version>0.35.0</version>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>com.fasterxml.jackson.core</groupId>-->
-<!--            <artifactId>jackson-databind</artifactId>-->
-<!--            &lt;!&ndash; Need until Spring Boot gets to 2.21.6 for SNYK-JAVA-COMFASTERXMLJACKSONCORE-19477042 et al. &ndash;&gt;-->
-<!--            <version>2.21.6</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <!-- Need until Spring Boot gets to 2.21.6 for SNYK-JAVA-COMFASTERXMLJACKSONCORE-19477042 et al. -->
+            <version>2.21.6</version>
+        </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>io.netty</groupId>-->
-<!--            <artifactId>netty-codec-http</artifactId>-->
-<!--            <version></version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>3.1.6</version>
+        </dependency>
 
     </dependencies>
 
