@@ -9,6 +9,8 @@ COPY pom.xml .
 # Build dependencies (use the cache if nothing has changed in pom, use local Maven settings to get glad-parent)
 RUN --mount=type=cache,target=/root/.m2 \
     --mount=type=secret,id=maven_settings,target=/root/.m2/settings.xml \
+    --mount=type=secret,id=github_username,env=GITHUB_USERNAME \
+    --mount=type=secret,id=github_token,env=GITHUB_TOKEN \
     mvn -s /root/.m2/settings.xml -B -q dependency:go-offline
 
 # Copy source and build

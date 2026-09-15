@@ -28,6 +28,8 @@ services:
         BUILDKIT_INLINE_CACHE: "1"
       secrets:
         - maven_settings
+        - github_username
+        - github_token
     container_name: payforlegalaid-local
     ports:
       - "8080:8080"
@@ -38,6 +40,7 @@ services:
       CLIENT_SECRET: ${CLIENT_SECRET}
       ORACLE_DB_PASSWORD: ${ORACLE_DB_PASSWORD}
       RDS_DB_HOST: payforlegalaid-local-postgres
+    
     depends_on:
       oracle:
         condition: service_healthy        # wait for Oracle to be ready
@@ -69,3 +72,7 @@ volumes:
 secrets:
   maven_settings:
     file: ${HOME}/.m2/settings.xml
+  github_username:
+    environment: GITHUB_USERNAME
+  github_token:
+    environment: GITHUB_TOKEN
