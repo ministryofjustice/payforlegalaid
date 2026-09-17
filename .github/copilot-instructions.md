@@ -4,47 +4,30 @@ Get Payments and Finance Data (GPFD) is a Spring Boot API that provides financia
 
 **For detailed setup, running, and troubleshooting instructions, see [README.md](../README.md).**
 
-## Quick Command Reference
-
-```bash
-# Build
-mvn clean package
-mvn clean package -DskipTests
-
-# Test - unit and integration only
-mvn clean test -Dtest='!*RunCucumberTest'
-mvn test -Dtest=ClassName#methodName
-
-# Test - acceptance (BDD)
-mvn clean test -Dtest='*RunCucumberTest' -Dcucumber.filter.tags="not @performance"
-
-# Test - performance (Gatling)
-export JSESSIONID=<from-browser>
-mvn gatling:test -Dgatling.simulationClass=uk.gov.laa.gpfd.simulations.ClassName -Dmaven.antrun.skip=true -Dmaven.resources.skip=true
-
-# Analysis
-mvn spotbugs:check
-snyk test --policy-path=.snyk
-
-# Docker local development
-docker compose build
-docker compose up
-docker compose down
-```
+## Developer Workflows
+- **Preferred local run**: `docker compose build` then `docker compose up`; this starts the app on `http://localhost:8080` with local Oracle and Postgres containers
+- **Local prerequisites**: create `.env` from `.env.example`, set `ORACLE_DB_PASSWORD`, and provide (development) SILAS `CLIENT_ID`, `TENANT_ID`, and `CLIENT_SECRET`
+- **Build**: `mvn clean package` for a local artefact, or `mvn clean verify -Dtest='!*RunCucumberTest'` to match the pull request build path
+- **Unit and integration tests**: `mvn clean test -Dtest='!*RunCucumberTest'`
+- **Single test**: `mvn test -Dtest=ClassName#methodName`
+- **Acceptance tests**: `mvn test -Dtest=RunCucumberTest -Dcucumber.filter.tags="not @performance"`; templates live in `src/main/resources`, and `TESTS_TO_DISABLE` can skip named scenarios at runtime
+- **Performance tests**: Gatling simulations live in `src/test/java/uk/gov/laa/gpfd/simulations`; Playwright performance scenarios run with `mvn test -Dspring.profiles.active=uat -Dtest='*RunCucumberTest' -Dcucumber.filter.tags="@performance"`
+- **Diagnostics**: use `/actuator/health`, `/actuator/health/liveness`, and `/actuator/health/readiness`; check `docker compose ps` once the local stack is up
+- **Static analysis**: `mvn spotbugs:check` and `snyk test --policy-path=.snyk`
 
 ## Architecture & Design
 
 ### System Overview
-GPFD is a dual-interface application:
-- **REST API**: Serves JSON for programmatic report access
-- **Web UI**: Thymeleaf-based interface for users to view and download reports
-
-Data sources:
-- **MOJFIN database** (read-only via views): Live financial report data
-- **Data Claims Reporting Service (DCRS)**: Pre-generated CSV reports
-- **RDS tracking database**: Report metadata and access logs
-
-Authentication: Microsoft Entra ID via SILAS (Sign Into Legal Aid Services)
+- GPFD is a dual-interface application:
+  - **REST API**: Serves JSON for programmatic report access
+  - **Web UI**: Thymeleaf-based interface for users to view and download reports
+- **Framework**: Spring Boot 4.x, Java c25, Spring Security
+- Data sources:
+  - **Data Claims Reporting Service (DCRS)**: Pre-generated CSV reports
+  - **RDS tracking database**: Report metadata and access logs
+- **Authentication**: 
+  - Microsoft Entra ID via SILAS (Sign Into Legal Aid Services)
+  - via `spring-cloud-azure-starter-active-directory`
 
 ### Layered Architecture
 ```
@@ -54,13 +37,13 @@ Service (business logic)
   ↓
 DAO (database access) / S3Client (AWS)
   ↓
-Database (RDS, MOJFIN) / AWS S3
+Database (RDS) / AWS S3
 ```
 
-Key modules:
-- `controller/`: HTTP endpoints for reports, health, API operations
+### Key modules ###
+- `controller/`: HTTP endpoints for reports, health, API operations. Implements OpenAPI generated interfaces. Delegates to services.
 - `services/`: ReportManagementService (core), StreamingService (file download), s3/ (AWS integration)
-- `dao/`: Database query layer with read-only MOJFIN access
+- `dao/`: Database query layer with read-only MOJFIN access (deprecated)
 - `config/`: Spring Security (SILAS), S3, AppConfig, SecurityConfig
 - `security/`: Custom auth/authz components
 - `model/`: DTOs (auto-generated from OpenAPI spec), entities
@@ -69,7 +52,6 @@ Key modules:
 ### Database Strategy
 - **Flyway** (`src/main/resources/flyway/migration/schema`): Manages RDS metadata schema in deployed environments
 - **Liquibase** (`src/test/resources`): Defines H2 test database schema
-- **MOJFIN access**: Read-only credentials via environment variables; queries use parameterised statements
 
 ## Code Patterns & Conventions
 
@@ -80,8 +62,11 @@ Key modules:
 - **Controllers**: REST endpoints only; delegate logic to services
 - **Services**: Implement business rules; avoid mixing concerns (keep report logic separate from S3, database, etc.)
 - **DAOs**: Query abstraction layer; enforce parameterised queries (prevent SQL injection)
-- **Models**: Use immutables (Immutables) or Lombok for concise data classes
+- **Models**: Use Immutables or Lombok for concise data classes
 - **Security**: Custom components (SecurityConfig, ContextBasedAuthorizationManager, TimeBasedAccessInterceptor) handle auth flow
+- **Logging**: Slf4j with `@Slf4j`, log levels: `log.debug()`, `log.info()` for key operations
+- **File Handling**: POI for Excel, Jackson CSV for streaming; buffer flush every 5000 rows
+- **Error Handling**: Custom exceptions (`ReportIdNotFoundException`, `InvalidReportFormatException`), global handler in `GlobalExceptionHandler`
 
 ### Testing Structure
 - **Unit tests** (`src/test/java`, `*Test.java`): Mock services, H2 database, isolated component testing
@@ -98,7 +83,7 @@ Key modules:
 ### Database Migrations
 - Use descriptive names: `V1__create_report_table.sql`, `R__01_seed_metadata.sql`
 - Flyway version-based (V*.sql) for deployment; repeatable (R__*.sql) for seed data
-- Deployed environments: RDS only (no Liquibase); MOJFIN accessed read-only
+- Deployed environments: RDS only
 
 ### Logging
 - **Production (dev/uat/prod)**: ECS structured JSON with trace/span IDs for OpenSearch/Kibana
