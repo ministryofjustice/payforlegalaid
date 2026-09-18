@@ -42,21 +42,6 @@ spec:
                 secretKeyRef:
                   name: gpfd-test-secret-01
                   key: tenant-id-dev
-            - name: MOJFIN_DEV_READ_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: gpfd-test-secret-01
-                  key: mojfin-dev-read-username
-            - name: MOJFIN_DEV_READ_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: gpfd-test-secret-01
-                  key: mojfin-dev-read-password
-            - name: MOJFIN_DB_URL
-              valueFrom:
-                secretKeyRef:
-                  name: gpfd-test-secret-01
-                  key: mojfin-db-url
           securityContext:
             capabilities:
               drop:

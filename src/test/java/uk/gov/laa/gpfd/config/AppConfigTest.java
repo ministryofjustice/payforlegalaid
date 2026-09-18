@@ -1,6 +1,5 @@
 package uk.gov.laa.gpfd.config;
 
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,26 +9,17 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
-import uk.gov.laa.gpfd.dao.sql.core.StatementPolicy;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -40,29 +30,17 @@ class AppConfigTest {
     ApplicationContext applicationContext;
 
     @Test
-    void shouldReadOnlyDataSourceBeanWithQualifier() {
-        // Given
-        // When
-        var dataSource = applicationContext.getBean("readOnlyDataSource", DataSource.class);
-
-        // Then
-        assertNotNull(dataSource, "ReadOnlyDataSource bean should be created.");
-    }
-
-    @Test
-    void shouldJdbcTemplateWithQualifier() {
-        // Given
-        // When
-        var jdbcTemplate = applicationContext.getBean("readOnlyJdbcTemplate", JdbcTemplate.class);
-
-        // Then
-        assertNotNull(jdbcTemplate, "JdbcTemplate bean should be created.");
-    }
-
-    @Test
     void shouldIncorrectBeanNameThrowsException() {
         assertThrows(NoSuchBeanDefinitionException.class, () ->
                 applicationContext.getBean("incorrectBeanName"));
+    }
+
+    @Test
+    void shouldNotCreateMojfinDataSourceOrJdbcTemplate() {
+        assertThrows(NoSuchBeanDefinitionException.class, () ->
+                applicationContext.getBean("readOnlyDataSource"));
+        assertThrows(NoSuchBeanDefinitionException.class, () ->
+                applicationContext.getBean("readOnlyJdbcTemplate"));
     }
 
     @Test
@@ -98,16 +76,6 @@ class AppConfigTest {
 
         // Then
         assertNotNull(restTemplate.getRequestFactory(), "Request factory should be configured.");
-    }
-
-    @Test
-    void shouldReadOnlyJdbcTemplateBean() {
-        // Given
-        // When
-        var jdbcTemplate = applicationContext.getBean("readOnlyJdbcTemplate", JdbcTemplate.class);
-
-        // Then
-        assertNotNull(jdbcTemplate, "ReadOnlyJdbcTemplate bean should be created.");
     }
 
     @Test
@@ -166,22 +134,5 @@ class AppConfigTest {
         assertTrue(restTemplate.getInterceptors().stream()
                         .anyMatch(i -> i instanceof ClientHttpRequestInterceptor),
                 "RestTemplate should have interceptors.");
-    }
-
-    @SneakyThrows
-    @Test
-    void shouldCreateStatementPolicyWithCorrectDetails() {
-        var mockConnection = mock(Connection.class);
-        var mockPreparedStatement = mock(PreparedStatement.class);
-        when(mockConnection.prepareStatement(any(), anyInt(), anyInt())).thenReturn(mockPreparedStatement);
-        var statementPolicy = applicationContext.getBean(StatementPolicy.class);
-        var statementCreator = statementPolicy.createStatementCreator("SELECT * FROM test");
-        statementCreator.createPreparedStatement(mockConnection);
-        verify(mockPreparedStatement).setQueryTimeout(30);
-        verify(mockPreparedStatement).setFetchSize(1000);
-        verify(mockConnection).prepareStatement(
-                "SELECT * FROM test",
-                ResultSet.TYPE_FORWARD_ONLY,
-                ResultSet.CONCUR_READ_ONLY);
     }
 }

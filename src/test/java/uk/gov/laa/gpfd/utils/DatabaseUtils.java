@@ -1,67 +1,17 @@
 package uk.gov.laa.gpfd.utils;
 
-import liquibase.CatalogAndSchema;
-import liquibase.Contexts;
-import liquibase.Liquibase;
-import liquibase.database.Database;
-import liquibase.database.jvm.JdbcConnection;
-import liquibase.exception.LiquibaseException;
-import liquibase.resource.ClassLoaderResourceAccessor;
 import org.springframework.stereotype.Component;
-import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-
+// MOJFIN access has been removed (LPF-1614); retained as a no-op until dependent IT/unit tests are cleaned up (LPF-1613)
 @Component
 public class DatabaseUtils {
 
-  private final DataSource dataSource;
-
-  public DatabaseUtils(@Qualifier("readOnlyDataSource") DataSource dataSource) {
-    this.dataSource = dataSource;
-  }
-
-  private static Liquibase liquibase;
-  private static Connection connection;
-
   public void setUpMockMojfinDatabase() {
-    try {
-      connection = dataSource.getConnection();
-      Database database = new liquibase.database.core.H2Database(); // or OracleDatabase, PostgresDatabase, etc.
-      database.setConnection(new JdbcConnection(connection));
-
-      applyLiquibaseXml("db.changelog-gpfd-reports-schema.xml", database);
-      applyLiquibaseXml("db.changelog-gpfd-reports-data.xml", database);
-      applyLiquibaseXml("db.changelog-any-report-schema.xml", database);
-      applyLiquibaseXml("db.changelog-any-report-data.xml", database);
-      applyLiquibaseXml("db.changelog-gpfd-schema-rbac.xml", database);
-    } catch (Exception e) {
-      throw new RuntimeException("Exception when setting up test database:" + e.getMessage());
-    }
-
-  }
-
-  private static void applyLiquibaseXml(String changeLogFile, Database database)
-      throws LiquibaseException {
-    liquibase = new Liquibase(changeLogFile, new ClassLoaderResourceAccessor(), database);
-    liquibase.update(new Contexts("test"));
+    // no-op: MOJFIN (ANY_REPORT) is no longer queried by the application
   }
 
   public void cleanUpMockMojfinDatabase() {
-    try {
-      if (liquibase != null) {
-        CatalogAndSchema[] schemas = new CatalogAndSchema[] {
-            new CatalogAndSchema(null, "GPFD"),
-            new CatalogAndSchema(null, "GPFD_REPORTS"),
-            new CatalogAndSchema(null, "ANY_REPORT")
-        };
-
-        liquibase.dropAll(schemas);
-      }
-    } catch (Exception e) {
-      throw new RuntimeException("Exception when cleaning up test database:" + e.getMessage());
-    }
+    // no-op: MOJFIN (ANY_REPORT) is no longer queried by the application
   }
 
 }
