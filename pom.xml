@@ -21,7 +21,7 @@
 
         <maven-surefire-junit5-tree-reporter.version>1.5.1</maven-surefire-junit5-tree-reporter.version>
         <immutables.version>2.12.2</immutables.version>
-        <govuk-frontend.version>6.5.0</govuk-frontend.version>
+        <govuk-frontend.version>6.5.1</govuk-frontend.version>
         <moj-frontend.version>6.0.0</moj-frontend.version>
 
         <maven-surefire-plugin.version>3.6.0</maven-surefire-plugin.version>
@@ -614,14 +614,14 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <!-- Need until Spring Boot gets to 2.21.6 for SNYK-JAVA-COMFASTERXMLJACKSONCORE-19477042 et al. -->
-            <version>2.21.6</version>
+            <!-- Need until Spring Boot gets to 2.22.2 for SNYK-JAVA-COMFASTERXMLJACKSONCORE-19477042 et al. -->
+            <version>2.22.2</version>
         </dependency>
 
         <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>3.1.6</version>
+            <version>3.2.2</version>
         </dependency>
 
     </dependencies>
