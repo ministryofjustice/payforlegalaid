@@ -1,4 +1,4 @@
-FROM amazoncorretto:25-alpine@sha256:2ad5f5cf03a3970f2478b130dc28f51b179ce13c58154fe3ec1a6fdeb3b86e3a
+FROM amazoncorretto:27-alpine@sha256:6fba5f9f2f4730e2d3e81055ce0378a8587c12a48611ee545c5db04c3a28f889
 RUN apk update && apk add --no-cache curl
 
 WORKDIR /app
