@@ -33,8 +33,18 @@ public interface StyleManager {
     /**
      * Creates and returns a new instance of StyleManager.
      *
+     * @deprecated This style manager is not safe for concurrent report generation.
+     * This stores mutable style state which can be shared between generated Excel reports
+     * allowing styles to leak between reports when they are generated concurrently.
+     * Use with caution in multithreaded environments.
+     *
+     * <p>This is being retained for now while a decision is made on whether styled reports
+     * will be continued to be supported as part of DLP.
+     *
+     * <p>See PF-1602 for known concurrency issues with this style manager.
      * @return a new StyleManager instance
      */
+    @Deprecated(forRemoval = false)
     static StyleManager create() {
         return new DefaultStyleManager();
     }
@@ -42,7 +52,11 @@ public interface StyleManager {
     /**
      * Implementation of StyleManager interface that stores styles in a grid structure.
      * Uses column indices and string keys to manage styles efficiently.
+     * See {@link StyleManager#create()} for details on concurrency issues.
+     *
+     * @deprecated This style manager is not safe for concurrent report generation.
      */
+    @Deprecated(forRemoval = false)
     class DefaultStyleManager implements StyleManager {
         private final short[][] matrix = new short[MAX_COLUMNS][MAX_KEYS];
         private final Map<String, Integer> keyIndex = new HashMap<>();
