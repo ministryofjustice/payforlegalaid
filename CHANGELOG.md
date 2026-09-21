@@ -1,5 +1,21 @@
 # Changelog
 
+## [4.1.2](https://github.com/ministryofjustice/payforlegalaid/compare/v4.1.1...v4.1.2) (2026-09-15)
+
+
+### Bug Fixes
+
+* **bot:** Bump com.github.spotbugs:spotbugs-maven-plugin from 4.10.4.0 to 4.10.4.1 ([#635](https://github.com/ministryofjustice/payforlegalaid/issues/635)) ([36a7c26](https://github.com/ministryofjustice/payforlegalaid/commit/36a7c26285afad595c9e882d1b8effb7afebb021))
+* **bot:** Bump io.gatling:gatling-maven-plugin from 4.21.11 to 4.21.12 in the minor group ([#634](https://github.com/ministryofjustice/payforlegalaid/issues/634)) ([92755bb](https://github.com/ministryofjustice/payforlegalaid/commit/92755bb7a31cf9eb315cff3f56d2f387ebd88a50))
+* **LPF-000:** bump base image and fix some snyks ([#637](https://github.com/ministryofjustice/payforlegalaid/issues/637)) ([d7c620f](https://github.com/ministryofjustice/payforlegalaid/commit/d7c620f175f1aa30834915b5b08292479ea6029c))
+
+## [4.1.1](https://github.com/ministryofjustice/payforlegalaid/compare/v4.1.0...v4.1.1) (2026-09-08)
+
+
+### Bug Fixes
+
+* **LPF-1601:** Stacktrace logging bug ([#626](https://github.com/ministryofjustice/payforlegalaid/issues/626)) ([2aa4ba2](https://github.com/ministryofjustice/payforlegalaid/commit/2aa4ba26569590eea841d3a6417b619136520de7))
+
 ## [4.1.0](https://github.com/ministryofjustice/payforlegalaid/compare/v4.0.2...v4.1.0) (2026-09-07)
 
 
