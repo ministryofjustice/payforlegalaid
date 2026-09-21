@@ -44,6 +44,7 @@ public interface StyleManager {
      * <p>See PF-1602 for known concurrency issues with this style manager.
      * @return a new StyleManager instance
      */
+    @SuppressWarnings("java:S1133") // Suppressing deprecation, retained pending DLP decision.
     @Deprecated(forRemoval = false)
     static StyleManager create() {
         return new DefaultStyleManager();
@@ -56,6 +57,7 @@ public interface StyleManager {
      *
      * @deprecated This style manager is not safe for concurrent report generation.
      */
+    @SuppressWarnings("java:S1133") // Suppressing deprecation, retained pending DLP decision.
     @Deprecated(forRemoval = false)
     class DefaultStyleManager implements StyleManager {
         private final short[][] matrix = new short[MAX_COLUMNS][MAX_KEYS];
