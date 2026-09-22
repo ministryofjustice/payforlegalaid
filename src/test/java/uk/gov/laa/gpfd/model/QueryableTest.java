@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
+@SuppressWarnings("java:S2187") // tests live in @Nested classes below; rule doesn't detect direct @Test methods on the outer class
 class QueryableTest {
 
     @Nested

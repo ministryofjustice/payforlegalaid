@@ -2,7 +2,7 @@ package uk.gov.laa.gpfd.services.stream;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import uk.gov.laa.gpfd.dao.ReportTrackingDao;
 import uk.gov.laa.gpfd.exception.StreamErrorException;
@@ -10,7 +10,7 @@ import uk.gov.laa.gpfd.exception.StreamErrorException;
 import java.io.IOException;
 import java.util.UUID;
 
-@Component
+@Service
 @RequiredArgsConstructor
 @Slf4j
 public class TrackedStreamService {

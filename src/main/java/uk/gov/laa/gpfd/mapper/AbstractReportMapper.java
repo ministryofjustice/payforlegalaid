@@ -7,6 +7,7 @@ import uk.gov.laa.gpfd.utils.UrlBuilder;
 
 import java.net.URI;
 import java.sql.Timestamp;
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -51,7 +52,7 @@ public abstract class AbstractReportMapper {
      * @return current timestamp
      */
     protected Timestamp currentTimestamp() {
-        return Timestamp.valueOf(LocalDateTime.now());
+        return Timestamp.valueOf(LocalDateTime.now(Clock.systemUTC()));
     }
 
 }
