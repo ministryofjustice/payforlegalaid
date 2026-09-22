@@ -35,7 +35,7 @@ class CellFormattingTest {
 
     @BeforeEach
     void setUp() {
-        styleManager = mock(StyleManager.DefaultStyleManager.class);
+        styleManager = mock(StyleManager.class);
         strategy = new CellFormatting(styleManager) { };
         sheet = mock(Sheet.class);
         cell = mock(Cell.class);
