@@ -7,13 +7,6 @@ gpfd:
     cors:
       allowed-origin: https://uat-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk
 
-  # MOJFIN database config
-  datasource:
-    read-only:
-      url: ${MOJFIN_DB_URL}
-      username: ${MOJFIN_DEV_READ_USERNAME}
-      password: ${MOJFIN_DEV_READ_PASSWORD}
-      driver-class-name: oracle.jdbc.pool.OracleDataSource
   s3:
     has-s3-access: true
     permissions:

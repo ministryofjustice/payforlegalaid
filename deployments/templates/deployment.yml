@@ -55,21 +55,6 @@ spec:
                 secretKeyRef:
                   name: ${SECRET_NAME}
                   key: tenant-id-${ENV_NAME}
-            - name: MOJFIN_DEV_READ_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: ${SECRET_NAME}
-                  key: mojfin-dev-read-username
-            - name: MOJFIN_DEV_READ_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: ${SECRET_NAME}
-                  key: mojfin-dev-read-password
-            - name: MOJFIN_DB_URL
-              valueFrom:
-                secretKeyRef:
-                  name: ${SECRET_NAME}
-                  key: mojfin-db-url
             - name: S3_TEMPLATE_STORE
               value: laa-get-payments-finance-data-${ENV_NAME}-file-store
             - name: S3_REPORT_STORE
