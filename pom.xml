@@ -614,7 +614,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <!-- Need until Spring Boot gets to 2.22.2 for SNYK-JAVA-COMFASTERXMLJACKSONCORE-19477042 et al. -->
+            <!-- Need until Spring Boot gets to 2.21.6 for SNYK-JAVA-COMFASTERXMLJACKSONCORE-19477042 et al. -->
             <version>2.21.6</version>
         </dependency>
 
