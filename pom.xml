@@ -21,7 +21,7 @@
 
         <maven-surefire-junit5-tree-reporter.version>1.5.1</maven-surefire-junit5-tree-reporter.version>
         <immutables.version>2.12.2</immutables.version>
-        <govuk-frontend.version>6.5.0</govuk-frontend.version>
+        <govuk-frontend.version>6.5.1</govuk-frontend.version>
         <moj-frontend.version>6.0.0</moj-frontend.version>
 
         <maven-surefire-plugin.version>3.6.0</maven-surefire-plugin.version>
