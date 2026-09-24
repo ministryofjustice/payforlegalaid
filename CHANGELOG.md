@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.1.3](https://github.com/ministryofjustice/payforlegalaid/compare/v4.1.2...v4.1.3) (2026-09-24)
+
+
+### Bug Fixes
+
+* **bot:** [Snyk] Fix for 6 vulnerabilities ([#650](https://github.com/ministryofjustice/payforlegalaid/issues/650)) ([72322d7](https://github.com/ministryofjustice/payforlegalaid/commit/72322d750de8fc4b8a28a5d5073903121a836d9d))
+* **bot:** Bump the minor group with 1 update ([#641](https://github.com/ministryofjustice/payforlegalaid/issues/641)) ([0d75c65](https://github.com/ministryofjustice/payforlegalaid/commit/0d75c65d1572123f9962af3aea79d9b01e944d74))
+
 ## [4.1.2](https://github.com/ministryofjustice/payforlegalaid/compare/v4.1.1...v4.1.2) (2026-09-15)
 
 
