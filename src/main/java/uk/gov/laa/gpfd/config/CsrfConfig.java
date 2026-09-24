@@ -11,6 +11,7 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 public class CsrfConfig {
 
     @Bean
+    @SuppressWarnings("java:S3330") // HttpOnly must be disabled so client-side JS can read the CSRF token and echo it back in a request header
     CookieCsrfTokenRepository csrfTokenRepository() {
         CookieCsrfTokenRepository repository = CookieCsrfTokenRepository.withHttpOnlyFalse();
         repository.setCookieCustomizer(cookie -> {
