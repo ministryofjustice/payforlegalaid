@@ -26,7 +26,8 @@ import static uk.gov.laa.gpfd.dao.sql.ChannelRowHandler.forStream;
  */
 @Slf4j
 public record JdbcDataStreamer(JdbcOperations jdbc, int csvBufferFlushFrequency) implements DataStreamer {
-    private static final char END_OF_LINE_SEPARATOR = '\n', EMPTY = ' ';
+    private static final char END_OF_LINE_SEPARATOR = '\n';
+    private static final char EMPTY = ' ';
 
     /**
      * Streams the results of a SQL query directly to the provided output stream.
