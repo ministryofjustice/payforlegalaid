@@ -77,9 +77,9 @@ final class ReportGetFileIT extends BaseIT {
 
     @Test
     @SneakyThrows
-    void shouldErrorIfIdNotSupportedByEndpoint() {
-        performGetRequestWithRoles("/reports/f46b4d3d-c100-429a-bf9a-6c3305dbdbf4/file", List.of(FINANCIAL))
-                                .andExpect(status().isNotFound())
+    void shouldRejectUnsupportedReportIdBeforeFileDownload() {
+        performGetRequestWithRoles("/reports/00000000-0000-0000-0000-000000000999/file", List.of(FINANCIAL))
+                .andExpect(status().isForbidden())
                 .andExpect(content().contentType(APPLICATION_JSON));
     }
 

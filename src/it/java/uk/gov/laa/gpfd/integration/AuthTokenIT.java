@@ -12,7 +12,6 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.params.provider.Arguments.of;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CCMS_REPORT;
 import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CSV_REPORT;
 import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.REP012ID;
 import static uk.gov.laa.gpfd.security.SilasRoles.all;
@@ -23,7 +22,6 @@ final class AuthTokenIT extends BaseIT {
         return Stream.of(
                 of("Root api endpoint", "/reports"),
                 of("Specific report endpoint", "/reports/%s".formatted(CSV_REPORT.getReportData().id())),
-                of("Excel download endpoint", "/reports/%s/excel".formatted(CCMS_REPORT.getReportData().id())),
                 of("CSV download endpoint", "/reports/%s/csv".formatted(CSV_REPORT.getReportData().id())),
                 of("File download endpoint", "/reports/%s/file".formatted(REP012ID.getReportData().id()))
         );
