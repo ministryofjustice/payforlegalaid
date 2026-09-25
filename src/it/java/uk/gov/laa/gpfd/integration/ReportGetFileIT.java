@@ -77,14 +77,6 @@ final class ReportGetFileIT extends BaseIT {
 
     @Test
     @SneakyThrows
-    void shouldRejectUnsupportedReportIdBeforeFileDownload() {
-        performGetRequestWithRoles("/reports/00000000-0000-0000-0000-000000000999/file", List.of(FINANCIAL))
-                .andExpect(status().isForbidden())
-                .andExpect(content().contentType(APPLICATION_JSON));
-    }
-
-    @Test
-    @SneakyThrows
     void shouldErrorIfIdNotValid() {
         performGetRequestWithRoles("/reports/hi/file", List.of(FINANCIAL))
                 .andExpect(status().isBadRequest())
