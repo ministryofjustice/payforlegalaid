@@ -36,7 +36,7 @@ class TemplateServiceTest {
 
     @Test
     void findTemplateById_ShouldLoadWorkbookFromRepositoryAndFactory() throws Exception {
-        var template = ExcelTemplate.fromString("eee30b23-2c8d-4b4b-bb11-8cd67d07915c");
+        var template = ExcelTemplate.fromString("00000000-0000-0000-0000-000000000000");
         var workbook = mock(Workbook.class);
         var factory = (WorkbookFactory) input -> workbook;
 
@@ -53,7 +53,7 @@ class TemplateServiceTest {
 
     @Test
     void findTemplateById_ShouldWrapIOExceptionAsExcelTemplateCreationException() throws Exception {
-        var template = ExcelTemplate.fromString("eee30b23-2c8d-4b4b-bb11-8cd67d07915c");
+        var template = ExcelTemplate.fromString("00000000-0000-0000-0000-000000000000");
         var factory = (WorkbookFactory) input -> { throw new IOException("boom"); };
 
         when(repository.findTemplateById(template.getId())).thenReturn(new ByteArrayInputStream(new byte[0]));

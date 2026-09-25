@@ -53,12 +53,7 @@ public record ReportTestData(
      * Each enum constant represents a specific report type with its test data.
      */
     public enum ReportType {
-        CSV_REPORT("f46b4d3d-c100-429a-bf9a-6c3305dbdbf4", "CIS to CCMS payment value Defined", CSV),
-        CCMS_REPORT("b36f9bbb-1178-432c-8f99-8090e285f2d3", "CCMS Invoice Analysis (CIS to CCMS)", XLSX),
-        GENERAL_LEDGER_REPORT("f46b4d3d-c100-429a-bf9a-223305dbdbfb", "CCMS General ledger extractor (small manual batches)", XLSX),
-        CCMS_AND_CIS_BANK_ACCOUNT_REPORT("eee30b23-2c8d-4b4b-bb11-8cd67d07915c", "CCMS and CIS Bank Account Report w Category Code (YTD)", XLSX),
-        LEGAL_HELP_CONTRACT_BALANCES_REPORT("7073dd13-e325-4863-a05c-a049a815d1f7", "Legal Help contract balances", XLSX),
-        CCMS_THIRD_PARTY_REPORT("77ef818d-e35d-47ad-8813-74b9fa675877", "CCMS Third party report", XLSX),
+        CSV_REPORT("f46b4d3d-c100-429a-bf9a-6c3305dbdbf4", "CSV generated report", CSV),
         REP012ID("cc55e276-97b0-4dd8-a919-26d4aa373266", "REP012 - Original Submissions Value Report", S3STORAGE),
         REP000ID("523f38f0-2179-4824-b885-3a38c5e149e8", "REP000 - Combined Data Extract for Submit a Bulk Claim Data", S3STORAGE);
 
