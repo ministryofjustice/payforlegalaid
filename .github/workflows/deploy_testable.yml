@@ -63,6 +63,14 @@ jobs:
           github-username: ${{ secrets.GITHUB_USERNAME }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Fetch IP list
+        id: fetch_ip
+        run: |
+          WHITELISTED_IP=$(curl -s https://raw.githubusercontent.com/ministryofjustice/laa-ip-allowlist/main/cidrs.txt | tr -d ' ' | awk 'ORS=","' | sed 's/,$//')
+          PINGDOM_IP_LIST=$(curl -s https://my.pingdom.com/probes/ipv4 | tr -d ' ' | awk '{print $0 "/32"}' ORS=',' | sed 's/,$//')
+          IP_LIST="${WHITELISTED_IP},${PINGDOM_IP_LIST}"
+          echo "ip_list=$IP_LIST" >> "$GITHUB_OUTPUT"
+
       - name: Generate Kubernetes files from templates
         env:
           IMAGE_TAG: ${{ github.sha }}
@@ -70,10 +78,15 @@ jobs:
           REPOSITORY: ${{ vars.ECR_REPOSITORY }}
           NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
           GPFD_URL: https://test-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk
+          IP_LIST: ${{ steps.fetch_ip.outputs.ip_list }}
         run: |
-          cat deployments/test/deployment.tpl | envsubst > deployments/test/deployment-${BRANCH_NAME}.yml
-          cat deployments/test/ingress.tpl | envsubst > deployments/test/ingress-${BRANCH_NAME}.yml
-          cat deployments/test/service.tpl | envsubst > deployments/test/service-${BRANCH_NAME}.yml
+          # namespace et non-empty IP_LIST checks
+          set -euo pipefail
+            test "$NAMESPACE" = "laa-get-payments-finance-data-dev"
+            : "${IP_LIST:?Set the approved client IP allowlist}"
+            envsubst < deployments/test/deployment.tpl > "deployments/test/deployment-${BRANCH_NAME}.yml"
+            envsubst < deployments/test/ingress.tpl > "deployments/test/ingress-${BRANCH_NAME}.yml"
+            envsubst < deployments/test/service.tpl > "deployments/test/service-${BRANCH_NAME}.yml"
 
       - name: Authenticate with Cloud Platform and Deploy
         env:
