@@ -1,5 +1,6 @@
 package uk.gov.laa.gpfd.config;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -87,7 +88,8 @@ public class SecurityConfig {
      * @return a configured {@link SecurityFilterChain} object.
      */
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity httpSecurity, Environment env) {
+    SecurityFilterChain filterChain(HttpSecurity httpSecurity, Environment env,
+                                   ObjectProvider<MockAuthSecurityConfig> mockAuthProvider) {
 
         boolean isLocal = env.acceptsProfiles(Profiles.of("local", "testauth"));
 
@@ -103,10 +105,16 @@ public class SecurityConfig {
                 )
                 .addFilterAfter(SecurityConfigSupport.csrfCookieFilter(), CsrfFilter.class)
                 .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(authorizeHttpRequestsBuilder)
-                .oauth2Login(oauth2 -> oauth2
-                        .successHandler((_, response, _) -> response.sendRedirect("/")))
                 .sessionManagement(sessionManagementConfigurerBuilder);
+
+        var mockAuth = mockAuthProvider.getIfAvailable();
+        if (mockAuth == null) {
+            http.oauth2Login(oauth2 -> oauth2
+                    .successHandler((_, response, _) -> response.sendRedirect("/")));
+        } else {
+            mockAuth.configure(http);
+        }
+        http.authorizeHttpRequests(authorizeHttpRequestsBuilder);
 
         return SecurityConfigSupport.applyCommonHeaders(http, isLocal, isLocal)
                 .build();

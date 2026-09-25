@@ -1,0 +1,13 @@
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.security.oauth2.client.autoconfigure.OAuth2ClientAutoConfiguration
+
+gpfd:
+  security:
+    mock-auth:
+      enabled: false
+      namespace: ${POD_NAMESPACE:}
+
+server:
+  forward-headers-strategy: none
