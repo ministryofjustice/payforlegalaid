@@ -3,17 +3,18 @@ kind: Deployment
 metadata:
   name: ${BRANCH_NAME}-gpfd-dev-deployment
   labels:
-    app: gpfd-dev
+    app: ${BRANCH_NAME}-gpfd-test
     branch: ${BRANCH_NAME}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: gpfd-dev
+      app: ${BRANCH_NAME}-gpfd-test
+      branch: ${BRANCH_NAME}
   template:
     metadata:
       labels:
-        app: gpfd-dev
+        app: ${BRANCH_NAME}-gpfd-test
         branch: ${BRANCH_NAME}
     spec:
       serviceAccountName: laa-get-payments-finance-data-dev-service

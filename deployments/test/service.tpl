@@ -6,7 +6,8 @@ metadata:
     branch: ${BRANCH_NAME}
 spec:
   selector:
-    app: gpfd-dev
+    app: ${BRANCH_NAME}-gpfd-test
+    branch: ${BRANCH_NAME}
   ports:
     - name: http
       port: 8080

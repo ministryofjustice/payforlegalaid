@@ -23,6 +23,6 @@ spec:
             pathType: ImplementationSpecific
             backend:
               service:
-                name: gpfd-dev-service
+                name: ${BRANCH_NAME}-gpfd-dev-service
                 port:
                   number: 8080
