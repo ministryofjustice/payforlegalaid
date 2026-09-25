@@ -53,7 +53,7 @@ public record ReportTestData(
      * Each enum constant represents a specific report type with its test data.
      */
     public enum ReportType {
-        CSV_REPORT("f46b4d3d-c100-429a-bf9a-6c3305dbdbf4", "CIS to CCMS payment value Defined", CSV),
+        CSV_REPORT("f46b4d3d-c100-429a-bf9a-6c3305dbdbf4", "CSV generated report", CSV),
         REP012ID("cc55e276-97b0-4dd8-a919-26d4aa373266", "REP012 - Original Submissions Value Report", S3STORAGE),
         REP000ID("523f38f0-2179-4824-b885-3a38c5e149e8", "REP000 - Combined Data Extract for Submit a Bulk Claim Data", S3STORAGE);
 
