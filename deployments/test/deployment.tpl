@@ -27,22 +27,13 @@ spec:
             - name: GPFD_URL
               value: ${GPFD_URL}
             - name: SPRING_PROFILES_ACTIVE
-              value: "dev"
-            - name: AZURE_CLIENT_SECRET
+              value: "dev,mockauth"
+            - name: GPFD_SECURITY_MOCK_AUTH_ENABLED
+              value: "true"
+            - name: POD_NAMESPACE
               valueFrom:
-                secretKeyRef:
-                  name: gpfd-test-secret-01
-                  key: client-secret-dev
-            - name: AZURE_CLIENT_ID
-              valueFrom:
-                secretKeyRef:
-                  name: gpfd-test-secret-01
-                  key: client-id-dev
-            - name: AZURE_TENANT_ID
-              valueFrom:
-                secretKeyRef:
-                  name: gpfd-test-secret-01
-                  key: tenant-id-dev
+                fieldRef:
+                  fieldPath: metadata.namespace
           securityContext:
             capabilities:
               drop:

@@ -41,7 +41,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
       - name: Set Spring profile
-        run: echo "SPRING_PROFILES_ACTIVE=dev" >> $GITHUB_ENV
+        run: echo "SPRING_PROFILES_ACTIVE=dev,mockauth" >> $GITHUB_ENV
 
       - uses: './.github/actions/login-to-aws'
         env:
