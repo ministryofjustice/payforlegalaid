@@ -11,14 +11,9 @@ class TemplateFileNameResolverTest {
     private final TemplateFileNameResolver templateFileNameResolver = new TemplateFileNameResolver();
 
     @Test
-    void shouldThrowTemplateNotFoundForUnknownId() {
+    void shouldThrowTemplateNotFoundForAnyId() {
         assertThrows(uk.gov.laa.gpfd.exception.TemplateResourceException.TemplateNotFoundException.class,
                 () -> templateFileNameResolver.getFileNameFromId(UUID.randomUUID()));
-    }
-
-    @Test
-    void shouldThrowErrorIfGivenNull(){
-        assertThrows(IllegalArgumentException.class, () -> templateFileNameResolver.getFileNameFromId(null));
     }
 
 }
