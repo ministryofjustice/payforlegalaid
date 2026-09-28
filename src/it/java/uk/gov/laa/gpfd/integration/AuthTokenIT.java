@@ -51,16 +51,16 @@ final class AuthTokenIT extends BaseIT {
         }
     }
 
-    @ParameterizedTest(name = "[{index}] {0} should return 200 when authenticated")
+    @ParameterizedTest(name = "[{index}] {0} should follow remaining role access rules")
     @MethodSource("securedReportEndpoints")
     @SneakyThrows
-    void authenticatedAccess_withValidRolesshouldReturnOk(String description, String endpoint) {
+    void authenticatedAccess_withRemainingRoles(String description, String endpoint) {
         if (Objects.equals(description, "Root api endpoint")) {
             performGetRequestWithRoles(endpoint, all()).andExpect(status().isOk());
         } else if (Objects.equals(description, "File download endpoint")) {
             performGetRequestWithRoles(endpoint, all()).andExpect(status().isNotImplemented());
         } else {
-            performGetRequestWithRoles(endpoint, all()).andExpect(status().isNotFound());
+            performGetRequestWithRoles(endpoint, all()).andExpect(status().isForbidden());
         }
     }
 

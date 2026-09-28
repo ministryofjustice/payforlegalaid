@@ -22,14 +22,14 @@ class ServerSideErrorIT extends BaseIT {
     }
 
     @Test
-        void getRetiredFinanceReportByIdShouldReturnNotFound() throws Exception {
+        void getRetiredFinanceReportByIdShouldDenyAccess() throws Exception {
         MvcResult result = performGetRequestWithRoles(
                         "/reports/b36f9bbb-1178-432c-8f99-8090e285f2d3",
                         List.of(REP000))
                 .andReturn();
 
-        assertEquals(404, result.getResponse().getStatus(),
-                "Expected 404 but got " + result.getResponse().getStatus()
+        assertEquals(403, result.getResponse().getStatus(),
+                "Expected 403 but got " + result.getResponse().getStatus()
                         + ": " + result.getResponse().getContentAsString());
     }
 
