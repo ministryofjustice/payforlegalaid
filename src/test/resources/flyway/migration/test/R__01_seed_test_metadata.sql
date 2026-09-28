@@ -9,7 +9,6 @@ INSERT INTO glad.report_output_types (id, extension, description) VALUES ('523ed
 -- ROLES
 INSERT INTO glad.roles (role_id, role_name) VALUES ('1', 'Get legal aid data - REP000') ON CONFLICT DO NOTHING;
 INSERT INTO glad.roles (role_id, role_name) VALUES ('2', 'Get legal aid data - Reconciliation') ON CONFLICT DO NOTHING;
-INSERT INTO glad.roles (role_id, role_name) VALUES ('3', 'Get legal aid data - Financial') ON CONFLICT DO NOTHING;
 
 -- REPORTS
 INSERT INTO glad.reports (id, name, template_secure_document_id, report_creation_date, description, num_days_to_keep, file_name, active, report_output_type, report_owner_id, report_owner_name, report_owner_email) VALUES ('0fbec75b-2d72-44f5-a0e3-2dcb29d92f79'::uuid, 'acceptance_test_table', '00000000-0000-0000-0000-000000000000'::uuid, DATE '2025-02-15', 'acceptance_test_table', '30', 'acceptance_test_table', 'Y', '6ebd27ac-4d83-485d-a4fd-3e45f9a53484'::uuid, '00000000-0000-0000-0000-000000000003'::uuid, 'Teresa Green', 'teresagreen@example.org') ON CONFLICT DO NOTHING;
@@ -558,24 +557,6 @@ INSERT INTO glad.field_attributes (id, report_query_id, source_name, mapped_name
 INSERT INTO glad.field_attributes (id, report_query_id, source_name, mapped_name, format, format_type, column_width, column_order) VALUES ('9cc6dbec-02cf-4736-8535-28c9282d7225'::uuid, '70847839-5103-4971-b163-f71832893f70'::uuid, 'BONUS_PAID_TOTAL', 'PAID_TOTAL', '', 'number', '15.33', '6') ON CONFLICT DO NOTHING;
 
 -- REPORT_ROLES
-INSERT INTO glad.report_roles (report_id, role_id) VALUES ('b36f9bbb-1178-432c-8f99-8090e285f2d3'::uuid, '3') ON CONFLICT DO NOTHING;
-INSERT INTO glad.report_roles (report_id, role_id) VALUES ('abbec75b-2d72-44f5-a0e3-2dcb29d92f79'::uuid, '3') ON CONFLICT DO NOTHING;
-INSERT INTO glad.report_roles (report_id, role_id) VALUES ('f46b4d3d-c100-429a-bf9a-6c3305dbdbf3'::uuid, '3') ON CONFLICT DO NOTHING;
-INSERT INTO glad.report_roles (report_id, role_id) VALUES ('f46b4d3d-c100-429a-bf9a-6c3305dbdbf4'::uuid, '3') ON CONFLICT DO NOTHING;
-INSERT INTO glad.report_roles (report_id, role_id) VALUES ('f46b4d3d-c100-429a-bf9a-6c3305dbdbf5'::uuid, '3') ON CONFLICT DO NOTHING;
-INSERT INTO glad.report_roles (report_id, role_id) VALUES ('f46b4d3d-c100-429a-bf9a-6c3305dbdbf6'::uuid, '3') ON CONFLICT DO NOTHING;
-INSERT INTO glad.report_roles (report_id, role_id) VALUES ('f46b4d3d-c100-429a-bf9a-6c3305dbdbf7'::uuid, '3') ON CONFLICT DO NOTHING;
-INSERT INTO glad.report_roles (report_id, role_id) VALUES ('f46b4d3d-c100-429a-bf9a-6c3305dbdbf8'::uuid, '3') ON CONFLICT DO NOTHING;
-INSERT INTO glad.report_roles (report_id, role_id) VALUES ('f46b4d3d-c100-429a-bf9a-6c3305dbdbf9'::uuid, '3') ON CONFLICT DO NOTHING;
-INSERT INTO glad.report_roles (report_id, role_id) VALUES ('f46b4d3d-c100-429a-bf9a-6c3305dbdbfa'::uuid, '3') ON CONFLICT DO NOTHING;
-INSERT INTO glad.report_roles (report_id, role_id) VALUES ('f46b4d3d-c100-429a-bf9a-6c3305dbdbfb'::uuid, '3') ON CONFLICT DO NOTHING;
-INSERT INTO glad.report_roles (report_id, role_id) VALUES ('f46b4d3d-c100-429a-bf9a-223305dbdbfb'::uuid, '3') ON CONFLICT DO NOTHING;
-INSERT INTO glad.report_roles (report_id, role_id) VALUES ('eee30b23-2c8d-4b4b-bb11-8cd67d07915c'::uuid, '3') ON CONFLICT DO NOTHING;
-INSERT INTO glad.report_roles (report_id, role_id) VALUES ('a017241a-359f-4fdb-a0cd-7f28f1946ef1'::uuid, '3') ON CONFLICT DO NOTHING;
-INSERT INTO glad.report_roles (report_id, role_id) VALUES ('7073dd13-e325-4863-a05c-a049a815d1f7'::uuid, '3') ON CONFLICT DO NOTHING;
-INSERT INTO glad.report_roles (report_id, role_id) VALUES ('f12b4d3d-c100-429a-bf9a-6c3305dbdbfb'::uuid, '3') ON CONFLICT DO NOTHING;
-INSERT INTO glad.report_roles (report_id, role_id) VALUES ('56328b13-254d-435d-813a-5863f94b996d'::uuid, '3') ON CONFLICT DO NOTHING;
-INSERT INTO glad.report_roles (report_id, role_id) VALUES ('77ef818d-e35d-47ad-8813-74b9fa675877'::uuid, '3') ON CONFLICT DO NOTHING;
 INSERT INTO glad.report_roles (report_id, role_id) VALUES ('cc55e276-97b0-4dd8-a919-26d4aa373266'::uuid, '2') ON CONFLICT DO NOTHING;
 INSERT INTO glad.report_roles (report_id, role_id) VALUES ('523f38f0-2179-4824-b885-3a38c5e149e8'::uuid, '1') ON CONFLICT DO NOTHING;
 

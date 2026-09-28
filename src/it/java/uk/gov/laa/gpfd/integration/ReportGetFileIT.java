@@ -29,7 +29,7 @@ import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.gov.laa.gpfd.security.SilasRoles.FINANCIAL;
+import static uk.gov.laa.gpfd.security.SilasRoles.REP000;
 import static uk.gov.laa.gpfd.security.SilasRoles.RECONCILIATION;
 import static uk.gov.laa.gpfd.utils.ReportIds.ID_REP012;
 
@@ -78,15 +78,15 @@ final class ReportGetFileIT extends BaseIT {
     @Test
     @SneakyThrows
     void shouldErrorIfIdNotSupportedByEndpoint() {
-        performGetRequestWithRoles("/reports/f46b4d3d-c100-429a-bf9a-6c3305dbdbf4/file", List.of(FINANCIAL))
-                                .andExpect(status().isNotFound())
+        performGetRequestWithRoles("/reports/f46b4d3d-c100-429a-bf9a-6c3305dbdbf4/file", List.of(REP000))
+                .andExpect(status().isNotFound())
                 .andExpect(content().contentType(APPLICATION_JSON));
     }
 
     @Test
     @SneakyThrows
     void shouldErrorIfIdNotValid() {
-        performGetRequestWithRoles("/reports/hi/file", List.of(FINANCIAL))
+        performGetRequestWithRoles("/reports/hi/file", List.of(REP000))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_JSON));
     }

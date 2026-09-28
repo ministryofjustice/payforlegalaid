@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS field_attributes (
 );
 
 -- roles
--- Application roles (e.g. REP000, Financial, Reconciliation).
+-- Application roles (e.g. REP000, Reconciliation).
 CREATE TABLE IF NOT EXISTS roles (
   role_id INT NOT NULL,
   role_name VARCHAR(200) NOT NULL,
