@@ -419,6 +419,7 @@
         <dependency>
             <groupId>tools.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-csv</artifactId>
+            <version>3.2.3</version>
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
@@ -599,18 +600,53 @@
             <!-- Needed until Spring Cloud Azure Starter upgrades past 0.35.0, to solve multiple vuln including SNYK-JAVA-ORGAPACHEQPID-19315769 -->
             <version>0.35.0</version>
         </dependency>
-
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <!-- Need until Spring Boot gets to 2.21.6 for SNYK-JAVA-COMFASTERXMLJACKSONCORE-19477042 et al. -->
             <version>2.22.3</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <!-- Need until Spring Boot gets to 2.21.6 for SNYK-JAVA-COMFASTERXMLJACKSONCORE-19477042 et al. -->
+            <version>2.22.3</version>
+        </dependency>
+        <!-- Needed until S3 SDK gets latest Jackson fixes -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.22</version>
+        </dependency>
         <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>3.1.7</version>
+            <version>3.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>3.2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec</artifactId>
+            <version>4.2.18.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec-classes-quic</artifactId>
+            <version>4.2.18.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec-http3</artifactId>
+            <version>4.2.18.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec-http</artifactId>
+            <version>4.2.18.Final</version>
         </dependency>
 
     </dependencies>
