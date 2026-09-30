@@ -13,11 +13,12 @@ metadata:
     nginx.ingress.kubernetes.io/enable-modsecurity: "true"
     nginx.ingress.kubernetes.io/modsecurity-snippet: |
       SecRuleEngine On
+    nginx.ingress.kubernetes.io/enable-owasp-core-rules: "true"
     nginx.ingress.kubernetes.io/whitelist-source-range: "${IP_LIST}"
   labels:
     branch: ${BRANCH_NAME}
 spec:
-  ingressClassName: default
+  ingressClassName: modsec-non-prod
   tls:
     - hosts:
         - ${BRANCH_HOSTNAME}
