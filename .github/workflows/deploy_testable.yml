@@ -39,6 +39,8 @@ jobs:
         uses: './.github/actions/snyk-scan'
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          skip-sarif-upload: 'true'
 
       - name: Set Spring profile
         run: echo "SPRING_PROFILES_ACTIVE=dev,mockauth" >> $GITHUB_ENV

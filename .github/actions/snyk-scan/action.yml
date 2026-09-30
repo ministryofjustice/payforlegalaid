@@ -21,7 +21,7 @@ runs:
       continue-on-error: true
 
     - name: Upload SARIF
-      if: always() && hashFiles('snyk.sarif') != ''
+      if: always() && hashFiles('snyk.sarif') != '' && !inputs.skip-sarif-upload
       uses: github/codeql-action/upload-sarif@1c5b675653bb5c22dbe9b12b556ec555138e09fd # v4.38.1
       with:
         sarif_file: snyk.sarif
