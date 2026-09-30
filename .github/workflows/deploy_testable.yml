@@ -115,11 +115,17 @@ jobs:
           # Branch credentials for the disposable branch Postgres sidecar
           DB_USERNAME="gpfd_$(echo "${BRANCH_NAME}" | tr -c 'a-zA-Z0-9' '_')"
           DB_PASSWORD="$(openssl rand -base64 24)"
-          kubectl -n ${KUBE_NAMESPACE} create secret generic "${BRANCH_NAME}-gpfd-db-credentials" \
+
+          kubectl -n "${KUBE_NAMESPACE}" create secret generic \
+            "${BRANCH_NAME}-gpfd-db-credentials" \
             --from-literal=username="${DB_USERNAME}" \
             --from-literal=password="${DB_PASSWORD}" \
-            --label=branch="${BRANCH_NAME}" \
-            --dry-run=client -o yaml | kubectl -n ${KUBE_NAMESPACE} apply -f -
+            --dry-run=client \
+            -o yaml |
+            kubectl label --local -f - \
+              "branch=${BRANCH_NAME}" \
+              -o yaml |
+            kubectl -n "${KUBE_NAMESPACE}" apply -f -
 
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments/test/deployment-${BRANCH_NAME}.yml
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments/test/ingress-${BRANCH_NAME}.yml
