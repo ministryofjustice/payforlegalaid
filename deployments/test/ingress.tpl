@@ -7,6 +7,12 @@ metadata:
     external-dns.alpha.kubernetes.io/aws-weight: "100"
     nginx.ingress.kubernetes.io/backend-protocol: http
     nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/limit-rps: "10"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      limit_req_status 429;
+    nginx.ingress.kubernetes.io/enable-modsecurity: "true"
+    nginx.ingress.kubernetes.io/modsecurity-snippet: |
+      SecRuleEngine On
     nginx.ingress.kubernetes.io/whitelist-source-range: "${IP_LIST}"
   labels:
     branch: ${BRANCH_NAME}
