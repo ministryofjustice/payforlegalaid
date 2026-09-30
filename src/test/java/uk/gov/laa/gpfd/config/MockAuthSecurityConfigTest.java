@@ -8,7 +8,6 @@ import org.springframework.boot.test.context.ConfigDataApplicationContextInitial
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.security.oauth2.client.autoconfigure.OAuth2ClientAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
@@ -128,7 +127,7 @@ class MockAuthSecurityConfigTest {
         return webAppContextSetup(context).apply(springSecurity()).build();
     }
 
-    @Configuration(proxyBeanMethods = false)
+    @org.springframework.boot.test.context.TestConfiguration(proxyBeanMethods = false)
     @EnableWebSecurity
     @EnableWebMvc
     @Import({SecurityConfig.class, CsrfConfig.class, HttpSecuritySessionManagementConfigurerBuilder.class,
