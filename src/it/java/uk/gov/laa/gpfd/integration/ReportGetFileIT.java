@@ -77,7 +77,7 @@ final class ReportGetFileIT extends BaseIT {
 
     @Test
     @SneakyThrows
-        void shouldDenyAccessToRetiredFinanceReport() {
+    void shouldDenyAccessToRetiredFinanceReport() {
         performGetRequestWithRoles("/reports/f46b4d3d-c100-429a-bf9a-6c3305dbdbf4/file", List.of(REP000))
                                 .andExpect(status().isForbidden())
                 .andExpect(content().contentType(APPLICATION_JSON));
