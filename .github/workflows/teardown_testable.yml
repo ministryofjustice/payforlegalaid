@@ -8,7 +8,7 @@ env:
 jobs:
   cleanup-testable:
     if: |
-      (github.event.ref_type == 'branch' && startsWith(github.ref, 'refs/heads/test-'))
+      (github.event.ref_type == 'branch' && startsWith(github.event.ref, 'test-'))
     environment: development
     runs-on: ubuntu-latest
     permissions:
@@ -33,5 +33,5 @@ jobs:
 
       - name: Delete Kubernetes resources
         env:
-          BRANCH_NAME: ${{ github.ref}}
-        run: kubectl delete service,ingress,pod,deployment -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE} --grace-period=0 --force --ignore-not-found=true
+          BRANCH_NAME: ${{ github.event.ref }}
+        run: kubectl delete secret,service,ingress,pod,deployment -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE} --grace-period=0 --force --ignore-not-found=true
