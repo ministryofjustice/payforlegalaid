@@ -118,7 +118,7 @@ jobs:
           kubectl -n ${KUBE_NAMESPACE} create secret generic "${BRANCH_NAME}-gpfd-db-credentials" \
             --from-literal=username="${DB_USERNAME}" \
             --from-literal=password="${DB_PASSWORD}" \
-            --labels=branch="${BRANCH_NAME}" \
+            --label=branch="${BRANCH_NAME}" \
             --dry-run=client -o yaml | kubectl -n ${KUBE_NAMESPACE} apply -f -
 
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments/test/deployment-${BRANCH_NAME}.yml
