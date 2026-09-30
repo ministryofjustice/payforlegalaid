@@ -13,6 +13,7 @@ INSERT INTO glad.roles (role_id, role_name)
 VALUES
     (1, 'Get legal aid data - REP000'),
     (2, 'Get legal aid data - Reconciliation')
+ON CONFLICT (role_id) DO UPDATE SET
     role_name = EXCLUDED.role_name;
 
 INSERT INTO glad.reports (id, description, name, file_name, template_secure_document_id, report_creation_date, num_days_to_keep, report_output_type, report_owner_id, report_owner_name, report_owner_email, active)
