@@ -22,7 +22,6 @@ FROM eclipse-temurin:25-jre-alpine@sha256:c707c0d18cb9e8556380719f80d96a7529d074
 
 WORKDIR /app
 
-RUN apk add --no-cache curl
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 RUN mkdir -p /data && chown -R appuser:appgroup /data
 
