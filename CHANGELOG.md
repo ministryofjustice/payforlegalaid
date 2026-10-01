@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.4](https://github.com/ministryofjustice/payforlegalaid/compare/v4.1.3...v4.1.4) (2026-10-01)
+
+
+### Bug Fixes
+
+* **LPF-0000:** Jackson and Netty Snyk issues - 28/09/2026 ([#654](https://github.com/ministryofjustice/payforlegalaid/issues/654)) ([3a4b33c](https://github.com/ministryofjustice/payforlegalaid/commit/3a4b33cf6380f835f7a8c357420db33519b0d9b8))
+
 ## [4.1.3](https://github.com/ministryofjustice/payforlegalaid/compare/v4.1.2...v4.1.3) (2026-09-24)
 
 
