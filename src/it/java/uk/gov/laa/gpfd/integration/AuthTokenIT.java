@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.params.provider.Arguments.of;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CSV_REPORT;
@@ -49,16 +50,18 @@ final class AuthTokenIT extends BaseIT {
         }
     }
 
-    @ParameterizedTest(name = "[{index}] {0} should return 200 when authenticated")
+    @ParameterizedTest(name = "[{index}] {0} should return the expected status when authenticated")
     @MethodSource("securedReportEndpoints")
     @SneakyThrows
-    void authenticatedAccess_withValidRolesshouldReturnOk(String description, String endpoint) {
-        if (Objects.equals(description, "Root api endpoint")) {
-            performGetRequestWithRoles(endpoint, all()).andExpect(status().isOk());
-        } else if (Objects.equals(description, "File download endpoint")) {
-            performGetRequestWithRoles(endpoint, all()).andExpect(status().isNotImplemented());
-        } else {
-            performGetRequestWithRoles(endpoint, all()).andExpect(status().isNotFound());
+    void authenticatedAccess_withValidRolesShouldReturnOk(String description, String endpoint) {
+        switch (description) {
+            case "File download endpoint" ->
+                    performGetRequestWithRoles(endpoint, all()).andExpect(status().isNotImplemented());
+            case "CSV download endpoint" -> performGetRequestWithRoles(endpoint, all())
+                    .andExpect(status().isInternalServerError())
+                    .andExpect(jsonPath("$.error").value("Unsupported file type: CSV"));
+            //'default' case covers /reports and /reports/{id} which should return 200 OK with valid roles
+            case null, default -> performGetRequestWithRoles(endpoint, all()).andExpect(status().isOk());
         }
     }
 
