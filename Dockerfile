@@ -11,7 +11,6 @@ ENTRYPOINT ["java", \
     "-Xmx4g", \
     "-XX:MaxRAMPercentage=85", \
     "-XX:NativeMemoryTracking=detail", \
-    "-Doracle.jdbc.maxCachedBufferSize=524288", \
     "-XX:+UseG1GC", \
     "-XX:MaxGCPauseMillis=400", \
     "-XX:InitiatingHeapOccupancyPercent=35", \

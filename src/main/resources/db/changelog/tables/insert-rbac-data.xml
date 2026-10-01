@@ -103,4 +103,13 @@
         <column name="ROLE_ID" value="1"/>
     </insert>
 </changeSet>
+
+    <changeSet id="remove-financial-role" author="laa">
+        <delete tableName="REPORT_ROLES" schemaName="GPFD">
+            <where>ROLE_ID = 3</where>
+        </delete>
+        <delete tableName="ROLES" schemaName="GPFD">
+            <where>ROLE_ID = 3</where>
+        </delete>
+    </changeSet>
 </databaseChangeLog>

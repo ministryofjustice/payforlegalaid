@@ -60,7 +60,7 @@ final class AuthTokenIT extends BaseIT {
             case "CSV download endpoint" -> performGetRequestWithRoles(endpoint, all())
                     .andExpect(status().isInternalServerError())
                     .andExpect(jsonPath("$.error").value("Unsupported file type: CSV"));
-            //'default' case covers /reports and /reports/{id} which should return 200 OK with valid roles
+            // Default covers /reports and /reports/{id}, which return 200 with valid roles.
             case null, default -> performGetRequestWithRoles(endpoint, all()).andExpect(status().isOk());
         }
     }

@@ -1,25 +1,4 @@
 services:
-  oracle:
-    image: gvenzl/oracle-free:23-slim@sha256:8f9a8225cc43d28f5b61e4b961734d3d798d4c2f058bed3f21498c03adee6141
-    container_name: oracle-local
-    environment:
-      ORACLE_PASSWORD: ${ORACLE_DB_PASSWORD}
-      ORACLE_DB_PASSWORD: ${ORACLE_DB_PASSWORD}
-      ORACLE_CHARACTERSET: AL32UTF8
-    ports:
-      - "1521:1521"
-    volumes:
-      - oracle-data:/opt/oracle/oradata
-      - ./local/oracle-init:/container-entrypoint-initdb.d
-    mem_limit: 2g
-    shm_size: 1g
-    healthcheck:
-      test: ["CMD", "healthcheck.sh"]
-      interval: 15s
-      timeout: 10s
-      retries: 20
-      start_period: 120s
-
   payforlegalaid:
     build:
       context: .
@@ -36,13 +15,12 @@ services:
       CLIENT_ID: ${CLIENT_ID}
       TENANT_ID: ${TENANT_ID}
       CLIENT_SECRET: ${CLIENT_SECRET}
-      ORACLE_DB_PASSWORD: ${ORACLE_DB_PASSWORD}
       RDS_DB_HOST: payforlegalaid-local-postgres
     depends_on:
-      oracle:
-        condition: service_healthy        # wait for Oracle to be ready
+      postgres:
+        condition: service_healthy
     healthcheck:
-      test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/1521"]
+      test: ["CMD", "nc", "-z", "127.0.0.1", "8080"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -61,9 +39,14 @@ services:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "user", "-d", "glad"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
 
 volumes:
-  oracle-data:
   postgres-data:
 
 secrets:

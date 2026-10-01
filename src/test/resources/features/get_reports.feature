@@ -4,7 +4,6 @@ Feature: List All Available Reports
   I want to retrieve a list of all available reports
   So that I can view and manage the reports effectively
 
-  @Role=Financial
   @Role=Reconciliation
   @Role=REP000
   Scenario: Successfully retrieve a list of all reports with valid authentication
