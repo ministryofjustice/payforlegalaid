@@ -32,7 +32,6 @@ public class RoleSetupHook {
         return switch (tagValue) {
             case "REP000" -> SilasRoles.REP000;
             case "Reconciliation" -> SilasRoles.RECONCILIATION;
-            case "Financial" -> SilasRoles.FINANCIAL;
             default -> tagValue;
         };
     }
