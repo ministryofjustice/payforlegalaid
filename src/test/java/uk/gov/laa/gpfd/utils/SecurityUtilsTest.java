@@ -102,7 +102,7 @@ class SecurityUtilsTest {
     @Test
     void extractRoles_parsesCommaSeparatedStringCorrectly() {
         when(oidcUser.getAttributes()).thenReturn(Map.of("LAA_APP_ROLES",
-                "Get legal aid data - REP000, Get legal aid data - Reconciliation, Get legal aid data - Financial"));
+                String.join(", ", all())));
         when(authentication.getPrincipal()).thenReturn(oidcUser);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
