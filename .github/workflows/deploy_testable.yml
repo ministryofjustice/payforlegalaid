@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   build-and-deploy-to-testable:
-    environment: development
+    environment: uat
     runs-on: ubuntu-latest
     permissions:
       id-token: write
