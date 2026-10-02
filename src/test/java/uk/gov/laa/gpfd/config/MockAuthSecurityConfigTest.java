@@ -1,8 +1,13 @@
 package uk.gov.laa.gpfd.config;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
@@ -23,11 +28,13 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import uk.gov.laa.gpfd.config.builders.HttpSecuritySessionManagementConfigurerBuilder;
 import uk.gov.laa.gpfd.security.SilasRoles;
+import uk.gov.laa.gpfd.utils.RequestLogUtils;
 
 import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -87,16 +94,39 @@ class MockAuthSecurityConfigTest {
 
     @Test
     void protectedRequestsUseSyntheticOidcIdentity() {
-        runner.run(context -> {
-            assertThat(context).doesNotHaveBean(ClientRegistrationRepository.class);
-            var mvc = mockMvc(context);
-            var result = mvc.perform(get("/private"))
-                    .andExpect(status().isOk())
-                    .andReturn();
-            var body = result.getResponse().getContentAsString();
-            assertThat(UUID.fromString(body.substring(0, body.indexOf(':')))).isNotNull();
-            assertThat(body).endsWith(":" + String.join(",", SilasRoles.all()));
-        });
+        var logger = (Logger) LoggerFactory.getLogger(MockAuthSecurityConfig.class);
+        var originalLevel = logger.getLevel();
+        var appender = new ListAppender<ILoggingEvent>();
+        appender.setContext(logger.getLoggerContext());
+        appender.start();
+        logger.addAppender(appender);
+        logger.setLevel(Level.INFO);
+        try {
+            runner.run(context -> {
+                assertThat(context).doesNotHaveBean(ClientRegistrationRepository.class);
+                var mvc = mockMvc(context);
+                var result = mvc.perform(get("/private"))
+                        .andExpect(status().isOk())
+                        .andReturn();
+                var body = result.getResponse().getContentAsString();
+                assertThat(UUID.fromString(body.substring(0, body.indexOf(':')))).isNotNull();
+                assertThat(body).endsWith(":" + String.join(",", SilasRoles.all()));
+            });
+            assertThat(appender.list).hasSize(1);
+            var event = appender.list.getFirst();
+            assertThat(event.getLevel()).isEqualTo(Level.INFO);
+            assertThat(event.getFormattedMessage()).isEqualTo("Login bypassed using mock authentication");
+            assertThat(event.getKeyValuePairs())
+                    .extracting(keyValue -> keyValue.key, keyValue -> keyValue.value)
+                    .containsExactly(
+                            tuple(RequestLogUtils.EVENT_ACTION, "authentication.mock.bypass"),
+                            tuple(RequestLogUtils.EVENT_OUTCOME, "success"),
+                            tuple("event.type", "authentication"));
+        } finally {
+            logger.detachAppender(appender);
+            appender.stop();
+            logger.setLevel(originalLevel);
+        }
     }
 
     @ParameterizedTest
