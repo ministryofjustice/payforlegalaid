@@ -23,12 +23,13 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Slf4j
 @Configuration(proxyBeanMethods = false)
 @Profile("mockauth")
 public class MockAuthSecurityConfig {
+
+    private static final String MOCK_USER_ID = "00000000-0000-4000-8000-000000000001";
 
     private final MockAuthAccessPolicy accessPolicy;
 
@@ -66,11 +67,10 @@ public class MockAuthSecurityConfig {
     }
 
     private OAuth2AuthenticationToken createAuthentication() {
-        var userId = UUID.randomUUID().toString();
         var now = Instant.now();
         var token = new OidcIdToken("mockauth", now, now.plusSeconds(3600), Map.of(
-                "sub", userId,
-                "oid", userId,
+                "sub", MOCK_USER_ID,
+                "oid", MOCK_USER_ID,
                 "name", "Ephemeral test user",
                 "LAA_APP_ROLES", SilasRoles.all()));
         var authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));

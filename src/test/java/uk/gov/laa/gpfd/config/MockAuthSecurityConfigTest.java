@@ -31,12 +31,16 @@ import uk.gov.laa.gpfd.security.SilasRoles;
 import uk.gov.laa.gpfd.utils.RequestLogUtils;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.anonymous;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -128,6 +132,40 @@ class MockAuthSecurityConfigTest {
     }
 
     @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void independentRequestsUseFixedIdentity(boolean explicitlyAnonymous) {
+        runner.run(context -> {
+            var mvc = mockMvc(context);
+            for (int requestNumber = 0; requestNumber < 2; requestNumber++) {
+                var request = get("/identity");
+                if (explicitlyAnonymous) {
+                    request.with(anonymous());
+                }
+                mvc.perform(request)
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.sub").value("00000000-0000-4000-8000-000000000001"))
+                        .andExpect(jsonPath("$.oid").value("00000000-0000-4000-8000-000000000001"))
+                        .andExpect(jsonPath("$.name").value("Ephemeral test user"));
+            }
+        });
+    }
+
+    @Test
+    void preservesExistingAuthenticatedIdentity() {
+        runner.run(context -> {
+            var mvc = mockMvc(context);
+            mvc.perform(get("/identity").with(oidcLogin().idToken(token -> token
+                            .subject("existing-subject")
+                            .claim("oid", "existing-user")
+                            .claim("name", "Existing test user"))))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.sub").value("existing-subject"))
+                    .andExpect(jsonPath("$.oid").value("existing-user"))
+                    .andExpect(jsonPath("$.name").value("Existing test user"));
+        });
+    }
+
+    @ParameterizedTest
     @ValueSource(strings = {
             "gpfd.security.mock-auth.enabled=false",
             "gpfd.security.mock-auth.namespace=other"
@@ -166,6 +204,14 @@ class MockAuthSecurityConfigTest {
 
     @RestController
     static class PrivateController {
+        @GetMapping("/identity")
+        Map<String, String> identity(Authentication authentication) {
+            var principal = (OidcUser) authentication.getPrincipal();
+            return Map.of("sub", principal.getSubject(),
+                    "oid", principal.getAttribute("oid"),
+                    "name", principal.getFullName());
+        }
+
         @GetMapping("/private")
         String privateEndpoint(Authentication authentication) {
             var principal = (OidcUser) authentication.getPrincipal();
