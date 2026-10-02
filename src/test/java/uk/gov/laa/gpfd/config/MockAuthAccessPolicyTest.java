@@ -22,6 +22,16 @@ class MockAuthAccessPolicyTest {
     @ValueSource(strings = {"uat", "prod"})
     void rejectsProtectedProfilesEvenWhenDisabled(String profile) {
         var environment = new MockEnvironment();
+        environment.setProperty("gpfd.security.mock-auth.enabled", "false");
+        environment.setActiveProfiles("mockauth", profile);
+        assertThrows(IllegalStateException.class, () -> new MockAuthAccessPolicy(environment));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"uat", "prod"})
+    void rejectsProtectedProfilesWhenEnabled(String profile) {
+        var environment = new MockEnvironment();
+        environment.setProperty("gpfd.security.mock-auth.enabled", "true");
         environment.setActiveProfiles("mockauth", profile);
         assertThrows(IllegalStateException.class, () -> new MockAuthAccessPolicy(environment));
     }

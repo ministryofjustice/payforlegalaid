@@ -118,7 +118,7 @@ class MockAuthSecurityConfigTest {
     @ValueSource(strings = {"uat", "prod"})
     void failsStartupForProtectedProfiles(String profile) {
         runner.withPropertyValues("spring.profiles.active=dev,mockauth," + profile,
-                        "gpfd.security.mock-auth.enabled=false")
+                        "gpfd.security.mock-auth.enabled=true")
                 .run(context -> assertThat(context).hasFailed()
                         .getFailure().hasStackTraceContaining("mockauth must not be active with uat or prod"));
     }
