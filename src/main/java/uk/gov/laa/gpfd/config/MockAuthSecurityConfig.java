@@ -36,15 +36,9 @@ public class MockAuthSecurityConfig {
         this.accessPolicy = accessPolicy;
     }
 
-    MockAuthAccessPolicy accessPolicy() {
-        return accessPolicy;
-    }
-
     void configure(HttpSecurity http) {
         if (!accessPolicy.allows()) {
-            http.authorizeHttpRequests(authorize -> authorize.requestMatchers("/login").denyAll())
-                    .formLogin(form -> form.disable());
-            return;
+            throw new IllegalStateException("MockAuthSecurityConfig loaded but MockAuth disabled");
         }
 
         http.formLogin(form -> form.disable())

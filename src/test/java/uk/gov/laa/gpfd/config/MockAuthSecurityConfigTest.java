@@ -35,10 +35,8 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -134,14 +132,11 @@ class MockAuthSecurityConfigTest {
             "gpfd.security.mock-auth.enabled=false",
             "gpfd.security.mock-auth.namespace=other"
     })
-    void deniesLoginWhenAnyGuardFails(String property) {
-        runner.withPropertyValues(property).run(context -> {
-            var mvc = mockMvc(context);
-            mvc.perform(get("/login").header("X-Forwarded-For", "192.0.2.10"))
-                    .andExpect(status().isForbidden());
-            mvc.perform(post("/login").with(csrf())).andExpect(status().isForbidden());
-            mvc.perform(get("/private")).andExpect(status().isForbidden());
-        });
+    void failsStartupWhenAnyGuardFails(String property) {
+        runner.withPropertyValues(property)
+                .run(context -> assertThat(context).hasFailed()
+                        .getFailure().hasRootCauseInstanceOf(IllegalStateException.class)
+                        .hasRootCauseMessage("MockAuthSecurityConfig loaded but MockAuth disabled"));
     }
 
     @ParameterizedTest
