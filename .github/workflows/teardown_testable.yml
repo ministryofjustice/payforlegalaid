@@ -2,6 +2,10 @@ name: Tear Down Test Environment
 
 on: delete
 
+concurrency:
+  group: deploy-testable-refs/heads/${{ github.event.ref }}
+  cancel-in-progress: true
+
 env:
   KUBE_NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
 
