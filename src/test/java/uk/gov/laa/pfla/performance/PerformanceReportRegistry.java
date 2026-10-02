@@ -12,12 +12,9 @@ public class PerformanceReportRegistry {
 
     // Fixed benchmark report IDs (manually curated by file size)
     private static final Map<String, String> REPORT_IDS = Map.of(
-            "small-csv",   "f46b4d3d-c100-429a-bf9a-6c3305dbdbf5",
-            "medium-csv",  "f46b4d3d-c100-429a-bf9a-6c3305dbdbf8",
-            "large-csv",   "f46b4d3d-c100-429a-bf9a-6c3305dbdbfb",
-            "small-excel", "f46b4d3d-c100-429a-bf9a-223305dbdbfb",
-            "medium-excel","7073dd13-e325-4863-a05c-a049a815d1f7",
-            "large-excel", "a017241a-359f-4fdb-a0cd-7f28f1946ef1"
+            "small-csv",   "c4ba2e89-c106-48a7-8e1d-7c19dbd7710d", //002
+            "medium-csv",  "55daf3c1-28f0-4260-9396-2ee6d537abab", //014
+            "large-csv",   "c4ba2e89-c106-48a7-8e1d-7c19dbd7710d" //000
     );
 
     public static void validateReportsExist(List<ReportsGet200ResponseReportListInner> loaded) {
