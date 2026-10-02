@@ -1,9 +1,16 @@
 name: Tear Down Test Environment
 
-on: delete
+on:
+  delete:
+  workflow_dispatch:
+    inputs:
+      branch_name:
+        description: 'Test branch environment to remove (test-*)'
+        required: true
+        type: string
 
 concurrency:
-  group: deploy-testable-refs/heads/${{ github.event.ref }}
+  group: deploy-testable-refs/heads/${{ inputs.branch_name || github.event.ref }}
   cancel-in-progress: true
 
 env:
@@ -12,7 +19,8 @@ env:
 jobs:
   cleanup-testable:
     if: |
-      (github.event.ref_type == 'branch' && startsWith(github.event.ref, 'test-'))
+      (github.event_name == 'delete' && github.event.ref_type == 'branch' && startsWith(github.event.ref, 'test-')) ||
+      (github.event_name == 'workflow_dispatch' && startsWith(inputs.branch_name, 'test-'))
     environment: development
     runs-on: ubuntu-latest
     permissions:
@@ -37,5 +45,5 @@ jobs:
 
       - name: Delete Kubernetes resources
         env:
-          BRANCH_NAME: ${{ github.event.ref }}
-        run: kubectl delete secret,service,ingress,pod,deployment -l branch=${BRANCH_NAME} -n ${KUBE_NAMESPACE} --grace-period=0 --force --ignore-not-found=true
+          BRANCH_NAME: ${{ inputs.branch_name || github.event.ref }}
+        run: kubectl delete secret,service,ingress,pod,deployment -l "branch=${BRANCH_NAME}" -n "${KUBE_NAMESPACE}" --grace-period=0 --force --ignore-not-found=true
