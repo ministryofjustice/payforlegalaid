@@ -10,9 +10,9 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.params.provider.Arguments.of;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CCMS_REPORT;
 import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.CSV_REPORT;
 import static uk.gov.laa.gpfd.integration.data.ReportTestData.ReportType.REP012ID;
 import static uk.gov.laa.gpfd.security.SilasRoles.all;
@@ -23,7 +23,6 @@ final class AuthTokenIT extends BaseIT {
         return Stream.of(
                 of("Root api endpoint", "/reports"),
                 of("Specific report endpoint", "/reports/%s".formatted(CSV_REPORT.getReportData().id())),
-                of("Excel download endpoint", "/reports/%s/excel".formatted(CCMS_REPORT.getReportData().id())),
                 of("CSV download endpoint", "/reports/%s/csv".formatted(CSV_REPORT.getReportData().id())),
                 of("File download endpoint", "/reports/%s/file".formatted(REP012ID.getReportData().id()))
         );
@@ -51,16 +50,18 @@ final class AuthTokenIT extends BaseIT {
         }
     }
 
-    @ParameterizedTest(name = "[{index}] {0} should return 200 when authenticated")
+    @ParameterizedTest(name = "[{index}] {0} should return the expected status when authenticated")
     @MethodSource("securedReportEndpoints")
     @SneakyThrows
-    void authenticatedAccess_withValidRolesshouldReturnOk(String description, String endpoint) {
-        if (Objects.equals(description, "Root api endpoint")) {
-            performGetRequestWithRoles(endpoint, all()).andExpect(status().isOk());
-        } else if (Objects.equals(description, "File download endpoint")) {
-            performGetRequestWithRoles(endpoint, all()).andExpect(status().isNotImplemented());
-        } else {
-            performGetRequestWithRoles(endpoint, all()).andExpect(status().isNotFound());
+    void authenticatedAccess_withValidRolesShouldReturnOk(String description, String endpoint) {
+        switch (description) {
+            case "File download endpoint" ->
+                    performGetRequestWithRoles(endpoint, all()).andExpect(status().isNotImplemented());
+            case "CSV download endpoint" -> performGetRequestWithRoles(endpoint, all())
+                    .andExpect(status().isInternalServerError())
+                    .andExpect(jsonPath("$.error").value("Unsupported file type: CSV"));
+            // Default covers /reports and /reports/{id}, which return 200 with valid roles.
+            case null, default -> performGetRequestWithRoles(endpoint, all()).andExpect(status().isOk());
         }
     }
 

@@ -64,21 +64,17 @@ https://dsdmoj.atlassian.net/wiki/spaces/LPF/pages/4736516940/GPFD+Environments
 
 ### Locally (Docker)
 
-The application can be run locally using Docker and Docker Compose, which handles building the app and spinning up all required services.
-Uses the DB changelog files that were initially stored in the payforlegalaid-tests repo to build out the test database via Liquibase.
+The application can be run locally using Docker and Docker Compose. Compose starts the application and a local PostgreSQL instance for tracking metadata; Flyway applies the metadata migrations on startup.
 
 #### Prerequisites
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) (or Docker Engine 23+)
 - Git
-- .env created and populated with Oracle DB password (can be anything)
+- `.env` created from `.env.example` and populated with local SILAS `CLIENT_ID`, `TENANT_ID`, and `CLIENT_SECRET`
 
 #### Building the Image
 
-Using the .env.example file as a template, create your own .env file on your machine at the same level as the example file
-and populate with your own password for the Oracle DB. This should help set up credentials for the DB itself and assist with
-Liquibase migrations. Gitignore has been updated to include .env, if accidentally pushed to git, PR will complain about password
-and automatically block.
+Using `.env.example` as a template, create your own `.env` file next to it and add the local SILAS credentials. Do not commit this file.
 
 Once set up, build the images:
 
@@ -90,7 +86,6 @@ This build uses `~/.m2/settings.xml` as a Docker BuildKit secret so Maven can au
 
 To force a clean rebuild from scratch:
 ```bash
-docker volume rm payforlegalaid_oracle-data   
 docker compose build --no-cache
 ```
 
@@ -119,18 +114,6 @@ docker compose up -d
 To stop the application:
 ```bash
 docker compose down
-```
-
-Connecting to the Oracle container
-```bash
-docker exec -it oracle-local bash
-sqlplus / as sysdba
-ALTER SESSION SET CONTAINER = FREEPDB1;
-```
-
-Example SQL query once connected
-```sql
-SELECT table_name FROM all_tables WHERE owner = 'GPFD';
 ```
 
 #### SILAS config
@@ -163,10 +146,8 @@ Then reload your shell with `source ~/.zshrc` (or `~/.bashrc`).
 **Bean creation error for `filterchain`**:
 Ensure you have set up SILAS config as documented above.
 
-**Bean creation error for `liquibase` or `Table "DATABSECHANGELOG" already exists`**:
-Two possible reasons:
-1. Need to cleanup the last run. Do a `docker-compose down` and then delete the `payforlegalaid_gpfd-data` volume
-2. The app is crashing and restarting itself. If you scroll back to the top of the logs you should find the original error causing the restart, which you'll need to solve before doing step 1 above.
+**Flyway cannot connect to the local tracking database**:
+Check that the Postgres service is healthy with `docker compose ps`, then inspect its logs with `docker compose logs postgres`.
 
 ### Scanning Snyk tools
 - `snyk test --policy-path=.snyk`
