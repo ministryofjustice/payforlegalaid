@@ -104,12 +104,12 @@ spec:
               mountPath: /var/lib/postgresql
           readinessProbe:
             exec:
-              command: ["sh", "-c", "pg_isready -h localhost -p 5432 -U \"$POSTGRES_USER\""]
+              command: ["sh", "-c", "pg_isready -h localhost -p 5432 -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\""]
             initialDelaySeconds: 5
             periodSeconds: 5
           livenessProbe:
             exec:
-              command: ["sh", "-c", "pg_isready -h localhost -p 5432 -U \"$POSTGRES_USER\""]
+              command: ["sh", "-c", "pg_isready -h localhost -p 5432 -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\""]
             initialDelaySeconds: 10
             periodSeconds: 10
           resources:
