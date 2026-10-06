@@ -1,4 +1,11 @@
 name: Snyk Scan
+description: 'Scan with Snyk and optionally upload SARIF results'
+
+inputs:
+  skip-sarif-upload:
+    description: 'Skip uploading Snyk SARIF results'
+    required: false
+    default: 'false'
 
 runs:
   using: 'composite'
@@ -21,7 +28,7 @@ runs:
       continue-on-error: true
 
     - name: Upload SARIF
-      if: always() && hashFiles('snyk.sarif') != ''
+      if: always() && hashFiles('snyk.sarif') != '' && inputs.skip-sarif-upload != 'true'
       uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
       with:
         sarif_file: snyk.sarif

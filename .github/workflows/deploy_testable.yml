@@ -5,6 +5,10 @@ on:
     branches:
       - 'test-*'
 
+concurrency:
+  group: deploy-testable-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-and-deploy-to-testable:
     environment: development
@@ -29,14 +33,17 @@ jobs:
         with:
           github-username: ${{ secrets.GITHUB_USERNAME }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-environment: development
 
       - name: Run Snyk security suite
         uses: './.github/actions/snyk-scan'
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          skip-sarif-upload: 'true'
 
       - name: Set Spring profile
-        run: echo "SPRING_PROFILES_ACTIVE=dev" >> $GITHUB_ENV
+        run: echo "SPRING_PROFILES_ACTIVE=dev,mockauth" >> $GITHUB_ENV
 
       - uses: './.github/actions/login-to-aws'
         env:
@@ -58,17 +65,47 @@ jobs:
           github-username: ${{ secrets.GITHUB_USERNAME }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Fetch IP list
+        id: fetch_ip
+        run: |
+          WHITELISTED_IP=$(curl -s https://raw.githubusercontent.com/ministryofjustice/laa-ip-allowlist/main/cidrs.txt | tr -d ' ' | awk 'ORS=","' | sed 's/,$//')
+          PINGDOM_IP_LIST=$(curl -s https://my.pingdom.com/probes/ipv4 | tr -d ' ' | awk '{print $0 "/32"}' ORS=',' | sed 's/,$//')
+          IP_LIST="${WHITELISTED_IP},${PINGDOM_IP_LIST}"
+          echo "ip_list=$IP_LIST" >> "$GITHUB_OUTPUT"
+
       - name: Generate Kubernetes files from templates
         env:
           IMAGE_TAG: ${{ github.sha }}
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: ${{ vars.ECR_REPOSITORY }}
           NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
-          GPFD_URL: https://test-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk
+          IP_LIST: ${{ steps.fetch_ip.outputs.ip_list }}
         run: |
-          cat deployments/test/deployment.tpl | envsubst > deployments/test/deployment-${BRANCH_NAME}.yml
-          cat deployments/test/ingress.tpl | envsubst > deployments/test/ingress-${BRANCH_NAME}.yml
-          cat deployments/test/service.tpl | envsubst > deployments/test/service-${BRANCH_NAME}.yml
+          # namespace et non-empty IP_LIST checks
+          set -euo pipefail
+          test "$NAMESPACE" = "laa-get-payments-finance-data-dev"
+          : "${IP_LIST:?Set the approved client IP allowlist}"
+
+          # Each branch gets its own hostname on cloud platform wildcard domain
+          SAFE_BRANCH_BASE="$(printf '%s' "$BRANCH_NAME" \
+            | tr '[:upper:]' '[:lower:]' \
+            | tr -c 'a-z0-9-' '-' \
+            | sed 's/^-*//;s/-*$//')"
+          SAFE_BRANCH="$SAFE_BRANCH_BASE"
+          if (( ${#SAFE_BRANCH} > 54 )); then
+            BRANCH_HASH="$(printf '%s' "$BRANCH_NAME" | sha256sum | cut -c1-3)"
+            SAFE_BRANCH_BASE="$(printf '%s' "$SAFE_BRANCH_BASE" | cut -c1-50 | sed 's/-*$//')"
+            SAFE_BRANCH="${SAFE_BRANCH_BASE}-${BRANCH_HASH}"
+          fi
+          export BRANCH_HOSTNAME="laa-gpfd-${SAFE_BRANCH}.apps.live.cloud-platform.service.justice.gov.uk"
+          export GPFD_URL="https://${BRANCH_HOSTNAME}"
+
+          # Restrict substitution to these placeholders only, so runtime shell/container variables in the
+          # templates (e.g. $POSTGRES_USER, $(POSTGRES_USER)) are left untouched instead of being emptied.
+          VARS='${BRANCH_NAME} ${REGISTRY} ${REPOSITORY} ${IMAGE_TAG} ${GPFD_URL} ${IP_LIST} ${NAMESPACE} ${BRANCH_HOSTNAME}'
+          envsubst "$VARS" < deployments/test/deployment.tpl > "deployments/test/deployment-${BRANCH_NAME}.yml"
+          envsubst "$VARS" < deployments/test/ingress.tpl > "deployments/test/ingress-${BRANCH_NAME}.yml"
+          envsubst "$VARS" < deployments/test/service.tpl > "deployments/test/service-${BRANCH_NAME}.yml"
 
       - name: Authenticate with Cloud Platform and Deploy
         env:
@@ -77,11 +114,30 @@ jobs:
           KUBE_CERT: ${{ secrets.KUBE_CERT_DEV }}
           KUBE_TOKEN: ${{ secrets.KUBE_TOKEN_DEV }}
         run: |
+          set -euo pipefail
           echo "${KUBE_CERT}" > ca.crt
           kubectl config set-cluster ${KUBE_CLUSTER} --certificate-authority=./ca.crt --server=https://${KUBE_CLUSTER}
           kubectl config set-credentials deploy-user --token=${KUBE_TOKEN}
           kubectl config set-context ${KUBE_CLUSTER} --cluster=${KUBE_CLUSTER} --user=deploy-user --namespace=${KUBE_NAMESPACE}
           kubectl config use-context ${KUBE_CLUSTER}
+
+          # Branch credentials for the disposable branch Postgres sidecar
+          DB_USERNAME="gpfd_$(echo "${BRANCH_NAME}" | tr -c 'a-zA-Z0-9' '_')"
+          DB_PASSWORD="$(openssl rand -base64 24)"
+
+          kubectl -n "${KUBE_NAMESPACE}" create secret generic \
+            "${BRANCH_NAME}-gpfd-db-credentials" \
+            --from-literal=username="${DB_USERNAME}" \
+            --from-literal=password="${DB_PASSWORD}" \
+            --dry-run=client \
+            -o yaml |
+            kubectl label --local -f - \
+              "branch=${BRANCH_NAME}" \
+              -o yaml |
+            kubectl -n "${KUBE_NAMESPACE}" apply -f -
+
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments/test/deployment-${BRANCH_NAME}.yml
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments/test/ingress-${BRANCH_NAME}.yml
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments/test/service-${BRANCH_NAME}.yml
+
+          kubectl -n ${KUBE_NAMESPACE} rollout status deployment/${BRANCH_NAME}-gpfd-dev-deployment --timeout=180s
