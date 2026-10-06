@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import uk.gov.laa.gpfd.config.builders.HttpSecuritySessionManagementConfigurerBuilder;
+import uk.gov.laa.gpfd.security.OAuth2LoginAuditHandler;
 import uk.gov.laa.gpfd.security.SilasRoles;
 import uk.gov.laa.gpfd.utils.RequestLogUtils;
 
@@ -41,6 +42,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
@@ -93,6 +95,51 @@ class MockAuthSecurityConfigTest {
                         assertThat(redirect).startsWith("https://identity.example/authorize?");
                     });
                 }
+
+    @Test
+    void normalProfileAuditsFailedEntraCallback() {
+        var logger = (Logger) LoggerFactory.getLogger(OAuth2LoginAuditHandler.class);
+        var originalLevel = logger.getLevel();
+        var appender = new ListAppender<ILoggingEvent>();
+        appender.setContext(logger.getLoggerContext());
+        appender.start();
+        logger.addAppender(appender);
+        logger.setLevel(Level.INFO);
+        try {
+            runner.withPropertyValues("spring.profiles.active=dev")
+                    .withBean(ClientRegistrationRepository.class,
+                            () -> new InMemoryClientRegistrationRepository(entraRegistration()))
+                    .run(context -> mockMvc(context)
+                            .perform(get("/login/oauth2/code/entra").param("code", "c").param("state", "s"))
+                            .andExpect(status().isFound())
+                            .andExpect(redirectedUrl("/login?error")));
+            assertThat(appender.list).hasSize(1);
+            var event = appender.list.getFirst();
+            assertThat(event.getLevel()).isEqualTo(Level.WARN);
+            assertThat(event.getKeyValuePairs())
+                    .extracting(keyValue -> keyValue.key, keyValue -> keyValue.value)
+                    .contains(
+                            tuple(RequestLogUtils.EVENT_ACTION, OAuth2LoginAuditHandler.EVENT_ACTION),
+                            tuple(RequestLogUtils.EVENT_OUTCOME, "failure"),
+                            tuple(OAuth2LoginAuditHandler.REGISTRATION_ID, "entra"),
+                            tuple(OAuth2LoginAuditHandler.ERROR_CODE, "authorization_request_not_found"));
+        } finally {
+            logger.detachAppender(appender);
+            appender.stop();
+            logger.setLevel(originalLevel);
+        }
+    }
+
+    private static ClientRegistration entraRegistration() {
+        return ClientRegistration.withRegistrationId("entra")
+                .clientId("test-client").clientSecret("synthetic-test-secret")
+                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
+                .authorizationUri("https://identity.example/authorize")
+                .tokenUri("https://identity.example/token")
+                .userInfoUri("https://identity.example/userinfo")
+                .userNameAttributeName("sub").build();
+    }
 
     @Test
     void protectedRequestsUseSyntheticOidcIdentity() {
