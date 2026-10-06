@@ -40,6 +40,12 @@ spec:
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: ${ENV_NAME}
+            - name: SENTRY_DSN
+              valueFrom:
+                secretKeyRef:
+                  name: ${SECRET_NAME}
+                  key: sentry-dsn
+                  optional: true
             - name: AZURE_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:

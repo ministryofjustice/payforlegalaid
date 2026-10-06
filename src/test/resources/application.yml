@@ -1,3 +1,6 @@
+sentry:
+  enabled: false
+
 gpfd:
   url: https://localhost:8080
   datasource:

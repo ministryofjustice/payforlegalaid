@@ -20,6 +20,36 @@ logging:
         transaction: ${SPRING_LOGGING_LEVEL:INFO}
         web: ${SPRING_LOGGING_LEVEL:INFO}
 
+sentry:
+  dsn: ${SENTRY_DSN:}
+  environment: ${SENTRY_ENVIRONMENT:${spring.profiles.active:local}}
+  release: pay-for-legal-aid@${spring.application.version}
+  sample-rate: 1.0
+  traces-sample-rate: ${SENTRY_TRACES_SAMPLE_RATE:0.1}
+  send-default-pii: false
+  max-request-body-size: none
+  data-collection: # introduced in SDK 8.58.0
+    user-info: false
+    cookies:
+      mode: off
+    http-bodies: []
+    http-headers:
+      request:
+        mode: off
+      response:
+        mode: off
+    url-query-params:
+      mode: off
+    file-paths: false
+    graphql:
+      document: false
+      variables: false
+  trace-propagation-targets: []
+  logging:
+    enabled: false
+  logs:
+    enabled: false
+
 management:
   endpoints:
     web:
