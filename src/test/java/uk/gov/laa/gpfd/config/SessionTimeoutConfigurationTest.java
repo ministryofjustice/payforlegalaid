@@ -20,7 +20,7 @@ class SessionTimeoutConfigurationTest {
     @ValueSource(strings = {"dev", "uat", "prod"})
     void shouldConfigureFifteenMinuteSessionTimeout(String profile)
             throws IOException {
-        var environment = loadProfile(profile);
+        var environment = loadProfileProperties(profile);
 
         assertEquals(Duration.ofMinutes(15), sessionTimeout(environment), "Session timeout for profile: " + profile);
     }
@@ -29,7 +29,7 @@ class SessionTimeoutConfigurationTest {
     @ValueSource(strings = {"dev", "uat", "prod"})
     void shouldAllowEnvironmentVariableToOverrideSessionTimeout(String profile)
             throws IOException {
-        var environment = loadProfile(profile);
+        var environment = loadProfileProperties(profile);
         environment.getPropertySources().addFirst(
                 new SystemEnvironmentPropertySource(
                         "systemEnvironment",
@@ -39,7 +39,7 @@ class SessionTimeoutConfigurationTest {
         assertEquals(Duration.ofMinutes(1), sessionTimeout(environment), "Session timeout for profile: " + profile);
     }
 
-    private MockEnvironment loadProfile(String profile) throws IOException {
+    private MockEnvironment loadProfileProperties(String profile) throws IOException {
         var environment = new MockEnvironment();
         var resource = new ClassPathResource("application-" + profile + ".yml");
 
