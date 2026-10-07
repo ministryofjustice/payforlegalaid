@@ -22,7 +22,7 @@ class SessionTimeoutConfigurationTest {
             throws IOException {
         var environment = loadProfile(profile);
 
-        assertEquals(Duration.ofMinutes(15), sessionTimeout(environment));
+        assertEquals(Duration.ofMinutes(15), sessionTimeout(environment), "Session timeout for profile: " + profile);
     }
 
     @ParameterizedTest
@@ -36,7 +36,7 @@ class SessionTimeoutConfigurationTest {
                         Map.<String, Object>of(
                                 "SERVER_SERVLET_SESSION_TIMEOUT", "1m")));
 
-        assertEquals(Duration.ofMinutes(1), sessionTimeout(environment));
+        assertEquals(Duration.ofMinutes(1), sessionTimeout(environment), "Session timeout for profile: " + profile);
     }
 
     private MockEnvironment loadProfile(String profile) throws IOException {
