@@ -19,7 +19,7 @@ jobs:
       - name: Build and test
         uses: './.github/actions/build-and-test'
         with:
-          github-username: ${{ secrets.GITHUB_USERNAME }}
+          github-username: ${{ github.actor }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           github-environment: acceptance-tests
         env:
