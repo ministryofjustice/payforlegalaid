@@ -28,8 +28,8 @@ jobs:
       - name: Run acceptance tests
         uses: './.github/actions/run_acceptance_tests'
         with:
-          github-username: ${{ secrets.GITHUB_USERNAME }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-username: ${{ github.actor }}
+          github-token: ${{ secrets.TEMPORARY_ALASTAIR_MOJ_PAT_FOR_INTERNAL_READ_PACKAGES }}
         env:
           ROLE: ${{ secrets.FILE_STORE_UAT_S3_ROLE_TO_ASSUME }}
           AWS_REGION: ${{ vars.FILE_STORE_UAT_S3_REGION }}
