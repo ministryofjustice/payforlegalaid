@@ -53,6 +53,6 @@ class SessionTimeoutConfigurationTest {
     private Duration sessionTimeout(MockEnvironment environment) {
         return Binder.get(environment)
                 .bind("server.servlet.session.timeout", Duration.class)
-                .get();
+                .orElseThrow(() -> new AssertionError( "Missing server.servlet.session.timeout"));
     }
 }
