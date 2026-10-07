@@ -46,7 +46,6 @@ spec:
             - name: GPFD_URL
               value: ${GPFD_URL}
             - name: SPRING_PROFILES_ACTIVE
-<<<<<<< HEAD
               value: "dev,mockauth"
             - name: SPRING_FLYWAY_CONNECT_RETRIES
               value: "30"
@@ -66,7 +65,6 @@ spec:
             - name: RDS_DB_NAME
               value: glad
             - name: TRACKING_DB_USERNAME
-=======
               value: "dev"
             - name: SENTRY_DSN #TODO to remove before merge
               valueFrom:
@@ -75,7 +73,6 @@ spec:
                   key: sentry-dsn
                   optional: true
             - name: AZURE_CLIENT_SECRET
->>>>>>> 67e6bc99 (feat:add to testable deployment for testing)
               valueFrom:
                 secretKeyRef:
                   name: ${BRANCH_NAME}-gpfd-db-credentials

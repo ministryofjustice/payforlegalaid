@@ -94,6 +94,7 @@ jobs:
         with:
           github-username: ${{ secrets.GITHUB_USERNAME }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          sentry-auth-token: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
       - name: Set ingress class based on environment
         id: ingress_class

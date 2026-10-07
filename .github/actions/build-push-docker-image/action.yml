@@ -1,4 +1,5 @@
 name: Build and push docker image
+description: Build and push the docker image
 
 inputs:
   github-username:
@@ -7,6 +8,9 @@ inputs:
   github-token:
     required: true
     description: GitHub token
+  sentry-auth-token:
+    required: false
+    description: Optional Sentry token for source-context upload
 
 runs:
   using: composite
@@ -20,8 +24,13 @@ runs:
       env:
         GITHUB_USERNAME: ${{ inputs.github-username }}
         GITHUB_TOKEN: ${{ inputs.github-token }}
+        SENTRY_AUTH_TOKEN: ${{ inputs.sentry-auth-token }}
       run: |
-        mvn -s .github/settings.xml -B -ntp -DskipTests clean package
+        maven_profiles=()
+        if [[ -n "${SENTRY_AUTH_TOKEN}" ]]; then
+          maven_profiles+=(-Psentry-source-context)
+        fi
+        mvn -s .github/settings.xml -B -ntp "${maven_profiles[@]}" -DskipTests clean package
 
     - name: Build and push Docker image to container repository
       shell: bash
