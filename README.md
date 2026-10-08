@@ -62,6 +62,11 @@ https://dsdmoj.atlassian.net/wiki/spaces/LPF/pages/4736516940/GPFD+Environments
 
 ## Running The App
 
+Dependency management is declared directly in `pom.xml`, based on GLAD Parent 2.1.4
+and its GLAD BOM 2.1.5. The application inherits Spring Boot 4.1.1 directly and
+does not download GLAD artifacts from GitHub Packages or require a PAT for Maven
+dependencies. Dependency version updates are maintained in this repository.
+
 ### Locally (Docker)
 
 The application can be run locally using Docker and Docker Compose. Compose starts the application and a local PostgreSQL instance for tracking metadata; Flyway applies the metadata migrations on startup.
