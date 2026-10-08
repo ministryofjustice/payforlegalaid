@@ -12,6 +12,9 @@ jobs:
       contents: read
       packages: read
       id-token: write # needed so AWS can login in the acceptance test action
+      actions: read
+      security-events: write
+
     steps:
       - name: Checkout GitHub repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

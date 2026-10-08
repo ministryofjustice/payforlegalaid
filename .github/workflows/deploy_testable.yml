@@ -16,6 +16,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
+      actions: read
+      security-events: write
 
     env:
       USERNAME: ${{ secrets.OPENAPI_PACKAGE_USER }}
