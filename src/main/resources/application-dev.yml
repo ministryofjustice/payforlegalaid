@@ -22,6 +22,7 @@ server:
   shutdown: graceful
   servlet:
     session:
+      timeout: 15m
       cookie:
         secure: true
         same-site: lax
