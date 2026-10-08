@@ -9,7 +9,9 @@ jobs:
     environment: acceptance-tests
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       id-token: write # needed so AWS can login in the acceptance test action
+      actions: read
     steps:
       - name: Checkout GitHub repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
