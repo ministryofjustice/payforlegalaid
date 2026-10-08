@@ -16,6 +16,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
+      actions: read
+      security-events: write
 
     env:
       USERNAME: ${{ secrets.OPENAPI_PACKAGE_USER }}
@@ -31,8 +33,8 @@ jobs:
         env:
           SOCKET_KEY: ${{ secrets.DEV_API_SOCKET_KEY }}
         with:
-          github-username: ${{ secrets.GITHUB_USERNAME }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-username: ${{ github.actor }}
+          github-token: ${{ secrets.TEMPORARY_ALASTAIR_MOJ_PAT_FOR_INTERNAL_READ_PACKAGES }}
           github-environment: development
 
       - name: Run Snyk security suite
@@ -62,8 +64,8 @@ jobs:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           SOCKET_KEY: ${{ secrets.DEV_API_SOCKET_KEY }}
         with:
-          github-username: ${{ secrets.GITHUB_USERNAME }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-username: ${{ github.actor }}
+          github-token: ${{ secrets.TEMPORARY_ALASTAIR_MOJ_PAT_FOR_INTERNAL_READ_PACKAGES }}
 
       - name: Fetch IP list
         id: fetch_ip

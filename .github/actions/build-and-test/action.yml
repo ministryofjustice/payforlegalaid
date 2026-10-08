@@ -33,7 +33,7 @@ runs:
       shell:
         bash
       run: |
-        mvn -s .github/settings.xml -ntp -B clean verify -Dtest='!*RunCucumberTest'
+        mvn -s .github/settings.xml -ntp -X -B clean verify -Dtest='!*RunCucumberTest'
 
     - name: Run unit tests
       if: ${{ github.event_name != 'pull_request' && inputs.github-environment != 'development' }}
@@ -44,7 +44,7 @@ runs:
       shell:
         bash
       run: |
-        mvn -s .github/settings.xml -ntp -B clean test -Dtest='!*RunCucumberTest'
+        mvn -s .github/settings.xml -ntp -X -B clean test -Dtest='!*RunCucumberTest'
 
     - name: Upload JaCoCo Report (development and PR only)
       if: ${{ github.event_name == 'pull_request' || inputs.github-environment == 'development' }}
