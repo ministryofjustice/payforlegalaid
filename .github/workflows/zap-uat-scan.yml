@@ -1,0 +1,71 @@
+name: OWASP ZAP Dev Scan
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    # Every weekday at 2am UTC
+    - cron: '0 2 * * 1-5'
+
+concurrency:
+  group: zap-dev-scan
+  cancel-in-progress: false
+
+jobs:
+  zap_scan:
+    name: Run OWASP ZAP Authenticated Scan
+    runs-on: ubuntu-latest
+    environment: development
+    timeout-minutes: 30
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Run ZAP Automation Framework plan
+        shell: bash
+        env:
+          ZAP_USERNAME: ${{ secrets.ZAP_USERNAME }}
+          ZAP_PASSWORD: ${{ secrets.ZAP_PASSWORD }}
+          ZAP_TOTP_SECRET: ${{ secrets.ZAP_TOTP_SECRET }}
+        run: |
+          for variable in ZAP_USERNAME ZAP_PASSWORD ZAP_TOTP_SECRET; do
+            if [[ -z "${!variable}" ]]; then
+              echo "::error::Missing $variable. Configure it as a GitHub Actions secret accessible to the development environment."
+              exit 1
+            fi
+          done
+          mkdir -p zap-report
+          chmod a+rwx zap-report
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/zap/wrk:rw" \
+            -e ZAP_USERNAME -e ZAP_PASSWORD -e ZAP_TOTP_SECRET \
+            ghcr.io/zaproxy/zaproxy:stable \
+            zap.sh -cmd -addonupdate -autorun /zap/wrk/.zap/uat-plan.yaml
+
+      - name: Verify authenticated scan
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path("zap-report/auth-report.json").read_text())
+          authenticated = any(
+              item.get("key") == "auth.summary.auth" and item.get("passed") is True
+              for item in report.get("summaryItems", [])
+          )
+          if not authenticated:
+              raise SystemExit("Authentication failed. Check the ZAP authentication report and runner access to dev.")
+          print("ZAP authentication verification passed.")
+          PY
+
+      - name: Upload ZAP reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: zap-dev-report
+          path: zap-report/
+          retention-days: 7
