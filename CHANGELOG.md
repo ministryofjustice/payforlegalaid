@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.2.0](https://github.com/ministryofjustice/payforlegalaid/compare/v4.1.4...v4.2.0) (2026-10-08)
+
+
+### Features
+
+* **LPF-1681:** update CSP to use level 3 ([#665](https://github.com/ministryofjustice/payforlegalaid/issues/665)) ([89d2500](https://github.com/ministryofjustice/payforlegalaid/commit/89d250085e4fbcb9c437fdf059833b5ef70818fd))
+
+
+### Bug Fixes
+
+* **LPF-1733:** ensure logging for ModSec is searchable ([#663](https://github.com/ministryofjustice/payforlegalaid/issues/663)) ([09e2eb9](https://github.com/ministryofjustice/payforlegalaid/commit/09e2eb921b759b8d81ab25eed3e8d2f351977e4a))
+* **LPF-973:** Restore testable ephemeral environment ([#658](https://github.com/ministryofjustice/payforlegalaid/issues/658)) ([51820bb](https://github.com/ministryofjustice/payforlegalaid/commit/51820bb3b64e52900f00c213a9e56bf7650a2e7c))
+
 ## [4.1.4](https://github.com/ministryofjustice/payforlegalaid/compare/v4.1.3...v4.1.4) (2026-10-01)
 
 
