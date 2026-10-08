@@ -9,7 +9,11 @@ jobs:
     environment: acceptance-tests
     runs-on: ubuntu-latest
     permissions:
+      contents: read
+      packages: read
       id-token: write # needed so AWS can login in the acceptance test action
+      actions: read
+      security-events: write
     steps:
       - name: Checkout GitHub repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -17,8 +21,8 @@ jobs:
       - name: Build and test
         uses: './.github/actions/build-and-test'
         with:
-          github-username: ${{ secrets.GITHUB_USERNAME }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-username: ${{ github.actor }}
+          github-token: ${{ secrets.TEMPORARY_ALASTAIR_MOJ_PAT_FOR_INTERNAL_READ_PACKAGES }}
           github-environment: acceptance-tests
         env:
           SOCKET_KEY: ${{ secrets.DEV_API_SOCKET_KEY }}
