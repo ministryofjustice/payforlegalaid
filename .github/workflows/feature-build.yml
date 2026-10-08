@@ -21,8 +21,8 @@ jobs:
       - name: Build and test
         uses: './.github/actions/build-and-test'
         with:
-          github-username: ${{ secrets.GITHUB_USERNAME }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-username: ${{ github.actor }}
+          github-token: ${{ secrets.TEMPORARY_ALASTAIR_MOJ_PAT_FOR_INTERNAL_READ_PACKAGES }}
           github-environment: acceptance-tests
         env:
           SOCKET_KEY: ${{ secrets.DEV_API_SOCKET_KEY }}
