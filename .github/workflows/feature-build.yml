@@ -12,19 +12,9 @@ jobs:
       contents: read
       id-token: write # needed so AWS can login in the acceptance test action
       actions: read
-      packages: read
     steps:
       - name: Checkout GitHub repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Test GitHub Packages authentication
-        run: |
-          curl -v \
-            -u "${GITHUB_ACTOR}:${GITHUB_TOKEN}" \
-            https://maven.pkg.github.com/ministryofjustice/glad-platform/uk/gov/laa/glad-parent/2.1.4/glad-parent-2.1.4.pom
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_ACTOR: ${{ github.actor }}
 
       - name: Build and test
         uses: './.github/actions/build-and-test'
