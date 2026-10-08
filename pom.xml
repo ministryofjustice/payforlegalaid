@@ -767,10 +767,14 @@
 
     </dependencies>
 
-    <repositories>
-        <repository>
+  <repositories>
+        <!-- <repository>
             <id>central</id>
             <url>https://repo.maven.apache.org/maven2</url>
+        </repository> -->
+        <repository>
+            <id>github-platform</id>
+            <url>https://maven.pkg.github.com/ministryofjustice/glad-platform</url>
         </repository>
     </repositories>
 
