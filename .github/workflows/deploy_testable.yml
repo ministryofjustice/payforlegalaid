@@ -142,4 +142,11 @@ jobs:
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments/test/ingress-${BRANCH_NAME}.yml
           kubectl -n ${KUBE_NAMESPACE} apply -f deployments/test/service-${BRANCH_NAME}.yml
 
-          kubectl -n ${KUBE_NAMESPACE} rollout status deployment/${BRANCH_NAME}-gpfd-dev-deployment --timeout=180s
+          if ! kubectl -n "${KUBE_NAMESPACE}" rollout status "deployment/${BRANCH_NAME}-gpfd-dev-deployment" --timeout=180s; then
+            kubectl -n "${KUBE_NAMESPACE}" get pods,replicasets -l "branch=${BRANCH_NAME}" -o wide || true
+            kubectl -n "${KUBE_NAMESPACE}" describe deployment "${BRANCH_NAME}-gpfd-dev-deployment" || true
+            kubectl -n "${KUBE_NAMESPACE}" describe pods -l "branch=${BRANCH_NAME}" || true
+            kubectl -n "${KUBE_NAMESPACE}" logs -l "branch=${BRANCH_NAME}" --all-containers=true --prefix=true --tail=100 || true
+            kubectl -n "${KUBE_NAMESPACE}" logs -l "branch=${BRANCH_NAME}" --all-containers=true --prefix=true --tail=100 --previous || true
+            exit 1
+          fi
