@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.2.1](https://github.com/ministryofjustice/payforlegalaid/compare/v4.2.0...v4.2.1) (2026-10-09)
+
+
+### Bug Fixes
+
+* **LPF-1725:** Set servlet session timeout ([#661](https://github.com/ministryofjustice/payforlegalaid/issues/661)) ([6e1cde4](https://github.com/ministryofjustice/payforlegalaid/commit/6e1cde4729aaaf5646436ff85d25fb06de957e32))
+
 ## [4.2.0](https://github.com/ministryofjustice/payforlegalaid/compare/v4.1.4...v4.2.0) (2026-10-08)
 
 
