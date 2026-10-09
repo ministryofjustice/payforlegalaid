@@ -39,3 +39,6 @@ src/main/resources/static/
 
 # Local Docker app env vars
 .env
+
+# ZAP diagnostics contain session cookies and login data.
+zap-report/

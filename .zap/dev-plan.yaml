@@ -1,0 +1,156 @@
+env:
+  contexts:
+    - name: gpfd-dev
+      urls:
+        - https://dev-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk
+      includePaths:
+        - https://dev-laa-get-payments-finance-data\.cloud-platform\.service\.justice\.gov\.uk.*
+      excludePaths:
+        - https://dev-laa-get-payments-finance-data\.cloud-platform\.service\.justice\.gov\.uk/logout.*
+        - https://login\.microsoftonline\.com.*
+      authentication:
+        method: browser
+        parameters:
+          loginPageUrl: https://dev-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk/reports
+          loginPageWait: 10
+          browserId: firefox-headless
+          stepDelay: 1
+          diagnostics: true
+          steps:
+            - description: Email
+              type: USERNAME
+              cssSelector: input[name="loginfmt"]
+              timeout: 15000
+            - description: Next
+              type: CLICK
+              cssSelector: "#idSIButton9"
+              timeout: 15000
+            - description: Password
+              type: PASSWORD
+              cssSelector: input[name="passwd"]
+              timeout: 15000
+            - description: Sign in
+              type: CLICK
+              cssSelector: "#idSIButton9"
+              timeout: 15000
+            - description: TOTP code
+              type: TOTP_FIELD
+              cssSelector: input[name="otc"]
+              timeout: 15000
+            - description: Verify
+              type: CLICK
+              cssSelector: "#idSubmit_SAOTCC_Continue"
+              timeout: 15000
+            - description: Stay signed in - No
+              type: CLICK
+              cssSelector: "#idBtn_Back"
+              timeout: 15000
+        verification:
+          method: poll
+          pollFrequency: 60
+          pollUnits: requests
+          pollUrl: https://dev-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk/reports
+          loggedInRegex: \Q"reportList"\E
+          loggedOutRegex: login\.microsoftonline\.com
+      sessionManagement:
+        method: headers
+      users:
+        - name: zap-service-account
+          credentials:
+            username: ${ZAP_USERNAME}
+            password: ${ZAP_PASSWORD}
+            totp:
+              secret: ${ZAP_TOTP_SECRET}
+              period: 30
+              digits: 6
+              algorithm: SHA1
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    progressToStdout: true
+
+jobs:
+  - type: passiveScan-config
+    parameters:
+      maxAlertsPerRule: 10
+      scanOnlyInScope: true
+
+  - type: requestor
+    parameters:
+      user: zap-service-account
+    requests:
+      - name: Verify authenticated reports access
+        url: https://dev-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk/reports
+        responseCode: 200
+    tests:
+      - name: Verify reports response is authenticated JSON
+        type: url
+        url: https://dev-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk/reports
+        operator: or
+        responseBodyRegex: '"reportList"'
+        onFail: error
+
+  - type: openapi
+    parameters:
+      context: gpfd-dev
+      user: zap-service-account
+      apiFile: /zap/wrk/src/main/resources/static/swagger.yml
+      targetUrl: https://dev-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk
+
+  - type: spider
+    parameters:
+      context: gpfd-dev
+      user: zap-service-account
+      maxDuration: 5
+
+  - type: passiveScan-wait
+    parameters:
+      maxDuration: 10
+
+  - type: activeScan-policy
+    parameters:
+      name: GPFD Active Policy
+    policyDefinition:
+      defaultStrength: Medium
+      defaultThreshold: Medium
+
+  - type: activeScan
+    name: authenticated-active-scan
+    parameters:
+      context: gpfd-dev
+      user: zap-service-account
+      policy: GPFD Active Policy
+      maxScanDurationInMins: 20
+      maxRuleDurationInMins: 2
+      delayInMs: 100
+      threadPerHost: 2
+      maxAlertsPerRule: 10
+
+  - type: passiveScan-wait
+    parameters:
+      maxDuration: 10
+
+  - type: report
+    parameters:
+      template: traditional-html
+      reportDir: /zap/wrk/zap-report
+      reportFile: zap-report.html
+      reportTitle: GPFD DEV ZAP Scan
+
+  - type: report
+    parameters:
+      template: traditional-json
+      reportDir: /zap/wrk/zap-report
+      reportFile: zap-report.json
+
+  - type: report
+    parameters:
+      template: sarif-json
+      reportDir: /zap/wrk/zap-report
+      reportFile: zap-report.sarif
+
+  - type: report
+    parameters:
+      template: auth-report-json
+      reportDir: /zap/wrk/zap-report
+      reportFile: auth-report.json
