@@ -5,6 +5,9 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
+import io.sentry.ScopeCallback;
+import io.sentry.Sentry;
+import io.sentry.SentryLevel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +16,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.MDC;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authorization.AuthorizationResult;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
@@ -39,6 +44,41 @@ class ContextBasedAuthorizationManagerTest {
     private Authentication authentication;
 
     private ListAppender<ILoggingEvent> appender;
+
+    @Test
+    void reportsUnauthenticatedAccessWithoutCreatingAnException() {
+        when(authenticationSupplier.get()).thenReturn(null);
+        try (var sentry = mockStatic(Sentry.class)) {
+            var result = new ContextBasedAuthorizationManager().authorize(authenticationSupplier, context);
+            assertFalse(result.isGranted());
+            sentry.verify(() -> Sentry.captureMessage(eq("Unauthenticated access attempt"),
+                    eq(SentryLevel.WARNING), any(ScopeCallback.class)));
+            sentry.verifyNoMoreInteractions();
+        }
+    }
+
+    @Test
+    void reportsAnonymousAccessDeniedByDelegate() {
+        when(authenticationSupplier.get()).thenReturn(new AnonymousAuthenticationToken(
+                "test", "anonymousUser", AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS")));
+        try (var sentry = mockStatic(Sentry.class)) {
+            var result = new ContextBasedAuthorizationManager().authorize(authenticationSupplier, context);
+            assertFalse(result.isGranted());
+            sentry.verify(() -> Sentry.captureMessage(eq("Access denied by authentication check"),
+                    eq(SentryLevel.WARNING), any(ScopeCallback.class)));
+            sentry.verifyNoMoreInteractions();
+        }
+    }
+
+    @Test
+    void doesNotReportSuccessfulAuthorization() {
+        when(authenticationSupplier.get()).thenReturn(authentication);
+        when(authentication.isAuthenticated()).thenReturn(true);
+        try (var sentry = mockStatic(Sentry.class)) {
+            assertTrue(new ContextBasedAuthorizationManager().authorize(authenticationSupplier, context).isGranted());
+            sentry.verifyNoInteractions();
+        }
+    }
 
     @AfterEach
     void tearDown() {

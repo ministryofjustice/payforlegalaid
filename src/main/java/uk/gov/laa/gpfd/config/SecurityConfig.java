@@ -110,6 +110,7 @@ public class SecurityConfig {
         var mockAuth = mockAuthProvider.getIfAvailable();
         if (mockAuth == null) {
             http.oauth2Login(oauth2 -> oauth2
+                    .failureHandler(new SentryAuthenticationFailureHandler())
                     .successHandler((_, response, _) -> response.sendRedirect("/")));
         } else {
             mockAuth.configure(http);

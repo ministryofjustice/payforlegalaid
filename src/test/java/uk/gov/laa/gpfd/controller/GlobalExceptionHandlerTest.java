@@ -5,12 +5,19 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
+import io.sentry.Hint;
+import io.sentry.ScopeCallback;
+import io.sentry.Sentry;
+import io.sentry.SentryEnvelope;
+import io.sentry.protocol.User;
+import io.sentry.transport.ITransport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentCaptor;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import software.amazon.awssdk.awscore.exception.AwsErrorDetails;
@@ -55,6 +62,12 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Stream.of;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -69,6 +82,57 @@ class GlobalExceptionHandlerTest {
 
     private static final GlobalExceptionHandler globalExceptionHandler = new GlobalExceptionHandler();
     private ListAppender<ILoggingEvent> appender;
+
+    @Test
+    void capturesDeniedReportAccessWithScopedMetadata() {
+        var exception = new ReportAccessException(UUID.randomUUID());
+        try (var sentry = mockStatic(Sentry.class)) {
+            var response = globalExceptionHandler.handleReportAccessException(exception);
+            assertEquals(FORBIDDEN, response.getStatusCode());
+            sentry.verify(() -> Sentry.captureException(eq(exception), any(ScopeCallback.class)));
+            sentry.verifyNoMoreInteractions();
+        }
+    }
+
+    @Test
+    void deliveredSecurityEventHasScopedTagsWithoutUserIdentity() throws Exception {
+        ITransport transport = mock(ITransport.class);
+        Sentry.init(options -> {
+            options.setDsn("https://public@example.test/1");
+            options.setEnvironment("dev");
+            options.setRelease("security-events-test");
+            options.setTransportFactory((settings, details) -> transport);
+            options.setEnableUncaughtExceptionHandler(false);
+            options.setEnableShutdownHook(false);
+        });
+        try {
+            User user = new User();
+            user.setId("synthetic-user");
+            user.setEmail("synthetic@example.test");
+            Sentry.setUser(user);
+
+            globalExceptionHandler.handleReportAccessException(new ReportAccessException(UUID.randomUUID()));
+            Sentry.captureException(new IllegalStateException("Separate synthetic failure"));
+
+            var envelopes = ArgumentCaptor.forClass(SentryEnvelope.class);
+            verify(transport, times(2)).send(envelopes.capture(), any(Hint.class));
+            var serializer = Sentry.getCurrentScopes().getOptions().getSerializer();
+            var securityEvent = envelopes.getAllValues().getFirst().getItems().iterator().next().getEvent(serializer);
+            var nextEvent = envelopes.getAllValues().getLast().getItems().iterator().next().getEvent(serializer);
+            assertEquals("authorization.denied", securityEvent.getTag(RequestLogUtils.EVENT_ACTION));
+            assertEquals("failure", securityEvent.getTag(RequestLogUtils.EVENT_OUTCOME));
+            assertEquals("dev", securityEvent.getEnvironment());
+            assertEquals("security-events-test", securityEvent.getRelease());
+            assertNull(securityEvent.getUser().getId());
+            assertNull(securityEvent.getUser().getEmail());
+            assertNull(securityEvent.getUser().getUsername());
+            assertNull(securityEvent.getUser().getIpAddress());
+            assertNull(nextEvent.getTag(RequestLogUtils.EVENT_ACTION));
+            assertEquals("synthetic-user", nextEvent.getUser().getId());
+        } finally {
+            Sentry.close();
+        }
+    }
 
     @AfterEach
     void tearDown() {

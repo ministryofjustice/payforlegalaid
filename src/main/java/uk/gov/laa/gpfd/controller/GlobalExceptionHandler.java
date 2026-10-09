@@ -33,6 +33,7 @@ import uk.gov.laa.gpfd.model.ReportsGet400Response;
 import uk.gov.laa.gpfd.model.ReportsGet404Response;
 import uk.gov.laa.gpfd.model.ReportsGet500Response;
 import uk.gov.laa.gpfd.utils.RequestLogUtils;
+import uk.gov.laa.gpfd.utils.SentryEvents;
 
 import java.sql.SQLSyntaxErrorException;
 
@@ -81,6 +82,9 @@ public class GlobalExceptionHandler {
         if (e.getCause() != null) {
             log.error("Caused by: {}", e.getCause().getMessage());
         }
+        if (e instanceof TemplateResourceException.ExcelTemplateCreationException) {
+            SentryEvents.captureException(e, "report.write.failure");
+        }
 
         return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(response);
     }
@@ -126,6 +130,7 @@ public class GlobalExceptionHandler {
         }};
 
         log.error("ExcelStreamWriteException Thrown: {}", response.getError());
+        SentryEvents.captureException(e, "report.write.failure");
 
         return internalServerError().body(response);
     }
@@ -226,6 +231,7 @@ public class GlobalExceptionHandler {
         }};
 
         log.error("MethodArgumentTypeMismatchException Thrown: %s".formatted(response));
+        SentryEvents.captureException(e, "input.invalid");
 
         return badRequest().body(response);
     }
@@ -299,6 +305,7 @@ public class GlobalExceptionHandler {
         errorResponse.setError(e.getMessage());
 
         log.error("InvalidDownloadFormatException Thrown: Report {} has file {} which is not a csv file", e.getReportId(), e.getFileName());
+        SentryEvents.captureException(e, "input.invalid");
 
         return ResponseEntity.status(BAD_REQUEST)
                 .body(errorResponse);
@@ -335,6 +342,7 @@ public class GlobalExceptionHandler {
         errorResponse.setError("Authentication response error.");
 
         log.error("UnexpectedAuthTypeException Thrown: {}", e.getMessage());
+        SentryEvents.captureException(e, "authentication.details.failure");
 
         return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                 .body(errorResponse);
@@ -356,6 +364,7 @@ public class GlobalExceptionHandler {
                 .addKeyValue(RequestLogUtils.EVENT_ACTION, "authorization.denied")
                 .addKeyValue(RequestLogUtils.EVENT_OUTCOME, "failure")
                 .log("ReportAccessException Thrown: User tried to access report {} but lacks the relevant permission(s)", e.getReportId());
+            SentryEvents.captureException(e, "authorization.denied");
 
         return ResponseEntity.status(FORBIDDEN)
                 .body(errorResponse);
@@ -380,6 +389,9 @@ public class GlobalExceptionHandler {
         log.error("CsvGenerationException Thrown: {}", response.getError());
         if (e.getCause() != null) {
             log.error("Caused by: {}", e.getCause().getMessage());
+        }
+        if (e instanceof CsvGenerationException.WritingToCsvException) {
+            SentryEvents.captureException(e, "report.write.failure");
         }
 
         return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(response);
@@ -418,6 +430,7 @@ public class GlobalExceptionHandler {
 
         log.error("InvalidReportFormatException Thrown: Report {} requested as {} but is actually {}",
                 e.getReportId(), e.getRequestedFormat(), e.getActualFormat());
+        SentryEvents.captureException(e, "input.invalid");
 
         return ResponseEntity.status(BAD_REQUEST)
                 .body(errorResponse);
@@ -458,6 +471,7 @@ public class GlobalExceptionHandler {
 
         log.error("StreamErrorException Thrown: Report {} failed streaming on the server side with exception, caused by {}",
                 e.getReportId(), e.getMessage());
+        SentryEvents.captureException(e, "report.stream.failure");
 
         return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                 .body(errorResponse);

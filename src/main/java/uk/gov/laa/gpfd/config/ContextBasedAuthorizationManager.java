@@ -10,6 +10,7 @@ import org.springframework.security.authorization.AuthorizationResult;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import uk.gov.laa.gpfd.utils.RequestLogUtils;
+import uk.gov.laa.gpfd.utils.SentryEvents;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -29,6 +30,7 @@ public class ContextBasedAuthorizationManager implements AuthorizationManager<Re
                     .addKeyValue(RequestLogUtils.EVENT_ACTION, "authorization.check")
                     .addKeyValue(RequestLogUtils.EVENT_OUTCOME, "failure")
                     .log("Unauthenticated access attempt");
+                    SentryEvents.captureMessage("Unauthenticated access attempt", "authorization.check");
             return new AuthorizationDecision(false);
         }
 
@@ -42,6 +44,9 @@ public class ContextBasedAuthorizationManager implements AuthorizationManager<Re
                 .addKeyValue(RequestLogUtils.EVENT_ACTION, "authorization.check")
                 .addKeyValue(RequestLogUtils.EVENT_OUTCOME, decisionGranted ? "success" : "failure")
                 .log("Authorization decision: {}", decisionGranted);
+            if (!decisionGranted) {
+                SentryEvents.captureMessage("Access denied by authentication check", "authorization.check");
+            }
         return decision;
     }
 }
