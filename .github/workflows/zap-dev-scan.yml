@@ -1,0 +1,127 @@
+name: OWASP ZAP Dev Scan
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches:
+      - LPF-1348-owasp-zap
+
+  schedule:
+    # Every weekday at 9pm UK local time (GMT/BST)
+    - cron: '0 21 * * 1-5'
+      timezone: 'Europe/London'
+
+concurrency:
+  group: zap-dev-scan
+  cancel-in-progress: false
+
+jobs:
+  zap_scan:
+    name: Run OWASP ZAP Authenticated Scan
+    runs-on: ubuntu-latest
+    environment: development
+    timeout-minutes: 60
+
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Run ZAP Automation Framework plan
+        shell: bash
+        env:
+          ZAP_USERNAME: ${{ secrets.ZAP_USERNAME }}
+          ZAP_PASSWORD: ${{ secrets.ZAP_PASSWORD }}
+          ZAP_TOTP_SECRET: ${{ secrets.ZAP_TOTP_SECRET }}
+        run: |
+          for variable in ZAP_USERNAME ZAP_PASSWORD ZAP_TOTP_SECRET; do
+            if [[ -z "${!variable}" ]]; then
+              echo "::error::Missing $variable. Configure it as a GitHub Actions secret accessible to the development environment."
+              exit 1
+            fi
+          done
+          mkdir -p zap-report
+          chmod a+rwx zap-report
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/zap/wrk:rw" \
+            -e ZAP_USERNAME -e ZAP_PASSWORD -e ZAP_TOTP_SECRET \
+            ghcr.io/zaproxy/zaproxy:stable \
+            zap.sh -cmd -addonupdate -autorun /zap/wrk/.zap/dev-plan.yaml
+
+      - name: Verify authenticated scan
+        id: verify-auth
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path("zap-report/auth-report.json").read_text())
+          authenticated = any(
+              item.get("key") == "auth.summary.auth" and item.get("passed") is True
+              for item in report.get("summaryItems", [])
+          )
+          if not authenticated:
+              raise SystemExit("Authentication failed. Check the ZAP authentication report and runner access to dev.")
+          print("ZAP authentication verification passed.")
+          PY
+
+      - name: Prepare SARIF for Code Scanning
+        id: sarif
+        if: always()
+        run: |
+          if [[ ! -f zap-report/zap-report.sarif ]]; then
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::ZAP SARIF report was not generated."
+            exit 0
+          fi
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          from urllib.parse import urlsplit, urlunsplit
+
+          path = Path("zap-report/zap-report.sarif")
+          report = json.loads(path.read_text())
+          if report.get("version") != "2.1.0" or not isinstance(report.get("runs"), list):
+              raise SystemExit("ZAP produced an invalid SARIF 2.1.0 report.")
+
+          def sanitize(value):
+              if isinstance(value, dict):
+                  for key in list(value):
+                      if key.lower() in {"webrequest", "webresponse"}:
+                          del value[key]
+                      else:
+                          sanitize(value[key])
+                  if "uri" in value and isinstance(value["uri"], str):
+                      uri = urlsplit(value["uri"])
+                      if uri.scheme in {"http", "https"}:
+                          value["uri"] = urlunsplit((uri.scheme, uri.netloc, uri.path, "", ""))
+              elif isinstance(value, list):
+                  for item in value:
+                      sanitize(item)
+
+          sanitize(report)
+          path.write_text(json.dumps(report))
+          PY
+          echo "exists=true" >> "$GITHUB_OUTPUT"
+
+      - name: Upload ZAP SARIF to Code Scanning
+        if: always() && steps.verify-auth.conclusion == 'success' && steps.sarif.outputs.exists == 'true'
+        uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+        with:
+          sarif_file: zap-report/zap-report.sarif
+          category: zap-dev
+
+      - name: Upload ZAP reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: zap-dev-report
+          path: |
+            zap-report/zap-report.html
+            zap-report/zap-report.json
+            zap-report/zap-report.sarif
+          retention-days: 7

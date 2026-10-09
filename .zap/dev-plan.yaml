@@ -82,11 +82,49 @@ jobs:
       apiUrl: https://dev-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk/swagger.yml
       targetUrl: https://dev-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk
 
+  - type: requestor
+    parameters:
+      user: zap-service-account
+    requests:
+      - name: Verify authenticated reports access
+        url: https://dev-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk/reports
+        responseCode: 200
+    tests:
+      - name: Verify reports response is authenticated JSON
+        type: url
+        url: https://dev-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk/reports
+        operator: or
+        responseBodyRegex: '"reportList"'
+        onFail: error
+
   - type: spider
     parameters:
       context: gpfd-dev
       user: zap-service-account
       maxDuration: 5
+
+  - type: passiveScan-wait
+    parameters:
+      maxDuration: 10
+
+  - type: activeScan-policy
+    parameters:
+      name: GPFD Active Policy
+    policyDefinition:
+      defaultStrength: Medium
+      defaultThreshold: Medium
+
+  - type: activeScan
+    name: authenticated-active-scan
+    parameters:
+      context: gpfd-dev
+      user: zap-service-account
+      policy: GPFD Active Policy
+      maxScanDurationInMins: 20
+      maxRuleDurationInMins: 2
+      delayInMs: 100
+      threadPerHost: 2
+      maxAlertsPerRule: 10
 
   - type: passiveScan-wait
     parameters:
@@ -104,6 +142,12 @@ jobs:
       template: traditional-json
       reportDir: /zap/wrk/zap-report
       reportFile: zap-report.json
+
+  - type: report
+    parameters:
+      template: sarif-json
+      reportDir: /zap/wrk/zap-report
+      reportFile: zap-report.sarif
 
   - type: report
     parameters:
