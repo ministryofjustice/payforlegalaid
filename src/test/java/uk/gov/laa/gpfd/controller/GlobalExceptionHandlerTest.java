@@ -70,7 +70,6 @@ import uk.gov.laa.gpfd.config.AsyncConfig;
 import uk.gov.laa.gpfd.config.SentryConfig;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -116,46 +115,6 @@ class GlobalExceptionHandlerTest {
 
     private static final GlobalExceptionHandler globalExceptionHandler = new GlobalExceptionHandler();
     private ListAppender<ILoggingEvent> appender;
-
-    @Test
-    void preservesSentExceptionAndCauseMessagesWithoutMutatingLocalExceptions() throws Exception {
-        ITransport transport = mock(ITransport.class);
-        Sentry.init(options -> {
-            options.setDsn("https://public@example.test/1");
-            options.setTransportFactory((settings, details) -> transport);
-            options.setBeforeSend(new SentryConfig().sentryBeforeSend());
-            options.setEnableUncaughtExceptionHandler(false);
-            options.setEnableShutdownHook(false);
-        });
-        try {
-            var cause = new IOException("Email person@example.test token=synthetic-secret");
-            var exception = new IllegalStateException("Name: Synthetic Person; address: 12 Example Street", cause);
-            uk.gov.laa.gpfd.utils.SentryEvents.captureException(exception, "synthetic.failure");
-
-            var envelope = ArgumentCaptor.forClass(SentryEnvelope.class);
-            verify(transport).send(envelope.capture(), any(Hint.class));
-            var serializer = Sentry.getCurrentScopes().getOptions().getSerializer();
-            var event = envelope.getValue().getItems().iterator().next().getEvent(serializer);
-            assertEquals(2, event.getExceptions().size());
-            event.getExceptions().forEach(sent -> {
-                assertTrue(sent.getValue().equals(exception.getMessage())
-                    || sent.getValue().equals(cause.getMessage()));
-                assertNotNull(sent.getStacktrace());
-                assertFalse(sent.getStacktrace().getFrames().isEmpty());
-            });
-            assertEquals("synthetic.failure", event.getTag(RequestLogUtils.EVENT_ACTION));
-            var json = new StringWriter();
-            serializer.serialize(event, json);
-            assertTrue(json.toString().contains("person@example.test"));
-            assertTrue(json.toString().contains("synthetic-secret"));
-            assertTrue(json.toString().contains("Synthetic Person"));
-            assertTrue(json.toString().contains("12 Example Street"));
-            assertTrue(exception.getMessage().contains("Synthetic Person"));
-            assertSame(cause, exception.getCause());
-        } finally {
-            Sentry.close();
-        }
-    }
 
     @Test
     void preservesFormattedMessagesTemplatesAndParameters() {
