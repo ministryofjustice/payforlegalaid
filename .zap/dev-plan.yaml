@@ -75,13 +75,6 @@ jobs:
       maxAlertsPerRule: 10
       scanOnlyInScope: true
 
-  - type: openapi
-    parameters:
-      context: gpfd-dev
-      user: zap-service-account
-      apiUrl: https://dev-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk/swagger.yml
-      targetUrl: https://dev-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk
-
   - type: requestor
     parameters:
       user: zap-service-account
@@ -96,6 +89,13 @@ jobs:
         operator: or
         responseBodyRegex: '"reportList"'
         onFail: error
+
+  - type: openapi
+    parameters:
+      context: gpfd-dev
+      user: zap-service-account
+      apiFile: /zap/wrk/src/main/resources/static/swagger.yml
+      targetUrl: https://dev-laa-get-payments-finance-data.cloud-platform.service.justice.gov.uk
 
   - type: spider
     parameters:
