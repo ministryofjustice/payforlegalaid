@@ -81,6 +81,7 @@ jobs:
           REPOSITORY: ${{ vars.ECR_REPOSITORY }}
           NAMESPACE: ${{ secrets.KUBE_NAMESPACE_DEV }}
           IP_LIST: ${{ steps.fetch_ip.outputs.ip_list }}
+          SECRET_NAME: gpfd-test-secret-01
         run: |
           # namespace et non-empty IP_LIST checks
           set -euo pipefail
@@ -103,7 +104,7 @@ jobs:
 
           # Restrict substitution to these placeholders only, so runtime shell/container variables in the
           # templates (e.g. $POSTGRES_USER, $(POSTGRES_USER)) are left untouched instead of being emptied.
-          VARS='${BRANCH_NAME} ${REGISTRY} ${REPOSITORY} ${IMAGE_TAG} ${GPFD_URL} ${IP_LIST} ${NAMESPACE} ${BRANCH_HOSTNAME}'
+          VARS='${BRANCH_NAME} ${REGISTRY} ${REPOSITORY} ${IMAGE_TAG} ${GPFD_URL} ${IP_LIST} ${NAMESPACE} ${BRANCH_HOSTNAME} ${SECRET_NAME}'
           envsubst "$VARS" < deployments/test/deployment.tpl > "deployments/test/deployment-${BRANCH_NAME}.yml"
           envsubst "$VARS" < deployments/test/ingress.tpl > "deployments/test/ingress-${BRANCH_NAME}.yml"
           envsubst "$VARS" < deployments/test/service.tpl > "deployments/test/service-${BRANCH_NAME}.yml"
