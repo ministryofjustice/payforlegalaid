@@ -48,6 +48,8 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 
 class MockAuthSecurityConfigTest {
 
+    private static final String ENTRA_REGISTRATION_ID = "entra";
+
     private final WebApplicationContextRunner runner = new WebApplicationContextRunner()
             .withUserConfiguration(TestConfiguration.class)
             .withPropertyValues(
@@ -75,7 +77,7 @@ class MockAuthSecurityConfigTest {
 
                 @Test
                 void normalProfileRetainsOauthAndDeniesMockLoginEvenWhenEnabled() {
-                var registration = ClientRegistration.withRegistrationId("entra")
+                var registration = ClientRegistration.withRegistrationId(ENTRA_REGISTRATION_ID)
                     .clientId("test-client").clientSecret("synthetic-test-secret")
                     .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                     .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
@@ -90,7 +92,7 @@ class MockAuthSecurityConfigTest {
                         assertThat(context).doesNotHaveBean(MockAuthSecurityConfig.class);
                         var mvc = mockMvc(context);
                         mvc.perform(get("/login")).andExpect(status().isOk());
-                        var redirect = mvc.perform(get("/oauth2/authorization/entra"))
+                        var redirect = mvc.perform(get("/oauth2/authorization/" + ENTRA_REGISTRATION_ID))
                             .andExpect(status().isFound()).andReturn().getResponse().getRedirectedUrl();
                         assertThat(redirect).startsWith("https://identity.example/authorize?");
                     });
@@ -110,7 +112,8 @@ class MockAuthSecurityConfigTest {
                     .withBean(ClientRegistrationRepository.class,
                             () -> new InMemoryClientRegistrationRepository(entraRegistration()))
                     .run(context -> mockMvc(context)
-                            .perform(get("/login/oauth2/code/entra").param("code", "c").param("state", "s"))
+                                .perform(get("/login/oauth2/code/" + ENTRA_REGISTRATION_ID)
+                                    .param("code", "c").param("state", "s"))
                             .andExpect(status().isFound())
                             .andExpect(redirectedUrl("/login?error")));
             assertThat(appender.list).hasSize(1);
@@ -121,7 +124,7 @@ class MockAuthSecurityConfigTest {
                     .contains(
                             tuple(RequestLogUtils.EVENT_ACTION, OAuth2LoginAuditHandler.EVENT_ACTION),
                             tuple(RequestLogUtils.EVENT_OUTCOME, "failure"),
-                            tuple(OAuth2LoginAuditHandler.REGISTRATION_ID, "entra"),
+                            tuple(OAuth2LoginAuditHandler.REGISTRATION_ID, ENTRA_REGISTRATION_ID),
                             tuple(OAuth2LoginAuditHandler.ERROR_CODE, "authorization_request_not_found"));
         } finally {
             logger.detachAppender(appender);
@@ -131,7 +134,7 @@ class MockAuthSecurityConfigTest {
     }
 
     private static ClientRegistration entraRegistration() {
-        return ClientRegistration.withRegistrationId("entra")
+        return ClientRegistration.withRegistrationId(ENTRA_REGISTRATION_ID)
                 .clientId("test-client").clientSecret("synthetic-test-secret")
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
