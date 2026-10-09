@@ -289,6 +289,7 @@ public class GlobalExceptionHandler {
         errorResponse.setError(e.getMessage());
 
         log.error("OperationNotSupportedException Thrown: {}", e.getMessage());
+        SentryEvents.captureException(e, "operation.unsupported");
 
         return ResponseEntity.status(NOT_IMPLEMENTED)
                 .body(errorResponse);

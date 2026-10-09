@@ -215,7 +215,6 @@ class GlobalExceptionHandlerTest {
         return Stream.of(new InvalidReportFormatException(UUID.randomUUID(), "XLSX", "CSV"),
                 new InvalidDownloadFormatException("synthetic.docx", UUID.randomUUID()),
                 new ReportNotSupportedForDownloadException(UUID.randomUUID()),
-                new OperationNotSupportedException("/synthetic"),
                 new org.springframework.web.server.ResponseStatusException(BAD_REQUEST),
                 new java.io.EOFException());
     }
@@ -225,6 +224,7 @@ class GlobalExceptionHandlerTest {
         var callback = new SentryConfig().sentryBeforeSend();
         assertNull(callback.execute(new SentryEvent(new java.io.EOFException()), new Hint()));
         assertNull(callback.execute(new SentryEvent(new ReportIdNotFoundException("Synthetic missing report")), new Hint()));
+        assertNotNull(callback.execute(new SentryEvent(new OperationNotSupportedException("/synthetic")), new Hint()));
         assertNotNull(callback.execute(new SentryEvent(new ReportAccessException(UUID.randomUUID())), new Hint()));
         assertNotNull(callback.execute(new SentryEvent(new IllegalStateException("Synthetic bug")), new Hint()));
         assertNotNull(callback.execute(new SentryEvent(), new Hint()));
@@ -237,6 +237,18 @@ class GlobalExceptionHandlerTest {
             new AsyncConfig().getAsyncUncaughtExceptionHandler().handleUncaughtException(exception,
                     GlobalExceptionHandlerTest.class.getDeclaredMethod("capturesUncaughtAsyncFailureExactlyOnce"),
                     "private-method-argument");
+            sentry.verify(() -> Sentry.captureException(eq(exception), any(ScopeCallback.class)));
+            sentry.verifyNoMoreInteractions();
+        }
+    }
+
+    @Test
+    void capturesUnsupportedOperationOnceAndKeeps501Response() {
+        var exception = new OperationNotSupportedException("/synthetic");
+        try (var sentry = mockStatic(Sentry.class)) {
+            var response = globalExceptionHandler.handleNotSupportedException(exception);
+            assertEquals(NOT_IMPLEMENTED, response.getStatusCode());
+            assertEquals(exception.getMessage(), response.getBody().getError());
             sentry.verify(() -> Sentry.captureException(eq(exception), any(ScopeCallback.class)));
             sentry.verifyNoMoreInteractions();
         }
