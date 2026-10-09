@@ -48,13 +48,27 @@ class TrackedStreamServiceTest {
     @SneakyThrows
     @Test
     void catchesAndRethrowsAnyStreamingErrors() {
-        StreamingResponseBody rawStream = _ -> {throw new IOException("sad");};
+        var cause = new IOException("sad");
+        StreamingResponseBody rawStream = _ -> {throw cause;};
 
         StreamingResponseBody wrappedStream = trackedStreamService.wrapStream(rawStream,REPORT_ID, USER_ID);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        assertThrows(StreamErrorException.class, () -> wrappedStream.writeTo(outputStream));
+        var error = assertThrows(StreamErrorException.class, () -> wrappedStream.writeTo(outputStream));
+        assertNull(error.getCause());
+        assertEquals(cause.getMessage(), error.getMessage());
+        assertEquals(REPORT_ID, error.getReportId());
 
+    }
+
+    @Test
+    void doesNotRetainClientDisconnectCause() {
+        StreamingResponseBody rawStream = _ -> {throw new java.io.EOFException();};
+        var wrappedStream = trackedStreamService.wrapStream(rawStream, REPORT_ID, USER_ID);
+        var error = assertThrows(StreamErrorException.class,
+                () -> wrappedStream.writeTo(new ByteArrayOutputStream()));
+        assertNull(error.getCause());
+        assertEquals(REPORT_ID, error.getReportId());
     }
 
 }

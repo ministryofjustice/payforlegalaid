@@ -5,6 +5,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import uk.gov.laa.gpfd.utils.SentryEvents;
 
 /**
  * Exception handler for ReportsViewController.
@@ -28,6 +29,7 @@ public class UIExceptionHandler {
     @ExceptionHandler(Exception.class)
     public String handleAnyExceptionUi(Exception e, Model model) {
         log.error("{} handled (UI): {}", e.getClass().getName(), e.getMessage());
+        SentryEvents.captureException(e, "ui.failure");
         model.addAttribute("errorMessage", e.getMessage());
         return "reports/list";
     }

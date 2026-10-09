@@ -11,6 +11,7 @@ import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.security.concurrent.DelegatingSecurityContextExecutor;
+import uk.gov.laa.gpfd.utils.SentryEvents;
 
 /** This configuration is necessary to ensure that the authentication details are passed to any service methods marked as @Async
  *  - i.e. running in a separate thread.
@@ -36,7 +37,9 @@ public class AsyncConfig implements AsyncConfigurer {
 
   @Override
   public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-    return (throwable, method, params) ->
-        log.error("Uncaught async error in method: {}", method.getName(), throwable);
+    return (throwable, method, params) -> {
+      log.error("Uncaught async error in method: {}", method.getName(), throwable);
+      SentryEvents.captureException(throwable, "async.failure");
+    };
   }
 }

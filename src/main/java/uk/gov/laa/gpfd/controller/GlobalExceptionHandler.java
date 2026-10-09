@@ -82,9 +82,8 @@ public class GlobalExceptionHandler {
         if (e.getCause() != null) {
             log.error("Caused by: {}", e.getCause().getMessage());
         }
-        if (e instanceof TemplateResourceException.ExcelTemplateCreationException) {
-            SentryEvents.captureException(e, "report.write.failure");
-        }
+        SentryEvents.captureException(e, e instanceof TemplateResourceException.ExcelTemplateCreationException
+            ? "report.write.failure" : "report.template.failure");
 
         return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(response);
     }
@@ -112,6 +111,7 @@ public class GlobalExceptionHandler {
         if (e.getCause() != null) {
             log.error("Caused by: {}", e.getCause().getMessage());
         }
+        SentryEvents.captureException(e, "report.generation.failure");
 
         return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(response);
     }
@@ -154,6 +154,7 @@ public class GlobalExceptionHandler {
 
         log.error("DatabaseReadException Thrown: {}", response, e);
         log.error("DatabaseReadException Thrown: {}", e.getMessage(), e);
+        SentryEvents.captureException(e, "database.read.failure");
 
         return internalServerError()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -176,6 +177,7 @@ public class GlobalExceptionHandler {
 
         log.error("ReportOutputTypeNotFoundException Thrown: {}", response, e);
         log.error("ReportOutputTypeNotFoundException stacktrace: {}", e.getMessage(), e);
+        SentryEvents.captureException(e, "report.output.failure");
 
         return internalServerError().body(response);
     }
@@ -231,7 +233,6 @@ public class GlobalExceptionHandler {
         }};
 
         log.error("MethodArgumentTypeMismatchException Thrown: %s".formatted(response));
-        SentryEvents.captureException(e, "input.invalid");
 
         return badRequest().body(response);
     }
@@ -253,6 +254,7 @@ public class GlobalExceptionHandler {
                 .addKeyValue(RequestLogUtils.EVENT_ACTION, "s3.download.failure")
                 .addKeyValue(RequestLogUtils.EVENT_OUTCOME, "failure")
                 .log("AwsServiceException ({}) Thrown: {}", e.getClass().getSimpleName(), e.awsErrorDetails().toString());
+            SentryEvents.captureException(e, "s3.download.failure");
 
         return internalServerError().body(errorResponse);
     }
@@ -305,7 +307,6 @@ public class GlobalExceptionHandler {
         errorResponse.setError(e.getMessage());
 
         log.error("InvalidDownloadFormatException Thrown: Report {} has file {} which is not a csv file", e.getReportId(), e.getFileName());
-        SentryEvents.captureException(e, "input.invalid");
 
         return ResponseEntity.status(BAD_REQUEST)
                 .body(errorResponse);
@@ -364,7 +365,7 @@ public class GlobalExceptionHandler {
                 .addKeyValue(RequestLogUtils.EVENT_ACTION, "authorization.denied")
                 .addKeyValue(RequestLogUtils.EVENT_OUTCOME, "failure")
                 .log("ReportAccessException Thrown: User tried to access report {} but lacks the relevant permission(s)", e.getReportId());
-            SentryEvents.captureException(e, "authorization.denied");
+        SentryEvents.captureException(e, "authorization.denied");
 
         return ResponseEntity.status(FORBIDDEN)
                 .body(errorResponse);
@@ -390,9 +391,8 @@ public class GlobalExceptionHandler {
         if (e.getCause() != null) {
             log.error("Caused by: {}", e.getCause().getMessage());
         }
-        if (e instanceof CsvGenerationException.WritingToCsvException) {
-            SentryEvents.captureException(e, "report.write.failure");
-        }
+        SentryEvents.captureException(e, e instanceof CsvGenerationException.WritingToCsvException
+            ? "report.write.failure" : "report.generation.failure");
 
         return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(response);
     }
@@ -411,6 +411,7 @@ public class GlobalExceptionHandler {
 
         log.error("S3BucketHasNoCopiesOfReportException Thrown: No matching entries in the S3 bucket were found for report with ID {} using prefix {}.",
                 e.getReportId(), e.getPrefix());
+        SentryEvents.captureException(e, "s3.download.failure");
 
         return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                 .body(errorResponse);
@@ -430,7 +431,6 @@ public class GlobalExceptionHandler {
 
         log.error("InvalidReportFormatException Thrown: Report {} requested as {} but is actually {}",
                 e.getReportId(), e.getRequestedFormat(), e.getActualFormat());
-        SentryEvents.captureException(e, "input.invalid");
 
         return ResponseEntity.status(BAD_REQUEST)
                 .body(errorResponse);
@@ -451,6 +451,7 @@ public class GlobalExceptionHandler {
         response.setError(e.getMessage());
 
         log.error("DatabaseWriteException thrown", e);
+        SentryEvents.captureException(e, "database.write.failure");
 
         return internalServerError()
                 .contentType(MediaType.APPLICATION_JSON)

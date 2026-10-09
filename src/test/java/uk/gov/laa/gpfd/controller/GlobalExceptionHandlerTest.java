@@ -6,11 +6,16 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import io.sentry.Hint;
+import io.sentry.ITransportFactory;
+import io.sentry.IScopes;
 import io.sentry.ScopeCallback;
 import io.sentry.Sentry;
 import io.sentry.SentryEnvelope;
+import io.sentry.SentryEvent;
+import io.sentry.protocol.Message;
 import io.sentry.protocol.User;
 import io.sentry.transport.ITransport;
+import io.sentry.spring.boot4.SentryAutoConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,6 +23,14 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
+import org.springframework.boot.autoconfigure.AutoConfigurations;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import software.amazon.awssdk.awscore.exception.AwsErrorDetails;
@@ -53,8 +66,11 @@ import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.NoRolesInAttr
 import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.PrincipalIsNullException;
 import uk.gov.laa.gpfd.exception.UnableToParseAuthDetailsException.UnexpectedAuthClassException;
 import uk.gov.laa.gpfd.utils.RequestLogUtils;
+import uk.gov.laa.gpfd.config.AsyncConfig;
+import uk.gov.laa.gpfd.config.SentryConfig;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -80,8 +96,181 @@ import static uk.gov.laa.gpfd.exception.DatabaseReadException.SqlFormatException
 @SuppressWarnings("DataFlowIssue")
 class GlobalExceptionHandlerTest {
 
+    @TestConfiguration(proxyBeanMethods = false)
+    @EnableWebMvc
+    static class MvcTestConfiguration {
+    }
+
+    @RestController
+    static class FailingController {
+        @GetMapping("/sentry-policy-server")
+        public String serverFailure() {
+            throw new DatabaseFetchException("Synthetic database failure");
+        }
+
+        @GetMapping("/sentry-policy-client")
+        public String expectedClientFailure() {
+            throw new ReportIdNotFoundException("Synthetic missing report");
+        }
+    }
+
     private static final GlobalExceptionHandler globalExceptionHandler = new GlobalExceptionHandler();
     private ListAppender<ILoggingEvent> appender;
+
+    @Test
+    void preservesSentExceptionAndCauseMessagesWithoutMutatingLocalExceptions() throws Exception {
+        ITransport transport = mock(ITransport.class);
+        Sentry.init(options -> {
+            options.setDsn("https://public@example.test/1");
+            options.setTransportFactory((settings, details) -> transport);
+            options.setBeforeSend(new SentryConfig().sentryBeforeSend());
+            options.setEnableUncaughtExceptionHandler(false);
+            options.setEnableShutdownHook(false);
+        });
+        try {
+            var cause = new IOException("Email person@example.test token=synthetic-secret");
+            var exception = new IllegalStateException("Name: Synthetic Person; address: 12 Example Street", cause);
+            uk.gov.laa.gpfd.utils.SentryEvents.captureException(exception, "synthetic.failure");
+
+            var envelope = ArgumentCaptor.forClass(SentryEnvelope.class);
+            verify(transport).send(envelope.capture(), any(Hint.class));
+            var serializer = Sentry.getCurrentScopes().getOptions().getSerializer();
+            var event = envelope.getValue().getItems().iterator().next().getEvent(serializer);
+            assertEquals(2, event.getExceptions().size());
+            event.getExceptions().forEach(sent -> {
+                assertTrue(sent.getValue().equals(exception.getMessage())
+                    || sent.getValue().equals(cause.getMessage()));
+                assertNotNull(sent.getStacktrace());
+                assertFalse(sent.getStacktrace().getFrames().isEmpty());
+            });
+            assertEquals("synthetic.failure", event.getTag(RequestLogUtils.EVENT_ACTION));
+            var json = new StringWriter();
+            serializer.serialize(event, json);
+            assertTrue(json.toString().contains("person@example.test"));
+            assertTrue(json.toString().contains("synthetic-secret"));
+            assertTrue(json.toString().contains("Synthetic Person"));
+            assertTrue(json.toString().contains("12 Example Street"));
+            assertTrue(exception.getMessage().contains("Synthetic Person"));
+            assertSame(cause, exception.getCause());
+        } finally {
+            Sentry.close();
+        }
+    }
+
+    @Test
+    void preservesFormattedMessagesTemplatesAndParameters() {
+        var event = new SentryEvent();
+        var original = new Message();
+        original.setMessage("User %s failed");
+        original.setFormatted("User synthetic@example.test failed");
+        original.setParams(java.util.List.of("synthetic@example.test"));
+        event.setMessage(original);
+
+        assertSame(event, new SentryConfig().sentryBeforeSend().execute(event, new Hint()));
+        assertSame(original, event.getMessage());
+        assertEquals("User synthetic@example.test failed", event.getMessage().getFormatted());
+        assertEquals("User %s failed", event.getMessage().getMessage());
+        assertEquals(java.util.List.of("synthetic@example.test"), event.getMessage().getParams());
+    }
+
+    @Test
+    void defaultMvcIntegrationCapturesServerFailureOnceAndSkipsExpectedClientFailure() {
+        ITransport transport = mock(ITransport.class);
+        new WebApplicationContextRunner()
+                .withInitializer(new ConfigDataApplicationContextInitializer())
+                .withConfiguration(AutoConfigurations.of(SentryAutoConfiguration.class))
+                .withUserConfiguration(MvcTestConfiguration.class, SentryConfig.class)
+                .withBean(FailingController.class)
+                .withBean(GlobalExceptionHandler.class)
+                .withBean(ITransportFactory.class, () -> (options, details) -> transport)
+                .withPropertyValues("spring.config.location=file:target/classes/application.yml",
+                        "sentry.dsn=https://public@example.test/1", "sentry.traces-sample-rate=0.0",
+                        "sentry.enable-uncaught-exception-handler=false", "sentry.enable-shutdown-hook=false")
+                .run(context -> {
+                    assertNull(context.getStartupFailure());
+                    var options = context.getBean(IScopes.class).getOptions();
+                    assertSame(context.getBean("sentryBeforeSend"), options.getBeforeSend());
+                    var mvc = MockMvcBuilders.webAppContextSetup(context).build();
+                    assertEquals(500, mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                            .get("/sentry-policy-server")).andReturn().getResponse().getStatus());
+                    assertEquals(404, mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                            .get("/sentry-policy-client")).andReturn().getResponse().getStatus());
+                    var envelope = ArgumentCaptor.forClass(SentryEnvelope.class);
+                    verify(transport).send(envelope.capture(), any(Hint.class));
+                    var event = envelope.getValue().getItems().iterator().next().getEvent(options.getSerializer());
+                    assertEquals("database.read.failure", event.getTag(RequestLogUtils.EVENT_ACTION));
+                });
+    }
+
+    @ParameterizedTest
+    @MethodSource("expectedSentryFailures")
+    void ignoresExpectedFailuresAtAnyManualCaptureBoundary(Throwable exception) {
+        try (var sentry = mockStatic(Sentry.class)) {
+            uk.gov.laa.gpfd.utils.SentryEvents.captureException(exception, "synthetic.failure");
+            sentry.verifyNoInteractions();
+        }
+    }
+
+    private static Stream<Throwable> expectedSentryFailures() {
+        return Stream.of(new InvalidReportFormatException(UUID.randomUUID(), "XLSX", "CSV"),
+                new InvalidDownloadFormatException("synthetic.docx", UUID.randomUUID()),
+                new ReportNotSupportedForDownloadException(UUID.randomUUID()),
+                new OperationNotSupportedException("/synthetic"),
+                new org.springframework.web.server.ResponseStatusException(BAD_REQUEST),
+                new java.io.EOFException());
+    }
+
+    @Test
+    void sdkFilterDropsDisconnectsAndExpectedFailuresButKeepsSecurityEvents() {
+        var callback = new SentryConfig().sentryBeforeSend();
+        assertNull(callback.execute(new SentryEvent(new java.io.EOFException()), new Hint()));
+        assertNull(callback.execute(new SentryEvent(new ReportIdNotFoundException("Synthetic missing report")), new Hint()));
+        assertNotNull(callback.execute(new SentryEvent(new ReportAccessException(UUID.randomUUID())), new Hint()));
+        assertNotNull(callback.execute(new SentryEvent(new IllegalStateException("Synthetic bug")), new Hint()));
+        assertNotNull(callback.execute(new SentryEvent(), new Hint()));
+    }
+
+    @Test
+    void capturesUncaughtAsyncFailureExactlyOnce() throws Exception {
+        var exception = new IllegalStateException("Synthetic async failure");
+        try (var sentry = mockStatic(Sentry.class)) {
+            new AsyncConfig().getAsyncUncaughtExceptionHandler().handleUncaughtException(exception,
+                    GlobalExceptionHandlerTest.class.getDeclaredMethod("capturesUncaughtAsyncFailureExactlyOnce"),
+                    "private-method-argument");
+            sentry.verify(() -> Sentry.captureException(eq(exception), any(ScopeCallback.class)));
+            sentry.verifyNoMoreInteractions();
+        }
+    }
+
+    @Test
+    void capturesUnexpectedDatabaseFailureExactlyOnce() {
+        var exception = new DatabaseFetchException("Synthetic database failure");
+        try (var sentry = mockStatic(Sentry.class)) {
+            assertEquals(INTERNAL_SERVER_ERROR,
+                    globalExceptionHandler.handleDatabaseReadException(exception).getStatusCode());
+            sentry.verify(() -> Sentry.captureException(eq(exception), any(ScopeCallback.class)));
+            sentry.verifyNoMoreInteractions();
+        }
+    }
+
+    @Test
+    void doesNotCaptureRoutineMissingReport() {
+        try (var sentry = mockStatic(Sentry.class)) {
+            assertEquals(NOT_FOUND, globalExceptionHandler.handleReportIdNotFoundException(
+                    new ReportIdNotFoundException("Synthetic missing report")).getStatusCode());
+            sentry.verifyNoInteractions();
+        }
+    }
+
+    @Test
+    void doesNotCaptureClientDisconnectInWrappedStreamError() {
+        var exception = new StreamErrorException("Synthetic disconnect", UUID.randomUUID());
+        exception.initCause(new java.io.EOFException());
+        try (var sentry = mockStatic(Sentry.class)) {
+            globalExceptionHandler.handleStreamErrorException(exception);
+            sentry.verifyNoInteractions();
+        }
+    }
 
     @Test
     void capturesDeniedReportAccessWithScopedMetadata() {

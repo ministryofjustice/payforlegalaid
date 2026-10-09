@@ -13,4 +13,9 @@ public class StreamErrorException extends RuntimeException {
         super(message);
         this.reportId = reportId;
     }
+
+    public StreamErrorException(String message, UUID reportId, Throwable cause) {
+        super(message, cause);
+        this.reportId = reportId;
+    }
 }
