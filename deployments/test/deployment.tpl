@@ -64,12 +64,6 @@ spec:
               value: localhost
             - name: RDS_DB_NAME
               value: glad
-            - name: SENTRY_DSN #TODO to remove before merge
-              valueFrom:
-                secretKeyRef:
-                  name: ${SECRET_NAME}
-                  key: sentry-dsn
-                  optional: true
             - name: TRACKING_DB_USERNAME
               valueFrom:
                 secretKeyRef:
