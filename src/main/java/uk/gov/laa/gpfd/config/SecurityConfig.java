@@ -18,6 +18,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import uk.gov.laa.gpfd.config.builders.AuthorizeHttpRequestsBuilder;
 import uk.gov.laa.gpfd.config.builders.HttpSecuritySessionManagementConfigurerBuilder;
 import uk.gov.laa.gpfd.config.builders.SessionManagementConfigurerBuilder;
+import uk.gov.laa.gpfd.security.OAuth2LoginAuditHandler;
 
 /**
  * Configuration class to set up Spring Security for the application.
@@ -109,8 +110,10 @@ public class SecurityConfig {
 
         var mockAuth = mockAuthProvider.getIfAvailable();
         if (mockAuth == null) {
+            var loginAuditHandler = new OAuth2LoginAuditHandler();
             http.oauth2Login(oauth2 -> oauth2
-                    .successHandler((_, response, _) -> response.sendRedirect("/")));
+                    .successHandler(loginAuditHandler)
+                    .failureHandler(loginAuditHandler));
         } else {
             mockAuth.configure(http);
         }
