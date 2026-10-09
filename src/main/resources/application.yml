@@ -69,6 +69,15 @@ gpfd:
       jdbcUrl: jdbc:postgresql://${RDS_DB_HOST:localhost}:5432/${RDS_DB_NAME:glad}
       username: ${TRACKING_DB_USERNAME:user}
       password: ${TRACKING_DB_PASSWORD:dev}
+      # HikariCP timeouts are in milliseconds.
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      keepalive-time: 120000
+      validation-timeout: 5000
+      # Fixed-size pool: idle-timeout does not shrink the pool below minimum-idle.
+      minimum-idle: 10
+      maximum-pool-size: 10
 
   security:
     cors:
